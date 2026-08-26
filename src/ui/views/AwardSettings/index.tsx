@@ -27,6 +27,7 @@ import { orderBy } from "../../../common/utils.ts";
 import { Dropdown } from "react-bootstrap";
 import { resetFileInput } from "../../util/resetFileInput.ts";
 import type { ZodError } from "zod";
+import { Documentation } from "./Documentation.tsx";
 
 const MARGIN = 14;
 
@@ -153,6 +154,8 @@ const AwardSettings = ({
 	return (
 		<>
 			<MoreLinks type="awards" page="award_settings" season={season} />
+
+			<Documentation />
 
 			<form
 				id={formId}

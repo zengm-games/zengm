@@ -1,7 +1,7 @@
 custom awards
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
-  - why is it needed?
+  - why is it needed? can just use shortName+season?
   - only in PlayerAward?
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
@@ -14,6 +14,8 @@ custom awards
       - min/max functions
         - also add to GOAT formula/season
     - explain how achievements work
+  - team records not updating when api is used to update awards/players
+  - last season stats not working right if formula changed? is it using fixed order of award winners?
   - link to award settings
     - from league settings
     - hide in tools menu?
@@ -25,6 +27,7 @@ custom awards
 - UI to update
   - awards editor (winners)
   - GOAT formula
+    - explain min/max functions
     - award:shortName
     - keep compatibility with old ones by translating to shortName https://www.reddit.com/r/BasketballGM/comments/oey0m6/collection_of_some_goat_lab_formulas/
 - make sure hashAward accounts for everything

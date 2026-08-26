@@ -7,7 +7,6 @@ custom awards
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
   - fix Max variables
-  - distinguish between saving and processing, and actionbutton should switch between disabled and processing
   - proofread docs
   - team records not updating when api is used to update awards/players
   - last season stats not working right if formula changed? is it using fixed order of award winners?

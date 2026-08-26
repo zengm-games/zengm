@@ -126,7 +126,7 @@ const AwardSettings = ({
 	const [awardsState, setAwardsState] = useState(() =>
 		awardsToEditingState(awardCandidates),
 	);
-	const [working, setWorking] = useState(false);
+	const [status, setStatus] = useState<"loading" | "saving" | "idle">("idle");
 	const { setDirty } = useBlocker();
 	const formId = useId();
 
@@ -163,7 +163,7 @@ const AwardSettings = ({
 				style={{ marginTop: -MARGIN }}
 				onSubmit={async (event) => {
 					event.preventDefault();
-					setWorking(true);
+					setStatus("saving");
 					const awards = awardsStateToAwards(awardsState);
 					if (awards) {
 						await toWorker("main", "updateGameAttributes", {
@@ -185,7 +185,7 @@ const AwardSettings = ({
 						setAwardsState(awardsToEditingState(newAwards.awardCandidates));
 						setDirty(false);
 					}
-					setWorking(false);
+					setStatus("idle");
 				}}
 			>
 				{awardsState.map(({ awards, editing }, i) => {
@@ -234,7 +234,7 @@ const AwardSettings = ({
 											<EditSettings
 												canMoveDown={i < awardsState.length - 1}
 												canMoveUp={i > 0}
-												disabled={working}
+												disabled={status !== "idle"}
 												move={(direction) => {
 													setDirty(true);
 													setAwardsState((oldState) => {
@@ -290,7 +290,7 @@ const AwardSettings = ({
 				<div className={DEFAULT_CLASSES} style={{ marginTop: MARGIN }}>
 					<button
 						className="btn btn-secondary btn-lg"
-						disabled={working}
+						disabled={status !== "idle"}
 						type="button"
 						onClick={() => {
 							setAwardsState((oldState) => {
@@ -323,13 +323,13 @@ const AwardSettings = ({
 
 			<StickyBottomButtons>
 				<Dropdown>
-					<Dropdown.Toggle variant="secondary" disabled={working}>
+					<Dropdown.Toggle variant="secondary" disabled={status !== "idle"}>
 						Actions
 					</Dropdown.Toggle>
 					<Dropdown.Menu>
 						<Dropdown.Item
 							onClick={async () => {
-								setWorking(true);
+								setStatus("loading");
 								try {
 									const newAwards = await toWorker(
 										"awardSettings",
@@ -352,7 +352,7 @@ const AwardSettings = ({
 										text: error.message,
 									});
 								} finally {
-									setWorking(false);
+									setStatus("idle");
 								}
 							}}
 						>
@@ -405,7 +405,7 @@ const AwardSettings = ({
 										return;
 									}
 
-									setWorking(true);
+									setStatus("loading");
 									try {
 										const { basicInfo } = await toWorker(
 											"leagueFileUpload",
@@ -455,7 +455,7 @@ const AwardSettings = ({
 											text: error.message,
 										});
 									} finally {
-										setWorking(false);
+										setStatus("idle");
 									}
 								}}
 							/>
@@ -467,7 +467,8 @@ const AwardSettings = ({
 					type="submit"
 					className="ms-auto"
 					variant="primary"
-					processing={working}
+					disabled={status === "loading"}
+					processing={status === "saving"}
 					processingText="Saving"
 				>
 					Save settings

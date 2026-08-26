@@ -674,6 +674,14 @@ export const awardSettingsSchema = z
 			if (award.mip && typeof award.statRange === "number") {
 				addIssue("Playoff series awards cannot be Most Improved Player awards");
 			}
+			if (award.numTeams === undefined && award.opoyFormula !== undefined) {
+				const banWith = ["actAs", "rookie", "bench", "mip"] as const;
+				for (const key of banWith) {
+					if (award[key]) {
+						addIssue(`opoyFormula and ${key} cannot both be defined`);
+					}
+				}
+			}
 
 			seen.add(shortName);
 		}

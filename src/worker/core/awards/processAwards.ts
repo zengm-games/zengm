@@ -1,5 +1,7 @@
 import fastDeepEqual from "fast-deep-equal";
-import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
+import FormulaEvaluator, {
+	InvalidVariableError,
+} from "../../util/FormulaEvaluator.ts";
 import {
 	chunk,
 	groupByUnique,
@@ -244,9 +246,24 @@ export const processAwards = async ({
 				} catch (error) {
 					const posPart = award.formulaByPos?.[p.pos] ? `${p.pos} ` : "";
 
+					// Show extra info if the error is about an invalid variable, when the variable would have been valid outside of a playoff series
+					let variablesPart = "";
+					if (
+						error instanceof InvalidVariableError &&
+						typeof statRange === "number"
+					) {
+						const variables = error.invalidVariables;
+						const variablesThatWouldHaveBeenValid = variables.filter(
+							(variable) => AWARD_STATS_ALL.includes(variable),
+						);
+						if (variablesThatWouldHaveBeenValid.length > 0) {
+							variablesPart = `. ${variables.length === 1 ? "This variable is" : "These variables are"} available only for regular season, playoffs, or combined stat ranges, not for playoff seasons${variables.length === variablesThatWouldHaveBeenValid.length ? "" : `: ${variablesThatWouldHaveBeenValid.join(", ")}`}.`;
+						}
+					}
+
 					errorMessages ??= [];
 					errorMessages.push(
-						`${award.shortName} ${posPart}formula (${award.formula}): ${error.message}`,
+						`${award.shortName} ${posPart}formula (${award.formula}): ${error.message}${variablesPart}`,
 					);
 
 					// At least render something

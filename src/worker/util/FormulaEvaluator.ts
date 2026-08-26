@@ -194,6 +194,16 @@ const shuntingYard = (string: string) => {
 	return output;
 };
 
+export class InvalidVariableError extends Error {
+	public invalidVariables: string[];
+	constructor(invalidVariables: string[]) {
+		super(
+			`Invalid ${helpers.plural("variable", invalidVariables.length)}: ${invalidVariables.join(", ")}`,
+		);
+		this.invalidVariables = invalidVariables;
+	}
+}
+
 class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 	private symbols: Set<Symbols[number]>;
 	private tokens: (string | number)[];
@@ -220,6 +230,8 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 	private partiallyEvaluate(tokens: string[]) {
 		const processed: (string | number)[] = [];
 
+		const invalidTokens = new Set<string>();
+
 		for (const token of tokens) {
 			if (this.symbols.has(token)) {
 				this.usedSymbols.add(token);
@@ -233,10 +245,14 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 			} else {
 				const float = helpers.localeParseFloat(token);
 				if (Number.isNaN(float)) {
-					throw new Error(`Invalid variable "${token}"`);
+					invalidTokens.add(token);
 				}
 				processed.push(float);
 			}
+		}
+
+		if (invalidTokens.size > 0) {
+			throw new InvalidVariableError(Array.from(invalidTokens));
 		}
 
 		return processed;

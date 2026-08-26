@@ -171,10 +171,14 @@ const AwardSettings = ({
 						});
 
 						// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
-						const newAwards = await toWorker("main", "getAwardCandidates", {
-							type: "season",
-							season,
-						});
+						const newAwards = await toWorker(
+							"awardSettings",
+							"getAwardCandidates",
+							{
+								type: "season",
+								season,
+							},
+						);
 						if (newAwards.errorMessages) {
 							showErrorMessages(newAwards.errorMessages);
 						}
@@ -328,7 +332,7 @@ const AwardSettings = ({
 								setWorking(true);
 								try {
 									const newAwards = await toWorker(
-										"main",
+										"awardSettings",
 										"getAwardCandidates",
 										{
 											type: "default",
@@ -427,7 +431,7 @@ const AwardSettings = ({
 										);
 										if (result.success) {
 											const newAwards = await toWorker(
-												"main",
+												"awardSettings",
 												"getAwardCandidates",
 												{ type: "custom", season, awards: result.data },
 											);

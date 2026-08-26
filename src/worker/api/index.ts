@@ -13,6 +13,7 @@ import {
 	REAL_PLAYERS_INFO,
 } from "../../common/constants.ts";
 import actions from "./actions.ts";
+import * as awardSettings from "./awardSettings.ts";
 import leagueFileUpload, {
 	decompressStreamIfNecessary,
 	emitProgressStream,
@@ -172,8 +173,6 @@ import {
 	saveAwardsByPlayer,
 	type AwardsByPlayer,
 } from "../core/awards/awardsByPlayer.ts";
-import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
-import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1798,32 +1797,6 @@ const getAutoPos = (ratings: any) => {
 		boundedRatings[key] = player.limitRating(boundedRatings[key]);
 	}
 	return player.pos(boundedRatings);
-};
-
-const getAwardCandidates2 = async (
-	info:
-		| {
-				type: "season";
-				season: number;
-		  }
-		| {
-				type: "default";
-				season: number;
-		  }
-		| {
-				type: "custom";
-				season: number;
-				awards: GameAttributesLeague["awards"];
-		  },
-) => {
-	const season = info.season;
-	const awards =
-		info.type === "season"
-			? g.get("awards")
-			: info.type === "default"
-				? defaultGameAttributes.awards
-				: info.awards;
-	return await getAwardCandidates(season, awards);
 };
 
 const getBornLoc = async (pid: number) => {
@@ -5302,6 +5275,7 @@ const setScheduleFromEditor = async ({
 
 export default {
 	actions,
+	awardSettings,
 	eightyTwoZeroDraft,
 	exhibitionGame,
 	leagueFileUpload,
@@ -5348,7 +5322,6 @@ export default {
 		exportPlayerGamesCsv,
 		generateFace: generateFace2,
 		getAutoPos,
-		getAwardCandidates: getAwardCandidates2,
 		getBornLoc,
 		getDefaultInjuries,
 		getDefaultNewLeagueSettings,

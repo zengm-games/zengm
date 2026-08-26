@@ -22,8 +22,10 @@ import {
 	GAME_ACRONYM,
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/constants.ts";
-import { ImportFileButton } from "../../components/ImportFileButton.tsx";
+import { IMPORT_FILE_STYLE } from "../../components/ImportFileButton.tsx";
 import { orderBy } from "../../../common/utils.ts";
+import { Dropdown } from "react-bootstrap";
+import { resetFileInput } from "../../util/resetFileInput.ts";
 
 const MARGIN = 14;
 
@@ -297,63 +299,102 @@ const AwardSettings = ({
 			</form>
 
 			<StickyBottomButtons>
-				<ImportFileButton
-					accept=".json,.gz,application/json,application/gzip"
-					withFile={async (file) => {
-						try {
-							const { basicInfo } = await toWorker(
-								"leagueFileUpload",
-								"initialCheck",
-								{
-									file,
-								},
-							);
+				<Dropdown>
+					<Dropdown.Toggle variant="secondary" disabled={saving}>
+						Actions
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item
+							onClick={async () => {
+								console.log("NOT IMPLEMENTED");
+								// setAwardsState(awardsToEditingState(defaultAwards));
+							}}
+						>
+							Reset to default
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={async () => {
+								setAwardsState([]);
+							}}
+						>
+							Clear settings
+						</Dropdown.Item>
+						<Dropdown.Divider />
+						<Dropdown.Item
+							onClick={() => {
+								const awards = awardsStateToAwards(awardsState);
+								if (awards) {
+									downloadFile(
+										`${GAME_ACRONYM}_award_settings.json`,
+										JSON.stringify(
+											{
+												version: LEAGUE_DATABASE_VERSION,
+												gameAttributes: { awards },
+											},
+											undefined,
+											2,
+										),
+										"application/json",
+									);
+								}
+							}}
+						>
+							Export settings
+						</Dropdown.Item>
+						<Dropdown.Item
+							// Like <ImportFileButton>
+							as="div"
+							style={{ position: "relative", overflow: "hidden" }}
+						>
+							Import settings
+							<input
+								className="cursor-pointer"
+								type="file"
+								accept=".json,.gz,application/json,application/gzip"
+								style={IMPORT_FILE_STYLE}
+								onClick={resetFileInput}
+								onChange={async (event) => {
+									const file = event.target.files?.[0];
+									if (!file) {
+										return;
+									}
 
-							if (!basicInfo.gameAttributes) {
-								throw new Error("League file does not contain any settings.");
-							}
-							if (!basicInfo.gameAttributes.awards) {
-								throw new Error(
-									"League file does not contain any award settings.",
-								);
-							}
+									try {
+										const { basicInfo } = await toWorker(
+											"leagueFileUpload",
+											"initialCheck",
+											{
+												file,
+											},
+										);
 
-							const result = awardSettingsSchema.safeParse(
-								basicInfo.gameAttributes.awards,
-							);
+										if (!basicInfo.gameAttributes) {
+											throw new Error(
+												"League file does not contain any settings.",
+											);
+										}
+										if (!basicInfo.gameAttributes.awards) {
+											throw new Error(
+												"League file does not contain any award settings.",
+											);
+										}
 
-							console.log(basicInfo.gameAttributes.awards, result);
-						} catch (error) {
-							showNotification({
-								type: "error",
-								text: error.message,
-							});
-						}
-					}}
-				/>
-				<button
-					type="button"
-					className="btn btn-secondary mx-2"
-					onClick={() => {
-						const awards = awardsStateToAwards(awardsState);
-						if (awards) {
-							downloadFile(
-								`${GAME_ACRONYM}_award_settings.json`,
-								JSON.stringify(
-									{
-										version: LEAGUE_DATABASE_VERSION,
-										gameAttributes: { awards },
-									},
-									undefined,
-									2,
-								),
-								"application/json",
-							);
-						}
-					}}
-				>
-					Export
-				</button>
+										const result = awardSettingsSchema.safeParse(
+											basicInfo.gameAttributes.awards,
+										);
+
+										console.log(basicInfo.gameAttributes.awards, result);
+									} catch (error) {
+										showNotification({
+											type: "error",
+											text: error.message,
+										});
+									}
+								}}
+							/>
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 				<ActionButton
 					form={formId}
 					type="submit"

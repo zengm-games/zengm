@@ -611,7 +611,6 @@ const ScheduleEditor = ({
 	const [showRegenerateScheduleModal, setShowRegenerateScheduleModal] =
 		useState(false);
 	const [regenerated, setRegenerated] = useState(false);
-	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleFileUpload = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
@@ -1178,7 +1177,6 @@ const ScheduleEditor = ({
 							>
 								Import schedule from CSV
 								<input
-									ref={fileInputRef}
 									className="cursor-pointer"
 									type="file"
 									accept=".csv,text/csv"

@@ -19,7 +19,7 @@ const myGetCol = (stat: string) => {
 		return "Team total WS";
 	}
 	if (stat === "won") {
-		return "Games won this series";
+		return "1 for winning team, 0 for losing team";
 	}
 
 	try {

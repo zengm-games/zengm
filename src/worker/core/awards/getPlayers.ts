@@ -4,7 +4,7 @@ import type {
 	NonEmptyArray,
 	Player,
 } from "../../../common/types.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
 import getLeaderRequirements, {
 	getLeaderRequirementsStats,
@@ -40,6 +40,14 @@ const AWARD_STATS = [
 
 	// Anything that appears in a player stats table
 	...Object.values(PLAYER_STATS_TABLES).flatMap((x) => x.stats),
+
+	// A few extra that don't
+	...bySport({
+		baseball: ["outs"],
+		basketball: [],
+		football: ["totTD"],
+		hockey: ["gs"],
+	}),
 ];
 export const AWARD_STATS_ALL = [
 	...AWARD_STATS,
@@ -51,11 +59,23 @@ if (isSport("basketball")) {
 	AWARD_STATS_ALL.push("teamWs");
 }
 
+const SKIP_BY_SPORT = new Set(
+	bySport({
+		baseball: ["keyStatsShort", "poSo", "pos"],
+		basketball: [],
+		football: ["min"],
+		hockey: ["gMin", "keyStatsWithGoalieGP", "gW", "gL", "gT", "gOTL"],
+	}),
+);
+
 const PLAYOFF_SERIES_AWARD_STATS_RAW = player.stats.raw.filter(
-	(key) => !SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp"),
+	(key) =>
+		!SKIP_PLAYER_STATS.has(key) &&
+		!SKIP_BY_SPORT.has(key) &&
+		!key.startsWith("opp"),
 );
 const PLAYOFF_SERIES_AWARD_STATS_DERIVED = derivedPlayerStatKeys.filter(
-	(key) => key !== "age",
+	(key) => !SKIP_BY_SPORT.has(key) && key !== "age",
 );
 const PLAYOFF_SERIES_AWARD_STATS = [
 	...PLAYOFF_SERIES_AWARD_STATS_RAW,

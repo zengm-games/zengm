@@ -1,21 +1,86 @@
 import { useState } from "react";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import type { getVariables } from "../../../worker/api/awardSettings.ts";
+import { getCol } from "../../../common/getCol.ts";
+
+const myGetCol = (stat: string) => {
+	if (stat === "seasonFraction") {
+		return "Fraction of team's season completed, see below";
+	}
+	if (stat === "teamGp") {
+		return "Team games played";
+	}
+	if (stat === "winp") {
+		return "Team winning percentage";
+	}
+	if (stat === "wsFraction") {
+	}
+
+	try {
+		if (stat.endsWith("Max")) {
+			return `${getCol(`stat:${stat.replace("Max", "")}`)?.title ?? "???"} game high`;
+		}
+
+		const col = getCol(`stat:${stat}`);
+		return `${col.title}${col.desc !== undefined ? `, ${col.desc}` : ""}`;
+	} catch {
+		return "???";
+	}
+};
 
 export const Documentation = () => {
-	const [show, setShow] = useState(false);
+	const [state, setState] = useState<
+		| {
+				show: false;
+				variables?: ReturnType<typeof getVariables>;
+		  }
+		| {
+				show: true;
+				variables: ReturnType<typeof getVariables>;
+		  }
+	>({
+		show: false,
+	});
+
+	const ulStyle = {
+		columnWidth: 350,
+	};
 
 	return (
 		<>
 			<button
 				className="btn btn-secondary mb-3"
-				onClick={() => {
-					setShow((show) => !show);
+				onClick={async () => {
+					console.log(state);
+					if (state.show) {
+						setState({
+							show: false,
+							variables: state.variables,
+						});
+					} else if (state.variables) {
+						setState({
+							show: true,
+							variables: state.variables,
+						});
+					} else {
+						const variables = await toWorker(
+							"awardSettings",
+							"getVariables",
+							undefined,
+						);
+						console.log(variables);
+						setState({
+							show: true,
+							variables,
+						});
+					}
 				}}
 			>
-				{show ? "Hide" : "Show"} documentation
+				{state.show ? "Hide" : "Show"} documentation
 			</button>
-			{show ? (
+			{state.show ? (
 				<>
 					<p>
 						I'm sorry custom awards are so complicated, but they need to be to
@@ -67,24 +132,49 @@ export const Documentation = () => {
 						But you can convert back and forth by either multiplying or dividing
 						by <code>gp</code>.
 					</p>
-					<h2>Available stats</h2>
+					<h2>Available stat variables</h2>
+					<h3>All awards</h3>
+					<ul className="list-unstyled" style={ulStyle}>
+						{state.variables.common.map((stat) => (
+							<li key={stat}>
+								<code>{stat}</code>: {myGetCol(stat)}
+							</li>
+						))}
+					</ul>
+					<h3>Only in regular season, playoffs, or combined awards</h3>
+					<ul className="list-unstyled" style={ulStyle}>
+						{state.variables.normalOnly.map((stat) => (
+							<li key={stat}>
+								<code>{stat}</code>: {myGetCol(stat)}
+							</li>
+						))}
+					</ul>
+					<p>
+						<code>seasonFraction</code> deserves a little explanation. It's a
+						value between 0 to 1 representing the fraction of the season's games
+						that the player's team has completed so far. This really only
+						matters for the Award Races page, since it's always 1 at the end of
+						the season. But during the season you might use this to make the
+						Award Races look better. For instance in BBGM, the MVP formula is
+						something like <code>ewa + seasonFraction * winp</code>. EWA is a
+						cumulative stat that will continue increasing throughout the season.
+						But <code>winp</code> is the team's winning percentage, which
+						generally stays about the same throughout the year. Okay, I mean it
+						goes up and down, but it doesn't continually increase over 82 games
+						like a cumulative stat. So to combine those two numbers, you want{" "}
+						<code>winp</code> to gradually become more important as the season
+						progresses.
+					</p>
+					<h3>Only in playoff series awards</h3>
+					<ul className="list-unstyled" style={ulStyle}>
+						{state.variables.playoffSeriesOnly.map((stat) => (
+							<li key={stat}>
+								<code>{stat}</code>: {myGetCol(stat)}
+							</li>
+						))}
+					</ul>
 					<p>teamGp: number;</p>
 					<p>winp: number;</p>
-					<p>
-						<code>seasonFraction</code>: From 0 to 1, the fraction of the
-						season's games that the player's team has completed so far. This
-						really only matters for the Award Races page, since it's always 1 at
-						the end of the season. But during the season you might use this to
-						make the Award Races look better. For instance in BBGM, the MVP
-						formula is something like <code>ewa + seasonFraction * winp</code>.
-						EWA is a cumulative stat that will continue increasing throughout
-						the season. But <code>winp</code> is the team's winning percentage,
-						which generally stays about the same throughout the year. Okay, I
-						mean it goes up and down, but it doesn't continually increase over
-						82 games like a cumulative stat. So to combine those two numbers,
-						you want <code>winp</code> to gradually become more important as the
-						season progresses.
-					</p>
 					<h2>Achievements</h2>
 					<p>
 						You can edit award settings outside of God Mode because they don't

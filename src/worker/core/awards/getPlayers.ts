@@ -65,6 +65,7 @@ export const PLAYOFF_SERIES_AWARD_STATS_ALL = [
 	...PLAYOFF_SERIES_AWARD_STATS,
 	"won",
 ];
+console.log(AWARD_STATS_ALL, PLAYOFF_SERIES_AWARD_STATS_ALL);
 
 type StatRange =
 	| NonNullable<AwardInfoIndividual["statRange"]>

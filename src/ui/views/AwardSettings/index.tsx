@@ -229,6 +229,7 @@ const AwardSettings = ({
 												canMoveUp={i > 0}
 												disabled={working}
 												move={(direction) => {
+													setDirty(true);
 													setAwardsState((oldState) => {
 														const toMove = oldState[i];
 														const otherIndex = i + direction;
@@ -246,6 +247,7 @@ const AwardSettings = ({
 												numGamesPlayoffSeries={numGamesPlayoffSeries}
 												playoffsByConf={playoffsByConf}
 												remove={() => {
+													setDirty(true);
 													setAwardsState((oldState) => {
 														return oldState.filter((row, k) => i !== k);
 													});

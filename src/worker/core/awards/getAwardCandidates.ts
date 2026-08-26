@@ -103,7 +103,6 @@ export const getAwardCandidates = async (
 		season,
 		statOverridesByMatchup,
 	});
-	console.log(awards, realizedAwards);
 
 	const playersByPid = groupByUnique(players, "pid");
 

@@ -14,9 +14,8 @@ const updateAwardSettings = async (
 	state: any,
 ) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement")
+		// In theory could update on gameSim and playerMovement, but it's actually tricky to keep editing state in sync so save it for later
+		updateEvents.includes("firstRun")
 	) {
 		const season =
 			actualPhase() === PHASE.PRESEASON ? g.get("season") - 1 : g.get("season");

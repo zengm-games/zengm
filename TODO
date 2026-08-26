@@ -7,10 +7,13 @@ custom awards
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
   - docs
-    - explain seasonFraction scaling
-      - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
-    - min/max functions
-      - also add to GOAT formula/season
+    - formula
+      - all variables
+      - explain seasonFraction scaling
+        - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
+      - min/max functions
+        - also add to GOAT formula/season
+    - explain how achievements work
   - link to award settings
     - from league settings
     - hide in tools menu?
@@ -18,7 +21,6 @@ custom awards
     - player stats not updating as sim progresses
     - award races/settings formatting of team awards for byPos - maybe use pos instead of rank?
     - help icon for byPos, UI stats
-    - explain how achievements work
   - test
     - invalid statRange value, like if playoff size changed and a round is no longer valid
     - uses last season data when editing in preseason
@@ -96,6 +98,7 @@ custom awards
   - some way to set award settings in default new league settings
   - pick and choose which awards to import, and option to not overwrite all
   - ability to add/edit/delete manual awards for player, maybe in player editor
+  - on award settings page, player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
 
 btn-close vs glyphicon-remove
 

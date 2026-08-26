@@ -173,6 +173,7 @@ import {
 	type AwardsByPlayer,
 } from "../core/awards/awardsByPlayer.ts";
 import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1799,8 +1800,30 @@ const getAutoPos = (ratings: any) => {
 	return player.pos(boundedRatings);
 };
 
-const getAwardCandidates2 = async (season: number) => {
-	return await getAwardCandidates(season, g.get("awards"));
+const getAwardCandidates2 = async (
+	info:
+		| {
+				type: "season";
+				season: number;
+		  }
+		| {
+				type: "default";
+				season: number;
+		  }
+		| {
+				type: "custom";
+				season: number;
+				awards: GameAttributesLeague["awards"];
+		  },
+) => {
+	const season = info.season;
+	const awards =
+		info.type === "season"
+			? g.get("awards")
+			: info.type === "default"
+				? defaultGameAttributes.awards
+				: info.awards;
+	return await getAwardCandidates(season, awards);
 };
 
 const getBornLoc = async (pid: number) => {

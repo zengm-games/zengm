@@ -26,6 +26,7 @@ import { IMPORT_FILE_STYLE } from "../../components/ImportFileButton.tsx";
 import { orderBy } from "../../../common/utils.ts";
 import { Dropdown } from "react-bootstrap";
 import { resetFileInput } from "../../util/resetFileInput.ts";
+import type { ZodError } from "zod";
 
 const MARGIN = 14;
 
@@ -44,11 +45,40 @@ const showErrorMessages = (errorMessages: string[]) => {
 	});
 };
 
+const zodErrorsToErrorMessages = (error: ZodError<unknown>) => {
+	return error.issues.map((error) => {
+		const index = error.path[0] as any;
+		return {
+			index,
+			message: error.message,
+		};
+	});
+};
+
+const getUniqueErrorMessages = (
+	errorMessages: { index: number; message: string }[],
+	awards: ReturnType<typeof editingStateToAward>["award"][],
+) => {
+	return Array.from(
+		new Set(
+			orderBy(errorMessages, "index", "asc").map(({ index, message }) => {
+				const shortName = awards?.[index]?.shortName;
+				let output = shortName !== undefined ? `${shortName}: ` : "";
+				output += message;
+				return output;
+			}),
+		),
+	);
+};
+
 const awardsStateToAwards = (
 	awardsState: ReturnType<typeof awardsToEditingState>,
 ) => {
 	// Combine error messages from editingStateToAward and awardSettingsSchema
-	const errorMessages = [];
+	const errorMessages: {
+		index: number;
+		message: string;
+	}[] = [];
 	const awards: ReturnType<typeof editingStateToAward>["award"][] = [];
 	for (const [index, { editing }] of awardsState.entries()) {
 		const { award, errorMessages: errorMessagesTemp } = editingStateToAward(
@@ -67,29 +97,12 @@ const awardsStateToAwards = (
 			return result.data;
 		}
 	} else {
-		errorMessages.push(
-			...result.error.issues.map((error) => {
-				const index = error.path[0] as any;
-				return {
-					index,
-					message: error.message,
-				};
-			}),
-		);
+		errorMessages.push(...zodErrorsToErrorMessages(result.error));
 	}
 
 	// Some error messages can be repeated, like if there are multiple duplicate abbrevs
 	// Also sort in order of index (how they are displayed in UI)
-	const uniqueErrorMessages = Array.from(
-		new Set(
-			orderBy(errorMessages, "index", "asc").map(({ index, message }) => {
-				const shortName = awards[index]?.shortName;
-				let output = shortName !== undefined ? `${shortName}: ` : "";
-				output += message;
-				return output;
-			}),
-		),
-	);
+	const uniqueErrorMessages = getUniqueErrorMessages(errorMessages, awards);
 
 	showErrorMessages(uniqueErrorMessages);
 };
@@ -155,11 +168,10 @@ const AwardSettings = ({
 						});
 
 						// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
-						const newAwards = await toWorker(
-							"main",
-							"getAwardCandidates",
+						const newAwards = await toWorker("main", "getAwardCandidates", {
+							type: "season",
 							season,
-						);
+						});
 						if (newAwards.errorMessages) {
 							showErrorMessages(newAwards.errorMessages);
 						}
@@ -306,8 +318,15 @@ const AwardSettings = ({
 					<Dropdown.Menu>
 						<Dropdown.Item
 							onClick={async () => {
-								console.log("NOT IMPLEMENTED");
-								// setAwardsState(awardsToEditingState(defaultAwards));
+								const newAwards = await toWorker("main", "getAwardCandidates", {
+									type: "default",
+									season,
+								});
+								if (newAwards.errorMessages) {
+									showErrorMessages(newAwards.errorMessages);
+								}
+								setAwardsState(awardsToEditingState(newAwards.awardCandidates));
+								setDirty(true);
 							}}
 						>
 							Reset to default
@@ -382,8 +401,26 @@ const AwardSettings = ({
 										const result = awardSettingsSchema.safeParse(
 											basicInfo.gameAttributes.awards,
 										);
-
-										console.log(basicInfo.gameAttributes.awards, result);
+										if (result.success) {
+											const newAwards = await toWorker(
+												"main",
+												"getAwardCandidates",
+												{ type: "custom", season, awards: result.data },
+											);
+											if (newAwards.errorMessages) {
+												showErrorMessages(newAwards.errorMessages);
+											}
+											setAwardsState(
+												awardsToEditingState(newAwards.awardCandidates),
+											);
+											setDirty(true);
+										} else {
+											const uniqueErrorMessages = getUniqueErrorMessages(
+												zodErrorsToErrorMessages(result.error),
+												basicInfo.gameAttributes.awards,
+											);
+											showErrorMessages(uniqueErrorMessages);
+										}
 									} catch (error) {
 										showNotification({
 											type: "error",

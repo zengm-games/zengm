@@ -64,10 +64,12 @@ const updateEditAwardWinners = async (
 			playersRaw.map((p) => omit(p, ["stats"])),
 			["lastName", "firstName"],
 		);
-		console.log(awards, players, season);
+
+		const actualAwards = awards.awards;
+		console.log({ awards: actualAwards, players, season });
 
 		return {
-			awards,
+			awards: actualAwards,
 			players,
 			season,
 		};

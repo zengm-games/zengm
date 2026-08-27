@@ -106,6 +106,7 @@ export const getAwardCandidates = async (
 
 	const playersByPid = groupByUnique(players, "pid");
 
+	// Like showStatsByType but with a bit more
 	const awardCandidateStats: Partial<Record<Award2["showStats"], string[]>> =
 		bySport({
 			baseball: {

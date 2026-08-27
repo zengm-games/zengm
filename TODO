@@ -1,6 +1,15 @@
 custom awards
 - EditAwards
+  - use showStatsByType
   - show playoff series stats - is statOverridesByMatchup needed in getPlayers for past seasons?
+  - when updating winners, be careful about what goes in winner, like pos, statOverrides, opoyOverride
+  - can't list twice for same award
+  - newRow similar to award settings
+    - races too?
+  - show stats similar to history
+  - test
+    - pos prefix when appropriate
+    - with conf/div grouping
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed? can just use shortName+season?

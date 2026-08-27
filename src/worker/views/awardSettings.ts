@@ -58,7 +58,6 @@ const updateAwardSettings = async (
 			season,
 			g.get("awards"),
 		);
-		console.log("awardCandidates", awardCandidates);
 
 		teams ??= await getTeams(season);
 

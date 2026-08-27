@@ -2,11 +2,14 @@ custom awards
 - JSON.stringify will turn undefined into null, for blank spots in winners array - make sure to handle this properly!
 - having Winner undefined in a team award loses pos, should we reevaluate this?
 - EditAwards
-  - why stats showing for everyone in playoff series menu?
+  - setWinner for team award
+    - maintain pos even when blank
   - make sure it works when switching season
   - useDirty
     - on season change?
-  - in setWinner, compute statOverrides?
+  - setWinner statOverrides
+    - test - reuse when possible, including when there are no box scores
+    - recompute when saving if not already there (duplicate)
   - somehow make clear that the entries under each award are the rank
   - disable when saving
   - show playoff series stats - is statOverridesByMatchup needed in getPlayers for past seasons?

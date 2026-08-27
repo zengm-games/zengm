@@ -128,9 +128,13 @@ const Award = ({
 							? []
 							: stats
 									.map((stat) => {
-										const value =
-											winner?.statOverrides?.[stat] ??
-											p.currentStats[statRange]?.[stat];
+										let value;
+										if (p.pid === winner?.pid) {
+											value = winner?.statOverrides?.[stat];
+										}
+										if (value === undefined) {
+											value = p.currentStats[statRange]?.[stat];
+										}
 										if (value === undefined) {
 											return;
 										}

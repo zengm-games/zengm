@@ -62,7 +62,12 @@ const updateEditAwardWinners = async (
 		// stats not needed, since we're only showing currentStats
 		const players = orderBy(
 			playersRaw.map((p) => omit(p, ["stats"])),
-			["lastName", "firstName"],
+			[
+				(p) => p.ratings.findLast((row) => row.season === season)?.ovr ?? 0,
+				"lastName",
+				"firstName",
+			],
+			["desc", "asc", "asc"],
 		);
 
 		const actualAwards = awards.awards;

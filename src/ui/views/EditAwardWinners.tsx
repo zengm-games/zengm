@@ -46,7 +46,6 @@ const Award = ({
 		rank = 1;
 		winners = award.winner;
 	}
-	console.log(award, rank, winners);
 
 	const statRange = award.statRange ?? "regularSeason";
 	const stats = showStatsByType[award.showStats];
@@ -63,48 +62,70 @@ const Award = ({
 					rank,
 				})}
 			</h3>
-			{winners.map((winner, i) => {
-				if (winner === undefined) {
-					return <div key={i}>Blank</div>;
-				}
+			<div className="d-flex flex-column gap-1">
+				{winners.map((winner, i) => {
+					const p = winner ? playersByPid[winner.pid] : undefined;
 
-				const p = playersByPid[winner.pid];
-				const abbrev = abbrevsByTid[winner.tid] ?? "???";
+					const getOptionLabel = (
+						p: View<"editAwardWinners">["players"][number],
+					) => {
+						let tid;
+						if (p.pid === winner?.pid) {
+							tid = winner.tid;
+						} else {
+							tid = p.currentStats[statRange]?.tid ?? -1;
+						}
 
-				let playerName;
-				if (!p) {
-					playerName = `??? (${abbrev})`;
-				} else {
-					playerName = `${p.name} (${p.pos}, ${abbrev})`;
-				}
+						const abbrev = abbrevsByTid[tid];
 
-				const playerStatsArray = !p
-					? []
-					: stats
-							.map((stat) => {
-								const value =
-									winner.statOverrides?.[stat] ??
-									p.currentStats[statRange]?.[stat];
-								if (value === undefined) {
-									return;
-								}
+						const posAndAbbrevArray = [];
+						if (p) {
+							posAndAbbrevArray.push(p.pos);
+						}
+						if (abbrev !== undefined) {
+							posAndAbbrevArray.push(abbrev);
+						}
+						const posAndAbbrev =
+							posAndAbbrevArray.length > 0
+								? ` (${posAndAbbrevArray.join(", ")})`
+								: "";
 
-								return `${helpers.roundStat(value, stat)}${stat === "keyStats" ? "" : ` ${getCol(`stat:${stat}`).title}`}`;
-							})
-							.filter((text) => text !== undefined);
-				const playerStats =
-					playerStatsArray.length === 0
-						? undefined
-						: playerStatsArray.join(", ");
+						const playerStatsArray = !p
+							? []
+							: stats
+									.map((stat) => {
+										const value =
+											winner?.statOverrides?.[stat] ??
+											p.currentStats[statRange]?.[stat];
+										if (value === undefined) {
+											return;
+										}
 
-				return (
-					<div key={i}>
-						{winner.pos !== undefined ? `${winner.pos} ` : undefined}
-						{playerName}
-						{playerStats !== undefined ? ` ${playerStats}` : undefined}
-					</div>
-				);
-			})}
+										return `${helpers.roundStat(value, stat)}${stat === "keyStats" ? "" : ` ${getCol(`stat:${stat}`).title}`}`;
+									})
+									.filter((text) => text !== undefined);
+						const playerStats =
+							playerStatsArray.length === 0
+								? undefined
+								: playerStatsArray.join(", ");
+
+						return `${winner?.pos !== undefined ? `${winner.pos} ` : ""}${p?.name ?? "???"}${posAndAbbrev}${playerStats !== undefined ? ` ${playerStats}` : ""}`;
+					};
+
+					return (
+						<SelectMultiple
+							key={i}
+							options={players}
+							value={p}
+							getOptionLabel={getOptionLabel}
+							getOptionValue={(p) => String(p.pid)}
+							onChange={(value) => {
+								console.log(value);
+							}}
+						/>
+					);
+				})}
+			</div>
 		</div>
 	);
 };

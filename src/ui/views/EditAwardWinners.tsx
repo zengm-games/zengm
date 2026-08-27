@@ -12,9 +12,11 @@ import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
-import { formatPlayerAwardName } from "../../common/awards.ts";
+import { formatPlayerAwardName, showStatsByType } from "../../common/awards.ts";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import { getAwardKey } from "./AwardRaces.tsx";
+import { getCol } from "../../common/getCol.ts";
+import { groupByUnique } from "../../common/utils.ts";
 
 type Winner =
 	| (AwardInfoIndividual["winner"][number] & {
@@ -27,11 +29,13 @@ const Award = ({
 	award,
 	disabled,
 	players,
+	playersByPid,
 }: {
 	award:
 		| (AwardInfoIndividual & { teamIndex?: undefined })
 		| (AwardInfoTeam & { teamIndex: number });
 	disabled: boolean;
+	playersByPid: Record<number, View<"editAwardWinners">["players"][number]>;
 } & Pick<View<"editAwardWinners">, "abbrevsByTid" | "players">) => {
 	let rank;
 	let winners: Winner[];
@@ -42,8 +46,13 @@ const Award = ({
 		rank = 1;
 		winners = award.winner;
 	}
+	console.log(award, rank, winners);
 
 	const statRange = award.statRange ?? "regularSeason";
+	const stats = showStatsByType[award.showStats];
+	if (!stats) {
+		throw new Error("Invalid showStats");
+	}
 
 	return (
 		<div className="col-md-4 col-6 mb-4">
@@ -59,7 +68,7 @@ const Award = ({
 					return <div key={i}>Blank</div>;
 				}
 
-				const p = players[winner.pid];
+				const p = playersByPid[winner.pid];
 				const abbrev = abbrevsByTid[winner.tid] ?? "???";
 
 				let playerName;
@@ -69,10 +78,30 @@ const Award = ({
 					playerName = `${p.name} (${p.pos}, ${abbrev})`;
 				}
 
+				const playerStatsArray = !p
+					? []
+					: stats
+							.map((stat) => {
+								const value =
+									winner.statOverrides?.[stat] ??
+									p.currentStats[statRange]?.[stat];
+								if (value === undefined) {
+									return;
+								}
+
+								return `${helpers.roundStat(value, stat)}${stat === "keyStats" ? "" : ` ${getCol(`stat:${stat}`).title}`}`;
+							})
+							.filter((text) => text !== undefined);
+				const playerStats =
+					playerStatsArray.length === 0
+						? undefined
+						: playerStatsArray.join(", ");
+
 				return (
 					<div key={i}>
 						{winner.pos !== undefined ? `${winner.pos} ` : undefined}
 						{playerName}
+						{playerStats !== undefined ? ` ${playerStats}` : undefined}
 					</div>
 				);
 			})}
@@ -102,6 +131,8 @@ const EditAwardWinners = ({
 	}, [awards, season]);
 
 	const formId = useId();
+
+	const playersByPid = groupByUnique(players, "pid");
 
 	return (
 		<>
@@ -137,6 +168,7 @@ const EditAwardWinners = ({
 										}}
 										disabled={saving}
 										players={players}
+										playersByPid={playersByPid}
 									/>
 								);
 							});
@@ -149,6 +181,7 @@ const EditAwardWinners = ({
 								award={award}
 								disabled={saving}
 								players={players}
+								playersByPid={playersByPid}
 							/>
 						);
 					})}

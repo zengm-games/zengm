@@ -603,9 +603,12 @@ const awardInfoIndividualSchema = awardInfoCommonSchema
 	.extend({
 		// Individual award - top 5 are saved
 		winner: z.array(
-			awardPlayer2Schema.extend({
-				opoyOverride: z.literal(true).optional(),
-			}),
+			z.union([
+				awardPlayer2Schema.extend({
+					opoyOverride: z.literal(true).optional(),
+				}),
+				z.undefined(),
+			]),
 		),
 
 		// Special QB stuff for OPOY award - not in Common because we don't need to persist this in Player objects, we only need it here for state (GameAttributesLeague) and history (Awards)

@@ -210,6 +210,10 @@ const getInvalidVariablesErrorMessageVariablesPart = (
 	return "";
 };
 
+const toLength = <T>(arr: T[], length: number): (T | undefined)[] => {
+	return Array.from({ length }, (_, i) => arr[i]);
+};
+
 export const processAwards = async ({
 	awards,
 	numPlayersPerIndividualAward,
@@ -487,72 +491,76 @@ export const processAwards = async ({
 				const numTeams = award.numTeams;
 				if (numTeams === undefined) {
 					// Individual award
-					const winner = sortedPlayers
-						.slice(0, numPlayersPerIndividualAward)
-						.map((p) => {
-							const score = getScore(p);
-							if (score === -Infinity) {
-								return;
-							}
+					const winner = toLength(
+						sortedPlayers,
+						numPlayersPerIndividualAward,
+					).map((p) => {
+						if (!p) {
+							return;
+						}
 
-							let tid = p.currentStats[statRange]?.tid;
+						const score = getScore(p);
+						if (score === -Infinity) {
+							return;
+						}
 
-							if (group?.type === "playoffSeries") {
-								// Save playoff series stats if possible
-								const currentStats = p.currentStats[statRange];
-								if (currentStats || statOverridesByMatchup) {
-									const stats = showStatsByType[award.showStats];
-									if (!stats) {
-										throw new Error("Invalid showStats");
+						let tid = p.currentStats[statRange]?.tid;
+
+						if (group?.type === "playoffSeries") {
+							// Save playoff series stats if possible
+							const currentStats = p.currentStats[statRange];
+							if (currentStats || statOverridesByMatchup) {
+								const stats = showStatsByType[award.showStats];
+								if (!stats) {
+									throw new Error("Invalid showStats");
+								}
+
+								let statOverrides: AwardPlayer2["statOverrides"];
+								if (currentStats !== undefined) {
+									tid = currentStats.tid;
+									statOverrides = {
+										score,
+									};
+									for (const stat of stats) {
+										if (currentStats[stat] !== undefined) {
+											statOverrides[stat] = currentStats[stat];
+										}
 									}
-
-									let statOverrides: AwardPlayer2["statOverrides"];
-									if (currentStats !== undefined) {
-										tid = currentStats.tid;
-										statOverrides = {
-											score,
-										};
-										for (const stat of stats) {
-											if (currentStats[stat] !== undefined) {
-												statOverrides[stat] = currentStats[stat];
-											}
-										}
-									} else if (statOverridesByMatchup) {
-										// Find statOverrides values from original awards, if possible. Otherwise we won't have any stats to display on Award Races for playoff series awards if box scores are deleted
-										const matchupKey = hashPlayoffSeries(group);
-										const statOverridesAndTid =
-											statOverridesByMatchup[matchupKey]?.[p.pid];
-										if (!statOverridesAndTid) {
-											// No stats, no statOverrides, no thing to do here!
-											return;
-										}
-										tid = statOverridesAndTid.tid;
-										statOverrides = omit(statOverridesAndTid, [
-											"tid",
-										]) as AwardPlayer2["statOverrides"];
-									} else {
+								} else if (statOverridesByMatchup) {
+									// Find statOverrides values from original awards, if possible. Otherwise we won't have any stats to display on Award Races for playoff series awards if box scores are deleted
+									const matchupKey = hashPlayoffSeries(group);
+									const statOverridesAndTid =
+										statOverridesByMatchup[matchupKey]?.[p.pid];
+									if (!statOverridesAndTid) {
 										// No stats, no statOverrides, no thing to do here!
 										return;
 									}
-
-									return {
-										pid: p.pid,
-										tid,
-										statOverrides,
-									};
+									tid = statOverridesAndTid.tid;
+									statOverrides = omit(statOverridesAndTid, [
+										"tid",
+									]) as AwardPlayer2["statOverrides"];
+								} else {
+									// No stats, no statOverrides, no thing to do here!
+									return;
 								}
-							}
 
-							if (tid === undefined) {
-								throw new Error("Should never happen");
+								return {
+									pid: p.pid,
+									tid,
+									statOverrides,
+								};
 							}
+						}
 
-							return {
-								pid: p.pid,
-								tid,
-							};
-						})
-						.filter((row) => row !== undefined);
+						if (tid === undefined) {
+							throw new Error("Should never happen");
+						}
+
+						return {
+							pid: p.pid,
+							tid,
+						};
+					});
 					return omit(
 						{
 							...award,

@@ -32,7 +32,7 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
 			statOverridesByMatchup ??= {};
 			statOverridesByMatchup[matchupKey] = {};
 			for (const p of persistedAward.winner) {
-				if (p.statOverrides) {
+				if (p?.statOverrides) {
 					statOverridesByMatchup[matchupKey][p.pid] = {
 						tid: p.tid,
 						...p.statOverrides,
@@ -134,7 +134,11 @@ export const getAwardCandidates = async (
 
 	const augmentPlayers = (
 		award: Award2,
-		winner: AwardInfoIndividual["winner"] | AwardInfoTeam["winner"][number],
+		winner:
+			| AwardInfoIndividual["winner"]
+			| (AwardInfoTeam["winner"][number][number] & {
+					opoyOverride?: undefined;
+			  })[],
 	) => {
 		return addFirstNameShort(
 			winner
@@ -155,8 +159,7 @@ export const getAwardCandidates = async (
 						} as {
 							score: number | undefined;
 						} & (typeof p)["currentStats"]["regularSeason"],
-						opoyOverride: (p2 as AwardInfoIndividual["winner"][number])
-							.opoyOverride,
+						opoyOverride: p2.opoyOverride,
 						statOverrides: p2.statOverrides,
 					};
 				})

@@ -227,36 +227,86 @@ const EditAwardWinners = ({
 						}
 					});
 
-					const winner = props.award.winner.map((p, i) => {
-						if (p && p === duplicate) {
-							return;
-						}
-						if (i !== props.playerIndex) {
-							return p;
-						}
-
-						if (!props.p) {
-							return;
-						}
-
-						// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award
-						return (
-							duplicate ?? {
-								pid: props.p.pid,
-								tid: props.p.tid,
+					const winner: AwardInfoIndividual["winner"] = props.award.winner.map(
+						(p, i) => {
+							if (p && p === duplicate) {
+								return;
 							}
-						);
-					});
+							if (i !== props.playerIndex) {
+								return p;
+							}
+
+							if (!props.p) {
+								return;
+							}
+
+							// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award
+							return (
+								duplicate ?? {
+									pid: props.p.pid,
+									tid: props.p.tid,
+								}
+							);
+						},
+					);
+
+					return {
+						...props.award,
+						winner,
+					};
+				} else {
+					// Is this player already a winner? If so make a note of it so we can delete them later, while also saving statOverrides
+					let duplicate: AwardInfoTeam["winner"][number][number] | undefined;
+					OUTER_LOOP: for (const [i, team] of props.award.winner.entries()) {
+						for (const [j, p] of team.entries()) {
+							if (
+								(i !== props.teamIndex || j !== props.playerIndex) &&
+								p.pid === props.p?.pid
+							) {
+								duplicate = p;
+								break OUTER_LOOP;
+							}
+						}
+					}
+
+					const winner: AwardInfoTeam["winner"] = props.award.winner.map(
+						(team, i) => {
+							return team.map((p, j) => {
+								const base: { pos?: string } =
+									p.pos !== undefined ? { pos: p.pos } : {};
+
+								if (p === duplicate) {
+									return base;
+								}
+								if (i !== props.teamIndex || j !== props.playerIndex) {
+									return p;
+								}
+
+								if (!props.p) {
+									return base;
+								}
+
+								// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award
+								if (duplicate) {
+									return {
+										...duplicate,
+										...base,
+									};
+								}
+								return {
+									...base,
+									pid: props.p.pid,
+									tid: props.p.tid,
+								};
+							});
+						},
+					);
 
 					return {
 						...props.award,
 						winner,
 					};
 				}
-
-				return {
-					...props.award,
-				};
 			});
 		});
 	};

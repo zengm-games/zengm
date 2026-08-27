@@ -91,7 +91,7 @@ export const Documentation = () => {
 					<div style={TEXT_MAX_WIDTH}>
 						<p>
 							I'm sorry custom awards are so complicated, but they need to be to
-							support all the features I wanted!
+							support all these features!
 						</p>
 						<h2>Formulas</h2>
 						<p>
@@ -109,21 +109,22 @@ export const Documentation = () => {
 							then the award winner will simply be who has the most{" "}
 							{bySport({
 								baseball: "WAR",
-								basketball: "WS",
+								basketball: "win shares",
 								football: "AV",
-								hockey: "PS",
+								hockey: "point shares",
 							})}
 							. Or it can be really complicated, like the default DPOY formula
 							in Football GM is{" "}
 							<code>
 								4*defSk + 0.4*defTckLoss + 0.2*defTckAst + 0.4*defTckSolo +
 								3*defFmbFrc + 3*defFmbRec + 6*defInt + 2*defPssDef
-							</code>
-							.
+							</code>{" "}
+							and that's not even the biggest one!
 						</p>
 						<p>
-							You can do all the normal arithmetic operations (+ - * /) and you
-							can even use exponents (^) if you want.
+							You can do all the normal arithmetic operations{" "}
+							<code>+ - * /</code> and you can even use exponents <code>^</code>{" "}
+							if you want.
 						</p>
 						<p>
 							In addition there are <code>min</code> and <code>max</code>{" "}
@@ -138,6 +139,15 @@ export const Documentation = () => {
 							<code>pssTD</code> is the total number of passing TDs this
 							season). But you can convert back and forth by either multiplying
 							or dividing by <code>gp</code>.
+						</p>
+						<p>
+							Awards can be for the entire regular season, the entire playoffs,
+							the regular season and playoffs combined, or a specific playoff
+							series (like Finals MVP or Semifinals MVP). Due to some internal
+							details of how these stats are stored, there are some stats which
+							are only available for playoff series awards and other stats which
+							are only available for other awards. And of course many available
+							in both. The next section lists them all.
 						</p>
 					</div>
 					<h2>Available stat variables</h2>
@@ -193,7 +203,7 @@ export const Documentation = () => {
 						</p>
 						<p>
 							All of the award-based achievements mention specific awards (MVP,
-							ROY, etc.) in their descriptions. If you do not edit any of the
+							ROY, etc.) in their descriptions. If you don't edit any of the
 							awards used by an achievement, then you can still get that
 							achievement even if you edit other awards. You can also edit
 							superficial parts of the award, like the name. But once you start
@@ -214,7 +224,8 @@ export const Documentation = () => {
 							is true even for the abbrev, like if you edit the MVP award so the
 							abbrev is now "ABC" or whatever, that will still count as an MVP
 							award for achievements as long as all the meaningful parts of the
-							award are unedited.
+							award are unedited. It works by scanning all the details of the
+							award setting, not by matching the name/abbrev.
 						</p>
 						<h2>Anything else?</h2>
 						<p>

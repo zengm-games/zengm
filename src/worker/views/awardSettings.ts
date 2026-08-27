@@ -11,7 +11,6 @@ import { defaultAwards } from "../../common/defaultGameAttributes.ts";
 const updateAwardSettings = async (
 	inputs: unknown,
 	updateEvents: UpdateEvents,
-	state: any,
 ) => {
 	if (
 		// In theory could update on gameSim and playerMovement, but it's actually tricky to keep editing state in sync so save it for later

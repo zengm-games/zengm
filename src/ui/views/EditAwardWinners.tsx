@@ -17,6 +17,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import { getAwardKey } from "./AwardRaces.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { groupByUnique } from "../../common/utils.ts";
+import { PLAYER } from "../../common/constants.ts";
 
 type Winner =
 	| (AwardInfoIndividual["winner"][number] & {
@@ -24,24 +25,52 @@ type Winner =
 	  })
 	| AwardInfoTeam["winner"][number][number];
 
+type MyPlayer = View<"editAwardWinners">["players"][number];
+
+type SetWinnerProps = (
+	| {
+			award: AwardInfoIndividual;
+			teamIndex: undefined;
+	  }
+	| {
+			award: AwardInfoTeam;
+			teamIndex: number;
+	  }
+) & {
+	p: MyPlayer | undefined;
+	playerIndex: number;
+	tid: number;
+};
+
+type AwardProps = (
+	| {
+			award: AwardInfoIndividual;
+			teamIndex: undefined;
+	  }
+	| {
+			award: AwardInfoTeam;
+			teamIndex: number;
+	  }
+) & {
+	disabled: boolean;
+	playersByPid: Record<number, MyPlayer>;
+	setWinner: (props: SetWinnerProps) => void;
+} & Pick<View<"editAwardWinners">, "abbrevsByTid" | "players">;
+
 const Award = ({
 	abbrevsByTid,
 	award,
 	disabled,
 	players,
 	playersByPid,
-}: {
-	award:
-		| (AwardInfoIndividual & { teamIndex?: undefined })
-		| (AwardInfoTeam & { teamIndex: number });
-	disabled: boolean;
-	playersByPid: Record<number, View<"editAwardWinners">["players"][number]>;
-} & Pick<View<"editAwardWinners">, "abbrevsByTid" | "players">) => {
+	setWinner,
+	teamIndex,
+}: AwardProps) => {
 	let rank;
 	let winners: Winner[];
-	if (award.teamIndex !== undefined) {
-		rank = award.teamIndex + 1;
-		winners = award.winner[award.teamIndex]!;
+	if (teamIndex !== undefined) {
+		rank = teamIndex + 1;
+		winners = award.winner[teamIndex] ?? [];
 	} else {
 		rank = 1;
 		winners = award.winner;
@@ -66,15 +95,20 @@ const Award = ({
 				{winners.map((winner, i) => {
 					const p = winner ? playersByPid[winner.pid] : undefined;
 
-					const getOptionLabel = (
-						p: View<"editAwardWinners">["players"][number],
-					) => {
-						let tid;
-						if (p.pid === winner?.pid) {
-							tid = winner.tid;
-						} else {
-							tid = p.currentStats[statRange]?.tid ?? -1;
+					const getTid = (p: MyPlayer | null) => {
+						if (!p) {
+							return PLAYER.DOES_NOT_EXIST;
 						}
+
+						if (p.pid === winner?.pid) {
+							return winner.tid;
+						}
+
+						return p.currentStats[statRange]?.tid ?? PLAYER.DOES_NOT_EXIST;
+					};
+
+					const getOptionLabel = (p: MyPlayer) => {
+						const tid = getTid(p);
 
 						const abbrev = abbrevsByTid[tid];
 
@@ -115,12 +149,29 @@ const Award = ({
 					return (
 						<SelectMultiple
 							key={i}
+							disabled={disabled}
 							options={players}
-							value={p}
+							value={p ?? null}
 							getOptionLabel={getOptionLabel}
 							getOptionValue={(p) => String(p.pid)}
-							onChange={(value) => {
-								console.log(value);
+							onChange={(p) => {
+								if (award.numTeams === undefined) {
+									setWinner({
+										award,
+										p: p === null ? undefined : p,
+										playerIndex: i,
+										teamIndex: undefined,
+										tid: getTid(p),
+									});
+								} else {
+									setWinner({
+										award,
+										p: p === null ? undefined : p,
+										playerIndex: i,
+										teamIndex: teamIndex!,
+										tid: getTid(p),
+									});
+								}
 							}}
 						/>
 					);
@@ -148,12 +199,61 @@ const EditAwardWinners = ({
 		helpers.deepCopy(awards),
 	);
 	useEffect(() => {
-		setAwardsState(() => helpers.deepCopy(awards));
+		setAwardsState(helpers.deepCopy(awards));
 	}, [awards, season]);
 
 	const formId = useId();
 
 	const playersByPid = groupByUnique(players, "pid");
+
+	const setWinner = (props: SetWinnerProps) => {
+		setAwardsState((oldState) => {
+			return oldState.map((award) => {
+				if (award !== props.award) {
+					return award;
+				}
+
+				if (props.teamIndex === undefined) {
+					// Is this player already a winner? If so make a note of it so we can delete them later, while also saving statOverrides
+					const duplicate = props.award.winner.find((p, i) => {
+						if (i !== props.playerIndex && p && p.pid === props.p?.pid) {
+							return p;
+						}
+					});
+
+					const winner = props.award.winner.map((p, i) => {
+						if (p && p === duplicate) {
+							return;
+						}
+						if (i !== props.playerIndex) {
+							return p;
+						}
+
+						if (!props.p) {
+							return;
+						}
+
+						// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award
+						return (
+							duplicate ?? {
+								pid: props.p.pid,
+								tid: props.p.tid,
+							}
+						);
+					});
+
+					return {
+						...props.award,
+						winner,
+					};
+				}
+
+				return {
+					...props.award,
+				};
+			});
+		});
+	};
 
 	return (
 		<>
@@ -183,13 +283,12 @@ const EditAwardWinners = ({
 									<Award
 										key={getAwardKey({ ...award, rank: i + 1 })}
 										abbrevsByTid={abbrevsByTid}
-										award={{
-											...award,
-											teamIndex: i,
-										}}
+										award={award}
 										disabled={saving}
 										players={players}
 										playersByPid={playersByPid}
+										setWinner={setWinner}
+										teamIndex={i}
 									/>
 								);
 							});
@@ -203,6 +302,8 @@ const EditAwardWinners = ({
 								disabled={saving}
 								players={players}
 								playersByPid={playersByPid}
+								setWinner={setWinner}
+								teamIndex={undefined}
 							/>
 						);
 					})}

@@ -1,4 +1,7 @@
 custom awards
+- EditAwards
+  - rename to EditAwardWinners
+  
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed? can just use shortName+season?
@@ -6,7 +9,6 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - UI to update
-  - awards editor (winners)
   - GOAT formula
     - explain min/max functions
     - award:shortName

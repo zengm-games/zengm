@@ -85,7 +85,6 @@ export const PLAYOFF_SERIES_AWARD_STATS_ALL = [
 	...PLAYOFF_SERIES_AWARD_STATS,
 	"won",
 ];
-console.log(AWARD_STATS_ALL, PLAYOFF_SERIES_AWARD_STATS_ALL);
 
 type StatRange =
 	| NonNullable<AwardInfoIndividual["statRange"]>
@@ -173,6 +172,10 @@ const getProcessedPlayers = async (
 		age: number;
 		scores: Partial<Record<StatRange, Record<string, number>>>;
 	})[];
+
+	for (const p of players) {
+		delete (p as any).careerStats;
+	}
 
 	// Used to filter out some players here with no stats, but even a player with no stats could have some relevant awards (like if there are no awards for regularSeason or playoffs but there are for playoff series, series stats are loaded elsewhere)
 

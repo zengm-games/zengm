@@ -201,11 +201,9 @@ const EditAwardWinners = ({
 
 	const [saving, setSaving] = useState(false);
 
-	const [awardsState, setAwardsState] = useState(() =>
-		helpers.deepCopy(awards),
-	);
+	const [awardsState, setAwardsState] = useState(awards);
 	useEffect(() => {
-		setAwardsState(helpers.deepCopy(awards));
+		setAwardsState(awards);
 	}, [awards, season]);
 
 	const formId = useId();

@@ -1,7 +1,6 @@
 custom awards
 - EditAwards
-  - rename to EditAwardWinners
-  
+  - show playoff series stats - is statOverridesByMatchup needed in getPlayers for past seasons?
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed? can just use shortName+season?
@@ -21,6 +20,7 @@ custom awards
   - First vs 1st?
     - could dynamically fix in formatAwardName
   - upgrade old awards objects
+    - be defensive, some props might not exist like sfmvp
     - specify old default awards, even if we're changing the defaults now
       - number of all-rookie teams
   - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)

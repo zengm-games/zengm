@@ -1,8 +1,4 @@
-import type {
-	Awards2,
-	Conditions,
-	TeamFiltered,
-} from "../../../common/types.ts";
+import type { Conditions, TeamFiltered } from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 import { idb } from "../../db/index.ts";
 import { processAwards } from "./processAwards.ts";
@@ -129,11 +125,10 @@ export const doAwards = async (conditions: Conditions) => {
 
 	await saveAwardsByPlayer(awardsByPlayer, conditions, season);
 
-	const awards: Awards2 = {
+	const awards = {
 		season,
 		...bestRecords,
 		awards: flatRealizedAwards,
 	};
-	console.log("awards", awards);
 	await idb.cache.awards.put(awards);
 };

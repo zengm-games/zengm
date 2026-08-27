@@ -251,8 +251,11 @@ export const MoreLinks = (
 
 		if (godMode) {
 			links.push({
-				url: season == undefined ? ["edit_awards"] : ["edit_awards", season],
-				name: "Edit Awards",
+				url:
+					season == undefined
+						? ["edit_award_winners"]
+						: ["edit_award_winners", season],
+				name: "Edit Award Winners",
 				className: "god-mode",
 			});
 		}

@@ -78,10 +78,14 @@ const makeAwardPlayer = (
 	};
 };
 
-const EditAwards = ({ players, awards, season }: View<"editAwards">) => {
+const EditAwardWinners = ({
+	players,
+	awards,
+	season,
+}: View<"editAwardWinners">) => {
 	useTitleBar({
-		title: "Edit Awards",
-		dropdownView: "edit_awards",
+		title: "Edit Award Winners",
+		dropdownView: "edit_award_winners",
 		dropdownFields: { seasonsHistory: season },
 	});
 
@@ -439,4 +443,4 @@ const EditAwards = ({ players, awards, season }: View<"editAwards">) => {
 		return <div>Awards from this season do not exist</div>;
 	}
 };
-export default EditAwards;
+export default EditAwardWinners;

@@ -701,12 +701,12 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: (pageID) => pageID === "editAwards",
+				active: (pageID) => pageID === "editAwardWinners",
 				godMode: true,
 				league: true,
 				commandPalette: true,
-				path: ["edit_awards"],
-				text: "Edit Awards",
+				path: ["edit_award_winners"],
+				text: "Edit Award Winners",
 			},
 			{
 				type: "link",

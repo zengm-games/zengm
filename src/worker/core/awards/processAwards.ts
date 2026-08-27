@@ -13,6 +13,7 @@ import { showStatsByType } from "../../../common/awards.ts";
 import type {
 	Award2,
 	AwardInfoIndividual,
+	AwardInfoTeam,
 	AwardPlayer2,
 	Awards2,
 	DistributiveOmit,
@@ -674,7 +675,8 @@ export const processAwards = async ({
 							return positions.map((pos) => {
 								const p = playersByPos[pos]?.shift();
 								if (p === undefined) {
-									return;
+									// We still want to know what position this slot is for
+									return { pos };
 								}
 								const tid = p.currentStats[statRange]?.tid;
 								if (tid === undefined) {
@@ -691,28 +693,31 @@ export const processAwards = async ({
 							winner,
 						};
 					} else {
-						const winner = chunk(
-							sortedPlayers
-								.slice(0, numTeams * TEAM_AWARD_INFO.numPlayersPerTeam)
-								.filter((p) => p.currentStats[statRange])
-								.map((p) => {
-									const tid = p.currentStats[statRange]?.tid;
-									if (tid === undefined) {
-										throw new Error("Should never happen");
-									}
+						const numPlayers = numTeams * TEAM_AWARD_INFO.numPlayersPerTeam;
+						const winnerPlayers: AwardInfoTeam["winner"][number] = sortedPlayers
+							.slice(0, numPlayers)
+							.filter((p) => p.currentStats[statRange])
+							.map((p) => {
+								const tid = p.currentStats[statRange]?.tid;
+								if (tid === undefined) {
+									throw new Error("Should never happen");
+								}
 
-									return {
-										pid: p.pid,
-										tid,
-									};
-								}),
+								return {
+									pid: p.pid,
+									tid,
+								};
+							});
+
+						// Add enough blank slots to fill out the teams
+						while (winnerPlayers.length < numPlayers) {
+							winnerPlayers.push({});
+						}
+
+						const winner = chunk(
+							winnerPlayers,
 							TEAM_AWARD_INFO.numPlayersPerTeam,
 						);
-
-						// Add dummy teams
-						while (winner.length < numTeams) {
-							winner.push([]);
-						}
 
 						return {
 							...award,

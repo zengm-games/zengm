@@ -143,7 +143,7 @@ export const getAwardCandidates = async (
 		return addFirstNameShort(
 			winner
 				.map((p2) => {
-					if (p2 === undefined) {
+					if (p2 === undefined || p2.pid === undefined) {
 						return;
 					}
 

@@ -193,7 +193,7 @@ const updateHistory = async (
 				for (const team of award.winner) {
 					const augmentedTeam: (typeof winner)[number] = [];
 					for (const pTemp of team) {
-						if (!pTemp) {
+						if (pTemp?.pid === undefined) {
 							continue;
 						}
 						const { pid, pos, statOverrides } = pTemp;

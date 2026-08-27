@@ -20,6 +20,7 @@ import { groupByUnique } from "../../common/utils.ts";
 import { PLAYER } from "../../common/constants.ts";
 
 type Winner =
+	| undefined
 	| (AwardInfoIndividual["winner"][number] & {
 			pos?: undefined;
 	  })
@@ -93,7 +94,8 @@ const Award = ({
 			</h3>
 			<div className="d-flex flex-column gap-1">
 				{winners.map((winner, i) => {
-					const p = winner ? playersByPid[winner.pid] : undefined;
+					const p =
+						winner?.pid !== undefined ? playersByPid[winner.pid] : undefined;
 
 					const getTid = (p: MyPlayer | null) => {
 						if (!p) {

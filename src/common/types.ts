@@ -627,8 +627,12 @@ const awardInfoTeamSchema = awardInfoCommonSchema
 						pos: z.string().optional(),
 					}),
 
-					// undefined would be if it can't find enough players at one position
-					z.undefined(),
+					// This would be if it can't find enough players at one position - either an empty object, or one containg only pos if TEAM_AWARD_INFO.byPos
+					z.object({
+						pid: z.undefined().optional(),
+						tid: z.undefined().optional(),
+						pos: z.string().optional(),
+					}),
 				]),
 			),
 		),

@@ -218,7 +218,9 @@ type RowsInfo = Pick<
 	"award" | "season" | "teams"
 >;
 
-export const getAwardKey = (award: RowsInfo["award"]) => {
+export const getAwardKey = (
+	award: Pick<RowsInfo["award"], "group" | "numTeams" | "shortName" | "rank">,
+) => {
 	return JSON.stringify([
 		award.shortName,
 		award.group,

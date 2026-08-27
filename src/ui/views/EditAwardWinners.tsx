@@ -13,6 +13,8 @@ import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { formatPlayerAwardName } from "../../common/awards.ts";
+import { MoreLinks } from "../components/MoreLinks.tsx";
+import { getAwardKey } from "./AwardRaces.tsx";
 
 type Winner =
 	| (AwardInfoIndividual["winner"][number] & {
@@ -44,7 +46,7 @@ const Award = ({
 	const statRange = award.statRange ?? "regularSeason";
 
 	return (
-		<div className="col-md-4 col-6">
+		<div className="col-md-4 col-6 mb-4">
 			<h3>
 				{formatPlayerAwardName({
 					name: award.name,
@@ -52,9 +54,9 @@ const Award = ({
 					rank,
 				})}
 			</h3>
-			{winners.map((winner) => {
+			{winners.map((winner, i) => {
 				if (winner === undefined) {
-					return <div>Blank</div>;
+					return <div key={i}>Blank</div>;
 				}
 
 				const p = players[winner.pid];
@@ -68,7 +70,7 @@ const Award = ({
 				}
 
 				return (
-					<div>
+					<div key={i}>
 						{winner.pos !== undefined ? `${winner.pos} ` : undefined}
 						{playerName}
 					</div>
@@ -103,6 +105,7 @@ const EditAwardWinners = ({
 
 	return (
 		<>
+			<MoreLinks type="awards" page="edit_award_winners" season={season} />
 			<form
 				id={formId}
 				onSubmit={async (event) => {
@@ -126,6 +129,7 @@ const EditAwardWinners = ({
 							return award.winner.map((winner, i) => {
 								return (
 									<Award
+										key={getAwardKey({ ...award, rank: i + 1 })}
 										abbrevsByTid={abbrevsByTid}
 										award={{
 											...award,
@@ -140,6 +144,7 @@ const EditAwardWinners = ({
 
 						return (
 							<Award
+								key={getAwardKey(award)}
 								abbrevsByTid={abbrevsByTid}
 								award={award}
 								disabled={saving}

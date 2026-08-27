@@ -68,7 +68,21 @@ const updateEditAwardWinners = async (
 		const actualAwards = awards.awards;
 		console.log({ awards: actualAwards, players, season });
 
+		const teams = await idb.getCopies.teamsPlus(
+			{
+				attrs: ["tid"],
+				seasonAttrs: ["abbrev"],
+				season: inputs.season,
+			},
+			"noCopyCache",
+		);
+		const abbrevsByTid: Record<number, string> = {};
+		for (const t of teams) {
+			abbrevsByTid[t.tid] = t.seasonAttrs.abbrev;
+		}
+
 		return {
+			abbrevsByTid,
 			awards: actualAwards,
 			players,
 			season,

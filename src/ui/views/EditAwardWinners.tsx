@@ -21,6 +21,7 @@ type Winner =
 	| AwardInfoTeam["winner"][number][number];
 
 const Award = ({
+	abbrevsByTid,
 	award,
 	disabled,
 	players,
@@ -29,7 +30,7 @@ const Award = ({
 		| (AwardInfoIndividual & { teamIndex?: undefined })
 		| (AwardInfoTeam & { teamIndex: number });
 	disabled: boolean;
-} & Pick<View<"editAwardWinners">, "players">) => {
+} & Pick<View<"editAwardWinners">, "abbrevsByTid" | "players">) => {
 	let rank;
 	let winners: Winner[];
 	if (award.teamIndex !== undefined) {
@@ -39,6 +40,8 @@ const Award = ({
 		rank = 1;
 		winners = award.winner;
 	}
+
+	const statRange = award.statRange ?? "regularSeason";
 
 	return (
 		<div className="col-md-4 col-6">
@@ -54,10 +57,20 @@ const Award = ({
 					return <div>Blank</div>;
 				}
 
+				const p = players[winner.pid];
+				const abbrev = abbrevsByTid[winner.tid] ?? "???";
+
+				let playerName;
+				if (!p) {
+					playerName = `??? (${abbrev})`;
+				} else {
+					playerName = `${p.name} (${p.pos}, ${abbrev})`;
+				}
+
 				return (
 					<div>
 						{winner.pos !== undefined ? `${winner.pos} ` : undefined}
-						{players[winner.pid]?.name ?? "???"}
+						{playerName}
 					</div>
 				);
 			})}
@@ -66,6 +79,7 @@ const Award = ({
 };
 
 const EditAwardWinners = ({
+	abbrevsByTid,
 	awards,
 	players,
 	season,
@@ -112,6 +126,7 @@ const EditAwardWinners = ({
 							return award.winner.map((winner, i) => {
 								return (
 									<Award
+										abbrevsByTid={abbrevsByTid}
 										award={{
 											...award,
 											teamIndex: i,
@@ -123,7 +138,14 @@ const EditAwardWinners = ({
 							});
 						}
 
-						return <Award award={award} disabled={saving} players={players} />;
+						return (
+							<Award
+								abbrevsByTid={abbrevsByTid}
+								award={award}
+								disabled={saving}
+								players={players}
+							/>
+						);
 					})}
 				</div>
 			</form>

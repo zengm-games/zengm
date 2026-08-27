@@ -1,4 +1,4 @@
-import { PHASE } from "../../common/constants.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { omit, orderBy } from "../../common/utils.ts";
 import { idb } from "../db/index.ts";
@@ -61,7 +61,15 @@ const updateEditAwardWinners = async (
 
 		// stats not needed, since we're only showing currentStats
 		const players = orderBy(
-			playersRaw.map((p) => omit(p, ["stats"])),
+			playersRaw.map((p) => {
+				const lastTid =
+					p.stats.findLast((row) => row.season === season)?.tid ??
+					PLAYER.DOES_NOT_EXIST;
+				return {
+					...omit(p, ["stats"]),
+					lastTid,
+				};
+			}),
 			[
 				(p) => p.ratings.findLast((row) => row.season === season)?.ovr ?? 0,
 				"lastName",

@@ -104,7 +104,7 @@ const Award = ({
 							return winner.tid;
 						}
 
-						return p.currentStats[statRange]?.tid ?? PLAYER.DOES_NOT_EXIST;
+						return p.currentStats[statRange]?.tid ?? p.lastTid;
 					};
 
 					const getOptionLabel = (p: MyPlayer) => {

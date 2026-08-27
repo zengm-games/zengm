@@ -1,4 +1,4 @@
-import { type SubmitEvent, useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
@@ -9,7 +9,8 @@ import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import { AWARD_NAMES, SIMPLE_AWARDS } from "../../common/constants.ts";
 import { range } from "../../common/utils.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
-import { useLocal } from "../util/local.ts";
+import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
+import { ActionButton } from "../components/ActionButton.tsx";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {
@@ -89,7 +90,7 @@ const EditAwardWinners = ({
 		dropdownFields: { seasonsHistory: season },
 	});
 
-	const { godMode } = useLocal(["godMode"]);
+	const [saving, setSaving] = useState(false);
 
 	const [aws, setAws] = useState(() => helpers.deepCopy(awards));
 	useEffect(() => {
@@ -221,20 +222,6 @@ const EditAwardWinners = ({
 			return error;
 		};
 
-	const handleFormSubmit = async (event: SubmitEvent) => {
-		event.preventDefault();
-		try {
-			await toWorker("main", "updateAwards", aws);
-			realtimeUpdate([], helpers.leagueUrl(["history", season]));
-		} catch (error) {
-			showNotification({
-				type: "error",
-				text: error.message,
-				persistent: true,
-			});
-		}
-	};
-
 	const getPlayer = (p?: { pid: number }) => {
 		if (!p) {
 			return;
@@ -263,9 +250,28 @@ const EditAwardWinners = ({
 		return `${p.name} (${p.ratings.pos}, ${p.stats.abbrev}) ${stats}`;
 	};
 
-	if (aws) {
-		return (
-			<form onSubmit={handleFormSubmit}>
+	const formId = useId();
+
+	return (
+		<>
+			<form
+				id={formId}
+				onSubmit={async (event) => {
+					event.preventDefault();
+					setSaving(true);
+					try {
+						await toWorker("main", "updateAwards", aws);
+						realtimeUpdate([], helpers.leagueUrl(["history", season]));
+					} catch (error) {
+						showNotification({
+							type: "error",
+							text: error.message,
+						});
+					} finally {
+						setSaving(false);
+					}
+				}}
+			>
 				<div className="row">
 					{SIMPLE_AWARDS.map((key) => (
 						<div key={key} className="col-lg-4 col-md-6 mb-3">
@@ -433,14 +439,20 @@ const EditAwardWinners = ({
 						})}
 					</div>
 				</div>
-
-				<button className="btn btn-primary mt-3" disabled={!godMode}>
-					Save Changes
-				</button>
 			</form>
-		);
-	} else {
-		return <div>Awards from this season do not exist</div>;
-	}
+			<StickyBottomButtons>
+				<ActionButton
+					form={formId}
+					type="submit"
+					className="ms-auto"
+					variant="primary"
+					processing={saving}
+					processingText="Saving"
+				>
+					Save award winners
+				</ActionButton>
+			</StickyBottomButtons>
+		</>
+	);
 };
 export default EditAwardWinners;

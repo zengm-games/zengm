@@ -5,11 +5,6 @@ custom awards
   - only in PlayerAward?
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
-- edit awards settings
-  - last season stats not working right if formula changed? is it using fixed order of award winners?
-  - link to award settings
-    - from league settings
-    - hide in tools menu?
 - test
   - football posFactor in dpoyScore - really needed? could add formulaByPos but it gets messy. could also add references to other awards
   - historyAll, teamRecords, awardRecords
@@ -79,12 +74,13 @@ custom awards
   - rethink awards column on player profile - something like FMVP-5 is a bit silly, and SFMVP maybe is always silly
   - edit conf/div abbrevs, and test usage in award name prefixes
   - make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
-  - edit award settings for past seasons
-  - some way to set award settings in default new league settings
-  - pick and choose which awards to import, and option to not overwrite all
   - ability to add/edit/delete manual awards for player, maybe in player editor
-  - on award settings page, player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
-  - award settings - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
+  - award settings
+    - some way to set award settings in default new league settings
+    - edit award settings for past seasons
+    - pick and choose which awards to import, and option to not overwrite all
+    - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
+    - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
 
 btn-close vs glyphicon-remove
 

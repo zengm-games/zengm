@@ -7,27 +7,23 @@ custom awards
 - make sure hashAward accounts for everything
 - rename Awards2
 - upgrade
-  - test
-    - all sports
-    - grouped awards look fine
-  - First vs 1st?
-    - could dynamically fix in formatAwardName
-  - upgrade old awards objects
+  - indexeddb
+    - pad winners with undefined for both individual and team awards as necessary
+      - does this matter? i guess it does for editing awards, so should pad
     - specify old default awards, even if we're changing the defaults now
       - baseball
       - football
       - hockey
     - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
-    - is it okay to never set group? otherwise we need to look up playoff series info
-      - cause any problems looking up stats, does statRange number assume there is a group?
-  - indexeddb
+      - First vs 1st?
+        - could dynamically fix in formatAwardName
   - import
     - tricky because we don't have all the players and awards in memory at the same time
       - can i somehow do it without knowing the awards objects?
       - if not, then at least do awards object upgrade on the import, and then set some flag and go back and reprocess awards objects later to upgrade player awards
-  - similar for real player data, reformat Awards and Player.awards
-  - use old award types? maybe move to own types file to be clear, like one for obsolete types
-  - pad winners with undefined for both individual and team awards as necessary
+  - test
+    - all sports
+    - grouped awards look fine
 - get rid of SIMPLE_AWARDS and AWARD_NAMES (might need in upgrade though)
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
   - after upgrade, can remove awardsOld?

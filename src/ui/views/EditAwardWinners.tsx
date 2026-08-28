@@ -18,6 +18,7 @@ import { getAwardKey } from "./AwardRaces.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { PLAYER } from "../../common/constants.ts";
+import { useBlocker } from "../hooks/useBlocker.ts";
 
 type Winner =
 	| undefined
@@ -203,6 +204,10 @@ const EditAwardWinners = ({
 
 	const [awardsState, setAwardsState] = useState(awards);
 
+	const formId = useId();
+
+	const { setDirty } = useBlocker();
+
 	// Update state if new season
 	const firstRun = useRef(true);
 	useEffect(() => {
@@ -210,14 +215,14 @@ const EditAwardWinners = ({
 			firstRun.current = false;
 		} else {
 			setAwardsState(awards);
+			setDirty(false);
 		}
-	}, [awards, season]);
-
-	const formId = useId();
+	}, [awards, season, setDirty]);
 
 	const playersByPid = groupByUnique(players, "pid");
 
 	const setWinner = (props: SetWinnerProps) => {
+		setDirty(true);
 		setAwardsState((oldState) => {
 			return oldState.map((award) => {
 				if (award !== props.award) {
@@ -327,6 +332,7 @@ const EditAwardWinners = ({
 					setSaving(true);
 					try {
 						await toWorker("main", "updateAwards", awardsState);
+						setDirty(false);
 						realtimeUpdate([], helpers.leagueUrl(["history", season]));
 					} catch (error) {
 						showNotification({

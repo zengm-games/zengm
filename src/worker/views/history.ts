@@ -87,20 +87,22 @@ const updateHistory = async (
 			showStats,
 			statOverrides,
 			statRange,
+			tid,
 		}: {
 			pid: number;
 			pos?: string;
 			season: number;
 			showStats: AwardInfoIndividual["showStats"];
-			statOverrides: AwardPlayer2["statOverrides"];
+			statOverrides?: AwardPlayer2["statOverrides"];
 			statRange: Award2["statRange"];
+			tid: number;
 		}) => {
 			const stats = showStatsByType[showStats];
 			if (!stats) {
 				throw new Error("Invalid showStats");
 			}
 
-			const allStats = [...stats, "tid"];
+			const allStats = [...stats];
 			if (isSport("baseball")) {
 				allStats.push("gpF");
 			}
@@ -131,12 +133,8 @@ const updateHistory = async (
 				last(p.ratings).pos;
 			p2.ratings = { pos: ratingsPos };
 
-			if (statOverrides) {
-				p2.stats.tid = statOverrides.tid;
-			}
-
 			// Could have asked for "abbrev" in playersPlus, but we already have the teams in memory...
-			const t = teamsByTid[p2.stats.tid];
+			const t = teamsByTid[tid];
 
 			return {
 				pid,
@@ -145,6 +143,7 @@ const updateHistory = async (
 				statOverrides,
 				stats: {
 					...p2.stats,
+					tid,
 					abbrev: t?.seasonAttrs.abbrev ?? "???",
 				},
 			};
@@ -164,12 +163,10 @@ const updateHistory = async (
 				if (!award.winner[0]) {
 					continue;
 				}
-				const { pid, statOverrides } = award.winner[0];
 				const winner = await augmentPlayer({
-					pid,
+					...award.winner[0],
 					season: awards.season,
 					showStats: award.showStats,
-					statOverrides,
 					statRange: award.statRange,
 				});
 
@@ -196,13 +193,10 @@ const updateHistory = async (
 						if (pTemp?.pid === undefined) {
 							continue;
 						}
-						const { pid, pos, statOverrides } = pTemp;
 						const p = await augmentPlayer({
-							pid,
-							pos,
+							...pTemp,
 							season: awards.season,
 							showStats: award.showStats,
-							statOverrides,
 							statRange: award.statRange,
 						});
 						augmentedTeam.push(p);

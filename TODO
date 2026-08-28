@@ -2,7 +2,6 @@ custom awards
 - JSON.stringify will turn undefined into null, for blank spots in winners array - make sure to handle this properly!
 - having Winner undefined in a team award loses pos, should we reevaluate this?
 - EditAwards
-  - make sure it works when switching season, seems to get stuck in an infinite loop or something
   - useDirty
     - on season change?
   - setWinner statOverrides

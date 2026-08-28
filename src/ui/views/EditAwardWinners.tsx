@@ -1,4 +1,4 @@
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect, useId, useRef } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type {
 	AwardInfoIndividual,
@@ -202,8 +202,15 @@ const EditAwardWinners = ({
 	const [saving, setSaving] = useState(false);
 
 	const [awardsState, setAwardsState] = useState(awards);
+
+	// Update state if new season
+	const firstRun = useRef(true);
 	useEffect(() => {
-		setAwardsState(awards);
+		if (firstRun.current) {
+			firstRun.current = false;
+		} else {
+			setAwardsState(awards);
+		}
 	}, [awards, season]);
 
 	const formId = useId();
@@ -314,6 +321,7 @@ const EditAwardWinners = ({
 			<MoreLinks type="awards" page="edit_award_winners" season={season} />
 			<form
 				id={formId}
+				key={season}
 				onSubmit={async (event) => {
 					event.preventDefault();
 					setSaving(true);

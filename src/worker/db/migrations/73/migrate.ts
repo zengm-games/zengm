@@ -120,6 +120,11 @@ const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 		},
 	})();
 
+	const oldAwardsToDelete: {
+		season: number;
+		type: string;
+	}[] = [];
+
 	for (const row of toTranslate) {
 		if (!row.old) {
 			continue;
@@ -189,7 +194,7 @@ const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 		}
 	}
 
-	return awards;
+	return { awards, oldAwardsToDelete };
 };
 
 export const migrate73 = async (transaction: VersionChangeTransaction) => {
@@ -210,12 +215,14 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 			}
 		}
 
+		const { awards, oldAwardsToDelete } = parseOldAwards(oldAwards);
+
 		const newAwards: Awards2 = {
 			season: oldAwards.season,
 			bestRecord: oldAwards.bestRecord?.tid ?? PLAYER.DOES_NOT_EXIST,
 			bestRecordConfs,
 			bestRecordDivs: {},
-			awards: parseOldAwards(oldAwards),
+			awards,
 		};
 		console.log(newAwards);
 

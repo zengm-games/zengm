@@ -13,6 +13,8 @@ custom awards
       - football
       - hockey
     - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
+      - do something new for oldAwardsToDelete, or copy over old addSimpleAndTeamAwardsToAwardsByPlayer?
+      - do something like getAwardsByPlayer for new awards
       - First vs 1st?
         - could dynamically fix in formatAwardName
   - import

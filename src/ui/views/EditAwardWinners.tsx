@@ -150,37 +150,69 @@ const Award = ({
 								? undefined
 								: playerStatsArray.join(", ");
 
-						return `${winner?.pos !== undefined ? `${winner.pos} ` : ""}${p?.name ?? "???"}${posAndAbbrev}${playerStats !== undefined ? ` ${playerStats}` : ""}`;
+						return `${p?.name ?? "???"}${posAndAbbrev}${playerStats !== undefined ? ` ${playerStats}` : ""}`;
 					};
 
+					let prefix;
+					if (teamIndex === undefined) {
+						prefix = (
+							<div
+								className="flex-shrink-0"
+								style={{
+									width: 16,
+								}}
+							>
+								{i + 1}
+							</div>
+						);
+					} else if (winner?.pos !== undefined) {
+						prefix = (
+							<div
+								className="flex-shrink-0"
+								style={{
+									width: 26,
+								}}
+							>
+								{winner.pos}
+							</div>
+						);
+					} else {
+						prefix = null;
+					}
+
 					return (
-						<SelectMultiple
-							key={i}
-							disabled={disabled}
-							options={players}
-							value={p ?? null}
-							getOptionLabel={getOptionLabel}
-							getOptionValue={(p) => String(p.pid)}
-							onChange={(p) => {
-								if (award.numTeams === undefined) {
-									setWinner({
-										award,
-										p: p === null ? undefined : p,
-										playerIndex: i,
-										teamIndex: undefined,
-										tid: getTid(p),
-									});
-								} else {
-									setWinner({
-										award,
-										p: p === null ? undefined : p,
-										playerIndex: i,
-										teamIndex: teamIndex!,
-										tid: getTid(p),
-									});
-								}
-							}}
-						/>
+						<div key={i} className="d-flex align-items-center">
+							{prefix}
+
+							<div className="w-100">
+								<SelectMultiple
+									disabled={disabled}
+									options={players}
+									value={p ?? null}
+									getOptionLabel={getOptionLabel}
+									getOptionValue={(p) => String(p.pid)}
+									onChange={(p) => {
+										if (award.numTeams === undefined) {
+											setWinner({
+												award,
+												p: p === null ? undefined : p,
+												playerIndex: i,
+												teamIndex: undefined,
+												tid: getTid(p),
+											});
+										} else {
+											setWinner({
+												award,
+												p: p === null ? undefined : p,
+												playerIndex: i,
+												teamIndex: teamIndex!,
+												tid: getTid(p),
+											});
+										}
+									}}
+								/>
+							</div>
+						</div>
 					);
 				})}
 			</div>

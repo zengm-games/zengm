@@ -8,7 +8,6 @@ custom awards
 - rename Awards2
 - upgrade
   - indexeddb
-    - key for sfmvp award in UI depends on group containing tids, need to put something there, maybe one of them at least
     - specify old default awards, even if we're changing the defaults now
       - baseball
       - football

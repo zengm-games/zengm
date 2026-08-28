@@ -29,7 +29,7 @@ type WinnerTeam = Extract<
 	{ pid: number }
 >;
 
-const makeNewAwards = (oldAwardsRaw: OldAwards) => {
+const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 	const awards: Awards2["awards"] = [];
 
 	const toTranslate = bySport<
@@ -153,6 +153,17 @@ const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 				winner: [winner, {}, {}, {}, {}],
 			};
 
+			if (typeof row.new.statRange === "number") {
+				// We need to define this so getAwardKey is unique, but we only easily know one of the teams. That's enough though, can't play in two series in the same round!
+				const tid =
+					award.winner.find((p) => p.tid !== undefined)?.tid ??
+					PLAYER.DOES_NOT_EXIST;
+				award.group = {
+					type: "playoffSeries",
+					tids: [PLAYER.DOES_NOT_EXIST, tid],
+				};
+			}
+
 			awards.push(award);
 		} else {
 			const award: AwardInfoTeam = {
@@ -204,7 +215,7 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 			bestRecord: oldAwards.bestRecord?.tid ?? PLAYER.DOES_NOT_EXIST,
 			bestRecordConfs,
 			bestRecordDivs: {},
-			awards: makeNewAwards(oldAwards),
+			awards: parseOldAwards(oldAwards),
 		};
 		console.log(newAwards);
 

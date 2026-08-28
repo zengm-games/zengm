@@ -13,10 +13,10 @@ custom awards
   - First vs 1st?
     - could dynamically fix in formatAwardName
   - upgrade old awards objects
-    - statOverrides for playoff series
-    - be defensive, some props might not exist like sfmvp
     - specify old default awards, even if we're changing the defaults now
-      - number of all-rookie teams
+      - baseball
+      - football
+      - hockey
     - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
     - is it okay to never set group? otherwise we need to look up playoff series info
       - cause any problems looking up stats, does statRange number assume there is a group?
@@ -80,6 +80,8 @@ custom awards
     - pick and choose which awards to import, and option to not overwrite all
     - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
     - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
+
+when deleting all leagues, count in the notification should subtract starred ones
 
 TEXT_MAX_WIDTH for messages?
 

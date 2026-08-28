@@ -29,31 +29,6 @@ type WinnerTeam = Extract<
 	{ pid: number }
 >;
 
-const addStatOverrides = <
-	NewAward extends AwardSettingIndividual | AwardSettingTeam,
->(
-	newAward: NewAward,
-	oldAward: any,
-	winner: NewAward extends AwardInfoIndividual ? WinnerIndividual : WinnerTeam,
-) => {
-	// Save statOverrides for playoff series awards, if possible
-	if (typeof newAward.statRange === "number") {
-		const stats = showStatsByType[newAward.showStats];
-		if (!stats) {
-			throw new Error("Invalid showStats");
-		}
-		winner.statOverrides = {
-			score: 0,
-		};
-		for (const stat of stats) {
-			const oldStat = oldAward[stat];
-			if (typeof oldStat === "number") {
-				winner.statOverrides[stat] = oldStat;
-			}
-		}
-	}
-};
-
 const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 	const awards: Awards2["awards"] = [];
 
@@ -155,7 +130,23 @@ const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 				pid: row.old.pid,
 				tid: row.old.tid,
 			};
-			addStatOverrides(row.new, row.old, winner);
+
+			// Save statOverrides for playoff series awards, if possible
+			if (typeof row.new.statRange === "number") {
+				const stats = showStatsByType[row.new.showStats];
+				if (!stats) {
+					throw new Error("Invalid showStats");
+				}
+				winner.statOverrides = {
+					score: 0,
+				};
+				for (const stat of stats) {
+					const oldStat = (row.old as any)[stat];
+					if (typeof oldStat === "number") {
+						winner.statOverrides[stat] = oldStat;
+					}
+				}
+			}
 
 			const award: AwardInfoIndividual = {
 				...omit(row.new, ["group"]),
@@ -172,10 +163,11 @@ const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 							pid: p.pid,
 							tid: p.tid,
 						};
-						addStatOverrides(row.new, row.old, winner);
 						if (TEAM_AWARD_INFO.byPos && p.pos !== undefined) {
 							winner.pos = p.pos;
 						}
+
+						// No need to set statOverrides because old playoff series awards are all individual
 
 						return winner;
 					}),

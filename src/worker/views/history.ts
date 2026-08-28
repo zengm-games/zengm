@@ -154,21 +154,24 @@ const updateHistory = async (
 		})[] = [];
 		const individualAwardsPlayoffs: typeof individualAwards = [];
 		const teamAwards: (Omit<AwardInfoTeam, "winner"> & {
-			winner: Awaited<ReturnType<typeof augmentPlayer>>[][];
+			winner: (
+				| Awaited<ReturnType<typeof augmentPlayer>>
+				| { pos?: string }
+			)[][];
 		})[] = [];
 
 		for (const award of awards.awards) {
 			const numTeams = award.numTeams;
 			if (numTeams === undefined) {
-				if (award.winner[0]?.pid === undefined) {
-					continue;
-				}
-				const winner = await augmentPlayer({
-					...award.winner[0],
-					season: awards.season,
-					showStats: award.showStats,
-					statRange: award.statRange,
-				});
+				const winner =
+					award.winner[0]?.pid === undefined
+						? undefined
+						: await augmentPlayer({
+								...award.winner[0],
+								season: awards.season,
+								showStats: award.showStats,
+								statRange: award.statRange,
+							});
 
 				const augmented = {
 					...award,
@@ -190,15 +193,15 @@ const updateHistory = async (
 				for (const team of award.winner) {
 					const augmentedTeam: (typeof winner)[number] = [];
 					for (const pTemp of team) {
-						if (pTemp?.pid === undefined) {
-							continue;
-						}
-						const p = await augmentPlayer({
-							...pTemp,
-							season: awards.season,
-							showStats: award.showStats,
-							statRange: award.statRange,
-						});
+						const p =
+							pTemp.pid === undefined
+								? pTemp
+								: await augmentPlayer({
+										...pTemp,
+										season: awards.season,
+										showStats: award.showStats,
+										statRange: award.statRange,
+									});
 						augmentedTeam.push(p);
 					}
 					winner.push(augmentedTeam);

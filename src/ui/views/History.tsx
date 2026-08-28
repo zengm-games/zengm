@@ -13,6 +13,8 @@ type ActualProps = Exclude<
 	{ invalidSeason: true; season: number }
 >;
 
+const NO_WINNER = "No winner";
+
 const Winner = ({
 	award,
 	indentStats,
@@ -24,7 +26,9 @@ const Winner = ({
 		| ActualProps["awards"]["individualAwards"][number]
 		| ActualProps["awards"]["teamAwards"][number];
 	indentStats?: boolean;
-	p: ActualProps["awards"]["individualAwards"][number]["winner"];
+	p:
+		| ActualProps["awards"]["individualAwards"][number]["winner"]
+		| { pid?: undefined; pos?: string };
 	season: number;
 	userTid: number;
 }) => {
@@ -35,6 +39,16 @@ const Winner = ({
 
 	if (!p) {
 		return null;
+	}
+
+	if (p.pid === undefined) {
+		return (
+			<div>
+				{p.pos} {NO_WINNER}
+				<br />
+				<br />
+			</div>
+		);
 	}
 
 	return (
@@ -228,7 +242,7 @@ const History = (props: View<"history">) => {
 																userTid={userTid}
 															/>
 														) : (
-															"???"
+															NO_WINNER
 														);
 													})}
 												</div>
@@ -237,7 +251,7 @@ const History = (props: View<"history">) => {
 									})}
 								</div>
 							) : (
-								<div className="mb-3">???</div>
+								<div className="mb-3">{NO_WINNER}</div>
 							)}
 							<h2>Best Record</h2>
 							{Array.from(awards.bestRecordConfs.entries()).map(([cid, t]) =>
@@ -277,7 +291,7 @@ const History = (props: View<"history">) => {
 													userTid={userTid}
 												/>
 											) : (
-												"???"
+												NO_WINNER
 											)}
 										</div>
 									</React.Fragment>

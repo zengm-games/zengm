@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { router } from "../router/index.ts";
 import { confirm } from "../util/confirm.tsx";
 
@@ -13,33 +13,39 @@ export const useBlocker = ({
 	cancelText?: string;
 	initialDirty?: boolean;
 } = {}) => {
-	// dirtyRef is so that setDirty(false) immediate clears the blocker, so you can immediately navigate away if you want, like in EditAwardWinners
 	const [dirty, setDirtyState] = useState(initialDirty);
-	const dirtyRef = useRef(initialDirty);
+
 	const setDirty = useCallback((value: boolean) => {
-		dirtyRef.current = value;
 		setDirtyState(value);
+
+		// Do this here rather than in useEffect that setDirty(false) immediate clears the blocker, so you can immediately navigate away if you want, like in EditAwardWinners.
+		// This does mean that setDirty(true) does not immediately set the blocker. I could fix that by setting the block function here, but then setDirty will need to depend on the inputs to that, and I'd rather have setDirty never change. Also currently it just doesn't matter. Like why would I set a blocker and then immediately navigate? I could
+		if (!value) {
+			router.shouldBlock = undefined;
+		}
 	}, []);
 
 	useEffect(() => {
-		router.shouldBlock = async (refresh) => {
-			// refresh check is needed because realtimeUpdate triggers a refresh pageview through the router to trigger updating data, but we never consider that "navigating away" from a page. For example when clicking "Save" on League Settings
-			if (refresh || !dirtyRef.current) {
-				return false;
-			}
+		if (dirty) {
+			router.shouldBlock = async (refresh) => {
+				// This check is needed because realtimeUpdate triggers a refresh pageview through the router to trigger updating data, but we never consider that "navigating away" from a page. For example when clicking "Save" on League Settings
+				if (refresh) {
+					return false;
+				}
 
-			const proceed = await confirm(message, {
-				okText,
-				cancelText,
-			});
+				const proceed = await confirm(message, {
+					okText,
+					cancelText,
+				});
 
-			return !proceed;
-		};
+				return !proceed;
+			};
 
-		return () => {
-			router.shouldBlock = undefined;
-		};
-	}, [cancelText, message, okText]);
+			return () => {
+				router.shouldBlock = undefined;
+			};
+		}
+	}, [cancelText, dirty, message, okText]);
 
 	return { dirty, setDirty };
 };

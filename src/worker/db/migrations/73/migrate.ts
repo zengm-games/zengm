@@ -150,7 +150,7 @@ const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 
 			const award: AwardInfoIndividual = {
 				...omit(row.new, ["group"]),
-				winner: [winner],
+				winner: [winner, {}, {}, {}, {}],
 			};
 
 			awards.push(award);

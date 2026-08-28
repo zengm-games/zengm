@@ -79,7 +79,6 @@ const updateEditAwardWinners = async (
 		);
 
 		const actualAwards = awards.awards;
-		console.log({ awards: actualAwards, players, season });
 
 		const teams = await idb.getCopies.teamsPlus(
 			{

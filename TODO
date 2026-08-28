@@ -1,10 +1,12 @@
 custom awards
+- test editing award winner to add statOverrides with score 0
 - UI to update
   - GOAT formula
     - explain min/max functions
     - award:shortName
     - keep compatibility with old ones by translating to shortName https://www.reddit.com/r/BasketballGM/comments/oey0m6/collection_of_some_goat_lab_formulas/
 - make sure hashAward accounts for everything
+- rename Awards2
 - upgrade
   - test
     - all sports
@@ -12,13 +14,17 @@ custom awards
   - First vs 1st?
     - could dynamically fix in formatAwardName
   - upgrade old awards objects
+    - statOverrides for playoff series
     - be defensive, some props might not exist like sfmvp
     - specify old default awards, even if we're changing the defaults now
       - number of all-rookie teams
-  - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
+    - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
+    - is it okay to never set group? otherwise we need to look up playoff series info
+      - cause any problems looking up stats, does statRange number assume there is a group?
   - indexeddb
   - import
     - tricky because we don't have all the players and awards in memory at the same time. maybe defer?
+      - can i somehow do it without knowing the awards objects?
   - similar for real player data, reformat Awards and Player.awards
   - use old award types? maybe move to own types file to be clear, like one for obsolete types
   - pad winners with undefined for both individual and team awards as necessary

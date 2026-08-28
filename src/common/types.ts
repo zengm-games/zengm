@@ -601,7 +601,7 @@ const awardInfoTeamCommonSchema = z.object({
 const awardInfoIndividualSchema = awardInfoCommonSchema
 	.extend(awardInfoIndividualCommonSchema.shape)
 	.extend({
-		// Individual award - top 5 are saved
+		// Individual award - top 5 are saved, although we may have fewer slots than that in an upgraded league
 		winner: z.array(
 			z.union([
 				awardPlayer2Schema.extend({

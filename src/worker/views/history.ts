@@ -220,7 +220,6 @@ const updateHistory = async (
 
 		const awardsAugmented = {
 			season: awards.season,
-			bestRecord: teamsByTid[awards.bestRecord],
 			bestRecordConfs: augmentTeams(awards.bestRecordConfs),
 			individualAwards,
 			individualAwardsPlayoffs,

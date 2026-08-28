@@ -164,6 +164,11 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 	for await (const cursor of transaction.objectStore("awards")) {
 		const oldAwards = cursor.value as unknown as OldAwards;
 
+		// Quick sanity check in case awards is actually in the new format somehow
+		if ((oldAwards as any).awards) {
+			continue;
+		}
+
 		const bestRecordConfs: Record<number, number> = {};
 		if (oldAwards.bestRecordConfs) {
 			for (const [cid, row] of oldAwards.bestRecordConfs.entries()) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { router } from "../router/index.ts";
 import { confirm } from "../util/confirm.tsx";
 
@@ -13,31 +13,33 @@ export const useBlocker = ({
 	cancelText?: string;
 	initialDirty?: boolean;
 } = {}) => {
-	const [dirty, setDirty] = useState(initialDirty);
+	// dirtyRef is so that setDirty(false) immediate clears the blocker, so you can immediately navigate away if you want, like in EditAwardWinners
+	const [dirty, setDirtyState] = useState(initialDirty);
+	const dirtyRef = useRef(initialDirty);
+	const setDirty = useCallback((value: boolean) => {
+		dirtyRef.current = value;
+		setDirtyState(value);
+	}, []);
 
 	useEffect(() => {
-		if (dirty) {
-			router.shouldBlock = async (refresh) => {
-				// This check is needed because realtimeUpdate triggers a refresh pageview through the router to trigger updating data, but we never consider that "navigating away" from a page. For example when clicking "Save" on League Settings
-				if (refresh) {
-					return false;
-				}
+		router.shouldBlock = async (refresh) => {
+			// refresh check is needed because realtimeUpdate triggers a refresh pageview through the router to trigger updating data, but we never consider that "navigating away" from a page. For example when clicking "Save" on League Settings
+			if (refresh || !dirtyRef.current) {
+				return false;
+			}
 
-				const proceed = await confirm(message, {
-					okText,
-					cancelText,
-				});
+			const proceed = await confirm(message, {
+				okText,
+				cancelText,
+			});
 
-				return !proceed;
-			};
+			return !proceed;
+		};
 
-			return () => {
-				router.shouldBlock = undefined;
-			};
-		} else {
+		return () => {
 			router.shouldBlock = undefined;
-		}
-	}, [cancelText, dirty, message, okText]);
+		};
+	}, [cancelText, message, okText]);
 
 	return { dirty, setDirty };
 };

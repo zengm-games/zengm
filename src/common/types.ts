@@ -607,7 +607,10 @@ const awardInfoIndividualSchema = awardInfoCommonSchema
 				awardPlayer2Schema.extend({
 					opoyOverride: z.literal(true).optional(),
 				}),
-				z.undefined(),
+				awardPlayer2Schema.extend({
+					pid: z.undefined().optional(),
+					tid: z.undefined().optional(),
+				}),
 			]),
 		),
 
@@ -628,7 +631,7 @@ const awardInfoTeamSchema = awardInfoCommonSchema
 					}),
 
 					// This would be if it can't find enough players at one position - either an empty object, or one containg only pos if TEAM_AWARD_INFO.byPos
-					z.object({
+					awardPlayer2Schema.extend({
 						pid: z.undefined().optional(),
 						tid: z.undefined().optional(),
 						pos: z.string().optional(),

@@ -91,7 +91,7 @@ const Award = ({
 
 	const statOverridesByPid: Record<
 		number,
-		NonNullable<AwardInfoIndividual["winner"][number]>["statOverrides"]
+		NonNullable<AwardInfoIndividual["winner"][number]["statOverrides"]>
 	> = {};
 	for (const winner of winners) {
 		if (winner?.pid !== undefined && winner.statOverrides) {
@@ -294,14 +294,14 @@ const EditAwardWinners = ({
 					const winner: AwardInfoIndividual["winner"] = props.award.winner.map(
 						(p, i) => {
 							if (p && p === duplicate) {
-								return;
+								return {};
 							}
 							if (i !== props.playerIndex) {
 								return p;
 							}
 
 							if (!props.p) {
-								return;
+								return {};
 							}
 
 							// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award

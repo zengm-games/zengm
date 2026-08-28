@@ -160,7 +160,7 @@ const updateHistory = async (
 		for (const award of awards.awards) {
 			const numTeams = award.numTeams;
 			if (numTeams === undefined) {
-				if (!award.winner[0]) {
+				if (award.winner[0]?.pid === undefined) {
 					continue;
 				}
 				const winner = await augmentPlayer({

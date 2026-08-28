@@ -270,7 +270,7 @@ export const getAwardsByPlayer = (
 
 		if (award.numTeams === undefined) {
 			for (const [i, pTemp] of award.winner.entries()) {
-				if (!pTemp) {
+				if (pTemp?.pid === undefined) {
 					continue;
 				}
 				const { pid, tid } = pTemp;

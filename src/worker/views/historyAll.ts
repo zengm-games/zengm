@@ -168,7 +168,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 								})
 								.map(async (award) => {
 									const winner = award.winner[0];
-									if (!winner) {
+									if (winner?.pid === undefined) {
 										return;
 									}
 									const { pid, statOverrides } = winner;

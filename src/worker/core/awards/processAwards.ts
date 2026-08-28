@@ -497,12 +497,12 @@ export const processAwards = async ({
 						numPlayersPerIndividualAward,
 					).map((p) => {
 						if (!p) {
-							return;
+							return {};
 						}
 
 						const score = getScore(p);
 						if (score === -Infinity) {
-							return;
+							return {};
 						}
 
 						let tid = p.currentStats[statRange]?.tid;
@@ -533,16 +533,16 @@ export const processAwards = async ({
 									const statOverridesAndTid =
 										statOverridesByMatchup[matchupKey]?.[p.pid];
 									if (!statOverridesAndTid) {
-										// No stats, no statOverrides, no thing to do here!
-										return;
+										// No stats, no statOverrides, nothing to do here!
+										return {};
 									}
 									tid = statOverridesAndTid.tid;
 									statOverrides = omit(statOverridesAndTid, [
 										"tid",
 									]) as AwardPlayer2["statOverrides"];
 								} else {
-									// No stats, no statOverrides, no thing to do here!
-									return;
+									// No stats, no statOverrides, nothing to do here!
+									return {};
 								}
 
 								return {
@@ -753,7 +753,7 @@ export const processAwards = async ({
 				const mvpWinner = mvpAward.winner[0];
 				const opoyWinner = opoyAward.winner[0];
 
-				if (mvpWinner && opoyWinner) {
+				if (mvpWinner?.pid !== undefined && opoyWinner?.pid !== undefined) {
 					const playersByPid = groupByUnique(players, "pid");
 					const mvp = playersByPid[mvpWinner.pid];
 					const opoy = playersByPid[opoyWinner.pid];

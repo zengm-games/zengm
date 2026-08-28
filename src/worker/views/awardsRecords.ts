@@ -195,8 +195,6 @@ const updateAwardsRecords = async (
 				}
 			}
 		}
-
-		console.log(awardTypes);
 	} else {
 		awardTypes = state.awardTypes;
 	}

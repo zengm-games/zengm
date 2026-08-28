@@ -1500,10 +1500,6 @@ hr.my-hr {
 	.dark-select__group-heading {
 		font-size: 90%;
 	}
-
-	.dark-select__menu {
-		z-index: 3; // Above .settings-buttons
-	}
 }
 
 // Make same height as other form controls
@@ -1537,6 +1533,7 @@ hr.my-hr {
 .dark-select__menu {
 	margin-top: 0 !important;
 	margin-bottom: 0 !important;
+	z-index: 11 !important; // Above .settings-buttons
 }
 
 $sticky-cols: (

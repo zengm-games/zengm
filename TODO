@@ -57,6 +57,8 @@ custom awards
     - score
     - postseason awards
   - in AwardsSummary on player profile, break down by team number (and conf/div prefix) for tooltip
+  - upgrade
+    - doesn't fill in 2nd-5th place finishers for individual awards
 - maybe
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - real player data for award top 5 finish

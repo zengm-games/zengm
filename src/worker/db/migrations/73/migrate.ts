@@ -1,8 +1,9 @@
 import { showStatsByType } from "../../../../common/awards.ts";
-import { PLAYER } from "../../../../common/constants.ts";
+import { PLAYER, TEAM_AWARD_INFO } from "../../../../common/constants.ts";
 import { bySport } from "../../../../common/sportFunctions.ts";
 import type {
 	AwardInfoIndividual,
+	AwardInfoTeam,
 	Awards2,
 	AwardSettingIndividual,
 	AwardSettingTeam,
@@ -18,6 +19,41 @@ import type {
 	OldAwardsHockey,
 } from "./types.ts";
 
+type WinnerIndividual = Extract<
+	AwardInfoIndividual["winner"][number],
+	{ pid: number }
+>;
+
+type WinnerTeam = Extract<
+	AwardInfoTeam["winner"][number][number],
+	{ pid: number }
+>;
+
+const addStatOverrides = <
+	NewAward extends AwardSettingIndividual | AwardSettingTeam,
+>(
+	newAward: NewAward,
+	oldAward: any,
+	winner: NewAward extends AwardInfoIndividual ? WinnerIndividual : WinnerTeam,
+) => {
+	// Save statOverrides for playoff series awards, if possible
+	if (typeof newAward.statRange === "number") {
+		const stats = showStatsByType[newAward.showStats];
+		if (!stats) {
+			throw new Error("Invalid showStats");
+		}
+		winner.statOverrides = {
+			score: 0,
+		};
+		for (const stat of stats) {
+			const oldStat = oldAward[stat];
+			if (typeof oldStat === "number") {
+				winner.statOverrides[stat] = oldStat;
+			}
+		}
+	}
+};
+
 const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 	const awards: Awards2["awards"] = [];
 
@@ -31,8 +67,7 @@ const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 			| {
 					type: "team";
 					new: AwardSettingTeam;
-					old: { pid: number; tid: number }[] | undefined;
-					rank: number;
+					old: { pid: number; pos?: string; tid: number }[][] | undefined;
 			  }
 		)[]
 	>({
@@ -83,27 +118,20 @@ const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 					new: defaultAwardsBasketball.sfmvp,
 					old: oldAwards.sfmvp?.[1],
 				},
-				...oldAwards.allLeague.map((team, i) => {
-					return {
-						type: "team",
-						new: defaultAwards.all,
-						old: team.players,
-						rank: i + 1,
-					} as const;
-				}),
-				...oldAwards.allLeague.map((team, i) => {
-					return {
-						type: "team",
-						new: defaultAwardsBasketball.def,
-						old: team.players,
-						rank: i + 1,
-					} as const;
-				}),
+				{
+					type: "team",
+					new: defaultAwards.all,
+					old: oldAwards.allLeague.map((team) => team.players),
+				},
+				{
+					type: "team",
+					new: defaultAwardsBasketball.def,
+					old: oldAwards.allLeague.map((team) => team.players),
+				},
 				{
 					type: "team",
 					new: defaultAwards.alr,
-					old: oldAwards.allRookie,
-					rank: 1,
+					old: [oldAwards.allRookie],
 				},
 			];
 		},
@@ -123,34 +151,35 @@ const makeNewAwards = (oldAwardsRaw: OldAwards) => {
 		}
 
 		if (row.type === "individual") {
-			const winner: Extract<
-				AwardInfoIndividual["winner"][number],
-				{ pid: number }
-			> = {
+			const winner: WinnerIndividual = {
 				pid: row.old.pid,
 				tid: row.old.tid,
 			};
-
-			// Save statOverrides for playoff series awards, if possible
-			if (typeof row.new.statRange === "number") {
-				const stats = showStatsByType[row.new.showStats];
-				if (!stats) {
-					throw new Error("Invalid showStats");
-				}
-				winner.statOverrides = {
-					score: 0,
-				};
-				for (const stat of stats) {
-					const oldStat = (row.old as any)[stat];
-					if (typeof oldStat === "number") {
-						winner.statOverrides[stat] = oldStat;
-					}
-				}
-			}
+			addStatOverrides(row.new, row.old, winner);
 
 			const award: AwardInfoIndividual = {
 				...omit(row.new, ["group"]),
 				winner: [winner],
+			};
+
+			awards.push(award);
+		} else {
+			const award: AwardInfoTeam = {
+				...omit(row.new, ["group"]),
+				winner: row.old.map((team) =>
+					team.map((p) => {
+						const winner: WinnerTeam = {
+							pid: p.pid,
+							tid: p.tid,
+						};
+						addStatOverrides(row.new, row.old, winner);
+						if (TEAM_AWARD_INFO.byPos && p.pos !== undefined) {
+							winner.pos = p.pos;
+						}
+
+						return winner;
+					}),
+				),
 			};
 
 			awards.push(award);

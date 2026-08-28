@@ -1338,7 +1338,7 @@ export type PlayerAwardBuiltIn = {
 	type?: undefined;
 	name: string;
 	shortName: string;
-	index: number; // Index in the list of awards for this season
+	index: number; // Index in the list of awards for this season - this is just used in the UI some places for sorting
 	rank: number; // rank in individual award, team number in team award
 	group?:
 		| {

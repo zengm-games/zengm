@@ -57,12 +57,17 @@ type AwardProps = (
 	disabled: boolean;
 	playersByPid: Record<number, MyPlayer>;
 	setWinner: (props: SetWinnerProps) => void;
-} & Pick<View<"editAwardWinners">, "abbrevsByTid" | "players">;
+} & Pick<
+		View<"editAwardWinners">,
+		"abbrevsByTid" | "confs" | "divs" | "players"
+	>;
 
 const Award = ({
 	abbrevsByTid,
 	award,
+	confs,
 	disabled,
+	divs,
 	players,
 	playersByPid,
 	setWinner,
@@ -94,6 +99,8 @@ const Award = ({
 		}
 	}
 
+	const group = award.group;
+
 	return (
 		<div className="col-xl-4 col-md-6 col-12 mb-4">
 			<h3>
@@ -103,6 +110,13 @@ const Award = ({
 					rank,
 				})}
 			</h3>
+			{group && group.type !== "playoffSeries" ? (
+				<h4>
+					{group.type === "conf"
+						? confs[group.cid]?.name
+						: divs[group.did]?.name}
+				</h4>
+			) : null}
 			<div className="d-flex flex-column gap-1">
 				{winners.map((winner, i) => {
 					const p =
@@ -229,6 +243,8 @@ const Award = ({
 const EditAwardWinners = ({
 	abbrevsByTid,
 	awards,
+	confs,
+	divs,
 	players,
 	season,
 }: View<"editAwardWinners">) => {
@@ -419,7 +435,9 @@ const EditAwardWinners = ({
 										key={getAwardKey({ ...award, rank: i + 1 })}
 										abbrevsByTid={abbrevsByTid}
 										award={award}
+										confs={confs}
 										disabled={saving}
+										divs={divs}
 										players={players}
 										playersByPid={playersByPid}
 										setWinner={setWinner}
@@ -434,7 +452,9 @@ const EditAwardWinners = ({
 								key={getAwardKey(award)}
 								abbrevsByTid={abbrevsByTid}
 								award={award}
+								confs={confs}
 								disabled={saving}
+								divs={divs}
 								players={players}
 								playersByPid={playersByPid}
 								setWinner={setWinner}

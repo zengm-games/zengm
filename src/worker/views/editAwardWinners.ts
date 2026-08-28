@@ -84,7 +84,7 @@ const updateEditAwardWinners = async (
 			{
 				attrs: ["tid"],
 				seasonAttrs: ["abbrev"],
-				season: inputs.season,
+				season,
 			},
 			"noCopyCache",
 		);
@@ -96,6 +96,8 @@ const updateEditAwardWinners = async (
 		return {
 			abbrevsByTid,
 			awards: actualAwards,
+			confs: g.get("confs", season),
+			divs: g.get("divs", season),
 			players,
 			season,
 		};

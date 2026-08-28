@@ -7,9 +7,9 @@ custom awards
     - recompute when saving if not already there (duplicate)
   - show playoff series stats - is statOverridesByMatchup needed in getPlayers for past seasons?
     - if fall back to regular season or playoff stats, show asterisk
-  - newRow similar to award settings
-    - races too?
   - test
+    - baseball
+    - hockey
     - reuse statOverrides when switching a player within the same playoff series award, including when there are no box scores
     - with conf/div grouping
     - maintain pos even when blank (either deleting an entry, or due to a duplicate)

@@ -85,7 +85,7 @@ const Award = ({
 	}
 
 	return (
-		<div className="col-md-4 col-6 mb-4">
+		<div className="col-xl-4 col-md-6 col-12 mb-4">
 			<h3>
 				{formatPlayerAwardName({
 					name: award.name,

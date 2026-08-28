@@ -276,6 +276,8 @@ const EditAwardWinners = ({
 	const playersByPid = groupByUnique(players, "pid");
 
 	const setWinner = (props: SetWinnerProps) => {
+		const { p, playerIndex, tid } = props;
+
 		setDirty(true);
 		setAwardsState((oldState) => {
 			return oldState.map((award) => {
@@ -285,22 +287,22 @@ const EditAwardWinners = ({
 
 				if (props.teamIndex === undefined) {
 					// Is this player already a winner? If so make a note of it so we can delete them later, while also saving statOverrides
-					const duplicate = props.award.winner.find((p, i) => {
-						if (i !== props.playerIndex && p && p.pid === props.p?.pid) {
-							return p;
+					const duplicate = props.award.winner.find((p2, i) => {
+						if (i !== playerIndex && p2 && p2.pid === p?.pid) {
+							return p2;
 						}
 					});
 
 					const winner: AwardInfoIndividual["winner"] = props.award.winner.map(
-						(p, i) => {
-							if (p && p === duplicate) {
+						(p2, i) => {
+							if (p2 && p2 === duplicate) {
 								return {};
 							}
-							if (i !== props.playerIndex) {
-								return p;
+							if (i !== playerIndex) {
+								return p2;
 							}
 
-							if (!props.p) {
+							if (!p) {
 								return {};
 							}
 
@@ -310,14 +312,14 @@ const EditAwardWinners = ({
 							}
 
 							const row: AwardInfoIndividual["winner"][number] = {
-								pid: props.p.pid,
-								tid: props.p.tid,
+								pid: p.pid,
+								tid,
 							};
 
 							// Add statOverrides
 							if (props.award.group?.type === "playoffSeries") {
 								const statRange = props.award.statRange ?? "regularSeason";
-								const currentStats = props.p.currentStats[statRange];
+								const currentStats = p.currentStats[statRange];
 								if (currentStats !== undefined) {
 									const stats = showStatsByType[award.showStats];
 									if (!stats) {
@@ -347,12 +349,12 @@ const EditAwardWinners = ({
 					// Is this player already a winner? If so make a note of it so we can delete them later, while also saving statOverrides
 					let duplicate: AwardInfoTeam["winner"][number][number] | undefined;
 					OUTER_LOOP: for (const [i, team] of props.award.winner.entries()) {
-						for (const [j, p] of team.entries()) {
+						for (const [j, p2] of team.entries()) {
 							if (
-								(i !== props.teamIndex || j !== props.playerIndex) &&
-								p.pid === props.p?.pid
+								(i !== props.teamIndex || j !== playerIndex) &&
+								p2.pid === p?.pid
 							) {
-								duplicate = p;
+								duplicate = p2;
 								break OUTER_LOOP;
 							}
 						}
@@ -360,18 +362,18 @@ const EditAwardWinners = ({
 
 					const winner: AwardInfoTeam["winner"] = props.award.winner.map(
 						(team, i) => {
-							return team.map((p, j) => {
+							return team.map((p2, j) => {
 								const base: { pos?: string } =
-									p.pos !== undefined ? { pos: p.pos } : {};
+									p2.pos !== undefined ? { pos: p2.pos } : {};
 
-								if (p === duplicate) {
+								if (p2 === duplicate) {
 									return base;
 								}
-								if (i !== props.teamIndex || j !== props.playerIndex) {
-									return p;
+								if (i !== props.teamIndex || j !== playerIndex) {
+									return p2;
 								}
 
-								if (!props.p) {
+								if (!p) {
 									return base;
 								}
 
@@ -385,8 +387,8 @@ const EditAwardWinners = ({
 
 								return {
 									...base,
-									pid: props.p.pid,
-									tid: props.p.tid,
+									pid: p.pid,
+									tid,
 								};
 							});
 						},

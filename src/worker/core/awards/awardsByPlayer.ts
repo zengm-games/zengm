@@ -1,3 +1,4 @@
+import fastDeepEqual from "fast-deep-equal";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
@@ -133,10 +134,7 @@ export const saveAwardsByPlayer = async (
 };
 
 export const deleteAwardsByPlayer = async (
-	awardsByPlayer: {
-		pid: number;
-		type: string;
-	}[],
+	awardsByPlayer: AwardsByPlayer,
 	season: number,
 ) => {
 	if (awardsByPlayer.length === 0) {
@@ -150,18 +148,30 @@ export const deleteAwardsByPlayer = async (
 		},
 		"noCopyCache",
 	);
+
+	const awardsByPid = Object.groupBy(awardsByPlayer, (award) => award.pid);
+
 	for (const p of players) {
-		const typesToDelete = awardsByPlayer
-			.filter((award) => award.pid === p.pid)
-			.map((award) => award.type);
-		p.awards = p.awards.filter(
-			(award) => award.season != season || !typesToDelete.includes(award.type),
-		);
-		await idb.cache.players.put(p);
+		const toDelete = awardsByPid[p.pid];
+		if (toDelete) {
+			p.awards = p.awards.filter((award) => {
+				if (award.season !== season) {
+					return true;
+				}
+
+				// Delete this award if it matches any of toDelete
+				for (const { award: awardToDelete } of toDelete) {
+					if (fastDeepEqual({ ...awardToDelete, season }, award)) {
+						return false;
+					}
+				}
+
+				return true;
+			});
+			await idb.cache.players.put(p);
+		}
 	}
 };
-
-export const addSimpleAndTeamAwardsToAwardsByPlayer = () => {};
 
 export const getLeagueLeaderAwards = async (
 	players: PlayerFiltered[],
@@ -237,7 +247,10 @@ type ProcessAwardsReturn = Awaited<ReturnType<typeof processAwards>>;
 
 export const getAwardsByPlayer = (
 	realizedAwards: ProcessAwardsReturn["realizedAwards"][number],
-	players: ProcessAwardsReturn["players"],
+	players: {
+		name: string;
+		pid: number;
+	}[],
 ) => {
 	const playersByPid = groupByUnique(players, "pid");
 	const awardsByPlayer: AwardsByPlayer = [];
@@ -284,7 +297,7 @@ export const getAwardsByPlayer = (
 		} else {
 			for (const [i, team] of award.winner.entries()) {
 				for (const pTemp of team) {
-					if (!pTemp) {
+					if (pTemp?.pid === undefined) {
 						continue;
 					}
 					const { pid, tid } = pTemp;

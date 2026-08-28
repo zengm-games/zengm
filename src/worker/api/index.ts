@@ -1,3 +1,4 @@
+import fastDeepEqual from "fast-deep-equal";
 import { csvFormat, csvFormatRows } from "d3-dsv";
 import {
 	GAME_ACRONYM,
@@ -77,6 +78,7 @@ import {
 	type NonEmptyArray,
 	realPlayerPhotosSchema,
 	realTeamInfoSchema,
+	type Awards2,
 } from "../../common/types.ts";
 import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
@@ -168,10 +170,9 @@ import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { GenOrderResult } from "../core/draft/genOrder.ts";
 import undoLog from "./undoLog.ts";
 import {
-	addSimpleAndTeamAwardsToAwardsByPlayer,
 	deleteAwardsByPlayer,
+	getAwardsByPlayer,
 	saveAwardsByPlayer,
-	type AwardsByPlayer,
 } from "../core/awards/awardsByPlayer.ts";
 
 const acceptContractNegotiation = async ({
@@ -4689,30 +4690,48 @@ const updateConfsDivs = async ({
 };
 
 const updateAwards = async (
-	awards: any,
+	newAwards: Pick<Awards2, "awards" | "season">,
 	conditions: Conditions,
 ): Promise<any> => {
-	const awardsInitial = await idb.getCopy.awards(
+	const oldAwards = await idb.getCopy.awards(
 		{
-			season: awards.season,
+			season: newAwards.season,
 		},
 		"noCopyCache",
 	);
 
-	if (!awardsInitial) {
-		throw new Error("awardsInitial not found");
+	if (!oldAwards) {
+		throw new Error("oldAwards not found");
 	}
 
-	// Delete old awards
-	const awardsByPlayerToDelete: AwardsByPlayer = [];
-	addSimpleAndTeamAwardsToAwardsByPlayer(awardsInitial, awardsByPlayerToDelete);
-	await deleteAwardsByPlayer(awardsByPlayerToDelete, awards.season);
+	const playersAll = await idb.getCopies.players(
+		{
+			activeSeason: newAwards.season,
+		},
+		"noCopyCache",
+	);
+	const players = await idb.getCopies.playersPlus(playersAll, {
+		attrs: ["name", "pid"],
+	});
 
-	// Add new awards
-	const awardsByPlayer: AwardsByPlayer = [];
-	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);
-	await idb.cache.awards.put(awards);
-	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season, false);
+	const oldAwardsByPlayer = getAwardsByPlayer(oldAwards.awards, players);
+	const newAwardsByPlayer = getAwardsByPlayer(newAwards.awards, players);
+
+	// Only need to delete/write ones that changed
+	const toDelete = oldAwardsByPlayer.filter((oldAward) =>
+		newAwardsByPlayer.every((newAward) => !fastDeepEqual(newAward, oldAward)),
+	);
+	const toWrite = newAwardsByPlayer.filter((newAward) =>
+		oldAwardsByPlayer.every((oldAward) => !fastDeepEqual(newAward, oldAward)),
+	);
+	console.log({ toDelete, toWrite });
+
+	await deleteAwardsByPlayer(toDelete, newAwards.season);
+	await idb.cache.awards.put({
+		...oldAwards,
+		...newAwards,
+	});
+	await saveAwardsByPlayer(toWrite, conditions, newAwards.season, false);
 };
 
 const upgrade65Estimate = async () => {

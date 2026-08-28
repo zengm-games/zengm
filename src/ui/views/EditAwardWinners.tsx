@@ -331,7 +331,10 @@ const EditAwardWinners = ({
 					event.preventDefault();
 					setSaving(true);
 					try {
-						await toWorker("main", "updateAwards", awardsState);
+						await toWorker("main", "updateAwards", {
+							season,
+							awards: awardsState,
+						});
 						setDirty(false);
 						realtimeUpdate([], helpers.leagueUrl(["history", season]));
 					} catch (error) {

@@ -321,7 +321,7 @@ const allStarDraftSetPlayers = async (
 		// Delete old awards
 		const awardsByPlayerToDelete = pidsToDelete.map((pid) => ({
 			pid,
-			type: "All-Star",
+			award: { type: "All-Star" },
 		}));
 		await deleteAwardsByPlayer(awardsByPlayerToDelete, g.get("season"));
 

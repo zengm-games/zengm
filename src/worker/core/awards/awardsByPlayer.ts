@@ -23,15 +23,15 @@ import { groupByUnique } from "../../../common/utils.ts";
 import type { processAwards } from "./processAwards.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 
-export type AwardsByPlayer = {
+type AwardByPlayer = {
 	pid: number;
 	tid: number;
 	name: string;
 	award: DistributiveOmit<PlayerAward, "season">;
-}[];
+};
 
 export const saveAwardsByPlayer = async (
-	awardsByPlayer: AwardsByPlayer,
+	awardsByPlayer: AwardByPlayer[],
 	conditions: Conditions,
 	season: number = g.get("season"),
 	logEvents: boolean = true,
@@ -134,7 +134,7 @@ export const saveAwardsByPlayer = async (
 };
 
 export const deleteAwardsByPlayer = async (
-	awardsByPlayer: AwardsByPlayer,
+	awardsByPlayer: Pick<AwardByPlayer, "pid" | "award">[],
 	season: number,
 ) => {
 	if (awardsByPlayer.length === 0) {
@@ -188,7 +188,7 @@ export const getLeagueLeaderAwards = async (
 	const gamesPlayedCache = new GamesPlayedCache();
 	await gamesPlayedCache.loadSeasons([season], false);
 
-	const awardsByPlayer: AwardsByPlayer = [];
+	const awardsByPlayer: AwardByPlayer[] = [];
 
 	for (const { stat, name } of leaderAwardCategories) {
 		if (!requirements[stat]) {
@@ -253,7 +253,7 @@ export const getAwardsByPlayer = (
 	}[],
 ) => {
 	const playersByPid = groupByUnique(players, "pid");
-	const awardsByPlayer: AwardsByPlayer = [];
+	const awardsByPlayer: AwardByPlayer[] = [];
 	for (const [index, award] of realizedAwards.entries()) {
 		const common: Pick<
 			PlayerAwardBuiltIn,

@@ -240,7 +240,7 @@ export const MoreLinks = (
 
 		links = [
 			{
-				url: ["award_races"],
+				url: season == undefined ? ["award_races"] : ["award_races", season],
 				name: "Award Races",
 			},
 			{

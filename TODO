@@ -3,9 +3,7 @@ custom awards
 - having Winner undefined in a team award loses pos, should we reevaluate this?
 - EditAwards
   - statOverrides
-    - should show in dropdown too for the winners in all slots
-    - setWinner statOverrides
-      - recompute when saving if not already there (duplicate)
+    - should show in dropdown too for the winners in all slots, even when no box scores
   - show playoff series stats - is statOverridesByMatchup needed in getPlayers for past seasons?
     - if fall back to regular season or playoff stats, show asterisk
   - test

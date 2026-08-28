@@ -283,12 +283,37 @@ const EditAwardWinners = ({
 							}
 
 							// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award
-							return (
-								duplicate ?? {
-									pid: props.p.pid,
-									tid: props.p.tid,
+							if (duplicate) {
+								return duplicate;
+							}
+
+							const row: AwardInfoIndividual["winner"][number] = {
+								pid: props.p.pid,
+								tid: props.p.tid,
+							};
+
+							// Add statOverrides
+							if (props.award.group?.type === "playoffSeries") {
+								const statRange = props.award.statRange ?? "regularSeason";
+								const currentStats = props.p.currentStats[statRange];
+								if (currentStats !== undefined) {
+									const stats = showStatsByType[award.showStats];
+									if (!stats) {
+										throw new Error("Invalid showStats");
+									}
+									row.statOverrides = {
+										// Would be nice to compute score, but maybe not worth the complexity
+										score: 0,
+									};
+									for (const stat of stats) {
+										if (currentStats[stat] !== undefined) {
+											row.statOverrides[stat] = currentStats[stat];
+										}
+									}
 								}
-							);
+							}
+
+							return row;
 						},
 					);
 
@@ -328,13 +353,14 @@ const EditAwardWinners = ({
 									return base;
 								}
 
-								// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award
+								// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award (not strictly necessary here because statOverrides are not in team awards, but I guess this is more future proof, although I'd also need to add code to create statOverrides when there is no duplicate like on the individual award branch above...)
 								if (duplicate) {
 									return {
 										...duplicate,
 										...base,
 									};
 								}
+
 								return {
 									...base,
 									pid: props.p.pid,

@@ -511,13 +511,13 @@ export const processAwards = async ({
 							// Save playoff series stats if possible
 							const currentStats = p.currentStats[statRange];
 							if (currentStats || statOverridesByMatchup) {
-								const stats = showStatsByType[award.showStats];
-								if (!stats) {
-									throw new Error("Invalid showStats");
-								}
-
 								let statOverrides: AwardPlayer2["statOverrides"];
 								if (currentStats !== undefined) {
+									const stats = showStatsByType[award.showStats];
+									if (!stats) {
+										throw new Error("Invalid showStats");
+									}
+
 									tid = currentStats.tid;
 									statOverrides = {
 										score,

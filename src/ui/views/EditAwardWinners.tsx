@@ -84,6 +84,16 @@ const Award = ({
 		throw new Error("Invalid showStats");
 	}
 
+	const statOverridesByPid: Record<
+		number,
+		NonNullable<AwardInfoIndividual["winner"][number]>["statOverrides"]
+	> = {};
+	for (const winner of winners) {
+		if (winner?.pid !== undefined && winner.statOverrides) {
+			statOverridesByPid[winner.pid] = winner.statOverrides;
+		}
+	}
+
 	return (
 		<div className="col-xl-4 col-md-6 col-12 mb-4">
 			<h3>
@@ -131,13 +141,9 @@ const Award = ({
 							? []
 							: stats
 									.map((stat) => {
-										let value;
-										if (p.pid === winner?.pid) {
-											value = winner?.statOverrides?.[stat];
-										}
-										if (value === undefined) {
-											value = p.currentStats[statRange]?.[stat];
-										}
+										const value =
+											statOverridesByPid[p.pid]?.[stat] ??
+											p.currentStats[statRange]?.[stat];
 										if (value === undefined) {
 											return;
 										}

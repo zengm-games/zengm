@@ -1738,6 +1738,7 @@ const migrate = async ({
 	}
 
 	if (oldVersion < 73) {
+		slowUpgrade();
 		await migrate73(transaction);
 	}
 

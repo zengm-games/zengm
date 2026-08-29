@@ -24,7 +24,6 @@ custom awards
       - basketball
       - football
       - hockey
-    - how slow is it, needs a warning?
   - import
     - tricky because we don't have all the players and awards in memory at the same time
       - can i somehow do it without knowing the awards objects?

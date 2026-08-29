@@ -12,6 +12,12 @@ custom awards
     - keep compatibility with old ones by translating to shortName https://www.reddit.com/r/BasketballGM/comments/oey0m6/collection_of_some_goat_lab_formulas/
 - make sure hashAward accounts for everything
 - upgrade
+  - leagues with missing awards objects, like real player leagues without historical data
+    - player awards won't get converted to new format
+      - First -> 1st for all-X teams won't happen (added hack in formatPlayerAwardName)
+      - groupAwards no longer has oldAwards, so those all get sorted to bottom
+      - awards column on player page wil not be populated with these old awards
+    - award records doesn't show any of the built-in awards, because it's all based on awards objects now
   - indexeddb
     - test
       - baseball

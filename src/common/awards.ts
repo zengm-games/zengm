@@ -41,6 +41,17 @@ export const formatPlayerAwardName = (
 		return `${prefixAndRank} ${award.name}`;
 	}
 
+	// For either manually added team awards, or old ones in a league without corresponding awards objects (such as a real players league without all historical data)
+	if (award.type.startsWith("First ")) {
+		return `1st ${award.type.replace("First ", "")}`;
+	}
+	if (award.type.startsWith("Second ")) {
+		return `2nd ${award.type.replace("Second ", "")}`;
+	}
+	if (award.type.startsWith("Third ")) {
+		return `3rd ${award.type.replace("Third ", "")}`;
+	}
+
 	return award.type;
 };
 

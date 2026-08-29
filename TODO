@@ -8,8 +8,9 @@ custom awards
 - rename Awards2
 - upgrade
   - indexeddb
-    - specify old default awards, even if we're changing the defaults now
+    - test
       - baseball
+      - basketball
       - football
       - hockey
     - how slow is it, needs a warning?
@@ -30,6 +31,8 @@ custom awards
   - conf/div abbrev
 - blog
   - apologize for lack of replies and other updates
+  - same formulas as before
+  - numTeams changed for some team awards
   - roy changes
     - edge cases
       - new league with no stats

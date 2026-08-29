@@ -11,6 +11,7 @@ import type {
 import { omit } from "../../../../common/utils.ts";
 import {
 	defaultAwards,
+	defaultAwardsBaseball,
 	defaultAwardsBasketball,
 	defaultAwardsFootball,
 	defaultAwardsHockey,
@@ -54,7 +55,48 @@ export const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 	>({
 		baseball: () => {
 			const oldAwards = oldAwardsRaw as OldAwardsBaseball;
-			return [];
+			return [
+				{
+					type: "individual",
+					new: defaultAwards.mvp,
+					old: oldAwards.mvp,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsBaseball.poy,
+					old: oldAwards.poy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsBaseball.rpoy,
+					old: oldAwards.rpoy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsBaseball.roy,
+					old: oldAwards.roy,
+				},
+				{
+					type: "individual",
+					new: defaultAwards.fmvp,
+					old: oldAwards.finalsMvp,
+				},
+				{
+					type: "team",
+					new: defaultAwards.all,
+					old: [oldAwards.allOffense],
+				},
+				{
+					type: "team",
+					new: defaultAwardsBaseball.def,
+					old: [oldAwards.allDefense],
+				},
+				{
+					type: "team",
+					new: defaultAwards.alr,
+					old: [oldAwards.allRookie],
+				},
+			];
 		},
 		basketball: () => {
 			const oldAwards = oldAwardsRaw as OldAwardsBasketball;

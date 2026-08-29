@@ -34,7 +34,7 @@ type WinnerTeam = Extract<
 	{ pid: number }
 >;
 
-export const parseOldAwards = (oldAwardsRaw: OldAwards) => {
+const getNewAwards = (oldAwardsRaw: OldAwards) => {
 	const awards: Awards2["awards"] = [];
 
 	const toTranslate = bySport<
@@ -327,4 +327,27 @@ export const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 	}
 
 	return awards;
+};
+
+export const oldAwardsToNewAwards = (oldAwards: OldAwards) => {
+	const bestRecordConfs: Record<number, number> = {};
+	if (oldAwards.bestRecordConfs) {
+		for (const [cid, row] of oldAwards.bestRecordConfs.entries()) {
+			if (row?.tid !== undefined) {
+				bestRecordConfs[cid] = row.tid;
+			}
+		}
+	}
+
+	const awards = getNewAwards(oldAwards);
+
+	const newAwards: Awards2 = {
+		season: oldAwards.season,
+		bestRecord: oldAwards.bestRecord?.tid ?? PLAYER.DOES_NOT_EXIST,
+		bestRecordConfs,
+		bestRecordDivs: {},
+		awards,
+	};
+
+	return newAwards;
 };

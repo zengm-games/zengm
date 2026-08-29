@@ -7,29 +7,6 @@ import { orderBy } from "../../common/utils.ts";
 import type { PlayerAwardBuiltInWithPrefix } from "../../worker/views/player.ts";
 import { helpers } from "./helpers.ts";
 
-// These are old award names from before customizable awards
-const awardsOld = [
-	"Most Valuable Player",
-	"Finals MVP",
-	"Semifinals MVP",
-	"Offensive Player of the Year",
-	"Protector of the Year",
-	"Defensive Player of the Year",
-	"Goalie of the Year",
-	"Sixth Man of the Year",
-	"Most Improved Player",
-	"Rookie of the Year",
-	"Offensive Rookie of the Year",
-	"Defensive Rookie of the Year",
-	"First Team All-League",
-	"Second Team All-League",
-	"Third Team All-League",
-	"First Team All-Defensive",
-	"Second Team All-Defensive",
-	"Third Team All-Defensive",
-	"All-Rookie Team",
-];
-
 // These are "awards" not stored in awards table to show before/after normal awards
 const awardsStart = ["Inducted into the Hall of Fame", "Won Championship"];
 const awardsEnd = [
@@ -206,7 +183,6 @@ export const groupAwards = (
 		...orderBy(realAwardsGrouped, ["averageIndex", "type"], ["asc", "asc"]),
 	);
 
-	processFakeAwards(awardsOld);
 	processFakeAwards(awardsEnd);
 
 	// Handle non-default awards, just for fun if someone wants to add more

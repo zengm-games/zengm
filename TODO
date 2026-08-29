@@ -21,9 +21,8 @@ custom awards
   - test
     - all sports
     - grouped awards look fine
-- get rid of SIMPLE_AWARDS and AWARD_NAMES (might need in upgrade though)
-- search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
-  - after upgrade, can remove awardsOld?
+- get rid of AWARD_NAMES
+- after upgrade, can remove awardsOld from groupAwards?
 - schema
   - setting
   - awards object

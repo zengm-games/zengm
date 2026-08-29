@@ -9,7 +9,11 @@ import type {
 	AwardSettingTeam,
 } from "../../../../common/types.ts";
 import { omit } from "../../../../common/utils.ts";
-import { defaultAwards, defaultAwardsBasketball } from "./defaultAwards.ts";
+import {
+	defaultAwards,
+	defaultAwardsBasketball,
+	defaultAwardsFootball,
+} from "./defaultAwards.ts";
 import type {
 	OldAwards,
 	OldAwardsBaseball,
@@ -41,7 +45,9 @@ export const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 			| {
 					type: "team";
 					new: AwardSettingTeam;
-					old: { pid: number; pos?: string; tid: number }[][] | undefined;
+					old:
+						| ({ pid: number; pos?: string; tid: number } | undefined)[][]
+						| undefined;
 			  }
 		)[]
 	>({
@@ -111,7 +117,53 @@ export const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 		},
 		football: () => {
 			const oldAwards = oldAwardsRaw as OldAwardsFootball;
-			return [];
+			return [
+				{
+					type: "individual",
+					new: defaultAwards.mvp,
+					old: oldAwards.mvp,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsFootball.opoy,
+					old: oldAwards.opoy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsFootball.poy,
+					old: oldAwards.poy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsFootball.dpoy,
+					old: oldAwards.dpoy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsFootball.oroy,
+					old: oldAwards.oroy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsFootball.droy,
+					old: oldAwards.droy,
+				},
+				{
+					type: "individual",
+					new: defaultAwards.fmvp,
+					old: oldAwards.finalsMvp,
+				},
+				{
+					type: "team",
+					new: defaultAwards.all,
+					old: oldAwards.allLeague.map((team) => team.players),
+				},
+				{
+					type: "team",
+					new: defaultAwards.alr,
+					old: [oldAwards.allRookie],
+				},
+			];
 		},
 		hockey: () => {
 			const oldAwards = oldAwardsRaw as OldAwardsHockey;
@@ -168,19 +220,21 @@ export const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 			const award: AwardInfoTeam = {
 				...omit(row.new, ["group"]),
 				winner: row.old.map((team) =>
-					team.map((p) => {
-						const winner: WinnerTeam = {
-							pid: p.pid,
-							tid: p.tid,
-						};
-						if (TEAM_AWARD_INFO.byPos && p.pos !== undefined) {
-							winner.pos = p.pos;
-						}
+					team
+						.filter((p) => p !== undefined)
+						.map((p) => {
+							const winner: WinnerTeam = {
+								pid: p.pid,
+								tid: p.tid,
+							};
+							if (TEAM_AWARD_INFO.byPos && p.pos !== undefined) {
+								winner.pos = p.pos;
+							}
 
-						// No need to set statOverrides because old playoff series awards are all individual
+							// No need to set statOverrides because old playoff series awards are all individual
 
-						return winner;
-					}),
+							return winner;
+						}),
 				),
 			};
 

@@ -538,7 +538,25 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			},
 			awards: {
 				type: "array",
-				items: zodJsonSchema(awardsSchema),
+				items: {
+					oneOf: [
+						zodJsonSchema(awardsSchema),
+
+						// We don't want old files to be an error, at least not for a while (2026-08 is when the new awards schema came out), so this will catch any old ones. allRookie as an array is maybe the only property that is defined in all sports
+						{
+							type: "object",
+							properties: {
+								allRookie: {
+									type: "array",
+								},
+								season: {
+									type: "integer",
+								},
+							},
+							required: ["allRookie", "season"],
+						},
+					],
+				},
 			},
 			draftPicks: {
 				type: "array",

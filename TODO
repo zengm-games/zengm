@@ -30,7 +30,6 @@ custom awards
     - grouped awards look fine
 - get rid of AWARD_NAMES
 - schema
-  - don't go crazy with old awards objects
   - conf/div abbrev
 - maybe
   - real player data for award top 5 finish

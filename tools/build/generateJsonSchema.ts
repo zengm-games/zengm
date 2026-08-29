@@ -499,6 +499,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			div: {
 				type: "object",
 				properties: {
+					abbrev: {
+						type: "string",
+					},
 					did: {
 						type: "integer",
 					},
@@ -514,6 +517,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			conf: {
 				type: "object",
 				properties: {
+					abbrev: {
+						type: "string",
+					},
 					cid: {
 						type: "integer",
 					},

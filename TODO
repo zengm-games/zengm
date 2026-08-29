@@ -29,8 +29,6 @@ custom awards
     - all sports
     - grouped awards look fine
 - get rid of AWARD_NAMES
-- schema
-  - conf/div abbrev
 - maybe
   - real player data for award top 5 finish
   - showStats have some default value we can assume to save space

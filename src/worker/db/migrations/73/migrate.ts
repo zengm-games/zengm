@@ -11,6 +11,7 @@ import type {
 import { omit } from "../../../../common/utils.ts";
 import { getAwardsByPlayer } from "../../../core/awards/awardsByPlayer.ts";
 import type { VersionChangeTransaction } from "../../connectLeague.ts";
+import { updatePlayerAwards } from "./updatePlayerAwards.ts";
 import { defaultAwards, defaultAwardsBasketball } from "./defaultAwards.ts";
 import { getOldAwardsByPlayer } from "./getOldAwardsByPlayer.ts";
 import type {
@@ -234,5 +235,13 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 		console.log({ oldAwards, newAwards, oldAwardsByPlayer, newAwardsByPlayer });
 
 		await cursor.update(newAwards);
+
+		await updatePlayerAwards({
+			awardsToDelete: oldAwardsByPlayer,
+			awardsToSave: newAwardsByPlayer,
+			getPlayer: (pid) => transaction.objectStore("players").get(pid),
+			putPlayer: (p) => transaction.objectStore("players").put(p),
+			season: newAwards.season,
+		});
 	}
 };

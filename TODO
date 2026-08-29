@@ -76,6 +76,7 @@ custom awards
     - pick and choose which awards to import, and option to not overwrite all
     - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
     - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
+  - make deleteAwardsByPlayer and saveAwardsByPlayer one function, like updatePlayerAwards
 
 when deleting all leagues, count in the notification should subtract starred ones
 

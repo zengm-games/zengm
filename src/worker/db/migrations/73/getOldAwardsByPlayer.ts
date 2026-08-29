@@ -1,4 +1,3 @@
-import { PLAYER } from "../../../../common/constants.ts";
 import { bySport, isSport } from "../../../../common/sportFunctions.ts";
 import type { AwardByPlayer } from "../../../core/awards/awardsByPlayer.ts";
 import type { OldAwards } from "./types.ts";
@@ -59,7 +58,7 @@ const AWARD_NAMES = bySport<Record<string, string>>({
 });
 
 export const getOldAwardsByPlayer = (awards: OldAwards) => {
-	const awardsByPlayer: AwardByPlayer[] = [];
+	const awardsByPlayer: Pick<AwardByPlayer, "pid" | "award">[] = [];
 
 	for (const key of SIMPLE_AWARDS) {
 		const type = AWARD_NAMES[key]!;
@@ -71,8 +70,6 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 
 		awardsByPlayer.push({
 			pid: award.pid,
-			tid: PLAYER.DOES_NOT_EXIST,
-			name: "",
 			award: { type },
 		});
 	}
@@ -94,8 +91,6 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 				if (p) {
 					awardsByPlayer.push({
 						pid: p.pid,
-						tid: PLAYER.DOES_NOT_EXIST,
-						name: "",
 						award: { type },
 					});
 				}
@@ -106,8 +101,6 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 					if (p) {
 						awardsByPlayer.push({
 							pid: p.pid,
-							tid: PLAYER.DOES_NOT_EXIST,
-							name: "",
 							award: { type: `${level.title} ${type}` },
 						});
 					}

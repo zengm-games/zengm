@@ -37,10 +37,6 @@ export const saveAwardsByPlayer = async (
 	logEvents: boolean = true,
 	allStarGID?: number,
 ) => {
-	if (awardsByPlayer.length === 0) {
-		return;
-	}
-
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
 		let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
@@ -105,28 +101,22 @@ export const saveAwardsByPlayer = async (
 			);
 		}
 	}
-	const pids = Array.from(
-		new Set(awardsByPlayer.map((award) => award.pid)),
-	).filter((x) => x != undefined);
-	for (const pid of pids) {
-		let p = await idb.cache.players.get(pid);
-		if (!p) {
-			p = await idb.getCopy.players(
-				{
-					pid,
-				},
-				"noCopyCache",
-			);
-		}
 
-		if (p && pid != undefined) {
-			for (const awardByPlayer of awardsByPlayer) {
-				if (awardByPlayer.pid === pid) {
-					addAward(p, {
-						...awardByPlayer.award,
-						season,
-					});
-				}
+	const awardsByPid = Map.groupBy(awardsByPlayer, (award) => award.pid);
+
+	for (const [pid, toSave] of awardsByPid) {
+		const p = await idb.getCopy.players(
+			{
+				pid,
+			},
+			"noCopyCache",
+		);
+		if (p) {
+			for (const { award } of toSave) {
+				addAward(p, {
+					...award,
+					season,
+				});
 			}
 			await idb.cache.players.put(p);
 		}
@@ -137,10 +127,6 @@ export const deleteAwardsByPlayer = async (
 	awardsByPlayer: Pick<AwardByPlayer, "pid" | "award">[],
 	season: number,
 ) => {
-	if (awardsByPlayer.length === 0) {
-		return;
-	}
-
 	const pids = Array.from(new Set(awardsByPlayer.map((award) => award.pid)));
 	const players = await idb.getCopies.players(
 		{

@@ -45,7 +45,7 @@ export const defaultAwards = {
 			name: "All-League",
 			showStats: "overall",
 			formula: "ps",
-			numTeams: 2,
+			numTeams: 3,
 		},
 	}),
 	alr: bySport<AwardSettingTeam>({

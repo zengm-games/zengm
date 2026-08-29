@@ -13,6 +13,7 @@ import {
 	defaultAwards,
 	defaultAwardsBasketball,
 	defaultAwardsFootball,
+	defaultAwardsHockey,
 } from "./defaultAwards.ts";
 import type {
 	OldAwards,
@@ -167,7 +168,48 @@ export const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 		},
 		hockey: () => {
 			const oldAwards = oldAwardsRaw as OldAwardsHockey;
-			return [];
+			return [
+				{
+					type: "individual",
+					new: defaultAwards.mvp,
+					old: oldAwards.mvp,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsHockey.goy,
+					old: oldAwards.goy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsHockey.dpoy,
+					old: oldAwards.dpoy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsHockey.dfoy,
+					old: oldAwards.dfoy,
+				},
+				{
+					type: "individual",
+					new: defaultAwardsHockey.roy,
+					old: oldAwards.roy,
+				},
+				{
+					type: "individual",
+					new: defaultAwards.fmvp,
+					old: oldAwards.finalsMvp,
+				},
+				{
+					type: "team",
+					new: defaultAwards.all,
+					old: oldAwards.allLeague.map((team) => team.players),
+				},
+				{
+					type: "team",
+					new: defaultAwards.alr,
+					old: [oldAwards.allRookie],
+				},
+			];
 		},
 	})();
 

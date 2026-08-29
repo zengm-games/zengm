@@ -590,14 +590,6 @@ export const RATINGS: RatingKey[] = [
 	"endu",
 ];
 
-export const SIMPLE_AWARDS = [
-	"mvp",
-	"roy",
-	"poy",
-	"rpoy",
-	"finalsMvp",
-] as const;
-
 export const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",

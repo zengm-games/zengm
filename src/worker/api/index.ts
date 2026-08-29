@@ -4724,7 +4724,6 @@ const updateAwards = async (
 	const toWrite = newAwardsByPlayer.filter((newAward) =>
 		oldAwardsByPlayer.every((oldAward) => !fastDeepEqual(newAward, oldAward)),
 	);
-	console.log({ toDelete, toWrite });
 
 	await deleteAwardsByPlayer(toDelete, newAwards.season);
 	await idb.cache.awards.put({

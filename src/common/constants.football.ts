@@ -937,16 +937,6 @@ export const RATINGS: RatingKey[] = [
 	"pac",
 ];
 
-export const SIMPLE_AWARDS = [
-	"mvp",
-	"opoy",
-	"poy",
-	"dpoy",
-	"oroy",
-	"droy",
-	"finalsMvp",
-] as const;
-
 export const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	opoy: "Offensive Player of the Year",

@@ -9,8 +9,10 @@ import type {
 	AwardSettingTeam,
 } from "../../../../common/types.ts";
 import { omit } from "../../../../common/utils.ts";
+import { getAwardsByPlayer } from "../../../core/awards/awardsByPlayer.ts";
 import type { VersionChangeTransaction } from "../../connectLeague.ts";
 import { defaultAwards, defaultAwardsBasketball } from "./defaultAwards.ts";
+import { getOldAwardsByPlayer } from "./getOldAwardsByPlayer.ts";
 import type {
 	OldAwards,
 	OldAwardsBaseball,
@@ -120,11 +122,6 @@ const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 		},
 	})();
 
-	const oldAwardsToDelete: {
-		season: number;
-		type: string;
-	}[] = [];
-
 	for (const row of toTranslate) {
 		if (!row.old) {
 			continue;
@@ -194,7 +191,7 @@ const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 		}
 	}
 
-	return { awards, oldAwardsToDelete };
+	return awards;
 };
 
 export const migrate73 = async (transaction: VersionChangeTransaction) => {
@@ -206,6 +203,8 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 			continue;
 		}
 
+		// Make new awards object, based on old one
+
 		const bestRecordConfs: Record<number, number> = {};
 		if (oldAwards.bestRecordConfs) {
 			for (const [cid, row] of oldAwards.bestRecordConfs.entries()) {
@@ -215,7 +214,7 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 			}
 		}
 
-		const { awards, oldAwardsToDelete } = parseOldAwards(oldAwards);
+		const awards = parseOldAwards(oldAwards);
 
 		const newAwards: Awards2 = {
 			season: oldAwards.season,
@@ -224,7 +223,15 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 			bestRecordDivs: {},
 			awards,
 		};
-		console.log(newAwards);
+
+		// Figure out what player awards to delete, based on old awards object
+		const oldAwardsByPlayer = getOldAwardsByPlayer(oldAwards);
+
+		// Figure out what new player awards to add, based on new awards object
+		// Can pass empty array as players because we don't care what tid/name anyone has, we're not creating events
+		const newAwardsByPlayer = getAwardsByPlayer(newAwards.awards, []);
+
+		console.log({ oldAwards, newAwards, oldAwardsByPlayer, newAwardsByPlayer });
 
 		await cursor.update(newAwards);
 	}

@@ -313,15 +313,6 @@ export const RATINGS: RatingKey[] = [
 	"glk",
 ];
 
-export const SIMPLE_AWARDS = [
-	"mvp",
-	"dpoy",
-	"dfoy",
-	"goy",
-	"roy",
-	"finalsMvp",
-] as const;
-
 export const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",

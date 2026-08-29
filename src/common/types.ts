@@ -16,6 +16,8 @@ import {
 	type PlayerAwardBuiltIn,
 	type PlayerAwardSimple,
 	type PlayerAward,
+	type Award,
+	type Awards,
 } from "../../common/types.ts";
 
 export {
@@ -30,6 +32,8 @@ export {
 	type PlayerAwardBuiltIn,
 	type PlayerAwardSimple,
 	type PlayerAward,
+	type Award,
+	type Awards,
 };
 
 // Would be nice to make .at(-1) return T but idk how, so use the `last` function instead!
@@ -2041,13 +2045,3 @@ export type SavedTradingBlock = {
 };
 
 export type TeamNum = 0 | 1;
-
-export type Award = AwardInfoIndividual | AwardInfoTeam;
-
-export type Awards = {
-	season: number;
-	bestRecord: number; // tid
-	bestRecordConfs: Record<number, number>; // <cid, tid>
-	bestRecordDivs: Record<number, number>; // <did, tid>
-	awards: Award[];
-};

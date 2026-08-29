@@ -196,8 +196,8 @@ const playerAwardBuiltInBaseSchema = z.object({
 	type: z.undefined().optional(),
 	name: z.string(),
 	shortName: z.string(),
-	index: z.number(),
-	rank: z.number(),
+	index: z.number(), // Index in the list of awards for this season - this is just used in the UI some places for sorting
+	rank: z.number(), // rank in individual award, team number in team award
 	group: z
 		.discriminatedUnion("type", [
 			z.object({
@@ -230,3 +230,19 @@ export const playerAwardSchema = z.union([
 export type PlayerAwardBuiltIn = z.infer<typeof playerAwardBuiltInSchema>;
 export type PlayerAwardSimple = z.infer<typeof playerAwardSimpleSchema>;
 export type PlayerAward = z.infer<typeof playerAwardSchema>;
+
+const awardSchema = z.union([awardInfoIndividualSchema, awardInfoTeamSchema]);
+
+export const awardsSchema = z.object({
+	season: z.number(),
+	bestRecord: z.number(), // tid
+
+	// Keys can't be z.number() because that messes up the JSON Schema type https://github.com/colinhacks/zod/issues/6496
+	bestRecordConfs: z.record(z.string(), z.number()), // <cid, tid>
+	bestRecordDivs: z.record(z.string(), z.number()), // <did, tid>
+
+	awards: z.array(awardSchema),
+});
+
+export type Award = z.infer<typeof awardSchema>;
+export type Awards = z.infer<typeof awardsSchema>;

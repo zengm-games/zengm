@@ -1,7 +1,11 @@
 import { toJSONSchema } from "zod";
 import { bySport } from "../lib/bySport.ts";
 import type { Sport } from "../lib/getSport.ts";
-import { awardSettingsSchema, playerAwardSchema } from "../../common/types.ts";
+import {
+	awardSettingsSchema,
+	awardsSchema,
+	playerAwardSchema,
+} from "../../common/types.ts";
 
 const zodJsonSchema = (schema: any) => {
 	const jsonSchema = toJSONSchema(schema, {
@@ -534,10 +538,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			},
 			awards: {
 				type: "array",
-				items: {
-					type: "object",
-					properties: {},
-				},
+				items: zodJsonSchema(awardsSchema),
 			},
 			draftPicks: {
 				type: "array",

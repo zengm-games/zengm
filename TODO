@@ -1,5 +1,7 @@
 custom awards
 - editing award of incomplete team will only show the slots that are defined, not allow you to pick new ones
+  - byPos and not
+    - basketball see old seasons before awards existed in real players league
   - add placeholders in edit code
   - any extra to the end
   - DH issue
@@ -28,7 +30,7 @@ custom awards
     - grouped awards look fine
 - get rid of AWARD_NAMES
 - schema
-  - awards object
+  - don't go crazy with old awards objects
   - conf/div abbrev
 - maybe
   - real player data for award top 5 finish

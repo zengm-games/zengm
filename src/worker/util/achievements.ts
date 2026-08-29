@@ -4,7 +4,7 @@ import type {
 	Achievement,
 	AwardInfoIndividual,
 	AwardInfoTeam,
-	Awards2,
+	Awards,
 	AwardSettingIndividual,
 	AwardSettingTeam,
 	NonEmptyArray,
@@ -30,7 +30,7 @@ const findAwards = <
 		? AwardInfoIndividual
 		: AwardInfoTeam),
 >(
-	awards: Awards2 | undefined,
+	awards: Awards | undefined,
 	searchFor: Input,
 ): Output[] => {
 	if (!awards) {
@@ -99,7 +99,7 @@ const findAwards = <
 };
 
 const findAwardWinners = (
-	awards: Awards2 | undefined,
+	awards: Awards | undefined,
 	searchFor: AwardSettingIndividual,
 ) => {
 	return findAwards(awards, searchFor)

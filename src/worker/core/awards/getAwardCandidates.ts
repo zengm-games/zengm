@@ -1,9 +1,9 @@
 import { bySport } from "../../../common/sportFunctions.ts";
 import type {
-	Award2,
+	Award,
 	AwardInfoIndividual,
 	AwardInfoTeam,
-	Awards2,
+	Awards,
 	GameAttributesLeague,
 } from "../../../common/types.ts";
 import { groupByUnique } from "../../../common/utils.ts";
@@ -14,7 +14,7 @@ import type { StatOverridesByMatchup } from "./getPlayers.ts";
 import { hashPlayoffSeries } from "./hashPlayoffSeries.ts";
 import { processAwards } from "./processAwards.ts";
 
-const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
+const persistedAwardsToAwardSetting = (persistedAwards: Awards) => {
 	let statOverridesByMatchup: StatOverridesByMatchup | undefined;
 
 	const awards: GameAttributesLeague["awards"] = [];
@@ -48,7 +48,7 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
 		seenShortNames.add(persistedAward.shortName);
 
 		const award: GameAttributesLeague["awards"][number] & {
-			winner?: Awards2["awards"][number]["winner"];
+			winner?: Awards["awards"][number]["winner"];
 		} = {
 			...persistedAward,
 			group:
@@ -107,7 +107,7 @@ export const getAwardCandidates = async (
 	const playersByPid = groupByUnique(players, "pid");
 
 	// Like showStatsByType but with a bit more
-	const awardCandidateStats: Partial<Record<Award2["showStats"], string[]>> =
+	const awardCandidateStats: Partial<Record<Award["showStats"], string[]>> =
 		bySport({
 			baseball: {
 				overall: ["keyStats", "war"],
@@ -133,7 +133,7 @@ export const getAwardCandidates = async (
 		});
 
 	const augmentPlayers = (
-		award: Award2,
+		award: Award,
 		winner:
 			| AwardInfoIndividual["winner"]
 			| (AwardInfoTeam["winner"][number][number] & {

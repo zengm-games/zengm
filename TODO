@@ -5,7 +5,6 @@ custom awards
     - award:shortName
     - keep compatibility with old ones by translating to shortName https://www.reddit.com/r/BasketballGM/comments/oey0m6/collection_of_some_goat_lab_formulas/
 - make sure hashAward accounts for everything
-- rename Awards2
 - upgrade
   - indexeddb
     - test
@@ -22,7 +21,6 @@ custom awards
     - all sports
     - grouped awards look fine
 - get rid of AWARD_NAMES
-- after upgrade, can remove awardsOld from groupAwards?
 - schema
   - setting
   - awards object

@@ -517,7 +517,7 @@ export type TragicDeaths = {
 
 type FootballOvertime = "suddenDeath" | "exceptFg" | "bothPossess";
 
-const awardPlayer2Schema = z.object({
+const awardPlayerSchema = z.object({
 	pid: z.number(),
 	tid: z.number(),
 	statOverrides: z
@@ -528,7 +528,7 @@ const awardPlayer2Schema = z.object({
 		.optional(),
 });
 
-export type AwardPlayer2 = z.infer<typeof awardPlayer2Schema>;
+export type AwardPlayer = z.infer<typeof awardPlayerSchema>;
 
 const awardInfoCommonSchema = z.object({
 	shortName: z.string(),
@@ -604,10 +604,10 @@ const awardInfoIndividualSchema = awardInfoCommonSchema
 		// Individual award - top 5 are saved, although we may have fewer slots than that in an upgraded league
 		winner: z.array(
 			z.union([
-				awardPlayer2Schema.extend({
+				awardPlayerSchema.extend({
 					opoyOverride: z.literal(true).optional(),
 				}),
-				awardPlayer2Schema.extend({
+				awardPlayerSchema.extend({
 					pid: z.undefined().optional(),
 					tid: z.undefined().optional(),
 				}),
@@ -625,13 +625,13 @@ const awardInfoTeamSchema = awardInfoCommonSchema
 		winner: z.array(
 			z.array(
 				z.union([
-					awardPlayer2Schema.extend({
+					awardPlayerSchema.extend({
 						// pos is defined if TEAM_AWARD_INFO.byPos
 						pos: z.string().optional(),
 					}),
 
 					// This would be if it can't find enough players at one position - either an empty object, or one containg only pos if TEAM_AWARD_INFO.byPos
-					awardPlayer2Schema.extend({
+					awardPlayerSchema.extend({
 						pid: z.undefined().optional(),
 						tid: z.undefined().optional(),
 						pos: z.string().optional(),
@@ -2231,12 +2231,12 @@ export type SavedTradingBlock = {
 
 export type TeamNum = 0 | 1;
 
-export type Award2 = AwardInfoIndividual | AwardInfoTeam;
+export type Award = AwardInfoIndividual | AwardInfoTeam;
 
-export type Awards2 = {
+export type Awards = {
 	season: number;
 	bestRecord: number; // tid
 	bestRecordConfs: Record<number, number>; // <cid, tid>
 	bestRecordDivs: Record<number, number>; // <did, tid>
-	awards: Award2[];
+	awards: Award[];
 };

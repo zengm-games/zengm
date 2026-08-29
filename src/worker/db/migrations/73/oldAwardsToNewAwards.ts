@@ -4,7 +4,7 @@ import { bySport } from "../../../../common/sportFunctions.ts";
 import type {
 	AwardInfoIndividual,
 	AwardInfoTeam,
-	Awards2,
+	Awards,
 	AwardSettingIndividual,
 	AwardSettingTeam,
 } from "../../../../common/types.ts";
@@ -35,7 +35,7 @@ type WinnerTeam = Extract<
 >;
 
 const getNewAwards = (oldAwardsRaw: OldAwards) => {
-	const awards: Awards2["awards"] = [];
+	const awards: Awards["awards"] = [];
 
 	const toTranslate = bySport<
 		() => (
@@ -341,7 +341,7 @@ export const oldAwardsToNewAwards = (oldAwards: OldAwards) => {
 
 	const awards = getNewAwards(oldAwards);
 
-	const newAwards: Awards2 = {
+	const newAwards: Awards = {
 		season: oldAwards.season,
 		bestRecord: oldAwards.bestRecord?.tid ?? PLAYER.DOES_NOT_EXIST,
 		bestRecordConfs,

@@ -1,5 +1,5 @@
 import { g } from "../../util/index.ts";
-import type { Award2, PlayerAwardBuiltIn } from "../../../common/types.ts";
+import type { Award, PlayerAwardBuiltIn } from "../../../common/types.ts";
 
 const getInitials = (string: string) => {
 	return (
@@ -11,7 +11,7 @@ const getInitials = (string: string) => {
 };
 
 export const getGroupPrefix = (
-	award: Pick<Award2, "group"> | Pick<PlayerAwardBuiltIn, "group">,
+	award: Pick<Award, "group"> | Pick<PlayerAwardBuiltIn, "group">,
 	season: number,
 ) => {
 	const group = award.group;
@@ -33,7 +33,7 @@ export const getGroupPrefix = (
 };
 
 export const formatAwardNamePrefix = (
-	award: Pick<Award2, "group" | "name" | "shortName">,
+	award: Pick<Award, "group" | "name" | "shortName">,
 	season: number,
 	short?: boolean,
 ) => {

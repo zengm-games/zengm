@@ -1,6 +1,6 @@
 import { helpers } from "./helpers.ts";
 import { bySport } from "./sportFunctions.ts";
-import type { Award2, PlayerAwardBuiltIn } from "./types.ts";
+import type { Award, PlayerAwardBuiltIn } from "./types.ts";
 
 export const formatTeamNumber = (rank: number) =>
 	`${helpers.ordinal(rank)} Team`;
@@ -44,7 +44,7 @@ export const formatPlayerAwardName = (
 	return award.type;
 };
 
-export const showStatsByType: Partial<Record<Award2["showStats"], string[]>> =
+export const showStatsByType: Partial<Record<Award["showStats"], string[]>> =
 	bySport({
 		baseball: {
 			// keyStats formats W-L and slash line nicely

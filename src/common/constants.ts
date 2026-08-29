@@ -9,7 +9,7 @@ import type {
 	Phase,
 	DraftType,
 	MoodTrait,
-	Award2,
+	Award,
 } from "./types.ts";
 
 export const ACCOUNT_API_URL =
@@ -601,7 +601,7 @@ export const TEAM_AWARD_INFO:
 	  }
 	| {
 			byPos: true;
-			positions: Partial<Record<Award2["showStats"], string[]>> &
+			positions: Partial<Record<Award["showStats"], string[]>> &
 				Record<"default", string[]>;
 	  } = bySport({
 	baseball: {

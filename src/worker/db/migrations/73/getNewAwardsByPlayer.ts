@@ -1,6 +1,6 @@
 import type {
 	AwardInfoIndividual,
-	Awards2,
+	Awards,
 	PlayerAwardBuiltIn,
 } from "../../../../common/types.ts";
 import type { AwardByPlayer } from "../../../core/awards/awardsByPlayer.ts";
@@ -9,7 +9,7 @@ import type { AwardByPlayer } from "../../../core/awards/awardsByPlayer.ts";
 
 type MyAwardByPlayer = Pick<AwardByPlayer, "pid" | "award">;
 
-export const getNewAwardsByPlayer = (awards: Awards2["awards"]) => {
+export const getNewAwardsByPlayer = (awards: Awards["awards"]) => {
 	const awardsByPlayer: MyAwardByPlayer[] = [];
 	for (const [index, award] of awards.entries()) {
 		const common: Pick<

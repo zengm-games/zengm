@@ -1,6 +1,6 @@
 import type {
 	AwardInfoIndividual,
-	AwardPlayer2,
+	AwardPlayer,
 	NonEmptyArray,
 	Player,
 } from "../../../common/types.ts";
@@ -29,7 +29,7 @@ export type StatOverridesByMatchup = Record<
 	string,
 	Record<
 		number,
-		AwardPlayer2["statOverrides"] & {
+		AwardPlayer["statOverrides"] & {
 			tid: number;
 		}
 	>

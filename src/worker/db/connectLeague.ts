@@ -43,7 +43,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
 	SavedTradingBlock,
-	Awards2,
+	Awards,
 } from "../../common/types.ts";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
@@ -63,7 +63,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	awards: {
 		key: number;
-		value: Awards2;
+		value: Awards;
 	};
 	draftLotteryResults: {
 		key: number;

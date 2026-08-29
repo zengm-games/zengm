@@ -78,7 +78,7 @@ import {
 	type NonEmptyArray,
 	realPlayerPhotosSchema,
 	realTeamInfoSchema,
-	type Awards2,
+	type Awards,
 } from "../../common/types.ts";
 import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
@@ -4690,7 +4690,7 @@ const updateConfsDivs = async ({
 };
 
 const updateAwards = async (
-	newAwards: Pick<Awards2, "awards" | "season">,
+	newAwards: Pick<Awards, "awards" | "season">,
 	conditions: Conditions,
 ): Promise<any> => {
 	const oldAwards = await idb.getCopy.awards(

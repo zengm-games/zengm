@@ -1,5 +1,5 @@
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
-import type { Achievement, Awards2 } from "../../common/types.ts";
+import type { Achievement, Awards } from "../../common/types.ts";
 import { mockIDBLeague, resetCache, resetG } from "../../test/helpers.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -8,8 +8,8 @@ import g from "./g.ts";
 import helpers from "./helpers.ts";
 
 export const makeAwards = (
-	awards: Partial<Awards2> & Pick<Awards2, "awards">,
-): Awards2 => {
+	awards: Partial<Awards> & Pick<Awards, "awards">,
+): Awards => {
 	return {
 		season: g.get("season"),
 		bestRecord: 0,

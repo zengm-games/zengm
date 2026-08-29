@@ -4,7 +4,7 @@ import type {
 	UpdateEvents,
 	AllStars,
 	ViewInput,
-	Awards2,
+	Awards,
 } from "../../common/types.ts";
 import { season } from "../core/index.ts";
 import { omit, orderBy } from "../../common/utils.ts";
@@ -54,7 +54,7 @@ const maxBy = <Key extends string, T extends Record<Key, number | undefined>>(
 const tallyAwards = async (
 	tid: number,
 	seasons: Set<number>,
-	awards: Awards2[],
+	awards: Awards[],
 	allAllStars: AllStars[],
 ) => {
 	const teamAwards = {
@@ -139,7 +139,7 @@ const getRowInfo = async (
 		ptsMax: number;
 		playoffRoundsWon: number;
 	}[],
-	awards: Awards2[],
+	awards: Awards[],
 	allStars: AllStars[],
 ) => {
 	let playoffs = 0;

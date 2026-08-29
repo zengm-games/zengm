@@ -1,10 +1,10 @@
 import { idb } from "../db/index.ts";
 import { g, local, updatePlayMenu } from "../util/index.ts";
 import type {
-	Award2,
+	Award,
 	AwardInfoIndividual,
 	AwardInfoTeam,
-	AwardPlayer2,
+	AwardPlayer,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types.ts";
@@ -93,8 +93,8 @@ const updateHistory = async (
 			pos?: string;
 			season: number;
 			showStats: AwardInfoIndividual["showStats"];
-			statOverrides?: AwardPlayer2["statOverrides"];
-			statRange: Award2["statRange"];
+			statOverrides?: AwardPlayer["statOverrides"];
+			statRange: Award["statRange"];
 			tid: number;
 		}) => {
 			const stats = showStatsByType[showStats];

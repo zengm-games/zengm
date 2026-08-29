@@ -2,7 +2,7 @@ import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { groupByUnique, omit, orderBy } from "../../../common/utils.ts";
 import type {
 	AwardInfoTeam,
-	Awards2,
+	Awards,
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
 	PlayerAward,
@@ -157,7 +157,7 @@ const getAwards = (
 
 		const teamAwardsByShortName: Record<string, AwardInfoTeam> = {};
 
-		const builtInAwards: Awards2["awards"] = [];
+		const builtInAwards: Awards["awards"] = [];
 		for (const { slug, award } of seasonAwards) {
 			if (award.type !== undefined) {
 				continue;
@@ -222,7 +222,7 @@ const getAwards = (
 
 		const bestRecordInfo = bestRecordInfoBySeason[season]!;
 
-		const awards: Awards2 = {
+		const awards: Awards = {
 			season,
 			bestRecord: bestRecordInfo.bestRecord.tid,
 			bestRecordConfs: getBestTids(bestRecordInfo.bestRecordConfs),

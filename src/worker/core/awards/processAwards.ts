@@ -11,11 +11,11 @@ import {
 } from "../../../common/utils.ts";
 import { showStatsByType } from "../../../common/awards.ts";
 import type {
-	Award2,
+	Award,
 	AwardInfoIndividual,
 	AwardInfoTeam,
-	AwardPlayer2,
-	Awards2,
+	AwardPlayer,
+	Awards,
 	DistributiveOmit,
 	GameAttributesLeague,
 } from "../../../common/types.ts";
@@ -349,7 +349,7 @@ export const processAwards = async ({
 
 	let hasOpoy: boolean = false;
 
-	const realizedAwards: Award2[][] = await Promise.all(
+	const realizedAwards: Award[][] = await Promise.all(
 		awards.map(async (baseAward) => {
 			const baseFilteredPlayers = filterPlayersForAward(
 				players,
@@ -360,7 +360,7 @@ export const processAwards = async ({
 
 			// Handle conf/div/series awards - make copies for each one
 			let expandedAwards: DistributiveOmit<
-				Awards2["awards"][number],
+				Awards["awards"][number],
 				"winner"
 			>[];
 			if (baseAward.group === "conf") {
@@ -511,7 +511,7 @@ export const processAwards = async ({
 							// Save playoff series stats if possible
 							const currentStats = p.currentStats[statRange];
 							if (currentStats || statOverridesByMatchup) {
-								let statOverrides: AwardPlayer2["statOverrides"];
+								let statOverrides: AwardPlayer["statOverrides"];
 								if (currentStats !== undefined) {
 									const stats = showStatsByType[award.showStats];
 									if (!stats) {
@@ -539,7 +539,7 @@ export const processAwards = async ({
 									tid = statOverridesAndTid.tid;
 									statOverrides = omit(statOverridesAndTid, [
 										"tid",
-									]) as AwardPlayer2["statOverrides"];
+									]) as AwardPlayer["statOverrides"];
 								} else {
 									// No stats, no statOverrides, nothing to do here!
 									return {};

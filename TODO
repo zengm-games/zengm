@@ -1,4 +1,8 @@
 custom awards
+- editing award of incomplete team will only show the slots that are defined, not allow you to pick new ones
+  - add placeholders in edit code
+  - any extra to the end
+  - DH issue
 - UI to update
   - GOAT formula
     - explain min/max functions

@@ -1,5 +1,20 @@
+import { toJSONSchema } from "zod";
 import { bySport } from "../lib/bySport.ts";
 import type { Sport } from "../lib/getSport.ts";
+import { awardSettingsSchema } from "../../common/types.ts";
+
+const zodJsonSchema = (schema: any) => {
+	const jsonSchema = toJSONSchema(schema, {
+		target: "draft-07",
+
+		// This is to handle z.undefined().optional() which ideally would just not appear in the schema at all as a property of an object, but I think that's not possible
+		unrepresentable: "any",
+	});
+
+	delete jsonSchema.$schema;
+
+	return jsonSchema;
+};
 
 const genRatings = (sport: Sport) => {
 	const properties: any = {
@@ -1544,6 +1559,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 0,
 						maximum: 1,
 					},
+					awards: zodJsonSchema(awardSettingsSchema),
 				},
 			},
 			games: {

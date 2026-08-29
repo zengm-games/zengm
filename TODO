@@ -11,6 +11,8 @@ custom awards
 - make sure hashAward accounts for everything
 - upgrade
   - indexeddb
+    - gameAttributes awards value should be set
+      - await bbgm.idb.league.transaction("gameAttributes").store.get("awards")
     - test
       - baseball
       - basketball
@@ -26,9 +28,7 @@ custom awards
     - grouped awards look fine
 - get rid of AWARD_NAMES
 - schema
-  - setting
   - awards object
-  - player awards
   - conf/div abbrev
 - maybe
   - real player data for award top 5 finish

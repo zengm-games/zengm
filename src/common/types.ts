@@ -13,8 +13,9 @@ import {
 	type AwardSettingIndividual,
 	type AwardSettingTeam,
 	type AwardSettings,
-	type AwardInfoIndividualCommon,
-	type AwardInfoTeamCommon,
+	type PlayerAwardBuiltIn,
+	type PlayerAwardSimple,
+	type PlayerAward,
 } from "../../common/types.ts";
 
 export {
@@ -26,6 +27,9 @@ export {
 	type AwardSettingIndividual,
 	type AwardSettingTeam,
 	type AwardSettings,
+	type PlayerAwardBuiltIn,
+	type PlayerAwardSimple,
+	type PlayerAward,
 };
 
 // Would be nice to make .at(-1) return T but idk how, so use the `last` function instead!
@@ -1166,31 +1170,6 @@ export type MinimalPlayerRatings = {
 	endu: number;
 	locked?: boolean;
 };
-
-export type PlayerAwardBuiltIn = {
-	season: number;
-	type?: undefined;
-	name: string;
-	shortName: string;
-	index: number; // Index in the list of awards for this season - this is just used in the UI some places for sorting
-	rank: number; // rank in individual award, team number in team award
-	group?:
-		| {
-				type: "conf";
-				cid: number;
-		  }
-		| {
-				type: "div";
-				did: number;
-		  };
-} & (AwardInfoIndividualCommon | AwardInfoTeamCommon);
-
-export type PlayerAwardSimple = {
-	season: number;
-	type: string;
-};
-
-export type PlayerAward = PlayerAwardSimple | PlayerAwardBuiltIn;
 
 export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	awards: PlayerAward[];

@@ -184,13 +184,49 @@ export const awardSettingsSchema = z
 
 export type AwardInfoCommon = z.infer<typeof awardInfoCommonSchema>;
 export type AwardInfoIndividual = z.infer<typeof awardInfoIndividualSchema>;
-export type AwardInfoIndividualCommon = z.infer<
-	typeof awardInfoIndividualCommonSchema
->;
 export type AwardInfoTeam = z.infer<typeof awardInfoTeamSchema>;
-export type AwardInfoTeamCommon = z.infer<typeof awardInfoTeamCommonSchema>;
 export type AwardSettingIndividual = z.infer<
 	typeof awardSettingIndividualSchema
 >;
 export type AwardSettingTeam = z.infer<typeof awardSettingTeamSchema>;
 export type AwardSettings = z.infer<typeof awardSettingsSchema>;
+
+const playerAwardBuiltInBaseSchema = z.object({
+	season: z.number(),
+	type: z.undefined().optional(),
+	name: z.string(),
+	shortName: z.string(),
+	index: z.number(),
+	rank: z.number(),
+	group: z
+		.discriminatedUnion("type", [
+			z.object({
+				type: z.literal("conf"),
+				cid: z.number(),
+			}),
+			z.object({
+				type: z.literal("div"),
+				did: z.number(),
+			}),
+		])
+		.optional(),
+});
+
+const playerAwardBuiltInSchema = z.union([
+	playerAwardBuiltInBaseSchema.extend(awardInfoIndividualCommonSchema.shape),
+	playerAwardBuiltInBaseSchema.extend(awardInfoTeamCommonSchema.shape),
+]);
+
+const playerAwardSimpleSchema = z.object({
+	season: z.number(),
+	type: z.string(),
+});
+
+export const playerAwardSchema = z.union([
+	playerAwardSimpleSchema,
+	playerAwardBuiltInSchema,
+]);
+
+export type PlayerAwardBuiltIn = z.infer<typeof playerAwardBuiltInSchema>;
+export type PlayerAwardSimple = z.infer<typeof playerAwardSimpleSchema>;
+export type PlayerAward = z.infer<typeof playerAwardSchema>;

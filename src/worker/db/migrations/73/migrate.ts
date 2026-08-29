@@ -4,6 +4,7 @@ import { getOldAwardsByPlayer } from "./getOldAwardsByPlayer.ts";
 import type { OldAwards } from "./types.ts";
 import { getNewAwardsByPlayer } from "./getNewAwardsByPlayer.ts";
 import { oldAwardsToNewAwards } from "./oldAwardsToNewAwards.ts";
+import { defaultGameAttributes } from "../../../../common/defaultGameAttributes.ts";
 
 export const migrate73 = async (transaction: VersionChangeTransaction) => {
 	for await (const cursor of transaction.objectStore("awards")) {
@@ -28,6 +29,14 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 			getPlayer: (pid) => transaction.objectStore("players").get(pid),
 			putPlayer: (p) => transaction.objectStore("players").put(p),
 			season: newAwards.season,
+		});
+	}
+
+	const awards = await transaction.objectStore("gameAttributes").get("awards");
+	if (!awards) {
+		await transaction.objectStore("gameAttributes").put({
+			key: "awards",
+			value: defaultGameAttributes.awards,
 		});
 	}
 };

@@ -13,8 +13,6 @@ custom awards
 - make sure hashAward accounts for everything
 - upgrade
   - indexeddb
-    - gameAttributes awards value should be set
-      - await bbgm.idb.league.transaction("gameAttributes").store.get("awards")
     - test
       - baseball
       - basketball

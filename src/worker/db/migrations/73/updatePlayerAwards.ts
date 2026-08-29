@@ -39,6 +39,10 @@ export const updatePlayerAwards = async ({
 		const p = await getPlayer(pid);
 		if (p) {
 			console.log("player", p.pid, p.firstName, p.lastName);
+			if (toDelete.length !== toSave.length) {
+				console.log("Foo");
+				throw new Error("Awards don't match");
+			}
 			p.awards = p.awards.filter((award) => {
 				if (award.season !== season) {
 					return true;

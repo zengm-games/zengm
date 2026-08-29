@@ -255,11 +255,10 @@ export const getAwardsByPlayer = (
 		}
 
 		if (award.numTeams === undefined) {
-			for (const [i, pTemp] of award.winner.entries()) {
-				if (pTemp?.pid === undefined) {
+			for (const [i, { pid, tid }] of award.winner.entries()) {
+				if (pid === undefined) {
 					continue;
 				}
-				const { pid, tid } = pTemp;
 				const extra: {
 					actAs?: AwardInfoIndividual["actAs"];
 				} = {};
@@ -282,11 +281,10 @@ export const getAwardsByPlayer = (
 			}
 		} else {
 			for (const [i, team] of award.winner.entries()) {
-				for (const pTemp of team) {
-					if (pTemp?.pid === undefined) {
+				for (const { pid, tid } of team) {
+					if (pid === undefined) {
 						continue;
 					}
-					const { pid, tid } = pTemp;
 					const p = playersByPid[pid]!;
 
 					awardsByPlayer.push({

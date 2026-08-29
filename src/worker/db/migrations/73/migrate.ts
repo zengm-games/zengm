@@ -9,7 +9,6 @@ import type {
 	AwardSettingTeam,
 } from "../../../../common/types.ts";
 import { omit } from "../../../../common/utils.ts";
-import { getAwardsByPlayer } from "../../../core/awards/awardsByPlayer.ts";
 import type { VersionChangeTransaction } from "../../connectLeague.ts";
 import { updatePlayerAwards } from "./updatePlayerAwards.ts";
 import { defaultAwards, defaultAwardsBasketball } from "./defaultAwards.ts";
@@ -21,6 +20,7 @@ import type {
 	OldAwardsFootball,
 	OldAwardsHockey,
 } from "./types.ts";
+import { getNewAwardsByPlayer } from "./getNewAwardsByPlayer.ts";
 
 type WinnerIndividual = Extract<
 	AwardInfoIndividual["winner"][number],
@@ -104,7 +104,7 @@ const parseOldAwards = (oldAwardsRaw: OldAwards) => {
 				{
 					type: "team",
 					new: defaultAwardsBasketball.def,
-					old: oldAwards.allLeague.map((team) => team.players),
+					old: oldAwards.allDefensive.map((team) => team.players),
 				},
 				{
 					type: "team",
@@ -229,8 +229,7 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 		const oldAwardsByPlayer = getOldAwardsByPlayer(oldAwards);
 
 		// Figure out what new player awards to add, based on new awards object
-		// Can pass empty array as players because we don't care what tid/name anyone has, we're not creating events
-		const newAwardsByPlayer = getAwardsByPlayer(newAwards.awards, []);
+		const newAwardsByPlayer = getNewAwardsByPlayer(newAwards.awards);
 
 		console.log({ oldAwards, newAwards, oldAwardsByPlayer, newAwardsByPlayer });
 

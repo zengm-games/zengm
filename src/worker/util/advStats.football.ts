@@ -456,7 +456,7 @@ const advStats = async () => {
 				const team = allLeagueTeams.winner[i];
 				if (team) {
 					for (const p of team) {
-						if (p?.pid !== undefined) {
+						if (p.pid !== undefined) {
 							const pid = p.pid;
 							if (playersByPid[pid]) {
 								playersByPid[pid].allLeagueTeam = i;

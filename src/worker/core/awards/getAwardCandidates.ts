@@ -32,7 +32,7 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
 			statOverridesByMatchup ??= {};
 			statOverridesByMatchup[matchupKey] = {};
 			for (const p of persistedAward.winner) {
-				if (p?.pid !== undefined && p.statOverrides) {
+				if (p.pid !== undefined && p.statOverrides) {
 					statOverridesByMatchup[matchupKey][p.pid] = {
 						tid: p.tid,
 						...p.statOverrides,

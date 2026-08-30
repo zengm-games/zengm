@@ -277,7 +277,7 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				};
 				for (const stat of stats) {
 					const oldStat = (row.old as any)[stat];
-					if (typeof oldStat === "number") {
+					if (oldStat !== undefined) {
 						winner.statOverrides[stat] = oldStat;
 					}
 				}

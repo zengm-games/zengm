@@ -18,10 +18,6 @@ custom awards
       - groupAwards no longer has oldAwards, so those all get sorted to bottom
       - awards column on player page will not be populated with these old awards
     - award records doesn't show any of the built-in awards, because it's all based on awards objects now
-  - indexeddb
-    - test
-      - baseball
-      - hockey
   - import
     - tricky because we don't have all the players and awards in memory at the same time
       - can i somehow do it without knowing the awards objects?
@@ -35,8 +31,6 @@ custom awards
 - get rid of AWARD_NAMES
 - maybe
   - real player data for award top 5 finish
-  - showStats have some default value we can assume to save space
-    - make sure to apply in editingStateToAward
 - blog
   - apologize for lack of replies and other updates
   - same formulas as before

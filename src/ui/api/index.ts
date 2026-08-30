@@ -17,6 +17,7 @@ import { confirmDeleteAllLeagues } from "../util/confirmDeleteAllLeagues.tsx";
 import { requestPersistentStorage } from "../util/requestPersistentStorage.tsx";
 import { confirm } from "../util/confirm.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
+import Bugsnag from "@bugsnag/browser";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
 	ads.setLoadingDone(type);
@@ -132,21 +133,23 @@ const crossTabEmit = (
 	crossTabEmitter.emit(...parameters);
 };
 
-/*const bugsnagNotify = (
+const bugsnagNotify = (
 	error: Error,
-	metadata: Record<string, Record<string, string>>,
+	metadata?: Record<string, Record<string, string>>,
 ) => {
 	Bugsnag.notify(error, (event) => {
-		for (const [name, object] of Object.entries(metadata)) {
-			event.addMetadata(name, object);
+		if (metadata) {
+			for (const [name, object] of Object.entries(metadata)) {
+				event.addMetadata(name, object);
+			}
 		}
 	});
-};*/
+};
 
 export default {
 	analyticsEvent,
 	autoPlayDialog,
-	//bugsnagNotify,
+	bugsnagNotify,
 	confirm,
 	confirmDeleteAllLeagues,
 	crossTabEmit,

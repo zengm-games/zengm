@@ -16,21 +16,22 @@ custom awards
     - player awards won't get converted to new format
       - First -> 1st for all-X teams won't happen (added hack in formatPlayerAwardName)
       - groupAwards no longer has oldAwards, so those all get sorted to bottom
-      - awards column on player page wil not be populated with these old awards
+      - awards column on player page will not be populated with these old awards
     - award records doesn't show any of the built-in awards, because it's all based on awards objects now
   - indexeddb
     - test
       - baseball
-      - basketball
-      - football
       - hockey
   - import
     - tricky because we don't have all the players and awards in memory at the same time
       - can i somehow do it without knowing the awards objects?
       - if not, then at least do awards object upgrade on the import, and then set some flag and go back and reprocess awards objects later to upgrade player awards
-  - test
-    - all sports
-    - grouped awards look fine
+    - test
+      - baseball
+      - basketball
+      - football
+      - hockey
+  - remove migration console.logs
 - get rid of AWARD_NAMES
 - maybe
   - real player data for award top 5 finish

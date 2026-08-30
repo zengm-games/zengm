@@ -305,7 +305,7 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				...omit(row.new, ["group"]),
 				winner: row.old.map((team) =>
 					team
-						.filter((p) => p !== undefined)
+						.filter((p) => p !== undefined && p !== null)
 						.map((p) => {
 							const winner: WinnerTeam = {
 								pid: p.pid,

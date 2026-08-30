@@ -30,9 +30,8 @@ custom awards
       - hockey
   - remove migration console.logs
 - get rid of AWARD_NAMES
-- maybe
-  - real player data for award top 5 finish
-    - check sort when merging awards from two parsers
+- real player data for award top 5 finish
+  - some have no voting history like old ROY
 - blog
   - apologize for lack of replies and other updates
   - same formulas as before

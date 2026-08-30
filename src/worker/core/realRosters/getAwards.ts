@@ -1,6 +1,7 @@
 import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { groupByUnique, omit, orderBy } from "../../../common/utils.ts";
 import type {
+	AwardInfoIndividual,
 	AwardInfoTeam,
 	Awards,
 	GameAttributesLeague,
@@ -150,11 +151,13 @@ const getAwards = (
 
 	for (let season = seasonsRange[0]; season <= seasonsRange[1]; season++) {
 		const seasonAwards = awardsBySeason[season] ?? [];
+		console.log(season, seasonAwards);
 
 		if (!playersBySlug) {
 			throw new Error("Should never happen");
 		}
 
+		const individualAwardsByShortName: Record<string, AwardInfoIndividual> = {};
 		const teamAwardsByShortName: Record<string, AwardInfoTeam> = {};
 
 		const builtInAwards: Awards["awards"] = [];
@@ -188,11 +191,17 @@ const getAwards = (
 			const numTeams = award.numTeams;
 			if (numTeams === undefined) {
 				// Individual award
-				builtInAwards.push({
-					...common,
-					numTeams: undefined,
-					winner: [pidAndTid],
-				});
+				let individualAward = individualAwardsByShortName[info.shortName];
+				if (!individualAward) {
+					individualAward = {
+						...common,
+						numTeams: undefined,
+						winner: [],
+					};
+					builtInAwards.push(individualAward);
+					individualAwardsByShortName[info.shortName] = individualAward;
+				}
+				individualAward.winner[award.rank - 1] = pidAndTid;
 			} else {
 				// Team award
 				const teamIndex = award.rank - 1;

@@ -3,8 +3,9 @@ custom awards
   - byPos and not
     - basketball see old seasons before awards existed in real players league
   - add placeholders in edit code
-  - any extra to the end
-  - DH issue
+    - any extra to the end
+    - DH issue
+  - or, add "add" button?
 - UI to update
   - GOAT formula
     - explain min/max functions
@@ -31,6 +32,7 @@ custom awards
 - get rid of AWARD_NAMES
 - maybe
   - real player data for award top 5 finish
+    - check sort when merging awards from two parsers
 - blog
   - apologize for lack of replies and other updates
   - same formulas as before

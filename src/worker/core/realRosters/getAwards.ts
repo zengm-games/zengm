@@ -201,7 +201,13 @@ const getAwards = (
 					builtInAwards.push(individualAward);
 					individualAwardsByShortName[info.shortName] = individualAward;
 				}
-				individualAward.winner[award.rank - 1] = pidAndTid;
+				const index = award.rank - 1;
+				individualAward.winner[index] = pidAndTid;
+
+				// Make sure there are never any undefined slots
+				for (let i = 0; i < index; i++) {
+					individualAward.winner[i] ??= {};
+				}
 			} else {
 				// Team award
 				const teamIndex = award.rank - 1;

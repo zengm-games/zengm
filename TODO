@@ -6,6 +6,11 @@ custom awards
     - any extra to the end
     - DH issue
   - or, add "add" button?
+    - in that case, don't need to pad arrays when creating winners
+      - processAwards
+      - oldAwardsToNewAwards
+      - editing awards (if blank at end, just delete slot)
+- if we do wind up keeping padded award winners, make sure to add that logic in getAwards.ts for real rosters, cause currently it's not there and some awards don't have 5 players in the history
 - UI to update
   - GOAT formula
     - explain min/max functions
@@ -30,8 +35,7 @@ custom awards
       - hockey
   - remove migration console.logs
 - get rid of AWARD_NAMES
-- real player data for award top 5 finish
-  - some have no voting history like old ROY
+- update rosters
 - blog
   - apologize for lack of replies and other updates
   - same formulas as before

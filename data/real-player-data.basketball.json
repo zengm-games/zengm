@@ -3,6 +3,10 @@
     "abdulka01": [
       {
         "season": 1970,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1970,
         "type": "All-Star"
       },
       {
@@ -25,8 +29,8 @@
         "shortName": "MVP"
       },
       {
-        "season": 1970,
-        "shortName": "ROY"
+        "season": 1971,
+        "shortName": "MVP"
       },
       {
         "season": 1971,
@@ -54,7 +58,7 @@
         "type": "Won Championship"
       },
       {
-        "season": 1971,
+        "season": 1972,
         "shortName": "MVP"
       },
       {
@@ -68,10 +72,6 @@
       {
         "season": 1972,
         "type": "League Scoring Leader"
-      },
-      {
-        "season": 1972,
-        "shortName": "MVP"
       },
       {
         "season": 1973,
@@ -88,6 +88,10 @@
       },
       {
         "season": 1974,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1974,
         "type": "All-Star"
       },
       {
@@ -97,10 +101,6 @@
       {
         "season": 1974,
         "shortName": "ALL"
-      },
-      {
-        "season": 1974,
-        "shortName": "MVP"
       },
       {
         "season": 1975,
@@ -117,6 +117,10 @@
       {
         "rank": 5,
         "season": 1975,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1976,
         "shortName": "MVP"
       },
       {
@@ -141,7 +145,7 @@
         "type": "League Blocks Leader"
       },
       {
-        "season": 1976,
+        "season": 1977,
         "shortName": "MVP"
       },
       {
@@ -156,10 +160,6 @@
       {
         "season": 1977,
         "shortName": "ALL"
-      },
-      {
-        "season": 1977,
-        "shortName": "MVP"
       },
       {
         "rank": 2,
@@ -196,6 +196,10 @@
       {
         "rank": 4,
         "season": 1979,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1980,
         "shortName": "MVP"
       },
       {
@@ -217,10 +221,6 @@
       {
         "season": 1980,
         "type": "Won Championship"
-      },
-      {
-        "season": 1980,
-        "shortName": "MVP"
       },
       {
         "season": 1981,
@@ -369,15 +369,15 @@
     "adamsal01": [
       {
         "season": 1976,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1976,
         "type": "All-Star"
       },
       {
         "season": 1976,
         "shortName": "ALR"
-      },
-      {
-        "season": 1976,
-        "shortName": "ROY"
       }
     ],
     "adamsmi01": [
@@ -833,23 +833,23 @@
       },
       {
         "season": 2017,
-        "type": "All-Star"
-      },
-      {
-        "rank": 2,
-        "season": 2017,
-        "shortName": "DEF"
-      },
-      {
-        "rank": 2,
-        "season": 2017,
-        "shortName": "ALL"
-      },
-      {
-        "season": 2017,
         "shortName": "MIP"
       },
       {
+        "season": 2017,
+        "type": "All-Star"
+      },
+      {
+        "rank": 2,
+        "season": 2017,
+        "shortName": "DEF"
+      },
+      {
+        "rank": 2,
+        "season": 2017,
+        "shortName": "ALL"
+      },
+      {
         "season": 2018,
         "type": "All-Star"
       },
@@ -857,6 +857,10 @@
         "rank": 2,
         "season": 2018,
         "shortName": "ALL"
+      },
+      {
+        "season": 2019,
+        "shortName": "MVP"
       },
       {
         "season": 2019,
@@ -871,13 +875,17 @@
         "shortName": "ALL"
       },
       {
-        "season": 2019,
-        "shortName": "MVP"
-      },
-      {
         "rank": 2,
         "season": 2019,
         "shortName": "DPOY"
+      },
+      {
+        "season": 2020,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2020,
+        "shortName": "MVP"
       },
       {
         "season": 2020,
@@ -890,14 +898,6 @@
       {
         "season": 2020,
         "shortName": "ALL"
-      },
-      {
-        "season": 2020,
-        "shortName": "MVP"
-      },
-      {
-        "season": 2020,
-        "shortName": "DPOY"
       },
       {
         "season": 2021,
@@ -1260,6 +1260,10 @@
     "arizipa01": [
       {
         "season": 1951,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1951,
         "type": "All-Star"
       },
       {
@@ -1372,11 +1376,11 @@
     "armstda01": [
       {
         "season": 1999,
-        "shortName": "SMOY"
+        "shortName": "MIP"
       },
       {
         "season": 1999,
-        "shortName": "MIP"
+        "shortName": "SMOY"
       }
     ],
     "artesro01": [
@@ -1397,6 +1401,10 @@
       },
       {
         "season": 2004,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2004,
         "type": "All-Star"
       },
       {
@@ -1407,10 +1415,6 @@
         "rank": 3,
         "season": 2004,
         "shortName": "ALL"
-      },
-      {
-        "season": 2004,
-        "shortName": "DPOY"
       },
       {
         "season": 2006,
@@ -1565,11 +1569,11 @@
     "ballla01": [
       {
         "season": 2021,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2021,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2022,
@@ -1586,11 +1590,11 @@
     "banchpa01": [
       {
         "season": 2023,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2023,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2024,
@@ -1737,15 +1741,15 @@
       },
       {
         "season": 1993,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1993,
         "type": "All-Star"
       },
       {
         "season": 1993,
         "shortName": "ALL"
-      },
-      {
-        "season": 1993,
-        "shortName": "MVP"
       },
       {
         "season": 1994,
@@ -1841,11 +1845,11 @@
     "barnesc01": [
       {
         "season": 2022,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2022,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2024,
@@ -1879,11 +1883,11 @@
     "barroda01": [
       {
         "season": 1995,
-        "type": "All-Star"
+        "shortName": "MIP"
       },
       {
         "season": 1995,
-        "shortName": "MIP"
+        "type": "All-Star"
       }
     ],
     "barrybr01": [
@@ -1913,6 +1917,10 @@
     "barryri01": [
       {
         "season": 1966,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1966,
         "type": "All-Star"
       },
       {
@@ -1922,10 +1930,6 @@
       {
         "season": 1966,
         "shortName": "ALR"
-      },
-      {
-        "season": 1966,
-        "shortName": "ROY"
       },
       {
         "season": 1967,
@@ -2085,6 +2089,10 @@
       },
       {
         "season": 1959,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1959,
         "type": "All-Star"
       },
       {
@@ -2095,10 +2103,6 @@
         "rank": 3,
         "season": 1959,
         "shortName": "MVP"
-      },
-      {
-        "season": 1959,
-        "shortName": "ROY"
       },
       {
         "season": 1960,
@@ -2343,6 +2347,10 @@
     "bellawa01": [
       {
         "season": 1962,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1962,
         "type": "All-Star"
       },
       {
@@ -2499,11 +2507,11 @@
     "bingda01": [
       {
         "season": 1967,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1967,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1968,
@@ -2568,6 +2576,10 @@
     "birdla01": [
       {
         "season": 1980,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1980,
         "type": "All-Star"
       },
       {
@@ -2582,10 +2594,6 @@
         "rank": 4,
         "season": 1980,
         "shortName": "MVP"
-      },
-      {
-        "season": 1980,
-        "shortName": "ROY"
       },
       {
         "season": 1981,
@@ -2655,6 +2663,10 @@
       },
       {
         "season": 1984,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1984,
         "type": "All-Star"
       },
       {
@@ -2671,7 +2683,7 @@
         "type": "Won Championship"
       },
       {
-        "season": 1984,
+        "season": 1985,
         "shortName": "MVP"
       },
       {
@@ -2683,12 +2695,12 @@
         "shortName": "ALL"
       },
       {
-        "season": 1985,
-        "shortName": "MVP"
+        "season": 1986,
+        "shortName": "FMVP"
       },
       {
         "season": 1986,
-        "shortName": "FMVP"
+        "shortName": "MVP"
       },
       {
         "season": 1986,
@@ -2705,10 +2717,6 @@
       {
         "season": 1986,
         "type": "Three-Point Contest Winner"
-      },
-      {
-        "season": 1986,
-        "shortName": "MVP"
       },
       {
         "season": 1987,
@@ -3377,11 +3385,11 @@
     "brandel01": [
       {
         "season": 2000,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2000,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2002,
@@ -3588,11 +3596,11 @@
     "brogdma01": [
       {
         "season": 2017,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2017,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2023,
@@ -4038,6 +4046,10 @@
       },
       {
         "season": 2008,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2008,
         "type": "All-Star"
       },
       {
@@ -4047,10 +4059,6 @@
       {
         "season": 2008,
         "shortName": "ALL"
-      },
-      {
-        "season": 2008,
-        "shortName": "MVP"
       },
       {
         "rank": 5,
@@ -4334,16 +4342,16 @@
       },
       {
         "season": 2015,
+        "shortName": "MIP"
+      },
+      {
+        "season": 2015,
         "type": "All-Star"
       },
       {
         "rank": 2,
         "season": 2015,
         "shortName": "DEF"
-      },
-      {
-        "season": 2015,
-        "shortName": "MIP"
       },
       {
         "season": 2016,
@@ -4561,15 +4569,15 @@
       },
       {
         "season": 2007,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2007,
         "shortName": "DEF"
       },
       {
         "season": 2007,
         "type": "League Blocks Leader"
-      },
-      {
-        "season": 2007,
-        "shortName": "DPOY"
       },
       {
         "season": 2008,
@@ -4713,21 +4721,21 @@
     "cartemi01": [
       {
         "season": 2014,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2014,
-        "shortName": "ROY"
+        "shortName": "ALR"
       }
     ],
     "cartevi01": [
       {
         "season": 1999,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1999,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2000,
@@ -4852,11 +4860,11 @@
     "castlst01": [
       {
         "season": 2025,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2025,
-        "shortName": "ROY"
+        "shortName": "ALR"
       }
     ],
     "caulewi01": [
@@ -4953,7 +4961,15 @@
     "chambwi01": [
       {
         "season": 1960,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1960,
         "type": "All-Star MVP"
+      },
+      {
+        "season": 1960,
+        "shortName": "ROY"
       },
       {
         "season": 1960,
@@ -4970,10 +4986,6 @@
       {
         "season": 1960,
         "type": "League Rebounding Leader"
-      },
-      {
-        "season": 1960,
-        "shortName": "MVP"
       },
       {
         "season": 1961,
@@ -5071,6 +5083,10 @@
       },
       {
         "season": 1966,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1966,
         "type": "All-Star"
       },
       {
@@ -5086,7 +5102,7 @@
         "type": "League Rebounding Leader"
       },
       {
-        "season": 1966,
+        "season": 1967,
         "shortName": "MVP"
       },
       {
@@ -5106,7 +5122,7 @@
         "type": "Won Championship"
       },
       {
-        "season": 1967,
+        "season": 1968,
         "shortName": "MVP"
       },
       {
@@ -5120,10 +5136,6 @@
       {
         "season": 1968,
         "type": "League Rebounding Leader"
-      },
-      {
-        "season": 1968,
-        "shortName": "MVP"
       },
       {
         "season": 1969,
@@ -5214,6 +5226,10 @@
         "shortName": "DPOY"
       },
       {
+        "season": 2012,
+        "shortName": "DPOY"
+      },
+      {
         "rank": 2,
         "season": 2012,
         "shortName": "DEF"
@@ -5222,10 +5238,6 @@
         "rank": 3,
         "season": 2012,
         "shortName": "ALL"
-      },
-      {
-        "season": 2012,
-        "shortName": "DPOY"
       },
       {
         "season": 2013,
@@ -5552,11 +5564,11 @@
     "colemde01": [
       {
         "season": 1991,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1991,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "rank": 3,
@@ -5764,15 +5776,15 @@
       },
       {
         "season": 1987,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1987,
         "shortName": "DEF"
       },
       {
         "season": 1987,
         "type": "Won Championship"
-      },
-      {
-        "season": 1987,
-        "shortName": "DPOY"
       },
       {
         "rank": 3,
@@ -5962,6 +5974,10 @@
       },
       {
         "season": 1957,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1957,
         "type": "All-Star"
       },
       {
@@ -5975,10 +5991,6 @@
       {
         "season": 1957,
         "type": "Won Championship"
-      },
-      {
-        "season": 1957,
-        "shortName": "MVP"
       },
       {
         "season": 1958,
@@ -6102,11 +6114,11 @@
     "cowenda01": [
       {
         "season": 1971,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1971,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1972,
@@ -6118,16 +6130,16 @@
       },
       {
         "season": 1973,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1973,
         "type": "All-Star"
       },
       {
         "rank": 2,
         "season": 1973,
         "shortName": "ALL"
-      },
-      {
-        "season": 1973,
-        "shortName": "MVP"
       },
       {
         "season": 1974,
@@ -6244,11 +6256,11 @@
     "cummite01": [
       {
         "season": 1983,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1983,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1985,
@@ -6438,6 +6450,10 @@
       },
       {
         "season": 2015,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2015,
         "type": "All-Star"
       },
       {
@@ -6453,7 +6469,7 @@
         "type": "Three-Point Contest Winner"
       },
       {
-        "season": 2015,
+        "season": 2016,
         "shortName": "MVP"
       },
       {
@@ -6471,10 +6487,6 @@
       {
         "season": 2016,
         "type": "League Steals Leader"
-      },
-      {
-        "season": 2016,
-        "shortName": "MVP"
       },
       {
         "rank": 4,
@@ -6683,6 +6695,10 @@
     "daniedy01": [
       {
         "season": 2025,
+        "shortName": "MIP"
+      },
+      {
+        "season": 2025,
         "shortName": "DEF"
       },
       {
@@ -6693,10 +6709,6 @@
         "rank": 2,
         "season": 2025,
         "shortName": "DPOY"
-      },
-      {
-        "season": 2025,
-        "shortName": "MIP"
       },
       {
         "rank": 2,
@@ -6720,11 +6732,11 @@
     "dantlad01": [
       {
         "season": 1977,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1977,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1980,
@@ -7113,6 +7125,10 @@
     "daviswa03": [
       {
         "season": 1978,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1978,
         "type": "All-Star"
       },
       {
@@ -7128,10 +7144,6 @@
         "rank": 5,
         "season": 1978,
         "shortName": "MVP"
-      },
-      {
-        "season": 1978,
-        "shortName": "ROY"
       },
       {
         "season": 1979,
@@ -7406,15 +7418,15 @@
     "digreer01": [
       {
         "season": 1974,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1974,
         "shortName": "ALR"
       },
       {
         "season": 1974,
         "type": "League Assists Leader"
-      },
-      {
-        "season": 1974,
-        "shortName": "ROY"
       }
     ],
     "dinwisp01": [
@@ -7430,6 +7442,10 @@
       }
     ],
     "dischte01": [
+      {
+        "season": 1963,
+        "shortName": "ROY"
+      },
       {
         "season": 1963,
         "type": "All-Star"
@@ -7492,11 +7508,11 @@
     "doncilu01": [
       {
         "season": 2019,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2019,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2020,
@@ -7620,13 +7636,13 @@
     ],
     "dragigo01": [
       {
+        "season": 2014,
+        "shortName": "MIP"
+      },
+      {
         "rank": 3,
         "season": 2014,
         "shortName": "ALL"
-      },
-      {
-        "season": 2014,
-        "shortName": "MIP"
       },
       {
         "season": 2018,
@@ -7954,6 +7970,10 @@
     "duncati01": [
       {
         "season": 1998,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1998,
         "type": "All-Star"
       },
       {
@@ -7973,10 +7993,6 @@
         "rank": 5,
         "season": 1998,
         "shortName": "MVP"
-      },
-      {
-        "season": 1998,
-        "shortName": "ROY"
       },
       {
         "season": 1999,
@@ -8049,6 +8065,10 @@
       },
       {
         "season": 2002,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2002,
         "type": "All-Star"
       },
       {
@@ -8060,12 +8080,12 @@
         "shortName": "ALL"
       },
       {
-        "season": 2002,
-        "shortName": "MVP"
+        "season": 2003,
+        "shortName": "FMVP"
       },
       {
         "season": 2003,
-        "shortName": "FMVP"
+        "shortName": "MVP"
       },
       {
         "season": 2003,
@@ -8082,10 +8102,6 @@
       {
         "season": 2003,
         "type": "Won Championship"
-      },
-      {
-        "season": 2003,
-        "shortName": "MVP"
       },
       {
         "rank": 4,
@@ -8281,11 +8297,11 @@
     "duranke01": [
       {
         "season": 2008,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2008,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "rank": 3,
@@ -8367,6 +8383,10 @@
       },
       {
         "season": 2014,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2014,
         "type": "All-Star"
       },
       {
@@ -8376,10 +8396,6 @@
       {
         "season": 2014,
         "type": "League Scoring Leader"
-      },
-      {
-        "season": 2014,
-        "shortName": "MVP"
       },
       {
         "season": 2015,
@@ -8531,15 +8547,15 @@
       },
       {
         "season": 1985,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1985,
         "shortName": "DEF"
       },
       {
         "season": 1985,
         "type": "League Blocks Leader"
-      },
-      {
-        "season": 1985,
-        "shortName": "DPOY"
       },
       {
         "season": 1986,
@@ -8575,15 +8591,15 @@
       },
       {
         "season": 1989,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1989,
         "type": "All-Star"
       },
       {
         "season": 1989,
         "shortName": "DEF"
-      },
-      {
-        "season": 1989,
-        "shortName": "DPOY"
       },
       {
         "rank": 5,
@@ -8908,6 +8924,10 @@
       },
       {
         "season": 2023,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2023,
         "type": "All-Star"
       },
       {
@@ -8917,10 +8937,6 @@
       {
         "season": 2023,
         "type": "League Scoring Leader"
-      },
-      {
-        "season": 2023,
-        "shortName": "MVP"
       },
       {
         "season": 2024,
@@ -9062,15 +9078,15 @@
       },
       {
         "season": 1981,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1981,
         "type": "All-Star"
       },
       {
         "season": 1981,
         "shortName": "ALL"
-      },
-      {
-        "season": 1981,
-        "shortName": "MVP"
       },
       {
         "season": 1982,
@@ -9141,14 +9157,18 @@
     "evansty01": [
       {
         "season": 2010,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2010,
-        "shortName": "ROY"
+        "shortName": "ALR"
       }
     ],
     "ewingpa01": [
+      {
+        "season": 1986,
+        "shortName": "ROY"
+      },
       {
         "season": 1986,
         "type": "All-Star"
@@ -9156,10 +9176,6 @@
       {
         "season": 1986,
         "shortName": "ALR"
-      },
-      {
-        "season": 1986,
-        "shortName": "ROY"
       },
       {
         "season": 1988,
@@ -9340,6 +9356,10 @@
     "felixra01": [
       {
         "season": 1954,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1954,
         "type": "All-Star"
       }
     ],
@@ -9473,11 +9493,11 @@
     "flaggco01": [
       {
         "season": 2026,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2026,
-        "shortName": "ROY"
+        "shortName": "ALR"
       }
     ],
     "flaglad01": [
@@ -9534,6 +9554,10 @@
     ],
     "fordph01": [
       {
+        "season": 1979,
+        "shortName": "ROY"
+      },
+      {
         "rank": 2,
         "season": 1979,
         "shortName": "ALL"
@@ -9541,10 +9565,6 @@
       {
         "season": 1979,
         "shortName": "ALR"
-      },
-      {
-        "season": 1979,
-        "shortName": "ROY"
       }
     ],
     "fordtj01": [
@@ -9677,6 +9697,10 @@
       }
     ],
     "francst01": [
+      {
+        "season": 2000,
+        "shortName": "ROY"
+      },
       {
         "season": 2000,
         "shortName": "ALR"
@@ -10103,6 +10127,10 @@
       },
       {
         "season": 2004,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2004,
         "type": "All-Star"
       },
       {
@@ -10116,10 +10144,6 @@
       {
         "season": 2004,
         "type": "League Rebounding Leader"
-      },
-      {
-        "season": 2004,
-        "shortName": "MVP"
       },
       {
         "season": 2005,
@@ -10168,6 +10192,10 @@
       {
         "season": 2007,
         "type": "League Rebounding Leader"
+      },
+      {
+        "season": 2008,
+        "shortName": "DPOY"
       },
       {
         "season": 2008,
@@ -10189,10 +10217,6 @@
         "rank": 3,
         "season": 2008,
         "shortName": "MVP"
-      },
-      {
-        "season": 2008,
-        "shortName": "DPOY"
       },
       {
         "season": 2009,
@@ -10260,6 +10284,10 @@
         "type": "All-Star"
       },
       {
+        "season": 2013,
+        "shortName": "DPOY"
+      },
+      {
         "rank": 2,
         "season": 2013,
         "shortName": "DEF"
@@ -10268,10 +10296,6 @@
         "rank": 2,
         "season": 2013,
         "shortName": "ALL"
-      },
-      {
-        "season": 2013,
-        "shortName": "DPOY"
       },
       {
         "season": 2015,
@@ -10293,11 +10317,11 @@
     "gasolpa01": [
       {
         "season": 2002,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2002,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2006,
@@ -10437,6 +10461,10 @@
       },
       {
         "season": 2013,
+        "shortName": "MIP"
+      },
+      {
+        "season": 2013,
         "type": "All-Star"
       },
       {
@@ -10448,10 +10476,6 @@
         "rank": 3,
         "season": 2013,
         "shortName": "ALL"
-      },
-      {
-        "season": 2013,
-        "shortName": "MIP"
       },
       {
         "season": 2014,
@@ -10722,6 +10746,10 @@
       },
       {
         "season": 2025,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2025,
         "shortName": "SFMVP"
       },
       {
@@ -10745,7 +10773,7 @@
         "type": "Won Championship"
       },
       {
-        "season": 2025,
+        "season": 2026,
         "shortName": "MVP"
       },
       {
@@ -10755,10 +10783,6 @@
       {
         "season": 2026,
         "shortName": "ALL"
-      },
-      {
-        "season": 2026,
-        "shortName": "MVP"
       }
     ],
     "gilleco01": [
@@ -10872,13 +10896,13 @@
         "shortName": "SMOY"
       },
       {
+        "season": 2008,
+        "shortName": "SMOY"
+      },
+      {
         "rank": 3,
         "season": 2008,
         "shortName": "ALL"
-      },
-      {
-        "season": 2008,
-        "shortName": "SMOY"
       },
       {
         "rank": 4,
@@ -10951,10 +10975,14 @@
       },
       {
         "season": 2018,
-        "shortName": "DEF"
+        "shortName": "DPOY"
       },
       {
         "season": 2018,
+        "shortName": "DEF"
+      },
+      {
+        "season": 2019,
         "shortName": "DPOY"
       },
       {
@@ -10965,10 +10993,6 @@
         "rank": 3,
         "season": 2019,
         "shortName": "ALL"
-      },
-      {
-        "season": 2019,
-        "shortName": "DPOY"
       },
       {
         "season": 2020,
@@ -10990,6 +11014,10 @@
       },
       {
         "season": 2021,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2021,
         "type": "All-Star"
       },
       {
@@ -11000,10 +11028,6 @@
         "rank": 3,
         "season": 2021,
         "shortName": "ALL"
-      },
-      {
-        "season": 2021,
-        "shortName": "DPOY"
       },
       {
         "season": 2022,
@@ -11024,11 +11048,11 @@
       },
       {
         "season": 2024,
-        "shortName": "DEF"
+        "shortName": "DPOY"
       },
       {
         "season": 2024,
-        "shortName": "DPOY"
+        "shortName": "DEF"
       },
       {
         "rank": 2,
@@ -11141,16 +11165,16 @@
     "gordobe01": [
       {
         "season": 2005,
+        "shortName": "SMOY"
+      },
+      {
+        "season": 2005,
         "shortName": "ALR"
       },
       {
         "rank": 2,
         "season": 2005,
         "shortName": "ROY"
-      },
-      {
-        "season": 2005,
-        "shortName": "SMOY"
       },
       {
         "rank": 5,
@@ -11171,11 +11195,11 @@
       },
       {
         "season": 2017,
-        "type": "Three-Point Contest Winner"
+        "shortName": "SMOY"
       },
       {
         "season": 2017,
-        "shortName": "SMOY"
+        "type": "Three-Point Contest Winner"
       },
       {
         "rank": 2,
@@ -11214,11 +11238,11 @@
       },
       {
         "season": 2009,
-        "type": "All-Star"
+        "shortName": "MIP"
       },
       {
         "season": 2009,
-        "shortName": "MIP"
+        "type": "All-Star"
       }
     ],
     "grantbr01": [
@@ -11398,6 +11422,10 @@
       },
       {
         "season": 2017,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2017,
         "type": "All-Star"
       },
       {
@@ -11416,10 +11444,6 @@
       {
         "season": 2017,
         "type": "Won Championship"
-      },
-      {
-        "season": 2017,
-        "shortName": "DPOY"
       },
       {
         "season": 2018,
@@ -11645,6 +11669,10 @@
     "griffbl01": [
       {
         "season": 2011,
+        "shortName": "ROY"
+      },
+      {
+        "season": 2011,
         "type": "All-Star"
       },
       {
@@ -11654,10 +11682,6 @@
       {
         "season": 2011,
         "type": "Slam Dunk Contest Winner"
-      },
-      {
-        "season": 2011,
-        "shortName": "ROY"
       },
       {
         "season": 2012,
@@ -11713,11 +11737,11 @@
     "griffda01": [
       {
         "season": 1981,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1981,
-        "shortName": "ROY"
+        "shortName": "ALR"
       }
     ],
     "griffed01": [
@@ -11739,6 +11763,10 @@
       }
     ],
     "grozaal01": [
+      {
+        "season": 1950,
+        "shortName": "ROY"
+      },
       {
         "season": 1950,
         "shortName": "ALL"
@@ -12170,6 +12198,10 @@
       },
       {
         "season": 2018,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2018,
         "type": "All-Star"
       },
       {
@@ -12179,10 +12211,6 @@
       {
         "season": 2018,
         "type": "League Scoring Leader"
-      },
-      {
-        "season": 2018,
-        "shortName": "MVP"
       },
       {
         "season": 2019,
@@ -12885,6 +12913,10 @@
     "heinsto01": [
       {
         "season": 1957,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1957,
         "type": "All-Star"
       },
       {
@@ -13146,15 +13178,15 @@
     "hillgr01": [
       {
         "season": 1995,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1995,
         "type": "All-Star"
       },
       {
         "season": 1995,
         "shortName": "ALR"
-      },
-      {
-        "season": 1995,
-        "shortName": "ROY"
       },
       {
         "season": 1996,
@@ -13275,6 +13307,10 @@
       }
     ],
     "hoffmpa01": [
+      {
+        "season": 1948,
+        "shortName": "ROY"
+      },
       {
         "season": 1948,
         "type": "Won Championship"
@@ -13615,6 +13651,10 @@
       },
       {
         "season": 2009,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2009,
         "type": "All-Star"
       },
       {
@@ -13639,7 +13679,7 @@
         "shortName": "MVP"
       },
       {
-        "season": 2009,
+        "season": 2010,
         "shortName": "DPOY"
       },
       {
@@ -13668,7 +13708,7 @@
         "shortName": "MVP"
       },
       {
-        "season": 2010,
+        "season": 2011,
         "shortName": "DPOY"
       },
       {
@@ -13687,10 +13727,6 @@
         "rank": 2,
         "season": 2011,
         "shortName": "MVP"
-      },
-      {
-        "season": 2011,
-        "shortName": "DPOY"
       },
       {
         "season": 2012,
@@ -13944,6 +13980,10 @@
     ],
     "hutchme01": [
       {
+        "season": 1952,
+        "shortName": "ROY"
+      },
+      {
         "season": 1953,
         "type": "All-Star"
       },
@@ -14131,11 +14171,11 @@
       },
       {
         "season": 2020,
-        "type": "All-Star"
+        "shortName": "MIP"
       },
       {
         "season": 2020,
-        "shortName": "MIP"
+        "type": "All-Star"
       },
       {
         "season": 2026,
@@ -14145,11 +14185,11 @@
     "irvinky01": [
       {
         "season": 2012,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2012,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2013,
@@ -14233,11 +14273,11 @@
     "iversal01": [
       {
         "season": 1997,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1997,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1999,
@@ -14267,6 +14307,10 @@
       },
       {
         "season": 2001,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2001,
         "type": "All-Star"
       },
       {
@@ -14280,10 +14324,6 @@
       {
         "season": 2001,
         "type": "League Steals Leader"
-      },
-      {
-        "season": 2001,
-        "shortName": "MVP"
       },
       {
         "season": 2002,
@@ -14448,6 +14488,10 @@
       },
       {
         "season": 2023,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2023,
         "type": "All-Star"
       },
       {
@@ -14457,10 +14501,6 @@
       {
         "season": 2023,
         "type": "League Blocks Leader"
-      },
-      {
-        "season": 2023,
-        "shortName": "DPOY"
       },
       {
         "season": 2025,
@@ -14507,11 +14547,11 @@
     "jacksma01": [
       {
         "season": 1988,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1988,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1989,
@@ -14573,11 +14613,11 @@
     "jamesle01": [
       {
         "season": 2004,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2004,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2005,
@@ -14642,6 +14682,10 @@
       },
       {
         "season": 2009,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2009,
         "type": "All-Star"
       },
       {
@@ -14651,10 +14695,6 @@
       {
         "season": 2009,
         "shortName": "ALL"
-      },
-      {
-        "season": 2009,
-        "shortName": "MVP"
       },
       {
         "rank": 2,
@@ -14663,6 +14703,10 @@
       },
       {
         "season": 2010,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2010,
         "type": "All-Star"
       },
       {
@@ -14672,10 +14716,6 @@
       {
         "season": 2010,
         "shortName": "ALL"
-      },
-      {
-        "season": 2010,
-        "shortName": "MVP"
       },
       {
         "rank": 4,
@@ -14705,6 +14745,10 @@
       },
       {
         "season": 2012,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2012,
         "type": "All-Star"
       },
       {
@@ -14718,10 +14762,6 @@
       {
         "season": 2012,
         "type": "Won Championship"
-      },
-      {
-        "season": 2012,
-        "shortName": "MVP"
       },
       {
         "rank": 4,
@@ -14734,6 +14774,10 @@
       },
       {
         "season": 2013,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2013,
         "type": "All-Star"
       },
       {
@@ -14747,10 +14791,6 @@
       {
         "season": 2013,
         "type": "Won Championship"
-      },
-      {
-        "season": 2013,
-        "shortName": "MVP"
       },
       {
         "rank": 2,
@@ -15391,13 +15431,13 @@
     ],
     "johnske02": [
       {
+        "season": 1989,
+        "shortName": "MIP"
+      },
+      {
         "rank": 2,
         "season": 1989,
         "shortName": "ALL"
-      },
-      {
-        "season": 1989,
-        "shortName": "MIP"
       },
       {
         "season": 1990,
@@ -15447,11 +15487,11 @@
     "johnsla02": [
       {
         "season": 1992,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1992,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1993,
@@ -15639,6 +15679,10 @@
       },
       {
         "season": 1987,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1987,
         "type": "All-Star"
       },
       {
@@ -15652,10 +15696,6 @@
       {
         "season": 1987,
         "type": "Won Championship"
-      },
-      {
-        "season": 1987,
-        "shortName": "MVP"
       },
       {
         "season": 1988,
@@ -15676,15 +15716,15 @@
       },
       {
         "season": 1989,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1989,
         "type": "All-Star"
       },
       {
         "season": 1989,
         "shortName": "ALL"
-      },
-      {
-        "season": 1989,
-        "shortName": "MVP"
       },
       {
         "season": 1990,
@@ -15692,15 +15732,15 @@
       },
       {
         "season": 1990,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1990,
         "type": "All-Star"
       },
       {
         "season": 1990,
         "shortName": "ALL"
-      },
-      {
-        "season": 1990,
-        "shortName": "MVP"
       },
       {
         "season": 1991,
@@ -15883,6 +15923,10 @@
       },
       {
         "season": 2021,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2021,
         "type": "All-Star"
       },
       {
@@ -15890,7 +15934,7 @@
         "shortName": "ALL"
       },
       {
-        "season": 2021,
+        "season": 2022,
         "shortName": "MVP"
       },
       {
@@ -15900,10 +15944,6 @@
       {
         "season": 2022,
         "shortName": "ALL"
-      },
-      {
-        "season": 2022,
-        "shortName": "MVP"
       },
       {
         "season": 2023,
@@ -15933,15 +15973,15 @@
       },
       {
         "season": 2024,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2024,
         "type": "All-Star"
       },
       {
         "season": 2024,
         "shortName": "ALL"
-      },
-      {
-        "season": 2024,
-        "shortName": "MVP"
       },
       {
         "season": 2025,
@@ -16018,6 +16058,10 @@
       {
         "season": 1982,
         "shortName": "DEF"
+      },
+      {
+        "season": 1983,
+        "shortName": "SMOY"
       },
       {
         "season": 1983,
@@ -16408,6 +16452,10 @@
     "jordami01": [
       {
         "season": 1985,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1985,
         "type": "All-Star"
       },
       {
@@ -16418,10 +16466,6 @@
       {
         "season": 1985,
         "shortName": "ALR"
-      },
-      {
-        "season": 1985,
-        "shortName": "ROY"
       },
       {
         "season": 1986,
@@ -16454,6 +16498,14 @@
       },
       {
         "season": 1988,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1988,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1988,
         "type": "All-Star"
       },
       {
@@ -16477,14 +16529,6 @@
         "type": "Slam Dunk Contest Winner"
       },
       {
-        "season": 1988,
-        "shortName": "MVP"
-      },
-      {
-        "season": 1988,
-        "shortName": "DPOY"
-      },
-      {
         "season": 1989,
         "type": "All-Star"
       },
@@ -16541,6 +16585,10 @@
       },
       {
         "season": 1991,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1991,
         "type": "All-Star"
       },
       {
@@ -16558,10 +16606,6 @@
       {
         "season": 1991,
         "type": "Won Championship"
-      },
-      {
-        "season": 1991,
-        "shortName": "MVP"
       },
       {
         "season": 1992,
@@ -16569,6 +16613,10 @@
       },
       {
         "season": 1992,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1992,
         "type": "All-Star"
       },
       {
@@ -16586,10 +16634,6 @@
       {
         "season": 1992,
         "type": "Won Championship"
-      },
-      {
-        "season": 1992,
-        "shortName": "MVP"
       },
       {
         "rank": 3,
@@ -16644,6 +16688,10 @@
       },
       {
         "season": 1996,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1996,
         "type": "All-Star"
       },
       {
@@ -16661,10 +16709,6 @@
       {
         "season": 1996,
         "type": "Won Championship"
-      },
-      {
-        "season": 1996,
-        "shortName": "MVP"
       },
       {
         "season": 1997,
@@ -16710,6 +16754,10 @@
       },
       {
         "season": 1998,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1998,
         "type": "All-Star"
       },
       {
@@ -16727,10 +16775,6 @@
       {
         "season": 1998,
         "type": "Won Championship"
-      },
-      {
-        "season": 1998,
-        "shortName": "MVP"
       },
       {
         "rank": 4,
@@ -16970,6 +17014,10 @@
       }
     ],
     "kiddja01": [
+      {
+        "season": 1995,
+        "shortName": "ROY"
+      },
       {
         "season": 1995,
         "shortName": "ALR"
@@ -17424,11 +17472,11 @@
       },
       {
         "season": 1996,
-        "type": "Won Championship"
+        "shortName": "SMOY"
       },
       {
         "season": 1996,
-        "shortName": "SMOY"
+        "type": "Won Championship"
       },
       {
         "season": 1997,
@@ -17780,6 +17828,10 @@
       },
       {
         "season": 2015,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2015,
         "shortName": "DEF"
       },
       {
@@ -17787,7 +17839,7 @@
         "type": "League Steals Leader"
       },
       {
-        "season": 2015,
+        "season": 2016,
         "shortName": "DPOY"
       },
       {
@@ -17806,10 +17858,6 @@
         "rank": 2,
         "season": 2016,
         "shortName": "MVP"
-      },
-      {
-        "season": 2016,
-        "shortName": "DPOY"
       },
       {
         "season": 2017,
@@ -17985,11 +18033,11 @@
     "lillada01": [
       {
         "season": 2013,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2013,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2014,
@@ -18260,15 +18308,15 @@
       },
       {
         "season": 2011,
+        "shortName": "MIP"
+      },
+      {
+        "season": 2011,
         "type": "All-Star"
       },
       {
         "season": 2011,
         "type": "League Rebounding Leader"
-      },
-      {
-        "season": 2011,
-        "shortName": "MIP"
       },
       {
         "season": 2012,
@@ -18393,6 +18441,10 @@
     "lucasje01": [
       {
         "season": 1964,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1964,
         "type": "All-Star"
       },
       {
@@ -18403,10 +18455,6 @@
       {
         "season": 1964,
         "shortName": "ALR"
-      },
-      {
-        "season": 1964,
-        "shortName": "ROY"
       },
       {
         "season": 1965,
@@ -18795,6 +18843,10 @@
       },
       {
         "season": 1997,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1997,
         "type": "All-Star"
       },
       {
@@ -18804,10 +18856,6 @@
       {
         "season": 1997,
         "shortName": "ALL"
-      },
-      {
-        "season": 1997,
-        "shortName": "MVP"
       },
       {
         "season": 1998,
@@ -18828,15 +18876,15 @@
       },
       {
         "season": 1999,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1999,
         "shortName": "DEF"
       },
       {
         "season": 1999,
         "shortName": "ALL"
-      },
-      {
-        "season": 1999,
-        "shortName": "MVP"
       },
       {
         "season": 2000,
@@ -18884,6 +18932,10 @@
       },
       {
         "season": 1979,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1979,
         "type": "All-Star"
       },
       {
@@ -18898,10 +18950,6 @@
       {
         "season": 1979,
         "type": "League Rebounding Leader"
-      },
-      {
-        "season": 1979,
-        "shortName": "MVP"
       },
       {
         "season": 1980,
@@ -18932,6 +18980,10 @@
       },
       {
         "season": 1982,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1982,
         "type": "All-Star"
       },
       {
@@ -18943,12 +18995,12 @@
         "type": "League Rebounding Leader"
       },
       {
-        "season": 1982,
-        "shortName": "MVP"
+        "season": 1983,
+        "shortName": "FMVP"
       },
       {
         "season": 1983,
-        "shortName": "FMVP"
+        "shortName": "MVP"
       },
       {
         "season": 1983,
@@ -18969,10 +19021,6 @@
       {
         "season": 1983,
         "type": "Won Championship"
-      },
-      {
-        "season": 1983,
-        "shortName": "MVP"
       },
       {
         "season": 1984,
@@ -19219,11 +19267,11 @@
       },
       {
         "season": 2023,
-        "type": "All-Star"
+        "shortName": "MIP"
       },
       {
         "season": 2023,
-        "shortName": "MIP"
+        "type": "All-Star"
       }
     ],
     "marksse01": [
@@ -19436,11 +19484,11 @@
     "maxeyty01": [
       {
         "season": 2024,
-        "type": "All-Star"
+        "shortName": "MIP"
       },
       {
         "season": 2024,
-        "shortName": "MIP"
+        "type": "All-Star"
       },
       {
         "season": 2026,
@@ -19519,13 +19567,13 @@
     "mcadobo01": [
       {
         "season": 1973,
-        "shortName": "ALR"
-      },
-      {
-        "season": 1973,
         "shortName": "ROY"
       },
       {
+        "season": 1973,
+        "shortName": "ALR"
+      },
+      {
         "season": 1974,
         "type": "All-Star"
       },
@@ -19545,6 +19593,10 @@
       },
       {
         "season": 1975,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1975,
         "type": "All-Star"
       },
       {
@@ -19554,10 +19606,6 @@
       {
         "season": 1975,
         "type": "League Scoring Leader"
-      },
-      {
-        "season": 1975,
-        "shortName": "MVP"
       },
       {
         "season": 1976,
@@ -19809,16 +19857,16 @@
       },
       {
         "season": 2001,
+        "shortName": "MIP"
+      },
+      {
+        "season": 2001,
         "type": "All-Star"
       },
       {
         "rank": 2,
         "season": 2001,
         "shortName": "ALL"
-      },
-      {
-        "season": 2001,
-        "shortName": "MIP"
       },
       {
         "season": 2002,
@@ -19955,15 +20003,15 @@
       },
       {
         "season": 1984,
+        "shortName": "SMOY"
+      },
+      {
+        "season": 1984,
         "type": "All-Star"
       },
       {
         "season": 1984,
         "type": "Won Championship"
-      },
-      {
-        "season": 1984,
-        "shortName": "SMOY"
       },
       {
         "season": 1985,
@@ -20147,6 +20195,12 @@
       {
         "season": 2019,
         "type": "Won Championship"
+      }
+    ],
+    "meinemo01": [
+      {
+        "season": 1953,
+        "shortName": "ROY"
       }
     ],
     "meinhca01": [
@@ -20438,11 +20492,11 @@
     "millemi01": [
       {
         "season": 2001,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2001,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2006,
@@ -20772,6 +20826,10 @@
       },
       {
         "season": 2025,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2025,
         "type": "All-Star"
       },
       {
@@ -20782,10 +20840,6 @@
         "rank": 2,
         "season": 2025,
         "shortName": "ALL"
-      },
-      {
-        "season": 2025,
-        "shortName": "DPOY"
       }
     ],
     "mohamna01": [
@@ -20817,6 +20871,10 @@
       },
       {
         "season": 1983,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1983,
         "type": "All-Star"
       },
       {
@@ -20833,7 +20891,7 @@
         "shortName": "MVP"
       },
       {
-        "season": 1983,
+        "season": 1984,
         "shortName": "DPOY"
       },
       {
@@ -20848,10 +20906,6 @@
         "rank": 2,
         "season": 1984,
         "shortName": "ALL"
-      },
-      {
-        "season": 1984,
-        "shortName": "DPOY"
       },
       {
         "season": 1985,
@@ -20909,11 +20963,11 @@
     "monroea01": [
       {
         "season": 1968,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1968,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1969,
@@ -20996,11 +21050,15 @@
     "moranja01": [
       {
         "season": 2020,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2020,
-        "shortName": "ROY"
+        "shortName": "ALR"
+      },
+      {
+        "season": 2022,
+        "shortName": "MIP"
       },
       {
         "season": 2022,
@@ -21010,10 +21068,6 @@
         "rank": 2,
         "season": 2022,
         "shortName": "ALL"
-      },
-      {
-        "season": 2022,
-        "shortName": "MIP"
       },
       {
         "season": 2023,
@@ -21097,6 +21151,10 @@
       },
       {
         "season": 1999,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1999,
         "shortName": "DEF"
       },
       {
@@ -21113,7 +21171,7 @@
         "shortName": "MVP"
       },
       {
-        "season": 1999,
+        "season": 2000,
         "shortName": "DPOY"
       },
       {
@@ -21137,10 +21195,6 @@
         "rank": 3,
         "season": 2000,
         "shortName": "MVP"
-      },
-      {
-        "season": 2000,
-        "shortName": "DPOY"
       },
       {
         "season": 2001,
@@ -21379,6 +21433,10 @@
       },
       {
         "season": 1995,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1995,
         "type": "All-Star"
       },
       {
@@ -21389,10 +21447,6 @@
       {
         "season": 1995,
         "type": "League Blocks Leader"
-      },
-      {
-        "season": 1995,
-        "shortName": "DPOY"
       },
       {
         "season": 1996,
@@ -21409,6 +21463,10 @@
       },
       {
         "season": 1997,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1997,
         "type": "All-Star"
       },
       {
@@ -21416,7 +21474,7 @@
         "shortName": "DEF"
       },
       {
-        "season": 1997,
+        "season": 1998,
         "shortName": "DPOY"
       },
       {
@@ -21431,10 +21489,6 @@
         "rank": 3,
         "season": 1998,
         "shortName": "ALL"
-      },
-      {
-        "season": 1998,
-        "shortName": "DPOY"
       },
       {
         "rank": 2,
@@ -21461,6 +21515,10 @@
       },
       {
         "season": 2001,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2001,
         "type": "All-Star"
       },
       {
@@ -21475,10 +21533,6 @@
       {
         "season": 2001,
         "type": "League Rebounding Leader"
-      },
-      {
-        "season": 2001,
-        "shortName": "DPOY"
       },
       {
         "season": 2002,
@@ -21573,6 +21627,10 @@
       },
       {
         "season": 2005,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2005,
         "type": "All-Star"
       },
       {
@@ -21584,7 +21642,7 @@
         "type": "League Assists Leader"
       },
       {
-        "season": 2005,
+        "season": 2006,
         "shortName": "MVP"
       },
       {
@@ -21598,10 +21656,6 @@
       {
         "season": 2006,
         "type": "League Assists Leader"
-      },
-      {
-        "season": 2006,
-        "shortName": "MVP"
       },
       {
         "season": 2007,
@@ -21845,6 +21899,10 @@
       },
       {
         "season": 2014,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2014,
         "type": "All-Star"
       },
       {
@@ -21859,10 +21917,6 @@
         "rank": 4,
         "season": 2014,
         "shortName": "MVP"
-      },
-      {
-        "season": 2014,
-        "shortName": "DPOY"
       }
     ],
     "noblech01": [
@@ -21965,15 +22019,15 @@
       },
       {
         "season": 2007,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2007,
         "type": "All-Star"
       },
       {
         "season": 2007,
         "shortName": "ALL"
-      },
-      {
-        "season": 2007,
-        "shortName": "MVP"
       },
       {
         "season": 2008,
@@ -22146,11 +22200,11 @@
     "okafoem01": [
       {
         "season": 2005,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2005,
-        "shortName": "ROY"
+        "shortName": "ALR"
       }
     ],
     "okafoja01": [
@@ -22193,6 +22247,10 @@
       },
       {
         "season": 2018,
+        "shortName": "MIP"
+      },
+      {
+        "season": 2018,
         "type": "All-Star"
       },
       {
@@ -22207,10 +22265,6 @@
       {
         "season": 2018,
         "type": "League Steals Leader"
-      },
-      {
-        "season": 2018,
-        "shortName": "MIP"
       },
       {
         "season": 2019,
@@ -22352,6 +22406,10 @@
       },
       {
         "season": 1993,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1993,
         "type": "All-Star"
       },
       {
@@ -22372,12 +22430,16 @@
         "shortName": "MVP"
       },
       {
-        "season": 1993,
+        "season": 1994,
         "shortName": "DPOY"
       },
       {
         "season": 1994,
         "shortName": "FMVP"
+      },
+      {
+        "season": 1994,
+        "shortName": "MVP"
       },
       {
         "season": 1994,
@@ -22394,14 +22456,6 @@
       {
         "season": 1994,
         "type": "Won Championship"
-      },
-      {
-        "season": 1994,
-        "shortName": "MVP"
-      },
-      {
-        "season": 1994,
-        "shortName": "DPOY"
       },
       {
         "season": 1995,
@@ -22494,16 +22548,16 @@
     "onealje01": [
       {
         "season": 2002,
+        "shortName": "MIP"
+      },
+      {
+        "season": 2002,
         "type": "All-Star"
       },
       {
         "rank": 3,
         "season": 2002,
         "shortName": "ALL"
-      },
-      {
-        "season": 2002,
-        "shortName": "MIP"
       },
       {
         "season": 2003,
@@ -22544,15 +22598,15 @@
     "onealsh01": [
       {
         "season": 1993,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1993,
         "type": "All-Star"
       },
       {
         "season": 1993,
         "shortName": "ALR"
-      },
-      {
-        "season": 1993,
-        "shortName": "ROY"
       },
       {
         "season": 1994,
@@ -22632,6 +22686,10 @@
       },
       {
         "season": 2000,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2000,
         "type": "All-Star"
       },
       {
@@ -22650,10 +22708,6 @@
       {
         "season": 2000,
         "type": "Won Championship"
-      },
-      {
-        "season": 2000,
-        "shortName": "MVP"
       },
       {
         "rank": 2,
@@ -23003,11 +23057,11 @@
     "paulch01": [
       {
         "season": 2006,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2006,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2008,
@@ -23304,6 +23358,10 @@
       },
       {
         "season": 1996,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1996,
         "type": "All-Star"
       },
       {
@@ -23318,10 +23376,6 @@
       {
         "season": 1996,
         "type": "League Steals Leader"
-      },
-      {
-        "season": 1996,
-        "shortName": "DPOY"
       },
       {
         "season": 1997,
@@ -23493,11 +23547,11 @@
     "persoch01": [
       {
         "season": 1987,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1987,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "rank": 3,
@@ -23530,6 +23584,10 @@
       }
     ],
     "petrige01": [
+      {
+        "season": 1971,
+        "shortName": "ROY"
+      },
       {
         "season": 1971,
         "type": "All-Star"
@@ -23573,6 +23631,10 @@
     "pettibo01": [
       {
         "season": 1955,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1955,
         "type": "All-Star"
       },
       {
@@ -23585,6 +23647,10 @@
       },
       {
         "season": 1956,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1956,
         "type": "All-Star"
       },
       {
@@ -23594,10 +23660,6 @@
       {
         "season": 1956,
         "type": "League Scoring Leader"
-      },
-      {
-        "season": 1956,
-        "shortName": "MVP"
       },
       {
         "season": 1957,
@@ -23639,6 +23701,10 @@
       },
       {
         "season": 1959,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1959,
         "type": "All-Star"
       },
       {
@@ -23648,10 +23714,6 @@
       {
         "season": 1959,
         "type": "League Scoring Leader"
-      },
-      {
-        "season": 1959,
-        "shortName": "MVP"
       },
       {
         "season": 1960,
@@ -24579,16 +24641,16 @@
       },
       {
         "season": 2021,
+        "shortName": "MIP"
+      },
+      {
+        "season": 2021,
         "type": "All-Star"
       },
       {
         "rank": 2,
         "season": 2021,
         "shortName": "ALL"
-      },
-      {
-        "season": 2021,
-        "shortName": "MIP"
       },
       {
         "season": 2023,
@@ -24732,15 +24794,15 @@
     "reedwi01": [
       {
         "season": 1965,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1965,
         "type": "All-Star"
       },
       {
         "season": 1965,
         "shortName": "ALR"
-      },
-      {
-        "season": 1965,
-        "shortName": "ROY"
       },
       {
         "season": 1966,
@@ -24788,6 +24850,10 @@
       },
       {
         "season": 1970,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1970,
         "type": "All-Star"
       },
       {
@@ -24801,10 +24867,6 @@
       {
         "season": 1970,
         "type": "Won Championship"
-      },
-      {
-        "season": 1970,
-        "shortName": "MVP"
       },
       {
         "season": 1971,
@@ -25013,11 +25075,11 @@
     "richmmi01": [
       {
         "season": 1989,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1989,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1993,
@@ -25174,6 +25236,14 @@
     "roberal01": [
       {
         "season": 1986,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1986,
+        "shortName": "MIP"
+      },
+      {
+        "season": 1986,
         "type": "All-Star"
       },
       {
@@ -25189,14 +25259,6 @@
       {
         "season": 1986,
         "type": "League Steals Leader"
-      },
-      {
-        "season": 1986,
-        "shortName": "DPOY"
-      },
-      {
-        "season": 1986,
-        "shortName": "MIP"
       },
       {
         "season": 1987,
@@ -25271,6 +25333,10 @@
       },
       {
         "season": 1961,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1961,
         "type": "All-Star"
       },
       {
@@ -25322,6 +25388,10 @@
       },
       {
         "season": 1964,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1964,
         "type": "All-Star"
       },
       {
@@ -25331,10 +25401,6 @@
       {
         "season": 1964,
         "type": "League Assists Leader"
-      },
-      {
-        "season": 1964,
-        "shortName": "MVP"
       },
       {
         "season": 1965,
@@ -25497,6 +25563,10 @@
     "robinda01": [
       {
         "season": 1990,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1990,
         "type": "All-Star"
       },
       {
@@ -25512,10 +25582,6 @@
       {
         "season": 1990,
         "shortName": "ALR"
-      },
-      {
-        "season": 1990,
-        "shortName": "ROY"
       },
       {
         "season": 1991,
@@ -25545,6 +25611,10 @@
       },
       {
         "season": 1992,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1992,
         "type": "All-Star"
       },
       {
@@ -25563,10 +25633,6 @@
         "rank": 3,
         "season": 1992,
         "shortName": "MVP"
-      },
-      {
-        "season": 1992,
-        "shortName": "DPOY"
       },
       {
         "season": 1993,
@@ -25617,6 +25683,10 @@
       },
       {
         "season": 1995,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1995,
         "type": "All-Star"
       },
       {
@@ -25626,10 +25696,6 @@
       {
         "season": 1995,
         "shortName": "ALL"
-      },
-      {
-        "season": 1995,
-        "shortName": "MVP"
       },
       {
         "rank": 4,
@@ -25882,6 +25948,10 @@
       },
       {
         "season": 1990,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 1990,
         "type": "All-Star"
       },
       {
@@ -25893,16 +25963,12 @@
         "type": "Won Championship"
       },
       {
-        "season": 1990,
+        "season": 1991,
         "shortName": "DPOY"
       },
       {
         "season": 1991,
         "shortName": "DEF"
-      },
-      {
-        "season": 1991,
-        "shortName": "DPOY"
       },
       {
         "season": 1992,
@@ -26120,15 +26186,19 @@
     "rosede01": [
       {
         "season": 2009,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2009,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2010,
         "type": "All-Star"
+      },
+      {
+        "season": 2011,
+        "shortName": "MVP"
       },
       {
         "season": 2011,
@@ -26137,10 +26207,6 @@
       {
         "season": 2011,
         "shortName": "ALL"
-      },
-      {
-        "season": 2011,
-        "shortName": "MVP"
       },
       {
         "rank": 4,
@@ -26260,11 +26326,11 @@
     "roybr01": [
       {
         "season": 2007,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2007,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2008,
@@ -26347,6 +26413,10 @@
       },
       {
         "season": 1958,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1958,
         "type": "All-Star"
       },
       {
@@ -26359,10 +26429,6 @@
         "type": "League Rebounding Leader"
       },
       {
-        "season": 1958,
-        "shortName": "MVP"
-      },
-      {
         "season": 1959,
         "type": "All-Star"
       },
@@ -26403,6 +26469,10 @@
       },
       {
         "season": 1961,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1961,
         "type": "All-Star"
       },
       {
@@ -26415,7 +26485,7 @@
         "type": "Won Championship"
       },
       {
-        "season": 1961,
+        "season": 1962,
         "shortName": "MVP"
       },
       {
@@ -26430,10 +26500,6 @@
       {
         "season": 1962,
         "type": "Won Championship"
-      },
-      {
-        "season": 1962,
-        "shortName": "MVP"
       },
       {
         "season": 1963,
@@ -26441,6 +26507,10 @@
       },
       {
         "season": 1963,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1963,
         "type": "All-Star"
       },
       {
@@ -26450,10 +26520,6 @@
       {
         "season": 1963,
         "type": "Won Championship"
-      },
-      {
-        "season": 1963,
-        "shortName": "MVP"
       },
       {
         "season": 1964,
@@ -26479,6 +26545,10 @@
       },
       {
         "season": 1965,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1965,
         "type": "All-Star"
       },
       {
@@ -26492,10 +26562,6 @@
       {
         "season": 1965,
         "type": "Won Championship"
-      },
-      {
-        "season": 1965,
-        "shortName": "MVP"
       },
       {
         "season": 1966,
@@ -26682,15 +26748,15 @@
     "sampsra01": [
       {
         "season": 1984,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1984,
         "type": "All-Star"
       },
       {
         "season": 1984,
         "shortName": "ALR"
-      },
-      {
-        "season": 1984,
-        "shortName": "ROY"
       },
       {
         "season": 1985,
@@ -26787,6 +26853,10 @@
       }
     ],
     "sauldwo01": [
+      {
+        "season": 1958,
+        "shortName": "ROY"
+      },
       {
         "season": 1959,
         "type": "All-Star"
@@ -27227,6 +27297,12 @@
         "type": "Won Championship"
       }
     ],
+    "shannho01": [
+      {
+        "season": 1949,
+        "shortName": "ROY"
+      }
+    ],
     "sharech01": [
       {
         "season": 1958,
@@ -27416,11 +27492,11 @@
     "siakapa01": [
       {
         "season": 2019,
-        "type": "Won Championship"
+        "shortName": "MIP"
       },
       {
         "season": 2019,
-        "shortName": "MIP"
+        "type": "Won Championship"
       },
       {
         "season": 2020,
@@ -27587,11 +27663,11 @@
     "simmobe01": [
       {
         "season": 2018,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2018,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2019,
@@ -27760,11 +27836,11 @@
       },
       {
         "season": 2022,
-        "shortName": "DEF"
+        "shortName": "DPOY"
       },
       {
         "season": 2022,
-        "shortName": "DPOY"
+        "shortName": "DEF"
       }
     ],
     "smithad01": [
@@ -28481,6 +28557,10 @@
     "stokema01": [
       {
         "season": 1956,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1956,
         "type": "All-Star"
       },
       {
@@ -28523,11 +28603,11 @@
     "stoudam01": [
       {
         "season": 2003,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2003,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2005,
@@ -28585,11 +28665,11 @@
     "stoudda01": [
       {
         "season": 1996,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1996,
-        "shortName": "ROY"
+        "shortName": "ALR"
       }
     ],
     "stricro02": [
@@ -29384,6 +29464,12 @@
         "type": "Won Championship"
       }
     ],
+    "toshebi01": [
+      {
+        "season": 1952,
+        "shortName": "ROY"
+      }
+    ],
     "toupaax01": [
       {
         "season": 2021,
@@ -29393,11 +29479,11 @@
     "townska01": [
       {
         "season": 2016,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2016,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2018,
@@ -29622,6 +29708,14 @@
     "unselwe01": [
       {
         "season": 1969,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1969,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1969,
         "type": "All-Star"
       },
       {
@@ -29631,14 +29725,6 @@
       {
         "season": 1969,
         "shortName": "ALR"
-      },
-      {
-        "season": 1969,
-        "shortName": "MVP"
-      },
-      {
-        "season": 1969,
-        "shortName": "ROY"
       },
       {
         "season": 1971,
@@ -30278,6 +30364,10 @@
     "wallabe01": [
       {
         "season": 2002,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2002,
         "shortName": "DEF"
       },
       {
@@ -30294,13 +30384,13 @@
         "type": "League Blocks Leader"
       },
       {
-        "season": 2002,
-        "shortName": "DPOY"
-      },
-      {
         "rank": 2,
         "season": 2002,
         "shortName": "MIP"
+      },
+      {
+        "season": 2003,
+        "shortName": "DPOY"
       },
       {
         "season": 2003,
@@ -30318,10 +30408,6 @@
       {
         "season": 2003,
         "type": "League Rebounding Leader"
-      },
-      {
-        "season": 2003,
-        "shortName": "DPOY"
       },
       {
         "season": 2004,
@@ -30347,6 +30433,10 @@
       },
       {
         "season": 2005,
+        "shortName": "DPOY"
+      },
+      {
+        "season": 2005,
         "type": "All-Star"
       },
       {
@@ -30359,7 +30449,7 @@
         "shortName": "ALL"
       },
       {
-        "season": 2005,
+        "season": 2006,
         "shortName": "DPOY"
       },
       {
@@ -30374,10 +30464,6 @@
         "rank": 2,
         "season": 2006,
         "shortName": "ALL"
-      },
-      {
-        "season": 2006,
-        "shortName": "DPOY"
       },
       {
         "rank": 2,
@@ -30560,6 +30646,10 @@
       },
       {
         "season": 1978,
+        "shortName": "MVP"
+      },
+      {
+        "season": 1978,
         "type": "All-Star"
       },
       {
@@ -30571,16 +30661,12 @@
         "shortName": "ALL"
       },
       {
-        "season": 1978,
-        "shortName": "MVP"
+        "season": 1986,
+        "shortName": "SMOY"
       },
       {
         "season": 1986,
         "type": "Won Championship"
-      },
-      {
-        "season": 1986,
-        "shortName": "SMOY"
       },
       {
         "season": 1993,
@@ -30725,11 +30811,11 @@
     "webbech01": [
       {
         "season": 1994,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 1994,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 1997,
@@ -30864,6 +30950,10 @@
     "wembavi01": [
       {
         "season": 2024,
+        "shortName": "ROY"
+      },
+      {
+        "season": 2024,
         "shortName": "DEF"
       },
       {
@@ -30880,16 +30970,16 @@
         "shortName": "DPOY"
       },
       {
-        "season": 2024,
-        "shortName": "ROY"
-      },
-      {
         "season": 2025,
         "type": "All-Star"
       },
       {
         "season": 2025,
         "type": "League Blocks Leader"
+      },
+      {
+        "season": 2026,
+        "shortName": "DPOY"
       },
       {
         "season": 2026,
@@ -30915,10 +31005,6 @@
         "rank": 3,
         "season": 2026,
         "shortName": "MVP"
-      },
-      {
-        "season": 2026,
-        "shortName": "DPOY"
       }
     ],
     "wennibi01": [
@@ -31013,6 +31099,10 @@
       },
       {
         "season": 2017,
+        "shortName": "MVP"
+      },
+      {
+        "season": 2017,
         "type": "All-Star"
       },
       {
@@ -31022,10 +31112,6 @@
       {
         "season": 2017,
         "type": "League Scoring Leader"
-      },
-      {
-        "season": 2017,
-        "shortName": "MVP"
       },
       {
         "season": 2018,
@@ -31476,15 +31562,15 @@
     "wickssi01": [
       {
         "season": 1972,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1972,
         "type": "All-Star"
       },
       {
         "season": 1972,
         "shortName": "ALR"
-      },
-      {
-        "season": 1972,
-        "shortName": "ROY"
       },
       {
         "season": 1973,
@@ -31508,11 +31594,11 @@
     "wiggian01": [
       {
         "season": 2015,
-        "shortName": "ALR"
+        "shortName": "ROY"
       },
       {
         "season": 2015,
-        "shortName": "ROY"
+        "shortName": "ALR"
       },
       {
         "season": 2022,
@@ -31532,15 +31618,15 @@
     "wilkeja01": [
       {
         "season": 1975,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1975,
         "shortName": "ALR"
       },
       {
         "season": 1975,
         "type": "Won Championship"
-      },
-      {
-        "season": 1975,
-        "shortName": "ROY"
       },
       {
         "season": 1976,
@@ -31769,15 +31855,15 @@
     "willibu01": [
       {
         "season": 1982,
+        "shortName": "ROY"
+      },
+      {
+        "season": 1982,
         "type": "All-Star"
       },
       {
         "season": 1982,
         "shortName": "ALR"
-      },
-      {
-        "season": 1982,
-        "shortName": "ROY"
       },
       {
         "season": 1983,

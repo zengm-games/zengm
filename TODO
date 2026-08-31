@@ -3,6 +3,7 @@ custom awards
   - only fetch needed variables from playersPlus when evaluating award formula
     - see FormulaEvaluator.usedSymbols
     - also consider showStats for Award Races
+    - test error messages (normal, byPos, OPOY)
 - UI to update
   - GOAT formula
     - explain min/max functions

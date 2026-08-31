@@ -211,6 +211,107 @@ const getInvalidVariablesErrorMessageVariablesPart = (
 	return "";
 };
 
+// This checks all formulas for all awards, so we know any invalid formulas right away, we know what variables are used in all formulas, and we can easily dedupe
+class FormulaEvaluators {
+	private formulaEvaluators: Record<
+		// Need to store normal and playoffSeries separately, otherwise with the same formula it's possible one is valid and the other isn't, and we only know by running `new FormulaEvaluator()`
+		"normal" | "playoffSeries",
+		Record<string, FormulaEvaluator<string[]>>
+	> = {
+		normal: {},
+		playoffSeries: {},
+	};
+	errorMessages: string[] | undefined;
+
+	private registerFormula({
+		formula,
+		opoy,
+		pos,
+		shortName,
+		type,
+	}: {
+		formula: string;
+		opoy: boolean;
+		pos: string | undefined;
+		shortName: string;
+		type: keyof FormulaEvaluators["formulaEvaluators"];
+	}) {
+		if (this.formulaEvaluators[type][formula]) {
+			// Two awards have the same formula
+			return;
+		}
+
+		const playoffSeries = type === "playoffSeries";
+		const symbols = playoffSeries
+			? PLAYOFF_SERIES_AWARD_STATS_ALL
+			: AWARD_STATS_ALL;
+
+		let formulaEvaluator;
+		try {
+			formulaEvaluator = new FormulaEvaluator(formula, symbols);
+		} catch (error) {
+			const posPart = pos ? `${pos} ` : "";
+			const opoyPart = opoy ? `${opoy} ` : "";
+
+			this.errorMessages ??= [];
+			this.errorMessages.push(
+				`${shortName} ${posPart}${opoyPart}formula (${formula}): ${error.message}${getInvalidVariablesErrorMessageVariablesPart(error, playoffSeries)}`,
+			);
+
+			// At least render something
+			formulaEvaluator = new FormulaEvaluator("0", symbols);
+		}
+
+		this.formulaEvaluators[type][formula] = formulaEvaluator;
+	}
+
+	constructor(awards: GameAttributesLeague["awards"]) {
+		for (const award of awards) {
+			const type =
+				typeof award.statRange === "number" ? "playoffSeries" : "normal";
+			this.registerFormula({
+				formula: award.formula,
+				opoy: false,
+				pos: undefined,
+				shortName: award.shortName,
+				type,
+			});
+
+			if (award.formulaByPos) {
+				for (const [pos, formula] of Object.entries(award.formulaByPos)) {
+					this.registerFormula({
+						formula,
+						opoy: false,
+						pos,
+						shortName: award.shortName,
+						type,
+					});
+				}
+			}
+
+			if (award.numTeams === undefined && award.opoyFormula !== undefined) {
+				this.registerFormula({
+					formula: award.opoyFormula,
+					opoy: true,
+					pos: undefined,
+					shortName: award.shortName,
+					type,
+				});
+			}
+		}
+	}
+
+	getEvaluate(formula: string, playoffSeries: boolean) {
+		const type = playoffSeries ? "playoffSeries" : "normal";
+		const formulaEvaluator = this.formulaEvaluators[type][formula];
+		if (!formulaEvaluator) {
+			throw new Error("Formula not registered");
+		}
+
+		return formulaEvaluator.evaluate.bind(formulaEvaluator);
+	}
+}
+
 export const processAwards = async ({
 	awards,
 	numPlayersPerIndividualAward,
@@ -222,6 +323,8 @@ export const processAwards = async ({
 	season: number;
 	statOverridesByMatchup: StatOverridesByMatchup | undefined;
 }) => {
+	const formulaEvaluators = new FormulaEvaluators(awards);
+
 	const statRanges = new Set(
 		awards.map((award) => award.statRange ?? "regularSeason"),
 	);
@@ -231,13 +334,6 @@ export const processAwards = async ({
 		statRanges,
 		statOverridesByMatchup,
 	);
-
-	const formulaEvaluators: Record<
-		string,
-		FormulaEvaluator<string[]>["evaluate"]
-	> = {};
-
-	let errorMessages: string[] | undefined;
 
 	for (const p of players) {
 		for (const award of awards) {
@@ -252,31 +348,10 @@ export const processAwards = async ({
 				continue;
 			}
 
-			if (!formulaEvaluators[formula]) {
-				const playoffSeries = typeof statRange === "number";
-				const symbols = playoffSeries
-					? PLAYOFF_SERIES_AWARD_STATS_ALL
-					: AWARD_STATS_ALL;
-
-				let formulaEvaluator;
-				try {
-					formulaEvaluator = new FormulaEvaluator(formula, symbols);
-				} catch (error) {
-					const posPart = award.formulaByPos?.[p.pos] ? `${p.pos} ` : "";
-
-					errorMessages ??= [];
-					errorMessages.push(
-						`${award.shortName} ${posPart}formula (${award.formula}): ${error.message}${getInvalidVariablesErrorMessageVariablesPart(error, playoffSeries)}`,
-					);
-
-					// At least render something
-					formulaEvaluator = new FormulaEvaluator("0", symbols);
-				}
-
-				formulaEvaluators[formula] =
-					formulaEvaluator.evaluate.bind(formulaEvaluator);
-			}
-			const evaluate = formulaEvaluators[formula];
+			const evaluate = formulaEvaluators.getEvaluate(
+				formula,
+				typeof statRange === "number",
+			);
 
 			const currentStats = p.currentStats[award.statRange ?? "regularSeason"];
 			const currentScore =
@@ -749,45 +824,33 @@ export const processAwards = async ({
 					const opoy = playersByPid[opoyWinner.pid];
 					if (mvp?.pos === "QB" && opoy) {
 						// MVP is a QB - if that QB is a significantly better offensive player (by opoyFormula) than the initial OPOY, then bump them to the top of the list
-						let formulaEvaluator;
 						const playoffSeries = typeof opoyAward.statRange === "number";
-						try {
-							formulaEvaluator = new FormulaEvaluator(
-								opoyAward.opoyFormula,
-								playoffSeries
-									? PLAYOFF_SERIES_AWARD_STATS_ALL
-									: AWARD_STATS_ALL,
-							);
-						} catch (error) {
-							errorMessages ??= [];
-							errorMessages.push(
-								`${opoyAward.shortName} OPOY formula (${opoyAward.formula}): ${error.message}${getInvalidVariablesErrorMessageVariablesPart(error, playoffSeries)}`,
-							);
-						}
+						const evaluate = formulaEvaluators.getEvaluate(
+							opoyAward.opoyFormula,
+							playoffSeries,
+						);
 
-						if (formulaEvaluator) {
-							const mvpCurrentStats =
-								mvp.currentStats[mvpAward.statRange ?? "regularSeason"];
-							const mvpScore = mvpCurrentStats
-								? formulaEvaluator.evaluate(mvpCurrentStats)
-								: undefined;
+						const mvpCurrentStats =
+							mvp.currentStats[mvpAward.statRange ?? "regularSeason"];
+						const mvpScore = mvpCurrentStats
+							? evaluate(mvpCurrentStats)
+							: undefined;
 
-							const opoyCurrentStats =
-								opoy.currentStats[opoyAward.statRange ?? "regularSeason"];
-							const opoyScore = opoyCurrentStats
-								? formulaEvaluator.evaluate(opoyCurrentStats)
-								: undefined;
+						const opoyCurrentStats =
+							opoy.currentStats[opoyAward.statRange ?? "regularSeason"];
+						const opoyScore = opoyCurrentStats
+							? evaluate(opoyCurrentStats)
+							: undefined;
 
-							if (
-								mvpScore !== undefined &&
-								opoyScore !== undefined &&
-								mvpScore / opoyScore > 1.2
-							) {
-								opoyAward.winner = [
-									{ ...mvpWinner, opoyOverride: true as const },
-									...opoyAward.winner,
-								].slice(0, numPlayersPerIndividualAward);
-							}
+						if (
+							mvpScore !== undefined &&
+							opoyScore !== undefined &&
+							mvpScore / opoyScore > 1.2
+						) {
+							opoyAward.winner = [
+								{ ...mvpWinner, opoyOverride: true as const },
+								...opoyAward.winner,
+							].slice(0, numPlayersPerIndividualAward);
 						}
 					}
 				}
@@ -795,5 +858,9 @@ export const processAwards = async ({
 		}
 	}
 
-	return { errorMessages, players, realizedAwards };
+	return {
+		errorMessages: formulaEvaluators.errorMessages,
+		players,
+		realizedAwards,
+	};
 };

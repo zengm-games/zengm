@@ -5,12 +5,34 @@ const hashAward = (award: PlayerAward) => {
 		return JSON.stringify([award.season, award.type]);
 	}
 
+	const group = award.group;
+	const groupPart =
+		group?.type === "conf"
+			? [group.type, group.cid]
+			: group?.type === "div"
+				? [group?.type, group.did]
+				: [];
+
+	if (award.numTeams === undefined) {
+		return JSON.stringify([
+			award.season,
+			award.name,
+			award.shortName,
+			award.index,
+			award.rank,
+			groupPart,
+			award.actAs,
+		]);
+	}
+
 	return JSON.stringify([
 		award.season,
-		award.index,
 		award.name,
-		award.rank,
 		award.shortName,
+		award.index,
+		award.rank,
+		award.numTeams,
+		groupPart,
 	]);
 };
 

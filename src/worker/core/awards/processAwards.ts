@@ -29,7 +29,6 @@ import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import helpers from "../../util/helpers.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import g from "../../util/g.ts";
-import { processStats as processStatsBaseball } from "../../../common/processPlayerStats.baseball.ts";
 import { idb } from "../../db/index.ts";
 import { TEAM_AWARD_INFO } from "../../../common/constants.ts";
 import { hashPlayoffSeries } from "./hashPlayoffSeries.ts";
@@ -89,8 +88,8 @@ const filterPlayersForAward = (
 			const statRange = award.statRange ?? "regularSeason";
 
 			filteredPlayers = filteredPlayers.filter((p) => {
-				// `firstSeasonWithStats - 1` because then a player who is a rookie during the first year with stats (p.draft.year === firstSeasonWithStats - 1) will not get caught by this filter
-				if (p.draft.year < firstSeasonWithStats - 1) {
+				// This is to handle the case where there are no past seasons with stats - treat rookies as players who were drafted last year
+				if (p.draft.year < firstSeasonWithStats) {
 					return p.draft.year === seasonForRookieCheck - 1;
 				}
 
@@ -102,14 +101,18 @@ const filterPlayersForAward = (
 				let abSum = 0;
 				let outsSum = 0;
 				for (const row of p.stats) {
-					if (row.playoffs === false) {
-						abSum += processStatsBaseball(row, ["ab"]).ab;
-						outsSum += row.outs;
+					if (row.season > seasonForRookieCheck) {
+						return false;
 					}
 
-					if (abSum >= 130 * cutoffFactor || outsSum >= 150 * cutoffFactor) {
-						// Rookie if this is the season they crossed the threshold
-						return row.season === seasonForRookieCheck;
+					if (row.playoffs === false) {
+						abSum += row.ab;
+						outsSum += row.outs;
+
+						if (abSum >= 130 * cutoffFactor || outsSum >= 150 * cutoffFactor) {
+							// Rookie if this is the season they crossed the threshold
+							return row.season === seasonForRookieCheck;
+						}
 					}
 				}
 
@@ -235,6 +238,12 @@ export class FormulaEvaluators {
 			normal: new Set<string>(extraStats),
 			playoffSeries: new Set<string>(extraStats),
 		};
+
+		if (isSport("baseball")) {
+			// Needed for baseball rookie stuff - these might already be picked up elsewhere, but let's be sure
+			this.variables.normal.add("ab");
+			this.variables.normal.add("outs");
+		}
 
 		for (const award of awards) {
 			const type =

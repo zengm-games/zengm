@@ -122,7 +122,6 @@ const getProcessedPlayers = async (
 			),
 		]),
 	);
-	console.log("stats", stats);
 
 	const regularSeason = statRanges.has("regularSeason");
 	const playoffs = statRanges.has("playoffs");
@@ -259,13 +258,9 @@ const getPlayoffSeriesStats = async (
 		}
 	> = new Map();
 
-	const statsToSum = new Set(PLAYOFF_SERIES_AWARD_STATS_RAW).intersection(
-		variables,
-	);
 	const statsForProcessPlayerStats = new Set(
 		PLAYOFF_SERIES_AWARD_STATS,
 	).intersection(variables);
-	console.log({ variables, statsToSum, statsForProcessPlayerStats });
 
 	for (const game of games) {
 		for (const t of game.teams) {
@@ -281,7 +276,8 @@ const getPlayoffSeriesStats = async (
 					rawStats: {},
 				});
 
-				for (const key of statsToSum) {
+				// Need to scan all of PLAYOFF_SERIES_AWARD_STATS_RAW because we don't know which ones will be used in processPlayerStats for derived variables
+				for (const key of PLAYOFF_SERIES_AWARD_STATS_RAW) {
 					row.rawStats[key] ??= 0;
 					row.rawStats[key] += p[key];
 				}

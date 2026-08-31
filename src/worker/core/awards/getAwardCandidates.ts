@@ -83,6 +83,33 @@ const getAwards = async (season: number) => {
 	};
 };
 
+// Like showStatsByType but with a bit more
+export const awardCandidateStats: Partial<
+	Record<Award["showStats"], string[]>
+> = bySport({
+	baseball: {
+		overall: ["keyStats", "war"],
+		sp: ["w", "l", "era", "ip", "war"],
+		rp: ["sv", "era", "ip", "war"],
+		offense: ["pa", "hr", "ba", "ops", "war"],
+		defense: ["pa", "hr", "ba", "ops", "war"], // Showing actualy defensive stats would be annoying because arrays
+	},
+	basketball: {
+		offense: ["pts", "trb", "ast", "per"],
+		defense: ["trb", "blk", "stl", "dws"],
+	},
+	football: {
+		overall: ["keyStats", "av"],
+		defense: ["defTck", "defSk", "defPssDef", "defInt", "av"],
+		blocking: ["pbw", "pbwr", "rbw", "rbwr", "av"],
+	},
+	hockey: {
+		overall: ["keyStats", "ps"],
+		defense: ["tk", "hit", "dps"],
+		goalkeeping: ["gpGoalie", "gaa", "svPct", "gps"],
+	},
+});
+
 export const getAwardCandidates = async (
 	season: number,
 	awardsOverride?: GameAttributesLeague["awards"],
@@ -97,40 +124,15 @@ export const getAwardCandidates = async (
 		statOverridesByMatchup = info.statOverridesByMatchup;
 	}
 
-	const { errorMessages, realizedAwards, players } = await processAwards({
+	const { errorMessages, players, realizedAwards } = await processAwards({
 		awards,
+		extraStats: [],
 		numPlayersPerIndividualAward: 10,
 		season,
 		statOverridesByMatchup,
 	});
 
 	const playersByPid = groupByUnique(players, "pid");
-
-	// Like showStatsByType but with a bit more
-	const awardCandidateStats: Partial<Record<Award["showStats"], string[]>> =
-		bySport({
-			baseball: {
-				overall: ["keyStats", "war"],
-				sp: ["w", "l", "era", "ip", "war"],
-				rp: ["sv", "era", "ip", "war"],
-				offense: ["pa", "hr", "ba", "ops", "war"],
-				defense: ["pa", "hr", "ba", "ops", "war"], // Showing actualy defensive stats would be annoying because arrays
-			},
-			basketball: {
-				offense: ["pts", "trb", "ast", "per"],
-				defense: ["trb", "blk", "stl", "dws"],
-			},
-			football: {
-				overall: ["keyStats", "av"],
-				defense: ["defTck", "defSk", "defPssDef", "defInt", "av"],
-				blocking: ["pbw", "pbwr", "rbw", "rbwr", "av"],
-			},
-			hockey: {
-				overall: ["keyStats", "ps"],
-				defense: ["tk", "hit", "dps"],
-				goalkeeping: ["gpGoalie", "gaa", "svPct", "gps"],
-			},
-		});
 
 	const augmentPlayers = (
 		award: Award,

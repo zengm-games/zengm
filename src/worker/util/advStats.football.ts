@@ -444,6 +444,7 @@ const advStats = async () => {
 	if (!playoffs) {
 		const { realizedAwards } = await processAwards({
 			awards: [defaultAwards.all],
+			extraStats: [],
 			numPlayersPerIndividualAward: 1,
 			season: g.get("season"),
 			statOverridesByMatchup: undefined,

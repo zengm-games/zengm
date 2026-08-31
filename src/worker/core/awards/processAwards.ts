@@ -33,6 +33,7 @@ import { processStats as processStatsBaseball } from "../../../common/processPla
 import { idb } from "../../db/index.ts";
 import { TEAM_AWARD_INFO } from "../../../common/constants.ts";
 import { hashPlayoffSeries } from "./hashPlayoffSeries.ts";
+import { awardCandidateStats } from "./getAwardCandidates.ts";
 
 const ROUGH_MPG_NEEDED_FOR_MIP = bySport({
 	baseball: undefined,
@@ -224,22 +225,63 @@ export class FormulaEvaluators {
 		playoffSeries: {},
 	};
 
-	variables = {
-		normal: new Set<string>(),
-		playoffSeries: new Set<string>(),
+	variables: {
+		normal: Set<string>;
+		playoffSeries: Set<string>;
 	};
 
+	constructor(awards: GameAttributesLeague["awards"], extraStats: string[]) {
+		this.variables = {
+			normal: new Set<string>(extraStats),
+			playoffSeries: new Set<string>(extraStats),
+		};
+
+		for (const award of awards) {
+			const type =
+				typeof award.statRange === "number" ? "playoffSeries" : "normal";
+			this.registerFormula({
+				award,
+				formula: award.formula,
+				opoy: false,
+				pos: undefined,
+				type,
+			});
+
+			if (award.formulaByPos) {
+				for (const [pos, formula] of Object.entries(award.formulaByPos)) {
+					this.registerFormula({
+						award,
+						formula,
+						opoy: false,
+						pos,
+						type,
+					});
+				}
+			}
+
+			if (award.numTeams === undefined && award.opoyFormula !== undefined) {
+				this.registerFormula({
+					award,
+					formula: award.opoyFormula,
+					opoy: true,
+					pos: undefined,
+					type,
+				});
+			}
+		}
+	}
+
 	private registerFormula({
+		award,
 		formula,
 		opoy,
 		pos,
-		shortName,
 		type,
 	}: {
+		award: GameAttributesLeague["awards"][number];
 		formula: string;
 		opoy: boolean;
 		pos: string | undefined;
-		shortName: string;
 		type: keyof FormulaEvaluators["formulaEvaluators"];
 	}) {
 		if (this.formulaEvaluators[type][formula]) {
@@ -261,7 +303,7 @@ export class FormulaEvaluators {
 
 			this.errorMessages ??= [];
 			this.errorMessages.push(
-				`${shortName} ${posPart}${opoyPart}formula (${formula}): ${error.message}${getInvalidVariablesErrorMessageVariablesPart(error, playoffSeries)}`,
+				`${award.shortName} ${posPart}${opoyPart}formula (${formula}): ${error.message}${getInvalidVariablesErrorMessageVariablesPart(error, playoffSeries)}`,
 			);
 
 			// At least render something
@@ -273,41 +315,13 @@ export class FormulaEvaluators {
 		for (const variable of formulaEvaluator.usedVariables) {
 			this.variables[type].add(variable);
 		}
-	}
 
-	constructor(awards: GameAttributesLeague["awards"]) {
-		for (const award of awards) {
-			const type =
-				typeof award.statRange === "number" ? "playoffSeries" : "normal";
-			this.registerFormula({
-				formula: award.formula,
-				opoy: false,
-				pos: undefined,
-				shortName: award.shortName,
-				type,
-			});
-
-			if (award.formulaByPos) {
-				for (const [pos, formula] of Object.entries(award.formulaByPos)) {
-					this.registerFormula({
-						formula,
-						opoy: false,
-						pos,
-						shortName: award.shortName,
-						type,
-					});
-				}
-			}
-
-			if (award.numTeams === undefined && award.opoyFormula !== undefined) {
-				this.registerFormula({
-					formula: award.opoyFormula,
-					opoy: true,
-					pos: undefined,
-					shortName: award.shortName,
-					type,
-				});
-			}
+		// Also add variables from showStats, since we'll need those when assembling player objects. Kind of weird to put this logic here I know, but it's easiest, and that's all that FormulaEvaluator.variables is used for currently! Similar with extraStats.
+		for (const stat of [
+			...showStatsByType[award.showStats]!,
+			...awardCandidateStats[award.showStats]!,
+		]) {
+			this.variables[type].add(stat);
 		}
 	}
 
@@ -324,17 +338,18 @@ export class FormulaEvaluators {
 
 export const processAwards = async ({
 	awards,
+	extraStats,
 	numPlayersPerIndividualAward,
 	season,
 	statOverridesByMatchup,
 }: {
 	awards: GameAttributesLeague["awards"];
+	extraStats: string[];
 	numPlayersPerIndividualAward: number;
 	season: number;
 	statOverridesByMatchup: StatOverridesByMatchup | undefined;
 }) => {
-	const formulaEvaluators = new FormulaEvaluators(awards);
-	console.log(formulaEvaluators.variables);
+	const formulaEvaluators = new FormulaEvaluators(awards, extraStats);
 
 	const statRanges = new Set(
 		awards.map((award) => award.statRange ?? "regularSeason"),

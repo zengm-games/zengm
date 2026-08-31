@@ -1,7 +1,8 @@
 custom awards
 - only fetch needed variables from playersPlus when evaluating award formula
-  - add showStats for Award Races
+  - test league leader awards
   - test error messages (normal, byPos, OPOY)
+  - editAwardWinners
 - UI to update
   - GOAT formula
     - explain min/max functions

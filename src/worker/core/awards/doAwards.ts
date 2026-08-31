@@ -8,6 +8,7 @@ import {
 	updatePlayerAwards,
 } from "./awardsByPlayer.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
+import { leaderAwardCategories } from "../../../common/awards.ts";
 
 const teamAwards = async (
 	teamsUnsorted: TeamFiltered<
@@ -112,6 +113,7 @@ export const doAwards = async (conditions: Conditions) => {
 
 	const { players, realizedAwards } = await processAwards({
 		awards: g.get("awards"),
+		extraStats: leaderAwardCategories.map((row) => row.stat),
 		numPlayersPerIndividualAward: NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD,
 		season,
 		statOverridesByMatchup: undefined,

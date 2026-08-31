@@ -1,16 +1,8 @@
 custom awards
-- editing award of incomplete team will only show the slots that are defined, not allow you to pick new ones
-  - byPos and not
-    - basketball see old seasons before awards existed in real players league
-  - add placeholders in edit code
-    - any extra to the end
-    - DH issue
-  - or, add "add" button?
-    - and a pos dropdown
-    - in that case, don't need to pad arrays when creating winners
-      - processAwards
-      - oldAwardsToNewAwards
-      - editing awards (if blank at end, just delete slot)
+- don't need to pad arrays when creating winners
+  - processAwards
+  - oldAwardsToNewAwards
+  - editing awards (if blank at end, just delete slot)
 - if we do wind up keeping padded award winners, make sure to add that logic in getAwards.ts for real rosters, cause currently it's not there and some awards don't have 5 players in the history
 - UI to update
   - GOAT formula

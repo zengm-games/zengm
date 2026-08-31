@@ -17,7 +17,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import { getAwardKey } from "./AwardRaces.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { groupByUnique } from "../../common/utils.ts";
-import { PLAYER, POSITIONS } from "../../common/constants.ts";
+import { PLAYER, POSITIONS, TEAM_AWARD_INFO } from "../../common/constants.ts";
 import { useBlocker } from "../hooks/useBlocker.ts";
 
 type Winner =
@@ -28,6 +28,16 @@ type Winner =
 	| AwardInfoTeam["winner"][number][number];
 
 type MyPlayer = View<"editAwardWinners">["players"][number];
+
+type AddWinnerProps =
+	| {
+			award: AwardInfoIndividual;
+			teamIndex: undefined;
+	  }
+	| {
+			award: AwardInfoTeam;
+			teamIndex: number;
+	  };
 
 type SetWinnerProps = (
 	| {
@@ -55,6 +65,7 @@ type AwardProps = (
 			teamIndex: number;
 	  }
 ) & {
+	addWinner: (props: AddWinnerProps) => void;
 	disabled: boolean;
 	playersByPid: Record<number, MyPlayer>;
 	setWinner: (props: SetWinnerProps) => void;
@@ -65,6 +76,7 @@ type AwardProps = (
 
 const Award = ({
 	abbrevsByTid,
+	addWinner,
 	award,
 	confs,
 	disabled,
@@ -261,6 +273,27 @@ const Award = ({
 						</div>
 					);
 				})}
+				<div>
+					<button
+						className="btn btn-light-bordered"
+						type="button"
+						onClick={() => {
+							if (award.numTeams === undefined) {
+								addWinner({
+									award,
+									teamIndex: undefined,
+								});
+							} else {
+								addWinner({
+									award,
+									teamIndex: teamIndex!,
+								});
+							}
+						}}
+					>
+						Add player
+					</button>
+				</div>
 			</div>
 		</div>
 	);
@@ -300,6 +333,40 @@ const EditAwardWinners = ({
 	}, [awards, season, setDirty]);
 
 	const playersByPid = groupByUnique(players, "pid");
+
+	const addWinner = (props: AddWinnerProps) => {
+		setDirty(true);
+		setAwardsState((oldState) => {
+			return oldState.map((award) => {
+				if (award !== props.award) {
+					return award;
+				}
+
+				if (props.teamIndex === undefined) {
+					return {
+						...props.award,
+						winner: [...props.award.winner, {}],
+					};
+				} else {
+					return {
+						...props.award,
+						winner: props.award.winner.map((team, i) => {
+							if (i !== props.teamIndex) {
+								return team;
+							}
+
+							const newEntry: { pos?: string } = {};
+							if (TEAM_AWARD_INFO.byPos) {
+								newEntry.pos = POSITIONS[0];
+							}
+
+							return [...team, newEntry];
+						}),
+					};
+				}
+			});
+		});
+	};
 
 	const setWinner = (props: SetWinnerProps) => {
 		const { p, playerIndex, pos, tid } = props;
@@ -461,6 +528,7 @@ const EditAwardWinners = ({
 									<Award
 										key={getAwardKey({ ...award, rank: i + 1 })}
 										abbrevsByTid={abbrevsByTid}
+										addWinner={addWinner}
 										award={award}
 										confs={confs}
 										disabled={saving}
@@ -478,6 +546,7 @@ const EditAwardWinners = ({
 							<Award
 								key={getAwardKey(award)}
 								abbrevsByTid={abbrevsByTid}
+								addWinner={addWinner}
 								award={award}
 								confs={confs}
 								disabled={saving}

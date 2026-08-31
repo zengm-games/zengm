@@ -338,12 +338,17 @@ export class FormulaEvaluators {
 
 export const processAwards = async ({
 	awards,
+	extraStatRanges,
 	extraStats,
 	numPlayersPerIndividualAward,
 	season,
 	statOverridesByMatchup,
 }: {
 	awards: GameAttributesLeague["awards"];
+	extraStatRanges: (
+		| NonNullable<GameAttributesLeague["awards"][number]["statRange"]>
+		| "regularSeason"
+	)[];
 	extraStats: string[];
 	numPlayersPerIndividualAward: number;
 	season: number;
@@ -351,9 +356,10 @@ export const processAwards = async ({
 }) => {
 	const formulaEvaluators = new FormulaEvaluators(awards, extraStats);
 
-	const statRanges = new Set(
-		awards.map((award) => award.statRange ?? "regularSeason"),
-	);
+	const statRanges = new Set([
+		...awards.map((award) => award.statRange ?? "regularSeason"),
+		...extraStatRanges,
+	]);
 
 	const { players, teamInfos } = await getPlayers(
 		season,

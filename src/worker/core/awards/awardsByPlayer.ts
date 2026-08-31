@@ -226,14 +226,14 @@ export const getLeagueLeaderAwards = async (
 		let leaders = [];
 		let leaderValue = statInfo.sortAscending ? Infinity : -Infinity;
 		for (const p of players) {
-			const playerValue = p.currentStats[stat];
+			const playerValue = p.currentStats.regularSeason?.[stat];
 
 			const pass = playerMeetsCategoryRequirements({
 				career: false,
 				cat: statInfo,
 				gamesPlayedCache,
 				p,
-				playerStats: p.currentStats,
+				playerStats: p.currentStats.regularSeason ?? {},
 				seasonType: "regularSeason",
 				season,
 				statType,

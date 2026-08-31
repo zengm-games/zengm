@@ -113,10 +113,13 @@ export const doAwards = async (conditions: Conditions) => {
 
 	const { players, realizedAwards } = await processAwards({
 		awards: g.get("awards"),
-		extraStats: leaderAwardCategories.map((row) => row.stat),
 		numPlayersPerIndividualAward: NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD,
 		season,
 		statOverridesByMatchup: undefined,
+
+		// For getLeagueLeaderAwards
+		extraStatRanges: ["regularSeason"],
+		extraStats: leaderAwardCategories.map((row) => row.stat),
 	});
 	const flatRealizedAwards = realizedAwards.flat();
 

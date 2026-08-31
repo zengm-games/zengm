@@ -1,6 +1,9 @@
 custom awards
 - only fetch needed variables from playersPlus when evaluating award formula
   - test league leader awards
+    - baseball
+    - football
+    - hockey
   - test error messages (normal, byPos, OPOY)
   - editAwardWinners
 - UI to update

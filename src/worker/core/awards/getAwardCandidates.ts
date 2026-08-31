@@ -126,6 +126,7 @@ export const getAwardCandidates = async (
 
 	const { errorMessages, players, realizedAwards } = await processAwards({
 		awards,
+		extraStatRanges: [],
 		extraStats: [],
 		numPlayersPerIndividualAward: 10,
 		season,

@@ -170,7 +170,6 @@ import type { GenOrderResult } from "../core/draft/genOrder.ts";
 import undoLog from "./undoLog.ts";
 import {
 	getAwardsByPlayer,
-	logEventsAwardsByPlayer,
 	updatePlayerAwards,
 } from "../core/awards/awardsByPlayer.ts";
 
@@ -335,11 +334,9 @@ const allStarDraftSetPlayers = async (
 		await updatePlayerAwards({
 			awardsToDelete,
 			awardsToSave,
-			season: g.get("season"),
-		});
-		await logEventsAwardsByPlayer({
-			awardsByPlayer: awardsToSave,
-			conditions,
+			logEventInfo: {
+				conditions,
+			},
 			season: g.get("season"),
 		});
 
@@ -4698,6 +4695,7 @@ const updateConfsDivs = async ({
 
 const updateAwards = async (
 	newAwards: Pick<Awards, "awards" | "season">,
+	conditions: Conditions,
 ): Promise<any> => {
 	const oldAwards = await idb.getCopy.awards(
 		{
@@ -4731,6 +4729,9 @@ const updateAwards = async (
 	await updatePlayerAwards({
 		awardsToDelete,
 		awardsToSave,
+		logEventInfo: {
+			conditions,
+		},
 		season: g.get("season"),
 	});
 };

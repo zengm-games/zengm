@@ -1,8 +1,5 @@
 import { PHASE } from "../../../common/constants.ts";
-import {
-	logEventsAwardsByPlayer,
-	updatePlayerAwards,
-} from "../awards/awardsByPlayer.ts";
+import { updatePlayerAwards } from "../awards/awardsByPlayer.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
@@ -100,12 +97,10 @@ const allStarMVP = async (
 	await updatePlayerAwards({
 		awardsToDelete: [],
 		awardsToSave: awardsByPlayer,
-		season: g.get("season"),
-	});
-	await logEventsAwardsByPlayer({
-		allStarGID: game.gid,
-		awardsByPlayer,
-		conditions,
+		logEventInfo: {
+			allStarGID: game.gid,
+			conditions,
+		},
 		season: g.get("season"),
 	});
 };

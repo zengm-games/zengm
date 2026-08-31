@@ -1,7 +1,4 @@
-import {
-	logEventsAwardsByPlayer,
-	updatePlayerAwards,
-} from "../awards/awardsByPlayer.ts";
+import { updatePlayerAwards } from "../awards/awardsByPlayer.ts";
 import { g } from "../../util/index.ts";
 import type {
 	AllStars,
@@ -419,11 +416,9 @@ const create = async (conditions: Conditions) => {
 	await updatePlayerAwards({
 		awardsToDelete: [],
 		awardsToSave: awardsByPlayer,
-		season: g.get("season"),
-	});
-	await logEventsAwardsByPlayer({
-		awardsByPlayer,
-		conditions,
+		logEventInfo: {
+			conditions,
+		},
 		season: g.get("season"),
 	});
 

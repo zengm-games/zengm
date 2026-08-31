@@ -3,7 +3,7 @@ import type { AwardByPlayer } from "../../../core/awards/awardsByPlayer.ts";
 import addAward from "../../../core/player/addAward.ts";
 import type { Player } from "../../../../common/types.ts";
 
-// These are like saveAwardsByPlayer and deleteAwardsByPlayer from awardsByPlayer.ts but all in one (since we're updating the same player generally) and use VersionChangeTransaction and also don't create events
+// This is like updatePlayerAwards from awardsByPlayer.ts except it uses VersionChangeTransaction and also doesn't create events. Also nice to have this frozen in time so any future updates to the main function don't have to worry about this migration.
 
 type MyAwardByPlayer = Pick<AwardByPlayer, "pid" | "award">;
 

@@ -30,90 +30,93 @@ export type AwardByPlayer = {
 	award: DistributiveOmit<PlayerAward, "season">;
 };
 
-export const logEventsAwardsByPlayer = ({
-	awardsByPlayer,
+const logEventAwardsByPlayer = ({
+	p,
 	conditions,
 	season,
 	allStarGID,
 }: {
-	awardsByPlayer: AwardByPlayer[];
+	p: AwardByPlayer;
 	conditions: Conditions;
 	season: number;
 	allStarGID?: number;
 }) => {
 	// None of this stuff needs to block, it's just notifications
-	for (const p of awardsByPlayer) {
-		let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-			p.name
-		}</a> (<a href="${helpers.leagueUrl([
-			"roster",
-			`${g.get("teamInfoCache")[p.tid]?.abbrev}_${p.tid}`,
-			g.get("season"),
-		])}">${g.get("teamInfoCache")[p.tid]?.abbrev}</a>) `;
-		let score;
+	let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+		p.name
+	}</a> (<a href="${helpers.leagueUrl([
+		"roster",
+		`${g.get("teamInfoCache")[p.tid]?.abbrev}_${p.tid}`,
+		g.get("season"),
+	])}">${g.get("teamInfoCache")[p.tid]?.abbrev}</a>) `;
 
-		if (p.award.type?.includes("Leader")) {
-			text += `led the league in ${p.award.type
-				.replace("League ", "")
-				.replace(" Leader", "")
-				.toLowerCase()}.`;
-			score = 10;
-		} else if (p.award.type === "All-Star") {
-			text += "made the All-Star team.";
-			score = 10;
-		} else if (p.award.type === "All-Star MVP") {
-			text += `won the <a href="${helpers.leagueUrl([
-				"game_log",
-				"special",
-				season,
-				allStarGID,
-			])}">All-Star MVP</a> award.`;
-			score = 10;
-		} else if (p.award.type === "Slam Dunk Contest Winner") {
-			text += "won the slam dunk contest.";
-			score = 10;
-		} else if (p.award.type === "Three-Point Contest Winner") {
-			text += "won the three-point contest.";
-			score = 10;
-		} else if (p.award.type === undefined && p.award.numTeams !== undefined) {
-			// Team awards - arguably should have formatAwardNamePrefix here too, idk
-			const groupPrefix = getGroupPrefix(p.award, season);
-			text += `made the ${formatPlayerAwardName(p.award, { groupPrefix })}.`;
-			score = 10;
-		} else {
-			if (p.award.type !== undefined || p.award.rank === 1) {
-				const groupPrefix =
-					p.award.type === undefined
-						? getGroupPrefix(p.award, season)
-						: undefined;
-				text += `won the ${formatPlayerAwardName(p.award, { groupPrefix })} award.`;
-				score = 20;
-			}
+	let score;
+	if (p.award.type?.includes("Leader")) {
+		text += `led the league in ${p.award.type
+			.replace("League ", "")
+			.replace(" Leader", "")
+			.toLowerCase()}.`;
+		score = 10;
+	} else if (p.award.type === "All-Star") {
+		text += "made the All-Star team.";
+		score = 10;
+	} else if (p.award.type === "All-Star MVP") {
+		text += `won the <a href="${helpers.leagueUrl([
+			"game_log",
+			"special",
+			season,
+			allStarGID,
+		])}">All-Star MVP</a> award.`;
+		score = 10;
+	} else if (p.award.type === "Slam Dunk Contest Winner") {
+		text += "won the slam dunk contest.";
+		score = 10;
+	} else if (p.award.type === "Three-Point Contest Winner") {
+		text += "won the three-point contest.";
+		score = 10;
+	} else if (p.award.type === undefined && p.award.numTeams !== undefined) {
+		// Team awards - arguably should have formatAwardNamePrefix here too, idk
+		const groupPrefix = getGroupPrefix(p.award, season);
+		text += `made the ${formatPlayerAwardName(p.award, { groupPrefix })}.`;
+		score = 10;
+	} else {
+		if (p.award.type !== undefined || p.award.rank === 1) {
+			const groupPrefix =
+				p.award.type === undefined
+					? getGroupPrefix(p.award, season)
+					: undefined;
+			text += `won the ${formatPlayerAwardName(p.award, { groupPrefix })} award.`;
+			score = 20;
 		}
+	}
 
-		if (score !== undefined) {
-			void logEvent(
-				{
-					type: "award",
-					text,
-					showNotification: false,
-					pids: [p.pid],
-					tids: [p.tid],
-					score,
-				},
-				conditions,
-			);
-		}
+	if (score !== undefined) {
+		void logEvent(
+			{
+				type: "award",
+				text,
+				showNotification: false,
+				pids: [p.pid],
+				tids: [p.tid],
+				score,
+			},
+			conditions,
+		);
 	}
 };
 
 export const updatePlayerAwards = async ({
 	awardsToDelete,
 	awardsToSave,
+	logEventInfo,
 	season,
 }: {
 	awardsToDelete: Pick<AwardByPlayer, "pid" | "award">[];
-	awardsToSave: Pick<AwardByPlayer, "pid" | "award">[];
+	awardsToSave: AwardByPlayer[];
+	logEventInfo?: {
+		conditions: Conditions;
+		allStarGID?: number;
+	};
 	season: number;
 }) => {
 	const toDeleteByPid = Map.groupBy(awardsToDelete, (award) => award.pid);
@@ -152,7 +155,6 @@ export const updatePlayerAwards = async ({
 			});
 		}
 	}
-	console.log({ awardsToDelete, awardsToSave }, awardsByPid);
 
 	for (const [pid, { toDelete, toSave }] of awardsByPid) {
 		const p = await idb.getCopy.players({ pid }, "noCopyCache");
@@ -175,11 +177,18 @@ export const updatePlayerAwards = async ({
 			});
 
 			if (toSave) {
-				for (const { award } of toSave) {
+				for (const row of toSave) {
 					addAward(p, {
-						...award,
+						...row.award,
 						season,
 					});
+					if (logEventInfo) {
+						logEventAwardsByPlayer({
+							p: row,
+							season,
+							...logEventInfo,
+						});
+					}
 				}
 			}
 			await idb.cache.players.put(p);

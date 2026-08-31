@@ -204,13 +204,13 @@ export class InvalidVariableError extends Error {
 	}
 }
 
-class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
-	private symbols: Set<Symbols[number]>;
+class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
+	private variables: Set<Variables[number]>;
 	private tokens: (string | number)[];
-	public usedSymbols = new Set<Symbols[number]>();
+	public usedVariables = new Set<Variables[number]>();
 
-	constructor(equation: string, symbols: Symbols) {
-		this.symbols = new Set(symbols);
+	constructor(equation: string, variables: Variables) {
+		this.variables = new Set(variables);
 		this.tokens = this.partiallyEvaluate(
 			shuntingYard(parseUnaryMinus(equation)),
 		);
@@ -219,10 +219,10 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 			throw new Error("Formula cannot be empty");
 		}
 
-		// Test with dummy values for symbols, to hopefully ensure that this.evaluate never throws
+		// Test with dummy values for variables, to hopefully ensure that this.evaluate never throws
 		const dummyValues: Record<string, number> = {};
-		for (const symbol of this.usedSymbols) {
-			dummyValues[symbol] = 0;
+		for (const variable of this.usedVariables) {
+			dummyValues[variable] = 0;
 		}
 		this.evaluate(dummyValues);
 	}
@@ -233,8 +233,8 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		const invalidTokens = new Set<string>();
 
 		for (const token of tokens) {
-			if (this.symbols.has(token)) {
-				this.usedSymbols.add(token);
+			if (this.variables.has(token)) {
+				this.usedVariables.add(token);
 				processed.push(token);
 			} else if (
 				operators[token] !== undefined ||
@@ -258,7 +258,7 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		return processed;
 	}
 
-	evaluate(symbols: Record<Symbols[number], number>) {
+	evaluate(variables: Record<Variables[number], number>) {
 		const stack: number[] = [];
 
 		for (const token of this.tokens) {
@@ -290,7 +290,7 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 				const a = stack.pop()! ?? 0;
 				stack.push(func.func(a, b));
 			} else {
-				stack.push((symbols as any)[token]);
+				stack.push((variables as any)[token]);
 			}
 		}
 

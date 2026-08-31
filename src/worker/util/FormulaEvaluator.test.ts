@@ -58,7 +58,7 @@ test("usedSymbols", () => {
 		"d",
 	]);
 	assert.deepStrictEqual(
-		formulaEvaluator.usedSymbols,
+		formulaEvaluator.usedVariables,
 		new Set(["a", "b", "c"]),
 	);
 });

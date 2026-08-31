@@ -43,16 +43,10 @@ export const updatePlayerAwards = async ({
 	for (const [pid, { toDelete, toSave }] of awardsByPid) {
 		const p = await playerStore.get(pid);
 		if (p) {
-			console.log("player", p.pid, p.firstName, p.lastName);
-			if (toDelete.length !== toSave.length) {
-				console.log("Foo");
-				throw new Error("Awards don't match");
-			}
 			p.awards = p.awards.filter((award) => {
 				// Delete this award if it matches any of toDelete
 				for (const { award: awardToDelete } of toDelete) {
 					if (fastDeepEqual(awardToDelete, award)) {
-						console.log("delete", award);
 						return false;
 					}
 				}
@@ -61,12 +55,9 @@ export const updatePlayerAwards = async ({
 			});
 
 			for (const { award } of toSave) {
-				console.log("add", award);
 				addAward(p, award);
 			}
 			await playerStore.put(p);
-		} else {
-			console.log("player not found:", pid);
 		}
 	}
 };

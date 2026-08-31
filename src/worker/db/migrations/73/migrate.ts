@@ -21,8 +21,6 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 		awardsToDelete.push(...getOldAwardsByPlayer(oldAwards));
 		awardsToSave.push(...getNewAwardsByPlayer(newAwards));
 
-		console.log({ oldAwards, newAwards, awardsToDelete, awardsToSave });
-
 		await cursor.update(newAwards);
 	}
 

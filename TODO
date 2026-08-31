@@ -1,9 +1,5 @@
 custom awards
-- Add season to update player awards awards objects, so we can update once at the end rather than reading the same player multiple times
-  - Process old in import, save players by awards for later
-  - benchmark before and after tis change
 - minor
-  - Edit allstar filter not needed
   - only fetch needed variables from playersPlus when evaluating award formula
     - see FormulaEvaluator.usedSymbols
     - also consider showStats for Award Races
@@ -19,13 +15,6 @@ custom awards
       - groupAwards no longer has oldAwards, so those all get sorted to bottom
       - awards column on player page will not be populated with these old awards
     - award records doesn't show any of the built-in awards, because it's all based on awards objects now
-  - import
-    - test
-      - baseball
-      - basketball
-      - football
-      - hockey
-  - remove migration console.logs
 - get rid of AWARD_NAMES
 - update rosters
 - blog

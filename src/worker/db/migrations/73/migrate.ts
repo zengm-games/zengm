@@ -7,6 +7,8 @@ import { oldAwardsToNewAwards } from "./oldAwardsToNewAwards.ts";
 import { defaultGameAttributes } from "../../../../common/defaultGameAttributes.ts";
 
 export const migrate73 = async (transaction: VersionChangeTransaction) => {
+	const awardsToDelete = [];
+	const awardsToSave = [];
 	for await (const cursor of transaction.objectStore("awards")) {
 		const oldAwards = cursor.value as unknown as OldAwards;
 
@@ -16,21 +18,19 @@ export const migrate73 = async (transaction: VersionChangeTransaction) => {
 		}
 
 		const newAwards = oldAwardsToNewAwards(oldAwards);
-		const awardsToDelete = getOldAwardsByPlayer(oldAwards);
-		const awardsToSave = getNewAwardsByPlayer(newAwards.awards);
+		awardsToDelete.push(...getOldAwardsByPlayer(oldAwards));
+		awardsToSave.push(...getNewAwardsByPlayer(newAwards));
 
 		console.log({ oldAwards, newAwards, awardsToDelete, awardsToSave });
 
 		await cursor.update(newAwards);
-
-		await updatePlayerAwards({
-			awardsToDelete,
-			awardsToSave,
-			getPlayer: (pid) => transaction.objectStore("players").get(pid),
-			putPlayer: (p) => transaction.objectStore("players").put(p),
-			season: newAwards.season,
-		});
 	}
+
+	await updatePlayerAwards({
+		awardsToDelete,
+		awardsToSave,
+		playerStore: transaction.objectStore("players"),
+	});
 
 	const awards = await transaction.objectStore("gameAttributes").get("awards");
 	if (!awards) {

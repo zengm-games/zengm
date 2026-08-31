@@ -1,6 +1,6 @@
 import { bySport, isSport } from "../../../../common/sportFunctions.ts";
-import type { AwardByPlayer } from "../../../core/awards/awardsByPlayer.ts";
 import type { OldAwards } from "./types.ts";
+import type { MyAwardByPlayer } from "./updatePlayerAwards.ts";
 
 // This is adapted from addSimpleAndTeamAwardsToAwardsByPlayer in the old version, now we use it to assemble the list of awards to delete
 
@@ -58,7 +58,8 @@ const AWARD_NAMES = bySport<Record<string, string>>({
 });
 
 export const getOldAwardsByPlayer = (awards: OldAwards) => {
-	const awardsByPlayer: Pick<AwardByPlayer, "pid" | "award">[] = [];
+	const season = awards.season;
+	const awardsByPlayer: MyAwardByPlayer[] = [];
 
 	for (const key of SIMPLE_AWARDS) {
 		const type = AWARD_NAMES[key]!;
@@ -70,7 +71,7 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 
 		awardsByPlayer.push({
 			pid: award.pid,
-			award: { type },
+			award: { season, type },
 		});
 	}
 	const awardsTeams = bySport({
@@ -91,7 +92,7 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 				if (p) {
 					awardsByPlayer.push({
 						pid: p.pid,
-						award: { type },
+						award: { season, type },
 					});
 				}
 			}
@@ -101,7 +102,7 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 					if (p) {
 						awardsByPlayer.push({
 							pid: p.pid,
-							award: { type: `${level.title} ${type}` },
+							award: { season, type: `${level.title} ${type}` },
 						});
 					}
 				}

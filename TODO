@@ -1,5 +1,9 @@
 custom awards
+- Add season to update player awards awards objects, so we can update once at the end rather than reading the same player multiple times
+  - Process old in import, save players by awards for later
+  - benchmark before and after tis change
 - minor
+  - Edit allstar filter not needed
   - only fetch needed variables from playersPlus when evaluating award formula
     - see FormulaEvaluator.usedSymbols
     - also consider showStats for Award Races

@@ -3,22 +3,23 @@ import type {
 	Awards,
 	PlayerAwardBuiltIn,
 } from "../../../../common/types.ts";
-import type { AwardByPlayer } from "../../../core/awards/awardsByPlayer.ts";
+import type { MyAwardByPlayer } from "./updatePlayerAwards.ts";
 
 // This is adapted from getAwardsByPlayer in awardsByPlayer.ts, so it doesn't require any player info besides pid, and so I don't have to worry about this migration code if I ever update the original getAwardsByPlayer
 
-type MyAwardByPlayer = Pick<AwardByPlayer, "pid" | "award">;
-
-export const getNewAwardsByPlayer = (awards: Awards["awards"]) => {
+export const getNewAwardsByPlayer = (awards: Awards) => {
+	const season = awards.season;
 	const awardsByPlayer: MyAwardByPlayer[] = [];
-	for (const [index, award] of awards.entries()) {
+
+	for (const [index, award] of awards.awards.entries()) {
 		const common: Pick<
 			PlayerAwardBuiltIn,
-			"group" | "index" | "name" | "shortName"
+			"group" | "index" | "name" | "season" | "shortName"
 		> = {
-			name: award.name,
-			shortName: award.shortName,
 			index,
+			name: award.name,
+			season,
+			shortName: award.shortName,
 		};
 
 		if (award.group && award.group.type !== "playoffSeries") {

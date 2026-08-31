@@ -1,24 +1,29 @@
 import fastDeepEqual from "fast-deep-equal";
-import type { AwardByPlayer } from "../../../core/awards/awardsByPlayer.ts";
 import addAward from "../../../core/player/addAward.ts";
-import type { Player } from "../../../../common/types.ts";
+import type { LeagueDB } from "../../connectLeague.ts";
+import type { IDBPObjectStore } from "@dumbmatter/idb";
+import type { PlayerAward } from "../../../../common/types.ts";
 
-// This is like updatePlayerAwards from awardsByPlayer.ts except it uses VersionChangeTransaction and also doesn't create events. Also nice to have this frozen in time so any future updates to the main function don't have to worry about this migration.
+// This is like updatePlayerAwards from awardsByPlayer.ts except it uses VersionChangeTransaction and also has some unneeded stuff deleted. Also nice to have this frozen in time so any future updates to the main function don't have to worry about this migration.
 
-type MyAwardByPlayer = Pick<AwardByPlayer, "pid" | "award">;
+export type MyAwardByPlayer = {
+	pid: number;
+	award: PlayerAward;
+};
 
 export const updatePlayerAwards = async ({
 	awardsToDelete,
 	awardsToSave,
-	getPlayer,
-	putPlayer,
-	season,
+	playerStore,
 }: {
 	awardsToDelete: MyAwardByPlayer[];
 	awardsToSave: MyAwardByPlayer[];
-	getPlayer: (pid: number) => Promise<Player | undefined>;
-	putPlayer: (p: Player) => Promise<unknown>;
-	season: number;
+	playerStore: IDBPObjectStore<
+		LeagueDB,
+		["players"],
+		"players",
+		"readwrite" | "versionchange"
+	>;
 }) => {
 	const toDeleteByPid = Map.groupBy(awardsToDelete, (award) => award.pid);
 	const toSaveByPid = Map.groupBy(awardsToSave, (award) => award.pid);
@@ -36,7 +41,7 @@ export const updatePlayerAwards = async ({
 	}
 
 	for (const [pid, { toDelete, toSave }] of awardsByPid) {
-		const p = await getPlayer(pid);
+		const p = await playerStore.get(pid);
 		if (p) {
 			console.log("player", p.pid, p.firstName, p.lastName);
 			if (toDelete.length !== toSave.length) {
@@ -44,13 +49,9 @@ export const updatePlayerAwards = async ({
 				throw new Error("Awards don't match");
 			}
 			p.awards = p.awards.filter((award) => {
-				if (award.season !== season) {
-					return true;
-				}
-
 				// Delete this award if it matches any of toDelete
 				for (const { award: awardToDelete } of toDelete) {
-					if (fastDeepEqual({ ...awardToDelete, season }, award)) {
+					if (fastDeepEqual(awardToDelete, award)) {
 						console.log("delete", award);
 						return false;
 					}
@@ -60,13 +61,10 @@ export const updatePlayerAwards = async ({
 			});
 
 			for (const { award } of toSave) {
-				console.log("add", { ...award, season });
-				addAward(p, {
-					...award,
-					season,
-				});
+				console.log("add", award);
+				addAward(p, award);
 			}
-			await putPlayer(p);
+			await playerStore.put(p);
 		} else {
 			console.log("player not found:", pid);
 		}

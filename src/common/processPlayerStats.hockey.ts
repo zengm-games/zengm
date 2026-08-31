@@ -87,7 +87,7 @@ export const statFunctions = {
 
 export const processStats = (
 	ps: PlayerStats,
-	stats: string[],
+	stats: Iterable<string>,
 	statType?: PlayerStatType,
 	bornYear?: number,
 ) => {

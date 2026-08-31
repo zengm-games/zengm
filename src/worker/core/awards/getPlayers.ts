@@ -23,6 +23,7 @@ import {
 	derivedPlayerStatKeys,
 	processPlayerStats,
 } from "../../util/processPlayerStats.ts";
+import type { FormulaEvaluators } from "./processAwards.ts";
 
 // tid gets added from root of AwardPlayer2 - that is the only tid we need to pass in to processPlayers, because otherwise we assume we have the actual stats available
 export type StatOverridesByMatchup = Record<
@@ -49,15 +50,11 @@ const AWARD_STATS = [
 		hockey: ["gs"],
 	}),
 ];
-export const AWARD_STATS_ALL = [
-	...AWARD_STATS,
-	"seasonFraction",
-	"teamGp",
-	"winp",
-];
+const AWARD_STATS_SPECIAL = ["seasonFraction", "teamGp", "winp"];
 if (isSport("basketball")) {
-	AWARD_STATS_ALL.push("teamWs");
+	AWARD_STATS_SPECIAL.push("teamWs");
 }
+export const AWARD_STATS_ALL = [...AWARD_STATS, ...AWARD_STATS_SPECIAL];
 
 const SKIP_BY_SPORT = new Set(
 	bySport({
@@ -81,9 +78,10 @@ const PLAYOFF_SERIES_AWARD_STATS = [
 	...PLAYOFF_SERIES_AWARD_STATS_RAW,
 	...PLAYOFF_SERIES_AWARD_STATS_DERIVED,
 ];
+const PLAYOFF_SERIES_AWARD_STATS_SPECIAL = ["won"];
 export const PLAYOFF_SERIES_AWARD_STATS_ALL = [
 	...PLAYOFF_SERIES_AWARD_STATS,
-	"won",
+	...PLAYOFF_SERIES_AWARD_STATS_SPECIAL,
 ];
 
 type StatRange =
@@ -111,13 +109,20 @@ type CurrentStats = {
 const getProcessedPlayers = async (
 	playersAll: Player[],
 	statRanges: Set<StatRange>,
+	variables: Set<string>,
 ) => {
+	const statsFromVariables = new Set(AWARD_STATS).intersection(variables);
+
 	const stats = Array.from(
 		new Set([
-			...AWARD_STATS,
-			...getLeaderRequirementsStats(getLeaderRequirements(), AWARD_STATS),
+			...statsFromVariables,
+			...getLeaderRequirementsStats(
+				getLeaderRequirements(),
+				statsFromVariables,
+			),
 		]),
 	);
+	console.log("stats", stats);
 
 	const regularSeason = statRanges.has("regularSeason");
 	const playoffs = statRanges.has("playoffs");
@@ -187,6 +192,7 @@ const getPlayoffSeriesStats = async (
 	seriesIndex: number,
 	abbrevsByTid: Map<number, string>,
 	statOverridesByMatchup: StatOverridesByMatchup | undefined,
+	variables: Set<string>,
 ) => {
 	const playoffSeries = await idb.getCopy.playoffSeries(
 		{ season },
@@ -253,6 +259,14 @@ const getPlayoffSeriesStats = async (
 		}
 	> = new Map();
 
+	const statsToSum = new Set(PLAYOFF_SERIES_AWARD_STATS_RAW).intersection(
+		variables,
+	);
+	const statsForProcessPlayerStats = new Set(
+		PLAYOFF_SERIES_AWARD_STATS,
+	).intersection(variables);
+	console.log({ variables, statsToSum, statsForProcessPlayerStats });
+
 	for (const game of games) {
 		for (const t of game.teams) {
 			for (const p of t.players) {
@@ -267,7 +281,7 @@ const getPlayoffSeriesStats = async (
 					rawStats: {},
 				});
 
-				for (const key of PLAYOFF_SERIES_AWARD_STATS_RAW) {
+				for (const key of statsToSum) {
 					row.rawStats[key] ??= 0;
 					row.rawStats[key] += p[key];
 				}
@@ -278,7 +292,7 @@ const getPlayoffSeriesStats = async (
 	for (const [pid, { info, rawStats }] of tempRowsByPid) {
 		rowsByPid[pid] = {
 			...info,
-			...processPlayerStats(rawStats, PLAYOFF_SERIES_AWARD_STATS, "perGame"),
+			...processPlayerStats(rawStats, statsForProcessPlayerStats, "perGame"),
 			won: winningTids.has(info.tid),
 		};
 	}
@@ -302,6 +316,7 @@ export const getPlayers = async (
 	season: number,
 	statRanges: Set<StatRange>,
 	statOverridesByMatchup: StatOverridesByMatchup | undefined,
+	variables: FormulaEvaluators["variables"],
 ) => {
 	let playersAll;
 	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
@@ -318,7 +333,11 @@ export const getPlayers = async (
 		);
 	}
 
-	const players = await getProcessedPlayers(playersAll, statRanges);
+	const players = await getProcessedPlayers(
+		playersAll,
+		statRanges,
+		variables.normal,
+	);
 
 	// Cache some stuff for later
 	const teamSeasons = await idb.getCopies.teamSeasons(
@@ -370,6 +389,7 @@ export const getPlayers = async (
 				statRange,
 				abbrevsByTid,
 				statOverridesByMatchup,
+				variables.playoffSeries,
 			);
 			if (stats) {
 				playoffSeriesStats[statRange] = stats;

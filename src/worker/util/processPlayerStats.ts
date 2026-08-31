@@ -21,7 +21,7 @@ import g from "./g.ts";
 
 export const processPlayerStats = (
 	ps: PlayerStats,
-	stats: string[],
+	stats: Iterable<string>,
 	statType?: PlayerStatType,
 	bornYear?: number,
 	keepWithNoStats?: boolean,

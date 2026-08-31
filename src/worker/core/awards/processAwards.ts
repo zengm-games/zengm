@@ -212,7 +212,9 @@ const getInvalidVariablesErrorMessageVariablesPart = (
 };
 
 // This checks all formulas for all awards, so we know any invalid formulas right away, we know what variables are used in all formulas, and we can easily dedupe
-class FormulaEvaluators {
+export class FormulaEvaluators {
+	errorMessages: string[] | undefined;
+
 	private formulaEvaluators: Record<
 		// Need to store normal and playoffSeries separately, otherwise with the same formula it's possible one is valid and the other isn't, and we only know by running `new FormulaEvaluator()`
 		"normal" | "playoffSeries",
@@ -221,7 +223,11 @@ class FormulaEvaluators {
 		normal: {},
 		playoffSeries: {},
 	};
-	errorMessages: string[] | undefined;
+
+	variables = {
+		normal: new Set<string>(),
+		playoffSeries: new Set<string>(),
+	};
 
 	private registerFormula({
 		formula,
@@ -263,6 +269,10 @@ class FormulaEvaluators {
 		}
 
 		this.formulaEvaluators[type][formula] = formulaEvaluator;
+
+		for (const variable of formulaEvaluator.usedVariables) {
+			this.variables[type].add(variable);
+		}
 	}
 
 	constructor(awards: GameAttributesLeague["awards"]) {
@@ -324,6 +334,7 @@ export const processAwards = async ({
 	statOverridesByMatchup: StatOverridesByMatchup | undefined;
 }) => {
 	const formulaEvaluators = new FormulaEvaluators(awards);
+	console.log(formulaEvaluators.variables);
 
 	const statRanges = new Set(
 		awards.map((award) => award.statRange ?? "regularSeason"),
@@ -333,6 +344,7 @@ export const processAwards = async ({
 		season,
 		statRanges,
 		statOverridesByMatchup,
+		formulaEvaluators.variables,
 	);
 
 	for (const p of players) {

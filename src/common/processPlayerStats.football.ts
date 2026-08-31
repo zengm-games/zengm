@@ -187,7 +187,7 @@ export const statFunctions = {
 
 export const processStats = (
 	ps: PlayerStats,
-	stats: string[],
+	stats: Iterable<string>,
 	bornYear: number | undefined,
 	getFantasyPoints: () => GameAttributesLeague["fantasyPoints"],
 ) => {

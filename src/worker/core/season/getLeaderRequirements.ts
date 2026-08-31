@@ -5,7 +5,7 @@ import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts"
 
 export const getLeaderRequirementsStats = (
 	requirements: ReturnType<typeof getLeaderRequirements>,
-	stats: string[],
+	stats: Iterable<string>,
 ) => {
 	// Always include GP, since it's used to scale minStats based on season length
 	const neededStats = new Set<string>(["gp"]);

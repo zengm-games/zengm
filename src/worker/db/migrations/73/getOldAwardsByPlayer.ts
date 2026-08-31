@@ -1,6 +1,6 @@
 import { bySport, isSport } from "../../../../common/sportFunctions.ts";
 import type { OldAwards } from "./types.ts";
-import type { MyAwardByPlayer } from "./updatePlayerAwards.ts";
+import type { AwardByPlayerMigrate73 } from "./updatePlayerAwards.ts";
 
 // This is adapted from addSimpleAndTeamAwardsToAwardsByPlayer in the old version, now we use it to assemble the list of awards to delete
 
@@ -59,7 +59,7 @@ const AWARD_NAMES = bySport<Record<string, string>>({
 
 export const getOldAwardsByPlayer = (awards: OldAwards) => {
 	const season = awards.season;
-	const awardsByPlayer: MyAwardByPlayer[] = [];
+	const awardsByPlayer: AwardByPlayerMigrate73[] = [];
 
 	for (const key of SIMPLE_AWARDS) {
 		const type = AWARD_NAMES[key]!;

@@ -6,7 +6,7 @@ import type { PlayerAward } from "../../../../common/types.ts";
 
 // This is like updatePlayerAwards from awardsByPlayer.ts except it uses VersionChangeTransaction and also has some unneeded stuff deleted. Also nice to have this frozen in time so any future updates to the main function don't have to worry about this migration.
 
-export type MyAwardByPlayer = {
+export type AwardByPlayerMigrate73 = {
 	pid: number;
 	award: PlayerAward;
 };
@@ -16,8 +16,8 @@ export const updatePlayerAwards = async ({
 	awardsToSave,
 	playerStore,
 }: {
-	awardsToDelete: MyAwardByPlayer[];
-	awardsToSave: MyAwardByPlayer[];
+	awardsToDelete: AwardByPlayerMigrate73[];
+	awardsToSave: AwardByPlayerMigrate73[];
 	playerStore: IDBPObjectStore<
 		LeagueDB,
 		["players"],
@@ -31,7 +31,7 @@ export const updatePlayerAwards = async ({
 
 	const awardsByPid = new Map<
 		number,
-		{ toDelete: MyAwardByPlayer[]; toSave: MyAwardByPlayer[] }
+		{ toDelete: AwardByPlayerMigrate73[]; toSave: AwardByPlayerMigrate73[] }
 	>();
 	for (const pid of allPids) {
 		awardsByPid.set(pid, {

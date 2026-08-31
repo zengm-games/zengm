@@ -73,6 +73,13 @@ import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 import { newLeagueGodModeLimits } from "../../util/newLeagueGodModeLimits.ts";
 import { choice, shuffle } from "../../../common/random.ts";
+import {
+	updatePlayerAwards,
+	type AwardByPlayerMigrate73,
+} from "../../db/migrations/73/updatePlayerAwards.ts";
+import { oldAwardsToNewAwards } from "../../db/migrations/73/oldAwardsToNewAwards.ts";
+import { getOldAwardsByPlayer } from "../../db/migrations/73/getOldAwardsByPlayer.ts";
+import { getNewAwardsByPlayer } from "../../db/migrations/73/getNewAwardsByPlayer.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -198,6 +205,12 @@ export type PreProcessParams = {
 	activeTids: number[];
 	averagePopulation: number | undefined;
 	hasRookieContracts: boolean | undefined;
+	migrationData: {
+		73?: {
+			awardsToDelete: AwardByPlayerMigrate73[];
+			awardsToSave: AwardByPlayerMigrate73[];
+		};
+	};
 	noStartingInjuries: boolean;
 	realPlayerPhotos: RealPlayerPhotos | undefined;
 	realTeamInfo: RealTeamInfo | undefined;
@@ -222,6 +235,7 @@ const preProcess = async (
 		activeTids,
 		averagePopulation,
 		hasRookieContracts,
+		migrationData,
 		noStartingInjuries,
 		realPlayerPhotos,
 		realTeamInfo,
@@ -234,7 +248,24 @@ const preProcess = async (
 		delete x[primaryKeyToDelete];
 	}
 
-	if (key === "draftPicks") {
+	if (key === "awards") {
+		// Version 73 upgrade
+		if (version !== undefined && version < 73) {
+			// Quick sanity check in case awards is actually in the new format somehow
+			if (!x.awards) {
+				const newAwards = oldAwardsToNewAwards(x);
+
+				migrationData[73] ??= {
+					awardsToDelete: [],
+					awardsToSave: [],
+				};
+				migrationData[73].awardsToDelete.push(...getOldAwardsByPlayer(x));
+				migrationData[73].awardsToSave.push(...getNewAwardsByPlayer(newAwards));
+
+				x = newAwards;
+			}
+		}
+	} else if (key === "draftPicks") {
 		if (typeof x.pick !== "number") {
 			x.pick = 0;
 		}
@@ -1365,6 +1396,7 @@ const afterDBStream = async ({
 	gameAttributes,
 	getLeagueOptions,
 	lid,
+	migrationData,
 	noStartingInjuries,
 	randomization,
 	realPlayerPhotos,
@@ -1378,6 +1410,7 @@ const afterDBStream = async ({
 }: {
 	extraFromStream: ExtraFromStream;
 	hasRookieContracts: boolean;
+	migrationData: PreProcessParams["migrationData"];
 	noStartingInjuries: boolean;
 	randomization: Settings["randomization"];
 	realPlayerPhotos: RealPlayerPhotos | undefined;
@@ -1797,6 +1830,16 @@ const afterDBStream = async ({
 			lid,
 		});
 	}
+
+	// Version 73 upgrade
+	if (migrationData["73"]) {
+		// Need to do this at the end of afterDBStream because we need all players (including activePlayers) to be in the databse. And then fill is to handle activePlayers already being in the cache
+		await updatePlayerAwards({
+			...migrationData["73"],
+			playerStore: idb.league.transaction("players", "readwrite").store,
+		});
+		await idb.cache.fill();
+	}
 };
 
 const createStream = async (
@@ -1848,6 +1891,8 @@ const createStream = async (
 	});
 	// console.timeLog("createStream");
 
+	const migrationData: PreProcessParams["migrationData"] = {};
+
 	const { extraFromStream, saveToDB } = await getSaveToDB({
 		keptKeys,
 		maxGid: fromFile.maxGid,
@@ -1855,6 +1900,7 @@ const createStream = async (
 			activeTids,
 			averagePopulation,
 			hasRookieContracts: fromFile.hasRookieContracts,
+			migrationData,
 			noStartingInjuries,
 			realPlayerPhotos,
 			realTeamInfo,
@@ -1878,6 +1924,7 @@ const createStream = async (
 		getLeagueOptions,
 		hasRookieContracts: fromFile.hasRookieContracts,
 		lid,
+		migrationData,
 		noStartingInjuries,
 		randomization: settings.randomization,
 		realPlayerPhotos,

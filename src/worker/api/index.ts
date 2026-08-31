@@ -1,4 +1,3 @@
-import fastDeepEqual from "fast-deep-equal";
 import { csvFormat, csvFormatRows } from "d3-dsv";
 import {
 	GAME_ACRONYM,
@@ -170,9 +169,9 @@ import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { GenOrderResult } from "../core/draft/genOrder.ts";
 import undoLog from "./undoLog.ts";
 import {
-	deleteAwardsByPlayer,
 	getAwardsByPlayer,
-	saveAwardsByPlayer,
+	logEventsAwardsByPlayer,
+	updatePlayerAwards,
 } from "../core/awards/awardsByPlayer.ts";
 
 const acceptContractNegotiation = async ({
@@ -319,14 +318,13 @@ const allStarDraftSetPlayers = async (
 		const pidsToDelete = prevPids.filter((pid) => !newPids.includes(pid));
 
 		// Delete old awards
-		const awardsByPlayerToDelete = pidsToDelete.map((pid) => ({
+		const awardsToDelete = pidsToDelete.map((pid) => ({
 			pid,
 			award: { type: "All-Star" },
 		}));
-		await deleteAwardsByPlayer(awardsByPlayerToDelete, g.get("season"));
 
 		// Add new awards
-		const awardsByPlayer = newPlayers
+		const awardsToSave = newPlayers
 			.filter((p) => !prevPids.includes(p.pid))
 			.map((p) => ({
 				pid: p.pid,
@@ -334,7 +332,16 @@ const allStarDraftSetPlayers = async (
 				name: p.name,
 				award: { type: "All-Star" },
 			}));
-		await saveAwardsByPlayer(awardsByPlayer, conditions);
+		await updatePlayerAwards({
+			awardsToDelete,
+			awardsToSave,
+			season: g.get("season"),
+		});
+		await logEventsAwardsByPlayer({
+			awardsByPlayer: awardsToSave,
+			conditions,
+			season: g.get("season"),
+		});
 
 		// Save new All-Stars
 		allStars.teams = players.teams;
@@ -4691,7 +4698,6 @@ const updateConfsDivs = async ({
 
 const updateAwards = async (
 	newAwards: Pick<Awards, "awards" | "season">,
-	conditions: Conditions,
 ): Promise<any> => {
 	const oldAwards = await idb.getCopy.awards(
 		{
@@ -4714,23 +4720,19 @@ const updateAwards = async (
 		attrs: ["name", "pid"],
 	});
 
-	const oldAwardsByPlayer = getAwardsByPlayer(oldAwards.awards, players);
-	const newAwardsByPlayer = getAwardsByPlayer(newAwards.awards, players);
+	const awardsToDelete = getAwardsByPlayer(oldAwards.awards, players);
+	const awardsToSave = getAwardsByPlayer(newAwards.awards, players);
 
-	// Only need to delete/write ones that changed
-	const toDelete = oldAwardsByPlayer.filter((oldAward) =>
-		newAwardsByPlayer.every((newAward) => !fastDeepEqual(newAward, oldAward)),
-	);
-	const toWrite = newAwardsByPlayer.filter((newAward) =>
-		oldAwardsByPlayer.every((oldAward) => !fastDeepEqual(newAward, oldAward)),
-	);
-
-	await deleteAwardsByPlayer(toDelete, newAwards.season);
 	await idb.cache.awards.put({
 		...oldAwards,
 		...newAwards,
 	});
-	await saveAwardsByPlayer(toWrite, conditions, newAwards.season, false);
+
+	await updatePlayerAwards({
+		awardsToDelete,
+		awardsToSave,
+		season: g.get("season"),
+	});
 };
 
 const upgrade65Estimate = async () => {

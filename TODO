@@ -1,4 +1,8 @@
 custom awards
+- minor
+  - only fetch needed variables from playersPlus when evaluating award formula
+    - see FormulaEvaluator.usedSymbols
+    - also consider showStats for Award Races
 - UI to update
   - GOAT formula
     - explain min/max functions
@@ -49,13 +53,10 @@ custom awards
   - upgrade
     - doesn't fill in 2nd-5th place finishers for individual awards
 - later
-  - support editing metadata of past awards, like name and shortName. maybe even formula too...
-  - only fetch needed variables from playersPlus when evaluating award formula
-    - see FormulaEvaluator.usedSymbols
-    - also consider showStats for Award Races
+  - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
+    - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award
-  - rethink awards column on player profile - something like FMVP-5 is a bit silly, and SFMVP maybe is always silly
   - edit conf/div abbrevs, and test usage in award name prefixes
   - make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
   - ability to add/edit/delete manual awards for player, maybe in player editor
@@ -65,7 +66,6 @@ custom awards
     - pick and choose which awards to import, and option to not overwrite all
     - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
     - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
-  - make deleteAwardsByPlayer and saveAwardsByPlayer one function, like updatePlayerAwards
 
 when deleting all leagues, count in the notification should subtract starred ones
 

@@ -67,11 +67,11 @@ describe("PointsFormulaEvaluator", () => {
 	test("error for invalid variable", () => {
 		assert.throws(() => {
 			new PointsFormulaEvaluator("1+2*W+OTL+Q");
-		}, 'Invalid variable "Q"');
+		}, "Invalid variabl: Q");
 
 		assert.throws(() => {
 			new PointsFormulaEvaluator("aBc+5");
-		}, 'Invalid variable "ABC"');
+		}, "Invalid variabl: ABC");
 	});
 
 	test("error for invalid syntax", () => {

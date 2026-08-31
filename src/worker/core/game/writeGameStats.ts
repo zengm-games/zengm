@@ -1,5 +1,8 @@
 import { PHASE } from "../../../common/constants.ts";
-import { saveAwardsByPlayer } from "../awards/awardsByPlayer.ts";
+import {
+	logEventsAwardsByPlayer,
+	updatePlayerAwards,
+} from "../awards/awardsByPlayer.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
@@ -84,20 +87,27 @@ const allStarMVP = async (
 			g.get("teamInfoCache")[p.tid]?.abbrev
 		}</a>) won the All-Star MVP award.`,
 	);
-	await saveAwardsByPlayer(
-		[
-			{
-				pid: mvp.pid,
-				tid: p.tid,
-				name: mvp.name,
-				award: { type: "All-Star MVP" },
-			},
-		],
+
+	const awardsByPlayer = [
+		{
+			pid: mvp.pid,
+			tid: p.tid,
+			name: mvp.name,
+			award: { type: "All-Star MVP" },
+		},
+	];
+
+	await updatePlayerAwards({
+		awardsToDelete: [],
+		awardsToSave: awardsByPlayer,
+		season: g.get("season"),
+	});
+	await logEventsAwardsByPlayer({
+		allStarGID: game.gid,
+		awardsByPlayer,
 		conditions,
-		g.get("season"),
-		true,
-		game.gid,
-	);
+		season: g.get("season"),
+	});
 };
 
 export const findSeries = (

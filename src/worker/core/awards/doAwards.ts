@@ -5,7 +5,8 @@ import { processAwards } from "./processAwards.ts";
 import {
 	getAwardsByPlayer,
 	getLeagueLeaderAwards,
-	saveAwardsByPlayer,
+	logEventsAwardsByPlayer,
+	updatePlayerAwards,
 } from "./awardsByPlayer.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
 
@@ -123,7 +124,16 @@ export const doAwards = async (conditions: Conditions) => {
 		...(await getLeagueLeaderAwards(players, season)),
 	];
 
-	await saveAwardsByPlayer(awardsByPlayer, conditions, season);
+	await updatePlayerAwards({
+		awardsToDelete: [],
+		awardsToSave: awardsByPlayer,
+		season: g.get("season"),
+	});
+	await logEventsAwardsByPlayer({
+		awardsByPlayer,
+		conditions,
+		season: g.get("season"),
+	});
 
 	const awards = {
 		season,

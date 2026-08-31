@@ -1,4 +1,7 @@
-import { saveAwardsByPlayer } from "../awards/awardsByPlayer.ts";
+import {
+	logEventsAwardsByPlayer,
+	updatePlayerAwards,
+} from "../awards/awardsByPlayer.ts";
 import { g } from "../../util/index.ts";
 import type {
 	AllStars,
@@ -413,7 +416,16 @@ const create = async (conditions: Conditions) => {
 			award: { type: "All-Star" },
 		};
 	});
-	await saveAwardsByPlayer(awardsByPlayer, conditions);
+	await updatePlayerAwards({
+		awardsToDelete: [],
+		awardsToSave: awardsByPlayer,
+		season: g.get("season"),
+	});
+	await logEventsAwardsByPlayer({
+		awardsByPlayer,
+		conditions,
+		season: g.get("season"),
+	});
 
 	const assignTopPlayerToTeam = (team: (typeof allStars)["teams"][number]) => {
 		const ind = allStars.remaining.findIndex(({ pid }) => healthyPids.has(pid));

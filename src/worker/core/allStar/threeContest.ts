@@ -6,7 +6,10 @@ import type {
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
-import { saveAwardsByPlayer } from "../awards/awardsByPlayer.ts";
+import {
+	logEventsAwardsByPlayer,
+	updatePlayerAwards,
+} from "../awards/awardsByPlayer.ts";
 import { getNextRoundType } from "./contest.ts";
 
 type Three = NonNullable<AllStars["three"]>;
@@ -177,19 +180,25 @@ export const simNextThreeEvent = async (
 
 			const p = three.players[three.winner!]!;
 
-			await saveAwardsByPlayer(
-				[
-					{
-						pid: p.pid,
-						tid: p.tid,
-						name: p.name,
-						award: { type: "Three-Point Contest Winner" },
-					},
-				],
+			const awardsByPlayer = [
+				{
+					pid: p.pid,
+					tid: p.tid,
+					name: p.name,
+					award: { type: "Three-Point Contest Winner" },
+				},
+			];
+
+			await updatePlayerAwards({
+				awardsToDelete: [],
+				awardsToSave: awardsByPlayer,
+				season: g.get("season"),
+			});
+			await logEventsAwardsByPlayer({
+				awardsByPlayer,
 				conditions,
-				g.get("season"),
-				true,
-			);
+				season: g.get("season"),
+			});
 		}
 	}
 

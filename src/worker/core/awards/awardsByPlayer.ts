@@ -30,13 +30,17 @@ export type AwardByPlayer = {
 	award: DistributiveOmit<PlayerAward, "season">;
 };
 
-export const saveAwardsByPlayer = async (
-	awardsByPlayer: AwardByPlayer[],
-	conditions: Conditions,
-	season: number = g.get("season"),
-	logEvents: boolean = true,
-	allStarGID?: number,
-) => {
+export const logEventsAwardsByPlayer = ({
+	awardsByPlayer,
+	conditions,
+	season,
+	allStarGID,
+}: {
+	awardsByPlayer: AwardByPlayer[];
+	conditions: Conditions;
+	season: number;
+	allStarGID?: number;
+}) => {
 	// None of this stuff needs to block, it's just notifications
 	for (const p of awardsByPlayer) {
 		let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
@@ -87,8 +91,8 @@ export const saveAwardsByPlayer = async (
 			}
 		}
 
-		if (logEvents && score !== undefined) {
-			logEvent(
+		if (score !== undefined) {
+			void logEvent(
 				{
 					type: "award",
 					text,
@@ -101,59 +105,83 @@ export const saveAwardsByPlayer = async (
 			);
 		}
 	}
-
-	const awardsByPid = Map.groupBy(awardsByPlayer, (award) => award.pid);
-
-	for (const [pid, toSave] of awardsByPid) {
-		const p = await idb.getCopy.players(
-			{
-				pid,
-			},
-			"noCopyCache",
-		);
-		if (p) {
-			for (const { award } of toSave) {
-				addAward(p, {
-					...award,
-					season,
-				});
-			}
-			await idb.cache.players.put(p);
-		}
-	}
 };
 
-export const deleteAwardsByPlayer = async (
-	awardsByPlayer: Pick<AwardByPlayer, "pid" | "award">[],
-	season: number,
-) => {
-	const pids = Array.from(new Set(awardsByPlayer.map((award) => award.pid)));
-	const players = await idb.getCopies.players(
+export const updatePlayerAwards = async ({
+	awardsToDelete,
+	awardsToSave,
+	season,
+}: {
+	awardsToDelete: Pick<AwardByPlayer, "pid" | "award">[];
+	awardsToSave: Pick<AwardByPlayer, "pid" | "award">[];
+	season: number;
+}) => {
+	const toDeleteByPid = Map.groupBy(awardsToDelete, (award) => award.pid);
+	const toSaveByPid = Map.groupBy(awardsToSave, (award) => award.pid);
+	const allPids = new Set([...toDeleteByPid.keys(), ...toSaveByPid.keys()]);
+
+	const awardsByPid = new Map<
+		number,
 		{
-			pids,
-		},
-		"noCopyCache",
-	);
+			toDelete: typeof awardsToDelete | undefined;
+			toSave: typeof awardsToSave | undefined;
+		}
+	>();
+	for (const pid of allPids) {
+		const toDelete = toDeleteByPid.get(pid);
+		const toSave = toSaveByPid.get(pid);
 
-	const awardsByPid = Object.groupBy(awardsByPlayer, (award) => award.pid);
+		if (toDelete && toSave) {
+			// Remove any awards that are equal in both arrays, so deleting/adding is noop - maybe saves reading a player from disk
+			const toDeleteFiltered = toDelete.filter(
+				(award) => !toSave.some((award2) => fastDeepEqual(award, award2)),
+			);
+			const toSaveFiltered = toSave.filter(
+				(award) => !toDelete.some((award2) => fastDeepEqual(award, award2)),
+			);
+			if (toDeleteFiltered.length > 0 || toSaveFiltered.length > 0) {
+				awardsByPid.set(pid, {
+					toDelete: toDeleteFiltered,
+					toSave: toSaveFiltered,
+				});
+			}
+		} else {
+			awardsByPid.set(pid, {
+				toDelete,
+				toSave,
+			});
+		}
+	}
+	console.log({ awardsToDelete, awardsToSave }, awardsByPid);
 
-	for (const p of players) {
-		const toDelete = awardsByPid[p.pid];
-		if (toDelete) {
+	for (const [pid, { toDelete, toSave }] of awardsByPid) {
+		const p = await idb.getCopy.players({ pid }, "noCopyCache");
+		if (p) {
 			p.awards = p.awards.filter((award) => {
 				if (award.season !== season) {
 					return true;
 				}
 
 				// Delete this award if it matches any of toDelete
-				for (const { award: awardToDelete } of toDelete) {
-					if (fastDeepEqual({ ...awardToDelete, season }, award)) {
-						return false;
+				if (toDelete) {
+					for (const { award: awardToDelete } of toDelete) {
+						if (fastDeepEqual({ ...awardToDelete, season }, award)) {
+							return false;
+						}
 					}
 				}
 
 				return true;
 			});
+
+			if (toSave) {
+				for (const { award } of toSave) {
+					addAward(p, {
+						...award,
+						season,
+					});
+				}
+			}
 			await idb.cache.players.put(p);
 		}
 	}

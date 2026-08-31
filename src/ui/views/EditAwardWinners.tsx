@@ -17,7 +17,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import { getAwardKey } from "./AwardRaces.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { groupByUnique } from "../../common/utils.ts";
-import { PLAYER } from "../../common/constants.ts";
+import { PLAYER, POSITIONS } from "../../common/constants.ts";
 import { useBlocker } from "../hooks/useBlocker.ts";
 
 type Winner =
@@ -42,6 +42,7 @@ type SetWinnerProps = (
 	p: MyPlayer | undefined;
 	playerIndex: number;
 	tid: number;
+	pos: string | undefined;
 };
 
 type AwardProps = (
@@ -122,7 +123,7 @@ const Award = ({
 					const p =
 						winner?.pid !== undefined ? playersByPid[winner.pid] : undefined;
 
-					const getTid = (p: MyPlayer | null) => {
+					const getTid = (p: MyPlayer | null | undefined) => {
 						if (!p) {
 							return PLAYER.DOES_NOT_EXIST;
 						}
@@ -188,12 +189,35 @@ const Award = ({
 					} else if (winner?.pos !== undefined) {
 						prefix = (
 							<div
-								className="flex-shrink-0"
+								className="flex-shrink-0 me-1"
 								style={{
-									width: 26,
+									width: 55,
 								}}
 							>
-								{winner.pos}
+								<select
+									className="form-select"
+									value={winner.pos}
+									disabled={disabled}
+									onChange={async (event) => {
+										const newPos = event.target.value;
+										setWinner({
+											award,
+											p,
+											playerIndex: i,
+											pos: newPos,
+											teamIndex,
+											tid: getTid(p),
+										});
+									}}
+								>
+									{POSITIONS.map((pos) => {
+										return (
+											<option key={pos} value={pos}>
+												{pos}
+											</option>
+										);
+									})}
+								</select>
 							</div>
 						);
 					} else {
@@ -217,6 +241,7 @@ const Award = ({
 												award,
 												p: p === null ? undefined : p,
 												playerIndex: i,
+												pos: winner?.pos,
 												teamIndex: undefined,
 												tid: getTid(p),
 											});
@@ -225,6 +250,7 @@ const Award = ({
 												award,
 												p: p === null ? undefined : p,
 												playerIndex: i,
+												pos: winner?.pos,
 												teamIndex: teamIndex!,
 												tid: getTid(p),
 											});
@@ -276,7 +302,7 @@ const EditAwardWinners = ({
 	const playersByPid = groupByUnique(players, "pid");
 
 	const setWinner = (props: SetWinnerProps) => {
-		const { p, playerIndex, tid } = props;
+		const { p, playerIndex, pos, tid } = props;
 
 		setDirty(true);
 		setAwardsState((oldState) => {
@@ -363,8 +389,7 @@ const EditAwardWinners = ({
 					const winner: AwardInfoTeam["winner"] = props.award.winner.map(
 						(team, i) => {
 							return team.map((p2, j) => {
-								const base: { pos?: string } =
-									p2.pos !== undefined ? { pos: p2.pos } : {};
+								const base: { pos?: string } = pos !== undefined ? { pos } : {};
 
 								if (p2 === duplicate) {
 									return base;

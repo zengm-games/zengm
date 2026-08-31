@@ -6,6 +6,7 @@ custom awards
     - any extra to the end
     - DH issue
   - or, add "add" button?
+    - and a pos dropdown
     - in that case, don't need to pad arrays when creating winners
       - processAwards
       - oldAwardsToNewAwards

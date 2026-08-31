@@ -1,6 +1,11 @@
 import { helpers } from "./helpers.ts";
 import { bySport } from "./sportFunctions.ts";
-import type { Award, PlayerAwardBuiltIn } from "./types.ts";
+import type {
+	Award,
+	AwardInfoIndividual,
+	AwardInfoTeam,
+	PlayerAwardBuiltIn,
+} from "./types.ts";
 
 export const formatTeamNumber = (rank: number) =>
 	`${helpers.ordinal(rank)} Team`;
@@ -199,3 +204,35 @@ export const leaderAwardCategories = bySport({
 		},
 	],
 });
+
+export const pruneEmptyWinners = (
+	awards: (AwardInfoIndividual | AwardInfoTeam)[],
+) => {
+	return awards.map((award) => {
+		if (award.numTeams === undefined) {
+			const winner = [...award.winner];
+
+			while (winner.length > 0 && winner.at(-1)?.pid === undefined) {
+				winner.pop();
+			}
+
+			return {
+				...award,
+				winner,
+			};
+		} else {
+			const winner = award.winner.map((teamTemp) => {
+				const team = [...teamTemp];
+				while (team.length > 0 && team.at(-1)?.pid === undefined) {
+					team.pop();
+				}
+				return team;
+			});
+
+			return {
+				...award,
+				winner,
+			};
+		}
+	});
+};

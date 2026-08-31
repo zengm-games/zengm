@@ -2,7 +2,6 @@ custom awards
 - don't need to pad arrays when creating winners
   - processAwards
   - oldAwardsToNewAwards
-  - editing awards (if blank at end, just delete slot)
 - if we do wind up keeping padded award winners, make sure to add that logic in getAwards.ts for real rosters, cause currently it's not there and some awards don't have 5 players in the history
 - UI to update
   - GOAT formula

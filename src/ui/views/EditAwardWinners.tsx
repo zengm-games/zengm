@@ -12,7 +12,11 @@ import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
-import { formatPlayerAwardName, showStatsByType } from "../../common/awards.ts";
+import {
+	formatPlayerAwardName,
+	pruneEmptyWinners,
+	showStatsByType,
+} from "../../common/awards.ts";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import { getAwardKey } from "./AwardRaces.tsx";
 import { getCol } from "../../common/getCol.ts";
@@ -507,7 +511,7 @@ const EditAwardWinners = ({
 					try {
 						await toWorker("main", "updateAwards", {
 							season,
-							awards: awardsState,
+							awards: pruneEmptyWinners(awardsState),
 						});
 						setDirty(false);
 						realtimeUpdate([], helpers.leagueUrl(["history", season]));

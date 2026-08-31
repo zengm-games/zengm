@@ -285,7 +285,7 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 
 			const award: AwardInfoIndividual = {
 				...omit(row.new, ["group"]),
-				winner: [winner, {}, {}, {}, {}],
+				winner: [winner],
 			};
 
 			if (typeof row.new.statRange === "number") {

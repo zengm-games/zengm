@@ -9,7 +9,7 @@ import {
 	orderBy,
 	range,
 } from "../../../common/utils.ts";
-import { showStatsByType } from "../../../common/awards.ts";
+import { pruneEmptyWinners, showStatsByType } from "../../../common/awards.ts";
 import type {
 	Award,
 	AwardInfoIndividual,
@@ -211,10 +211,6 @@ const getInvalidVariablesErrorMessageVariablesPart = (
 	return "";
 };
 
-const toLength = <T>(arr: T[], length: number): (T | undefined)[] => {
-	return Array.from({ length }, (_, i) => arr[i]);
-};
-
 export const processAwards = async ({
 	awards,
 	numPlayersPerIndividualAward,
@@ -349,356 +345,207 @@ export const processAwards = async ({
 
 	let hasOpoy: boolean = false;
 
-	const realizedAwards: Award[][] = await Promise.all(
-		awards.map(async (baseAward) => {
-			const baseFilteredPlayers = filterPlayersForAward(
-				players,
-				baseAward,
-				season,
-				teamInfos,
-			);
-
-			// Handle conf/div/series awards - make copies for each one
-			let expandedAwards: DistributiveOmit<
-				Awards["awards"][number],
-				"winner"
-			>[];
-			if (baseAward.group === "conf") {
-				const confs = g.get("confs", season);
-				expandedAwards = confs.map((conf) => {
-					return {
-						...baseAward,
-						group: {
-							type: "conf",
-							cid: conf.cid,
-						},
-					};
-				});
-			} else if (baseAward.group === "div") {
-				const divs = g.get("divs", season);
-				expandedAwards = divs.map((div) => {
-					return {
-						...baseAward,
-						group: {
-							type: "div",
-							did: div.did,
-						},
-					};
-				});
-			} else if (typeof baseAward.statRange === "number") {
-				const playoffSeries = await idb.getCopy.playoffSeries(
-					{ season },
-					"noCopyCache",
+	const realizedAwards: Award[][] = (
+		await Promise.all(
+			awards.map(async (baseAward) => {
+				const baseFilteredPlayers = filterPlayersForAward(
+					players,
+					baseAward,
+					season,
+					teamInfos,
 				);
-				const roundSeries = playoffSeries?.series.at(baseAward.statRange) ?? [];
-				expandedAwards = roundSeries
-					.map((series, i) => {
-						if (!series.away) {
-							return;
-						}
 
+				// Handle conf/div/series awards - make copies for each one
+				let expandedAwards: DistributiveOmit<
+					Awards["awards"][number],
+					"winner"
+				>[];
+				if (baseAward.group === "conf") {
+					const confs = g.get("confs", season);
+					expandedAwards = confs.map((conf) => {
 						return {
 							...baseAward,
 							group: {
-								type: "playoffSeries",
-								tids: [series.home.tid, series.away.tid],
-							} as const,
+								type: "conf",
+								cid: conf.cid,
+							},
 						};
-					})
-					.filter((award) => award !== undefined);
-
-				// Show placeholder award if no series
-				if (expandedAwards.length === 0) {
-					expandedAwards = [
-						{
+					});
+				} else if (baseAward.group === "div") {
+					const divs = g.get("divs", season);
+					expandedAwards = divs.map((div) => {
+						return {
 							...baseAward,
 							group: {
-								type: "playoffSeries",
-								tids: [-1, -1],
+								type: "div",
+								did: div.did,
 							},
-						},
-					];
-				}
-			} else {
-				expandedAwards = [omit(baseAward, ["group"])];
-			}
-
-			return expandedAwards.map((award) => {
-				if (award.numTeams === undefined && award.opoyFormula !== undefined) {
-					hasOpoy = true;
-				}
-
-				const statRange = award.statRange ?? "regularSeason";
-
-				let filteredPlayers = baseFilteredPlayers;
-				const group = award.group;
-				if (group) {
-					if (group.type === "div") {
-						filteredPlayers = filteredPlayers.filter((p) => {
-							const currentStats = p.currentStats[statRange];
-							if (!currentStats) {
-								return false;
+						};
+					});
+				} else if (typeof baseAward.statRange === "number") {
+					const playoffSeries = await idb.getCopy.playoffSeries(
+						{ season },
+						"noCopyCache",
+					);
+					const roundSeries =
+						playoffSeries?.series.at(baseAward.statRange) ?? [];
+					expandedAwards = roundSeries
+						.map((series, i) => {
+							if (!series.away) {
+								return;
 							}
-							const tid = currentStats.tid;
-							return teamInfos[tid]?.did === group.did;
-						});
-					} else if (group.type === "conf") {
-						filteredPlayers = filteredPlayers.filter((p) => {
-							const currentStats = p.currentStats[statRange];
-							if (!currentStats) {
-								return false;
-							}
-							const tid = currentStats.tid;
-							return teamInfos[tid]?.cid === group.cid;
-						});
-					} else {
-						filteredPlayers = filteredPlayers.filter((p) => {
-							if (statOverridesByMatchup) {
-								const matchupKey = hashPlayoffSeries(group);
-								const statOverrides =
-									statOverridesByMatchup[matchupKey]?.[p.pid];
-								if (statOverrides) {
-									return group.tids.includes(statOverrides.tid);
+
+							return {
+								...baseAward,
+								group: {
+									type: "playoffSeries",
+									tids: [series.home.tid, series.away.tid],
+								} as const,
+							};
+						})
+						.filter((award) => award !== undefined);
+
+					// Show placeholder award if no series
+					if (expandedAwards.length === 0) {
+						expandedAwards = [
+							{
+								...baseAward,
+								group: {
+									type: "playoffSeries",
+									tids: [-1, -1],
+								},
+							},
+						];
+					}
+				} else {
+					expandedAwards = [omit(baseAward, ["group"])];
+				}
+
+				return expandedAwards.map((award) => {
+					if (award.numTeams === undefined && award.opoyFormula !== undefined) {
+						hasOpoy = true;
+					}
+
+					const statRange = award.statRange ?? "regularSeason";
+
+					let filteredPlayers = baseFilteredPlayers;
+					const group = award.group;
+					if (group) {
+						if (group.type === "div") {
+							filteredPlayers = filteredPlayers.filter((p) => {
+								const currentStats = p.currentStats[statRange];
+								if (!currentStats) {
+									return false;
 								}
-							}
-
-							// This is a playoff series, so look for playoff series tid, in case player was somehow traded/moved to the playoff team and didn't record a regular season stat with them
-							const currentStats = p.currentStats[statRange];
-							return currentStats && group.tids.includes(currentStats.tid);
-						});
-					}
-				}
-
-				const getScore = (p: (typeof players)[number]) => {
-					// Use statOverridesByMatchup score if it exists, for old Award Races
-					if (statOverridesByMatchup && group?.type == "playoffSeries") {
-						const matchupKey = hashPlayoffSeries(group);
-						const statOverrides = statOverridesByMatchup[matchupKey]?.[p.pid];
-						if (statOverrides) {
-							return statOverrides.score;
-						}
-					}
-
-					const formula = award.formulaByPos?.[p.pos] ?? award.formula;
-					const score = p.scores[statRange]?.[formula] ?? -Infinity;
-					if (Number.isNaN(score)) {
-						return -Infinity;
-					}
-					return score;
-				};
-
-				const sortedPlayers = orderBy(filteredPlayers, getScore, "desc");
-
-				const numTeams = award.numTeams;
-				if (numTeams === undefined) {
-					// Individual award
-					const winner = toLength(
-						sortedPlayers,
-						numPlayersPerIndividualAward,
-					).map((p) => {
-						if (!p) {
-							return {};
-						}
-
-						const score = getScore(p);
-						if (score === -Infinity) {
-							return {};
-						}
-
-						let tid = p.currentStats[statRange]?.tid;
-
-						if (group?.type === "playoffSeries") {
-							// Save playoff series stats if possible
-							const currentStats = p.currentStats[statRange];
-							if (currentStats || statOverridesByMatchup) {
-								let statOverrides: AwardPlayer["statOverrides"];
-								if (currentStats !== undefined) {
-									const stats = showStatsByType[award.showStats];
-									if (!stats) {
-										throw new Error("Invalid showStats");
-									}
-
-									tid = currentStats.tid;
-									statOverrides = {
-										score,
-									};
-									for (const stat of stats) {
-										if (currentStats[stat] !== undefined) {
-											statOverrides[stat] = currentStats[stat];
-										}
-									}
-								} else if (statOverridesByMatchup) {
-									// Find statOverrides values from original awards, if possible. Otherwise we won't have any stats to display on Award Races for playoff series awards if box scores are deleted
+								const tid = currentStats.tid;
+								return teamInfos[tid]?.did === group.did;
+							});
+						} else if (group.type === "conf") {
+							filteredPlayers = filteredPlayers.filter((p) => {
+								const currentStats = p.currentStats[statRange];
+								if (!currentStats) {
+									return false;
+								}
+								const tid = currentStats.tid;
+								return teamInfos[tid]?.cid === group.cid;
+							});
+						} else {
+							filteredPlayers = filteredPlayers.filter((p) => {
+								if (statOverridesByMatchup) {
 									const matchupKey = hashPlayoffSeries(group);
-									const statOverridesAndTid =
+									const statOverrides =
 										statOverridesByMatchup[matchupKey]?.[p.pid];
-									if (!statOverridesAndTid) {
-										// No stats, no statOverrides, nothing to do here!
-										return {};
+									if (statOverrides) {
+										return group.tids.includes(statOverrides.tid);
 									}
-									tid = statOverridesAndTid.tid;
-									statOverrides = omit(statOverridesAndTid, [
-										"tid",
-									]) as AwardPlayer["statOverrides"];
-								} else {
-									// No stats, no statOverrides, nothing to do here!
+								}
+
+								// This is a playoff series, so look for playoff series tid, in case player was somehow traded/moved to the playoff team and didn't record a regular season stat with them
+								const currentStats = p.currentStats[statRange];
+								return currentStats && group.tids.includes(currentStats.tid);
+							});
+						}
+					}
+
+					const getScore = (p: (typeof players)[number]) => {
+						// Use statOverridesByMatchup score if it exists, for old Award Races
+						if (statOverridesByMatchup && group?.type == "playoffSeries") {
+							const matchupKey = hashPlayoffSeries(group);
+							const statOverrides = statOverridesByMatchup[matchupKey]?.[p.pid];
+							if (statOverrides) {
+								return statOverrides.score;
+							}
+						}
+
+						const formula = award.formulaByPos?.[p.pos] ?? award.formula;
+						const score = p.scores[statRange]?.[formula] ?? -Infinity;
+						if (Number.isNaN(score)) {
+							return -Infinity;
+						}
+						return score;
+					};
+
+					const sortedPlayers = orderBy(filteredPlayers, getScore, "desc");
+
+					const numTeams = award.numTeams;
+					if (numTeams === undefined) {
+						// Individual award
+						const winner = sortedPlayers
+							.slice(0, numPlayersPerIndividualAward)
+							.map((p) => {
+								const score = getScore(p);
+								if (score === -Infinity) {
 									return {};
 								}
 
-								return {
-									pid: p.pid,
-									tid,
-									statOverrides,
-								};
-							}
-						}
+								let tid = p.currentStats[statRange]?.tid;
 
-						if (tid === undefined) {
-							throw new Error("Should never happen");
-						}
+								if (group?.type === "playoffSeries") {
+									// Save playoff series stats if possible
+									const currentStats = p.currentStats[statRange];
+									if (currentStats || statOverridesByMatchup) {
+										let statOverrides: AwardPlayer["statOverrides"];
+										if (currentStats !== undefined) {
+											const stats = showStatsByType[award.showStats];
+											if (!stats) {
+												throw new Error("Invalid showStats");
+											}
 
-						return {
-							pid: p.pid,
-							tid,
-						};
-					});
-					return omit(
-						{
-							...award,
-							group,
-							winner,
-						},
-						["numTeams"],
-					);
-				} else {
-					// Team award
-					if (TEAM_AWARD_INFO.byPos) {
-						let positions =
-							TEAM_AWARD_INFO.positions[award.showStats] ??
-							TEAM_AWARD_INFO.positions.default;
-						const playersByPos: Record<string, typeof players> = {};
+											tid = currentStats.tid;
+											statOverrides = {
+												score,
+											};
+											for (const stat of stats) {
+												if (currentStats[stat] !== undefined) {
+													statOverrides[stat] = currentStats[stat];
+												}
+											}
+										} else if (statOverridesByMatchup) {
+											// Find statOverrides values from original awards, if possible. Otherwise we won't have any stats to display on Award Races for playoff series awards if box scores are deleted
+											const matchupKey = hashPlayoffSeries(group);
+											const statOverridesAndTid =
+												statOverridesByMatchup[matchupKey]?.[p.pid];
+											if (!statOverridesAndTid) {
+												// No stats, no statOverrides, nothing to do here!
+												return {};
+											}
+											tid = statOverridesAndTid.tid;
+											statOverrides = omit(statOverridesAndTid, [
+												"tid",
+											]) as AwardPlayer["statOverrides"];
+										} else {
+											// No stats, no statOverrides, nothing to do here!
+											return {};
+										}
 
-						// In baseball, have to do special stuff to handle if the DH setting is enabled or not
-						if (isSport("baseball")) {
-							const dhOrPIndex = positions.indexOf("DH_OR_P");
-							const dhIfExistsIndex = positions.indexOf("DH_IF_EXISTS");
-
-							if (dhOrPIndex >= 0 || dhIfExistsIndex >= 0) {
-								positions = [...positions];
-
-								// See if DH setting is enabled - this works for current season but not any past ones, so I guess it is okay for team awards since those are never recomputed
-								const dh = g.get("dh");
-
-								// Question is, do we have DH applying to at least some teams covered by this team award?
-								let dhApplies: boolean;
-								if (dh === "all") {
-									dhApplies = true;
-								} else if (dh === "none") {
-									dhApplies = false;
-								} else {
-									// DH applies to some conferences
-									if (!group) {
-										dhApplies = true;
-									} else if (group.type === "conf") {
-										dhApplies = dh.includes(group.cid);
-									} else if (group.type === "div") {
-										const divs = g.get("divs", season);
-										const div = divs.find((div) => div.did === group.did);
-										dhApplies = !div || dh.includes(div.cid);
-									} else {
-										// Not strictly correct for a playoff series, but too lazy to look up values for individual teams, since realistically who is making an all-league team from a playoff series? Come on.
-										dhApplies = true;
+										return {
+											pid: p.pid,
+											tid,
+											statOverrides,
+										};
 									}
 								}
 
-								if (dhApplies) {
-									if (dhOrPIndex >= 0) {
-										positions[dhOrPIndex] = "DH";
-									}
-									if (dhIfExistsIndex >= 0) {
-										positions[dhIfExistsIndex] = "DH";
-									}
-								} else {
-									if (dhOrPIndex >= 0) {
-										positions[dhOrPIndex] = "P";
-									}
-									if (dhIfExistsIndex >= 0) {
-										positions.splice(dhIfExistsIndex, 1);
-									}
-								}
-							}
-						}
-
-						// Add up how many players we need at each position, factoring in that a position could be listed multiple times per team
-						const positionsNeeded = new Map<string, number>();
-						for (const pos of positions) {
-							const count = positionsNeeded.get(pos) ?? 0;
-							positionsNeeded.set(pos, count + numTeams);
-						}
-
-						for (const p of sortedPlayers) {
-							const score = getScore(p);
-							if (score === -Infinity) {
-								continue;
-							}
-
-							const pos = bySport({
-								baseball: () => {
-									if (p.pos === "SP" || p.pos === "RP") {
-										return "P";
-									}
-									return p.pos;
-								},
-								basketball: () => p.pos,
-								football: () => p.pos,
-								hockey: () => p.pos,
-							})();
-
-							const needed = positionsNeeded.get(pos);
-							if (needed !== undefined && needed > 0) {
-								playersByPos[pos] ??= [];
-								playersByPos[pos].push(p);
-
-								if (needed === 1) {
-									positionsNeeded.delete(pos);
-								} else {
-									positionsNeeded.set(pos, needed - 1);
-								}
-							}
-
-							if (positionsNeeded.size === 0) {
-								break;
-							}
-						}
-
-						const winner = range(numTeams).map((i) => {
-							return positions.map((pos) => {
-								const p = playersByPos[pos]?.shift();
-								if (p === undefined) {
-									// We still want to know what position this slot is for
-									return { pos };
-								}
-								const tid = p.currentStats[statRange]?.tid;
-								if (tid === undefined) {
-									throw new Error("Should never happen");
-								}
-								return { pid: p.pid, pos, tid };
-							});
-						});
-
-						return {
-							...award,
-							numTeams,
-							group,
-							winner,
-						};
-					} else {
-						const numPlayers = numTeams * TEAM_AWARD_INFO.numPlayersPerTeam;
-						const winnerPlayers: AwardInfoTeam["winner"][number] = sortedPlayers
-							.slice(0, numPlayers)
-							.filter((p) => p.currentStats[statRange])
-							.map((p) => {
-								const tid = p.currentStats[statRange]?.tid;
 								if (tid === undefined) {
 									throw new Error("Should never happen");
 								}
@@ -708,28 +555,171 @@ export const processAwards = async ({
 									tid,
 								};
 							});
-
-						// Add enough blank slots to fill out the teams
-						while (winnerPlayers.length < numPlayers) {
-							winnerPlayers.push({});
-						}
-
-						const winner = chunk(
-							winnerPlayers,
-							TEAM_AWARD_INFO.numPlayersPerTeam,
+						return omit(
+							{
+								...award,
+								group,
+								winner,
+							},
+							["numTeams"],
 						);
+					} else {
+						// Team award
+						if (TEAM_AWARD_INFO.byPos) {
+							let positions =
+								TEAM_AWARD_INFO.positions[award.showStats] ??
+								TEAM_AWARD_INFO.positions.default;
+							const playersByPos: Record<string, typeof players> = {};
 
-						return {
-							...award,
-							numTeams,
-							group,
-							winner,
-						};
+							// In baseball, have to do special stuff to handle if the DH setting is enabled or not
+							if (isSport("baseball")) {
+								const dhOrPIndex = positions.indexOf("DH_OR_P");
+								const dhIfExistsIndex = positions.indexOf("DH_IF_EXISTS");
+
+								if (dhOrPIndex >= 0 || dhIfExistsIndex >= 0) {
+									positions = [...positions];
+
+									// See if DH setting is enabled - this works for current season but not any past ones, so I guess it is okay for team awards since those are never recomputed
+									const dh = g.get("dh");
+
+									// Question is, do we have DH applying to at least some teams covered by this team award?
+									let dhApplies: boolean;
+									if (dh === "all") {
+										dhApplies = true;
+									} else if (dh === "none") {
+										dhApplies = false;
+									} else {
+										// DH applies to some conferences
+										if (!group) {
+											dhApplies = true;
+										} else if (group.type === "conf") {
+											dhApplies = dh.includes(group.cid);
+										} else if (group.type === "div") {
+											const divs = g.get("divs", season);
+											const div = divs.find((div) => div.did === group.did);
+											dhApplies = !div || dh.includes(div.cid);
+										} else {
+											// Not strictly correct for a playoff series, but too lazy to look up values for individual teams, since realistically who is making an all-league team from a playoff series? Come on.
+											dhApplies = true;
+										}
+									}
+
+									if (dhApplies) {
+										if (dhOrPIndex >= 0) {
+											positions[dhOrPIndex] = "DH";
+										}
+										if (dhIfExistsIndex >= 0) {
+											positions[dhIfExistsIndex] = "DH";
+										}
+									} else {
+										if (dhOrPIndex >= 0) {
+											positions[dhOrPIndex] = "P";
+										}
+										if (dhIfExistsIndex >= 0) {
+											positions.splice(dhIfExistsIndex, 1);
+										}
+									}
+								}
+							}
+
+							// Add up how many players we need at each position, factoring in that a position could be listed multiple times per team
+							const positionsNeeded = new Map<string, number>();
+							for (const pos of positions) {
+								const count = positionsNeeded.get(pos) ?? 0;
+								positionsNeeded.set(pos, count + numTeams);
+							}
+
+							for (const p of sortedPlayers) {
+								const score = getScore(p);
+								if (score === -Infinity) {
+									continue;
+								}
+
+								const pos = bySport({
+									baseball: () => {
+										if (p.pos === "SP" || p.pos === "RP") {
+											return "P";
+										}
+										return p.pos;
+									},
+									basketball: () => p.pos,
+									football: () => p.pos,
+									hockey: () => p.pos,
+								})();
+
+								const needed = positionsNeeded.get(pos);
+								if (needed !== undefined && needed > 0) {
+									playersByPos[pos] ??= [];
+									playersByPos[pos].push(p);
+
+									if (needed === 1) {
+										positionsNeeded.delete(pos);
+									} else {
+										positionsNeeded.set(pos, needed - 1);
+									}
+								}
+
+								if (positionsNeeded.size === 0) {
+									break;
+								}
+							}
+
+							const winner = range(numTeams).map((i) => {
+								return positions.map((pos) => {
+									const p = playersByPos[pos]?.shift();
+									if (p === undefined) {
+										// We still want to know what position this slot is for
+										return { pos };
+									}
+									const tid = p.currentStats[statRange]?.tid;
+									if (tid === undefined) {
+										throw new Error("Should never happen");
+									}
+									return { pid: p.pid, pos, tid };
+								});
+							});
+
+							return {
+								...award,
+								numTeams,
+								group,
+								winner,
+							};
+						} else {
+							const numPlayers = numTeams * TEAM_AWARD_INFO.numPlayersPerTeam;
+							const winnerPlayers: AwardInfoTeam["winner"][number] =
+								sortedPlayers
+									.slice(0, numPlayers)
+									.filter((p) => p.currentStats[statRange])
+									.map((p) => {
+										const tid = p.currentStats[statRange]?.tid;
+										if (tid === undefined) {
+											throw new Error("Should never happen");
+										}
+
+										return {
+											pid: p.pid,
+											tid,
+										};
+									});
+
+							const winner = chunk(
+								winnerPlayers,
+								TEAM_AWARD_INFO.numPlayersPerTeam,
+							);
+
+							return {
+								...award,
+								numTeams,
+								group,
+								winner,
+							};
+						}
 					}
-				}
-			});
-		}),
-	);
+				});
+			}),
+		)
+	).map(pruneEmptyWinners);
 
 	if (hasOpoy && isSport("football")) {
 		const flatRealizedAwards = realizedAwards.flat();

@@ -57,6 +57,7 @@ const updateEditAwardWinners = async (
 			season,
 			statRanges,
 			undefined, // statOverridesByMatchup,
+			undefined,
 		);
 
 		// stats not needed, since we're only showing currentStats

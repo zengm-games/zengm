@@ -1,11 +1,5 @@
 custom awards
-- only fetch needed variables from playersPlus when evaluating award formula
-  - test league leader awards
-    - baseball
-    - football
-    - hockey
-  - test error messages (normal, byPos, OPOY)
-  - editAwardWinners
+- baseball all-rookie team http://localhost:3000/l/566/award_races/2026
 - UI to update
   - GOAT formula
     - explain min/max functions

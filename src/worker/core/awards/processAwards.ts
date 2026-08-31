@@ -299,7 +299,7 @@ export class FormulaEvaluators {
 			formulaEvaluator = new FormulaEvaluator(formula, symbols);
 		} catch (error) {
 			const posPart = pos ? `${pos} ` : "";
-			const opoyPart = opoy ? `${opoy} ` : "";
+			const opoyPart = opoy ? `OPOY ` : "";
 
 			this.errorMessages ??= [];
 			this.errorMessages.push(
@@ -316,7 +316,7 @@ export class FormulaEvaluators {
 			this.variables[type].add(variable);
 		}
 
-		// Also add variables from showStats, since we'll need those when assembling player objects. Kind of weird to put this logic here I know, but it's easiest, and that's all that FormulaEvaluator.variables is used for currently! Similar with extraStats.
+		// Also add variables from showStats, since we'll need those when assembling player objects. Kind of weird to put this logic here I know, but it's easiest, and that's all that FormulaEvaluator.variables is used for currently! Similar with extraStats. It would be slightly more efficient to pass in the showStats stats like extraStatRanges and extraStats, since they are only needed when award output is displayed, but it's not a big deal.
 		for (const stat of [
 			...showStatsByType[award.showStats]!,
 			...awardCandidateStats[award.showStats]!,

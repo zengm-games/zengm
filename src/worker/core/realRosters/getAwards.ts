@@ -151,7 +151,6 @@ const getAwards = (
 
 	for (let season = seasonsRange[0]; season <= seasonsRange[1]; season++) {
 		const seasonAwards = awardsBySeason[season] ?? [];
-		console.log(season, seasonAwards);
 
 		if (!playersBySlug) {
 			throw new Error("Should never happen");

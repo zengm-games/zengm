@@ -41,7 +41,7 @@ describe("min/max", () => {
 	test("too many parameters", () => {
 		assert.throws(() => {
 			new FormulaEvaluator("min(x, y, z)", ["x", "y", "z"]);
-		}, "min requires exactly 2 parameters");
+		}, "Function called with too many parameters");
 	});
 
 	test("variable starting with a number", () => {
@@ -80,7 +80,7 @@ describe("abs", () => {
 	test("too many parameters", () => {
 		assert.throws(() => {
 			new FormulaEvaluator("abs(x, y)", ["x", "y"]);
-		}, "abs requires exactly 1 parameter");
+		}, "Function called with too many parameters");
 	});
 });
 

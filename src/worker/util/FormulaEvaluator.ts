@@ -276,10 +276,10 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 
 				// ?? 0 is needed for historical seasons where some stats don't exist and are undefined
 				if (operator.operands === 1) {
-					stack.push(operator.func(stack.pop()! ?? 0));
+					stack.push(operator.func(stack.pop() ?? 0));
 				} else {
-					const b = stack.pop()! ?? 0;
-					const a = stack.pop()! ?? 0;
+					const b = stack.pop() ?? 0;
+					const a = stack.pop() ?? 0;
 					stack.push(operator.func(a, b));
 				}
 			} else if (typeof token === "number") {
@@ -304,8 +304,9 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 			}
 		}
 
+		// Would be nice to explicitly track functions so we know which one it is...
 		if (stack.length !== 1) {
-			throw new Error("Expression must evaluate to exactly one value");
+			throw new Error("Function called with too many parameters");
 		}
 
 		return stack.pop()!;

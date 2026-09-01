@@ -301,7 +301,7 @@ const getPlayoffSeriesStats = async (
 		rowsByPid[pid] = {
 			...info,
 			...processPlayerStats(rawStats, statsForProcessPlayerStats, "perGame"),
-			won: winningTids.has(info.tid),
+			won: winningTids.has(info.tid) ? 1 : 0,
 		};
 	}
 
@@ -479,46 +479,46 @@ export const getPlayers = async (
 				currentStats.winp = teamInfo?.winp ?? 0;
 
 				// Only add numWon/numWonConsecutive if requested
-				if (variables) {
-					if (
-						variables.normal.has("numWon") ||
-						variables.playoffSeries.has("numWon")
-					) {
-						currentStats.numWon = {};
-						for (const award of (p as any).awards as PlayerAward[]) {
-							if (award.type !== undefined || award.season >= season) {
-								continue;
-							}
-							if (award.numTeams === undefined && award.rank !== 1) {
-								continue;
-							}
-
-							const shortName = award.shortName;
-							currentStats.numWon[shortName] ??= 0;
-							currentStats.numWon[shortName] += 1;
+				if (
+					!variables ||
+					variables.normal.has("numWon") ||
+					variables.playoffSeries.has("numWon")
+				) {
+					currentStats.numWon = {};
+					for (const award of (p as any).awards as PlayerAward[]) {
+						if (award.type !== undefined || award.season >= season) {
+							continue;
 						}
-					}
-					if (
-						variables.normal.has("numWonConsecutive") ||
-						variables.playoffSeries.has("numWonConsecutive")
-					) {
-						currentStats.numWonConsecutive = {};
-						for (const award of (
-							(p as any).awards as PlayerAward[]
-						).toReversed()) {
-							if (award.type !== undefined || award.season >= season) {
-								continue;
-							}
-							if (award.numTeams === undefined && award.rank !== 1) {
-								continue;
-							}
+						if (award.numTeams === undefined && award.rank !== 1) {
+							continue;
+						}
 
-							const shortName = award.shortName;
-							const diff = season - award.season;
-							const current = currentStats.numWonConsecutive[shortName] ?? 0;
-							if (diff === current + 1) {
-								currentStats.numWonConsecutive[shortName] = diff;
-							}
+						const shortName = award.shortName;
+						currentStats.numWon[shortName] ??= 0;
+						currentStats.numWon[shortName] += 1;
+					}
+				}
+				if (
+					!variables ||
+					variables.normal.has("numWonConsecutive") ||
+					variables.playoffSeries.has("numWonConsecutive")
+				) {
+					currentStats.numWonConsecutive = {};
+					for (const award of (
+						(p as any).awards as PlayerAward[]
+					).toReversed()) {
+						if (award.type !== undefined || award.season >= season) {
+							continue;
+						}
+						if (award.numTeams === undefined && award.rank !== 1) {
+							continue;
+						}
+
+						const shortName = award.shortName;
+						const diff = season - award.season;
+						const current = currentStats.numWonConsecutive[shortName] ?? 0;
+						if (diff === current + 1) {
+							currentStats.numWonConsecutive[shortName] = diff;
 						}
 					}
 				}

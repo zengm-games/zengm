@@ -1,6 +1,5 @@
 custom awards
 - numWon and numWonConsecutive for voter fatigue
-  - `pnpm test` failure
   - doesn't make sense in MIP, maybe show error
 - fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/Inbox/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e40
 - best on X/reddit

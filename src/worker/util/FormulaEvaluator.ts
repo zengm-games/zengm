@@ -70,7 +70,7 @@ const operators: Record<string, Operator> = {
 		operands: 2,
 		precedence: 4,
 		associativity: "r",
-		func: (a, b) => Math.pow(a, b),
+		func: (a, b) => a ** b,
 	},
 	"#": {
 		operands: 1,
@@ -80,23 +80,23 @@ const operators: Record<string, Operator> = {
 	},
 };
 
-type Function = {
-	operands: number;
+type FormulaFunction = {
+	arity: number;
 	func: (...params: number[]) => number;
 };
 
-const functions: Record<string, Function> = {
+const functions: Record<string, FormulaFunction> = {
 	abs: {
-		operands: 1,
-		func: (a) => Math.abs(a),
+		arity: 1,
+		func: Math.abs,
 	},
 	max: {
-		operands: 2,
-		func: (a, b) => Math.max(a, b),
+		arity: 2,
+		func: Math.max,
 	},
 	min: {
-		operands: 2,
-		func: (a, b) => Math.min(a, b),
+		arity: 2,
+		func: Math.min,
 	},
 };
 
@@ -200,6 +200,7 @@ const shuntingYard = (string: string) => {
 
 export class InvalidVariableError extends Error {
 	public invalidVariables: string[];
+
 	constructor(invalidVariables: string[]) {
 		super(
 			`Invalid ${helpers.plural("variable", invalidVariables.length)}: ${invalidVariables.join(", ")}`,
@@ -287,14 +288,14 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 				const name = token.slice(FUNCTION_PREFIX.length);
 				const func = functions[name]!;
 
-				if (stack.length < func.operands) {
+				if (stack.length < func.arity) {
 					throw new Error(
-						`${name} requires exactly ${func.operands} ${helpers.plural("parameter", func.operands)}`,
+						`${name} requires exactly ${func.arity} ${helpers.plural("parameter", func.arity)}`,
 					);
 				}
 
 				const params = [];
-				while (params.length < func.operands) {
+				while (params.length < func.arity) {
 					params.push(stack.pop() ?? 0);
 				}
 				stack.push(func.func(...params));
@@ -304,7 +305,7 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 		}
 
 		if (stack.length !== 1) {
-			throw new Error("min/max requires exactly two parameters");
+			throw new Error("Expression must evaluate to exactly one value");
 		}
 
 		return stack.pop()!;

@@ -45,6 +45,7 @@ custom awards
   - clutch player award
   - edit conf/div abbrevs, and test usage in award name prefixes
   - make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
+  - HoF formula should be editable similarly
   - ability to add/edit/delete manual awards for player, maybe in player editor
   - award settings
     - some way to set award settings in default new league settings

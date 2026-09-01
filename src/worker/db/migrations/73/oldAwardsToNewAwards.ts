@@ -303,23 +303,25 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 		} else {
 			const award: AwardInfoTeam = {
 				...omit(row.new, ["group"]),
-				winner: row.old.map((team) =>
-					team
-						.filter((p) => p !== undefined && p !== null)
-						.map((p) => {
-							const winner: WinnerTeam = {
-								pid: p.pid,
-								tid: p.tid,
-							};
-							if (TEAM_AWARD_INFO.byPos && p.pos !== undefined) {
-								winner.pos = p.pos;
-							}
+				winner: row.old
+					.filter((team) => team !== undefined)
+					.map((team) =>
+						team
+							.filter((p) => p !== undefined && p !== null)
+							.map((p) => {
+								const winner: WinnerTeam = {
+									pid: p.pid,
+									tid: p.tid,
+								};
+								if (TEAM_AWARD_INFO.byPos && p.pos !== undefined) {
+									winner.pos = p.pos;
+								}
 
-							// No need to set statOverrides because old playoff series awards are all individual
+								// No need to set statOverrides because old playoff series awards are all individual
 
-							return winner;
-						}),
-				),
+								return winner;
+							}),
+					),
 			};
 
 			awards.push(award);

@@ -1,9 +1,7 @@
 custom awards
 - numWon and numWonConsecutive for voter fatigue
-  - need to support indexing
+  - `pnpm test` failure
   - doesn't make sense in MIP, maybe show error
-  - docs
-  - blog
 - fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/Inbox/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e40
 - best on X/reddit
 - UI to update
@@ -24,6 +22,7 @@ custom awards
   - apologize for lack of replies and other updates
   - same formulas as before
   - numTeams changed for some team awards
+  - voter fatigue with numWon/numWonConsecutive
   - roy changes
     - edge cases
       - new league with no stats

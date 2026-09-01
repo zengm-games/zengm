@@ -7,7 +7,7 @@ import { getCol } from "../../../common/getCol.ts";
 
 const myGetCol = (stat: string) => {
 	if (stat === "seasonFraction") {
-		return "Fraction of team's season completed, see below";
+		return "Fraction of team's season completed";
 	}
 	if (stat === "teamGp") {
 		return "Team games played";
@@ -22,10 +22,20 @@ const myGetCol = (stat: string) => {
 		return "1 for winning team, 0 for losing team";
 	}
 	if (stat === "numWon") {
-		return "Number of past seasons player won this award";
+		return (
+			<>
+				Number of past seasons player won a type of award, like{" "}
+				<code className="text-black">numWon.MVP</code>
+			</>
+		);
 	}
 	if (stat === "numWonConsecutive") {
-		return "Number of consecutive past seasons player won this award";
+		return (
+			<>
+				Number of consecutive past seasons player won a type of award, like{" "}
+				<code className="text-black">numWonConsecutive.MVP</code>
+			</>
+		);
 	}
 
 	try {
@@ -201,6 +211,24 @@ export const Documentation = () => {
 							increase over 82 games like a cumulative stat. So to combine those
 							two numbers, you want <code>winp</code> to gradually become more
 							important as the season progresses.
+						</p>
+						<p>
+							<code>numWon</code> and <code>numWonConsecutive</code> can be used
+							to implement voter fatigue. Like if you write{" "}
+							<code>ws * 1/(numWon.MVP+1)</code> - <code>numWon.MVP</code> is
+							the number of prior MVPs this player won. So if that value is 0,
+							the result is just ws. But if it's 1, then it's 50% of WS. If 2,
+							then 33% of WS, etc. If that sounds too extreme, you can use an
+							exponent to make the dropoff slower, like{" "}
+							<code>ws * (1/(numWon.MVP+1))^(1/4)</code>.{" "}
+							<a
+								href="https://www.wolframalpha.com/input?i=%281%2F%281%2Bx%29%29%5E%281%2F4%29+from+0+to+10"
+								target="_blank"
+							>
+								Wolfram Alpha
+							</a>{" "}
+							is an easy tool to evaluate what these kinds of functions look
+							like, if you want to try to find the best exponent.
 						</p>
 					</div>
 					<div style={TEXT_MAX_WIDTH}>

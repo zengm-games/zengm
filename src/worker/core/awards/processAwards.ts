@@ -830,6 +830,11 @@ export const processAwards = async ({
 								TEAM_AWARD_INFO.numPlayersPerTeam,
 							);
 
+							// Placeholder teams if there are no or very few players
+							while (winner.length < numTeams) {
+								winner.push([]);
+							}
+
 							return {
 								...award,
 								numTeams,

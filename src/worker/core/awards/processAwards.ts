@@ -245,6 +245,10 @@ export class FormulaEvaluators {
 			this.variables.normal.add("outs");
 		}
 
+		// Needed for bench awards
+		this.variables.normal.add("gs");
+		this.variables.normal.add("gp");
+
 		for (const award of awards) {
 			const type =
 				typeof award.statRange === "number" ? "playoffSeries" : "normal";

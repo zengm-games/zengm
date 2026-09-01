@@ -38,6 +38,7 @@ custom awards
   - in AwardsSummary on player profile, break down by team number (and conf/div prefix) for tooltip
   - upgrade
     - doesn't fill in 2nd-5th place finishers for individual awards
+  - explain how to set GP limit effectively https://discord.com/channels/290013534023057409/1544159572510507130/1544168149329514587
 - later
   - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
     - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten

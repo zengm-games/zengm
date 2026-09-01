@@ -469,7 +469,6 @@ export const defaultAwardsHockey = {
 		// Originally wrote this as "(gps / gpGoalie) * min(0.75 * teamGp, gpGoalie)" but that behaves poorly when gpGoalie is 0
 		formula: "gps * min(0.75 * teamGp / gpGoalie, 1)",
 		showStats: "goalkeeping",
-		bench: true,
 	} as AwardSettingIndividual,
 	roy: {
 		shortName: "ROY",

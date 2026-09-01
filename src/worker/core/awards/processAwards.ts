@@ -21,6 +21,7 @@ import type {
 } from "../../../common/types.ts";
 import {
 	AWARD_STATS_ALL,
+	type CurrentStats,
 	PLAYOFF_SERIES_AWARD_STATS_ALL,
 	type StatOverridesByMatchup,
 	getPlayers,
@@ -339,14 +340,38 @@ export class FormulaEvaluators {
 		}
 	}
 
-	getEvaluate(formula: string, playoffSeries: boolean) {
-		const type = playoffSeries ? "playoffSeries" : "normal";
+	getFormulaEvaluator(
+		formula: string,
+		{
+			shortName,
+			statRange,
+		}: Pick<AwardInfoIndividual, "shortName" | "statRange">,
+	) {
+		const type = typeof statRange === "number" ? "playoffSeries" : "normal";
 		const formulaEvaluator = this.formulaEvaluators[type][formula];
 		if (!formulaEvaluator) {
 			throw new Error("Formula not registered");
 		}
 
-		return formulaEvaluator.evaluate.bind(formulaEvaluator);
+		const toProcess = new Set(["numWon", "numWonConsecutive"]).intersection(
+			formulaEvaluator.usedVariables,
+		);
+
+		return (currentStats: CurrentStats) => {
+			if (toProcess.size > 0) {
+				const copiedStats: Record<string, number> = { ...currentStats };
+				for (const key of toProcess) {
+					if (formulaEvaluator.usedVariables.has(key)) {
+						copiedStats[key] = currentStats[key]?.[shortName] ?? 0;
+					}
+				}
+
+				console.log({ copiedStats, shortName });
+				return formulaEvaluator.evaluate(copiedStats);
+			}
+
+			return formulaEvaluator.evaluate(currentStats);
+		};
 	}
 }
 
@@ -395,17 +420,13 @@ export const processAwards = async ({
 				continue;
 			}
 
-			const evaluate = formulaEvaluators.getEvaluate(
-				formula,
-				typeof statRange === "number",
-			);
+			const evaluate = formulaEvaluators.getFormulaEvaluator(formula, award);
 
 			const currentStats = p.currentStats[award.statRange ?? "regularSeason"];
-			const currentScore =
-				currentStats && evaluate ? evaluate(currentStats) : -Infinity;
+			const currentScore = currentStats ? evaluate(currentStats) : -Infinity;
 
 			// For MIP, compare score to last season and max of all previous seasons
-			if (award.mip && evaluate) {
+			if (award.mip) {
 				const statRange = award.statRange ?? "regularSeason";
 				if (typeof statRange === "number") {
 					throw new Error("mip not supported for playoff series award");
@@ -876,10 +897,9 @@ export const processAwards = async ({
 					const opoy = playersByPid[opoyWinner.pid];
 					if (mvp?.pos === "QB" && opoy) {
 						// MVP is a QB - if that QB is a significantly better offensive player (by opoyFormula) than the initial OPOY, then bump them to the top of the list
-						const playoffSeries = typeof opoyAward.statRange === "number";
-						const evaluate = formulaEvaluators.getEvaluate(
+						const evaluate = formulaEvaluators.getFormulaEvaluator(
 							opoyAward.opoyFormula,
-							playoffSeries,
+							opoyAward,
 						);
 
 						const mvpCurrentStats =

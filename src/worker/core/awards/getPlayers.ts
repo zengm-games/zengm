@@ -3,6 +3,7 @@ import type {
 	AwardPlayer,
 	NonEmptyArray,
 	Player,
+	PlayerAward,
 } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -50,7 +51,13 @@ const AWARD_STATS = [
 		hockey: ["gs"],
 	}),
 ];
-const AWARD_STATS_SPECIAL = ["seasonFraction", "teamGp", "winp"];
+const AWARD_STATS_SPECIAL = [
+	"seasonFraction",
+	"teamGp",
+	"winp",
+	"numWon",
+	"numWonConsecutive",
+];
 if (isSport("basketball")) {
 	AWARD_STATS_SPECIAL.push("teamWs");
 }
@@ -100,7 +107,9 @@ type StatsRow = StatsRowDefined & {
 	[key: string]: any;
 };
 
-type CurrentStats = {
+export type CurrentStats = {
+	numWon?: Record<string, number>;
+	numWonConsecutive?: Record<string, number>;
 	seasonFraction: number;
 	teamGp: number;
 	winp: number;
@@ -141,6 +150,7 @@ const getProcessedPlayers = async (
 			"watch",
 			"hof",
 			"tid",
+			"awards",
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
 		stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
@@ -460,14 +470,63 @@ export const getPlayers = async (
 			? teamInfos[p.currentStats.regularSeason.tid]
 			: undefined;
 
-		// Make some teamInfo available in formulas - these are regular season values but get applied to every statRange!
+		// Make some teamInfo and other things available in formulas
 		for (const currentStats of Object.values(p.currentStats)) {
 			if (currentStats) {
+				// These are regular season values but get applied to every statRange!
 				currentStats.seasonFraction = teamInfo?.seasonFraction ?? 1;
 				currentStats.teamGp = teamInfo?.gp ?? 0;
 				currentStats.winp = teamInfo?.winp ?? 0;
+
+				// Only add numWon/numWonConsecutive if requested
+				if (variables) {
+					if (
+						variables.normal.has("numWon") ||
+						variables.playoffSeries.has("numWon")
+					) {
+						currentStats.numWon = {};
+						for (const award of (p as any).awards as PlayerAward[]) {
+							if (award.type !== undefined || award.season >= season) {
+								continue;
+							}
+							if (award.numTeams === undefined && award.rank !== 1) {
+								continue;
+							}
+
+							const shortName = award.shortName;
+							currentStats.numWon[shortName] ??= 0;
+							currentStats.numWon[shortName] += 1;
+						}
+					}
+					if (
+						variables.normal.has("numWonConsecutive") ||
+						variables.playoffSeries.has("numWonConsecutive")
+					) {
+						currentStats.numWonConsecutive = {};
+						for (const award of (
+							(p as any).awards as PlayerAward[]
+						).toReversed()) {
+							if (award.type !== undefined || award.season >= season) {
+								continue;
+							}
+							if (award.numTeams === undefined && award.rank !== 1) {
+								continue;
+							}
+
+							const shortName = award.shortName;
+							const diff = season - award.season;
+							const current = currentStats.numWonConsecutive[shortName] ?? 0;
+							if (diff === current + 1) {
+								currentStats.numWonConsecutive[shortName] = diff;
+							}
+						}
+					}
+				}
 			}
 		}
+
+		// Delete awards since this is not used after here
+		delete (p as any).awards;
 
 		p.scores = {};
 	}

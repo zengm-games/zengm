@@ -21,6 +21,12 @@ const myGetCol = (stat: string) => {
 	if (stat === "won") {
 		return "1 for winning team, 0 for losing team";
 	}
+	if (stat === "numWon") {
+		return "Number of past seasons player won this award";
+	}
+	if (stat === "numWonConsecutive") {
+		return "Number of consecutive past seasons player won this award";
+	}
 
 	try {
 		if (stat.endsWith("Max")) {

@@ -213,14 +213,23 @@ export class InvalidVariableError extends Error {
 
 type VariableValue = number | Record<string, number>;
 
-class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
+class FormulaEvaluator<
+	Variables extends ReadonlyArray<string>,
+	NestedVariables extends Variables[number][],
+> {
 	private variables: Set<Variables[number]>;
+	private nestedVariables: Set<Variables[number]>;
 	private tokens: (string | number)[];
 	public usedVariables = new Set<Variables[number]>();
-	private nestedUsedVariables = new Set<Variables[number]>();
+	private usedNestedVariables = new Set<Variables[number]>();
 
-	constructor(equation: string, variables: Variables) {
+	constructor(
+		equation: string,
+		variables: Variables,
+		nestedVariables: NestedVariables,
+	) {
 		this.variables = new Set(variables);
+		this.nestedVariables = new Set(nestedVariables);
 		this.tokens = this.partiallyEvaluate(
 			shuntingYard(parseUnaryMinus(equation)),
 		);
@@ -234,7 +243,7 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 		for (const variable of this.usedVariables) {
 			dummyValues[variable] = 0;
 		}
-		for (const variable of this.nestedUsedVariables) {
+		for (const variable of this.usedNestedVariables) {
 			// Overwrite 0
 			dummyValues[variable] = {};
 		}
@@ -254,19 +263,21 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 			const variableName = nested ? token.slice(0, dotIndex) : token;
 
 			if (this.variables.has(variableName)) {
-				if (this.usedVariables.has(variableName)) {
-					// Make sure it's not used as both "x" and "x.y" in the same formula
-					const prevNested = this.nestedUsedVariables.has(variableName);
-					if (nested !== prevNested) {
-						throw new Error(
-							`Cannot use variable "${variableName}" both with and without nesting`,
-						);
-					}
+				const shouldBeNested = this.nestedVariables.has(variableName);
+				if (nested && !shouldBeNested) {
+					throw new Error(
+						`Cannot use variable "${variableName}" with nesting (like "${variableName}.foo")`,
+					);
+				}
+				if (!nested && shouldBeNested) {
+					throw new Error(
+						`Cannot use variable "${variableName}" without nesting (like "${variableName}.foo")`,
+					);
 				}
 
 				this.usedVariables.add(variableName);
 				if (nested) {
-					this.nestedUsedVariables.add(variableName);
+					this.usedNestedVariables.add(variableName);
 				}
 				processed.push(token);
 			} else if (
@@ -331,14 +342,13 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 				const dotIndex = token.indexOf(PROPERTY_PREFIX);
 
 				if (dotIndex === -1) {
-					const value = (variables as any)[token];
+					const value = (variables as any)[token] ?? 0;
 
-					// Arguably this should throw, but it's nice if evaluate never throws. Could force explicit specification of which variables are number vs nested in constructor, but idk if it's worth it
-					if (typeof value === "number") {
-						stack.push(value);
-					} else {
-						stack.push(0);
+					if (typeof value !== "number") {
+						throw new Error(`Variable "${token}" must be a number`);
 					}
+
+					stack.push(value);
 				} else {
 					const variableName = token.slice(0, dotIndex);
 					const propertyName = token.slice(dotIndex + 1);
@@ -346,11 +356,14 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 					const value = (variables as any)[variableName];
 
 					if (typeof value !== "object" || value === null) {
-						stack.push(0);
-					} else {
-						const property = value[propertyName] ?? 0;
-						stack.push(property);
+						throw new Error(
+							`Variable "${variableName}" must be an object to access property "${propertyName}"`,
+						);
 					}
+
+					const property = value[propertyName] ?? 0;
+
+					stack.push(property);
 				}
 			}
 		}

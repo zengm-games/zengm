@@ -56,7 +56,7 @@ for (const [short, long] of Object.entries(AWARD_NAMES)) {
 }
 AWARD_VARIABLES.numSeasons = "Number of Seasons Played";
 
-const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
+const formulaCache: Record<string, FormulaEvaluator<string[], string[]>> = {};
 
 const evaluate = (
 	p: Player,
@@ -232,6 +232,7 @@ const evaluate = (
 		formulaCache[goatFormula] = new FormulaEvaluator(
 			goatFormula,
 			Object.keys(object),
+			[],
 		);
 	}
 

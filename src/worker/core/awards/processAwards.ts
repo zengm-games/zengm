@@ -21,7 +21,6 @@ import type {
 } from "../../../common/types.ts";
 import {
 	AWARD_STATS_ALL,
-	type CurrentStats,
 	PLAYOFF_SERIES_AWARD_STATS_ALL,
 	type StatOverridesByMatchup,
 	getPlayers,
@@ -223,7 +222,7 @@ export class FormulaEvaluators {
 	private formulaEvaluators: Record<
 		// Need to store normal and playoffSeries separately, otherwise with the same formula it's possible one is valid and the other isn't, and we only know by running `new FormulaEvaluator()`
 		"normal" | "playoffSeries",
-		Record<string, FormulaEvaluator<string[]>>
+		Record<string, FormulaEvaluator<string[], string[]>>
 	> = {
 		normal: {},
 		playoffSeries: {},
@@ -313,13 +312,19 @@ export class FormulaEvaluators {
 		}
 
 		const playoffSeries = type === "playoffSeries";
-		const symbols = playoffSeries
+		const variables = playoffSeries
 			? PLAYOFF_SERIES_AWARD_STATS_ALL
 			: AWARD_STATS_ALL;
 
+		const nestedVariables = ["numWon", "numWonConsecutive"];
+
 		let formulaEvaluator;
 		try {
-			formulaEvaluator = new FormulaEvaluator(formula, symbols);
+			formulaEvaluator = new FormulaEvaluator(
+				formula,
+				variables,
+				nestedVariables,
+			);
 		} catch (error) {
 			const posPart = pos ? `${pos} ` : "";
 			const opoyPart = opoy ? `OPOY ` : "";
@@ -330,7 +335,7 @@ export class FormulaEvaluators {
 			);
 
 			// At least render something
-			formulaEvaluator = new FormulaEvaluator("0", symbols);
+			formulaEvaluator = new FormulaEvaluator("0", variables, nestedVariables);
 		}
 
 		this.formulaEvaluators[type][formula] = formulaEvaluator;
@@ -342,10 +347,7 @@ export class FormulaEvaluators {
 
 	getFormulaEvaluator(
 		formula: string,
-		{
-			shortName,
-			statRange,
-		}: Pick<AwardInfoIndividual, "shortName" | "statRange">,
+		{ statRange }: Pick<AwardInfoIndividual, "statRange">,
 	) {
 		const type = typeof statRange === "number" ? "playoffSeries" : "normal";
 		const formulaEvaluator = this.formulaEvaluators[type][formula];
@@ -353,25 +355,7 @@ export class FormulaEvaluators {
 			throw new Error("Formula not registered");
 		}
 
-		const toProcess = new Set(["numWon", "numWonConsecutive"]).intersection(
-			formulaEvaluator.usedVariables,
-		);
-
-		return (currentStats: CurrentStats) => {
-			if (toProcess.size > 0) {
-				const copiedStats: Record<string, number> = { ...currentStats };
-				for (const key of toProcess) {
-					if (formulaEvaluator.usedVariables.has(key)) {
-						copiedStats[key] = currentStats[key]?.[shortName] ?? 0;
-					}
-				}
-
-				console.log({ copiedStats, shortName });
-				return formulaEvaluator.evaluate(copiedStats);
-			}
-
-			return formulaEvaluator.evaluate(currentStats);
-		};
+		return formulaEvaluator.evaluate.bind(formulaEvaluator);
 	}
 }
 

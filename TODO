@@ -1,10 +1,13 @@
 custom awards
+- indexing
+  - specify up front which should be nested
 - numWon and numWonConsecutive for voter fatigue
-  - need to either support object indexing, or p.scores should have a key hash
+  - need to support indexing
   - doesn't make sense in MIP, maybe show error
   - docs
   - blog
 - fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/Inbox/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e40
+- best on X/reddit
 - UI to update
   - GOAT formula
     - explain min/max functions

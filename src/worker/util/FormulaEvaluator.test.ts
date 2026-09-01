@@ -96,3 +96,65 @@ test("usedSymbols", () => {
 		new Set(["a", "b", "c"]),
 	);
 });
+
+test("default 0 if undefined", () => {
+	const formulaEvaluator = new FormulaEvaluator("x+5", ["x"]);
+	assert.equal(formulaEvaluator.evaluate({}), 5);
+});
+
+describe("nested variables", () => {
+	test("works", () => {
+		const formulaEvaluator = new FormulaEvaluator("a.b", ["a"]);
+		assert.deepStrictEqual(formulaEvaluator.usedVariables, new Set(["a"]));
+		assert.equal(
+			formulaEvaluator.evaluate({
+				a: {
+					b: 6,
+				},
+			}),
+			6,
+		);
+	});
+
+	test("works in a function", () => {
+		const formulaEvaluator = new FormulaEvaluator("a.b+b+min(2,a.c)", [
+			"a",
+			"b",
+		]);
+		assert.deepStrictEqual(formulaEvaluator.usedVariables, new Set(["a", "b"]));
+		assert.equal(
+			formulaEvaluator.evaluate({
+				a: {
+					b: 6,
+					c: 1,
+				},
+				b: 3,
+			}),
+			10,
+		);
+	});
+
+	test("0 for undefined property", () => {
+		const formulaEvaluator = new FormulaEvaluator("a.b", ["a"]);
+		assert.equal(formulaEvaluator.evaluate({ a: {} }), 0);
+	});
+
+	test("0 for direct access when nested", () => {
+		const formulaEvaluator = new FormulaEvaluator("x", ["x"]);
+		assert.equal(formulaEvaluator.evaluate({ x: { y: 5 } }), 0);
+	});
+
+	test("0 for nested access of number", () => {
+		const formulaEvaluator = new FormulaEvaluator("x.a", ["x"]);
+		assert.equal(formulaEvaluator.evaluate({ x: 5 }), 0);
+	});
+
+	test("error for inconsistent direct access", () => {
+		const scenarios = ["x+x.a", "x.a+x"];
+		for (const scenario of scenarios) {
+			assert.throws(() => {
+				new FormulaEvaluator(scenario, ["x"]);
+			}, 'Cannot use variable "x" both with and without nesting');
+		}
+	});
+});

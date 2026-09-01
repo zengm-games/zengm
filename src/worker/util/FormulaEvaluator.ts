@@ -15,6 +15,7 @@ import helpers from "./helpers.ts";
 const BINARY_MINUS = "-";
 const UNARY_MINUS = "#";
 const FUNCTION_PREFIX = "@";
+const PROPERTY_PREFIX = ".";
 
 const regexEncode = (string: string) => {
 	// eslint-disable-next-line no-useless-escape
@@ -126,9 +127,10 @@ const shuntingYard = (string: string) => {
 			// that can actually be part of a number. Variables can also
 			// contain digits, including at the beginning.
 			String.raw`\d+(?:\.\d+)?(?:[eE][+-]?\d+)?(?![a-zA-Z\d])` +
+				// Property access, such as x.y
+				String.raw`|[a-zA-Z\d]+(?:\.[a-zA-Z\d]+)?` +
 				String.raw`|[(),]` +
-				String.raw`|${operatorsString}` +
-				String.raw`|[a-zA-Z\d]+`,
+				String.raw`|${operatorsString}`,
 			"g",
 		),
 	);
@@ -209,10 +211,13 @@ export class InvalidVariableError extends Error {
 	}
 }
 
+type VariableValue = number | Record<string, number>;
+
 class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 	private variables: Set<Variables[number]>;
 	private tokens: (string | number)[];
 	public usedVariables = new Set<Variables[number]>();
+	private nestedUsedVariables = new Set<Variables[number]>();
 
 	constructor(equation: string, variables: Variables) {
 		this.variables = new Set(variables);
@@ -225,9 +230,13 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 		}
 
 		// Test with dummy values for variables, to hopefully ensure that this.evaluate never throws
-		const dummyValues: Record<string, number> = {};
+		const dummyValues: Record<string, VariableValue> = {};
 		for (const variable of this.usedVariables) {
 			dummyValues[variable] = 0;
+		}
+		for (const variable of this.nestedUsedVariables) {
+			// Overwrite 0
+			dummyValues[variable] = {};
 		}
 		this.evaluate(dummyValues);
 	}
@@ -238,8 +247,27 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 		const invalidTokens = new Set<string>();
 
 		for (const token of tokens) {
-			if (this.variables.has(token)) {
-				this.usedVariables.add(token);
+			// A property variable looks like "x.y". The actual top-level
+			// variable is still just "x".
+			const dotIndex = token.indexOf(PROPERTY_PREFIX);
+			const nested = dotIndex !== -1;
+			const variableName = nested ? token.slice(0, dotIndex) : token;
+
+			if (this.variables.has(variableName)) {
+				if (this.usedVariables.has(variableName)) {
+					// Make sure it's not used as both "x" and "x.y" in the same formula
+					const prevNested = this.nestedUsedVariables.has(variableName);
+					if (nested !== prevNested) {
+						throw new Error(
+							`Cannot use variable "${variableName}" both with and without nesting`,
+						);
+					}
+				}
+
+				this.usedVariables.add(variableName);
+				if (nested) {
+					this.nestedUsedVariables.add(variableName);
+				}
 				processed.push(token);
 			} else if (
 				operators[token] !== undefined ||
@@ -263,7 +291,7 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 		return processed;
 	}
 
-	evaluate(variables: Record<Variables[number], number>) {
+	evaluate(variables: Record<Variables[number], VariableValue>) {
 		const stack: number[] = [];
 
 		for (const token of this.tokens) {
@@ -300,7 +328,30 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 				}
 				stack.push(func.func(...params));
 			} else {
-				stack.push((variables as any)[token]);
+				const dotIndex = token.indexOf(PROPERTY_PREFIX);
+
+				if (dotIndex === -1) {
+					const value = (variables as any)[token];
+
+					// Arguably this should throw, but it's nice if evaluate never throws. Could force explicit specification of which variables are number vs nested in constructor, but idk if it's worth it
+					if (typeof value === "number") {
+						stack.push(value);
+					} else {
+						stack.push(0);
+					}
+				} else {
+					const variableName = token.slice(0, dotIndex);
+					const propertyName = token.slice(dotIndex + 1);
+
+					const value = (variables as any)[variableName];
+
+					if (typeof value !== "object" || value === null) {
+						stack.push(0);
+					} else {
+						const property = value[propertyName] ?? 0;
+						stack.push(property);
+					}
+				}
 			}
 		}
 

@@ -297,6 +297,15 @@ export class FormulaEvaluators {
 		pos: string | undefined;
 		type: keyof FormulaEvaluators["formulaEvaluators"];
 	}) {
+		// Add variables from showStats, since we'll need those when assembling player objects. Kind of weird to put this logic here I know, but it's easiest, and that's all that FormulaEvaluator.variables is used for currently! Similar with extraStats. It would be slightly more efficient to pass in the showStats stats like extraStatRanges and extraStats, since they are only needed when award output is displayed, but it's not a big deal.
+		// This needs to run before the dupe formula check because you could have two of the same formulas with different showStats!
+		for (const stat of [
+			...showStatsByType[award.showStats]!,
+			...awardCandidateStats[award.showStats]!,
+		]) {
+			this.variables[type].add(stat);
+		}
+
 		if (this.formulaEvaluators[type][formula]) {
 			// Two awards have the same formula
 			return;
@@ -327,14 +336,6 @@ export class FormulaEvaluators {
 
 		for (const variable of formulaEvaluator.usedVariables) {
 			this.variables[type].add(variable);
-		}
-
-		// Also add variables from showStats, since we'll need those when assembling player objects. Kind of weird to put this logic here I know, but it's easiest, and that's all that FormulaEvaluator.variables is used for currently! Similar with extraStats. It would be slightly more efficient to pass in the showStats stats like extraStatRanges and extraStats, since they are only needed when award output is displayed, but it's not a big deal.
-		for (const stat of [
-			...showStatsByType[award.showStats]!,
-			...awardCandidateStats[award.showStats]!,
-		]) {
-			this.variables[type].add(stat);
 		}
 	}
 

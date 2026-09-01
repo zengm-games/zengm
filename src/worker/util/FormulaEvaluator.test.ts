@@ -35,18 +35,52 @@ describe("min/max", () => {
 	test("not enough parameters", () => {
 		assert.throws(() => {
 			new FormulaEvaluator("min(x)", ["x"]);
-		}, "min/max requires exactly two parameters");
+		}, "min requires exactly 2 parameters");
 	});
 
 	test("too many parameters", () => {
 		assert.throws(() => {
 			new FormulaEvaluator("min(x, y, z)", ["x", "y", "z"]);
-		}, "min/max requires exactly two parameters");
+		}, "min requires exactly 2 parameters");
 	});
 
 	test("variable starting with a number", () => {
 		const formulaEvaluator = new FormulaEvaluator("2pp+5", ["2pp"]);
 		assert.equal(formulaEvaluator.evaluate({ "2pp": 4 }), 9);
+	});
+});
+
+describe("abs", () => {
+	test("with positive variable", () => {
+		const formulaEvaluator = new FormulaEvaluator("abs(min)", ["min"]);
+		assert.equal(formulaEvaluator.evaluate({ min: 4 }), 4);
+	});
+
+	test("with negative variable", () => {
+		const formulaEvaluator = new FormulaEvaluator("abs(min)", ["min"]);
+		assert.equal(formulaEvaluator.evaluate({ min: -4 }), 4);
+	});
+
+	test("with positive constant", () => {
+		const formulaEvaluator = new FormulaEvaluator("abs(2)", []);
+		assert.equal(formulaEvaluator.evaluate({}), 2);
+	});
+
+	test("with negative constant", () => {
+		const formulaEvaluator = new FormulaEvaluator("abs(-2)", []);
+		assert.equal(formulaEvaluator.evaluate({}), 2);
+	});
+
+	test("not enough parameters", () => {
+		assert.throws(() => {
+			new FormulaEvaluator("abs()", []);
+		}, "abs requires exactly 1 parameter");
+	});
+
+	test("too many parameters", () => {
+		assert.throws(() => {
+			new FormulaEvaluator("abs(x, y)", ["x", "y"]);
+		}, "abs requires exactly 1 parameter");
 	});
 });
 

@@ -81,18 +81,22 @@ const operators: Record<string, Operator> = {
 };
 
 type Function = {
-	operands: 2;
-	func: (a: number, b: number) => number;
+	operands: number;
+	func: (...params: number[]) => number;
 };
 
 const functions: Record<string, Function> = {
-	min: {
-		operands: 2,
-		func: (a, b) => Math.min(a, b),
+	abs: {
+		operands: 1,
+		func: (a) => Math.abs(a),
 	},
 	max: {
 		operands: 2,
 		func: (a, b) => Math.max(a, b),
+	},
+	min: {
+		operands: 2,
+		func: (a, b) => Math.min(a, b),
 	},
 };
 
@@ -280,15 +284,20 @@ class FormulaEvaluator<Variables extends ReadonlyArray<string>> {
 			} else if (typeof token === "number") {
 				stack.push(token);
 			} else if (token.startsWith(FUNCTION_PREFIX)) {
-				const func = functions[token.slice(FUNCTION_PREFIX.length)]!;
+				const name = token.slice(FUNCTION_PREFIX.length);
+				const func = functions[name]!;
 
 				if (stack.length < func.operands) {
-					throw new Error("min/max requires exactly two parameters");
+					throw new Error(
+						`${name} requires exactly ${func.operands} ${helpers.plural("parameter", func.operands)}`,
+					);
 				}
 
-				const b = stack.pop()! ?? 0;
-				const a = stack.pop()! ?? 0;
-				stack.push(func.func(a, b));
+				const params = [];
+				while (params.length < func.operands) {
+					params.push(stack.pop() ?? 0);
+				}
+				stack.push(func.func(...params));
 			} else {
 				stack.push((variables as any)[token]);
 			}

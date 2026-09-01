@@ -21,6 +21,7 @@ import local from "../../util/local.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
+import { formatList } from "../../../common/formatList.ts";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -341,6 +342,31 @@ const processGameAttributes = async (
 			text = `Luxury tax changed from ${prevLuxuryTax} to ${info.luxuryTax}`;
 		}
 		texts.push(text);
+	}
+
+	if (info.awards !== undefined) {
+		const prevShortNames = new Set(
+			g.get("awards").map((award) => award.shortName),
+		);
+		const newShortNames = new Set(info.awards.map((award) => award.shortName));
+		const added = Array.from(newShortNames.difference(prevShortNames));
+		const removed = Array.from(prevShortNames.difference(newShortNames));
+		const addedText =
+			added.length > 0
+				? `${formatList(added)} ${helpers.plural("award", added.length)}`
+				: undefined;
+		const removedText =
+			removed.length > 0
+				? `${formatList(removed)} ${helpers.plural("award", removed.length)}`
+				: undefined;
+
+		if (addedText !== undefined && removedText !== undefined) {
+			texts.push(`Added ${addedText} and removed ${removedText}`);
+		} else if (addedText !== undefined) {
+			texts.push(`Added ${addedText}`);
+		} else if (removed !== undefined) {
+			texts.push(`Removed ${removedText}`);
+		}
 	}
 
 	for (const text of texts) {

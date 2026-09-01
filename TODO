@@ -1,4 +1,9 @@
 custom awards
+- if function
+  - blog
+- numWon and numWonConsecutive for voter fatigue
+  - blog
+- team awards not shown on award races in preseason
 - UI to update
   - GOAT formula
     - explain min/max functions
@@ -36,6 +41,8 @@ custom awards
     - score
     - postseason awards
   - in AwardsSummary on player profile, break down by team number (and conf/div prefix) for tooltip
+  - real player awards change over time in BBGM
+  - achievements
   - upgrade
     - doesn't fill in 2nd-5th place finishers for individual awards
   - explain how to set GP limit effectively https://discord.com/channels/290013534023057409/1544159572510507130/1544168149329514587

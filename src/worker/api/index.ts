@@ -1139,6 +1139,10 @@ const deleteScheduledEvents = async (type: string) => {
 					event,
 				);
 			}
+		} else if (type === "awards") {
+			if (event.type === "gameAttributes") {
+				await deleteFromGameAttributesScheduledEvent(["awards"], event);
+			}
 		}
 	}
 

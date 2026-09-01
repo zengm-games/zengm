@@ -840981,6 +840981,15 @@
     },
     {
       "info": {
+        "awards": [
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 2,
+            "shortName": "ALL",
+            "showStats": "offense"
+          }
+        ],
         "blockFactor": 1,
         "draftType": "noLottery",
         "foulsUntilBonus": [
@@ -841008,6 +841017,23 @@
     },
     {
       "info": {
+        "awards": [
+          {
+            "actAs": "roy",
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "Rookie of the Year",
+            "rookie": true,
+            "shortName": "ROY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 2,
+            "shortName": "ALL",
+            "showStats": "offense"
+          }
+        ],
         "ftAccuracyFactor": 0.9,
         "numGames": 48,
         "pace": 108,
@@ -841236,6 +841262,30 @@
     },
     {
       "info": {
+        "awards": [
+          {
+            "actAs": "mvp",
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "Most Valuable Player",
+            "shortName": "MVP",
+            "showStats": "offense"
+          },
+          {
+            "actAs": "roy",
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "Rookie of the Year",
+            "rookie": true,
+            "shortName": "ROY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 2,
+            "shortName": "ALL",
+            "showStats": "offense"
+          }
+        ],
         "ftAccuracyFactor": 0.99,
         "pace": 106.17,
         "twoPointAccuracyFactor": 0.85805
@@ -841384,6 +841434,38 @@
     },
     {
       "info": {
+        "awards": [
+          {
+            "actAs": "mvp",
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "Most Valuable Player",
+            "shortName": "MVP",
+            "showStats": "offense"
+          },
+          {
+            "actAs": "roy",
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "Rookie of the Year",
+            "rookie": true,
+            "shortName": "ROY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 2,
+            "shortName": "ALL",
+            "showStats": "offense"
+          },
+          {
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "All-Rookie",
+            "numTeams": 1,
+            "rookie": true,
+            "shortName": "ALR",
+            "showStats": "offense"
+          }
+        ],
         "pace": 117.316,
         "twoPointAccuracyFactor": 0.9439
       },
@@ -841514,6 +841596,52 @@
     },
     {
       "info": {
+        "awards": [
+          {
+            "actAs": "mvp",
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "Most Valuable Player",
+            "shortName": "MVP",
+            "showStats": "offense"
+          },
+          {
+            "actAs": "roy",
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "Rookie of the Year",
+            "rookie": true,
+            "shortName": "ROY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "gmsc * (1 + 0.75*won)",
+            "name": "Finals MVP",
+            "shortName": "FMVP",
+            "showStats": "offense",
+            "statRange": -1
+          },
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 2,
+            "shortName": "ALL",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "All-Defensive",
+            "numTeams": 2,
+            "shortName": "DEF",
+            "showStats": "defense"
+          },
+          {
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "All-Rookie",
+            "numTeams": 1,
+            "rookie": true,
+            "shortName": "ALR",
+            "showStats": "offense"
+          }
+        ],
         "pace": 114.571,
         "twoPointAccuracyFactor": 0.9439
       },
@@ -841846,6 +841974,65 @@
     },
     {
       "info": {
+        "awards": [
+          {
+            "actAs": "mvp",
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "Most Valuable Player",
+            "shortName": "MVP",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "Defensive Player of the Year",
+            "shortName": "DPOY",
+            "showStats": "defense"
+          },
+          {
+            "actAs": "roy",
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "Rookie of the Year",
+            "rookie": true,
+            "shortName": "ROY",
+            "showStats": "offense"
+          },
+          {
+            "bench": true,
+            "formula": "ewa / 5.5 + vorp / 2.3 + ws / 4.9 + seasonFraction * winp + gp / 82 * pts / 9.9",
+            "name": "Sixth Man of the Year",
+            "shortName": "SMOY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "gmsc * (1 + 0.75*won)",
+            "name": "Finals MVP",
+            "shortName": "FMVP",
+            "showStats": "offense",
+            "statRange": -1
+          },
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 2,
+            "shortName": "ALL",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "All-Defensive",
+            "numTeams": 2,
+            "shortName": "DEF",
+            "showStats": "defense"
+          },
+          {
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "All-Rookie",
+            "numTeams": 1,
+            "rookie": true,
+            "shortName": "ALR",
+            "showStats": "offense"
+          }
+        ],
         "orbFactor": 1.1215,
         "pace": 103.1,
         "stealFactor": 1.01,
@@ -841924,6 +842111,72 @@
     },
     {
       "info": {
+        "awards": [
+          {
+            "actAs": "mvp",
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "Most Valuable Player",
+            "shortName": "MVP",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "Defensive Player of the Year",
+            "shortName": "DPOY",
+            "showStats": "defense"
+          },
+          {
+            "actAs": "roy",
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "Rookie of the Year",
+            "rookie": true,
+            "shortName": "ROY",
+            "showStats": "offense"
+          },
+          {
+            "bench": true,
+            "formula": "ewa / 5.5 + vorp / 2.3 + ws / 4.9 + seasonFraction * winp + gp / 82 * pts / 9.9",
+            "name": "Sixth Man of the Year",
+            "shortName": "SMOY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "pts + trb + ast + per",
+            "mip": true,
+            "name": "Most Improved Player",
+            "shortName": "MIP",
+            "showStats": "offense"
+          },
+          {
+            "formula": "gmsc * (1 + 0.75*won)",
+            "name": "Finals MVP",
+            "shortName": "FMVP",
+            "showStats": "offense",
+            "statRange": -1
+          },
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 3,
+            "shortName": "ALL",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "All-Defensive",
+            "numTeams": 2,
+            "shortName": "DEF",
+            "showStats": "defense"
+          },
+          {
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "All-Rookie",
+            "numTeams": 2,
+            "rookie": true,
+            "shortName": "ALR",
+            "showStats": "offense"
+          }
+        ],
         "orbFactor": 1.10425,
         "stealFactor": 1.06,
         "threePointTendencyFactor": 0.095,
@@ -841994,6 +842247,65 @@
     },
     {
       "info": {
+        "awards": [
+          {
+            "actAs": "mvp",
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "Most Valuable Player",
+            "shortName": "MVP",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "Defensive Player of the Year",
+            "shortName": "DPOY",
+            "showStats": "defense"
+          },
+          {
+            "actAs": "roy",
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "Rookie of the Year",
+            "rookie": true,
+            "shortName": "ROY",
+            "showStats": "offense"
+          },
+          {
+            "bench": true,
+            "formula": "ewa / 5.5 + vorp / 2.3 + ws / 4.9 + seasonFraction * winp + gp / 82 * pts / 9.9",
+            "name": "Sixth Man of the Year",
+            "shortName": "SMOY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "gmsc * (1 + 0.75*won)",
+            "name": "Finals MVP",
+            "shortName": "FMVP",
+            "showStats": "offense",
+            "statRange": -1
+          },
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 3,
+            "shortName": "ALL",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "All-Defensive",
+            "numTeams": 2,
+            "shortName": "DEF",
+            "showStats": "defense"
+          },
+          {
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "All-Rookie",
+            "numTeams": 2,
+            "rookie": true,
+            "shortName": "ALR",
+            "showStats": "offense"
+          }
+        ],
         "orbFactor": 1.1215,
         "pace": 100.6,
         "stealFactor": 1.2,
@@ -842763,6 +843075,86 @@
       },
       "phase": 4,
       "season": 2021,
+      "type": "gameAttributes"
+    },
+    {
+      "info": {
+        "awards": [
+          {
+            "actAs": "mvp",
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "Most Valuable Player",
+            "shortName": "MVP",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "Defensive Player of the Year",
+            "shortName": "DPOY",
+            "showStats": "defense"
+          },
+          {
+            "actAs": "roy",
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "Rookie of the Year",
+            "rookie": true,
+            "shortName": "ROY",
+            "showStats": "offense"
+          },
+          {
+            "bench": true,
+            "formula": "ewa / 5.5 + vorp / 2.3 + ws / 4.9 + seasonFraction * winp + gp / 82 * pts / 9.9",
+            "name": "Sixth Man of the Year",
+            "shortName": "SMOY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "pts + trb + ast + per",
+            "mip": true,
+            "name": "Most Improved Player",
+            "shortName": "MIP",
+            "showStats": "offense"
+          },
+          {
+            "formula": "gmsc * (1 + 0.75*won)",
+            "name": "Finals MVP",
+            "shortName": "FMVP",
+            "showStats": "offense",
+            "statRange": -1
+          },
+          {
+            "formula": "gmsc * (1 + 0.75*won)",
+            "name": "Semifinals MVP",
+            "shortName": "SFMVP",
+            "showStats": "offense",
+            "statRange": -2
+          },
+          {
+            "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
+            "name": "All-League",
+            "numTeams": 3,
+            "shortName": "ALL",
+            "showStats": "offense"
+          },
+          {
+            "formula": "dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
+            "name": "All-Defensive",
+            "numTeams": 2,
+            "shortName": "DEF",
+            "showStats": "defense"
+          },
+          {
+            "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
+            "name": "All-Rookie",
+            "numTeams": 2,
+            "rookie": true,
+            "shortName": "ALR",
+            "showStats": "offense"
+          }
+        ]
+      },
+      "phase": 0,
+      "season": 2022,
       "type": "gameAttributes"
     },
     {

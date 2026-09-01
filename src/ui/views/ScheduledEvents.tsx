@@ -33,6 +33,10 @@ const gameAttributeName = (key: string) => {
 		return "Divisions";
 	}
 
+	if (key === "awards") {
+		return "Awards";
+	}
+
 	return key;
 };
 
@@ -217,9 +221,11 @@ const ViewEvent = ({
 										? (value as any[]).map((x, i) => (
 												<div key={i}>{x.name}</div>
 											))
-										: Array.isArray(value)
-											? JSON.stringify(value)
-											: String(value)}
+										: key === "awards"
+											? (value as any[]).map((row) => row.shortName).join(", ")
+											: Array.isArray(value)
+												? JSON.stringify(value)
+												: String(value)}
 								</td>
 							</tr>
 						);
@@ -354,6 +360,9 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 					</Dropdown.Item>
 					<Dropdown.Item onClick={bulkDelete("styleOfPlay")}>
 						Style of play changes
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("awards")}>
+						Award settings changes
 					</Dropdown.Item>
 					<Dropdown.Item onClick={bulkDelete("unretirePlayer")}>
 						Unretire players

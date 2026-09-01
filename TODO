@@ -1,4 +1,5 @@
 custom awards
+- season icon should only be given for winner!
 - numWon and numWonConsecutive for voter fatigue
   - doesn't make sense in MIP, maybe show error
 - fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/Inbox/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e40

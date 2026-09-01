@@ -75,7 +75,6 @@ export const Documentation = () => {
 			<button
 				className="btn btn-secondary mb-3"
 				onClick={async () => {
-					console.log(state);
 					if (state.show) {
 						setState({
 							show: false,
@@ -92,7 +91,6 @@ export const Documentation = () => {
 							"getVariables",
 							undefined,
 						);
-						console.log(variables);
 						setState({
 							show: true,
 							variables,

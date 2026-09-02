@@ -276,6 +276,19 @@ const evaluate = (
 		object.numSeasons = seasons.size;
 	}
 
+	// Make sure these are always defined, even for players with no awards
+	for (const short of Object.keys(SIMPLE_AWARD_VARIABLES)) {
+		if (short === "numTeams") {
+			continue;
+		}
+
+		object[short] = 0;
+	}
+	for (const short of Object.keys(LEGACY_AWARD_VARIABLES)) {
+		object[short] = 0;
+	}
+
+	const awards: Record<string, number> = {};
 	for (const row of p.awards) {
 		if (info.type === "season" && row.season !== info.season) {
 			continue;
@@ -286,12 +299,13 @@ const evaluate = (
 				continue;
 			}
 
-			object[short] ??= 0;
 			if (info.type === "season" && row.season !== info.season) {
 				continue;
 			}
+
+			object[short] ??= 0;
 			if (row.type === long) {
-				object[short] += 1;
+				object[short]! += 1;
 			}
 		}
 
@@ -299,7 +313,6 @@ const evaluate = (
 			object[short] ??= 0;
 			if (row.type === undefined) {
 				if (row.shortName === awardInfo.shortName) {
-					// Team award
 					if (row.numTeams === undefined) {
 						// Individual award - must be #1
 						if (row.rank === 1) {
@@ -320,7 +333,30 @@ const evaluate = (
 				object[short] += 1;
 			}
 		}
+
+		if (row.type === undefined) {
+			const shortName = row.shortName;
+			if (row.numTeams === undefined) {
+				// Individual award - must be #1
+				if (row.rank === 1) {
+					awards[shortName] ??= 0;
+					awards[shortName] += 1;
+				}
+			} else {
+				// Team award
+
+				// Count for any team
+				awards[shortName] ??= 0;
+				awards[shortName] += 1;
+
+				// Count for specific teamNum
+				const shortTeamWithTeamNum = `${shortName}${row.rank}`;
+				awards[shortTeamWithTeamNum] ??= 0;
+				awards[shortTeamWithTeamNum] += 1;
+			}
+		}
 	}
+	object.awards = awards as any;
 
 	// Ignore career totals from low games guys
 	const minGp = info.type === "season" ? MIN_GP_SEASON : MIN_GP_TOTAL;
@@ -342,7 +378,7 @@ const evaluate = (
 		formulaCache[goatFormula] = new FormulaEvaluator(
 			goatFormula,
 			Object.keys(object),
-			["numAwards"],
+			["awards"],
 		);
 	}
 

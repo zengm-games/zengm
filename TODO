@@ -14,7 +14,6 @@ custom awards
       - groupAwards no longer has oldAwards, so those all get sorted to bottom
       - awards column on player page will not be populated with these old awards
     - award records doesn't show any of the built-in awards, because it's all based on awards objects now
-- get rid of AWARD_NAMES
 - update rosters
 - blog
   - apologize for lack of replies and other updates

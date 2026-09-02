@@ -10,6 +10,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import { formatPlayerAwardName } from "../../common/awards.ts";
 
 type Most = {
 	value: number;
@@ -170,12 +171,33 @@ const tidAndSeasonToAbbrev = async (most: Most) => {
 	};
 };
 
-const getOldAwards = () => {
+const getOldAndCustomAwards = () => {
 	const oldAwards: Record<string, string> = {};
 	for (const [key, value] of Object.entries(goatFormula.OLD_AWARD_VARIABLES)) {
 		oldAwards[key] = value.name;
 	}
-	return oldAwards;
+
+	const awards = g.get("awards");
+	const customAwards: Record<string, string> = {};
+	for (const award of awards) {
+		if (award.numTeams === undefined) {
+			// Individual award
+			customAwards[award.shortName] = award.name;
+		} else {
+			// Team award - any team
+			customAwards[award.shortName] = award.name;
+
+			// Team award - specific team
+			for (let rank = 1; rank <= award.numTeams; rank++) {
+				customAwards[`${award.shortName}${rank}`] = formatPlayerAwardName({
+					...award,
+					rank,
+				});
+			}
+		}
+	}
+
+	return { customAwards, oldAwards };
 };
 
 const updatePlayers = async (
@@ -282,8 +304,8 @@ const updatePlayers = async (
 				colName: "GOAT",
 			});
 			extraProps = {
+				...getOldAndCustomAwards(),
 				formula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
-				oldAwards: getOldAwards(),
 				simpleAwards: goatFormula.SIMPLE_AWARD_VARIABLES,
 				stats: goatFormula.STAT_VARIABLES,
 			};
@@ -315,9 +337,9 @@ const updatePlayers = async (
 				},
 			);
 			extraProps = {
+				...getOldAndCustomAwards(),
 				formula:
 					g.get("goatSeasonFormula") ?? goatFormula.DEFAULT_FORMULA_SEASON,
-				oldAwards: getOldAwards(),
 				simpleAwards: omit(goatFormula.SIMPLE_AWARD_VARIABLES, ["numSeasons"]),
 				stats: goatFormula.STAT_VARIABLES,
 			};

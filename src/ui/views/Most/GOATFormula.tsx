@@ -7,12 +7,14 @@ import { helpers } from "../../util/helpers.ts";
 import { FunctionDocs } from "../AwardSettings/Documentation.tsx";
 
 const GOATFormula = ({
+	customAwards,
 	formula,
 	oldAwards,
 	simpleAwards,
 	stats,
 	type,
 }: {
+	customAwards: Record<string, string>;
 	formula: string;
 	oldAwards: Record<string, string>;
 	simpleAwards: Record<string, string>;
@@ -105,6 +107,20 @@ const GOATFormula = ({
 						If you had some other awards in past seasons, you can use those too
 						in the same format, <code>award.ABBREV</code>.
 					</p>
+					<ul
+						className="list-unstyled"
+						style={{
+							columnWidth: 100,
+						}}
+					>
+						{Object.entries(customAwards).map(([short, long]) => (
+							<li key={short}>
+								<abbr className="font-monospace" title={long}>
+									awards.{short}
+								</abbr>
+							</li>
+						))}
+					</ul>
 					<p>
 						These were the original award variables, and they still work, but
 						with the new customizable awards feature you are better off using

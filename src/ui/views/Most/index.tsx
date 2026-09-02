@@ -184,6 +184,7 @@ const Most = ({
 			{type === "goat" || type === "goat_season" ? (
 				<GOATFormula
 					key={type}
+					customAwards={extraProps.customAwards}
 					formula={extraProps.formula}
 					oldAwards={extraProps.oldAwards}
 					simpleAwards={extraProps.simpleAwards}

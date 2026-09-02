@@ -106,6 +106,34 @@ const operatorsString = Object.keys(operators)
 	.sort(regexSort)
 	.join("|");
 
+type ParsedVariable =
+	| {
+			type: "variable";
+			name: string;
+	  }
+	| {
+			type: "nestedVariable";
+			name: string;
+			property: string;
+	  };
+
+const parseVariable = (token: string): ParsedVariable => {
+	const dotIndex = token.indexOf(PROPERTY_PREFIX);
+
+	if (dotIndex === -1) {
+		return {
+			type: "variable",
+			name: token,
+		};
+	}
+
+	return {
+		type: "nestedVariable",
+		name: token.slice(0, dotIndex),
+		property: token.slice(dotIndex + 1),
+	};
+};
+
 const parseUnaryMinus = (string: string) => {
 	return string
 		.replace(/\s/g, "")
@@ -213,13 +241,19 @@ export class InvalidVariableError extends Error {
 
 type VariableValue = number | Record<string, number>;
 
-class FormulaEvaluator<
+type Token =
+	| { type: "number"; value: number }
+	| { type: "operator"; value: string }
+	| { type: "function"; name: string }
+	| ParsedVariable;
+
+export class FormulaEvaluator<
 	Variables extends ReadonlyArray<string>,
 	NestedVariables extends Variables[number][],
 > {
 	private variables: Set<Variables[number]>;
 	private nestedVariables: Set<Variables[number]>;
-	private tokens: (string | number)[];
+	private tokens: Token[];
 	public usedVariables = new Set<Variables[number]>();
 	private usedNestedVariables = new Set<Variables[number]>();
 
@@ -251,47 +285,52 @@ class FormulaEvaluator<
 	}
 
 	private partiallyEvaluate(tokens: string[]) {
-		const processed: (string | number)[] = [];
+		const processed: Token[] = [];
 
 		const invalidTokens = new Set<string>();
 
 		for (const token of tokens) {
-			// A property variable looks like "x.y". The actual top-level
-			// variable is still just "x".
-			const dotIndex = token.indexOf(PROPERTY_PREFIX);
-			const nested = dotIndex !== -1;
-			const variableName = nested ? token.slice(0, dotIndex) : token;
+			const variable = parseVariable(token);
 
-			if (this.variables.has(variableName)) {
-				const shouldBeNested = this.nestedVariables.has(variableName);
+			if (this.variables.has(variable.name)) {
+				const shouldBeNested = this.nestedVariables.has(variable.name);
+				const nested = variable.type === "nestedVariable";
+
 				if (nested && !shouldBeNested) {
 					throw new Error(
-						`Cannot use variable "${variableName}" with nesting (like "${variableName}.foo")`,
-					);
-				}
-				if (!nested && shouldBeNested) {
-					throw new Error(
-						`Cannot use variable "${variableName}" without nesting (like "${variableName}.foo")`,
+						`Cannot use variable "${variable.name}" with nesting (like "${variable.name}.foo")`,
 					);
 				}
 
-				this.usedVariables.add(variableName);
-				if (nested) {
-					this.usedNestedVariables.add(variableName);
+				if (!nested && shouldBeNested) {
+					throw new Error(
+						`Cannot use variable "${variable.name}" without nesting (like "${variable.name}.foo")`,
+					);
 				}
-				processed.push(token);
+
+				this.usedVariables.add(variable.name);
+
+				if (nested) {
+					this.usedNestedVariables.add(variable.name);
+				}
+
+				processed.push(variable);
+			} else if (operators[token] !== undefined) {
+				processed.push({ type: "operator", value: token });
 			} else if (
-				operators[token] !== undefined ||
-				(token.startsWith(FUNCTION_PREFIX) &&
-					functions[token.slice(FUNCTION_PREFIX.length)] !== undefined)
+				token.startsWith(FUNCTION_PREFIX) &&
+				functions[token.slice(FUNCTION_PREFIX.length)] !== undefined
 			) {
-				processed.push(token);
+				processed.push({
+					type: "function",
+					name: token.slice(FUNCTION_PREFIX.length),
+				});
 			} else {
 				const float = helpers.localeParseFloat(token);
 				if (Number.isNaN(float)) {
 					invalidTokens.add(token);
 				}
-				processed.push(float);
+				processed.push({ type: "number", value: float });
 			}
 		}
 
@@ -306,14 +345,12 @@ class FormulaEvaluator<
 		const stack: number[] = [];
 
 		for (const token of this.tokens) {
-			const operator = operators[token];
-
-			if (operator !== undefined) {
+			if (token.type === "operator") {
+				const operator = operators[token.value]!;
 				if (stack.length < operator.operands) {
 					throw new Error("Insufficient values in the expression");
 				}
 
-				// ?? 0 is needed for historical seasons where some stats don't exist and are undefined
 				if (operator.operands === 1) {
 					stack.push(operator.func(stack.pop() ?? 0));
 				} else {
@@ -321,15 +358,12 @@ class FormulaEvaluator<
 					const a = stack.pop() ?? 0;
 					stack.push(operator.func(a, b));
 				}
-			} else if (typeof token === "number") {
-				stack.push(token);
-			} else if (token.startsWith(FUNCTION_PREFIX)) {
-				const name = token.slice(FUNCTION_PREFIX.length);
-				const func = functions[name]!;
+			} else if (token.type === "function") {
+				const func = functions[token.name]!;
 
 				if (stack.length < func.arity) {
 					throw new Error(
-						`${name} requires exactly ${func.arity} ${helpers.plural("parameter", func.arity)}`,
+						`${token.name} requires exactly ${func.arity} ${helpers.plural("parameter", func.arity)}`,
 					);
 				}
 
@@ -338,43 +372,40 @@ class FormulaEvaluator<
 					params.push(stack.pop() ?? 0);
 				}
 				stack.push(func.func(...params));
+			} else if (token.type === "number") {
+				stack.push(token.value);
 			} else {
-				const dotIndex = token.indexOf(PROPERTY_PREFIX);
-
-				if (dotIndex === -1) {
-					const value = (variables as any)[token] ?? 0;
-
-					if (typeof value !== "number") {
-						throw new Error(`Variable "${token}" must be a number`);
-					}
-
-					stack.push(value);
+				let value;
+				if (token.type === "variable") {
+					value = (variables as any)[token.name];
 				} else {
-					const variableName = token.slice(0, dotIndex);
-					const propertyName = token.slice(dotIndex + 1);
+					const object = (variables as any)[token.name];
 
-					const value = (variables as any)[variableName];
-
-					if (typeof value !== "object" || value === null) {
+					if (typeof object !== "object" || object === null) {
 						throw new Error(
-							`Variable "${variableName}" must be an object to access property "${propertyName}"`,
+							`Variable "${token.name}" must be an object to access property "${token.property}"`,
 						);
 					}
 
-					const property = value[propertyName] ?? 0;
-
-					stack.push(property);
+					value = object[token.property];
 				}
+
+				// ?? 0 is needed for historical seasons where some stats don't exist and are undefined
+				const value2 = value ?? 0;
+
+				if (typeof value2 !== "number") {
+					throw new Error(`Variable "${token.name}" must be a number`);
+				}
+
+				stack.push(value2);
 			}
 		}
 
 		// Would be nice to explicitly track functions so we know which one it is...
 		if (stack.length !== 1) {
-			throw new Error("Function called with too many parameters");
+			throw new Error("Invalid expression: too many values");
 		}
 
 		return stack.pop()!;
 	}
 }
-
-export default FormulaEvaluator;

@@ -1,5 +1,6 @@
 import { assert, describe, test } from "vitest";
-import FormulaEvaluator from "./FormulaEvaluator.ts";
+import { FormulaEvaluator } from "./FormulaEvaluator.ts";
+
 // See also evaluatePointsFormula.test.ts
 
 describe("min/max", () => {
@@ -41,7 +42,7 @@ describe("min/max", () => {
 	test("too many parameters", () => {
 		assert.throws(() => {
 			new FormulaEvaluator("min(x, y, z)", ["x", "y", "z"], []);
-		}, "Function called with too many parameters");
+		}, "Invalid expression: too many values");
 	});
 
 	test("variable starting with a number", () => {
@@ -80,7 +81,7 @@ describe("abs", () => {
 	test("too many parameters", () => {
 		assert.throws(() => {
 			new FormulaEvaluator("abs(x, y)", ["x", "y"], []);
-		}, "Function called with too many parameters");
+		}, "Invalid expression: too many values");
 	});
 });
 

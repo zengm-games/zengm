@@ -1,5 +1,6 @@
 import fastDeepEqual from "fast-deep-equal";
-import FormulaEvaluator, {
+import {
+	FormulaEvaluator,
 	InvalidVariableError,
 } from "../../util/FormulaEvaluator.ts";
 import {

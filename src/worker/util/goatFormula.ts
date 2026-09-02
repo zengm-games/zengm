@@ -2,7 +2,7 @@ import { AWARD_NAMES } from "../../common/constants.ts";
 import type { Player } from "../../common/types.ts";
 import stats from "../core/player/stats.ts";
 import { weightByMinutes } from "../db/getCopies/playersPlus.ts";
-import FormulaEvaluator from "./FormulaEvaluator.ts";
+import { FormulaEvaluator } from "./FormulaEvaluator.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";

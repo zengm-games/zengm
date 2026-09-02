@@ -262,40 +262,41 @@ const evaluate = (
 		}
 	}
 
-	for (const [short, long] of Object.entries(SIMPLE_AWARD_VARIABLES)) {
-		if (short === "numSeasons") {
-			if (info.type === "season") {
-				object[short] = 1;
-			} else {
-				const seasons = new Set();
-				for (const row of p.stats) {
-					// gp is for real player data before minutes were tracked
-					if (row.min > 0 || row.gp > 0) {
-						seasons.add(row.season);
-					}
-				}
-				object[short] = seasons.size;
-			}
-		} else {
-			object[short] = 0;
-			for (const row of p.awards) {
-				if (info.type === "season" && row.season !== info.season) {
-					continue;
-				}
-				if (row.type === long) {
-					object[short] += 1;
-				}
+	object.numSeasons = 1;
+	if (info.type === "season") {
+		object.numSeasons = 1;
+	} else {
+		const seasons = new Set();
+		for (const row of p.stats) {
+			// gp is for real player data before minutes were tracked
+			if (row.min > 0 || row.gp > 0) {
+				seasons.add(row.season);
 			}
 		}
+		object.numSeasons = seasons.size;
 	}
 
-	for (const [short, awardInfo] of Object.entries(LEGACY_AWARD_VARIABLES)) {
-		object[short] = 0;
-		for (const row of p.awards) {
-			if (info.type === "season" && row.season !== info.season) {
+	for (const row of p.awards) {
+		if (info.type === "season" && row.season !== info.season) {
+			continue;
+		}
+
+		for (const [short, long] of Object.entries(SIMPLE_AWARD_VARIABLES)) {
+			if (short === "numTeams") {
 				continue;
 			}
 
+			object[short] ??= 0;
+			if (info.type === "season" && row.season !== info.season) {
+				continue;
+			}
+			if (row.type === long) {
+				object[short] += 1;
+			}
+		}
+
+		for (const [short, awardInfo] of Object.entries(LEGACY_AWARD_VARIABLES)) {
+			object[short] ??= 0;
 			if (row.type === undefined) {
 				if (row.shortName === awardInfo.shortName) {
 					// Team award
@@ -341,7 +342,7 @@ const evaluate = (
 		formulaCache[goatFormula] = new FormulaEvaluator(
 			goatFormula,
 			Object.keys(object),
-			[],
+			["numAwards"],
 		);
 	}
 

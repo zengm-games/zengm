@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, Player, ViewInput } from "../../common/types.ts";
-import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
+import { omit, orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { player } from "../core/index.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
@@ -170,6 +170,14 @@ const tidAndSeasonToAbbrev = async (most: Most) => {
 	};
 };
 
+const getOldAwards = () => {
+	const oldAwards: Record<string, string> = {};
+	for (const [key, value] of Object.entries(goatFormula.OLD_AWARD_VARIABLES)) {
+		oldAwards[key] = value.name;
+	}
+	return oldAwards;
+};
+
 const updatePlayers = async (
 	{ arg, type }: ViewInput<"most">,
 	updateEvents: UpdateEvents,
@@ -275,7 +283,8 @@ const updatePlayers = async (
 			});
 			extraProps = {
 				formula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
-				awards: goatFormula.SIMPLE_AWARD_VARIABLES,
+				oldAwards: getOldAwards(),
+				simpleAwards: goatFormula.SIMPLE_AWARD_VARIABLES,
 				stats: goatFormula.STAT_VARIABLES,
 			};
 
@@ -305,14 +314,11 @@ const updatePlayers = async (
 					colName: "Season",
 				},
 			);
-			const awards = {
-				...goatFormula.SIMPLE_AWARD_VARIABLES,
-			};
-			delete awards.numSeasons;
 			extraProps = {
 				formula:
 					g.get("goatSeasonFormula") ?? goatFormula.DEFAULT_FORMULA_SEASON,
-				awards,
+				oldAwards: getOldAwards(),
+				simpleAwards: omit(goatFormula.SIMPLE_AWARD_VARIABLES, ["numSeasons"]),
 				stats: goatFormula.STAT_VARIABLES,
 			};
 

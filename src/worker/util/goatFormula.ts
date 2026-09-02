@@ -37,7 +37,7 @@ const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
 
 // Need to maintain support for old award variables like "mvp" from before PlayerAwardBuiltIn existed
 // key is the old variable name, value is the corresponding shortName in the new award format
-const LEGACY_AWARD_VARIABLES = bySport<
+const OLD_AWARD_VARIABLES = bySport<
 	Record<
 		string,
 		{
@@ -284,7 +284,7 @@ const evaluate = (
 
 		object[short] = 0;
 	}
-	for (const short of Object.keys(LEGACY_AWARD_VARIABLES)) {
+	for (const short of Object.keys(OLD_AWARD_VARIABLES)) {
 		object[short] = 0;
 	}
 
@@ -309,7 +309,7 @@ const evaluate = (
 			}
 		}
 
-		for (const [short, awardInfo] of Object.entries(LEGACY_AWARD_VARIABLES)) {
+		for (const [short, awardInfo] of Object.entries(OLD_AWARD_VARIABLES)) {
 			object[short] ??= 0;
 			if (row.type === undefined) {
 				if (row.shortName === awardInfo.shortName) {
@@ -394,6 +394,7 @@ const evaluate = (
 export default {
 	DEFAULT_FORMULA,
 	DEFAULT_FORMULA_SEASON,
+	OLD_AWARD_VARIABLES,
 	SIMPLE_AWARD_VARIABLES,
 	STAT_VARIABLES,
 	evaluate,

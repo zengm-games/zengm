@@ -1,12 +1,8 @@
 custom awards
 - post on X/reddit
-- GOAT formula
+- GOAT formula docs UI
   - explain min/max/abs functions
-  - award.shortName like numWon
-    - and suffix for team number
-  - explain award variables
-    - show new ones
-    - show LEGACY_AWARD_VARIABLES?
+  - show new awards.X ones
 - upgrade
   - leagues with missing awards objects, like real player leagues without historical data
     - player awards won't get converted to new format

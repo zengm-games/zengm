@@ -451,6 +451,9 @@ export const getPlayers = async (
 				p.currentStats.playoffs ??
 				Object.values(p.currentStats)[0];
 			if (bestCurrentStats) {
+				if (bestCurrentStats && !bestCurrentStats.gpF) {
+					throw new Error("currentStats missing gpF");
+				}
 				p.pos = getPosByGpF(bestCurrentStats.gpF, p.pos);
 			}
 		}

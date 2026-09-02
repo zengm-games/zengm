@@ -3,7 +3,10 @@ custom awards
 - GOAT formula
   - explain min/max/abs functions
   - award.shortName like numWon
-  - keep compatibility with old ones by translating to shortName https://www.reddit.com/r/BasketballGM/comments/oey0m6/collection_of_some_goat_lab_formulas/
+    - and suffix for team number
+  - explain award variables
+    - show new ones
+    - show LEGACY_AWARD_VARIABLES?
 - upgrade
   - leagues with missing awards objects, like real player leagues without historical data
     - player awards won't get converted to new format

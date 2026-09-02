@@ -275,7 +275,7 @@ const updatePlayers = async (
 			});
 			extraProps = {
 				formula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
-				awards: goatFormula.AWARD_VARIABLES,
+				awards: goatFormula.SIMPLE_AWARD_VARIABLES,
 				stats: goatFormula.STAT_VARIABLES,
 			};
 
@@ -306,7 +306,7 @@ const updatePlayers = async (
 				},
 			);
 			const awards = {
-				...goatFormula.AWARD_VARIABLES,
+				...goatFormula.SIMPLE_AWARD_VARIABLES,
 			};
 			delete awards.numSeasons;
 			extraProps = {

@@ -207,13 +207,6 @@ export const MOOD_TRAITS: Record<MoodTrait, string> = {
 	W: "Winning",
 };
 
-export const AWARD_NAMES = bySport<Record<string, string>>({
-	baseball: constantsBaseball.AWARD_NAMES,
-	basketball: constantsBasketball.AWARD_NAMES,
-	football: constantsFootball.AWARD_NAMES,
-	hockey: constantsHockey.AWARD_NAMES,
-});
-
 export const DEFAULT_CONFS = bySport({
 	baseball: constantsBaseball.DEFAULT_CONFS,
 	basketball: constantsBasketball.DEFAULT_CONFS,

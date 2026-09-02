@@ -590,17 +590,6 @@ export const RATINGS: RatingKey[] = [
 	"endu",
 ];
 
-export const AWARD_NAMES = {
-	mvp: "Most Valuable Player",
-	roy: "Rookie of the Year",
-	poy: "Pitcher of the Year",
-	rpoy: "Relief Pitcher of the Year",
-	finalsMvp: "Finals MVP",
-	allOffense: "All-Offensive Team",
-	allDefense: "All-Defensive Team",
-	allRookie: "All-Rookie Team",
-} as const;
-
 export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,

@@ -4,6 +4,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { helpers } from "../../util/helpers.ts";
+import { FunctionDocs } from "../AwardSettings/Documentation.tsx";
 
 const GOATFormula = ({
 	formula,
@@ -85,7 +86,7 @@ const GOATFormula = ({
 				<details className="mb-3">
 					<summary>Award variables</summary>
 					<ul
-						className="list-unstyled mb-0"
+						className="list-unstyled"
 						style={{
 							columnWidth: 100,
 						}}
@@ -180,6 +181,11 @@ const GOATFormula = ({
 					) : (
 						<p>Seasons with very few games played are ignored.</p>
 					)}
+				</details>
+				<details className="mb-3">
+					<summary>Functions</summary>
+
+					<FunctionDocs />
 				</details>
 			</div>
 		</div>

@@ -50,6 +50,29 @@ const myGetCol = (stat: string) => {
 	}
 };
 
+export const FunctionDocs = () => {
+	return (
+		<>
+			<p>
+				There are <code>min</code> and <code>max</code> functions you can use to
+				compare two numbers, like <code>max(hr,sb)</code> is the largest of the
+				player's HR and SB stats. And there is an absolute value function, like{" "}
+				<code>abs(-4)</code> evaluates to <code>4</code>.
+			</p>
+			<p>
+				These functions can be used to do some clever things. Like{" "}
+				<code>-abs(per-15)</code> gives the players whose PER is closest to 15,
+				which is like a ranking of the most average players. You can use{" "}
+				<code>min</code> to implement a gradual games played cutoff, like{" "}
+				<code>per * min(1, gp / 60)</code> equals PER for someone who played 60+
+				games, and gradually decreases below that. If you want the cutoff to be
+				shaper, add an exponent! <code>per * min(1, gp / 60)^1000</code> will be
+				basically 0 for anyone under 60 games played.
+			</p>
+		</>
+	);
+};
+
 export const TEXT_MAX_WIDTH = { maxWidth: 648 };
 
 export const Documentation = () => {
@@ -140,24 +163,7 @@ export const Documentation = () => {
 							<code>+ - * /</code> and you can even use exponents <code>^</code>{" "}
 							if you want.
 						</p>
-						<p>
-							In addition there are <code>min</code> and <code>max</code>{" "}
-							functions you can use to compare two numbers, like{" "}
-							<code>max(hr,sb)</code> is the largest of the player's HR and SB
-							stats. And there is an absolute value function, like{" "}
-							<code>abs(-4)</code> evaluates to <code>4</code>.
-						</p>
-						<p>
-							These functions can be used to do some clever things. Like{" "}
-							<code>-abs(per-15)</code> gives the players whose PER is closes to
-							15, which is like a ranking of the most average players. You can
-							use <code>min</code> to implement a gradual games played cutoff,
-							like <code>per * min(1, gp / 60)</code> equals PER for someone who
-							played 60+ games, and gradually decreases below that. If you want
-							the cutoff to be shaper, add an exponent!{" "}
-							<code>per * min(1, gp / 60)^1000</code> will be basically 0 for
-							anyone under 60 games played.
-						</p>
+						<FunctionDocs />
 						<p>
 							In BBGM, most stats are per-game stats (like <code>pts</code>{" "}
 							means "points per game") because those are most commonly used. For

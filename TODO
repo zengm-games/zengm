@@ -1,16 +1,9 @@
 custom awards
-- numWon - maybe don't make nested, too confusing? instead make part of hashFormula?
-- numWon doesn't work in MIP because it looks at old stats rows
-  - anything else in currentStats that is not in normal stats?
-- numWon and numWonConsecutive for voter fatigue
-  - doesn't make sense in MIP, maybe show error
-- fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/Inbox/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e40
-- best on X/reddit
-- UI to update
-  - GOAT formula
-    - explain min/max/abs functions
-    - award.shortName like numWon
-    - keep compatibility with old ones by translating to shortName https://www.reddit.com/r/BasketballGM/comments/oey0m6/collection_of_some_goat_lab_formulas/
+- post on X/reddit
+- GOAT formula
+  - explain min/max/abs functions
+  - award.shortName like numWon
+  - keep compatibility with old ones by translating to shortName https://www.reddit.com/r/BasketballGM/comments/oey0m6/collection_of_some_goat_lab_formulas/
 - upgrade
   - leagues with missing awards objects, like real player leagues without historical data
     - player awards won't get converted to new format
@@ -50,6 +43,10 @@ custom awards
     - doesn't fill in 2nd-5th place finishers for individual awards
   - explain how to set GP limit effectively https://discord.com/channels/290013534023057409/1544159572510507130/1544168149329514587
 - later
+  - fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/search:record/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e4054
+    - first refactor so team info comes through currentStats, in getPlayers
+      - also use to calculate teamGp/seasonFraction/winp
+      - get rid of "teams" variable from awardRaces and awardSettings worker views, use from currentStats instead
   - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
     - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40

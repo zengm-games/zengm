@@ -406,67 +406,77 @@ export const processAwards = async ({
 			}
 
 			const evaluate = formulaEvaluators.getFormulaEvaluator(formula, award);
-
 			const currentStats = p.currentStats[award.statRange ?? "regularSeason"];
-			const currentScore = currentStats ? evaluate(currentStats) : -Infinity;
 
-			// For MIP, compare score to last season and max of all previous seasons
-			if (award.mip) {
-				const statRange = award.statRange ?? "regularSeason";
-				if (typeof statRange === "number") {
-					throw new Error("mip not supported for playoff series award");
-				}
+			if (currentStats) {
+				const currentScore = evaluate(currentStats);
 
-				// Use minCutoff only for regularSeason or combined, otherwise there's just going to be very few stats regardless
-				const careAboutMinCutoff =
-					statRange === "regularSeason" || statRange === "combined";
-				const minCutoff =
-					ROUGH_MPG_NEEDED_FOR_MIP !== undefined && careAboutMinCutoff
-						? ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season)
-						: undefined;
-				const oldSeasonScores = p.stats
-					.filter((ps) => {
-						if (ps.season >= season) {
-							return false;
-						}
+				// For MIP, compare score to last season and max of all previous seasons
+				if (award.mip) {
+					const statRange = award.statRange ?? "regularSeason";
+					if (typeof statRange === "number") {
+						throw new Error("mip not supported for playoff series award");
+					}
 
-						if (statRange === "regularSeason" && ps.playoffs !== false) {
-							return false;
-						}
-						if (statRange === "playoffs" && ps.playoffs !== true) {
-							return false;
-						}
-						if (statRange === "combined" && ps.playoffs !== "combined") {
-							return false;
-						}
-
-						if (minCutoff === undefined) {
-							if (careAboutMinCutoff) {
-								const tid = p.currentStats[statRange]?.tid ?? -1;
-								const gp = teamInfos[tid]?.gp ?? 0;
-
-								// Must have played in half of team's games last year
-								return ps.gp / gp >= GP_FRACTION_NEEDED_FOR_MIP;
-							} else {
-								return true;
+					// Use minCutoff only for regularSeason or combined, otherwise there's just going to be very few stats regardless
+					const careAboutMinCutoff =
+						statRange === "regularSeason" || statRange === "combined";
+					const minCutoff =
+						ROUGH_MPG_NEEDED_FOR_MIP !== undefined && careAboutMinCutoff
+							? ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season)
+							: undefined;
+					const oldSeasonScores = p.stats
+						.filter((ps) => {
+							if (ps.season >= season) {
+								return false;
 							}
-						}
 
-						return ps.min * ps.gp >= minCutoff / 2;
-					})
-					.map((ps: any) => evaluate(ps));
-				const prevScore = oldSeasonScores.at(-1)!;
+							if (statRange === "regularSeason" && ps.playoffs !== false) {
+								return false;
+							}
+							if (statRange === "playoffs" && ps.playoffs !== true) {
+								return false;
+							}
+							if (statRange === "combined" && ps.playoffs !== "combined") {
+								return false;
+							}
 
-				// Include prevSeasonScore because minCutoff could result in that not being included in oldSeasonScores
-				const maxScore = Math.max(...oldSeasonScores);
+							if (minCutoff === undefined) {
+								if (careAboutMinCutoff) {
+									const tid = p.currentStats[statRange]?.tid ?? -1;
+									const gp = teamInfos[tid]?.gp ?? 0;
 
-				// Could be slightly more efficient by also reading/storing currentScore from p.scores for MIP, but in practice it'd probably be quite rare for that to matter.
-				p.scores[formulaHash] = 2 * currentScore - prevScore - maxScore;
-			} else {
-				p.scores[formulaHash] = currentScore;
+									// Must have played in half of team's games last year
+									return ps.gp / gp >= GP_FRACTION_NEEDED_FOR_MIP;
+								} else {
+									return true;
+								}
+							}
+
+							return ps.min * ps.gp >= minCutoff / 2;
+						})
+						.map((ps: any) => {
+							// This is needed for numWon and some other things that are on currentStats but not raw stats rows - hacky and kind of incorrect, but probably nobody wants to be doing it anyway, so just don't error at least
+							const mergedStats = { ...currentStats, ...ps };
+
+							return evaluate(mergedStats);
+						});
+					const prevScore = oldSeasonScores.at(-1)!;
+
+					// Include prevSeasonScore because minCutoff could result in that not being included in oldSeasonScores
+					const maxScore = Math.max(...oldSeasonScores);
+
+					// Could be slightly more efficient by also reading/storing currentScore from p.scores for MIP, but in practice it'd probably be quite rare for that to matter.
+					p.scores[formulaHash] = 2 * currentScore - prevScore - maxScore;
+				} else {
+					p.scores[formulaHash] = currentScore;
+				}
 			}
 
-			if (Number.isNaN(p.scores[formulaHash])) {
+			if (
+				p.scores[formulaHash] === undefined ||
+				Number.isNaN(p.scores[formulaHash])
+			) {
 				p.scores[formulaHash] = -Infinity;
 			}
 		}

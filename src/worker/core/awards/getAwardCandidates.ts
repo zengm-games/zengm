@@ -154,9 +154,6 @@ export const getAwardCandidates = async (
 					const statRange = award.statRange ?? "regularSeason";
 
 					const p = playersByPid[p2.pid]!;
-					if (p.pid === 4888) {
-						console.log(p.scores);
-					}
 					return {
 						...p,
 						currentStats: {

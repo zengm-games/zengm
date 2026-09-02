@@ -186,7 +186,7 @@ const getProcessedPlayers = async (
 		pos: string;
 		currentStats: Partial<Record<StatRange, CurrentStats>>; // Would be nice to assume currentStats.regularSeason is always defined, but it's possible for a player to play in the playoffs but not the regular season...
 		age: number;
-		scores: Partial<Record<StatRange, Record<string, number>>>;
+		scores: Record<string, number>;
 	})[];
 
 	for (const p of players) {

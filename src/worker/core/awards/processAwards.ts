@@ -34,6 +34,7 @@ import { idb } from "../../db/index.ts";
 import { TEAM_AWARD_INFO } from "../../../common/constants.ts";
 import { hashPlayoffSeries } from "./hashPlayoffSeries.ts";
 import { awardCandidateStats } from "./getAwardCandidates.ts";
+import { hashFormula } from "./hashFormula.ts";
 
 const ROUGH_MPG_NEEDED_FOR_MIP = bySport({
 	baseball: undefined,
@@ -397,13 +398,9 @@ export const processAwards = async ({
 
 	for (const p of players) {
 		for (const award of awards) {
-			const formula = award.formulaByPos?.[p.pos] ?? award.formula;
+			const { formula, formulaHash } = hashFormula(award, p.pos);
 
-			const statRange = award.statRange ?? "regularSeason";
-			p.scores[statRange] ??= {};
-			const scores = p.scores[statRange];
-
-			if (scores[formula] !== undefined) {
+			if (p.scores[formulaHash] !== undefined) {
 				// If same formula is used for two awards, only calculate once
 				continue;
 			}
@@ -463,13 +460,14 @@ export const processAwards = async ({
 				// Include prevSeasonScore because minCutoff could result in that not being included in oldSeasonScores
 				const maxScore = Math.max(...oldSeasonScores);
 
-				scores[formula] = 2 * currentScore - prevScore - maxScore;
+				// Could be slightly more efficient by also reading/storing currentScore from p.scores for MIP, but in practice it'd probably be quite rare for that to matter.
+				p.scores[formulaHash] = 2 * currentScore - prevScore - maxScore;
 			} else {
-				scores[formula] = currentScore;
+				p.scores[formulaHash] = currentScore;
 			}
 
-			if (Number.isNaN(scores[formula])) {
-				scores[formula] = -Infinity;
+			if (Number.isNaN(p.scores[formulaHash])) {
+				p.scores[formulaHash] = -Infinity;
 			}
 		}
 	}
@@ -608,8 +606,8 @@ export const processAwards = async ({
 							}
 						}
 
-						const formula = award.formulaByPos?.[p.pos] ?? award.formula;
-						const score = p.scores[statRange]?.[formula] ?? -Infinity;
+						const { formulaHash } = hashFormula(award, p.pos);
+						const score = p.scores[formulaHash] ?? -Infinity;
 						if (Number.isNaN(score)) {
 							return -Infinity;
 						}

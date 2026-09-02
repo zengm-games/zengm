@@ -11,6 +11,7 @@ import { idb } from "../../db/index.ts";
 import addFirstNameShort from "../../util/addFirstNameShort.ts";
 import g from "../../util/g.ts";
 import type { StatOverridesByMatchup } from "./getPlayers.ts";
+import { hashFormula } from "./hashFormula.ts";
 import { hashPlayoffSeries } from "./hashPlayoffSeries.ts";
 import { processAwards } from "./processAwards.ts";
 
@@ -153,12 +154,14 @@ export const getAwardCandidates = async (
 					const statRange = award.statRange ?? "regularSeason";
 
 					const p = playersByPid[p2.pid]!;
-					const formula = award.formulaByPos?.[p.pos] ?? award.formula;
+					if (p.pid === 4888) {
+						console.log(p.scores);
+					}
 					return {
 						...p,
 						currentStats: {
 							...p.currentStats[statRange],
-							score: p.scores[statRange]?.[formula],
+							score: p.scores[hashFormula(award, p.pos).formulaHash],
 						} as {
 							score: number | undefined;
 						} & (typeof p)["currentStats"]["regularSeason"],

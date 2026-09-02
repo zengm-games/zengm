@@ -444,8 +444,15 @@ export const getPlayers = async (
 			p.ratings.findLast((row) => row.season === season) ?? last(p.ratings)
 		).pos;
 
-		if (isSport("baseball") && p.currentStats.regularSeason) {
-			p.pos = getPosByGpF(p.currentStats.regularSeason.gpF, p.pos);
+		if (isSport("baseball")) {
+			const bestCurrentStats =
+				p.currentStats.regularSeason ??
+				p.currentStats.combined ??
+				p.currentStats.playoffs ??
+				Object.values(p.currentStats)[0];
+			if (bestCurrentStats) {
+				p.pos = getPosByGpF(bestCurrentStats.gpF, p.pos);
+			}
 		}
 
 		// Sum up any byPos stats - not ideal for team awards of awards with formulas by position, but probably good enough since we're using gpF to assign position so most of their games at least will be at the correct position

@@ -243,6 +243,9 @@ export class FormulaEvaluators {
 			// Needed for baseball rookie stuff - these might already be picked up elsewhere, but let's be sure
 			this.variables.normal.add("ab");
 			this.variables.normal.add("outs");
+
+			// Needed for real pos stuff
+			this.variables.normal.add("gpF");
 		}
 
 		// Needed for bench awards

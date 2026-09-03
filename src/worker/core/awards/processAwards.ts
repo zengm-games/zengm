@@ -34,7 +34,6 @@ import { idb } from "../../db/index.ts";
 import { TEAM_AWARD_INFO } from "../../../common/constants.ts";
 import { hashPlayoffSeries } from "./hashPlayoffSeries.ts";
 import { awardCandidateStats } from "./getAwardCandidates.ts";
-import { hashFormula } from "./hashFormula.ts";
 
 const ROUGH_MPG_NEEDED_FOR_MIP = bySport({
 	baseball: undefined,
@@ -398,12 +397,9 @@ export const processAwards = async ({
 
 	for (const p of players) {
 		for (const award of awards) {
-			const { formula, formulaHash } = hashFormula(award, p.pos);
+			const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 
-			if (p.scores[formulaHash] !== undefined) {
-				// If same formula is used for two awards, only calculate once
-				continue;
-			}
+			// Used to skip based on award.formula or some hash of stuff that affects score (formula+statRange+mip) but I think it's not worth the complexity and as more features are added it'll just be a source of bugs. So now just assume shortName can be used to uniquely identify a score.
 
 			const evaluate = formulaEvaluators.getFormulaEvaluator(formula, award);
 			const currentStats = p.currentStats[award.statRange ?? "regularSeason"];
@@ -467,17 +463,17 @@ export const processAwards = async ({
 					const maxScore = Math.max(...oldSeasonScores);
 
 					// Could be slightly more efficient by also reading/storing currentScore from p.scores for MIP, but in practice it'd probably be quite rare for that to matter.
-					p.scores[formulaHash] = 2 * currentScore - prevScore - maxScore;
+					p.scores[award.shortName] = 2 * currentScore - prevScore - maxScore;
 				} else {
-					p.scores[formulaHash] = currentScore;
+					p.scores[award.shortName] = currentScore;
 				}
 			}
 
 			if (
-				p.scores[formulaHash] === undefined ||
-				Number.isNaN(p.scores[formulaHash])
+				p.scores[award.shortName] === undefined ||
+				Number.isNaN(p.scores[award.shortName])
 			) {
-				p.scores[formulaHash] = -Infinity;
+				p.scores[award.shortName] = -Infinity;
 			}
 		}
 	}
@@ -616,8 +612,7 @@ export const processAwards = async ({
 							}
 						}
 
-						const { formulaHash } = hashFormula(award, p.pos);
-						const score = p.scores[formulaHash] ?? -Infinity;
+						const score = p.scores[award.shortName] ?? -Infinity;
 						if (Number.isNaN(score)) {
 							return -Infinity;
 						}

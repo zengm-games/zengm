@@ -237,9 +237,8 @@ export const awardsSchema = z.object({
 	season: z.number(),
 	bestRecord: z.number(), // tid
 
-	// Keys can't be z.number() because that messes up the JSON Schema type https://github.com/colinhacks/zod/issues/6496
-	bestRecordConfs: z.record(z.string(), z.number()), // <cid, tid>
-	bestRecordDivs: z.record(z.string(), z.number()), // <did, tid>
+	bestRecordConfs: z.record(z.number(), z.number()), // <cid, tid>
+	bestRecordDivs: z.record(z.number(), z.number()), // <did, tid>
 
 	awards: z.array(awardSchema),
 });

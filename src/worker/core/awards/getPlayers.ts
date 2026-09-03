@@ -458,16 +458,40 @@ export const getPlayers = async (
 			}
 		}
 
-		// Sum up any byPos stats - not ideal for team awards of awards with formulas by position, but probably good enough since we're using gpF to assign position so most of their games at least will be at the correct position
+		// Sum up or average any byPos stats - not ideal for team awards of awards with formulas by position, but probably good enough since we're using gpF to assign position so most of their games at least will be at the correct position
 		if (player.stats.byPos) {
-			const byPosStats = [...player.stats.byPos];
+			const byPosStatsSum = [...player.stats.byPos];
 			if (isSport("baseball")) {
-				byPosStats.push("rfld");
+				byPosStatsSum.push(
+					// byPos advanced stats
+					"rfld",
+				);
 			}
-			for (const stat of byPosStats) {
+			for (const stat of byPosStatsSum) {
 				for (const currentStats of Object.values(p.currentStats)) {
 					if (currentStats && Array.isArray(currentStats[stat])) {
 						currentStats[stat] = helpers.sum(currentStats[stat]);
+					}
+				}
+			}
+
+			const byPosStatsPos = [];
+			if (isSport("baseball")) {
+				byPosStatsPos.push(
+					// byPos dynamic
+					"ch",
+					"fldp",
+					"rf9",
+					"rfg",
+					"inn",
+				);
+			}
+			for (const stat of byPosStatsPos) {
+				for (const currentStats of Object.values(p.currentStats)) {
+					if (currentStats && Array.isArray(currentStats[stat])) {
+						currentStats[stat] =
+							helpers.sum(currentStats[stat]) /
+							currentStats[stat].filter((x) => x !== undefined).length;
 					}
 				}
 			}

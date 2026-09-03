@@ -1,5 +1,4 @@
 custom awards
-
 - upgrade
   - leagues with missing awards objects, like real player leagues without historical data
     - player awards won't get converted to new format

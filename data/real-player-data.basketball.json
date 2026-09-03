@@ -47156,6 +47156,18 @@
       "pos": "GF",
       "weight": 202
     },
+    "diama01": {
+      "bornYear": 2004,
+      "college": "Ole Miss",
+      "country": "Tennessee, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 81,
+      "name": "Malik Dia",
+      "pos": "F",
+      "weight": 262
+    },
     "diawamo01": {
       "bornYear": 2005,
       "college": "",
@@ -89676,6 +89688,18 @@
       "name": "Emanuel Sharp",
       "pos": "SG",
       "weight": 208
+    },
+    "sharpja01": {
+      "bornYear": 2001,
+      "college": "Ole Miss",
+      "country": "Kentucky, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2024,
+      "height": 89,
+      "name": "Jamarion Sharp",
+      "pos": "C",
+      "weight": 225
     },
     "sharpsh01": {
       "bornYear": 2003,
@@ -167236,7 +167260,7 @@
         "season": 2031
       },
       {
-        "abbrev": "CLE",
+        "abbrev": "DEN",
         "originalAbbrev": "CLE",
         "round": 1,
         "season": 2031
@@ -167896,7 +167920,7 @@
         "season": 2032
       },
       {
-        "abbrev": "CLE",
+        "abbrev": "DEN",
         "originalAbbrev": "SAC",
         "round": 2,
         "season": 2032
@@ -225010,24 +225034,24 @@
       "tp": 46
     },
     {
-      "diq": 40,
-      "dnk": 52,
-      "drb": 42,
-      "endu": 38,
-      "fg": 86,
-      "ft": 55,
+      "diq": 44,
+      "dnk": 56,
+      "drb": 46,
+      "endu": 42,
+      "fg": 90,
+      "ft": 59,
       "fuzz": 0,
       "hgt": 45,
-      "ins": 65,
-      "jmp": 52,
-      "oiq": 67,
-      "pss": 44,
-      "reb": 38,
+      "ins": 69,
+      "jmp": 56,
+      "oiq": 71,
+      "pss": 48,
+      "reb": 42,
       "season": 2027,
       "slug": "bealbr01",
-      "spd": 49,
-      "stre": 25,
-      "tp": 42
+      "spd": 53,
+      "stre": 29,
+      "tp": 46
     },
     {
       "diq": 42,
@@ -308191,24 +308215,24 @@
       "tp": 37
     },
     {
-      "diq": 36,
-      "dnk": 49,
-      "drb": 47,
-      "endu": 32,
-      "fg": 43,
-      "ft": 43,
+      "diq": 32,
+      "dnk": 45,
+      "drb": 43,
+      "endu": 28,
+      "fg": 39,
+      "ft": 39,
       "fuzz": 0,
       "hgt": 38,
-      "ins": 25,
-      "jmp": 70,
-      "oiq": 47,
-      "pss": 46,
-      "reb": 53,
+      "ins": 21,
+      "jmp": 66,
+      "oiq": 43,
+      "pss": 42,
+      "reb": 49,
       "season": 2027,
       "slug": "davisjd01",
-      "spd": 62,
-      "stre": 35,
-      "tp": 37
+      "spd": 58,
+      "stre": 31,
+      "tp": 33
     },
     {
       "diq": 39,
@@ -314928,24 +314952,24 @@
       "tp": 32
     },
     {
-      "diq": 35,
-      "dnk": 61,
-      "drb": 58,
-      "endu": 74,
-      "fg": 89,
-      "ft": 62,
+      "diq": 39,
+      "dnk": 65,
+      "drb": 62,
+      "endu": 78,
+      "fg": 93,
+      "ft": 66,
       "fuzz": 0,
       "hgt": 50,
-      "ins": 71,
-      "jmp": 35,
-      "oiq": 77,
-      "pss": 32,
-      "reb": 37,
+      "ins": 75,
+      "jmp": 39,
+      "oiq": 81,
+      "pss": 36,
+      "reb": 41,
       "season": 2027,
       "slug": "derozde01",
-      "spd": 58,
-      "stre": 17,
-      "tp": 28
+      "spd": 62,
+      "stre": 21,
+      "tp": 32
     },
     {
       "diq": 37,
@@ -315631,6 +315655,26 @@
       "spd": 65,
       "stre": 43,
       "tp": 30
+    },
+    {
+      "diq": 29,
+      "dnk": 52,
+      "drb": 33,
+      "endu": 22,
+      "fg": 38,
+      "ft": 36,
+      "fuzz": 0,
+      "hgt": 64,
+      "ins": 38,
+      "jmp": 38,
+      "oiq": 35,
+      "pss": 31,
+      "reb": 58,
+      "season": 2027,
+      "slug": "diama01",
+      "spd": 40,
+      "stre": 49,
+      "tp": 31
     },
     {
       "diq": 41,
@@ -383150,24 +383194,24 @@
       "tp": 49
     },
     {
-      "diq": 69,
-      "dnk": 38,
-      "drb": 32,
-      "endu": 29,
-      "fg": 35,
-      "ft": 34,
+      "diq": 73,
+      "dnk": 42,
+      "drb": 36,
+      "endu": 33,
+      "fg": 39,
+      "ft": 38,
       "fuzz": 0,
       "hgt": 55,
-      "ins": 47,
-      "jmp": 42,
-      "oiq": 54,
-      "pss": 62,
-      "reb": 59,
+      "ins": 51,
+      "jmp": 46,
+      "oiq": 58,
+      "pss": 66,
+      "reb": 63,
       "season": 2027,
       "slug": "greendr01",
-      "spd": 25,
-      "stre": 53,
-      "tp": 45
+      "spd": 29,
+      "stre": 57,
+      "tp": 49
     },
     {
       "diq": 39,
@@ -389253,24 +389297,24 @@
       "tp": 27
     },
     {
-      "diq": 43,
-      "dnk": 47,
-      "drb": 40,
-      "endu": 28,
-      "fg": 28,
-      "ft": 48,
+      "diq": 39,
+      "dnk": 43,
+      "drb": 36,
+      "endu": 24,
+      "fg": 24,
+      "ft": 44,
       "fuzz": 0,
       "hgt": 58,
-      "ins": 50,
-      "jmp": 42,
-      "oiq": 34,
-      "pss": 37,
-      "reb": 63,
+      "ins": 46,
+      "jmp": 38,
+      "oiq": 30,
+      "pss": 33,
+      "reb": 59,
       "season": 2027,
       "slug": "gueyemo01",
-      "spd": 64,
-      "stre": 41,
-      "tp": 27
+      "spd": 60,
+      "stre": 37,
+      "tp": 23
     },
     {
       "diq": 26,
@@ -411597,6 +411641,26 @@
       "tp": 62
     },
     {
+      "diq": 42,
+      "dnk": 51,
+      "drb": 43,
+      "endu": 35,
+      "fg": 50,
+      "ft": 57,
+      "fuzz": 0,
+      "hgt": 51,
+      "ins": 33,
+      "jmp": 58,
+      "oiq": 42,
+      "pss": 37,
+      "reb": 33,
+      "season": 2027,
+      "slug": "hezonma01",
+      "spd": 53,
+      "stre": 23,
+      "tp": 50
+    },
+    {
       "diq": 35,
       "dnk": 56,
       "drb": 37,
@@ -413076,24 +413140,24 @@
       "tp": 56
     },
     {
-      "diq": 56,
-      "dnk": 16,
-      "drb": 30,
-      "endu": 8,
-      "fg": 48,
-      "ft": 32,
+      "diq": 60,
+      "dnk": 20,
+      "drb": 34,
+      "endu": 12,
+      "fg": 52,
+      "ft": 36,
       "fuzz": 0,
       "hgt": 48,
-      "ins": 29,
-      "jmp": 44,
-      "oiq": 55,
-      "pss": 36,
-      "reb": 48,
+      "ins": 33,
+      "jmp": 48,
+      "oiq": 59,
+      "pss": 40,
+      "reb": 52,
       "season": 2027,
       "slug": "highsha01",
-      "spd": 44,
-      "stre": 36,
-      "tp": 52
+      "spd": 48,
+      "stre": 40,
+      "tp": 56
     },
     {
       "diq": 41,
@@ -440698,24 +440762,24 @@
       "tp": 2
     },
     {
-      "diq": 36,
-      "dnk": 51,
-      "drb": 21,
-      "endu": 31,
-      "fg": 17,
-      "ft": 28,
+      "diq": 40,
+      "dnk": 55,
+      "drb": 25,
+      "endu": 35,
+      "fg": 21,
+      "ft": 32,
       "fuzz": 0,
       "hgt": 64,
-      "ins": 41,
-      "jmp": 44,
-      "oiq": 45,
-      "pss": 29,
-      "reb": 66,
+      "ins": 45,
+      "jmp": 48,
+      "oiq": 49,
+      "pss": 33,
+      "reb": 70,
       "season": 2027,
       "slug": "jemistr01",
-      "spd": 37,
-      "stre": 65,
-      "tp": 0
+      "spd": 41,
+      "stre": 69,
+      "tp": 2
     },
     {
       "diq": 42,
@@ -457547,24 +457611,24 @@
       "tp": 63
     },
     {
-      "diq": 46,
-      "dnk": 33,
-      "drb": 26,
-      "endu": 59,
-      "fg": 24,
-      "ft": 30,
+      "diq": 50,
+      "dnk": 37,
+      "drb": 30,
+      "endu": 63,
+      "fg": 28,
+      "ft": 34,
       "fuzz": 0,
       "hgt": 48,
-      "ins": 26,
-      "jmp": 48,
-      "oiq": 45,
-      "pss": 32,
-      "reb": 54,
+      "ins": 30,
+      "jmp": 52,
+      "oiq": 49,
+      "pss": 36,
+      "reb": 58,
       "season": 2027,
       "slug": "jonessp01",
-      "spd": 48,
-      "stre": 39,
-      "tp": 59
+      "spd": 52,
+      "stre": 43,
+      "tp": 63
     },
     {
       "diq": 35,
@@ -581623,24 +581687,24 @@
       "tp": 49
     },
     {
-      "diq": 67,
-      "dnk": 31,
-      "drb": 40,
+      "diq": 71,
+      "dnk": 35,
+      "drb": 44,
       "endu": 0,
-      "fg": 74,
-      "ft": 30,
+      "fg": 78,
+      "ft": 34,
       "fuzz": 0,
       "hgt": 39,
-      "ins": 24,
-      "jmp": 65,
-      "oiq": 50,
-      "pss": 41,
-      "reb": 68,
+      "ins": 28,
+      "jmp": 69,
+      "oiq": 54,
+      "pss": 45,
+      "reb": 72,
       "season": 2027,
       "slug": "paytoga02",
-      "spd": 50,
-      "stre": 13,
-      "tp": 45
+      "spd": 54,
+      "stre": 17,
+      "tp": 49
     },
     {
       "diq": 46,
@@ -581875,24 +581939,24 @@
       "tp": 64
     },
     {
-      "diq": 35,
-      "dnk": 21,
-      "drb": 43,
-      "endu": 32,
-      "fg": 56,
-      "ft": 58,
+      "diq": 39,
+      "dnk": 25,
+      "drb": 47,
+      "endu": 36,
+      "fg": 60,
+      "ft": 62,
       "fuzz": 0,
       "hgt": 25,
-      "ins": 28,
-      "jmp": 42,
-      "oiq": 47,
-      "pss": 48,
-      "reb": 46,
+      "ins": 32,
+      "jmp": 46,
+      "oiq": 51,
+      "pss": 52,
+      "reb": 50,
       "season": 2027,
       "slug": "pedulse01",
-      "spd": 47,
-      "stre": 39,
-      "tp": 60
+      "spd": 51,
+      "stre": 43,
+      "tp": 64
     },
     {
       "diq": 44,
@@ -641453,6 +641517,26 @@
       "tp": 58
     },
     {
+      "diq": 40,
+      "dnk": 55,
+      "drb": 21,
+      "endu": 22,
+      "fg": 27,
+      "ft": 10,
+      "fuzz": 0,
+      "hgt": 85,
+      "ins": 48,
+      "jmp": 43,
+      "oiq": 33,
+      "pss": 23,
+      "reb": 50,
+      "season": 2027,
+      "slug": "sharpja01",
+      "spd": 28,
+      "stre": 41,
+      "tp": 3
+    },
+    {
       "diq": 28,
       "dnk": 66,
       "drb": 41,
@@ -658406,24 +658490,24 @@
       "tp": 31
     },
     {
-      "diq": 45,
-      "dnk": 39,
-      "drb": 41,
-      "endu": 2,
-      "fg": 60,
-      "ft": 35,
+      "diq": 49,
+      "dnk": 43,
+      "drb": 45,
+      "endu": 6,
+      "fg": 64,
+      "ft": 39,
       "fuzz": 0,
       "hgt": 55,
-      "ins": 34,
-      "jmp": 36,
-      "oiq": 51,
-      "pss": 39,
-      "reb": 63,
+      "ins": 38,
+      "jmp": 40,
+      "oiq": 55,
+      "pss": 43,
+      "reb": 67,
       "season": 2027,
       "slug": "sochaje01",
-      "spd": 40,
-      "stre": 32,
-      "tp": 27
+      "spd": 44,
+      "stre": 36,
+      "tp": 31
     },
     {
       "diq": 56,
@@ -674271,24 +674355,24 @@
       "tp": 40
     },
     {
-      "diq": 51,
-      "dnk": 47,
-      "drb": 43,
-      "endu": 1,
-      "fg": 45,
-      "ft": 29,
+      "diq": 47,
+      "dnk": 43,
+      "drb": 39,
+      "endu": 0,
+      "fg": 41,
+      "ft": 25,
       "fuzz": 0,
       "hgt": 55,
-      "ins": 22,
-      "jmp": 50,
-      "oiq": 48,
-      "pss": 44,
-      "reb": 49,
+      "ins": 18,
+      "jmp": 46,
+      "oiq": 44,
+      "pss": 40,
+      "reb": 45,
       "season": 2027,
       "slug": "terryda01",
-      "spd": 57,
-      "stre": 22,
-      "tp": 40
+      "spd": 53,
+      "stre": 18,
+      "tp": 36
     },
     {
       "diq": 45,
@@ -679339,24 +679423,24 @@
       "tp": 49
     },
     {
-      "diq": 42,
-      "dnk": 45,
-      "drb": 47,
-      "endu": 35,
-      "fg": 60,
-      "ft": 60,
+      "diq": 38,
+      "dnk": 41,
+      "drb": 43,
+      "endu": 31,
+      "fg": 56,
+      "ft": 56,
       "fuzz": 0,
       "hgt": 40,
-      "ins": 44,
-      "jmp": 62,
-      "oiq": 57,
-      "pss": 48,
-      "reb": 56,
+      "ins": 40,
+      "jmp": 58,
+      "oiq": 53,
+      "pss": 44,
+      "reb": 52,
       "season": 2027,
       "slug": "thompet01",
-      "spd": 54,
-      "stre": 42,
-      "tp": 49
+      "spd": 50,
+      "stre": 38,
+      "tp": 45
     },
     {
       "diq": 41,
@@ -703584,24 +703668,24 @@
       "tp": 55
     },
     {
-      "diq": 23,
-      "dnk": 52,
-      "drb": 36,
-      "endu": 12,
-      "fg": 76,
-      "ft": 49,
+      "diq": 27,
+      "dnk": 56,
+      "drb": 40,
+      "endu": 16,
+      "fg": 80,
+      "ft": 53,
       "fuzz": 0,
       "hgt": 42,
-      "ins": 35,
-      "jmp": 52,
-      "oiq": 54,
-      "pss": 38,
-      "reb": 39,
+      "ins": 39,
+      "jmp": 56,
+      "oiq": 58,
+      "pss": 42,
+      "reb": 43,
       "season": 2027,
       "slug": "walkelo01",
-      "spd": 52,
-      "stre": 34,
-      "tp": 55
+      "spd": 56,
+      "stre": 38,
+      "tp": 59
     },
     {
       "diq": 44,
@@ -710287,24 +710371,24 @@
       "tp": 33
     },
     {
-      "diq": 38,
-      "dnk": 65,
-      "drb": 42,
-      "endu": 12,
-      "fg": 72,
-      "ft": 49,
+      "diq": 42,
+      "dnk": 69,
+      "drb": 46,
+      "endu": 16,
+      "fg": 76,
+      "ft": 53,
       "fuzz": 0,
       "hgt": 54,
-      "ins": 38,
-      "jmp": 52,
-      "oiq": 55,
-      "pss": 50,
-      "reb": 63,
+      "ins": 42,
+      "jmp": 56,
+      "oiq": 59,
+      "pss": 54,
+      "reb": 67,
       "season": 2027,
       "slug": "watfotr01",
-      "spd": 49,
-      "stre": 47,
-      "tp": 29
+      "spd": 53,
+      "stre": 51,
+      "tp": 33
     },
     {
       "diq": 41,
@@ -711253,24 +711337,24 @@
       "tp": 49
     },
     {
-      "diq": 42,
-      "dnk": 79,
-      "drb": 42,
-      "endu": 34,
-      "fg": 69,
-      "ft": 34,
+      "diq": 46,
+      "dnk": 83,
+      "drb": 46,
+      "endu": 38,
+      "fg": 73,
+      "ft": 38,
       "fuzz": 0,
       "hgt": 58,
-      "ins": 37,
-      "jmp": 55,
-      "oiq": 50,
-      "pss": 36,
-      "reb": 56,
+      "ins": 41,
+      "jmp": 59,
+      "oiq": 54,
+      "pss": 40,
+      "reb": 60,
       "season": 2027,
       "slug": "watsope01",
-      "spd": 50,
-      "stre": 49,
-      "tp": 45
+      "spd": 54,
+      "stre": 53,
+      "tp": 49
     },
     {
       "diq": 41,
@@ -715741,26 +715825,6 @@
       "spd": 67,
       "stre": 34,
       "tp": 45
-    },
-    {
-      "diq": 46,
-      "dnk": 50,
-      "drb": 54,
-      "endu": 22,
-      "fg": 65,
-      "ft": 32,
-      "fuzz": 0,
-      "hgt": 40,
-      "ins": 76,
-      "jmp": 58,
-      "oiq": 60,
-      "pss": 57,
-      "reb": 80,
-      "season": 2027,
-      "slug": "westbru01",
-      "spd": 63,
-      "stre": 30,
-      "tp": 41
     },
     {
       "diq": 51,
@@ -760221,12 +760285,22 @@
       "amounts": [
         22627671,
         22255493,
-        21124110,
-        19992727
+        21124110
       ],
-      "exp": 2027,
+      "exp": 2026,
       "slug": "brookdi01",
       "start": 2024
+    },
+    {
+      "amounts": [
+        23450000,
+        23450000,
+        23450000,
+        23450000
+      ],
+      "exp": 2030,
+      "slug": "brookdi01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -770874,6 +770948,14 @@
     },
     {
       "amounts": [
+        2450000
+      ],
+      "exp": 2027,
+      "slug": "derozde01",
+      "start": 2027
+    },
+    {
+      "amounts": [
         1800000,
         500000
       ],
@@ -771032,6 +771114,14 @@
       "exp": 2024,
       "slug": "diallha01",
       "start": 2024
+    },
+    {
+      "amounts": [
+        700000
+      ],
+      "exp": 2027,
+      "slug": "diama01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -783378,12 +783468,21 @@
         33000000,
         35680595,
         33653846,
-        39446090,
-        42317307
+        39446090
       ],
-      "exp": 2027,
+      "exp": 2026,
       "slug": "hardeja01",
       "start": 2023
+    },
+    {
+      "amounts": [
+        32330000,
+        32330000,
+        32330000
+      ],
+      "exp": 2029,
+      "slug": "hardeja01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -785682,6 +785781,14 @@
       "exp": 2021,
       "slug": "hezonma01",
       "start": 2020
+    },
+    {
+      "amounts": [
+        2450000
+      ],
+      "exp": 2027,
+      "slug": "hezonma01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -790841,6 +790948,14 @@
     },
     {
       "amounts": [
+        700000
+      ],
+      "exp": 2027,
+      "slug": "jemistr01",
+      "start": 2027
+    },
+    {
+      "amounts": [
         473604
       ],
       "exp": 2012,
@@ -793801,6 +793916,15 @@
       "exp": 2026,
       "slug": "jonessp01",
       "start": 2026
+    },
+    {
+      "amounts": [
+        5875000,
+        5875000
+      ],
+      "exp": 2028,
+      "slug": "jonessp01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -801350,12 +801474,22 @@
     {
       "amounts": [
         8571429,
-        9000000,
-        9428571
+        9000000
       ],
-      "exp": 2027,
+      "exp": 2026,
       "slug": "marshna01",
       "start": 2025
+    },
+    {
+      "amounts": [
+        15320000,
+        15320000,
+        15320000,
+        15320000
+      ],
+      "exp": 2030,
+      "slug": "marshna01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -813728,6 +813862,14 @@
     },
     {
       "amounts": [
+        2450000
+      ],
+      "exp": 2027,
+      "slug": "paytoga02",
+      "start": 2027
+    },
+    {
+      "amounts": [
         3875000,
         3875000,
         3875000,
@@ -813780,6 +813922,14 @@
       "exp": 2026,
       "slug": "pedulse01",
       "start": 2026
+    },
+    {
+      "amounts": [
+        700000
+      ],
+      "exp": 2027,
+      "slug": "pedulse01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -818050,7 +818200,7 @@
     },
     {
       "amounts": [
-        600000
+        700000
       ],
       "exp": 2027,
       "slug": "reeseju01",
@@ -823584,6 +823734,14 @@
     },
     {
       "amounts": [
+        700000
+      ],
+      "exp": 2027,
+      "slug": "sharpja01",
+      "start": 2027
+    },
+    {
+      "amounts": [
         6012960,
         6313800,
         6614160,
@@ -826160,6 +826318,14 @@
       "exp": 2026,
       "slug": "sochaje01",
       "start": 2026
+    },
+    {
+      "amounts": [
+        2450000
+      ],
+      "exp": 2027,
+      "slug": "sochaje01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -829902,14 +830068,6 @@
     },
     {
       "amounts": [
-        600000
-      ],
-      "exp": 2027,
-      "slug": "thompet01",
-      "start": 2027
-    },
-    {
-      "amounts": [
         816482,
         947276
       ],
@@ -830026,12 +830184,20 @@
     {
       "amounts": [
         15873016,
-        16666667,
-        17460317
+        16666667
       ],
-      "exp": 2027,
+      "exp": 2026,
       "slug": "thompkl01",
       "start": 2025
+    },
+    {
+      "amounts": [
+        6500000,
+        6500000
+      ],
+      "exp": 2028,
+      "slug": "thompkl01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -833906,6 +834072,14 @@
     },
     {
       "amounts": [
+        2450000
+      ],
+      "exp": 2027,
+      "slug": "walkelo01",
+      "start": 2027
+    },
+    {
+      "amounts": [
         53176
       ],
       "exp": 2022,
@@ -835106,6 +835280,18 @@
       "exp": 2026,
       "slug": "watsope01",
       "start": 2026
+    },
+    {
+      "amounts": [
+        22000000,
+        22000000,
+        22000000,
+        22000000,
+        22000000
+      ],
+      "exp": 2031,
+      "slug": "watsope01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -879054,6 +879240,12 @@
       "slug": "bealbr01"
     },
     {
+      "abbrev": "LAC",
+      "jerseyNumber": "0",
+      "season": 2027,
+      "slug": "bealbr01"
+    },
+    {
       "abbrev": "ATL",
       "jerseyNumber": "14",
       "season": 1970,
@@ -887592,7 +887784,7 @@
       "slug": "broomjo01"
     },
     {
-      "abbrev": "PHI",
+      "abbrev": "LAC",
       "jerseyNumber": "22",
       "season": 2027,
       "slug": "broomjo01"
@@ -892101,7 +892293,7 @@
       "slug": "caldwke01"
     },
     {
-      "abbrev": "MEM",
+      "abbrev": "PHI",
       "jerseyNumber": "3",
       "season": 2027,
       "slug": "caldwke01"
@@ -904949,12 +905141,6 @@
       "slug": "davisjd01"
     },
     {
-      "abbrev": "HOU",
-      "jerseyNumber": "4",
-      "season": 2027,
-      "slug": "davisjd01"
-    },
-    {
       "abbrev": "ATL",
       "jerseyNumber": "25",
       "season": 1968,
@@ -907054,6 +907240,12 @@
       "slug": "derozde01"
     },
     {
+      "abbrev": "DEN",
+      "jerseyNumber": "10",
+      "season": 2027,
+      "slug": "derozde01"
+    },
+    {
       "abbrev": "GS",
       "jerseyNumber": "32",
       "season": 2019,
@@ -907226,6 +907418,11 @@
       "phase": 6,
       "season": 2025,
       "slug": "diallha01"
+    },
+    {
+      "abbrev": "NOL",
+      "season": 2027,
+      "slug": "diama01"
     },
     {
       "abbrev": "NYC",
@@ -926441,6 +926638,12 @@
       "slug": "greendr01"
     },
     {
+      "abbrev": "GS",
+      "jerseyNumber": "23",
+      "season": 2027,
+      "slug": "greendr01"
+    },
+    {
       "abbrev": "DEN",
       "jerseyNumber": "11",
       "season": 2015,
@@ -928357,12 +928560,6 @@
       "jerseyNumber": "16",
       "phase": 4,
       "season": 2026,
-      "slug": "gueyemo01"
-    },
-    {
-      "abbrev": "MIN",
-      "jerseyNumber": "16",
-      "season": 2027,
       "slug": "gueyemo01"
     },
     {
@@ -935507,6 +935704,11 @@
       "slug": "hezonma01"
     },
     {
+      "abbrev": "CLE",
+      "season": 2027,
+      "slug": "hezonma01"
+    },
+    {
       "abbrev": "IND",
       "jerseyNumber": "55",
       "season": 2009,
@@ -935984,6 +936186,12 @@
       "abbrev": "PHO",
       "jerseyNumber": "19",
       "season": 2026,
+      "slug": "highsha01"
+    },
+    {
+      "abbrev": "PHO",
+      "jerseyNumber": "19",
+      "season": 2027,
       "slug": "highsha01"
     },
     {
@@ -944769,6 +944977,12 @@
       "slug": "jemistr01"
     },
     {
+      "abbrev": "TOR",
+      "jerseyNumber": "50",
+      "season": 2027,
+      "slug": "jemistr01"
+    },
+    {
       "abbrev": "GS",
       "jerseyNumber": "22",
       "season": 2012,
@@ -950076,6 +950290,12 @@
       "abbrev": "DEN",
       "jerseyNumber": "21",
       "season": 2026,
+      "slug": "jonessp01"
+    },
+    {
+      "abbrev": "DEN",
+      "jerseyNumber": "21",
+      "season": 2027,
       "slug": "jonessp01"
     },
     {
@@ -964718,7 +964938,7 @@
       "slug": "manntr01"
     },
     {
-      "abbrev": "CHA",
+      "abbrev": "WAS",
       "jerseyNumber": "23",
       "season": 2027,
       "slug": "manntr01"
@@ -988600,6 +988820,12 @@
     },
     {
       "abbrev": "GS",
+      "jerseyNumber": "8",
+      "season": 2027,
+      "slug": "paytoga02"
+    },
+    {
+      "abbrev": "GS",
       "jerseyNumber": "18",
       "season": 1952,
       "slug": "paytome01"
@@ -988668,6 +988894,12 @@
       "abbrev": "LAC",
       "jerseyNumber": "00",
       "season": 2026,
+      "slug": "pedulse01"
+    },
+    {
+      "abbrev": "HOU",
+      "jerseyNumber": "00",
+      "season": 2027,
       "slug": "pedulse01"
     },
     {
@@ -990405,7 +990637,7 @@
       "slug": "pickeja02"
     },
     {
-      "abbrev": "DEN",
+      "abbrev": "LAC",
       "jerseyNumber": "24",
       "season": 2027,
       "slug": "pickeja02"
@@ -996244,7 +996476,7 @@
       "slug": "reeseju01"
     },
     {
-      "abbrev": "WAS",
+      "abbrev": "DEN",
       "jerseyNumber": "15",
       "season": 2027,
       "slug": "reeseju01"
@@ -1005327,7 +1005559,7 @@
       "slug": "schrode01"
     },
     {
-      "abbrev": "CLE",
+      "abbrev": "CHA",
       "jerseyNumber": "8",
       "season": 2027,
       "slug": "schrode01"
@@ -1007336,6 +1007568,12 @@
       "jerseyNumber": "34",
       "season": 2027,
       "slug": "sharpem01"
+    },
+    {
+      "abbrev": "LAC",
+      "jerseyNumber": "33",
+      "season": 2027,
+      "slug": "sharpja01"
     },
     {
       "abbrev": "POR",
@@ -1012687,6 +1012925,12 @@
       "slug": "sochaje01"
     },
     {
+      "abbrev": "POR",
+      "jerseyNumber": "20",
+      "season": 2027,
+      "slug": "sochaje01"
+    },
+    {
       "abbrev": "ATL",
       "jerseyNumber": "40",
       "season": 1975,
@@ -1015751,7 +1015995,7 @@
       "slug": "strusma01"
     },
     {
-      "abbrev": "CLE",
+      "abbrev": "LAC",
       "jerseyNumber": "2",
       "season": 2027,
       "slug": "strusma01"
@@ -1017563,12 +1017807,6 @@
       "slug": "terryda01"
     },
     {
-      "abbrev": "PHI",
-      "jerseyNumber": "14",
-      "season": 2027,
-      "slug": "terryda01"
-    },
-    {
       "abbrev": "PHO",
       "jerseyNumber": "10",
       "season": 2019,
@@ -1019153,12 +1019391,6 @@
       "slug": "thompet01"
     },
     {
-      "abbrev": "IND",
-      "jerseyNumber": "55",
-      "season": 2027,
-      "slug": "thompet01"
-    },
-    {
       "abbrev": "MIL",
       "jerseyNumber": "24",
       "season": 1975,
@@ -1019357,7 +1019589,7 @@
       "slug": "thompkl01"
     },
     {
-      "abbrev": "DAL",
+      "abbrev": "MIA",
       "jerseyNumber": "31",
       "season": 2027,
       "slug": "thompkl01"
@@ -1026777,6 +1027009,11 @@
       "slug": "walkelo01"
     },
     {
+      "abbrev": "DEN",
+      "season": 2027,
+      "slug": "walkelo01"
+    },
+    {
       "abbrev": "WAS",
       "jerseyNumber": "20",
       "season": 1978,
@@ -1028795,6 +1029032,12 @@
       "slug": "watfotr01"
     },
     {
+      "abbrev": "NOL",
+      "jerseyNumber": "12",
+      "season": 2027,
+      "slug": "watfotr01"
+    },
+    {
       "abbrev": "SAC",
       "jerseyNumber": "13",
       "season": 2008,
@@ -1029044,6 +1029287,12 @@
       "abbrev": "DEN",
       "jerseyNumber": "8",
       "season": 2026,
+      "slug": "watsope01"
+    },
+    {
+      "abbrev": "CLE",
+      "jerseyNumber": "8",
+      "season": 2027,
       "slug": "watsope01"
     },
     {
@@ -1031940,7 +1032189,7 @@
       "slug": "whitmca01"
     },
     {
-      "abbrev": "WAS",
+      "abbrev": "CLE",
       "jerseyNumber": "1",
       "season": 2027,
       "slug": "whitmca01"

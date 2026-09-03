@@ -90,9 +90,9 @@ const filterPlayersForAward = (
 			const statRange = award.statRange ?? "regularSeason";
 
 			filteredPlayers = filteredPlayers.filter((p) => {
-				// This is to handle the case where there are no past seasons with stats - treat rookies as players who were drafted last year
-				if (p.draft.year < firstSeasonWithStats) {
-					return p.draft.year === seasonForRookieCheck - 1;
+				// Players whose first season in the league was before firstSeasonWithStats - we never can know when their "true" rookie season was
+				if (p.draft.year < firstSeasonWithStats - 1) {
+					return false;
 				}
 
 				const tid = p.currentStats[statRange]?.tid ?? -1;

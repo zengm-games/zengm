@@ -262,7 +262,6 @@ const evaluate = (
 		}
 	}
 
-	object.numSeasons = 1;
 	if (info.type === "season") {
 		object.numSeasons = 1;
 	} else {
@@ -278,7 +277,7 @@ const evaluate = (
 
 	// Make sure these are always defined, even for players with no awards
 	for (const short of Object.keys(SIMPLE_AWARD_VARIABLES)) {
-		if (short === "numTeams") {
+		if (short === "numSeasons") {
 			continue;
 		}
 
@@ -295,7 +294,7 @@ const evaluate = (
 		}
 
 		for (const [short, long] of Object.entries(SIMPLE_AWARD_VARIABLES)) {
-			if (short === "numTeams") {
+			if (short === "numSeasons") {
 				continue;
 			}
 

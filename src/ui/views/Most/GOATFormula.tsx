@@ -3,15 +3,21 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { FunctionDocs } from "../AwardSettings/Documentation.tsx";
 
 const GOATFormula = ({
-	awards,
+	customAwards,
 	formula,
+	oldAwards,
+	simpleAwards,
 	stats,
 	type,
 }: {
-	awards: Record<string, string>;
+	customAwards: Record<string, string>;
 	formula: string;
+	oldAwards: Record<string, string>;
+	simpleAwards: Record<string, string>;
 	stats: string[];
 	type: "career" | "season";
 }) => {
@@ -80,14 +86,54 @@ const GOATFormula = ({
 					counts and stats.
 				</p>
 				<details className="mb-3">
-					<summary>Full list of award variables</summary>
+					<summary>Award variables</summary>
+					<ul
+						className="list-unstyled"
+						style={{
+							columnWidth: 100,
+						}}
+					>
+						{Object.entries(simpleAwards).map(([short, long]) => (
+							<li key={short}>
+								<abbr className="font-monospace" title={long}>
+									{short}
+								</abbr>
+							</li>
+						))}
+					</ul>
+					<p>
+						These variables are based on your current{" "}
+						<a href={helpers.leagueUrl(["award_settings"])}>award settings</a>.
+						If you had some other awards in past seasons, you can use those too
+						in the same format, <code>award.ABBREV</code>.
+					</p>
+					<ul
+						className="list-unstyled"
+						style={{
+							columnWidth: 100,
+						}}
+					>
+						{Object.entries(customAwards).map(([short, long]) => (
+							<li key={short}>
+								<abbr className="font-monospace" title={long}>
+									awards.{short}
+								</abbr>
+							</li>
+						))}
+					</ul>
+					<p>
+						These were the original award variables, and they still work, but
+						with the new customizable awards feature you are better off using
+						the above "award.X" variables instead because they support any
+						customizations.
+					</p>
 					<ul
 						className="list-unstyled mb-0"
 						style={{
 							columnWidth: 100,
 						}}
 					>
-						{Object.entries(awards).map(([short, long]) => (
+						{Object.entries(oldAwards).map(([short, long]) => (
 							<li key={short}>
 								<abbr className="font-monospace" title={long}>
 									{short}
@@ -97,7 +143,7 @@ const GOATFormula = ({
 					</ul>
 				</details>
 				<details className="mb-3">
-					<summary>Full list of stat variables</summary>
+					<summary>Stat variables</summary>
 					<ul
 						className="list-unstyled"
 						style={{
@@ -151,6 +197,11 @@ const GOATFormula = ({
 					) : (
 						<p>Seasons with very few games played are ignored.</p>
 					)}
+				</details>
+				<details className="mb-3">
+					<summary>Functions</summary>
+
+					<FunctionDocs />
 				</details>
 			</div>
 		</div>

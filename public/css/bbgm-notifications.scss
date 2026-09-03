@@ -84,6 +84,10 @@
 	}
 }
 
+.notification p:last-child {
+	margin-bottom: 0;
+}
+
 .notification .notification-close {
 	font-size: 20px;
 	background: transparent;

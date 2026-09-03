@@ -89,6 +89,30 @@ if (!Set.prototype.intersection) {
 		configurable: true,
 	});
 }
+if (!Set.prototype.difference) {
+	Object.defineProperty(Set.prototype, "difference", {
+		value<T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
+			const result = new Set<T>(this);
+			if (this.size <= other.size) {
+				for (const elem of this) {
+					if (other.has(elem)) {
+						result.delete(elem);
+					}
+				}
+			} else {
+				for (const elem of other.keys()) {
+					if (result.has(elem)) {
+						result.delete(elem);
+					}
+				}
+			}
+			return result;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}
 if (!Set.prototype.isSubsetOf) {
 	Object.defineProperty(Set.prototype, "isSubsetOf", {
 		value<T>(this: Set<T>, other: SetReadOperations<T>): boolean {
@@ -305,4 +329,18 @@ if (!Iterator.zip) {
 			},
 		} as any;
 	};
+}
+
+// Chrome 110, Safari 16
+if (!Array.prototype.toReversed) {
+	Object.defineProperty(Array.prototype, "toReversed", {
+		value() {
+			const arr = Array.from(this);
+			arr.reverse();
+			return arr;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
 }

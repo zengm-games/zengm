@@ -398,55 +398,6 @@ const formatCurrency = (
 	);
 };
 
-const playoffRoundName = (
-	currentRound: number, // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
-	numPlayoffRounds: number,
-	playoffsByConf: ByConf,
-) => {
-	if (currentRound === -1) {
-		return "play-in tournament";
-	}
-
-	if (currentRound === numPlayoffRounds - 1) {
-		return "finals" as const;
-	}
-
-	// Put this early so as to not glorify just making the playoffs with some fancier text
-	if (currentRound === 0) {
-		return "1st round" as const;
-	}
-
-	const confChampionshipRound =
-		playoffsByConf === false
-			? undefined
-			: numPlayoffRounds - Math.log2(playoffsByConf);
-
-	if (confChampionshipRound !== undefined) {
-		if (currentRound === confChampionshipRound - 1) {
-			return "conference finals";
-		}
-		if (currentRound === confChampionshipRound - 2) {
-			return "conference semifinals";
-		}
-	}
-
-	if (currentRound === numPlayoffRounds - 2) {
-		return "semifinals";
-	}
-
-	if (currentRound === numPlayoffRounds - 3) {
-		return "quarterfinals";
-	}
-
-	if (currentRound >= 1) {
-		return `${commonHelpers.ordinal(currentRound + 1)} round` as const;
-	}
-
-	throw new Error(
-		`Invalid roundIndex ${currentRound} ${numPlayoffRounds} ${playoffsByConf}`,
-	);
-};
-
 const roundsWonText = ({
 	playoffRoundsWon,
 	numPlayoffRounds,
@@ -463,7 +414,7 @@ const roundsWonText = ({
 			return "league champs";
 		}
 
-		const roundName = playoffRoundName(
+		const roundName = commonHelpers.playoffRoundName(
 			playoffRoundsWon,
 			numPlayoffRounds,
 			playoffsByConf,
@@ -523,7 +474,6 @@ const helpers = {
 	daysLeft,
 	gameAndSeasonLengthScaleFactor,
 	stripBbcode,
-	playoffRoundName,
 	roundsWonText,
 };
 

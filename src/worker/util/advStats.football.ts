@@ -2,13 +2,15 @@ import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
-import { getPlayers, getTopPlayers } from "../core/season/awards.ts";
-import { dpoyScore, makeTeams } from "../core/season/doAwards.football.ts";
 import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
-import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import {
+	defaultAwards,
+	defaultGameAttributes,
+} from "../../common/defaultGameAttributes.ts";
 import helpers from "./helpers.ts";
 import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
+import { processAwards } from "../core/awards/processAwards.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -438,36 +440,38 @@ const advStats = async () => {
 	league.pbwr = league.pbw / league.pba;
 	league.rbwr = league.rbw / league.rba;
 
-	const updatedStats = { ...calculateAV(players, teams, league) };
-	await advStatsSave(players, playersRaw, updatedStats);
-
-	// Hackily account for AV of award winners, for OL and defense. These will not exactly correspond to the "real" AV formulas, they're just intended to be simple and good enough.
+	// Hackily account for AV of award winners, for defense only - we can do this without saving first because the formula does not use AV
 	if (!playoffs) {
-		const players2 = await getPlayers(g.get("season"));
-		const dpoyPlayers = getTopPlayers(
-			{
-				amount: Infinity,
-				score: dpoyScore,
-			},
-			players2,
-		);
-		// Can pass dpoyPlayers for all because the offensive/OL players don't matter
-		const allLeague = makeTeams(dpoyPlayers, dpoyPlayers, dpoyPlayers);
+		const { realizedAwards } = await processAwards({
+			awards: [defaultAwards.all],
+			extraStatRanges: [],
+			extraStats: [],
+			numPlayersPerIndividualAward: 1,
+			season: g.get("season"),
+			statOverridesByMatchup: undefined,
+		});
+		const allLeagueTeams = realizedAwards[0]?.[0];
+		if (allLeagueTeams?.numTeams !== undefined) {
+			const playersByPid = groupByUnique(players, "pid");
 
-		for (let i = 0; i < allLeague.length; i++) {
-			for (const p2 of allLeague[i].players) {
-				if (p2 && DEFENSIVE_POSITIONS.has(p2.pos)) {
-					const p = players.find((p3) => p3.pid === p2.pid);
-					if (p) {
-						p.allLeagueTeam = i;
+			for (let i = 0; i < 2; i++) {
+				const team = allLeagueTeams.winner[i];
+				if (team) {
+					for (const p of team) {
+						if (p.pid !== undefined) {
+							const pid = p.pid;
+							if (playersByPid[pid]) {
+								playersByPid[pid].allLeagueTeam = i;
+							}
+						}
 					}
 				}
 			}
 		}
-
-		const updatedStats = { ...calculateAV(players, teams, league) };
-		await advStatsSave(players, playersRaw, updatedStats);
 	}
+
+	const updatedStats = calculateAV(players, teams, league);
+	await advStatsSave(players, playersRaw, updatedStats);
 };
 
 export default advStats;

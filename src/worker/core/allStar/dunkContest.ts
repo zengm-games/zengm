@@ -6,7 +6,7 @@ import type {
 import { dunkInfos, getValidMoves } from "../../../common/dunkContest.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import { saveAwardsByPlayer } from "../season/awards.ts";
+import { updatePlayerAwards } from "../awards/awardsByPlayer.ts";
 import { getNextRoundType } from "./contest.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { choice, randInt, shuffle } from "../../../common/random.ts";
@@ -607,19 +607,23 @@ export const simNextDunkEvent = async (
 
 				const p = dunk.players[dunk.winner]!;
 
-				await saveAwardsByPlayer(
-					[
-						{
-							pid: p.pid,
-							tid: p.tid,
-							name: p.name,
-							type: "Slam Dunk Contest Winner",
-						},
-					],
-					conditions,
-					g.get("season"),
-					true,
-				);
+				const awardsByPlayer = [
+					{
+						pid: p.pid,
+						tid: p.tid,
+						name: p.name,
+						award: { type: "Slam Dunk Contest Winner" },
+					},
+				];
+
+				await updatePlayerAwards({
+					awardsToDelete: [],
+					awardsToSave: awardsByPlayer,
+					logEventInfo: {
+						conditions,
+					},
+					season: g.get("season"),
+				});
 			}
 		}
 	}

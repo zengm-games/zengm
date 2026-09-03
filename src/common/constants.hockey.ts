@@ -313,26 +313,6 @@ export const RATINGS: RatingKey[] = [
 	"glk",
 ];
 
-export const SIMPLE_AWARDS = [
-	"mvp",
-	"dpoy",
-	"dfoy",
-	"goy",
-	"roy",
-	"finalsMvp",
-] as const;
-
-export const AWARD_NAMES = {
-	mvp: "Most Valuable Player",
-	roy: "Rookie of the Year",
-	dpoy: "Defensive Player of the Year",
-	dfoy: "Defensive Forward of the Year",
-	goy: "Goalie of the Year",
-	finalsMvp: "Playoffs MVP",
-	allLeague: "All-League",
-	allRookie: "All-Rookie Team",
-} as const;
-
 export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,

@@ -1,8 +1,40 @@
+import * as z from "zod";
 import type { FaceConfig } from "facesjs";
 import type { ReactNode } from "react";
-import * as z from "zod";
 import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
+
+import {
+	awardSettingsSchema,
+	type AwardPlayer,
+	type AwardInfoCommon,
+	type AwardInfoIndividual,
+	type AwardInfoTeam,
+	type AwardSettingIndividual,
+	type AwardSettingTeam,
+	type AwardSettings,
+	type PlayerAwardBuiltIn,
+	type PlayerAwardSimple,
+	type PlayerAward,
+	type Award,
+	type Awards,
+} from "../../common/types.ts";
+
+export {
+	awardSettingsSchema,
+	type AwardPlayer,
+	type AwardInfoCommon,
+	type AwardInfoIndividual,
+	type AwardInfoTeam,
+	type AwardSettingIndividual,
+	type AwardSettingTeam,
+	type AwardSettings,
+	type PlayerAwardBuiltIn,
+	type PlayerAwardSimple,
+	type PlayerAward,
+	type Award,
+	type Awards,
+};
 
 // Would be nice to make .at(-1) return T but idk how, so use the `last` function instead!
 export type NonEmptyArray<T> = [T, ...T[]];
@@ -16,8 +48,8 @@ export type Env = {
 };
 
 declare global {
+	var bbgm: any; // Just for debugging, in worker and UI
 	interface Window {
-		bbgm: any; // Just for debugging
 		bbgmVersion: string;
 		bugsnagKey: string;
 		enableLogging: boolean;
@@ -501,8 +533,8 @@ export type NamesLegacy = {
 	};
 };
 
-export type Conf = { cid: number; name: string };
-export type Div = { cid: number; did: number; name: string };
+export type Conf = { cid: number; name: string; abbrev?: string };
+export type Div = { cid: number; did: number; name: string; abbrev?: string };
 
 export type InjuriesSetting = {
 	name: string;
@@ -548,6 +580,7 @@ export type GameAttributesLeague = {
 	autoRelocateGeo: "naFirst" | "naOnly" | "any";
 	autoRelocateRealign: boolean;
 	autoRelocateRebrand: boolean;
+	awards: AwardSettings;
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;
@@ -1142,11 +1175,6 @@ export type MinimalPlayerRatings = {
 	locked?: boolean;
 };
 
-export type PlayerAward = {
-	season: number;
-	type: string;
-};
-
 export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	awards: PlayerAward[];
 	born: {
@@ -1661,6 +1689,7 @@ import type {
 } from "../ui/util/keyboardShortcuts.ts";
 import type { gameAttributesSyncedToUi } from "./gameAttributesSyncedToUi.ts";
 import type { UndoLog } from "../worker/util/UndoLog.ts";
+
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &
@@ -1886,10 +1915,10 @@ export type UpdateEvents = (
 	| "watchList"
 )[];
 
-export const RealPlayerPhotosSchema = z.record(z.string(), z.string());
-export type RealPlayerPhotos = z.infer<typeof RealPlayerPhotosSchema>;
+export const realPlayerPhotosSchema = z.record(z.string(), z.string());
+export type RealPlayerPhotos = z.infer<typeof realPlayerPhotosSchema>;
 
-export const IndividualRealTeamInfoSchema = z.object({
+export const individualRealTeamInfoSchema = z.object({
 	abbrev: z.string().exactOptional(),
 	region: z.string().exactOptional(),
 	name: z.string().exactOptional(),
@@ -1900,16 +1929,16 @@ export const IndividualRealTeamInfoSchema = z.object({
 	jersey: z.string().exactOptional(),
 });
 export type IndividualRealTeamInfo = z.infer<
-	typeof IndividualRealTeamInfoSchema
+	typeof individualRealTeamInfoSchema
 >;
 
-export const RealTeamInfoSchema = z.record(
+export const realTeamInfoSchema = z.record(
 	z.string(),
-	IndividualRealTeamInfoSchema.extend({
-		seasons: z.record(z.number(), IndividualRealTeamInfoSchema).exactOptional(),
+	individualRealTeamInfoSchema.extend({
+		seasons: z.record(z.number(), individualRealTeamInfoSchema).exactOptional(),
 	}),
 );
-export type RealTeamInfo = z.infer<typeof RealTeamInfoSchema>;
+export type RealTeamInfo = z.infer<typeof realTeamInfoSchema>;
 
 export type GetLeagueOptionsReal = {
 	type: "real";

@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, Player, ViewInput } from "../../common/types.ts";
-import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
+import { omit, orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { player } from "../core/index.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
@@ -10,6 +10,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import { formatPlayerAwardName } from "../../common/awards.ts";
 
 type Most = {
 	value: number;
@@ -170,6 +171,35 @@ const tidAndSeasonToAbbrev = async (most: Most) => {
 	};
 };
 
+const getOldAndCustomAwards = () => {
+	const oldAwards: Record<string, string> = {};
+	for (const [key, value] of Object.entries(goatFormula.OLD_AWARD_VARIABLES)) {
+		oldAwards[key] = value.name;
+	}
+
+	const awards = g.get("awards");
+	const customAwards: Record<string, string> = {};
+	for (const award of awards) {
+		if (award.numTeams === undefined) {
+			// Individual award
+			customAwards[award.shortName] = award.name;
+		} else {
+			// Team award - any team
+			customAwards[award.shortName] = award.name;
+
+			// Team award - specific team
+			for (let rank = 1; rank <= award.numTeams; rank++) {
+				customAwards[`${award.shortName}${rank}`] = formatPlayerAwardName({
+					...award,
+					rank,
+				});
+			}
+		}
+	}
+
+	return { customAwards, oldAwards };
+};
+
 const updatePlayers = async (
 	{ arg, type }: ViewInput<"most">,
 	updateEvents: UpdateEvents,
@@ -274,8 +304,9 @@ const updatePlayers = async (
 				colName: "GOAT",
 			});
 			extraProps = {
+				...getOldAndCustomAwards(),
 				formula: g.get("goatFormula") ?? goatFormula.DEFAULT_FORMULA,
-				awards: goatFormula.AWARD_VARIABLES,
+				simpleAwards: goatFormula.SIMPLE_AWARD_VARIABLES,
 				stats: goatFormula.STAT_VARIABLES,
 			};
 
@@ -305,14 +336,11 @@ const updatePlayers = async (
 					colName: "Season",
 				},
 			);
-			const awards = {
-				...goatFormula.AWARD_VARIABLES,
-			};
-			delete awards.numSeasons;
 			extraProps = {
+				...getOldAndCustomAwards(),
 				formula:
 					g.get("goatSeasonFormula") ?? goatFormula.DEFAULT_FORMULA_SEASON,
-				awards,
+				simpleAwards: omit(goatFormula.SIMPLE_AWARD_VARIABLES, ["numSeasons"]),
 				stats: goatFormula.STAT_VARIABLES,
 			};
 

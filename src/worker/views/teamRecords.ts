@@ -1,9 +1,13 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, AllStars, ViewInput } from "../../common/types.ts";
-import { isSport } from "../../common/sportFunctions.ts";
+import type {
+	UpdateEvents,
+	AllStars,
+	ViewInput,
+	Awards,
+} from "../../common/types.ts";
 import { season } from "../core/index.ts";
-import { orderBy } from "../../common/utils.ts";
+import { omit, orderBy } from "../../common/utils.ts";
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],
@@ -11,7 +15,10 @@ const sumBy = <Key extends string, T extends Record<Key, number>>(
 ): number => {
 	let sum = 0;
 	for (const record of records) {
-		sum += record[key];
+		// undefined check needed for custom awards
+		if (record[key] !== undefined) {
+			sum += record[key];
+		}
 	}
 	return sum;
 };
@@ -44,160 +51,55 @@ const maxBy = <Key extends string, T extends Record<Key, number | undefined>>(
 	return max;
 };
 
-const tallyAwards = (
+const tallyAwards = async (
 	tid: number,
 	seasons: Set<number>,
-	awards: any[],
+	awards: Awards[],
 	allAllStars: AllStars[],
 ) => {
 	const teamAwards = {
-		mvp: 0,
-		opoy: 0,
-		dpoy: 0,
-		dfoy: 0,
-		goy: 0,
-		smoy: 0,
-		mip: 0,
-		roy: 0,
-		oroy: 0,
-		droy: 0,
-		poy: 0,
-		rpoy: 0,
-		allLeague: 0,
-		allDefense: 0,
-		allOffense: 0,
-		allRookie: 0,
 		allStar: 0,
 		allStarMVP: 0,
 		bestRecord: 0,
 		bestRecordConf: 0,
+		bestRecordDiv: 0,
+		custom: {} as Record<string, number>,
 	};
 
-	for (const a of awards) {
-		if (!a) {
+	for (const row of awards) {
+		if (!seasons.has(row.season)) {
 			continue;
 		}
 
-		if (!seasons.has(a.season)) {
-			continue;
+		if (row.bestRecord === tid) {
+			teamAwards.bestRecord++;
 		}
-
-		if (a.mvp?.tid === tid) {
-			teamAwards.mvp++;
-		}
-
-		if (a.opoy?.tid === tid) {
-			teamAwards.opoy++;
-		}
-
-		if (a.dpoy?.tid === tid) {
-			teamAwards.dpoy++;
-		}
-
-		if (a.dfoy?.tid === tid) {
-			teamAwards.dfoy++;
-		}
-
-		if (a.goy?.tid === tid) {
-			teamAwards.goy++;
-		}
-
-		if (a.smoy?.tid === tid) {
-			teamAwards.smoy++;
-		}
-
-		if (a.mip?.tid === tid) {
-			teamAwards.mip++;
-		}
-
-		if (a.roy?.tid === tid) {
-			teamAwards.roy++;
-		}
-
-		if (a.oroy?.tid === tid) {
-			teamAwards.oroy++;
-		}
-
-		if (a.droy?.tid === tid) {
-			teamAwards.droy++;
-		}
-
-		if (a.poy?.tid === tid) {
-			teamAwards.poy++;
-		}
-
-		if (isSport("baseball")) {
-			if (a.rpoy?.tid === tid) {
-				teamAwards.rpoy++;
-			}
-		}
-
-		if (a.bre && a.brw) {
-			// For old league files, this format is obsolete now
-			if (a.bre.tid === tid) {
+		for (const bestTid of Object.values(row.bestRecordConfs)) {
+			if (bestTid === tid) {
 				teamAwards.bestRecordConf++;
 			}
-
-			if (a.brw.tid === tid) {
-				teamAwards.bestRecordConf++;
-			}
-
-			if (a.bre.won >= a.brw.won) {
-				if (a.bre.tid === tid) {
-					teamAwards.bestRecord++;
-				}
-			} else {
-				// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
-				if (a.brw.tid === tid) {
-					teamAwards.bestRecord++;
-				}
-			}
-		} else {
-			for (const t of a.bestRecordConfs) {
-				if (t && t.tid === tid) {
-					teamAwards.bestRecordConf++;
-				}
-			}
-
-			if (a.bestRecord.tid === tid) {
-				teamAwards.bestRecord++;
-			}
-
-			for (const t of a.allRookie) {
-				if (t && t.tid === tid) {
-					teamAwards.allRookie++;
-				}
+		}
+		for (const bestTid of Object.values(row.bestRecordDivs)) {
+			if (bestTid === tid) {
+				teamAwards.bestRecordDiv++;
 			}
 		}
 
-		if (isSport("baseball")) {
-			for (const p of a.allDefense) {
-				if (p && p.tid === tid) {
-					teamAwards.allDefense++;
-				}
+		for (const award of row.awards) {
+			// This logic needs to be duplicated from below rather than just checking seenAwardTypes because shortName could be used for both a valid and invalid award
+			if (award.numTeams !== undefined) {
+				// Skip team awards
+				continue;
 			}
-			for (const p of a.allOffense) {
-				if (p && p.tid === tid) {
-					teamAwards.allOffense++;
-				}
-			}
-		} else {
-			for (const t of a.allLeague) {
-				for (const p of t.players) {
-					if (p && p.tid === tid) {
-						teamAwards.allLeague++;
-					}
-				}
+			if (typeof award.statRange === "number") {
+				// Skip playoff series awards - usually not that much info there, like if you won FMVP you also probably won a championship
+				continue;
 			}
 
-			if (a.allDefensive) {
-				for (const t of a.allDefensive) {
-					for (const p of t.players) {
-						if (p && p.tid === tid) {
-							teamAwards.allDefense++;
-						}
-					}
-				}
+			if (award.winner[0]?.tid === tid) {
+				const shortName = award.shortName;
+				teamAwards.custom[shortName] ??= 0;
+				teamAwards.custom[shortName] += 1;
 			}
 		}
 	}
@@ -225,7 +127,7 @@ const tallyAwards = (
 	return teamAwards;
 };
 
-const getRowInfo = (
+const getRowInfo = async (
 	tid: number,
 	seasonAttrs: {
 		season: number;
@@ -237,7 +139,7 @@ const getRowInfo = (
 		ptsMax: number;
 		playoffRoundsWon: number;
 	}[],
-	awards: any[],
+	awards: Awards[],
 	allStars: AllStars[],
 ) => {
 	let playoffs = 0;
@@ -288,12 +190,12 @@ const getRowInfo = (
 		lastPlayoffs,
 		lastFinals,
 		lastTitle,
-		...tallyAwards(
+		...(await tallyAwards(
 			tid,
 			new Set(seasonAttrs.map((x) => x.season)),
 			awards,
 			allStars,
-		),
+		)),
 	};
 	rowInfo.winp = helpers.calcWinp(rowInfo);
 	rowInfo.ptsPct = rowInfo.ptsMax !== 0 ? rowInfo.pts / rowInfo.ptsMax : 0;
@@ -326,9 +228,13 @@ type Team = {
 	lastFinals: number | undefined;
 	lastTitle: number | undefined;
 	sortValue: number;
-} & ReturnType<typeof tallyAwards>;
+} & Awaited<ReturnType<typeof tallyAwards>>;
 
-const sumRecordsFor = (name: string, teams: Team[]) => {
+const sumRecordsFor = (
+	name: string,
+	teams: Team[],
+	awardTypes: Set<string>,
+) => {
 	const colsSum = [
 		"won",
 		"lost",
@@ -339,29 +245,18 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 		"playoffs",
 		"finals",
 		"titles",
-		"mvp",
-		"opoy",
-		"dpoy",
-		"dfoy",
-		"goy",
-		"smoy",
-		"mip",
-		"roy",
-		"oroy",
-		"droy",
-		"allLeague",
-		"allDefense",
-		"allRookie",
 		"allStar",
 		"allStarMVP",
 		"bestRecord",
 		"bestRecordConf",
+		"bestRecordDiv",
 	] as const;
 	const colsMin = ["start"] as const;
 	const colsMax = ["end", "lastPlayoffs", "lastFinals", "lastTitle"] as const;
 
-	const output = { ...teams[0]! };
-	delete output.disabled;
+	const output = teams[0]
+		? omit(teams[0], ["disabled"])
+		: ({ custom: {} } as Team);
 	for (const col of colsSum) {
 		output[col] = sumBy(teams, col);
 	}
@@ -371,6 +266,12 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 	for (const col of colsMax) {
 		output[col] = maxBy(teams, col);
 	}
+
+	const customs = teams.map((t) => t.custom);
+	for (const col of awardTypes) {
+		output.custom[col] = sumBy(customs, col);
+	}
+
 	output.name = name;
 	output.numSeasons =
 		output.start !== undefined && output.end !== undefined
@@ -395,6 +296,34 @@ const updateTeamRecords = async (
 	) {
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
 		const allStars = await idb.getCopies.allStars(undefined, "noCopyCache");
+
+		// Show newest awards in leftmost columns if we scan in order from most recent
+		awards.reverse();
+		const awardTypes: {
+			name: string;
+			shortName: string;
+		}[] = [];
+		const seenAwardTypes = new Set<string>();
+		for (const row of awards) {
+			for (const award of row.awards) {
+				if (award.numTeams !== undefined) {
+					// Skip team awards
+					continue;
+				}
+				if (typeof award.statRange === "number") {
+					// Skip playoff series awards - usually not that much info there, like if you won FMVP you also probably won a championship
+					continue;
+				}
+
+				if (!seenAwardTypes.has(award.shortName)) {
+					seenAwardTypes.add(award.shortName);
+					awardTypes.push({
+						name: award.name,
+						shortName: award.shortName,
+					});
+				}
+			}
+		}
 
 		const teamsAll = orderBy(
 			await idb.getCopies.teamsPlus(
@@ -447,7 +376,7 @@ const updateTeamRecords = async (
 				name: t.name,
 				imgURL: t.imgURL,
 				imgURLSmall: t.imgURLSmall,
-				...getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars),
+				...(await getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars)),
 				sortValue: teams.length,
 			};
 
@@ -460,14 +389,17 @@ const updateTeamRecords = async (
 			if (byType === "by_team") {
 				// by_team only - Any name changes or season gaps? If so, separate
 				const partials: typeof teams = [];
-				const addPartial = (tid: number, seasonAttrs: typeof t.seasonAttrs) => {
+				const addPartial = async (
+					tid: number,
+					seasonAttrs: typeof t.seasonAttrs,
+				) => {
 					partials.push({
 						root: false,
 						tid,
 						abbrev: seasonAttrs[0]!.abbrev,
 						region: seasonAttrs[0]!.region,
 						name: seasonAttrs[0]!.name,
-						...getRowInfo(tid, seasonAttrs, awards, allStars),
+						...(await getRowInfo(tid, seasonAttrs, awards, allStars)),
 						sortValue: teams.length + partials.length,
 					});
 				};
@@ -482,7 +414,7 @@ const updateTeamRecords = async (
 					if (prevName !== name || prevSeason !== ts.season + 1) {
 						// Either this is the first iteration of the loop, or the team name/region changed, or there is a gap in seasons
 						if (seasonAttrs.length > 0) {
-							addPartial(t.tid, seasonAttrs);
+							await addPartial(t.tid, seasonAttrs);
 						}
 
 						seasonAttrs = [];
@@ -494,7 +426,7 @@ const updateTeamRecords = async (
 
 				if (partials.length > 0) {
 					if (seasonAttrs.length > 0) {
-						addPartial(t.tid, seasonAttrs);
+						await addPartial(t.tid, seasonAttrs);
 					}
 
 					teams.push(...partials);
@@ -513,6 +445,7 @@ const updateTeamRecords = async (
 						}
 						return t2.cid === conf.cid;
 					}),
+					seenAwardTypes,
 				),
 			);
 		} else if (byType === "by_div") {
@@ -535,6 +468,7 @@ const updateTeamRecords = async (
 							}
 							return t2.did === div.did;
 						}),
+						seenAwardTypes,
 					),
 					confName,
 				};
@@ -559,6 +493,7 @@ const updateTeamRecords = async (
 		const usePts = pointsFormula !== "";
 
 		return {
+			awardTypes,
 			byType,
 			filter,
 			teams,

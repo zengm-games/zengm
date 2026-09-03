@@ -56,46 +56,6 @@ export type TeamStatAttrByPos =
 	| "oppRfg"
 	| "oppInn";
 
-type AwardTeam = {
-	tid: number;
-	abbrev: string;
-	region: string;
-	name: string;
-	won: number;
-	lost: number;
-	tied: number | undefined;
-	otl: number | undefined;
-};
-
-export type AwardPlayer = {
-	pid: number;
-	name: string;
-	tid: number;
-	pos: string;
-	keyStats: string;
-};
-
-export type Awards = {
-	season: number;
-	bestRecord: AwardTeam;
-
-	// undefined gets turned into null by JSON.stringify
-	bestRecordConfs: (AwardTeam | undefined | null)[];
-
-	// Only in old leagues
-	bre?: AwardTeam;
-	brw?: AwardTeam;
-
-	roy: AwardPlayer | undefined;
-	allOffense: (AwardPlayer | undefined)[];
-	allDefense: (AwardPlayer | undefined)[];
-	allRookie: (AwardPlayer | undefined)[];
-	mvp: AwardPlayer | undefined;
-	poy: AwardPlayer | undefined;
-	rpoy: AwardPlayer | undefined;
-	finalsMvp: AwardPlayer | undefined;
-};
-
 export type Position =
 	| "SP"
 	| "RP"

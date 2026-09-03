@@ -47,7 +47,7 @@ const startHeartbeat = async (l: Awaited<ReturnType<typeof getLeague>>) => {
 	setTimeout(() => {
 		clearInterval(heartbeatIntervalID); // Shouldn't be necessary, but just in case
 
-		heartbeatIntervalID = self.setInterval(async () => {
+		heartbeatIntervalID = setInterval(async () => {
 			const l2 = await getLeague(lid);
 			await runHeartbeat(l2);
 		}, 1000);

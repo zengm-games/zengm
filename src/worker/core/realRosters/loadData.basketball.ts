@@ -26,10 +26,18 @@ export type Ratings = {
 export type Basketball = {
 	awards: Record<
 		string,
-		{
-			type: string;
-			season: number;
-		}[]
+		(
+			| {
+					season: number;
+					type: string;
+			  }
+			| {
+					rank?: number; // Usually 1, so just leave those out and fill in on import
+					season: number;
+					shortName: string;
+					type?: undefined;
+			  }
+		)[]
 	>;
 	teams: {
 		slug: string;

@@ -1,8 +1,8 @@
 import { g } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
-import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
+import { groupByUnique } from "../../common/utils.ts";
 
 const updateAwardRaces = async (
 	inputs: ViewInput<"awardRaces">,
@@ -17,11 +17,8 @@ const updateAwardRaces = async (
 		inputs.season !== state.season
 	) {
 		const awardCandidates = (
-			await season.getAwardCandidates(inputs.season)
-		).map((row) => ({
-			...row,
-			players: addFirstNameShort(row.players),
-		}));
+			await getAwardCandidates(inputs.season)
+		).awardCandidates.flat();
 
 		const teams = await idb.getCopies.teamsPlus(
 			{
@@ -34,8 +31,10 @@ const updateAwardRaces = async (
 
 		return {
 			awardCandidates,
+			confs: g.get("confs", inputs.season),
+			divs: g.get("divs", inputs.season),
 			season: inputs.season,
-			teams,
+			teams: groupByUnique(teams, "tid"),
 		};
 	}
 };

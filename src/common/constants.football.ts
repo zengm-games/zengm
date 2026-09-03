@@ -937,28 +937,6 @@ export const RATINGS: RatingKey[] = [
 	"pac",
 ];
 
-export const SIMPLE_AWARDS = [
-	"mvp",
-	"opoy",
-	"poy",
-	"dpoy",
-	"oroy",
-	"droy",
-	"finalsMvp",
-] as const;
-
-export const AWARD_NAMES = {
-	mvp: "Most Valuable Player",
-	opoy: "Offensive Player of the Year",
-	poy: "Protector of the Year",
-	dpoy: "Defensive Player of the Year",
-	oroy: "Offensive Rookie of the Year",
-	droy: "Defensive Rookie of the Year",
-	finalsMvp: "Finals MVP",
-	allLeague: "All-League",
-	allRookie: "All-Rookie Team",
-} as const;
-
 export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,

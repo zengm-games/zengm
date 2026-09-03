@@ -12,8 +12,8 @@ import { toWorker } from "../../util/toWorker.ts";
 import { settings } from "../Settings/settings.tsx";
 import SettingsForm from "../Settings/SettingsForm.tsx";
 import type { Key } from "../Settings/types.ts";
-import ExportButton from "./ExportButton.tsx";
-import ImportButton from "./ImportButton.tsx";
+import { ExportButton } from "./ExportButton.tsx";
+import { ImportButton } from "./ImportButton.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 

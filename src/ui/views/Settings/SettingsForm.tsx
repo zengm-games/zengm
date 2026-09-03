@@ -254,7 +254,7 @@ const SettingsForm = ({
 	hasPlayers,
 	newLeague,
 	realPlayers,
-	saveText = "Save Settings",
+	saveText = "Save settings",
 	initialSettings,
 	settingsShown,
 	hideShortcuts,

@@ -138,9 +138,10 @@ const GodMode = () => {
 					<div className="card-body">
 						<h3 className="card-title">Edit Awards, Draft, Playoffs...</h3>
 						<p className="card-text">
-							Decide who should win any end-of-season awards at{" "}
-							<a href={helpers.leagueUrl(["edit_awards"])}>
-								Tools &gt; Edit Awards
+							Decide who should win any end-of-season awards (or create your own
+							awards) at{" "}
+							<a href={helpers.leagueUrl(["edit_award_winners"])}>
+								Tools &gt; Edit Award Winners
 							</a>
 							. Rig the{" "}
 							<a href={helpers.leagueUrl(["draft_lottery"])}>draft lottery</a>.

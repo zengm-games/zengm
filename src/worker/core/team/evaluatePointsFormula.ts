@@ -1,13 +1,16 @@
 import { DEFAULT_POINTS_FORMULA } from "../../../common/constants.ts";
 import { g } from "../../util/index.ts";
-import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
+import { FormulaEvaluator } from "../../util/FormulaEvaluator.ts";
 
 const SYMBOLS = ["W", "L", "T", "OTL"] as const;
 
 // Would be nicer if it inferred `typeof SYMBOLS` from the super call, but it seems not to.
-export class PointsFormulaEvaluator extends FormulaEvaluator<typeof SYMBOLS> {
+export class PointsFormulaEvaluator extends FormulaEvaluator<
+	typeof SYMBOLS,
+	[]
+> {
 	constructor(equation: string) {
-		super(equation.toUpperCase(), SYMBOLS);
+		super(equation.toUpperCase(), SYMBOLS, []);
 
 		// Run it once, just to confirm it works up front
 		this.evaluate({

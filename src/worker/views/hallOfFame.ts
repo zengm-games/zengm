@@ -61,7 +61,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			p.countMvp = 0;
 			p.countTitles = 0;
 			for (const award of p.awards) {
-				if (award.type === "Most Valuable Player") {
+				if (award.type === undefined && award.actAs === "mvp") {
 					p.countMvp += 1;
 				} else if (award.type === "Won Championship") {
 					p.countTitles += 1;

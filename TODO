@@ -1,70 +1,57 @@
-custom awards
-- fields
-  - formula
-  - short name
-    - MUST BE UNIQUE
-  - long name
-  - some way to filter for SMOY
-  - MIP filter
-  - rookie filter
-    - support some kind of games played limit, like for players who miss a whole season, or baseball
-  - stats range (regular season, playoffs, semifinals, finals, combined)
-  - team or individual
-  - if team
-    - way to specify if it's position based or not
-      - maybe just automatically handle this per sport
-    - number of players per team
-      - maybe just automatically handle this per sport
-    - how many teams
-  - order
-    - use on...
-      - player profile page
-      - league history table
-      - season summary
-  - show in league history table?
-  - SeasonIcon
-    - icon (give a few options)
-    - color
-  - some way to label as an "important" award like MVP equivalent, ROY equivalent
-    - football has two ROY equivalents, so that shouldn't be unique
-- extra things that get stored in player awards, but not in awards object
-  - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
-  - see awardsOrder in groupAwards for list
-    - All-Star
-    - Won Championship
-    - Dunk Contest
-    - Three Point Contest
-    - Hall of Fame
-- UI to update
-  - award races
-  - groupAwards
-  - awards editor
-  - player profile
-  - league history table
-  - season summary
-  - awards records
-  - team records
-  - GOAT formula
-- would be nice to support conditional stat-based awards that are not awarded every season, like triple crown or 40/40
-- store top 10 for each individual award, so it can be displayed easily on player profile pages
-  - store this in player object, don't need it anywhere else i think?
-    - for teams, only store rank if there are more than 1 team
-  - bold winner of individual award, link to award races
-- should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
-- support awards per div/conf
-- support clutch player award
-- how to show award as column when awards might change over time?
-- in AwardsSummary, break down by team number for tooltip
-- how to store Player.awards
-  - try storing normalized, how slow is it?
-    - could store more awards history in cache
-  - real players with partial data? depends on if we store normalized or not
-  - make sure it's deleted when importing
-- upgrade
-  - upgrade old awards objects
-  - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
-  - indexeddb
-  - import
+custom awards later
+- fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/search:record/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e4054
+  - first refactor so team info comes through currentStats, in getPlayers
+    - also use to calculate teamGp/seasonFraction/winp
+    - get rid of "teams" variable from awardRaces and awardSettings worker views, use from currentStats instead
+- support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
+  - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten
+- conditional stat-based awards that are not awarded every season, like triple crown or 40/40
+- clutch player award
+- edit conf/div abbrevs, and test usage in award name prefixes
+- make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
+- HoF formula should be editable similarly
+- ability to add/edit/delete manual awards for player, maybe in player editor
+- award settings
+  - some way to set award settings in default new league settings
+  - pick and choose which awards to import, and option to not overwrite all
+  - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
+  - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
+- `if` function in FormulaEvaluator
+
+update deps
+- idb
+- https://github.com/colinhacks/zod/issues/6496
+
+top menu can be longer than screen height https://discord.com/channels/290013534023057409/1544159572510507130/1544576889488810026
+
+when deleting all leagues, count in the notification should subtract starred ones
+
+TEXT_MAX_WIDTH for messages?
+
+useBlocker beforeunload sharedworker issue
+- get into dirty state, press ctrl+r to trigger beforeunload, click "cancel" to stay, and now all SPA links are broken
+- `await toWorker("main", "beforeView"` is hanging, but on worker it completes fine, somehow message getting lost? sharedworker weirdness?
+  - maybe yeah, if i disable sharedworker, it works...
+- happens in both firefox 154 and chrome 151
+
+can web locks API be used to identify if shared worker has stopped running somehow? (seems to happen when OS sleeps or tab is idle for a long time)
+- https://github.com/whatwg/html/issues/1766#issuecomment-633197720
+- https://aistudio.google.com/prompts/1Gj05Fid0e8yTQywMpInfhYc3ATBs5HpK
+- do similar to identify when tabs have closed
+  - https://developer.mozilla.org/en-US/docs/Web/API/LockManager/query see clientId
+- built into promise-worker-bi?
+  - could provide a "close" event if shared worker goes away, and better tracking of tabs
+
+btn-close vs glyphicon-remove
+
+extendedLifetimez shared workers - worth using to save dirty cache on close?
+
+default new league settings import should handle gameAttribute with history (take latest value)
+
+make GOAT lab use stats with derived variables, similar to awards
+- fixMax, etc
+
+https://github.com/ata-core/ata-validator
 
 more prominent warning when editing player and the draft year is in the future while they are on a team
 - also ideally show them on the roster page too
@@ -208,6 +195,12 @@ dev usability stuff
   - ensure called only once in a component
   - sort array
 - checkNaNs still needed?
+- use registerGlobal more
+- NonEmptyArray stuff
+  - use for individual award winner
+  - assertion function to make sure array is winner (useful in processAwards)
+    - move last() to same utils file as this
+- use scrollMarginTop for any scroll( or scrollBy(
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 
@@ -1496,9 +1489,6 @@ store pids of top 10 leaders in some key stats
 - update after each day
 - show dynamic "award" for being in top 10 all time of some statistic
 
-"award" column on player page, like baseball reference
-- requires storing top 10 of award votes
-
 player feats and box scores will need to be upgraded to use firstNameShort
 
 make ratings table editable https://old.reddit.com/r/BasketballGM/comments/sv89fj/version_202202171376_progressive_leaders_page/hxo0y96/?context=3
@@ -1548,8 +1538,6 @@ minors
 fbgm kickoff return to own 0 https://discord.com/channels/290013534023057409/290015591216054273/932688109596975164
 
 when starting a new league, contracts should be set not based on current state of player, but on state when contract was signed. especially noticable for rookies who progged a lot
-
-no awards if 0 games in regular season? https://discord.com/channels/290013534023057409/331882115119448065/930867153878544454
 
 redesign season summary
 - dramatic reveal of awards and award voting results, similar to draft lottery
@@ -2457,7 +2445,6 @@ https://react-hook-form.com/ for forms
 
 more customize player options
 - fixed position
-- awards
 
 football roster balance issues https://imgur.com/HmK00EF @Eddy
 
@@ -2545,7 +2532,6 @@ type better
 - skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
 - PlayerStatType should be sport specific
 - getCopy/getCopies and Cache
-  - awards should return Awards
   - players and playersPlus - Player<> and Player should be Player<PlayerRatings>
 - most MinimalPlayerRatings uses should be generic and take PlayerRatings
 

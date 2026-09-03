@@ -10,6 +10,7 @@ import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
+import { leaderAwardCategories } from "../../common/awards.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;
@@ -81,54 +82,6 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	defense: "Defense",
 	kicking: "Kicking",
 	returns: "Returns",
-	champion: "Won Championship",
-	mvp: "Most Valuable Player",
-	finals_mvp: isSport("hockey") ? "Playoffs MVP" : "Finals MVP",
-	sfmvp: "Semifinals MVP",
-	opoy: "Offensive Player of the Year",
-	dpoy: "Defensive Player of the Year",
-	dfoy: "Defensive Forward of the Year",
-	goy: "Goalie of the Year",
-	smoy: "Sixth Man of the Year",
-	mip: "Most Improved Player",
-	roy: "Rookie of the Year",
-	poy: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
-	rpoy: "Relief Pitcher of the Year",
-	first_team: "First Team All-League",
-	second_team: "Second Team All-League",
-	third_team: "Third Team All-League",
-	all_league: "All-League",
-	first_def: "First Team All-Defensive",
-	second_def: "Second Team All-Defensive",
-	third_def: "Third Team All-Defensive",
-	all_off: "All-Offensive",
-	all_def: "All-Defensive",
-	all_star: "All-Star",
-	all_star_mvp: "All-Star MVP",
-	dunk: "Slam Dunk Contest Winner",
-	three: "Three-Point Contest Winner",
-	ppg_leader: "League Scoring Leader",
-	rpg_leader: "League Rebounding Leader",
-	apg_leader: "League Assists Leader",
-	spg_leader: "League Steals Leader",
-	bpg_leader: "League Blocks Leader",
-	pss_leader: "League Passing Leader",
-	rush_leader: "League Rushing Leader",
-	rcv_leader: "League Receiving Leader",
-	scr_leader: "League Scrimmage Yards Leader",
-	pts_leader: "League Points Leader",
-	g_leader: "League Goals Leader",
-	ast_leader: "League Assists Leader",
-	hr_leader: "League HR Leader",
-	rbi_leader: "League RBI Leader",
-	r_leader: "League Runs Leader",
-	sb_leader: "League Stolen Bases Leader",
-	bb_leader: "League Walks Leader",
-	w_leader: "League Wins Leader",
-	soPit_leader: "League Strikeouts Leader",
-	war_leader: "League WAR Leader",
-	oroy: "Offensive Rookie of the Year",
-	droy: "Defensive Rookie of the Year",
 	"all|||types": makeResponsiveDropdownOption("All", "All Types"),
 	draft: "Draft",
 	freeAgent: "FA Signed",
@@ -172,6 +125,16 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	player: "Players",
 	teamSeason: "Teams",
 };
+
+const leaderInfos = leaderAwardCategories.map((x) => {
+	return {
+		val: x.name,
+		key: `${x.stat}_leader`,
+	};
+});
+for (const { key, val } of leaderInfos) {
+	dropdownValues[key] = val;
+}
 
 if (isSport("baseball")) {
 	Object.assign(dropdownValues, {
@@ -353,93 +316,6 @@ const useDropdownOptions = (
 			basketball: ["perGame", "per36", "totals"],
 			football: ["totals"],
 			hockey: ["totals"],
-		});
-	} else if (field === "awardType") {
-		// Sync wtih optionsTmp
-		keys = bySport({
-			baseball: [
-				"champion",
-				"mvp",
-				"finals_mvp",
-				"poy",
-				"rpoy",
-				"roy",
-				"all_off",
-				"all_def",
-				"all_star",
-				"all_star_mvp",
-				"hr_leader",
-				"rbi_leader",
-				"r_leader",
-				"sb_leader",
-				"bb_leader",
-				"w_leader",
-				"soPit_leader",
-				"war_leader",
-			],
-			basketball: [
-				"champion",
-				"mvp",
-				"finals_mvp",
-				"sfmvp",
-				"dpoy",
-				"smoy",
-				"mip",
-				"roy",
-				"first_team",
-				"second_team",
-				"third_team",
-				"all_league",
-				"first_def",
-				"second_def",
-				"third_def",
-				"all_def",
-				"all_star",
-				"all_star_mvp",
-				"dunk",
-				"three",
-				"ppg_leader",
-				"rpg_leader",
-				"apg_leader",
-				"spg_leader",
-				"bpg_leader",
-			],
-			football: [
-				"champion",
-				"mvp",
-				"finals_mvp",
-				"opoy",
-				"poy",
-				"dpoy",
-				"oroy",
-				"droy",
-				"first_team",
-				"second_team",
-				"all_league",
-				"all_star",
-				"all_star_mvp",
-				"pss_leader",
-				"rush_leader",
-				"rcv_leader",
-				"scr_leader",
-			],
-			hockey: [
-				"champion",
-				"mvp",
-				"finals_mvp",
-				"dpoy",
-				"dfoy",
-				"roy",
-				"goy",
-				"first_team",
-				"second_team",
-				"all_league",
-				"all_star",
-				"all_star_mvp",
-				"pts_leader",
-				"g_leader",
-				"ast_leader",
-			],
 		});
 	} else if (field === "eventType") {
 		keys = [

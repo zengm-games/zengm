@@ -13,6 +13,7 @@ import {
 	REAL_PLAYERS_INFO,
 } from "../../common/constants.ts";
 import actions from "./actions.ts";
+import * as awardSettings from "./awardSettings.ts";
 import leagueFileUpload, {
 	decompressStreamIfNecessary,
 	emitProgressStream,
@@ -74,15 +75,10 @@ import {
 	type League,
 	type View,
 	type NonEmptyArray,
-	RealPlayerPhotosSchema,
-	RealTeamInfoSchema,
+	realPlayerPhotosSchema,
+	realTeamInfoSchema,
+	type Awards,
 } from "../../common/types.ts";
-import {
-	addSimpleAndTeamAwardsToAwardsByPlayer,
-	type AwardsByPlayer,
-	deleteAwardsByPlayer,
-	saveAwardsByPlayer,
-} from "../core/season/awards.ts";
 import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula.ts";
@@ -172,6 +168,10 @@ import { initUILocalGames } from "../util/initUILocalGames.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { GenOrderResult } from "../core/draft/genOrder.ts";
 import undoLog from "./undoLog.ts";
+import {
+	getAwardsByPlayer,
+	updatePlayerAwards,
+} from "../core/awards/awardsByPlayer.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -317,22 +317,28 @@ const allStarDraftSetPlayers = async (
 		const pidsToDelete = prevPids.filter((pid) => !newPids.includes(pid));
 
 		// Delete old awards
-		const awardsByPlayerToDelete = pidsToDelete.map((pid) => ({
+		const awardsToDelete = pidsToDelete.map((pid) => ({
 			pid,
-			type: "All-Star",
+			award: { type: "All-Star" },
 		}));
-		await deleteAwardsByPlayer(awardsByPlayerToDelete, g.get("season"));
 
 		// Add new awards
-		const awardsByPlayer = newPlayers
+		const awardsToSave = newPlayers
 			.filter((p) => !prevPids.includes(p.pid))
 			.map((p) => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: p.name,
-				type: "All-Star",
+				award: { type: "All-Star" },
 			}));
-		await saveAwardsByPlayer(awardsByPlayer, conditions);
+		await updatePlayerAwards({
+			awardsToDelete,
+			awardsToSave,
+			logEventInfo: {
+				conditions,
+			},
+			season: g.get("season"),
+		});
 
 		// Save new All-Stars
 		allStars.teams = players.teams;
@@ -1132,6 +1138,10 @@ const deleteScheduledEvents = async (type: string) => {
 					],
 					event,
 				);
+			}
+		} else if (type === "awards") {
+			if (event.type === "gameAttributes") {
+				await deleteFromGameAttributesScheduledEvent(["awards"], event);
 			}
 		}
 	}
@@ -4210,7 +4220,7 @@ const updateOptions = async (
 			throw new Error("Invalid JSON in real player photos");
 		}
 
-		const result = RealPlayerPhotosSchema.safeParse(parsedJson);
+		const result = realPlayerPhotosSchema.safeParse(parsedJson);
 		if (result.success) {
 			realPlayerPhotos = result.data;
 		} else {
@@ -4228,7 +4238,7 @@ const updateOptions = async (
 			throw new Error("Invalid JSON in real team info");
 		}
 
-		const result = RealTeamInfoSchema.safeParse(parsedJson);
+		const result = realTeamInfoSchema.safeParse(parsedJson);
 		if (result.success) {
 			realTeamInfo = result.data;
 		} else {
@@ -4688,30 +4698,46 @@ const updateConfsDivs = async ({
 };
 
 const updateAwards = async (
-	awards: any,
+	newAwards: Pick<Awards, "awards" | "season">,
 	conditions: Conditions,
 ): Promise<any> => {
-	const awardsInitial = await idb.getCopy.awards(
+	const oldAwards = await idb.getCopy.awards(
 		{
-			season: awards.season,
+			season: newAwards.season,
 		},
 		"noCopyCache",
 	);
 
-	if (!awardsInitial) {
-		throw new Error("awardsInitial not found");
+	if (!oldAwards) {
+		throw new Error("oldAwards not found");
 	}
 
-	// Delete old awards
-	const awardsByPlayerToDelete: AwardsByPlayer = [];
-	addSimpleAndTeamAwardsToAwardsByPlayer(awardsInitial, awardsByPlayerToDelete);
-	await deleteAwardsByPlayer(awardsByPlayerToDelete, awards.season);
+	const playersAll = await idb.getCopies.players(
+		{
+			activeSeason: newAwards.season,
+		},
+		"noCopyCache",
+	);
+	const players = await idb.getCopies.playersPlus(playersAll, {
+		attrs: ["name", "pid"],
+	});
 
-	// Add new awards
-	const awardsByPlayer: AwardsByPlayer = [];
-	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);
-	await idb.cache.awards.put(awards);
-	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season, false);
+	const awardsToDelete = getAwardsByPlayer(oldAwards.awards, players);
+	const awardsToSave = getAwardsByPlayer(newAwards.awards, players);
+
+	await idb.cache.awards.put({
+		...oldAwards,
+		...newAwards,
+	});
+
+	await updatePlayerAwards({
+		awardsToDelete,
+		awardsToSave,
+		logEventInfo: {
+			conditions,
+		},
+		season: g.get("season"),
+	});
 };
 
 const upgrade65Estimate = async () => {
@@ -5274,6 +5300,7 @@ const setScheduleFromEditor = async ({
 
 export default {
 	actions,
+	awardSettings,
 	eightyTwoZeroDraft,
 	exhibitionGame,
 	leagueFileUpload,

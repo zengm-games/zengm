@@ -1,5 +1,24 @@
+import { toJSONSchema } from "zod";
 import { bySport } from "../lib/bySport.ts";
 import type { Sport } from "../lib/getSport.ts";
+import {
+	awardSettingsSchema,
+	awardsSchema,
+	playerAwardSchema,
+} from "../../common/types.ts";
+
+const zodJsonSchema = (schema: any) => {
+	const jsonSchema = toJSONSchema(schema, {
+		target: "draft-07",
+
+		// This is to handle z.undefined().optional() which ideally would just not appear in the schema at all as a property of an object, but I think that's not possible
+		unrepresentable: "any",
+	});
+
+	delete jsonSchema.$schema;
+
+	return jsonSchema;
+};
 
 const genRatings = (sport: Sport) => {
 	const properties: any = {
@@ -480,6 +499,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			div: {
 				type: "object",
 				properties: {
+					abbrev: {
+						type: "string",
+					},
 					did: {
 						type: "integer",
 					},
@@ -495,6 +517,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			conf: {
 				type: "object",
 				properties: {
+					abbrev: {
+						type: "string",
+					},
 					cid: {
 						type: "integer",
 					},
@@ -520,8 +545,23 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			awards: {
 				type: "array",
 				items: {
-					type: "object",
-					properties: {},
+					oneOf: [
+						zodJsonSchema(awardsSchema),
+
+						// We don't want old files to be an error, at least not for a while (2026-08 is when the new awards schema came out), so this will catch any old ones. allRookie as an array is maybe the only property that is defined in all sports
+						{
+							type: "object",
+							properties: {
+								allRookie: {
+									type: "array",
+								},
+								season: {
+									type: "integer",
+								},
+							},
+							required: ["allRookie", "season"],
+						},
+					],
 				},
 			},
 			draftPicks: {
@@ -1544,6 +1584,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 0,
 						maximum: 1,
 					},
+					awards: zodJsonSchema(awardSettingsSchema),
 				},
 			},
 			games: {
@@ -1736,18 +1777,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					properties: {
 						awards: {
 							type: "array",
-							items: {
-								type: "object",
-								properties: {
-									season: {
-										type: "integer",
-									},
-									type: {
-										type: "string",
-									},
-								},
-								required: ["season", "type"],
-							},
+							items: zodJsonSchema(playerAwardSchema),
 						},
 						born: {
 							type: "object",

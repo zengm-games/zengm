@@ -5,7 +5,6 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
 import { useLocal } from "../util/local.ts";
 
@@ -25,67 +24,13 @@ const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 	};
 };
 
-const categories = bySport({
-	baseball: [
-		"mvp",
-		"poy",
-		"rpoy",
-		"roy",
-		"bestRecord",
-		"bestRecordConf",
-		"allRookie",
-		"allOffense",
-		"allDefense",
-		"allStar",
-		"allStarMVP",
-	],
-	basketball: [
-		"mvp",
-		"dpoy",
-		"smoy",
-		"mip",
-		"roy",
-		"bestRecord",
-		"bestRecordConf",
-		"allRookie",
-		"allLeague",
-		"allDefense",
-		"allStar",
-		"allStarMVP",
-	],
-	football: [
-		"mvp",
-		"opoy",
-		"poy",
-		"dpoy",
-		"oroy",
-		"droy",
-		"bestRecord",
-		"bestRecordConf",
-		"allRookie",
-		"allLeague",
-		"allStar",
-		"allStarMVP",
-	],
-	hockey: [
-		"mvp",
-		"dpoy",
-		"dfoy",
-		"roy",
-		"goy",
-		"bestRecord",
-		"bestRecordConf",
-		"allRookie",
-		"allLeague",
-		"allStar",
-		"allStarMVP",
-	],
-});
-
 const isHistorical = (t: { root: boolean; disabled?: boolean }) =>
 	!t.root || t.disabled;
 
+const blankIfZero = (x: number) => (x === 0 ? undefined : x);
+
 const TeamRecords = ({
+	awardTypes,
 	byType,
 	filter,
 	teams,
@@ -128,7 +73,19 @@ const TeamRecords = ({
 		"Last",
 		"Titles",
 		"Last",
-		...categories.map((category) => `count:${category}`),
+		"BR",
+		"BRC",
+		"BRD",
+		...awardTypes.map((award) => {
+			return {
+				desc: award.name,
+				title: award.shortName,
+				sortSequence: ["desc", "asc"] as const,
+				sortType: "number" as const,
+			};
+		}),
+		"AS",
+		"ASMVP",
 	]);
 
 	const lasts = cols.filter((col) => col.title === "Last");
@@ -154,13 +111,20 @@ const TeamRecords = ({
 					...(usePts
 						? [t.pts, helpers.roundWinp(t.ptsPct)]
 						: [helpers.roundWinp(t.winp)]),
-					t.playoffs,
+					blankIfZero(t.playoffs),
 					t.lastPlayoffs,
-					t.finals,
+					blankIfZero(t.finals),
 					t.lastFinals,
-					t.titles,
+					blankIfZero(t.titles),
 					t.lastTitle,
-					...categories.map((category) => (t as any)[category]),
+					blankIfZero(t.bestRecord),
+					blankIfZero(t.bestRecordConf),
+					blankIfZero(t.bestRecordDiv),
+					...awardTypes.map((award) => {
+						return t.custom[award.shortName];
+					}),
+					blankIfZero(t.allStar),
+					blankIfZero(t.allStarMVP),
 				],
 				classNames: {
 					"text-body-secondary": !t.root,

@@ -51,8 +51,8 @@ export const routeInfos = {
 	"/l/:lid/trading_block": "tradingBlock",
 	"/l/:lid/trade_proposals": "tradeProposals",
 	"/l/:lid/saved_trades": "savedTrades",
-	"/l/:lid/edit_awards": "editAwards",
-	"/l/:lid/edit_awards/:season": "editAwards",
+	"/l/:lid/edit_award_winners": "editAwardWinners",
+	"/l/:lid/edit_award_winners/:season": "editAwardWinners",
 	"/l/:lid/draft": "draft",
 	"/l/:lid/draft_history": "draftHistory",
 	"/l/:lid/draft_history/:season": "draftHistory",
@@ -220,4 +220,5 @@ export const routeInfos = {
 	"/l/:lid/draft_picks/:abbrev": "draftPicks",
 	"/l/:lid/upgrade65": "upgrade65",
 	"/l/:lid/schedule_editor": "scheduleEditor",
+	"/l/:lid/award_settings": "awardSettings",
 };

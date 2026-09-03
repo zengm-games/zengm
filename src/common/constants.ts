@@ -4,7 +4,13 @@ import * as constantsBaseball from "./constants.baseball.ts";
 import * as constantsBasketball from "./constants.basketball.ts";
 import * as constantsFootball from "./constants.football.ts";
 import * as constantsHockey from "./constants.hockey.ts";
-import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types.ts";
+import type {
+	CompositeWeights,
+	Phase,
+	DraftType,
+	MoodTrait,
+	Award,
+} from "./types.ts";
 
 export const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
@@ -29,7 +35,7 @@ export const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-export const LEAGUE_DATABASE_VERSION = 72;
+export const LEAGUE_DATABASE_VERSION = 73;
 
 export const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
 	"freeAgents",
@@ -200,20 +206,6 @@ export const MOOD_TRAITS: Record<MoodTrait, string> = {
 	$: "Money",
 	W: "Winning",
 };
-
-export const SIMPLE_AWARDS = bySport<Readonly<string[]>>({
-	baseball: constantsBaseball.SIMPLE_AWARDS,
-	basketball: constantsBasketball.SIMPLE_AWARDS,
-	football: constantsFootball.SIMPLE_AWARDS,
-	hockey: constantsHockey.SIMPLE_AWARDS,
-});
-
-export const AWARD_NAMES = bySport<Record<string, string>>({
-	baseball: constantsBaseball.AWARD_NAMES,
-	basketball: constantsBasketball.AWARD_NAMES,
-	football: constantsFootball.AWARD_NAMES,
-	hockey: constantsHockey.AWARD_NAMES,
-});
 
 export const DEFAULT_CONFS = bySport({
 	baseball: constantsBaseball.DEFAULT_CONFS,
@@ -565,9 +557,20 @@ export const SKILLS = bySport<Record<string, string>>({
 	},
 });
 
+// These positions can never be a player's main position
 export const NOT_REAL_POSITIONS = new Set(
 	bySport({
 		baseball: ["DH"],
+		basketball: [],
+		football: ["KR", "PR"],
+		hockey: [],
+	}),
+);
+
+// ...but getPosByGpF can return DH, so that can show up as a player's position some places, including awards
+export const NOT_REAL_POSITIONS_AWARDS = new Set(
+	bySport({
+		baseball: [],
 		basketball: [],
 		football: ["KR", "PR"],
 		hockey: [],
@@ -583,3 +586,73 @@ export const ERROR_MESSAGE_ONE_TAB =
 export const ERROR_MESSAGE_UNDEFINED_SEASON =
 	"Undefined season - an error may have occurred while creating this league";
 export const ERROR_MESSSAGE_LEAGUE_NOT_FOUND = "League not found.";
+
+export const TEAM_AWARD_INFO:
+	| {
+			byPos: false;
+			numPlayersPerTeam: number;
+	  }
+	| {
+			byPos: true;
+			positions: Partial<Record<Award["showStats"], string[]>> &
+				Record<"default", string[]>;
+	  } = bySport({
+	baseball: {
+		byPos: true,
+		positions: {
+			offense: ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DH_OR_P"],
+			defense: ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "P"],
+			default: [
+				"C",
+				"1B",
+				"2B",
+				"3B",
+				"SS",
+				"LF",
+				"CF",
+				"RF",
+				"DH_IF_EXISTS",
+				"P",
+			],
+		},
+	},
+	basketball: {
+		byPos: false,
+		numPlayersPerTeam: 5,
+	},
+	football: {
+		byPos: true,
+		positions: {
+			default: [
+				"QB",
+				"RB",
+				"RB",
+				"WR",
+				"WR",
+				"TE",
+				"OL",
+				"OL",
+				"OL",
+				"OL",
+				"OL",
+				"DL",
+				"DL",
+				"DL",
+				"DL",
+				"LB",
+				"LB",
+				"LB",
+				"S",
+				"S",
+				"CB",
+				"CB",
+				"K",
+				"P",
+			],
+		},
+	},
+	hockey: {
+		byPos: true,
+		positions: { default: ["C", "W", "W", "D", "D", "G"] },
+	},
+});

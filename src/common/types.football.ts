@@ -111,51 +111,6 @@ export type TeamStatAttr =
 	| "oppPntTBPct"
 	| "oppPntIn20Pct";
 
-type AwardTeam = {
-	tid: number;
-	abbrev: string;
-	region: string;
-	name: string;
-	won: number;
-	lost: number;
-	tied: number | undefined;
-	otl: number | undefined;
-};
-
-export type AwardPlayer = {
-	pid: number;
-	name: string;
-	tid: number;
-	pos: string;
-	keyStats: string;
-};
-
-export type Awards = {
-	season: number;
-	bestRecord: AwardTeam;
-
-	// undefined gets turned into null by JSON.stringify
-	bestRecordConfs: (AwardTeam | undefined | null)[];
-	oroy: AwardPlayer | undefined;
-	droy: AwardPlayer | undefined;
-	allRookie: (AwardPlayer | undefined)[];
-	mvp: AwardPlayer | undefined;
-	opoy: AwardPlayer | undefined;
-	poy: AwardPlayer | undefined;
-	dpoy: AwardPlayer | undefined;
-	allLeague: [
-		{
-			title: "First Team";
-			players: (AwardPlayer | undefined)[];
-		},
-		{
-			title: "Second Team";
-			players: (AwardPlayer | undefined)[];
-		},
-	];
-	finalsMvp: AwardPlayer | undefined;
-};
-
 export type PrimaryPosition =
 	| "QB"
 	| "RB"

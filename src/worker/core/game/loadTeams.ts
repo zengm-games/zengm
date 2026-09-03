@@ -13,7 +13,7 @@ import { last } from "../../../common/utils.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
-const SKIP_PLAYER_STATS = new Set(["minAvailable"]);
+export const SKIP_PLAYER_STATS = new Set(["minAvailable"]);
 
 // Is this a game 6/7 (generalized to other playoff series lengths than 7)
 export const isGame6EliminationGameOrGame7 = async (

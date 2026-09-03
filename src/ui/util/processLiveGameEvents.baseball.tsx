@@ -13,6 +13,7 @@ import type { PlayerInjury } from "../../common/types.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.baseball.ts";
 import { formatLiveGameStat } from "./formatLiveGameStat.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
+import { formatList } from "../../common/formatList.ts";
 
 export type BoxScorePlayer = {
 	name: string;
@@ -87,8 +88,6 @@ const getBaseName = (base: 1 | 2 | 3 | 4) => {
 	return helpers.ordinal(base);
 };
 
-let listFormatter: Intl.ListFormat | undefined;
-
 const formatRunners = (
 	getName: (pid: number) => string,
 	runners: Extract<PlayByPlayEventInput, { type: "walk" }>["runners"],
@@ -106,11 +105,6 @@ const formatRunners = (
 		gameWinningRunScoredWithLiveBall?: boolean;
 	} = {},
 ) => {
-	// Safari 16 - and can remove condition below on listFormatter existence
-	if (!listFormatter && Intl.ListFormat) {
-		listFormatter = new Intl.ListFormat("en");
-	}
-
 	const filtered = runners.filter(
 		(runner) => runner.to !== runner.from || !ignoreStationary,
 	);
@@ -145,13 +139,7 @@ const formatRunners = (
 	} else if (scored.length === 1) {
 		texts.unshift(`${scored[0]} scores.`);
 	} else if (scored.length > 1) {
-		let namesCombined;
-		if (listFormatter) {
-			namesCombined = listFormatter.format(scored);
-		} else {
-			namesCombined = `${scored.length} runners`;
-		}
-		texts.unshift(`${namesCombined} score.`);
+		texts.unshift(`${formatList(scored)} score.`);
 	}
 
 	return texts.join(" ");

@@ -29,9 +29,141 @@ export const outsToInnings = (outs: number) => {
 	return completeInnings + fractionalInnings / 10;
 };
 
-const processStats = (
+type StatFunction = (
 	ps: PlayerStats,
-	stats: string[],
+	extra: {
+		ab: number;
+		ba: number;
+		bornYear: number | undefined;
+		derivedByPosStat: (cb: (i: number) => number) => number[];
+		era: number;
+		ip: number;
+		obp: number;
+		slg: number;
+		tb: number;
+	},
+) => number | string | number[] | undefined;
+
+const getKeyStatsFactory =
+	(stat: "keyStats" | "keyStatsShort"): StatFunction =>
+	(ps, { ab, ba, era, ip, obp, slg }) => {
+		let role: string | undefined;
+		if (ps.pa > 0 && ps.pa >= ps.pc) {
+			role = "batter";
+		} else if (ps.pc > 0) {
+			role = "pitcher";
+		}
+
+		if (role === "batter") {
+			let value;
+			if (stat === "keyStatsShort") {
+				value = `${helpers.roundWinp(ba)} BA, `;
+			} else {
+				value = "";
+			}
+			value += `${ps.hr} HR`;
+			if (stat === "keyStats") {
+				value += `, ${ab} AB, ${helpers.roundWinp(
+					ba,
+				)} / ${helpers.roundWinp(obp)} / ${helpers.roundWinp(slg)}`;
+			}
+
+			return value;
+		}
+
+		if (role === "pitcher") {
+			const recordOrSaves =
+				ps.w >= ps.sv
+					? helpers.formatRecord({
+							won: ps.w,
+							lost: ps.l,
+						})
+					: `${ps.sv} SV`;
+			let value = `${recordOrSaves}, ${era.toFixed(2)} ERA`;
+			if (stat === "keyStats") {
+				value += `, ${ip.toFixed(1)} IP`;
+			}
+
+			return value;
+		}
+
+		return "";
+	};
+
+export const statFunctions = {
+	age: (ps, { bornYear }) => {
+		if (bornYear === undefined) {
+			throw new Error(
+				"You must supply bornYear to processStats if you want age",
+			);
+		}
+
+		return ps.season - bornYear;
+	},
+	keyStats: getKeyStatsFactory("keyStats"),
+	keyStatsShort: getKeyStatsFactory("keyStatsShort"),
+	ab: (ps, { ab }) => ab,
+	ba: (ps, { ba }) => ba,
+	obp: (ps, { obp }) => obp,
+	slg: (ps, { slg }) => slg,
+	ops: (ps, { obp, slg }) => obp + slg,
+	tb: (ps, { tb }) => tb,
+	ip: (ps, { ip }) => ip,
+	winp: (ps) => helpers.ratio(ps.w, ps.w + ps.l),
+	era: (ps, { era }) => era,
+	fip: (ps) =>
+		helpers.ratio(
+			13 * ps.hrPit + 3 * (ps.hbpPit + ps.bbPit) - 2 * ps.soPit,
+			ps.outs / 3,
+			true,
+		) + 3.2,
+	whip: (ps) => helpers.ratio(ps.bbPit + ps.hPit, ps.outs / 3, true),
+	h9: (ps) => helpers.ratio(ps.hPit, ps.outs / NUM_OUTS_PER_GAME, true),
+	hr9: (ps) => helpers.ratio(ps.hrPit, ps.outs / NUM_OUTS_PER_GAME, true),
+	bb9: (ps) => helpers.ratio(ps.bbPit, ps.outs / NUM_OUTS_PER_GAME, true),
+	so9: (ps) => helpers.ratio(ps.soPit, ps.outs / NUM_OUTS_PER_GAME, true),
+	pc9: (ps) => helpers.ratio(ps.pc, ps.outs / NUM_OUTS_PER_GAME, true),
+	sow: (ps) => helpers.ratio(ps.soPit, ps.bbPit, true),
+	rfldTot: (ps) => sumByPos(ps.rfld),
+	ch: (ps, { derivedByPosStat }) => {
+		return derivedByPosStat(
+			(i) => (ps.po[i] ?? 0) + (ps.a[i] ?? 0) + (ps.e[i] ?? 0),
+		);
+	},
+	fldp: (ps, { derivedByPosStat }) => {
+		return derivedByPosStat((i) =>
+			helpers.ratio(
+				(ps.po[i] ?? 0) + (ps.a[i] ?? 0),
+				(ps.po[i] ?? 0) + (ps.a[i] ?? 0) + (ps.e[i] ?? 0),
+			),
+		);
+	},
+	rf9: (ps, { derivedByPosStat }) => {
+		return derivedByPosStat((i) =>
+			helpers.ratio(
+				(ps.po[i] ?? 0) + (ps.a[i] ?? 0),
+				(ps.outsF[i] ?? 0) / NUM_OUTS_PER_GAME,
+				true,
+			),
+		);
+	},
+	rfg: (ps, { derivedByPosStat }) => {
+		return derivedByPosStat((i) =>
+			helpers.ratio((ps.po[i] ?? 0) + (ps.a[i] ?? 0), ps.gpF[i]),
+		);
+	},
+	csp: (ps) => helpers.percentage(ps.csF, ps.csF + ps.sbF),
+	inn: (ps, { derivedByPosStat }) =>
+		derivedByPosStat((i) => outsToInnings(ps.outsF[i])),
+	babip: (ps, { ab }) =>
+		helpers.ratio(ps.h - ps.hr, ab - ps.so - ps.hr + ps.sf),
+	iso: (ps, { ab, tb }) => helpers.ratio(tb - ps.h, ab),
+	gmsc: (ps) => helpers.gameScoreBaseball(ps),
+} satisfies Record<string, StatFunction>;
+
+export const processStats = (
+	ps: PlayerStats,
+	stats: Iterable<string>,
 	statType?: PlayerStatType,
 	bornYear?: number,
 ) => {
@@ -49,7 +181,7 @@ const processStats = (
 	let posIndexesChecked = false;
 	const posIndexes: number[] = [];
 	const initPosIndexes = () => {
-		if (!posIndexesChecked) {
+		if (!posIndexesChecked && row.gpF !== undefined) {
 			for (let i = 0; i < row.gpF.length; i++) {
 				if (row.gpF[i] !== undefined) {
 					posIndexes.push(i);
@@ -70,126 +202,12 @@ const processStats = (
 		return output;
 	};
 
+	const statFunctions2 = statFunctions as Record<string, StatFunction>;
+	const extra = { ab, ba, bornYear, derivedByPosStat, era, ip, obp, slg, tb };
+
 	for (const stat of stats) {
-		if (stat === "age") {
-			if (bornYear === undefined) {
-				throw new Error(
-					"You must supply bornYear to processStats if you want age",
-				);
-			}
-
-			row.age = ps.season - bornYear;
-		} else if (stat === "keyStats" || stat === "keyStatsShort") {
-			let role: string | undefined;
-			if (ps.pa > 0 && ps.pa >= ps.pc) {
-				role = "batter";
-			} else if (ps.pc > 0) {
-				role = "pitcher";
-			}
-
-			if (role === "batter") {
-				if (stat === "keyStatsShort") {
-					row[stat] = `${helpers.roundWinp(ba)} BA, `;
-				} else {
-					row[stat] = "";
-				}
-				row[stat] += `${ps.hr} HR`;
-				if (stat === "keyStats") {
-					row[stat] += `, ${ab} AB, ${helpers.roundWinp(
-						ba,
-					)} / ${helpers.roundWinp(obp)} / ${helpers.roundWinp(
-						slg,
-					)} / ${helpers.roundWinp(obp + slg)}`;
-				}
-			} else if (role === "pitcher") {
-				const recordOrSaves =
-					ps.w >= ps.sv
-						? helpers.formatRecord({
-								won: ps.w,
-								lost: ps.l,
-							})
-						: `${ps.sv} SV`;
-				row[stat] = `${recordOrSaves}, ${era.toFixed(2)} ERA`;
-				if (stat === "keyStats") {
-					row[stat] += `, ${ip.toFixed(1)} IP`;
-				}
-			} else {
-				row[stat] = "";
-			}
-		} else if (stat === "ab") {
-			row[stat] = ab;
-		} else if (stat === "ba") {
-			row[stat] = ba;
-		} else if (stat === "obp") {
-			row[stat] = obp;
-		} else if (stat === "slg") {
-			row[stat] = slg;
-		} else if (stat === "ops") {
-			row[stat] = obp + slg;
-		} else if (stat === "tb") {
-			row[stat] = tb;
-		} else if (stat === "ip") {
-			row[stat] = ip;
-		} else if (stat === "winp") {
-			row[stat] = helpers.ratio(ps.w, ps.w + ps.l);
-		} else if (stat === "era") {
-			row[stat] = era;
-		} else if (stat === "fip") {
-			row[stat] =
-				helpers.ratio(
-					13 * ps.hrPit + 3 * (ps.hbpPit + ps.bbPit) - 2 * ps.soPit,
-					ps.outs / 3,
-					true,
-				) + 3.2;
-		} else if (stat === "whip") {
-			row[stat] = helpers.ratio(ps.bbPit + ps.hPit, ps.outs / 3, true);
-		} else if (stat === "h9") {
-			row[stat] = helpers.ratio(ps.hPit, ps.outs / NUM_OUTS_PER_GAME, true);
-		} else if (stat === "hr9") {
-			row[stat] = helpers.ratio(ps.hrPit, ps.outs / NUM_OUTS_PER_GAME, true);
-		} else if (stat === "bb9") {
-			row[stat] = helpers.ratio(ps.bbPit, ps.outs / NUM_OUTS_PER_GAME, true);
-		} else if (stat === "so9") {
-			row[stat] = helpers.ratio(ps.soPit, ps.outs / NUM_OUTS_PER_GAME, true);
-		} else if (stat === "pc9") {
-			row[stat] = helpers.ratio(ps.pc, ps.outs / NUM_OUTS_PER_GAME, true);
-		} else if (stat === "sow") {
-			row[stat] = helpers.ratio(ps.soPit, ps.bbPit, true);
-		} else if (stat === "rfldTot") {
-			row[stat] = sumByPos(ps.rfld);
-		} else if (stat === "ch") {
-			row[stat] = derivedByPosStat(
-				(i) => (ps.po[i] ?? 0) + (ps.a[i] ?? 0) + (ps.e[i] ?? 0),
-			);
-		} else if (stat === "fldp") {
-			row[stat] = derivedByPosStat((i) =>
-				helpers.ratio(
-					(ps.po[i] ?? 0) + (ps.a[i] ?? 0),
-					(ps.po[i] ?? 0) + (ps.a[i] ?? 0) + (ps.e[i] ?? 0),
-				),
-			);
-		} else if (stat === "rf9") {
-			row[stat] = derivedByPosStat((i) =>
-				helpers.ratio(
-					(ps.po[i] ?? 0) + (ps.a[i] ?? 0),
-					(ps.outsF[i] ?? 0) / NUM_OUTS_PER_GAME,
-					true,
-				),
-			);
-		} else if (stat === "rfg") {
-			row[stat] = derivedByPosStat((i) =>
-				helpers.ratio((ps.po[i] ?? 0) + (ps.a[i] ?? 0), ps.gpF[i]),
-			);
-		} else if (stat === "csp") {
-			row[stat] = helpers.percentage(ps.csF, ps.csF + ps.sbF);
-		} else if (stat === "inn") {
-			row[stat] = derivedByPosStat((i) => outsToInnings(ps.outsF[i]));
-		} else if (stat === "babip") {
-			row[stat] = helpers.ratio(ps.h - ps.hr, ab - ps.so - ps.hr + ps.sf);
-		} else if (stat === "iso") {
-			row[stat] = helpers.ratio(tb - ps.h, ab);
-		} else if (stat === "gmsc") {
-			row[stat] = helpers.gameScoreBaseball(ps);
+		if (statFunctions2[stat]) {
+			row[stat] = statFunctions2[stat](ps, extra);
 		} else {
 			row[stat] = ps[stat];
 		}
@@ -213,5 +231,3 @@ const processStats = (
 
 	return row;
 };
-
-export default processStats;

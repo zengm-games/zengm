@@ -10,8 +10,308 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { StatWithChange } from "../components/StatWithChange.tsx";
 import { useLocal } from "../util/local.ts";
+import { getCol } from "../../common/getCol.ts";
+import { Fragment, type ReactNode } from "react";
+import { isSport } from "../../common/sportFunctions.ts";
+import { formatPlayerAwardName } from "../../common/awards.ts";
+import clsx from "clsx";
+import type { getAwardCandidates } from "../../worker/core/awards/getAwardCandidates.ts";
 
-const AwardRaces = ({ awardCandidates, season, teams }: View<"awardRaces">) => {
+const MARGIN = 14;
+
+export type InputAward = Awaited<
+	ReturnType<typeof getAwardCandidates>
+>["awardCandidates"][number][number];
+
+const Title = ({
+	asterisk,
+	award,
+	confs,
+	divs,
+}: {
+	asterisk: boolean;
+	award: InputAward;
+} & Pick<View<"awardRaces">, "confs" | "divs">) => {
+	const group = award.group;
+	return (
+		<div>
+			<h2>
+				{formatPlayerAwardName({
+					name: award.name,
+					numTeams: award.numTeams,
+					rank: award.rank ?? 1,
+				})}
+				{asterisk ? "*" : null}
+			</h2>
+			{group && group.type !== "playoffSeries" ? (
+				<h3>
+					{group.type === "conf"
+						? confs[group.cid]?.name
+						: divs[group.did]?.name}
+				</h3>
+			) : null}
+		</div>
+	);
+};
+
+const getRows = ({
+	award,
+	challengeNoRatings,
+	currentSeason,
+	season,
+	teams,
+	userTid,
+}: {
+	award: InputAward;
+	challengeNoRatings: boolean;
+	currentSeason: number;
+	userTid: number;
+} & Pick<View<"awardRaces">, "season" | "teams">) => {
+	const { mip, rookie, players, stats } = award;
+
+	const rows: DataTableRow[] = players.map((p, j) => {
+		const ps = p.currentStats;
+		const pr = p.ratings.findLast((row) => row.season === season);
+
+		const abbrev = ps?.abbrev;
+		const tid = ps?.tid;
+		const t = teams[tid];
+
+		let recordOrPick = null;
+		if (rookie) {
+			if (p.draft.round > 0) {
+				recordOrPick = `${p.draft.round}-${p.draft.pick}`;
+				if (p.draft.year !== season - 1) {
+					recordOrPick += ` (${p.draft.year})`;
+				}
+			}
+		} else {
+			if (t) {
+				recordOrPick = helpers.formatRecord(t.seasonAttrs);
+			}
+		}
+
+		const data: DataTableRow["data"] = [
+			j + 1,
+			wrappedPlayerNameLabels({
+				injury: season === currentSeason ? p.injury : undefined,
+				jerseyNumber: ps ? ps.jerseyNumber : undefined,
+				pid: p.pid,
+				season,
+				skills: pr ? pr.skills : [],
+				defaultWatch: p.watch,
+				firstName: p.firstName,
+				firstNameShort: p.firstNameShort,
+				lastName: p.lastName,
+			}),
+			p.pos,
+			p.age,
+			<>
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}>
+					{abbrev}
+				</a>
+			</>,
+			recordOrPick,
+		];
+
+		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
+		if (mip) {
+			data.push(
+				pr && showRatings ? (
+					<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
+				) : null,
+			);
+
+			const ps2 = p.stats.findLast((row) => {
+				if (row.season !== season - 1) {
+					return false;
+				}
+
+				if (award.statRange === undefined && ps.playoffs !== false) {
+					return false;
+				}
+				if (award.statRange === "playoffs" && ps.playoffs !== true) {
+					return false;
+				}
+				if (award.statRange === "combined" && ps.playoffs !== "combined") {
+					return false;
+				}
+
+				return true;
+			});
+
+			const comparePlayersRange =
+				award.statRange === "playoffs"
+					? "p"
+					: award.statRange === "combined"
+						? "c"
+						: "r";
+
+			data.push(
+				...stats.map((stat) => {
+					if (!ps && !ps2) {
+						return null;
+					}
+
+					if (!ps2 || stat === "score" || stat === "keyStats") {
+						return helpers.roundStat(ps[stat], stat);
+					}
+
+					return (
+						<StatWithChange change={ps[stat] - ps2[stat]} stat={stat}>
+							{ps[stat]}
+						</StatWithChange>
+					);
+				}),
+				<a
+					href={helpers.leagueUrl([
+						"compare_players",
+						`${p.pid}-${season - 1}-${comparePlayersRange},${p.pid}-${season}-${comparePlayersRange}`,
+					])}
+				>
+					Compare
+				</a>,
+			);
+		} else {
+			data.push(pr && showRatings ? pr.ovr : null);
+			const statsRow = stats.map((stat) => {
+				if (p.opoyOverride && stat === "score") {
+					// Hide score from UI if opoyOverride because this player was put at #1 due to a different formula (opoyFormula)
+					return {
+						value: null,
+						sortValue: Infinity,
+					};
+				}
+
+				return ps
+					? helpers.roundStat(
+							p.statOverrides ? p.statOverrides[stat] : ps[stat],
+							stat,
+						)
+					: null;
+			});
+			data.push(...statsRow);
+		}
+
+		return {
+			key: p.pid,
+			metadata: {
+				type: "player",
+				pid: p.pid,
+				season,
+				playoffs: "regularSeason",
+			},
+			data,
+			classNames: {
+				"table-danger": p.hof,
+				"table-info": tid === userTid,
+			},
+		};
+	});
+
+	return rows;
+};
+
+type RowsInfo = Pick<
+	Parameters<typeof getRows>[0],
+	"award" | "season" | "teams"
+>;
+
+export const getAwardKey = (
+	award: Pick<RowsInfo["award"], "group" | "numTeams" | "shortName" | "rank">,
+) => {
+	return JSON.stringify([
+		award.shortName,
+		award.group,
+		award.numTeams ? award.rank : undefined,
+	]);
+};
+
+export const AwardRaceTable = ({
+	confs,
+	divs,
+	rowsInfo: { award, season, teams },
+	titleOverride,
+}: {
+	rowsInfo: RowsInfo;
+	titleOverride?: ReactNode;
+} & Pick<View<"awardRaces">, "confs" | "divs">) => {
+	const { mip, rookie, stats } = award;
+
+	const asterisk =
+		isSport("football") &&
+		award.numTeams === undefined &&
+		award.opoyFormula !== undefined;
+
+	const cols = getCols([
+		"#",
+		"Name",
+		"Pos",
+		"Age",
+		"Team",
+		rookie ? "Pick" : "Record",
+		"Ovr",
+		...stats.map((stat) => `stat:${stat}`),
+	]);
+	if (mip) {
+		cols.push(getCol("Compare"));
+	}
+
+	const title = titleOverride ?? (
+		<Title asterisk={asterisk} award={award} confs={confs} divs={divs} />
+	);
+
+	const {
+		challengeNoRatings,
+		season: currentSeason,
+		userTid,
+	} = useLocal(["challengeNoRatings", "season", "userTid"]);
+
+	const rows = getRows({
+		award,
+		challengeNoRatings,
+		currentSeason,
+		season,
+		teams,
+		userTid,
+	});
+
+	return (
+		<>
+			{rows.length > 0 ? (
+				<DataTable
+					classNameWrapper="mb-1"
+					cols={cols}
+					defaultSort={[0, "asc"]}
+					defaultStickyCols={window.mobile ? 0 : 2}
+					hideAllControls
+					name={`AwardRaces${getAwardKey(award)}`}
+					rows={rows}
+					title={title}
+				/>
+			) : (
+				<>
+					{title}
+					<p className="mt-2">No candidates yet...</p>
+				</>
+			)}
+			{asterisk ? (
+				<div className="text-body-secondary">
+					* Exceptional QBs can win both MVP and {award.shortName}
+				</div>
+			) : null}
+		</>
+	);
+};
+
+const AwardRaces = ({
+	awardCandidates,
+	confs,
+	divs,
+	season,
+	teams,
+}: View<"awardRaces">) => {
 	useTitleBar({
 		title: "Award Races",
 		jumpTo: true,
@@ -22,184 +322,29 @@ const AwardRaces = ({ awardCandidates, season, teams }: View<"awardRaces">) => {
 		},
 	});
 
-	const { challengeNoRatings, userTid } = useLocal([
-		"challengeNoRatings",
-		"userTid",
-	]);
-
-	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
-
 	return (
 		<>
 			<MoreLinks type="awards" page="award_races" season={season} />
 
-			<div className="row" style={{ marginTop: -14 }}>
-				{awardCandidates.map(({ asterisk, name, players, stats }) => {
-					const mip = name === "Most Improved Player";
-					const roy = name === "Rookie of the Year";
-
-					const cols = [
-						...globalCols,
-						...getCols([roy ? "Pick" : "Record", "Ovr"]),
-						...getCols(stats.map((stat) => `stat:${stat}`)),
-					];
-
-					if (mip) {
-						cols.push(...getCols(["Compare"]));
-					}
-
-					const rows: DataTableRow[] = players.map((p, j) => {
-						const ps = p.currentStats;
-						const pr = (p.ratings as any[]).findLast(
-							(row) => row.season === season,
-						);
-
-						const pos = pr ? pr.pos : "?";
-						const abbrev = ps ? ps.abbrev : undefined;
-						const tid = ps ? ps.tid : undefined;
-
-						const t = teams.find((t) => t.tid === tid);
-
-						let recordOrPick = null;
-						if (roy) {
-							if (p.draft.round > 0) {
-								recordOrPick = `${p.draft.round}-${p.draft.pick}`;
-							}
-						} else {
-							if (t) {
-								recordOrPick = helpers.formatRecord(t.seasonAttrs);
-							}
-						}
-
-						const data = [
-							j + 1,
-							wrappedPlayerNameLabels({
-								injury: p.injury,
-								jerseyNumber: ps ? ps.jerseyNumber : undefined,
-								pid: p.pid,
-								season,
-								skills: pr ? pr.skills : [],
-								defaultWatch: p.watch,
-								firstName: p.firstName,
-								firstNameShort: p.firstNameShort,
-								lastName: p.lastName,
-							}),
-							pos,
-							p.age,
-							<>
-								<a
-									href={helpers.leagueUrl([
-										"roster",
-										`${abbrev}_${tid}`,
-										season,
-									])}
-								>
-									{abbrev}
-								</a>
-							</>,
-							recordOrPick,
-						];
-
-						const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
-						if (mip) {
-							data.push(
-								pr && showRatings ? (
-									<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
-								) : undefined,
-							);
-
-							let ps2: any;
-							for (let i = p.stats.length - 1; i >= 0; i--) {
-								if (p.stats[i].season === season - 1 && !p.stats[i].playoffs) {
-									ps2 = p.stats[i];
-									break;
-								}
-							}
-							data.push(
-								...stats.map((stat) => {
-									if (!ps && !ps2) {
-										return undefined;
-									}
-
-									if (!ps2) {
-										return helpers.roundStat(ps[stat], stat);
-									}
-
-									return (
-										<StatWithChange change={ps[stat] - ps2[stat]} stat={stat}>
-											{ps[stat]}
-										</StatWithChange>
-									);
-								}),
-								<a
-									href={helpers.leagueUrl([
-										"compare_players",
-										`${p.pid}-${season - 1}-r,${p.pid}-${season}-r`,
-									])}
-								>
-									Compare
-								</a>,
-							);
-						} else {
-							data.push(pr && showRatings ? pr.ovr : undefined);
-							const statsRow = stats.map((stat) =>
-								ps ? helpers.roundStat(ps[stat], stat) : undefined,
-							);
-							data.push(...statsRow);
-						}
-
-						return {
-							key: p.pid,
-							metadata: {
-								type: "player",
-								pid: p.pid,
-								season,
-								playoffs: "regularSeason",
-							},
-							data,
-							classNames: {
-								"table-danger": p.hof,
-								"table-info": tid === userTid,
-							},
-						};
-					});
+			<div className="row" style={{ marginTop: -MARGIN }}>
+				{awardCandidates.map((award) => {
+					const key = getAwardKey(award);
 
 					return (
-						<div
-							key={name}
-							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
-							style={{ marginTop: 14 }}
-						>
-							{rows.length > 0 ? (
-								<DataTable
-									classNameWrapper="mb-1"
-									cols={cols}
-									defaultSort={[0, "asc"]}
-									defaultStickyCols={window.mobile ? 0 : 2}
-									hideAllControls
-									name={`AwardRaces${name}`}
-									rows={rows}
-									title={
-										<h2>
-											{name}
-											{asterisk ? "*" : null}
-										</h2>
-									}
+						<Fragment key={key}>
+							<div
+								className={clsx(
+									award.mip ? "col-12 col-lg-9" : "col-12 col-lg-6",
+								)}
+								style={{ marginTop: MARGIN }}
+							>
+								<AwardRaceTable
+									confs={confs}
+									divs={divs}
+									rowsInfo={{ award, season, teams }}
 								/>
-							) : (
-								<>
-									<h2>
-										{name}
-										{asterisk ? "*" : null}
-									</h2>
-									<p>No candidates yet...</p>
-								</>
-							)}
-							{asterisk ? (
-								<div className="text-body-secondary">* {asterisk}</div>
-							) : null}
-						</div>
+							</div>
+						</Fragment>
 					);
 				})}
 			</div>

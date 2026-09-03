@@ -43,6 +43,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
 	SavedTradingBlock,
+	Awards,
 } from "../../common/types.ts";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
@@ -53,6 +54,7 @@ import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToO
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { migrate73 } from "./migrations/73/migrate.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -61,7 +63,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	awards: {
 		key: number;
-		value: any;
+		value: Awards;
 	};
 	draftLotteryResults: {
 		key: number;
@@ -191,7 +193,7 @@ export interface LeagueDB extends DBSchema {
 
 export type LeagueDBStoreNames = StoreNames<LeagueDB>;
 
-type VersionChangeTransaction = IDBPTransaction<
+export type VersionChangeTransaction = IDBPTransaction<
 	LeagueDB,
 	LeagueDBStoreNames[],
 	"versionchange"
@@ -757,7 +759,7 @@ const migrate = async ({
 		if (oldVersion < 20) {
 			// New best records format in awards
 			for await (const cursor of transaction.objectStore("awards")) {
-				const a = cursor.value;
+				const a = cursor.value as any;
 				if (a.bre && a.brw) {
 					a.bestRecordConfs = [a.bre, a.brw];
 					a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
@@ -1733,6 +1735,11 @@ const migrate = async ({
 				await cursor.update(t);
 			}
 		}
+	}
+
+	if (oldVersion < 73) {
+		slowUpgrade();
+		await migrate73(transaction);
 	}
 
 	// Next update - do similar to `oldVersion < 71` above for numPlayoffRounds and draftType, from loadGameAttributes

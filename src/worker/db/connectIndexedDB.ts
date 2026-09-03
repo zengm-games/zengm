@@ -5,14 +5,14 @@ import type {
 	StoreNames,
 } from "@dumbmatter/idb";
 import { WEBSITE_ROOT } from "../../common/constants.ts";
-import { logEvent } from "../util/index.ts";
+import { logEvent, toUI } from "../util/index.ts";
 
 // If duplicate message is sent multiple times in a row (like IndexedDB transaction abort with many open requests), only show one
 const debounceMessagesStore = new Map<string, number>();
 const stopBecauseDebounce = (text: string) => {
 	const timeoutID = debounceMessagesStore.get(text);
 	if (timeoutID === undefined) {
-		const newTimeoutID = self.setTimeout(() => {
+		const newTimeoutID = setTimeout(() => {
 			debounceMessagesStore.delete(text);
 		}, 1000);
 		debounceMessagesStore.set(text, newTimeoutID);
@@ -45,10 +45,16 @@ const connectIndexedDB = async <DBTypes>({
 }) => {
 	const db = await openDB<DBTypes>(name, version, {
 		async upgrade(db, oldVersion, newVerison, transaction) {
-			if (oldVersion === 0) {
-				create(db);
-			} else {
-				await migrate({ db, lid, oldVersion, transaction });
+			try {
+				if (oldVersion === 0) {
+					create(db);
+				} else {
+					await migrate({ db, lid, oldVersion, transaction });
+				}
+			} catch (error) {
+				void toUI("bugsnagNotify", [error]);
+				console.log(error);
+				transaction.abort();
 			}
 		},
 		blocked() {

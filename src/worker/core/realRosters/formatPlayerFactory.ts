@@ -5,6 +5,7 @@ import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import type {
 	GetLeagueOptions,
 	NonEmptyArray,
+	PlayerAward,
 	PlayerContract,
 	PlayerInjury,
 } from "../../../common/types.ts";
@@ -16,6 +17,10 @@ import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatin
 import { getEWA } from "../../util/advStats.basketball.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { helpers } from "../../util/index.ts";
+import {
+	formatPlayerAward,
+	getDefaultAwardsByShortName,
+} from "./formatPlayerAward.ts";
 
 const MINUTES_PER_GAME = 48;
 
@@ -214,7 +219,7 @@ const formatPlayerFactory = async (
 		}
 
 		let contract: PlayerContract | undefined;
-		let awards;
+		let awards: PlayerAward[] | undefined;
 		let salaries;
 		if (options.type === "legends") {
 			contract = {
@@ -300,20 +305,32 @@ const formatPlayerFactory = async (
 				options.type === "real" && options.phase > PHASE.PLAYOFFS
 					? season + 1
 					: season;
+
+			const defaultAwardsByShortName = getDefaultAwardsByShortName();
+
 			awards =
 				allAwards && !draftProspect
-					? helpers.deepCopy(
-							allAwards.filter(
-								(award) =>
-									award.season < awardsCutoffSeason ||
-									(options.type === "real" &&
-										options.phase === PHASE.PLAYOFFS &&
-										award.season < awardsCutoffSeason + 1 &&
-										(award.type.includes("All-Star") ||
-											award.type === "Slam Dunk Contest Winner" ||
-											award.type === "Three-Point Contest Winner")),
-							),
-						)
+					? helpers
+							.deepCopy(
+								allAwards.filter(
+									(award) =>
+										award.season < awardsCutoffSeason ||
+										(options.type === "real" &&
+											options.phase === PHASE.PLAYOFFS &&
+											award.season < awardsCutoffSeason + 1 &&
+											((award.type !== undefined &&
+												award.type.includes("All-Star")) ||
+												award.type === "Slam Dunk Contest Winner" ||
+												award.type === "Three-Point Contest Winner")),
+								),
+							)
+							.map((award) => {
+								if (award.type !== undefined) {
+									return award;
+								}
+
+								return formatPlayerAward(award, defaultAwardsByShortName);
+							})
 					: undefined;
 		}
 

@@ -1328,8 +1328,9 @@ button.fast-forward {
 .settings-buttons {
 	position: sticky;
 
-	// To make it go over the Bootstrap custom form controls, like switch
-	z-index: 2;
+	// Needs to be 2 to make it go over the Bootstrap custom form controls, like switch
+	// Needs to be 10 to go over a sticky column in a table
+	z-index: 10;
 }
 @include media-breakpoint-down(lg) {
 	.settings-buttons {
@@ -1499,10 +1500,6 @@ hr.my-hr {
 	.dark-select__group-heading {
 		font-size: 90%;
 	}
-
-	.dark-select__menu {
-		z-index: 3; // Above .settings-buttons
-	}
 }
 
 // Make same height as other form controls
@@ -1536,6 +1533,7 @@ hr.my-hr {
 .dark-select__menu {
 	margin-top: 0 !important;
 	margin-bottom: 0 !important;
+	z-index: 11 !important; // Above .settings-buttons
 }
 
 $sticky-cols: (

@@ -3051,6 +3051,10 @@ const cols: {
 		sortType: "number",
 		title: "Age",
 	},
+	Awards: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Away: {
 		desc: "Away Team",
 	},
@@ -3628,179 +3632,41 @@ const cols: {
 		sortType: "number",
 		title: "YWT",
 	},
-	"count:allDefense": {
-		desc: "All-Defensive Team",
+	"stat:score": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "ADT",
+		title: "Score",
 	},
-	"count:allLeague": {
-		desc: "All-League Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ALT",
-	},
-	"count:allRookie": {
-		desc: "All-Rookie Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ART",
-	},
-	"count:allStar": {
+	AS: {
 		desc: "All-Star",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "AS",
 	},
-	"count:allOffense": {
-		desc: "All-Offensive Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "AOT",
-	},
-	"count:allStarMVP": {
+	ASMVP: {
 		desc: "All-Star MVP",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "ASMVP",
 	},
-	"count:bestRecord": {
+	BR: {
 		desc: "Best Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "BR",
 	},
-	"count:bestRecordConf": {
+	BRC: {
 		desc: "Best Conference Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "BRC",
 	},
-	"count:opoy": {
-		desc: "Offensive Player of the Year",
+	BRD: {
+		desc: "Best Division Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "OPOY",
 	},
-	"count:dpoy": {
-		desc: "Defensive Player of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DPOY",
-	},
-	"count:dfoy": {
-		desc: "Defensive Forward of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DFOY",
-	},
-	"count:goy": {
-		desc: "Goalie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "GOY",
-	},
-	"count:mip": {
-		desc: "Most Improved Player",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "MIP",
-	},
-	"count:mvp": {
+	MVP: {
 		desc: "Most Valuable Player",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "MVP",
-	},
-	"count:roy": {
-		desc: "Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ROY",
-	},
-	"count:smoy": {
-		desc: "Sixth Man of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "SMOY",
-	},
-	"count:oroy": {
-		desc: "Offensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "OROY",
-	},
-	"count:droy": {
-		desc: "Defensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DROY",
-	},
-	"count:poy": {
-		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "POY",
-	},
-	"count:rpoy": {
-		desc: "Relief Pitcher of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "RPOY",
-	},
-	"award:opoy": {
-		desc: "Offensive Player of the Year",
-		title: "OPOY",
-	},
-	"award:dpoy": {
-		desc: "Defensive Player of the Year",
-		title: "DPOY",
-	},
-	"award:dfoy": {
-		desc: "Defensive Forward of the Year",
-		title: "DFOY",
-	},
-	"award:goy": {
-		desc: "Goalie of the Year",
-		title: "GOY",
-	},
-	"award:finalsMvp": {
-		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
-		title: `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,
-	},
-	"award:mip": {
-		desc: "Most Improved Player",
-		title: "MIP",
-	},
-	"award:mvp": {
-		desc: "Most Valuable Player",
-		title: "MVP",
-	},
-	"award:roy": {
-		desc: "Rookie of the Year",
-		title: "ROY",
-	},
-	"award:smoy": {
-		desc: "Sixth Man of the Year",
-		title: "SMOY",
-	},
-	"award:poy": {
-		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
-		title: "POY",
-	},
-	"award:rpoy": {
-		desc: "Relief Pitcher of the Year",
-		title: "RPOY",
-	},
-	"award:oroy": {
-		desc: "Offensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		title: "OROY",
-	},
-	"award:droy": {
-		desc: "Defensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		title: "DROY",
 	},
 	Chances: {
 		desc: "Lottery Chances",
@@ -3810,10 +3676,14 @@ const cols: {
 };
 
 export const getCols = (
-	titles: string[],
+	titles: (string | Col)[],
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
 	return titles.map((title) => {
+		if (typeof title !== "string") {
+			return title;
+		}
+
 		if (!Object.hasOwn(cols, title)) {
 			throw new Error(`Unknown column: "${title}"`);
 		}

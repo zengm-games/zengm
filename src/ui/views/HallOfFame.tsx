@@ -33,7 +33,7 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 		"Retired",
 		"Pick",
 		"Peak Ovr",
-		"count:mvp",
+		"MVP",
 		"Titles",
 		"Year",
 		"Team",

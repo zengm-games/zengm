@@ -171,13 +171,11 @@ const checkMoneyball = async (maxPayroll: number) => {
 		"noCopyCache",
 	);
 	return !!(
-		(
-			t &&
-			t.seasonAttrs.playoffRoundsWon ===
-				g.get("numGamesPlayoffSeries", "current").length &&
-			t.seasonAttrs.expenses.salary <= maxPayroll &&
-			t.seasonAttrs.expenses.salary > 0
-		) // To handle leagues started at the beginning of the playoffs
+		t &&
+		t.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length &&
+		t.seasonAttrs.expenses.salary <= maxPayroll &&
+		t.seasonAttrs.expenses.salary > 0 // To handle leagues started at the beginning of the playoffs
 	);
 };
 
@@ -1051,10 +1049,11 @@ const achievements: Achievement[] = [
 					}
 				}
 
+				// This gets reached if all the teams are valid for the award (no continue above)
 				return true;
 			}
 
-			return true;
+			return false;
 		},
 
 		when: "afterAwards",

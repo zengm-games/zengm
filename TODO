@@ -17,6 +17,7 @@ custom awards later
   - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
   - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
 - `if` function in FormulaEvaluator
+- edit all-star MVP
 
 top menu can be longer than screen height https://discord.com/channels/290013534023057409/1544159572510507130/1544576889488810026
 

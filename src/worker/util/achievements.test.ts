@@ -2353,6 +2353,83 @@ test("golden_boy", async () => {
 	}
 });
 
+describe("team_effort", () => {
+	beforeAll(async () => {
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[g.get("userTid"), g.get("season")],
+		);
+		assert(teamSeason);
+		teamSeason.playoffRoundsWon = g.get("numGamesPlayoffSeries").length;
+		await idb.cache.teamSeasons.put(teamSeason);
+	});
+
+	test("Not enough teams -> not awarded", async () => {
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwards.all,
+					group: undefined,
+					winner: [
+						[{ pid: 0, tid: g.get("userTid") + 1 }],
+						[{ pid: 0, tid: g.get("userTid") + 1 }],
+					],
+				},
+			],
+		});
+
+		await idb.cache.awards.put(awards);
+
+		const awarded = await get("team_effort").check();
+		assert.strictEqual(awarded, false);
+	});
+
+	test("User's player on team -> not awarded", async () => {
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwards.all,
+					group: undefined,
+					winner: [
+						[{ pid: 0, tid: g.get("userTid") + 1 }],
+						[{ pid: 0, tid: g.get("userTid") + 1 }],
+						[{ pid: 0, tid: g.get("userTid") }],
+					],
+				},
+			],
+		});
+
+		await idb.cache.awards.put(awards);
+
+		const awarded = await get("team_effort").check();
+		assert.strictEqual(awarded, false);
+	});
+
+	test("User's player not on team -> awarded", async () => {
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwards.all,
+					group: undefined,
+					winner: [
+						[{ pid: 0, tid: g.get("userTid") + 1 }],
+						[{ pid: 0, tid: g.get("userTid") + 1 }],
+						[{ pid: 0, tid: g.get("userTid") + 1 }],
+					],
+				},
+			],
+		});
+
+		await idb.cache.awards.put(awards);
+
+		const awarded = await get("team_effort").check();
+		assert.strictEqual(awarded, true);
+	});
+});
+
 describe("Edited awards", () => {
 	test("name changed -> still valid", async () => {
 		const tid = g.get("userTid");

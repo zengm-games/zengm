@@ -404,7 +404,7 @@ export const EditSettings = ({
 						<DropdownButton
 							disabled={disabled}
 							variant="secondary"
-							title="Add position-speicifc formula"
+							title="Add position-specific formula"
 						>
 							{POSITIONS.map((pos) => {
 								if (

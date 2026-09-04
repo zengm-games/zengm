@@ -166577,12 +166577,6 @@
       },
       {
         "abbrev": "LAC",
-        "originalAbbrev": "IND",
-        "round": 1,
-        "season": 2029
-      },
-      {
-        "abbrev": "LAC",
         "originalAbbrev": "LAC",
         "round": 1,
         "season": 2029
@@ -166938,12 +166932,6 @@
       {
         "abbrev": "IND",
         "originalAbbrev": "IND",
-        "round": 1,
-        "season": 2030
-      },
-      {
-        "abbrev": "LAC",
-        "originalAbbrev": "LAC",
         "round": 1,
         "season": 2030
       },
@@ -167302,12 +167290,6 @@
         "season": 2031
       },
       {
-        "abbrev": "LAC",
-        "originalAbbrev": "LAC",
-        "round": 1,
-        "season": 2031
-      },
-      {
         "abbrev": "UTA",
         "originalAbbrev": "LAL",
         "round": 1,
@@ -167658,12 +167640,6 @@
       {
         "abbrev": "IND",
         "originalAbbrev": "IND",
-        "round": 1,
-        "season": 2032
-      },
-      {
-        "abbrev": "LAC",
-        "originalAbbrev": "LAC",
         "round": 1,
         "season": 2032
       },
@@ -168018,12 +167994,6 @@
       {
         "abbrev": "IND",
         "originalAbbrev": "IND",
-        "round": 1,
-        "season": 2033
-      },
-      {
-        "abbrev": "LAC",
-        "originalAbbrev": "LAC",
         "round": 1,
         "season": 2033
       },
@@ -175152,6 +175122,12 @@
       }
     ],
     "sharpsh01": [
+      {
+        "gamesRemaining": 150,
+        "phase": 0,
+        "season": 2027,
+        "type": "Injured"
+      },
       {
         "gamesRemaining": 70,
         "phase": 0,
@@ -448462,24 +448438,24 @@
       "tp": 39
     },
     {
-      "diq": 42,
-      "dnk": 57,
-      "drb": 29,
-      "endu": 18,
-      "fg": 42,
-      "ft": 33,
+      "diq": 46,
+      "dnk": 61,
+      "drb": 33,
+      "endu": 22,
+      "fg": 46,
+      "ft": 37,
       "fuzz": 0,
       "hgt": 48,
-      "ins": 35,
-      "jmp": 59,
-      "oiq": 42,
-      "pss": 25,
-      "reb": 51,
+      "ins": 39,
+      "jmp": 63,
+      "oiq": 46,
+      "pss": 29,
+      "reb": 55,
       "season": 2027,
       "slug": "johnske10",
-      "spd": 46,
-      "stre": 39,
-      "tp": 35
+      "spd": 50,
+      "stre": 43,
+      "tp": 39
     },
     {
       "diq": 38,
@@ -473597,24 +473573,24 @@
       "tp": 54
     },
     {
-      "diq": 53,
-      "dnk": 13,
-      "drb": 37,
-      "endu": 12,
-      "fg": 40,
-      "ft": 52,
+      "diq": 49,
+      "dnk": 9,
+      "drb": 33,
+      "endu": 8,
+      "fg": 36,
+      "ft": 48,
       "fuzz": 0,
       "hgt": 39,
-      "ins": 27,
-      "jmp": 86,
-      "oiq": 63,
-      "pss": 42,
-      "reb": 80,
+      "ins": 23,
+      "jmp": 82,
+      "oiq": 59,
+      "pss": 38,
+      "reb": 76,
       "season": 2027,
       "slug": "konchjo01",
-      "spd": 51,
-      "stre": 27,
-      "tp": 54
+      "spd": 47,
+      "stre": 23,
+      "tp": 50
     },
     {
       "diq": 38,
@@ -476496,24 +476472,24 @@
       "tp": 43
     },
     {
-      "diq": 39,
-      "dnk": 93,
-      "drb": 43,
-      "endu": 20,
-      "fg": 61,
-      "ft": 39,
+      "diq": 43,
+      "dnk": 97,
+      "drb": 47,
+      "endu": 24,
+      "fg": 65,
+      "ft": 43,
       "fuzz": 0,
       "hgt": 48,
-      "ins": 52,
-      "jmp": 60,
-      "oiq": 62,
-      "pss": 49,
-      "reb": 77,
+      "ins": 56,
+      "jmp": 64,
+      "oiq": 66,
+      "pss": 53,
+      "reb": 81,
       "season": 2027,
       "slug": "kuminjo01",
-      "spd": 72,
-      "stre": 43,
-      "tp": 39
+      "spd": 76,
+      "stre": 47,
+      "tp": 43
     },
     {
       "diq": 34,
@@ -504617,24 +504593,24 @@
       "tp": 59
     },
     {
-      "diq": 42,
-      "dnk": 46,
-      "drb": 51,
-      "endu": 32,
-      "fg": 58,
-      "ft": 43,
+      "diq": 46,
+      "dnk": 50,
+      "drb": 55,
+      "endu": 36,
+      "fg": 62,
+      "ft": 47,
       "fuzz": 0,
       "hgt": 37,
-      "ins": 28,
-      "jmp": 39,
-      "oiq": 51,
-      "pss": 56,
-      "reb": 30,
+      "ins": 32,
+      "jmp": 43,
+      "oiq": 55,
+      "pss": 60,
+      "reb": 34,
       "season": 2027,
       "slug": "mangaky01",
-      "spd": 54,
-      "stre": 26,
-      "tp": 59
+      "spd": 58,
+      "stre": 30,
+      "tp": 63
     },
     {
       "diq": 54,
@@ -512804,24 +512780,24 @@
       "tp": 47
     },
     {
-      "diq": 28,
-      "dnk": 92,
-      "drb": 48,
-      "endu": 64,
-      "fg": 71,
-      "ft": 60,
+      "diq": 32,
+      "dnk": 96,
+      "drb": 52,
+      "endu": 68,
+      "fg": 75,
+      "ft": 64,
       "fuzz": 0,
       "hgt": 50,
-      "ins": 43,
-      "jmp": 48,
-      "oiq": 54,
-      "pss": 41,
-      "reb": 62,
+      "ins": 47,
+      "jmp": 52,
+      "oiq": 58,
+      "pss": 45,
+      "reb": 66,
       "season": 2027,
       "slug": "mathube01",
-      "spd": 71,
-      "stre": 34,
-      "tp": 43
+      "spd": 75,
+      "stre": 38,
+      "tp": 47
     },
     {
       "diq": 31,
@@ -558383,24 +558359,24 @@
       "tp": 37
     },
     {
-      "diq": 37,
-      "dnk": 56,
-      "drb": 50,
-      "endu": 38,
-      "fg": 43,
-      "ft": 61,
+      "diq": 33,
+      "dnk": 52,
+      "drb": 46,
+      "endu": 34,
+      "fg": 39,
+      "ft": 57,
       "fuzz": 0,
       "hgt": 41,
-      "ins": 36,
-      "jmp": 45,
-      "oiq": 47,
-      "pss": 56,
-      "reb": 57,
+      "ins": 32,
+      "jmp": 41,
+      "oiq": 43,
+      "pss": 52,
+      "reb": 53,
       "season": 2027,
       "slug": "newtotr01",
-      "spd": 50,
-      "stre": 40,
-      "tp": 37
+      "spd": 46,
+      "stre": 36,
+      "tp": 33
     },
     {
       "diq": 34,
@@ -558680,24 +558656,24 @@
       "tp": 72
     },
     {
-      "diq": 34,
-      "dnk": 18,
-      "drb": 37,
-      "endu": 45,
-      "fg": 77,
-      "ft": 56,
+      "diq": 38,
+      "dnk": 22,
+      "drb": 41,
+      "endu": 49,
+      "fg": 81,
+      "ft": 60,
       "fuzz": 0,
       "hgt": 49,
-      "ins": 38,
-      "jmp": 40,
-      "oiq": 50,
-      "pss": 41,
-      "reb": 46,
+      "ins": 42,
+      "jmp": 44,
+      "oiq": 54,
+      "pss": 45,
+      "reb": 50,
       "season": 2027,
       "slug": "niangge01",
-      "spd": 41,
-      "stre": 47,
-      "tp": 72
+      "spd": 45,
+      "stre": 51,
+      "tp": 76
     },
     {
       "diq": 24,
@@ -609673,23 +609649,23 @@
       "tp": 0
     },
     {
-      "diq": 28,
-      "dnk": 87,
-      "drb": 23,
-      "endu": 48,
-      "fg": 58,
-      "ft": 32,
+      "diq": 32,
+      "dnk": 91,
+      "drb": 27,
+      "endu": 52,
+      "fg": 62,
+      "ft": 36,
       "fuzz": 0,
       "hgt": 65,
-      "ins": 43,
-      "jmp": 54,
-      "oiq": 45,
-      "pss": 27,
-      "reb": 78,
+      "ins": 47,
+      "jmp": 58,
+      "oiq": 49,
+      "pss": 31,
+      "reb": 82,
       "season": 2027,
       "slug": "richani01",
-      "spd": 32,
-      "stre": 61,
+      "spd": 36,
+      "stre": 65,
       "tp": 0
     },
     {
@@ -720403,24 +720379,24 @@
       "tp": 41
     },
     {
-      "diq": 34,
-      "dnk": 48,
-      "drb": 31,
-      "endu": 16,
-      "fg": 87,
-      "ft": 40,
+      "diq": 30,
+      "dnk": 44,
+      "drb": 27,
+      "endu": 12,
+      "fg": 83,
+      "ft": 36,
       "fuzz": 0,
       "hgt": 45,
-      "ins": 59,
-      "jmp": 55,
-      "oiq": 65,
-      "pss": 32,
-      "reb": 56,
+      "ins": 55,
+      "jmp": 51,
+      "oiq": 61,
+      "pss": 28,
+      "reb": 52,
       "season": 2027,
       "slug": "whitmca01",
-      "spd": 60,
-      "stre": 26,
-      "tp": 41
+      "spd": 56,
+      "stre": 22,
+      "tp": 37
     },
     {
       "diq": 39,
@@ -725520,24 +725496,24 @@
       "tp": 44
     },
     {
-      "diq": 42,
-      "dnk": 79,
-      "drb": 55,
-      "endu": 17,
-      "fg": 73,
-      "ft": 52,
+      "diq": 46,
+      "dnk": 83,
+      "drb": 59,
+      "endu": 21,
+      "fg": 77,
+      "ft": 56,
       "fuzz": 0,
       "hgt": 29,
-      "ins": 43,
-      "jmp": 76,
-      "oiq": 53,
-      "pss": 48,
-      "reb": 65,
+      "ins": 47,
+      "jmp": 80,
+      "oiq": 57,
+      "pss": 52,
+      "reb": 69,
       "season": 2027,
       "slug": "willibr03",
-      "spd": 70,
-      "stre": 31,
-      "tp": 40
+      "spd": 74,
+      "stre": 35,
+      "tp": 44
     },
     {
       "diq": 56,
@@ -792429,6 +792405,14 @@
     },
     {
       "amounts": [
+        1200000
+      ],
+      "exp": 2027,
+      "slug": "johnske10",
+      "start": 2027
+    },
+    {
+      "amounts": [
         1955000,
         2540000,
         3125000,
@@ -796731,12 +796715,20 @@
     },
     {
       "amounts": [
-        23799569,
-        24300000
+        23799569
       ],
-      "exp": 2027,
+      "exp": 2026,
       "slug": "kuminjo01",
       "start": 2026
+    },
+    {
+      "amounts": [
+        6215000,
+        6215000
+      ],
+      "exp": 2028,
+      "slug": "kuminjo01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -800973,6 +800965,14 @@
     },
     {
       "amounts": [
+        1360000
+      ],
+      "exp": 2027,
+      "slug": "mangaky01",
+      "start": 2027
+    },
+    {
+      "amounts": [
         1650000,
         2100000,
         2200000,
@@ -802275,6 +802275,15 @@
       "exp": 2026,
       "slug": "mathube01",
       "start": 2023
+    },
+    {
+      "amounts": [
+        8000000,
+        8000000
+      ],
+      "exp": 2028,
+      "slug": "mathube01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -809819,14 +809828,6 @@
       "amounts": [
         600000
       ],
-      "exp": 2027,
-      "slug": "newtotr01",
-      "start": 2027
-    },
-    {
-      "amounts": [
-        600000
-      ],
       "exp": 2025,
       "slug": "nfalyda01",
       "start": 2025
@@ -809893,6 +809894,14 @@
       "exp": 2026,
       "slug": "niangge01",
       "start": 2024
+    },
+    {
+      "amounts": [
+        3880000
+      ],
+      "exp": 2027,
+      "slug": "niangge01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -818903,6 +818912,14 @@
       "exp": 2026,
       "slug": "richani01",
       "start": 2024
+    },
+    {
+      "amounts": [
+        3060000
+      ],
+      "exp": 2027,
+      "slug": "richani01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -829964,12 +829981,24 @@
       "amounts": [
         8809320,
         9249960,
-        9690600,
-        12258609
+        9690600
       ],
-      "exp": 2027,
+      "exp": 2026,
       "slug": "thompam01",
       "start": 2024
+    },
+    {
+      "amounts": [
+        41600000,
+        41600000,
+        41600000,
+        41600000,
+        41600000,
+        41600000
+      ],
+      "exp": 2032,
+      "slug": "thompam01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -837481,6 +837510,14 @@
       "exp": 2026,
       "slug": "willibr03",
       "start": 2026
+    },
+    {
+      "amounts": [
+        2630000
+      ],
+      "exp": 2027,
+      "slug": "willibr03",
+      "start": 2027
     },
     {
       "amounts": [
@@ -927181,7 +927218,7 @@
       "slug": "greenjo02"
     },
     {
-      "abbrev": "MIN",
+      "abbrev": "UTA",
       "jerseyNumber": "10",
       "season": 2027,
       "slug": "greenjo02"
@@ -947425,6 +947462,12 @@
       "slug": "johnske10"
     },
     {
+      "abbrev": "MIA",
+      "jerseyNumber": "16",
+      "season": 2027,
+      "slug": "johnske10"
+    },
+    {
       "abbrev": "LAC",
       "jerseyNumber": "10",
       "season": 1978,
@@ -955111,12 +955154,6 @@
       "slug": "konchjo01"
     },
     {
-      "abbrev": "UTA",
-      "jerseyNumber": "55",
-      "season": 2027,
-      "slug": "konchjo01"
-    },
-    {
       "abbrev": "GS",
       "jerseyNumber": "15",
       "season": 1965,
@@ -956062,6 +956099,12 @@
       "abbrev": "ATL",
       "jerseyNumber": "0",
       "season": 2026,
+      "slug": "kuminjo01"
+    },
+    {
+      "abbrev": "MIN",
+      "jerseyNumber": "0",
+      "season": 2027,
       "slug": "kuminjo01"
     },
     {
@@ -964655,6 +964698,12 @@
       "slug": "maneka01"
     },
     {
+      "abbrev": "CHA",
+      "jerseyNumber": "20",
+      "season": 2027,
+      "slug": "mangaky01"
+    },
+    {
       "abbrev": "NYC",
       "jerseyNumber": "5",
       "season": 1947,
@@ -967168,6 +967217,12 @@
       "abbrev": "LAC",
       "jerseyNumber": "9",
       "season": 2026,
+      "slug": "mathube01"
+    },
+    {
+      "abbrev": "NOL",
+      "jerseyNumber": "9",
+      "season": 2027,
       "slug": "mathube01"
     },
     {
@@ -981681,12 +981736,6 @@
     },
     {
       "abbrev": "HOU",
-      "jerseyNumber": "00",
-      "season": 2027,
-      "slug": "newtotr01"
-    },
-    {
-      "abbrev": "HOU",
       "jerseyNumber": "3",
       "season": 2025,
       "slug": "nfalyda01"
@@ -981756,6 +981805,11 @@
       "jerseyNumber": "20",
       "phase": 4,
       "season": 2025,
+      "slug": "niangge01"
+    },
+    {
+      "abbrev": "GS",
+      "season": 2027,
       "slug": "niangge01"
     },
     {
@@ -997660,6 +997714,12 @@
       "abbrev": "CHI",
       "jerseyNumber": "13",
       "season": 2026,
+      "slug": "richani01"
+    },
+    {
+      "abbrev": "MIA",
+      "jerseyNumber": "13",
+      "season": 2027,
       "slug": "richani01"
     },
     {
@@ -1032189,12 +1032249,6 @@
       "slug": "whitmca01"
     },
     {
-      "abbrev": "CLE",
-      "jerseyNumber": "1",
-      "season": 2027,
-      "slug": "whitmca01"
-    },
-    {
       "abbrev": "SA",
       "jerseyNumber": "20",
       "season": 1994,
@@ -1033729,6 +1033783,12 @@
       "abbrev": "DAL",
       "jerseyNumber": "10",
       "season": 2026,
+      "slug": "willibr03"
+    },
+    {
+      "abbrev": "GS",
+      "jerseyNumber": "10",
+      "season": 2027,
       "slug": "willibr03"
     },
     {

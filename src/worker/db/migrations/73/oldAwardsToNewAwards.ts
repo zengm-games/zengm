@@ -144,12 +144,12 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				{
 					type: "team",
 					new: defaultAwards.all,
-					old: oldAwards.allLeague.map((team) => team.players),
+					old: oldAwards.allLeague?.map((team) => team.players) ?? [],
 				},
 				{
 					type: "team",
 					new: defaultAwardsBasketball.def,
-					old: oldAwards.allDefensive.map((team) => team.players),
+					old: oldAwards.allDefensive?.map((team) => team.players) ?? [],
 				},
 				{
 					type: "team",
@@ -199,7 +199,7 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				{
 					type: "team",
 					new: defaultAwards.all,
-					old: oldAwards.allLeague.map((team) => team.players),
+					old: oldAwards.allLeague?.map((team) => team.players) ?? [],
 				},
 				{
 					type: "team",
@@ -244,7 +244,7 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				{
 					type: "team",
 					new: defaultAwards.all,
-					old: oldAwards.allLeague.map((team) => team.players),
+					old: oldAwards.allLeague?.map((team) => team.players) ?? [],
 				},
 				{
 					type: "team",

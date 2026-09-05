@@ -17,8 +17,7 @@ export type OldAwardsBaseball<
 		pos: string;
 		keyStats: string;
 	},
-> = {
-	season: number;
+> = Partial<{
 	bestRecord: AwardTeam;
 
 	// undefined gets turned into null by JSON.stringify
@@ -32,6 +31,8 @@ export type OldAwardsBaseball<
 	poy: AwardPlayer | undefined;
 	rpoy: AwardPlayer | undefined;
 	finalsMvp: AwardPlayer | undefined;
+}> & {
+	season: number;
 };
 
 export type OldAwardsBasketball<
@@ -51,8 +52,7 @@ export type OldAwardsBasketball<
 		blk: number;
 		stl: number;
 	},
-> = {
-	season: number;
+> = Partial<{
 	bestRecord: AwardTeam;
 
 	// undefined gets turned into null by JSON.stringify
@@ -94,6 +94,8 @@ export type OldAwardsBasketball<
 	];
 	finalsMvp: AwardPlayer | undefined;
 	sfmvp: AwardPlayer[] | undefined;
+}> & {
+	season: number;
 };
 
 export type OldAwardsFootball<
@@ -104,8 +106,7 @@ export type OldAwardsFootball<
 		pos: string;
 		keyStats: string;
 	},
-> = {
-	season: number;
+> = Partial<{
 	bestRecord: AwardTeam;
 
 	// undefined gets turned into null by JSON.stringify
@@ -128,6 +129,8 @@ export type OldAwardsFootball<
 		},
 	];
 	finalsMvp: AwardPlayer | undefined;
+}> & {
+	season: number;
 };
 
 export type OldAwardsHockey<
@@ -147,8 +150,7 @@ export type OldAwardsHockey<
 		svPct: number;
 		gps: number;
 	},
-> = {
-	season: number;
+> = Partial<{
 	bestRecord: AwardTeam;
 
 	// undefined gets turned into null by JSON.stringify
@@ -175,6 +177,8 @@ export type OldAwardsHockey<
 	dfoy: AwardPlayer | undefined;
 	goy: AwardPlayer | undefined;
 	finalsMvp: AwardPlayer | undefined;
+}> & {
+	season: number;
 };
 
 export type OldAwards =

@@ -84,17 +84,17 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				{
 					type: "team",
 					new: defaultAwards.all,
-					old: [oldAwards.allOffense],
+					old: oldAwards.allOffense ? [oldAwards.allOffense] : undefined,
 				},
 				{
 					type: "team",
 					new: defaultAwardsBaseball.def,
-					old: [oldAwards.allDefense],
+					old: oldAwards.allDefense ? [oldAwards.allDefense] : undefined,
 				},
 				{
 					type: "team",
 					new: defaultAwards.alr,
-					old: [oldAwards.allRookie],
+					old: oldAwards.allRookie ? [oldAwards.allRookie] : undefined,
 				},
 			];
 		},
@@ -154,7 +154,7 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				{
 					type: "team",
 					new: defaultAwards.alr,
-					old: [oldAwards.allRookie],
+					old: oldAwards.allRookie ? [oldAwards.allRookie] : undefined,
 				},
 			];
 		},
@@ -204,7 +204,7 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				{
 					type: "team",
 					new: defaultAwards.alr,
-					old: [oldAwards.allRookie],
+					old: oldAwards.allRookie ? [oldAwards.allRookie] : undefined,
 				},
 			];
 		},
@@ -249,7 +249,7 @@ const getNewAwards = (oldAwardsRaw: OldAwards) => {
 				{
 					type: "team",
 					new: defaultAwards.alr,
-					old: [oldAwards.allRookie],
+					old: oldAwards.allRookie ? [oldAwards.allRookie] : undefined,
 				},
 			];
 		},

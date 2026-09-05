@@ -1,3 +1,5 @@
+MIP + Max variable is bugged - the special logic to overwrite array with number is not applied to historical stat seasons, but it needs to be, and maybe other stuff too
+
 custom awards later
 - fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/search:record/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e4054
   - first refactor so team info comes through currentStats, in getPlayers
@@ -21,8 +23,6 @@ custom awards later
 - add back KR/PR to FBGM teams?
 
 top menu can be longer than screen height https://discord.com/channels/290013534023057409/1544159572510507130/1544576889488810026
-
-when deleting all leagues, count in the notification should subtract starred ones
 
 TEXT_MAX_WIDTH for messages?
 

@@ -20,15 +20,21 @@ export const formatPlayerAwardName = (
 	{
 		groupPrefix,
 		hideTeamName,
+		includeIndividualRank,
 	}: {
 		groupPrefix?: string; // Like for conf awards, prefix with conf abbrev
 		hideTeamName?: boolean;
+		includeIndividualRank?: boolean;
 	} = {},
 ) => {
 	if (award.type === undefined) {
 		const prefixWithSpace = groupPrefix !== undefined ? `${groupPrefix} ` : "";
 		if (award.numTeams === undefined) {
-			return `${prefixWithSpace}${award.name}`;
+			const suffix =
+				includeIndividualRank && award.rank > 1
+					? ` (${helpers.ordinal(award.rank)} place)`
+					: "";
+			return `${prefixWithSpace}${award.name}${suffix}`;
 		}
 
 		if (award.numTeams === 1) {

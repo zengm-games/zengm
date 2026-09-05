@@ -1,6 +1,5 @@
 custom awards
 - MIP + Max variable is bugged - the special logic to overwrite array with number is not applied to historical stat seasons, but it needs to be, and maybe other stuff too
-- in awards column, Idea: hovering over the awards should show you what the abbreviation stands for https://discord.com/channels/290013534023057409/1545233863037681726/1545868296610521208
 - add All-Star (AS) to awards column https://discord.com/channels/290013534023057409/1544159572510507130/1545892971868590150
 - in HistoryAll make FinalsMVP first and hide other playoff series awards https://www.reddit.com/r/BasketballGM/comments/1w7spb1/league_history_page/
 - showStats more options

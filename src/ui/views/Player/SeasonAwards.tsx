@@ -1,6 +1,7 @@
 import { Fragment } from "react/jsx-runtime";
 import type { PlayerAwardBuiltIn } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
+import { formatPlayerAwardName } from "../../../common/awards.ts";
 
 const getAwardText = (award: PlayerAwardBuiltIn) => {
 	return `${award.shortName}${award.numTeams === 1 ? "" : award.numTeams !== undefined ? award.rank : `-${award.rank}`}`;
@@ -30,6 +31,9 @@ const SeasonAwards = ({
 						<a
 							href={helpers.leagueUrl(["award_races", season])}
 							className={className}
+							title={formatPlayerAwardName(award, {
+								includeIndividualRank: true,
+							})}
 						>
 							{getAwardText(award)}
 						</a>

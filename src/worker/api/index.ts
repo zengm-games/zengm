@@ -4736,7 +4736,7 @@ const updateAwards = async (
 		logEventInfo: {
 			conditions,
 		},
-		season: g.get("season"),
+		season: newAwards.season,
 	});
 };
 

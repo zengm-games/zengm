@@ -1,26 +1,36 @@
-MIP + Max variable is bugged - the special logic to overwrite array with number is not applied to historical stat seasons, but it needs to be, and maybe other stuff too
+custom awards
+- MIP + Max variable is bugged - the special logic to overwrite array with number is not applied to historical stat seasons, but it needs to be, and maybe other stuff too
+- in awards column, Idea: hovering over the awards should show you what the abbreviation stands for https://discord.com/channels/290013534023057409/1545233863037681726/1545868296610521208
+- add All-Star (AS) to awards column https://discord.com/channels/290013534023057409/1544159572510507130/1545892971868590150
+- in HistoryAll make FinalsMVP first and hide other playoff series awards https://www.reddit.com/r/BasketballGM/comments/1w7spb1/league_history_page/
+- showStats more options
+  - auto: derive from formula
+  - array: list specific stats
+- support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
+  - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten
+- add back KR/PR to FBGM teams?
 
 custom awards later
 - fix displayed record and winp variable in non-regularSeason https://app.fastmail.com/mail/search:record/ATSzI7V8fo5V.Stmv_fADjqhk?u=433e4054
   - first refactor so team info comes through currentStats, in getPlayers
     - also use to calculate teamGp/seasonFraction/winp
     - get rid of "teams" variable from awardRaces and awardSettings worker views, use from currentStats instead
-- support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
-  - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten
 - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
 - clutch player award
 - edit conf/div abbrevs, and test usage in award name prefixes
-- make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
+- All-Star formula should be editable
+  - actAs?
+- edit all-star MVP
+- edit all-star team retroactively
 - HoF formula should be editable similarly
 - ability to add/edit/delete manual awards for player, maybe in player editor
+  - maybe also show built-in awards here, with ability to delete (leave slot blank)
 - award settings
   - some way to set award settings in default new league settings
   - pick and choose which awards to import, and option to not overwrite all
   - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
   - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
 - `if` function in FormulaEvaluator
-- edit all-star MVP
-- add back KR/PR to FBGM teams?
 
 top menu can be longer than screen height https://discord.com/channels/290013534023057409/1544159572510507130/1544576889488810026
 

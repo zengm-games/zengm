@@ -265,15 +265,12 @@ export const EditSettings = ({
 			key: "roy",
 			text: "ROY",
 		},
+		...(SUPPORT_OPOY_STUFF ? [{ key: "opoy", text: "OPOY" } as const] : []),
 		{
 			key: "none",
 			text: "None",
 		},
 	];
-
-	if (SUPPORT_OPOY_STUFF) {
-		actAss.push({ key: "opoy", text: "OPOY" });
-	}
 
 	const flags: {
 		key: "bench" | "mip" | "rookie";

@@ -321,6 +321,7 @@ export const EditSettings = ({
 	];
 
 	const actAsId = useId();
+	const groupId = useId();
 	const opoyId = useId();
 
 	const changeHandler =
@@ -492,9 +493,19 @@ export const EditSettings = ({
 				</>
 			) : null}
 			<div className="mt-2 d-flex gap-3">
-				<label>
-					<div className="mb-1">Grouping</div>
+				<div>
+					<label className="mb-1" htmlFor={groupId}>
+						Grouping
+					</label>
+					<HelpPopover title="Grouping" className="ms-1">
+						<p>
+							For playoff round awards, one award will be awarded for each
+							series in that round. So 2 awards for the semifinals, 4 for the
+							quarterfinals, etc.
+						</p>
+					</HelpPopover>
 					<select
+						id={groupId}
 						className="form-select"
 						disabled={disabled}
 						onChange={changeHandler("group")}
@@ -506,7 +517,7 @@ export const EditSettings = ({
 							</option>
 						))}
 					</select>
-				</label>
+				</div>
 				<label>
 					<div className="mb-1">Range</div>
 					<select

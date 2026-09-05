@@ -445,13 +445,13 @@ export const getPlayers = async (
 		).pos;
 
 		if (isSport("baseball")) {
+			// Playoff series do not have gpF but everything else should
 			const bestCurrentStats =
 				p.currentStats.regularSeason ??
 				p.currentStats.combined ??
-				p.currentStats.playoffs ??
-				Object.values(p.currentStats)[0];
+				p.currentStats.playoffs;
 			if (bestCurrentStats) {
-				if (bestCurrentStats && !bestCurrentStats.gpF) {
+				if (!bestCurrentStats.gpF) {
 					throw new Error("currentStats missing gpF");
 				}
 				p.pos = getPosByGpF(bestCurrentStats.gpF, p.pos);

@@ -105,8 +105,16 @@ export const groupAwards = (
 	awards: (PlayerAwardSimple | PlayerAwardBuiltInWithPrefix)[],
 	shortNames?: boolean,
 ) => {
-	const seen = new Set();
-	const awardsGrouped = [];
+	type AwardGroup = {
+		type: string;
+		long: string;
+		count: number;
+		seasons: Record<string, number[]>;
+		averageIndex?: number;
+	};
+
+	const awardsGroupedByType = new Map<string, AwardGroup>();
+	const awardsGrouped: AwardGroup[] = [];
 	const awardsGroupedTemp = Object.groupBy(
 		awards.filter((award) => {
 			if (
@@ -127,18 +135,17 @@ export const groupAwards = (
 			const type = getName({ type: originalType }, shortNames);
 			const long = getLongWithoutTeamNumber(type, originalType);
 
-			if (awardsGroupedTemp[type] && !seen.has(type)) {
-				awardsGrouped.push({
+			if (awardsGroupedTemp[type] && !awardsGroupedByType.has(type)) {
+				const awardGroup: AwardGroup = {
 					type,
 					long,
 					count: awardsGroupedTemp[type].length,
 					seasons: {
-						[long]: helpers.yearRanges(
-							awardsGroupedTemp[type].map((a) => a.season),
-						),
+						[long]: awardsGroupedTemp[type].map((a) => a.season),
 					},
-				});
-				seen.add(type);
+				};
+				awardsGrouped.push(awardGroup);
+				awardsGroupedByType.set(type, awardGroup);
 			}
 		}
 	};
@@ -146,35 +153,32 @@ export const groupAwards = (
 	processFakeAwards(awardsStart);
 
 	// Any entry with a "real" award handle here
-	const realAwardsGrouped = [];
+	const realAwardsGrouped: AwardGroup[] = [];
 	for (const [type, awardsTemp] of Object.entries(awardsGroupedTemp)) {
 		const awards = awardsTemp!;
 		const awardsReal = awards.filter((award) => award.type === undefined);
-		if (!seen.has(type) && awardsReal[0]) {
+		if (!awardsGroupedByType.has(type) && awardsReal[0]) {
 			const averageIndex =
 				helpers.sum(awardsReal.map((award) => award.index)) / awardsReal.length;
 
-			const seasonsRaw: Record<string, number[]> = {};
+			const seasons: Record<string, number[]> = {};
 			for (const award of awardsReal) {
 				// type is already formatNameLong output if !shortNames
 				const name = formatNameLong(award, true);
 
-				seasonsRaw[name] ??= [];
-				seasonsRaw[name].push(award.season);
-			}
-			const seasons: Record<string, string[]> = {};
-			for (const [name, awardSeasons] of Object.entries(seasonsRaw)) {
-				seasons[name] = helpers.yearRanges(awardSeasons);
+				seasons[name] ??= [];
+				seasons[name].push(award.season);
 			}
 
-			realAwardsGrouped.push({
+			const awardGroup: AwardGroup = {
 				type,
 				long: awardsReal[0].name,
 				count: awardsReal.length,
 				seasons,
 				averageIndex,
-			});
-			seen.add(type);
+			};
+			awardsGrouped.push(awardGroup);
+			awardsGroupedByType.set(type, awardGroup);
 		}
 	}
 
@@ -187,19 +191,35 @@ export const groupAwards = (
 
 	// Handle non-default awards, just for fun if someone wants to add more
 	for (const [type, awardsTemp] of Object.entries(awardsGroupedTemp)) {
-		const awards = awardsTemp!;
-		if (!seen.has(type)) {
-			awardsGrouped.push({
+		const awards = awardsTemp!.filter((award) => award.type !== undefined);
+		const awardGroup = awardsGroupedByType.get(type);
+		if (!awardGroup) {
+			const awardGroup: AwardGroup = {
 				type,
 				long: type,
 				count: awards.length,
 				seasons: {
-					[type]: helpers.yearRanges(awards.map((a) => a.season)),
+					[type]: awards.map((a) => a.season),
 				},
-			});
-			seen.add(type);
+			};
+			awardsGrouped.push(awardGroup);
+			awardsGroupedByType.set(type, awardGroup);
+		} else {
+			awardGroup.seasons[type] ??= [];
+			awardGroup.count += awards.length;
+			awardGroup.seasons[type].push(...awards.map((a) => a.season));
 		}
 	}
 
-	return awardsGrouped;
+	return awardsGrouped.map((awardGroup) => {
+		const seasons: Record<string, string[]> = {};
+		for (const [name, awardSeasons] of Object.entries(awardGroup.seasons)) {
+			seasons[name] = helpers.yearRanges(awardSeasons);
+		}
+
+		return {
+			...awardGroup,
+			seasons,
+		};
+	});
 };

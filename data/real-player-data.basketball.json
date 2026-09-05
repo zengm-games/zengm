@@ -842380,7 +842380,7 @@
           {
             "formula": "ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
             "name": "All-League",
-            "numTeams": 3,
+            "numTeams": 2,
             "shortName": "ALL",
             "showStats": "offense"
           },
@@ -842394,7 +842394,7 @@
           {
             "formula": "ewa / 2.1 + vorp + gp / 82 * pts / 2",
             "name": "All-Rookie",
-            "numTeams": 2,
+            "numTeams": 1,
             "rookie": true,
             "shortName": "ALR",
             "showStats": "offense"
@@ -842497,6 +842497,13 @@
             "formula": "ewa / 5.5 + vorp / 2.3 + ws / 4.9 + seasonFraction * winp + gp / 82 * pts / 9.9",
             "name": "Sixth Man of the Year",
             "shortName": "SMOY",
+            "showStats": "offense"
+          },
+          {
+            "formula": "pts + trb + ast + per",
+            "mip": true,
+            "name": "Most Improved Player",
+            "shortName": "MIP",
             "showStats": "offense"
           },
           {

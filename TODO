@@ -1,5 +1,4 @@
 custom awards
-- MIP + Max variable is bugged - the special logic to overwrite array with number is not applied to historical stat seasons, but it needs to be, and maybe other stuff too
 - showStats more options
   - auto: derive from formula
   - array: list specific stats

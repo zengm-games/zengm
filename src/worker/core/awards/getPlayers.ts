@@ -115,6 +115,18 @@ export type CurrentStats = {
 	winp: number;
 } & StatsRow;
 
+const fixMax = (stats: Record<string, unknown> | undefined) => {
+	if (!stats) {
+		return;
+	}
+
+	for (const [key, value] of Object.entries(stats)) {
+		if (key.endsWith("Max") && Array.isArray(value)) {
+			stats[key] = value[0];
+		}
+	}
+};
+
 const getProcessedPlayers = async (
 	playersAll: Player[],
 	statRanges: Set<StatRange>,
@@ -191,6 +203,14 @@ const getProcessedPlayers = async (
 
 	for (const p of players) {
 		delete (p as any).careerStats;
+	}
+
+	if (stats.some((stat) => stat.endsWith("Max"))) {
+		for (const p of players) {
+			for (const row of p.stats) {
+				fixMax(row);
+			}
+		}
 	}
 
 	// Used to filter out some players here with no stats, but even a player with no stats could have some relevant awards (like if there are no awards for regularSeason or playoffs but there are for playoff series, series stats are loaded elsewhere)
@@ -306,18 +326,6 @@ const getPlayoffSeriesStats = async (
 	}
 
 	return rowsByPid;
-};
-
-const fixMax = (currentStats: Partial<Record<StatRange, CurrentStats>>) => {
-	for (const stats of Object.values(currentStats)) {
-		if (stats) {
-			for (const [key, value] of Object.entries(stats)) {
-				if (key.endsWith("Max") && Array.isArray(value)) {
-					stats[key] = value[0];
-				}
-			}
-		}
-	}
 };
 
 export const getPlayers = async (
@@ -438,7 +446,6 @@ export const getPlayers = async (
 				throw new Error("Should never happen");
 			}
 		}
-		fixMax(p.currentStats);
 
 		p.pos = (
 			p.ratings.findLast((row) => row.season === season) ?? last(p.ratings)

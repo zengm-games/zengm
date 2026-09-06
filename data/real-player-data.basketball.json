@@ -246587,24 +246587,24 @@
       "tp": 53
     },
     {
-      "diq": 26,
-      "dnk": 29,
-      "drb": 38,
-      "endu": 23,
-      "fg": 72,
-      "ft": 57,
+      "diq": 30,
+      "dnk": 33,
+      "drb": 42,
+      "endu": 27,
+      "fg": 76,
+      "ft": 61,
       "fuzz": 0,
       "hgt": 43,
-      "ins": 38,
-      "jmp": 41,
-      "oiq": 51,
-      "pss": 39,
-      "reb": 50,
+      "ins": 42,
+      "jmp": 45,
+      "oiq": 55,
+      "pss": 43,
+      "reb": 54,
       "season": 2027,
       "slug": "branhma01",
-      "spd": 53,
-      "stre": 29,
-      "tp": 53
+      "spd": 57,
+      "stre": 33,
+      "tp": 57
     },
     {
       "diq": 49,
@@ -308191,24 +308191,24 @@
       "tp": 37
     },
     {
-      "diq": 32,
-      "dnk": 45,
-      "drb": 43,
-      "endu": 28,
-      "fg": 39,
-      "ft": 39,
+      "diq": 36,
+      "dnk": 49,
+      "drb": 47,
+      "endu": 32,
+      "fg": 43,
+      "ft": 43,
       "fuzz": 0,
       "hgt": 38,
-      "ins": 21,
-      "jmp": 66,
-      "oiq": 43,
-      "pss": 42,
-      "reb": 49,
+      "ins": 25,
+      "jmp": 70,
+      "oiq": 47,
+      "pss": 46,
+      "reb": 53,
       "season": 2027,
       "slug": "davisjd01",
-      "spd": 58,
-      "stre": 31,
-      "tp": 33
+      "spd": 62,
+      "stre": 35,
+      "tp": 37
     },
     {
       "diq": 39,
@@ -504593,24 +504593,24 @@
       "tp": 59
     },
     {
-      "diq": 46,
-      "dnk": 50,
-      "drb": 55,
-      "endu": 36,
-      "fg": 62,
-      "ft": 47,
+      "diq": 42,
+      "dnk": 46,
+      "drb": 51,
+      "endu": 32,
+      "fg": 58,
+      "ft": 43,
       "fuzz": 0,
       "hgt": 37,
-      "ins": 32,
-      "jmp": 43,
-      "oiq": 55,
-      "pss": 60,
-      "reb": 34,
+      "ins": 28,
+      "jmp": 39,
+      "oiq": 51,
+      "pss": 56,
+      "reb": 30,
       "season": 2027,
       "slug": "mangaky01",
-      "spd": 58,
-      "stre": 30,
-      "tp": 63
+      "spd": 54,
+      "stre": 26,
+      "tp": 59
     },
     {
       "diq": 54,
@@ -555842,24 +555842,24 @@
       "tp": 40
     },
     {
-      "diq": 32,
-      "dnk": 49,
-      "drb": 26,
-      "endu": 31,
-      "fg": 1,
-      "ft": 56,
+      "diq": 36,
+      "dnk": 53,
+      "drb": 30,
+      "endu": 35,
+      "fg": 5,
+      "ft": 60,
       "fuzz": 0,
       "hgt": 62,
-      "ins": 41,
-      "jmp": 34,
-      "oiq": 31,
-      "pss": 29,
-      "reb": 54,
+      "ins": 45,
+      "jmp": 38,
+      "oiq": 35,
+      "pss": 33,
+      "reb": 58,
       "season": 2027,
       "slug": "nelsogr02",
-      "spd": 27,
-      "stre": 51,
-      "tp": 40
+      "spd": 31,
+      "stre": 55,
+      "tp": 44
     },
     {
       "diq": 38,
@@ -645510,23 +645510,23 @@
       "tp": 0
     },
     {
-      "diq": 54,
-      "dnk": 2,
-      "drb": 34,
-      "endu": 24,
-      "fg": 64,
-      "ft": 21,
+      "diq": 58,
+      "dnk": 6,
+      "drb": 38,
+      "endu": 28,
+      "fg": 68,
+      "ft": 25,
       "fuzz": 0,
       "hgt": 60,
-      "ins": 36,
-      "jmp": 35,
-      "oiq": 47,
-      "pss": 55,
-      "reb": 56,
+      "ins": 40,
+      "jmp": 39,
+      "oiq": 51,
+      "pss": 59,
+      "reb": 60,
       "season": 2027,
       "slug": "simmobe01",
-      "spd": 38,
-      "stre": 38,
+      "spd": 42,
+      "stre": 42,
       "tp": 0
     },
     {
@@ -756053,9 +756053,10 @@
     },
     {
       "amounts": [
-        5621700
+        6424800,
+        6746040
       ],
-      "exp": 2027,
+      "exp": 2028,
       "slug": "bealbr01",
       "start": 2027
     },
@@ -759548,6 +759549,14 @@
       "exp": 2026,
       "slug": "branhma01",
       "start": 2026
+    },
+    {
+      "amounts": [
+        1200000
+      ],
+      "exp": 2027,
+      "slug": "branhma01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -800965,14 +800974,6 @@
     },
     {
       "amounts": [
-        1360000
-      ],
-      "exp": 2027,
-      "slug": "mangaky01",
-      "start": 2027
-    },
-    {
-      "amounts": [
         1650000,
         2100000,
         2200000,
@@ -809359,6 +809360,14 @@
       "exp": 2026,
       "slug": "nelsogr02",
       "start": 2026
+    },
+    {
+      "amounts": [
+        1200000
+      ],
+      "exp": 2027,
+      "slug": "nelsogr02",
+      "start": 2027
     },
     {
       "amounts": [
@@ -824276,6 +824285,14 @@
       "exp": 2025,
       "slug": "simmobe01",
       "start": 2025
+    },
+    {
+      "amounts": [
+        3520000
+      ],
+      "exp": 2027,
+      "slug": "simmobe01",
+      "start": 2027
     },
     {
       "amounts": [
@@ -885983,6 +886000,12 @@
       "slug": "branhma01"
     },
     {
+      "abbrev": "ORL",
+      "jerseyNumber": "8",
+      "season": 2027,
+      "slug": "branhma01"
+    },
+    {
       "abbrev": "MIL",
       "jerseyNumber": "7",
       "season": 1950,
@@ -905182,6 +905205,12 @@
       "abbrev": "HOU",
       "jerseyNumber": "4",
       "season": 2026,
+      "slug": "davisjd01"
+    },
+    {
+      "abbrev": "ORL",
+      "jerseyNumber": "4",
+      "season": 2027,
       "slug": "davisjd01"
     },
     {
@@ -964705,12 +964734,6 @@
       "slug": "maneka01"
     },
     {
-      "abbrev": "CHA",
-      "jerseyNumber": "20",
-      "season": 2027,
-      "slug": "mangaky01"
-    },
-    {
       "abbrev": "NYC",
       "jerseyNumber": "5",
       "season": 1947,
@@ -980924,6 +980947,12 @@
       "jerseyNumber": "19",
       "season": 1976,
       "slug": "nelsodo01"
+    },
+    {
+      "abbrev": "BKN",
+      "jerseyNumber": "16",
+      "season": 2027,
+      "slug": "nelsogr02"
     },
     {
       "abbrev": "ORL",
@@ -1008894,6 +1008923,11 @@
       "abbrev": "LAC",
       "jerseyNumber": "25",
       "season": 2025,
+      "slug": "simmobe01"
+    },
+    {
+      "abbrev": "LAC",
+      "season": 2027,
       "slug": "simmobe01"
     },
     {

@@ -177,7 +177,7 @@ export const groupAwards = (
 				seasons,
 				averageIndex,
 			};
-			awardsGrouped.push(awardGroup);
+			realAwardsGrouped.push(awardGroup);
 			awardsGroupedByType.set(type, awardGroup);
 		}
 	}
@@ -191,28 +191,40 @@ export const groupAwards = (
 
 	// Handle non-default awards, just for fun if someone wants to add more
 	for (const [type, awardsTemp] of Object.entries(awardsGroupedTemp)) {
-		if (awardsStart.includes(type) || awardsEnd.includes(type)) {
-			// Already handled above
+		const awards = awardsTemp!.filter((award) => award.type !== undefined);
+		if (awards.length === 0) {
 			continue;
 		}
 
-		const awards = awardsTemp!.filter((award) => award.type !== undefined);
 		const awardGroup = awardsGroupedByType.get(type);
+
 		if (!awardGroup) {
+			const long = getLongWithoutTeamNumber(type, type);
+			if (awardsStart.includes(long) || awardsEnd.includes(long)) {
+				// Already handled above
+				continue;
+			}
+
 			const awardGroup: AwardGroup = {
 				type,
-				long: type,
+				long,
 				count: awards.length,
 				seasons: {
-					[type]: awards.map((a) => a.season),
+					[long]: awards.map((a) => a.season),
 				},
 			};
 			awardsGrouped.push(awardGroup);
 			awardsGroupedByType.set(type, awardGroup);
 		} else {
-			awardGroup.seasons[type] ??= [];
+			const long = awardGroup.long;
+			if (awardsStart.includes(long) || awardsEnd.includes(long)) {
+				// Already handled above
+				continue;
+			}
+
+			awardGroup.seasons[long] ??= [];
 			awardGroup.count += awards.length;
-			awardGroup.seasons[type].push(...awards.map((a) => a.season));
+			awardGroup.seasons[long].push(...awards.map((a) => a.season));
 		}
 	}
 

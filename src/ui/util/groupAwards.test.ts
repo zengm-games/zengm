@@ -6,6 +6,13 @@ test("works with built-in awards", () => {
 	const awards: PlayerAward[] = [
 		{
 			season: 2025,
+			name: "Defensive Player of the Year",
+			shortName: "DPOY",
+			index: 1,
+			rank: 1,
+		},
+		{
+			season: 2025,
 			name: "Most Valuable Player",
 			shortName: "MVP",
 			index: 0,
@@ -16,13 +23,6 @@ test("works with built-in awards", () => {
 			name: "Most Valuable Player",
 			shortName: "MVP",
 			index: 0,
-			rank: 1,
-		},
-		{
-			season: 2025,
-			name: "Defensive Player of the Year",
-			shortName: "DPOY",
-			index: 1,
 			rank: 1,
 		},
 	];

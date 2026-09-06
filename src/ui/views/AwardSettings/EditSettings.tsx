@@ -234,7 +234,7 @@ export const EditSettings = ({
 			{ key: "overall", text: "Overall" },
 			{ key: "sp", text: "Starting Pitching" },
 			{ key: "rp", text: "Relief Pitching" },
-			{ key: "offense", text: "Overall" },
+			{ key: "offense", text: "Offense" },
 			{ key: "defense", text: "Defense" },
 		],
 		basketball: [

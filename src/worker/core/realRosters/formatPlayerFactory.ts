@@ -242,15 +242,9 @@ const formatPlayerFactory = async (
 
 			if (salaryRows.length > 0 && !draftProspect) {
 				// Complicated stuff rather than just taking last entry because these can be out of order, particularly due to merging data sources. But still search backwards
-				let salaryRow;
-				for (let i = salaryRows.length - 1; i >= 0; i--) {
-					const row = salaryRows[i]!;
-
-					if (row.start <= season && row.exp >= season) {
-						salaryRow = row;
-						break;
-					}
-				}
+				let salaryRow = salaryRows.findLast(
+					(row) => row.start <= season && row.exp >= season,
+				);
 				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
 					// Auto-apply extensions, otherwise will feel weird
 					const salaryRowExtension = salaryRows.find(

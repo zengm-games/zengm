@@ -539,41 +539,45 @@ const roundStat = (
 	}
 };
 
-const yearRanges = (arrInput: number[]): string[] => {
-	if (arrInput.length <= 1) {
-		return arrInput.map(String);
+const yearRanges = (inputYears: number[]): string[] => {
+	if (inputYears.length <= 1) {
+		return inputYears.map(String);
 	}
 
-	const arr = [...arrInput];
+	const arr = [...inputYears];
 	arr.sort((a, b) => a - b);
 
-	const runArr: string[] = [];
-	const tempArr = [[arr[0]!]];
+	const groups = [[arr[0]!]];
 
 	for (let i = 1; i < arr.length; i++) {
 		// @ts-expect-error
 		if (arr[i] - arr[i - 1] > 1) {
-			tempArr.push([]);
+			groups.push([]);
 		}
 
-		tempArr.at(-1)!.push(arr[i]!);
+		groups.at(-1)!.push(arr[i]!);
 	}
 
-	for (const row of tempArr) {
-		// runs of up to 2 consecutive years are displayed individually
-		if (row.length <= 2) {
-			runArr.push(String(row[0]));
-
-			if (row.length === 2) {
-				runArr.push(String(row[1]));
-			}
+	return groups.map((group) => {
+		if (group.length <= 1) {
+			// If no consective years, display individually
+			return String(group[0]);
 		} else {
-			// runs of 3 or more are displayed as a range
-			runArr.push(`${row[0]}-${row.at(-1)}`);
-		}
-	}
+			// If consecutive, display as a range but with the common prefix removed, like 2019-20 for 2019-2020
+			// Leave at least 2 years at end, like 2005-06 rather than 2005-6
+			// Include whole year if more than 2 digits at end, like 2099-2100 rather than 2099-100
+			const first = String(group[0]);
+			let last = String(group.at(-1));
+			if (first.length === last.length) {
+				const index = first.length - 2;
+				if (first.slice(0, index) === last.slice(0, index)) {
+					last = last.slice(index);
+				}
+			}
 
-	return runArr;
+			return `${first}-${last}`;
+		}
+	});
 };
 
 const formatCurrency = (

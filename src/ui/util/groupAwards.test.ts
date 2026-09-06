@@ -34,7 +34,7 @@ test("works with built-in awards", () => {
 			type: "Most Valuable Player",
 			long: "Most Valuable Player",
 			count: 2,
-			seasons: { "Most Valuable Player": ["2025", "2026"] },
+			seasons: { "Most Valuable Player": ["2025-26"] },
 			averageIndex: 0,
 		},
 		{
@@ -43,44 +43,6 @@ test("works with built-in awards", () => {
 			count: 1,
 			seasons: { "Defensive Player of the Year": ["2025"] },
 			averageIndex: 1,
-		},
-	]);
-});
-
-test("Three year range", () => {
-	const awards: PlayerAward[] = [
-		{
-			season: 2025,
-			name: "Most Valuable Player",
-			shortName: "MVP",
-			index: 0,
-			rank: 1,
-		},
-		{
-			season: 2026,
-			name: "Most Valuable Player",
-			shortName: "MVP",
-			index: 0,
-			rank: 1,
-		},
-		{
-			season: 2027,
-			name: "Most Valuable Player",
-			shortName: "MVP",
-			index: 0,
-			rank: 1,
-		},
-	];
-
-	const grouped = groupAwards(awards);
-
-	assert.deepStrictEqual(grouped, [
-		{
-			type: "Most Valuable Player",
-			long: "Most Valuable Player",
-			count: 3,
-			seasons: { "Most Valuable Player": ["2025-2027"] },
-			averageIndex: 0,
 		},
 	]);
 });
@@ -117,7 +79,7 @@ test("skips lower ranks", () => {
 			type: "Most Valuable Player",
 			long: "Most Valuable Player",
 			count: 2,
-			seasons: { "Most Valuable Player": ["2025", "2026"] },
+			seasons: { "Most Valuable Player": ["2025-26"] },
 			averageIndex: 0,
 		},
 	]);
@@ -146,7 +108,7 @@ test("works with simple awards", () => {
 			type: "Most Valuable Player",
 			long: "Most Valuable Player",
 			count: 2,
-			seasons: { "Most Valuable Player": ["2025", "2026"] },
+			seasons: { "Most Valuable Player": ["2025-26"] },
 		},
 		{
 			type: "Defensive Player of the Year",
@@ -179,7 +141,7 @@ test("works with both combined", () => {
 			type: "Most Valuable Player",
 			long: "Most Valuable Player",
 			count: 2,
-			seasons: { "Most Valuable Player": ["2025", "2026"] },
+			seasons: { "Most Valuable Player": ["2025-26"] },
 			averageIndex: 0,
 		},
 	]);
@@ -207,7 +169,7 @@ test("works with both combined for custom award type", () => {
 			type: "Foo",
 			long: "Foo",
 			count: 2,
-			seasons: { Foo: ["2025", "2026"] },
+			seasons: { Foo: ["2025-26"] },
 			averageIndex: 0,
 		},
 	]);

@@ -466,6 +466,7 @@ export const getPlayers = async (
 		}
 
 		// Sum up or average any byPos stats - not ideal for team awards of awards with formulas by position, but probably good enough since we're using gpF to assign position so most of their games at least will be at the correct position
+		// Do this after we've already used gpF above, and currentStats contains references to stats array which will be updated by this
 		if (player.stats.byPos) {
 			const byPosStatsSum = [...player.stats.byPos];
 			if (isSport("baseball")) {
@@ -473,13 +474,6 @@ export const getPlayers = async (
 					// byPos advanced stats
 					"rfld",
 				);
-			}
-			for (const stat of byPosStatsSum) {
-				for (const currentStats of Object.values(p.currentStats)) {
-					if (currentStats && Array.isArray(currentStats[stat])) {
-						currentStats[stat] = helpers.sum(currentStats[stat]);
-					}
-				}
 			}
 
 			const byPosStatsPos = [];
@@ -493,12 +487,19 @@ export const getPlayers = async (
 					"inn",
 				);
 			}
-			for (const stat of byPosStatsPos) {
-				for (const currentStats of Object.values(p.currentStats)) {
-					if (currentStats && Array.isArray(currentStats[stat])) {
-						currentStats[stat] =
-							helpers.sum(currentStats[stat]) /
-							currentStats[stat].filter((x) => x !== undefined).length;
+
+			for (const row of p.stats) {
+				for (const stat of byPosStatsSum) {
+					if (Array.isArray(row[stat])) {
+						row[stat] = helpers.sum(row[stat]);
+					}
+				}
+
+				for (const stat of byPosStatsPos) {
+					if (Array.isArray(row[stat])) {
+						row[stat] =
+							helpers.sum(row[stat]) /
+							row[stat].filter((x) => x !== undefined).length;
 					}
 				}
 			}

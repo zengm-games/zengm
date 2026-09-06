@@ -18,6 +18,7 @@ import { SkillsBlock } from "../../components/SkillsBlock.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { useLocal } from "../../util/local.ts";
 import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
+import { orderBy } from "../../../common/utils.ts";
 
 const Player2 = ({
 	bestPos,
@@ -84,7 +85,12 @@ const Player2 = ({
 	}
 
 	const awardsBySeason = Map.groupBy(
-		player.awards.filter((award) => award.type === undefined),
+		orderBy(
+			player.awards.filter(
+				(award) => award.type === undefined || award.type === "All-Star",
+			),
+			(award) => (award.type === undefined ? 0 : 1),
+		),
 		(award) => award.season,
 	);
 

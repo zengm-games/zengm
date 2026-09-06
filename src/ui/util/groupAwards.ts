@@ -191,6 +191,11 @@ export const groupAwards = (
 
 	// Handle non-default awards, just for fun if someone wants to add more
 	for (const [type, awardsTemp] of Object.entries(awardsGroupedTemp)) {
+		if (awardsStart.includes(type) || awardsEnd.includes(type)) {
+			// Already handled above
+			continue;
+		}
+
 		const awards = awardsTemp!.filter((award) => award.type !== undefined);
 		const awardGroup = awardsGroupedByType.get(type);
 		if (!awardGroup) {

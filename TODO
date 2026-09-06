@@ -28,6 +28,17 @@ custom awards later
   - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
 - `if` function in FormulaEvaluator
 
+vitest 5
+- https://github.com/vitest-dev/vitest/issues/11164
+- https://github.com/vitest-dev/vitest/issues/11165
+  - could be worked around with:
+				// In Vitest 5, the native filter on moduleType seems to not work
+				if (process.env.VITEST) {
+					if (!id.endsWith(".ts") && !id.endsWith("tsx")) {
+						return;
+					}
+				}
+
 when navigating with ctrl+k menu, should reset scroll after navigating between player profile pages
 - since page id doesn't change, ViewManager.processUpdate doesn't mark it as firstRun, so then scrollToTop is false
 

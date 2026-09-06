@@ -452,7 +452,7 @@ const FieldBackground = ({
 }) => {
 	let midfieldLogo;
 	if (neutralSite) {
-		midfieldLogo = `https://zengm.com/files/logo-${process.env.SPORT}.svg`;
+		midfieldLogo = `https://zengm.com/files/logo-${__SPORT}.svg`;
 	} else {
 		midfieldLogo = t2.imgURLSmall ?? t2.imgURL;
 	}

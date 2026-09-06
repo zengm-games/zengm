@@ -23,7 +23,7 @@ self.bbgm = {
 	random,
 };
 
-if (process.env.NODE_ENV === "development") {
+if (__NODE_ENV === "development") {
 	import("./core/debug/index.ts").then(({ default: debug }) => {
 		self.bbgm.debug = debug;
 	});

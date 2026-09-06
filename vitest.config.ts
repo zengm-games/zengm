@@ -18,8 +18,8 @@ const makeProject = (
 ): TestProjectInlineConfiguration => {
 	return {
 		define: {
-			"process.env.NODE_ENV": JSON.stringify("test"),
-			"process.env.SPORT": JSON.stringify(sport),
+			__NODE_ENV: JSON.stringify("test"),
+			__SPORT: JSON.stringify(sport),
 		},
 		plugins: [
 			// @ts-expect-error

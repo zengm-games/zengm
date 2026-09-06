@@ -131,7 +131,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				Accounts are shared between <GameLinks />.
 			</p>
 			<form onSubmit={handleSubmit} ref={formRef}>
-				<input type="hidden" name="sport" value={process.env.SPORT} />
+				<input type="hidden" name="sport" value={__SPORT} />
 				<div className="mb-3">
 					<label className="form-label" htmlFor="register-username">
 						Username

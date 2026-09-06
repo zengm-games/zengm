@@ -110,7 +110,7 @@ const AccountInfoForm = ({
 					newPassword2?: string;
 					oldPassword: string;
 				} = {
-					sport: process.env.SPORT,
+					sport: __SPORT,
 					oldPassword: state.oldPassword,
 				};
 

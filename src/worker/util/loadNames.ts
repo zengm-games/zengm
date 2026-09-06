@@ -65,7 +65,7 @@ export const initDefaults = async (
 		let defaultNamesCountries: DefaultNames;
 		let defaultNamesGroups: DefaultNames;
 
-		if (process.env.NODE_ENV === "test") {
+		if (__NODE_ENV === "test") {
 			const dummyNames = {
 				first: { FirstName: 1 },
 				last: { LastName: 1 },

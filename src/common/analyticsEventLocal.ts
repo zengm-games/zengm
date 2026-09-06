@@ -9,7 +9,7 @@ export const analyticsEventLocal = async (
 			url: `${ACCOUNT_API_URL}/log_event.php`,
 			method: "POST",
 			data: {
-				sport: process.env.SPORT,
+				sport: __SPORT,
 				type,
 			},
 			credentials: "include",

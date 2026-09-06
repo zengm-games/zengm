@@ -15,7 +15,7 @@ globalThis.fetch = async (url: Parameters<typeof fetch>[0]) => {
 
 	let filePath = url.replace("/gen/", "data/");
 	if (filePath.endsWith("real-player-data.json")) {
-		filePath = filePath.replace(".json", `.${process.env.SPORT}.json`);
+		filePath = filePath.replace(".json", `.${__SPORT}.json`);
 	}
 
 	const data = await fs.readFile(filePath, "utf8");

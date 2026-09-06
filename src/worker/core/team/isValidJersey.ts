@@ -28,7 +28,7 @@ const isValidJersey = (jersey: unknown) => {
 	// Make sure sport matches
 	return (
 		(isSport("basketball") && jersey.startsWith("jersey")) ||
-		(!isSport("basketball") && jersey.startsWith(process.env.SPORT))
+		(!isSport("basketball") && jersey.startsWith(__SPORT))
 	);
 };
 

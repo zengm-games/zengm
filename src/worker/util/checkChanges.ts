@@ -26,7 +26,7 @@ export const checkChanges = async (conditions: Conditions) => {
 			data: {
 				since: lastChangesVersion,
 				current: env.bbgmVersion,
-				sport: process.env.SPORT,
+				sport: __SPORT,
 				limit: String(FETCH_LIMIT),
 			},
 		})) as unknown as {

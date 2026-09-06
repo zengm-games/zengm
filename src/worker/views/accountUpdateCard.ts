@@ -17,7 +17,7 @@ const updateAccountUpdateCard = async (
 				url: `${ACCOUNT_API_URL}/gold_card_info.php`,
 				method: "GET",
 				data: {
-					sport: process.env.SPORT,
+					sport: __SPORT,
 				},
 				credentials: "include",
 			});

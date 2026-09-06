@@ -79,11 +79,12 @@ export const rolldownConfig = (
 		},
 		transform: {
 			define: {
-				"process.env.NODE_ENV": JSON.stringify(envOptions.nodeEnv),
-				"process.env.SPORT": JSON.stringify(sport),
+				__NODE_ENV: JSON.stringify(envOptions.nodeEnv),
+				__SPORT: JSON.stringify(sport),
 			},
 			jsx: "react-jsx",
 		},
+		platform: "browser",
 		plugins,
 		preserveEntrySignatures: false,
 		external(id, parentId) {

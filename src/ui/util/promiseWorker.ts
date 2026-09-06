@@ -2,7 +2,7 @@ import Bugsnag from "@bugsnag/browser";
 import { PWBHost } from "promise-worker-bi";
 
 const workerPath =
-	process.env.NODE_ENV === "production"
+	__NODE_ENV === "production"
 		? `/gen/worker-${window.bbgmVersion}.js`
 		: "/gen/worker.js";
 const worker = window.useSharedWorker

@@ -96,7 +96,7 @@ async function add(
 			method: "POST",
 			data: {
 				achievements: slugs.join(","),
-				sport: process.env.SPORT,
+				sport: __SPORT,
 				difficulty,
 			},
 			credentials: "include",
@@ -151,7 +151,7 @@ async function getAll(): Promise<
 			url: `${ACCOUNT_API_URL}/get_achievements.php`,
 			method: "GET",
 			data: {
-				sport: process.env.SPORT,
+				sport: __SPORT,
 			},
 			credentials: "include",
 		});

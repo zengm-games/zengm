@@ -65,7 +65,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 		<>
 			<h2>Login</h2>
 			<form onSubmit={handleSubmit} ref={formRef}>
-				<input type="hidden" name="sport" value={process.env.SPORT} />
+				<input type="hidden" name="sport" value={__SPORT} />
 				<div className="mb-3">
 					<label className="form-label" htmlFor="login-username">
 						Username

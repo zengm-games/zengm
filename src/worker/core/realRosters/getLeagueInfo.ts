@@ -47,7 +47,7 @@ export const legendsInfo = {
 
 const getLeagueInfo = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {
-		throw new Error(`Not supported for ${process.env.SPORT}`);
+		throw new Error(`Not supported for ${__SPORT}`);
 	}
 
 	const basketball = await loadDataBasketball();

@@ -72,7 +72,7 @@ const LostPassword = () => {
 						information.
 					</p>
 					<form onSubmit={handleSubmit} id="lostpw">
-						<input type="hidden" name="sport" value={process.env.SPORT} />
+						<input type="hidden" name="sport" value={__SPORT} />
 						<div className="mb-3">
 							<label className="col-form-label" htmlFor="lostpw-entry">
 								Username or Email Address

@@ -45,7 +45,7 @@ const Dialog = ({
 				url: `${ACCOUNT_API_URL}/delete_account.php`,
 				method: "POST",
 				data: {
-					sport: process.env.SPORT,
+					sport: __SPORT,
 					password,
 				},
 				credentials: "include",

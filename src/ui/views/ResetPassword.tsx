@@ -36,7 +36,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 					data: {
 						action: "check_token",
 						token,
-						sport: process.env.SPORT,
+						sport: __SPORT,
 					},
 					credentials: "include",
 				});
@@ -142,7 +142,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 			<div className="col-lg-4 col-md-5 col-sm-6">
 				<p>Enter a new password for your account below.</p>
 				<form id="resetpw" onSubmit={handleSubmit}>
-					<input type="hidden" name="sport" value={process.env.SPORT} />
+					<input type="hidden" name="sport" value={__SPORT} />
 					<input type="hidden" name="action" value="reset_password" />
 					<input type="hidden" name="token" value={token} />
 					<div

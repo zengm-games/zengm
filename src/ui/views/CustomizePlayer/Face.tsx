@@ -63,7 +63,7 @@ export const Face = ({
 						onClick={() => {
 							// Need button rather than link because "open in new tab" seems to interfere with setting window.opener in the new window, even with rel="opener"
 							window.open(
-								`${process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://zengm.com"}/facesjs/editor/#${faceCount},${faceHash}`,
+								`${__NODE_ENV === "development" ? "http://localhost:5173" : "https://zengm.com"}/facesjs/editor/#${faceCount},${faceHash}`,
 								`_blank`,
 							);
 						}}

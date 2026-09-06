@@ -146,9 +146,9 @@ const gameAttributesKeysSportSpecific = {
 };
 export const gameAttributesKeysOtherSports = new Set<GameAttributeKey>();
 for (const [sport, keys] of Object.entries(gameAttributesKeysSportSpecific)) {
-	if (sport !== process.env.SPORT) {
+	if (sport !== __SPORT) {
 		for (const key of keys) {
-			if (!gameAttributesKeysSportSpecific[process.env.SPORT].has(key)) {
+			if (!gameAttributesKeysSportSpecific[__SPORT].has(key)) {
 				gameAttributesKeysOtherSports.add(key);
 			}
 		}
@@ -727,7 +727,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
 export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
-	process.env.NODE_ENV === "test" || isSport("football")
+	__NODE_ENV === "test" || isSport("football")
 		? {
 				numGames: wrapFromStart(17),
 				numGamesDiv: 6,
@@ -794,7 +794,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 		: {};
 
 export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
-	process.env.NODE_ENV === "test" || isSport("hockey")
+	__NODE_ENV === "test" || isSport("hockey")
 		? {
 				numGames: wrapFromStart(84),
 				numGamesDiv: 28,
@@ -844,7 +844,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
 export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
-	process.env.NODE_ENV === "test" || isSport("baseball")
+	__NODE_ENV === "test" || isSport("baseball")
 		? {
 				numGames: wrapFromStart(162),
 				numGamesDiv: 76,

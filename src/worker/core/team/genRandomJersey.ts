@@ -4,7 +4,7 @@ import { choice } from "../../../common/random.ts";
 
 const genRandomJersey = () => {
 	const jerseys = svgsIndex.jersey.filter((id) =>
-		id.startsWith(isSport("basketball") ? "jersey" : process.env.SPORT),
+		id.startsWith(isSport("basketball") ? "jersey" : __SPORT),
 	);
 	const jersey = choice(jerseys);
 	if (isSport("baseball")) {

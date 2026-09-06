@@ -43,7 +43,7 @@ const INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS = false;
 
 const getLeague = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {
-		throw new Error(`Not supported for ${process.env.SPORT}`);
+		throw new Error(`Not supported for ${__SPORT}`);
 	}
 
 	const basketball = await loadDataBasketball();

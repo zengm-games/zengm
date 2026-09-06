@@ -37,7 +37,7 @@ const StripeButton = ({ email }: { email: string }) => {
 								url: `${ACCOUNT_API_URL}/gold_start.php`,
 								method: "POST",
 								data: {
-									sport: process.env.SPORT,
+									sport: __SPORT,
 									token: token.id,
 								},
 								credentials: "include",
@@ -114,7 +114,7 @@ const handleCancel = async (e: MouseEvent) => {
 				url: `${ACCOUNT_API_URL}/gold_cancel.php`,
 				method: "POST",
 				data: {
-					sport: process.env.SPORT,
+					sport: __SPORT,
 				},
 				credentials: "include",
 			});
@@ -157,7 +157,7 @@ const UserInfo = ({
 				url: `${ACCOUNT_API_URL}/logout.php`,
 				method: "POST",
 				data: {
-					sport: process.env.SPORT,
+					sport: __SPORT,
 				},
 				credentials: "include",
 			});

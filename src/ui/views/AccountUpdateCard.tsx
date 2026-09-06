@@ -78,7 +78,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 							url: `${ACCOUNT_API_URL}/gold_card_update.php`,
 							method: "POST",
 							data: {
-								sport: process.env.SPORT,
+								sport: __SPORT,
 								token,
 							},
 							credentials: "include",

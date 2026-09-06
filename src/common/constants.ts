@@ -13,7 +13,7 @@ import type {
 } from "./types.ts";
 
 export const ACCOUNT_API_URL =
-	process.env.NODE_ENV === "development"
+	__NODE_ENV === "development"
 		? "http://account.basketball-gm.test"
 		: bySport({
 				basketball: "https://account.basketball-gm.com",
@@ -102,7 +102,7 @@ export const PHASE_TEXT = {
 };
 
 export const STRIPE_PUBLISHABLE_KEY =
-	process.env.NODE_ENV === "development"
+	__NODE_ENV === "development"
 		? "pk_test_Qbz0froGmHLp0dPCwHoYFY08"
 		: "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 

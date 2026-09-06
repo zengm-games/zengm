@@ -7,7 +7,7 @@ const updateMeta = async (
 	lidInput?: number,
 	noExtraStuff?: boolean,
 ) => {
-	if (process.env.NODE_ENV === "test") {
+	if (__NODE_ENV === "test") {
 		return;
 	}
 
@@ -37,7 +37,7 @@ const updateMeta = async (
 						if (g.get("userTids").length > 1) {
 							l.teamName = "Multi Team Mode";
 							l.teamRegion = "";
-							l.imgURL = `https://zengm.com/files/logo-${process.env.SPORT}.svg`;
+							l.imgURL = `https://zengm.com/files/logo-${__SPORT}.svg`;
 						} else {
 							l.teamName = teamInfo.name;
 							l.teamRegion = teamInfo.region;

@@ -15,7 +15,7 @@ import { idb } from "../db/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
 const updatePlayMenu = async () => {
-	if (process.env.NODE_ENV === "test") {
+	if (__NODE_ENV === "test") {
 		return;
 	}
 

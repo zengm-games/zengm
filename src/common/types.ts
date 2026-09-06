@@ -64,12 +64,8 @@ declare global {
 		withGoodWorker: () => void;
 	}
 
-	const process: {
-		env: {
-			NODE_ENV: "development" | "production" | "test";
-			SPORT: "basketball" | "football" | "baseball" | "hockey";
-		};
-	};
+	const __NODE_ENV: "development" | "production" | "test";
+	const __SPORT: "basketball" | "football" | "baseball" | "hockey";
 }
 
 type ViewsKeys = keyof typeof views;

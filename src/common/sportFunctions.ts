@@ -15,7 +15,7 @@ export const bySport = <T>(
 				default: T;
 		  },
 ): T => {
-	const sport = process.env.SPORT;
+	const sport = __SPORT;
 	if (Object.hasOwn(object, sport)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-expect-error
@@ -34,5 +34,5 @@ export const bySport = <T>(
 export const isSport = (
 	sport: "baseball" | "basketball" | "football" | "hockey",
 ) => {
-	return sport === process.env.SPORT;
+	return sport === __SPORT;
 };

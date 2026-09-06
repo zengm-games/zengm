@@ -1889,7 +1889,7 @@ if (isSport("basketball")) {
 		{
 			slug: "brick_wall",
 			name: "Brick Wall",
-			desc: `Have 3+ players make 1st Team ${defaultAwardsBasketball.def}.`,
+			desc: `Have 3+ players make 1st Team ${defaultAwardsBasketball.def.name}.`,
 			category: "Awards",
 
 			check() {
@@ -1901,7 +1901,7 @@ if (isSport("basketball")) {
 		{
 			slug: "brick_wall_2",
 			name: "Brick Wall 2",
-			desc: `Have 5 players make 1st Team ${defaultAwardsBasketball.def}.`,
+			desc: `Have 5 players make 1st Team ${defaultAwardsBasketball.def.name}.`,
 			category: "Awards",
 
 			check() {

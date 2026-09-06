@@ -240,7 +240,7 @@ const updateHistory = async (
 		});
 		const retiredPlayers = processPlayersHallOfFame(
 			await idb.getCopies.playersPlus(retiredPlayersAll, {
-				attrs: ["pid", "name", "age", "hof"],
+				attrs: ["pid", "name", "born", "hof"],
 				ratings: ["pos", "season"],
 				stats: ["season", "tid", "abbrev", retiredStat],
 				showNoStats: true,
@@ -251,7 +251,7 @@ const updateHistory = async (
 			return {
 				pid: p.pid,
 				name: p.name,
-				age: p.age,
+				age: season - p.born.year,
 				hof: p.hof,
 				pos: p.bestPos,
 				t:

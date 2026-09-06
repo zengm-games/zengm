@@ -69,10 +69,12 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 			continue;
 		}
 
-		awardsByPlayer.push({
-			pid: award.pid,
-			award: { season, type },
-		});
+		if (typeof award.pid === "number") {
+			awardsByPlayer.push({
+				pid: award.pid,
+				award: { season, type },
+			});
+		}
 	}
 	const awardsTeams = bySport({
 		baseball: ["allRookie", "allOffense", "allDefense"] as const,
@@ -89,7 +91,7 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 
 		if (key === "allRookie" || key === "sfmvp" || isSport("baseball")) {
 			for (const p of (awards as any)[key]) {
-				if (p) {
+				if (p && typeof p.pid === "number") {
 					awardsByPlayer.push({
 						pid: p.pid,
 						award: { season, type },
@@ -99,7 +101,7 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 		} else {
 			for (const level of (awards as any)[key]) {
 				for (const p of level.players) {
-					if (p) {
+					if (p && typeof p.pid === "number") {
 						awardsByPlayer.push({
 							pid: p.pid,
 							award: { season, type: `${level.title} ${type}` },

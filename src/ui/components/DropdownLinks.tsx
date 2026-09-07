@@ -66,7 +66,13 @@ const TopMenuDropdown = ({
 				openID={openID}
 				toggle={toggle}
 			/>
-			<Dropdown.Menu align="end">
+			<Dropdown.Menu
+				align="end"
+				style={{
+					maxHeight: "calc(100vh - 100%)",
+					overflowY: "auto",
+				}}
+			>
 				{!hideTitle ? (
 					<Dropdown.Header className="d-none d-sm-block d-md-none">
 						{long}

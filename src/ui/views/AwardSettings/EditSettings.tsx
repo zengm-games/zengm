@@ -14,6 +14,7 @@ import type {
 	AwardSettingTeam,
 } from "../../../common/types.ts";
 import { Dropdown, DropdownButton } from "react-bootstrap";
+import { POS_NUMBERS } from "../../../common/constants.baseball.ts";
 
 const SUPPORT_OPOY_STUFF = isSport("football");
 const OPOY_FORMULA_NAME = "OPOY (including QB)";
@@ -344,6 +345,13 @@ export const EditSettings = ({
 			});
 		};
 
+	const positions = bySport({
+		baseball: Object.keys(POS_NUMBERS),
+		basketball: POSITIONS,
+		football: POSITIONS,
+		hockey: POSITIONS,
+	});
+
 	return (
 		<div>
 			<div className="d-flex gap-3">
@@ -404,7 +412,7 @@ export const EditSettings = ({
 							variant="secondary"
 							title="Add position-specific formula"
 						>
-							{POSITIONS.map((pos) => {
+							{positions.map((pos) => {
 								if (
 									NOT_REAL_POSITIONS_AWARDS.has(pos) ||
 									state.formulaByPos[pos] !== undefined
@@ -445,7 +453,7 @@ export const EditSettings = ({
 							</p>
 						</HelpPopover>
 					</div>
-					{POSITIONS.map((pos) => {
+					{positions.map((pos) => {
 						const formula = state.formulaByPos[pos];
 						if (formula === undefined) {
 							return null;

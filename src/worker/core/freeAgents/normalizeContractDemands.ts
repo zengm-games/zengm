@@ -4,7 +4,7 @@ import { team, player, draft } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
-import { last, orderBy } from "../../../common/utils.ts";
+import { countBy, last, orderBy } from "../../../common/utils.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { choice, randInt, shuffle, uniform } from "../../../common/random.ts";
 
@@ -327,17 +327,12 @@ const normalizeContractDemands = async ({
 				"desc",
 			);
 
-			let numPlayersOnTeams = 0;
-			for (const p of playersAll) {
-				if (p.tid >= 0) {
-					numPlayersOnTeams += 1;
-				}
+			let numOpenRosterSpots = 0;
+			const numPlayersByTid = countBy(playersAll, (p) => p.tid);
+			for (const t of teams) {
+				const numPlayers = numPlayersByTid[t.tid] ?? 0;
+				numOpenRosterSpots += Math.max(0, g.get("maxRosterSize") - numPlayers);
 			}
-			const numTotalRosterSpots = teams.length * g.get("maxRosterSize");
-			const numOpenRosterSpots = Math.max(
-				0,
-				numTotalRosterSpots - numPlayersOnTeams,
-			);
 
 			// For the top free agents (up to the available number of roster spots), adjust their contract demands up/down based on available cap space. Anyone beyond the available number of roster spots, set to a min contract
 			let topPlayersAmountSum = 0;

@@ -35,11 +35,14 @@ const g: GameAttributes & {
 				// Return value from row with highest starting season that is still <= the current season
 				const season2 = season === "current" ? (g as any).season : season;
 
+				const lastRecord = gameAttribute.findLast((x) => season2 >= x.start);
+				// Explicit check rather than `?.value ??` because some settings can be null! And maybe could be undefined in the future, although that probably breaks stuff
+				if (lastRecord) {
+					return lastRecord.value;
+				}
+
 				// Should never need to check gameAttribute[0].value unless there is no matching season, which should never happen
-				return (
-					gameAttribute.findLast((x) => season2 >= x.start)?.value ??
-					gameAttribute[0].value
-				);
+				return gameAttribute[0].value;
 			}
 
 			if (key === "allStarGame" && typeof gameAttribute === "boolean") {

@@ -52,6 +52,9 @@ useBlocker beforeunload sharedworker issue
   - maybe yeah, if i disable sharedworker, it works...
 - happens in both firefox 154 and chrome 151
 
+draft race condition https://discord.com/channels/290013534023057409/1536156382552789023/1536156382552789023
+- I had the 3rd and 4th lottery pick in a draft and I spam clicked to pick and sim as I usually do, but I realized by the end of the draft that I drafted the same player twice. I didn't get the player twice- just once but the 4th pick is gone now. Not sure if this is a real backend bug or just lag on my end.
+
 can web locks API be used to identify if shared worker has stopped running somehow? (seems to happen when OS sleeps or tab is idle for a long time)
 - https://github.com/whatwg/html/issues/1766#issuecomment-633197720
 - https://aistudio.google.com/prompts/1Gj05Fid0e8yTQywMpInfhYc3ATBs5HpK

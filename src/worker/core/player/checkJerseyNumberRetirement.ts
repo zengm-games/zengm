@@ -9,7 +9,7 @@ import { getThreshold } from "./madeHof.football.ts";
 const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = isSport("basketball") ? 30 : 12;
 
 export const getValueStatsRow = (ps: any) => {
-	return bySport({
+	const value = bySport({
 		baseball: ps.war,
 		basketball: (() => {
 			let value = 0;
@@ -35,6 +35,13 @@ export const getValueStatsRow = (ps: any) => {
 			return (g + a) / 25 + ps.ops + ps.dps + 0.6 * ps.gps;
 		})(),
 	});
+
+	if (Number.isNaN(value)) {
+		// Could happen in a custom league file with missing stats
+		return 0;
+	}
+
+	return value;
 };
 
 // Ideally p should be a Player object, but a processed player object works too if it's in the right format
@@ -265,6 +272,15 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		) {
 			continue;
 		}
+
+		console.log("retire", {
+			number,
+			p,
+			score,
+			tid,
+			scoresByTid,
+			factor: helpers.gameAndSeasonLengthScaleFactor() * g.get("hofFactor"),
+		});
 
 		await retireJerseyNumber({
 			number,

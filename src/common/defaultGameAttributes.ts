@@ -271,7 +271,7 @@ export const defaultAwards = {
 		hockey: {
 			shortName: "PMVP",
 			name: "Playoff MVP",
-			formula: "pts / 25 + ps - 0.225 * gps + 20 * seasonFraction * winp",
+			formula: "pts / 25 + ps - 0.225 * gps",
 			showStats: "overall",
 			statRange: "playoffs",
 		},

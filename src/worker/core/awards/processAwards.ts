@@ -912,7 +912,10 @@ export const processAwards = async ({
 						) {
 							opoyAward.winner = [
 								{ ...mvpWinner, opoyOverride: true as const },
-								...opoyAward.winner,
+								...opoyAward.winner.filter((p) => {
+									// If MVP QB was already in OPOY rankings, bump him up to #1 rather than having him on there twice
+									return p.pid !== mvpWinner.pid;
+								}),
 							].slice(0, numPlayersPerIndividualAward);
 						}
 					}

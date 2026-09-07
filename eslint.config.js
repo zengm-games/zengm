@@ -111,7 +111,8 @@ export default defineConfig(
 		languageOptions: {
 			globals: {
 				...globals.browser,
-				process: false,
+				__NODE_ENV: "readonly",
+				__SPORT: "readonly",
 
 				// This is needed for no-undef
 				AlgorithmIdentifier: false,
@@ -137,7 +138,8 @@ export default defineConfig(
 		languageOptions: {
 			globals: {
 				...globals.sharedWorker,
-				process: false,
+				__NODE_ENV: "readonly",
+				__SPORT: "readonly",
 
 				// This is needed for no-undef
 				IDBValidKey: false,
@@ -154,7 +156,8 @@ export default defineConfig(
 		languageOptions: {
 			globals: {
 				...commonGlobals,
-				process: false,
+				__NODE_ENV: "readonly",
+				__SPORT: "readonly",
 
 				// This is needed for no-undef
 				HTMLLinkElement: false,

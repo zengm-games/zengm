@@ -186,9 +186,6 @@ importers:
       '@restart/ui':
         specifier: 1.9.4
         version: 1.9.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@rolldown/pluginutils':
-        specifier: 1.0.1
-        version: 1.0.1
       '@types/d3-dsv':
         specifier: 3.0.7
         version: 3.0.7

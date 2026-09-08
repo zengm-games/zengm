@@ -2,7 +2,6 @@ import fs from "node:fs/promises";
 import { transformAsync } from "@babel/core";
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import babelPluginSyntaxJsx from "@babel/plugin-syntax-jsx";
-import { and, code, include, moduleType, or } from "@rolldown/pluginutils";
 import type { RolldownPlugin, SourceMapInput, TransformResult } from "rolldown";
 import { babelPluginSportFunctionsFactory } from "../../babel-plugin-sport-functions/index.ts";
 import type { Sport } from "../getSport.ts";
@@ -25,14 +24,10 @@ export const sportFunctions = (
 	return {
 		name: "sport-functions",
 		transform: {
-			filter: [
-				include(
-					and(
-						or(moduleType("ts"), moduleType("tsx")),
-						or(code("bySport"), code("isSport")),
-					),
-				),
-			],
+			filter: {
+				moduleType: ["ts", "tsx"],
+				code: ["bySport", "isSport"],
+			},
 			async handler(code, id, { moduleType }) {
 				let mtimeMs;
 				if (nodeEnv === "development") {

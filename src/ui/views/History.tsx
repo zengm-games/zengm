@@ -185,6 +185,8 @@ const History = (props: View<"history">) => {
 		Object.groupBy(awards.individualAwardsPlayoffs, (award) => award.shortName),
 	);
 
+	const bestRecordConfs = Array.from(awards.bestRecordConfs.entries());
+
 	return (
 		<>
 			<MoreLinks type="awards" page="history" season={season} />
@@ -254,10 +256,12 @@ const History = (props: View<"history">) => {
 								<div className="mb-3">{NO_WINNER}</div>
 							)}
 							<h2>Best Record</h2>
-							{Array.from(awards.bestRecordConfs.entries()).map(([cid, t]) =>
+							{bestRecordConfs.map(([cid, t]) =>
 								t ? (
 									<div key={cid} className="mb-3">
-										{confs[cid]?.name}:<br />
+										{bestRecordConfs.length === 1 ? null : (
+											<div>{confs[cid]?.name}:</div>
+										)}
 										<span
 											className={t.tid === userTid ? "table-info" : undefined}
 										>

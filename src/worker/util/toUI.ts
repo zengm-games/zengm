@@ -6,13 +6,15 @@ const toUI = <Name extends keyof typeof api>(
 	name: Name,
 	args: Parameters<(typeof api)[Name]>,
 	conditions: Conditions = {},
-): Promise<ReturnType<(typeof api)[Name]>> => {
+) => {
 	if (__NODE_ENV === "test") {
-		// @ts-expect-error
 		return Promise.resolve();
 	}
 
-	return promiseWorker.postMessage([name, ...args], conditions.hostID);
+	return promiseWorker.postMessage(
+		[name, ...args],
+		conditions.hostID,
+	) as Promise<ReturnType<(typeof api)[Name]>>;
 };
 
 export default toUI;

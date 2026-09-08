@@ -67,7 +67,7 @@
 		"just-clone": "6.2.0",
 		"match-sorter": "8.3.0",
 		"nanoevents": "10.0.0",
-		"promise-worker-bi": "5.0.2",
+		"promise-worker-bi": "6.0.0-beta.0",
 		"react": "19.2.8",
 		"react-addons-text-content": "0.0.4",
 		"react-bootstrap": "2.10.10",

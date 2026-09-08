@@ -32,7 +32,7 @@ if (__NODE_ENV === "development") {
 export type WorkerAPICategory = keyof typeof api;
 
 // API functions should have at most 2 arguments. First argument is passed here from toWorker. If you need to pass multiple variables, use an object/array. Second argument is Conditions.
-promiseWorker.register(([type, name, param], hostID) => {
+promiseWorker.register(([type, name, param]: any, hostID) => {
 	const conditions = {
 		hostID,
 	};

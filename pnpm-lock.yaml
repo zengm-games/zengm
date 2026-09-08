@@ -120,8 +120,8 @@ importers:
         specifier: 10.0.0
         version: 10.0.0
       promise-worker-bi:
-        specifier: 5.0.2
-        version: 5.0.2
+        specifier: 6.0.0-beta.0
+        version: 6.0.0-beta.0
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -3816,8 +3816,8 @@ packages:
     resolution: {integrity: sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==}
     engines: {node: '>=6'}
 
-  promise-worker-bi@5.0.2:
-    resolution: {integrity: sha512-m6p4rmhF/Unn/i4vhV7rj7k6kKmX7eUkyUup8N+Jm8ja8gnj0AzBdsQx7FvR8sGHkFO0C2xMnr1MCEVG3TTiVA==}
+  promise-worker-bi@6.0.0-beta.0:
+    resolution: {integrity: sha512-yeAQhwpG4TX152zvwyXwBJM9tqpgFlHjCZXKn/l4640FLSclocsvidiHLxfSkJXOyul/zZTPRUhJm0JuAOnUHg==}
 
   prop-types-extra@1.1.1:
     resolution: {integrity: sha512-59+AHNnHYCdiC+vMwY52WmvP5dM3QLeoumYuEyceQDi9aEhtwN9zIQ2ZNo25sMyXnbh32h+P1ezDsUpUH3JAew==}
@@ -8408,7 +8408,7 @@ snapshots:
 
   pretty-bytes@5.6.0: {}
 
-  promise-worker-bi@5.0.2: {}
+  promise-worker-bi@6.0.0-beta.0: {}
 
   prop-types-extra@1.1.1(react@19.2.8):
     dependencies:

@@ -26,6 +26,7 @@ custom awards later
   - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
   - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
 - `if` function in FormulaEvaluator
+- comeback player of the year, similar to MIP
 
 vitest 5
 - https://github.com/vitest-dev/vitest/issues/11164
@@ -41,12 +42,6 @@ vitest 5
 when navigating with ctrl+k menu, should reset scroll after navigating between player profile pages
 - since page id doesn't change, ViewManager.processUpdate doesn't mark it as firstRun, so then scrollToTop is false
 
-useBlocker beforeunload sharedworker issue
-- get into dirty state, press ctrl+r to trigger beforeunload, click "cancel" to stay, and now all SPA links are broken
-- `await toWorker("main", "beforeView"` is hanging, but on worker it completes fine, somehow message getting lost? sharedworker weirdness?
-  - maybe yeah, if i disable sharedworker, it works...
-- happens in both firefox 154 and chrome 151
-
 draft race condition https://discord.com/channels/290013534023057409/1536156382552789023/1536156382552789023
 - I had the 3rd and 4th lottery pick in a draft and I spam clicked to pick and sim as I usually do, but I realized by the end of the draft that I drafted the same player twice. I didn't get the player twice- just once but the 4th pick is gone now. Not sure if this is a real backend bug or just lag on my end.
 
@@ -55,8 +50,11 @@ can web locks API be used to identify if shared worker has stopped running someh
 - https://aistudio.google.com/prompts/1Gj05Fid0e8yTQywMpInfhYc3ATBs5HpK
 - do similar to identify when tabs have closed
   - https://developer.mozilla.org/en-US/docs/Web/API/LockManager/query see clientId
+- maybe not reliable https://x.com/CzajkowskiDarek/status/2094884386566971691
 - built into promise-worker-bi?
   - could provide a "close" event if shared worker goes away, and better tracking of tabs
+- https://developer.chrome.com/docs/web-platform/page-lifecycle-api
+- https://developer.chrome.com/blog/freezing-on-energy-saver
 
 btn-close vs glyphicon-remove
 

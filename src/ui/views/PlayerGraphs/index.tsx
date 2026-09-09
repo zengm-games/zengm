@@ -12,6 +12,7 @@ import { groupByUnique } from "../../../common/utils.ts";
 import type { Col } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { addPrefixForStat } from "../../../common/advancedPlayerSearch.ts";
+import useLocalStorageState from "use-local-storage-state";
 
 const getStatsWithLabels = (stats: string[], statType: string) => {
 	return getCols(stats.map((stat) => addPrefixForStat(statType, stat)));
@@ -318,26 +319,45 @@ const PlayerGraphs = ({
 		dropdownView: "player_graphs",
 	});
 
+	const [savedState, setSavedState] = useLocalStorageState<
+		UpdateUrlParam | undefined
+	>("player-graphs-state", {
+		defaultValue: undefined,
+	});
+
 	const updateUrl = async (toUpdate: UpdateUrlParam) => {
+		const merged = {
+			seasonX: toUpdate.seasonX ?? seasonX,
+			statTypeX: toUpdate.statTypeX ?? statTypeX,
+			playoffsX: toUpdate.playoffsX ?? playoffsX,
+			statX: toUpdate.statX ?? statX,
+			seasonY: toUpdate.seasonY ?? seasonY,
+			statTypeY: toUpdate.statTypeY ?? statTypeY,
+			playoffsY: toUpdate.playoffsY ?? playoffsY,
+			statY: toUpdate.statY ?? statY,
+			minGames: toUpdate.minGames ?? minGames,
+		};
+		setSavedState(merged);
+
 		const url = helpers.leagueUrl([
 			"player_graphs",
-			toUpdate.seasonX ?? seasonX,
-			toUpdate.statTypeX ?? statTypeX,
-			toUpdate.playoffsX ?? playoffsX,
-			toUpdate.statX ?? statX,
-			toUpdate.seasonY ?? seasonY,
-			toUpdate.statTypeY ?? statTypeY,
-			toUpdate.playoffsY ?? playoffsY,
-			toUpdate.statY ?? statY,
-			`${toUpdate.minGames ?? minGames}g`,
+			merged.seasonX,
+			merged.statTypeX,
+			merged.playoffsX,
+			merged.statX,
+			merged.seasonY,
+			merged.statTypeY,
+			merged.playoffsY,
+			merged.statY,
+			`${merged.minGames}g`,
 		]);
 
 		await realtimeUpdate([], url, undefined, true);
 	};
 
 	if (location.pathname.endsWith("/player_graphs")) {
-		// Set initial URL, for ctrl+r and reloading
-		updateUrl({});
+		// Set initial URL, for ctrl+r and reloading, using the last selections if any
+		updateUrl(savedState ?? {});
 	}
 
 	let minGamesInteger = Number.parseInt(minGames);

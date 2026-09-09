@@ -806,6 +806,13 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						type: "integer",
 						minimum: 0,
 					},
+					freeAgencySigningsPerDay: {
+						type: "integer",
+					},
+					freeAgencySigningsThisDay: {
+						type: "integer",
+						minimum: 0,
+					},
 					defaultStadiumCapacity: {
 						type: "integer",
 						minimum: 0,

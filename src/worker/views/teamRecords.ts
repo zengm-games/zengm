@@ -87,19 +87,29 @@ const tallyAwards = async (
 
 		for (const award of row.awards) {
 			// This logic needs to be duplicated from below rather than just checking seenAwardTypes because shortName could be used for both a valid and invalid award
-			if (award.numTeams !== undefined) {
-				// Skip team awards
-				continue;
-			}
 			if (typeof award.statRange === "number") {
 				// Skip playoff series awards - usually not that much info there, like if you won FMVP you also probably won a championship
 				continue;
 			}
 
-			if (award.winner[0]?.tid === tid) {
-				const shortName = award.shortName;
-				teamAwards.custom[shortName] ??= 0;
-				teamAwards.custom[shortName] += 1;
+			if (award.numTeams === undefined) {
+				// Individual award - first player only
+				if (award.winner[0]?.tid === tid) {
+					const shortName = award.shortName;
+					teamAwards.custom[shortName] ??= 0;
+					teamAwards.custom[shortName] += 1;
+				}
+			} else {
+				// Team award - all teams
+				for (const team of award.winner) {
+					for (const p of team) {
+						if (p.tid === tid) {
+							const shortName = award.shortName;
+							teamAwards.custom[shortName] ??= 0;
+							teamAwards.custom[shortName] += 1;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -306,10 +316,6 @@ const updateTeamRecords = async (
 		const seenAwardTypes = new Set<string>();
 		for (const row of awards) {
 			for (const award of row.awards) {
-				if (award.numTeams !== undefined) {
-					// Skip team awards
-					continue;
-				}
 				if (typeof award.statRange === "number") {
 					// Skip playoff series awards - usually not that much info there, like if you won FMVP you also probably won a championship
 					continue;

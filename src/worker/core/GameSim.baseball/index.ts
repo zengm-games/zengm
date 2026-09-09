@@ -2439,9 +2439,17 @@ class GameSim extends GameSimBase {
 	}
 
 	shouldIntentionalWalk() {
+		// If the intentional walk results in a loss, don't do it
+		const basesLoaded = this.bases.every(Boolean);
+		const scoreTied =
+			this.team[this.d].t.stat.pts === this.team[this.o].t.stat.pts;
+		if (this.gameCanBeOverDuringInning() && basesLoaded && scoreTied) {
+			return;
+		}
+
 		// At end of game, don't put tying/winning run on
 		const diffPts = this.team[this.d].t.stat.pts - this.team[this.o].t.stat.pts;
-		const runsWithHR = this.bases.filter((p) => !p).length + 1;
+		const runsWithHR = this.bases.filter(Boolean).length + 1;
 		const tyingRunUp = diffPts === runsWithHR;
 		const tyingRunOnDeck = diffPts === runsWithHR + 1;
 		if (
@@ -2467,7 +2475,12 @@ class GameSim extends GameSimBase {
 
 		// If the current batter is just very scary
 		const scary = diffScore > 1 && Math.random() < diffScore - 1;
-		return scary;
+		// Even less likely if bases are loaded
+		if (basesLoaded) {
+			return scary && Math.random() < 0.1;
+		} else {
+			return scary;
+		}
 	}
 
 	simPlateAppearance() {

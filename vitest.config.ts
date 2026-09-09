@@ -22,7 +22,6 @@ const makeProject = (
 			__SPORT: JSON.stringify(sport),
 		},
 		plugins: [
-			// @ts-expect-error
 			{
 				...sportFunctions("production", sport),
 

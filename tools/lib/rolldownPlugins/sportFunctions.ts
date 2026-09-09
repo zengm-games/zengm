@@ -10,7 +10,7 @@ import type { Sport } from "../getSport.ts";
 export const sportFunctions = (
 	nodeEnv: "development" | "production" | "test",
 	sport: Sport,
-): RolldownPlugin => {
+) => {
 	const babelCache: Record<
 		string,
 		{
@@ -28,7 +28,11 @@ export const sportFunctions = (
 				moduleType: ["ts", "tsx"],
 				code: ["bySport", "isSport"],
 			},
-			async handler(code, id, { moduleType }) {
+			async handler(
+				code: string,
+				id: string,
+				{ moduleType }: { moduleType: string },
+			) {
 				let mtimeMs;
 				if (nodeEnv === "development") {
 					mtimeMs = (await fs.stat(id)).mtimeMs;
@@ -66,5 +70,5 @@ export const sportFunctions = (
 				return result;
 			},
 		},
-	};
+	} satisfies RolldownPlugin;
 };

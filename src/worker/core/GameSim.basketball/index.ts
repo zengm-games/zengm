@@ -152,6 +152,14 @@ class GameSim extends GameSimBase {
 
 	playersOnCourt: [PlayerGameSim[], PlayerGameSim[]];
 
+	playerSelectionRatios: number[];
+
+	// Individual skill contributions are constant between home-court adjustments.
+	synergySkills = new WeakMap<
+		PlayerGameSim,
+		Record<"3" | "A" | "B" | "Di" | "Dp" | "Po" | "Ps" | "R", number>
+	>();
+
 	t: number;
 
 	numPeriods: number;
@@ -248,6 +256,7 @@ class GameSim extends GameSimBase {
 			this.team[0].player.slice(0, this.numPlayersOnCourt),
 			this.team[1].player.slice(0, this.numPlayersOnCourt),
 		];
+		this.playerSelectionRatios = new Array(this.numPlayersOnCourt);
 
 		this.updatePlayersOnCourt({
 			recordStarters: true,
@@ -300,6 +309,9 @@ class GameSim extends GameSimBase {
 	 *
 	 */
 	homeCourtAdvantage(homeCourtFactor: number) {
+		// The constructor calculates initial synergy before applying home court.
+		// Invalidate here so subsequent substitutions use the adjusted ratings.
+		this.synergySkills = new WeakMap();
 		const homeCourtModifier =
 			homeCourtFactor *
 			helpers.bound(1 + g.get("homeCourtAdvantage") / 100, 0.01, Infinity);
@@ -1167,41 +1179,29 @@ class GameSim extends GameSimBase {
 			for (let i = 0; i < this.numPlayersOnCourt; i++) {
 				const p = this.playersOnCourt[t][i]!;
 
-				// 1 / (1 + e^-(15 * (x - 0.61))) from 0 to 1
-				// 0.61 is not always used - keep in sync with skills.js!
-
-				skillsCount["3"] += helpers.sigmoid(
-					p.compositeRating.shootingThreePointer,
-					15,
-					0.59,
-				);
-				skillsCount.A += helpers.sigmoid(
-					p.compositeRating.athleticism,
-					15,
-					0.63,
-				);
-				skillsCount.B += helpers.sigmoid(p.compositeRating.dribbling, 15, 0.68);
-				skillsCount.Di += helpers.sigmoid(
-					p.compositeRating.defenseInterior,
-					15,
-					0.57,
-				);
-				skillsCount.Dp += helpers.sigmoid(
-					p.compositeRating.defensePerimeter,
-					15,
-					0.61,
-				);
-				skillsCount.Po += helpers.sigmoid(
-					p.compositeRating.shootingLowPost,
-					15,
-					0.61,
-				);
-				skillsCount.Ps += helpers.sigmoid(p.compositeRating.passing, 15, 0.63);
-				skillsCount.R += helpers.sigmoid(
-					p.compositeRating.rebounding,
-					15,
-					0.61,
-				);
+				let skills = this.synergySkills.get(p);
+				if (!skills) {
+					const r = p.compositeRating;
+					skills = {
+						"3": helpers.sigmoid(r.shootingThreePointer, 15, 0.59),
+						A: helpers.sigmoid(r.athleticism, 15, 0.63),
+						B: helpers.sigmoid(r.dribbling, 15, 0.68),
+						Di: helpers.sigmoid(r.defenseInterior, 15, 0.57),
+						Dp: helpers.sigmoid(r.defensePerimeter, 15, 0.61),
+						Po: helpers.sigmoid(r.shootingLowPost, 15, 0.61),
+						Ps: helpers.sigmoid(r.passing, 15, 0.63),
+						R: helpers.sigmoid(r.rebounding, 15, 0.61),
+					};
+					this.synergySkills.set(p, skills);
+				}
+				skillsCount["3"] += skills["3"];
+				skillsCount.A += skills.A;
+				skillsCount.B += skills.B;
+				skillsCount.Di += skills.Di;
+				skillsCount.Dp += skills.Dp;
+				skillsCount.Po += skills.Po;
+				skillsCount.Ps += skills.Ps;
+				skillsCount.R += skills.R;
 			}
 
 			// Base offensive synergy
@@ -1260,70 +1260,43 @@ class GameSim extends GameSimBase {
 	 * This should be called once every possession, after this.updatePlayersOnCourt and this.updateSynergy as they influence output, to update the team composite ratings based on the players currently on the court.
 	 */
 	updateTeamCompositeRatings() {
-		// Only update ones that are actually used
-		const toUpdate = [
-			"dribbling",
-			"passing",
-			"rebounding",
-			"defense",
-			"defensePerimeter",
-			"blocking",
-		];
-
 		const foulLimit = this.getFoulTroubleLimit();
-
-		// Scale composite ratings
 		for (const t of teamNums) {
 			const oppT = teamNums[1 - t]!;
 			const diff = this.team[t].stat.pts - this.team[oppT].stat.pts;
-
 			const perfFactor = 1 - 0.2 * Math.tanh(diff / 60);
-
-			for (const rating of toUpdate) {
-				this.team[t].compositeRating[rating] = 0;
-
-				for (let i = 0; i < this.numPlayersOnCourt; i++) {
-					const p = this.playersOnCourt[t][i]!;
-
-					let foulLimitFactor = 1;
-					if (
-						rating === "defense" ||
-						rating === "defensePerimeter" ||
-						rating === "blocking"
-					) {
-						const pf = p.stat.pf;
-						if (pf === foulLimit) {
-							foulLimitFactor *= 0.9;
-						} else if (pf > foulLimit) {
-							foulLimitFactor *= 0.75;
-						}
-					}
-
-					this.team[t].compositeRating[rating] +=
-						p.compositeRating[rating] *
-						this.fatigue(p.stat.energy) *
-						perfFactor *
-						foulLimitFactor;
-				}
-
-				this.team[t].compositeRating[rating] /= 5;
+			let dribbling = 0;
+			let passing = 0;
+			let rebounding = 0;
+			let defense = 0;
+			let defensePerimeter = 0;
+			let blocking = 0;
+			for (const p of this.playersOnCourt[t]) {
+				const ratings = p.compositeRating;
+				const fatigue = this.fatigue(p.stat.energy);
+				const pf = p.stat.pf;
+				const foulFactor = pf === foulLimit ? 0.9 : pf > foulLimit ? 0.75 : 1;
+				// Preserve the multiplication and summation order for seeded games.
+				// Static property access also avoids six dynamic lookups per player.
+				dribbling += ratings.dribbling * fatigue * perfFactor;
+				passing += ratings.passing * fatigue * perfFactor;
+				rebounding += ratings.rebounding * fatigue * perfFactor;
+				defense += ratings.defense * fatigue * perfFactor * foulFactor;
+				defensePerimeter +=
+					ratings.defensePerimeter * fatigue * perfFactor * foulFactor;
+				blocking += ratings.blocking * fatigue * perfFactor * foulFactor;
 			}
-
-			this.team[t].compositeRating.dribbling +=
-				this.synergyFactor * this.team[t].synergy.off;
-			this.team[t].compositeRating.passing +=
-				this.synergyFactor * this.team[t].synergy.off;
-			this.team[t].compositeRating.rebounding +=
-				this.synergyFactor * this.team[t].synergy.reb;
-			this.team[t].compositeRating.defense +=
-				this.synergyFactor * this.team[t].synergy.def;
-			this.team[t].compositeRating.defensePerimeter +=
-				this.synergyFactor * this.team[t].synergy.def;
-			this.team[t].compositeRating.blocking +=
-				this.synergyFactor * this.team[t].synergy.def;
+			const ratings = this.team[t].compositeRating;
+			const synergy = this.team[t].synergy;
+			ratings.dribbling = dribbling / 5 + this.synergyFactor * synergy.off;
+			ratings.passing = passing / 5 + this.synergyFactor * synergy.off;
+			ratings.rebounding = rebounding / 5 + this.synergyFactor * synergy.reb;
+			ratings.defense = defense / 5 + this.synergyFactor * synergy.def;
+			ratings.defensePerimeter =
+				defensePerimeter / 5 + this.synergyFactor * synergy.def;
+			ratings.blocking = blocking / 5 + this.synergyFactor * synergy.def;
 		}
 	}
-
 	/**
 	 * Update playing time stats.
 	 *
@@ -1332,26 +1305,32 @@ class GameSim extends GameSimBase {
 	updatePlayingTime(possessionLength: number) {
 		const min = possessionLength / 60;
 		for (const t of teamNums) {
+			const playersOnCourt = this.playersOnCourt[t];
+
 			// Update minutes (overall, court, and bench)
 			for (const p of this.team[t].player) {
-				if (this.playersOnCourt[t].includes(p)) {
-					this.recordStat(t, p, "min", min);
-					this.recordStat(t, p, "courtTime", min);
+				if (playersOnCourt.includes(p)) {
+					// This is a very hot path. Do the equivalent of recordStat directly
+					// so court/bench bookkeeping does not repeatedly pass through all of
+					// recordStat's scoring and play-by-play branches.
+					p.stat.min += min;
+					this.team[t].stat.min += min;
+					if (this.playByPlay.active) {
+						this.playByPlay.logStat(t, p.id, "min", min);
+					}
+
+					p.stat.courtTime += min;
 
 					// This used to be 0.04. Increase more to lower PT
-					this.recordStat(
-						t,
-						p,
-						"energy",
-						-min * this.fatigueFactor * (1 - p.compositeRating.endurance),
-					);
+					p.stat.energy +=
+						-min * this.fatigueFactor * (1 - p.compositeRating.endurance);
 
 					if (p.stat.energy < 0) {
 						p.stat.energy = 0;
 					}
 				} else {
-					this.recordStat(t, p, "benchTime", min);
-					this.recordStat(t, p, "energy", min * 0.094);
+					p.stat.benchTime += min;
+					p.stat.energy += min * 0.094;
 
 					if (p.stat.energy > 1) {
 						p.stat.energy = 1;
@@ -2760,12 +2739,18 @@ class GameSim extends GameSimBase {
 	 * @param {number=} power Power that the composite rating is raised to after the components are linearly combined by  the weights and scaled from 0 to 1. This can be used to introduce nonlinearities, like making a certain stat more uniform (power < 1) or more unevenly distributed (power > 1) or making a composite rating an inverse (power = -1). Default value is 1.
 	 * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
 	 */
-	ratingArray(rating: CompositeRating, t: TeamNum, power: number = 1) {
+	ratingArray(
+		rating: CompositeRating,
+		t: TeamNum,
+		power: number = 1,
+		array: number[] = new Array(this.numPlayersOnCourt),
+	) {
 		const foulLimit = rating === "fouling" ? this.getFoulTroubleLimit() : 0;
 		let total = 0;
 
 		// Scale composite ratings
-		const array = this.playersOnCourt[t].map((p, i) => {
+		for (let i = 0; i < this.numPlayersOnCourt; i++) {
+			const p = this.playersOnCourt[t][i]!;
 			let compositeRating = p.compositeRating[rating];
 
 			if (rating === "fouling") {
@@ -2781,10 +2766,9 @@ class GameSim extends GameSimBase {
 
 			const value = (compositeRating * this.fatigue(p.stat.energy)) ** power;
 
+			array[i] = value;
 			total += value;
-
-			return value;
-		});
+		}
 
 		// Set floor (5% of total)
 		const floor = 0.05 * total;
@@ -2804,7 +2788,12 @@ class GameSim extends GameSimBase {
 		power: number,
 		exempt?: PlayerGameSim,
 	) {
-		const ratios = this.ratingArray(rating, t, power);
+		const ratios = this.ratingArray(
+			rating,
+			t,
+			power,
+			this.playerSelectionRatios,
+		);
 		const playersOnCourt = this.playersOnCourt[t];
 
 		if (exempt !== undefined) {
@@ -2829,8 +2818,8 @@ class GameSim extends GameSimBase {
 
 		let runningSum = 0;
 
-		for (const [i, ratio] of ratios.entries()) {
-			runningSum += ratio;
+		for (let i = 0; i < this.numPlayersOnCourt; i++) {
+			runningSum += ratios[i]!;
 			if (rand < runningSum) {
 				return playersOnCourt[i]!;
 			}

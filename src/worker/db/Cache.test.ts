@@ -48,3 +48,29 @@ describe("get", () => {
 		assert.strictEqual(p.pid, p2.pid);
 	});
 });
+
+describe("putAll", () => {
+	test("stores multiple objects and returns their IDs", async () => {
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
+		const p2 = {
+			...p,
+			pid: p.pid + 100000,
+			firstName: "Batch",
+			lastName: "Test",
+		};
+
+		p.firstName = "Updated";
+		const ids = await idb.cache.players.putAll([p, p2]);
+
+		assert.deepEqual(ids, [p.pid, p2.pid]);
+		assert.strictEqual(
+			(await idb.cache.players.get(p.pid))?.firstName,
+			"Updated",
+		);
+		assert.strictEqual(
+			(await idb.cache.players.get(p2.pid))?.firstName,
+			"Batch",
+		);
+	});
+});

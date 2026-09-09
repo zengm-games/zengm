@@ -7,25 +7,28 @@ const advStatsSave = async (
 	updatedStats: Record<string, number[] | number[][]>,
 ) => {
 	const keys = Object.keys(updatedStats);
-	await Promise.all(
-		players.map(async ({ pid }, i) => {
-			const p = playersRaw.find((p2) => p2.pid === pid);
+	const playersRawByPid = new Map(playersRaw.map((p) => [p.pid, p]));
+	const playersToSave: Player[] = [];
 
-			if (p) {
-				const ps = p.stats.at(-1);
+	for (const [i, { pid }] of players.entries()) {
+		const p = playersRawByPid.get(pid);
 
-				if (ps) {
-					for (const key of keys) {
-						if (!Number.isNaN(updatedStats[key]![i])) {
-							ps[key] = updatedStats[key]![i];
-						}
+		if (p) {
+			const ps = p.stats.at(-1);
+
+			if (ps) {
+				for (const key of keys) {
+					if (!Number.isNaN(updatedStats[key]![i])) {
+						ps[key] = updatedStats[key]![i];
 					}
-
-					await idb.cache.players.put(p);
 				}
+
+				playersToSave.push(p);
 			}
-		}),
-	);
+		}
+	}
+
+	await idb.cache.players.putAll(playersToSave);
 };
 
 export default advStatsSave;

@@ -186,6 +186,10 @@ class StoreAPI<Input, Output, ID extends string | number> {
 		return this.cache._put(this.store, obj) as any;
 	}
 
+	putAll(objs: Input[]): Promise<ID[]> {
+		return this.cache._putAll(this.store, objs) as any;
+	}
+
 	delete(id: ID): Promise<void> {
 		return this.cache._delete(this.store, id);
 	}
@@ -967,12 +971,7 @@ class Cache {
 		return output;
 	}
 
-	async _storeObj(
-		type: "add" | "put",
-		store: Store,
-		obj: any,
-	): Promise<number | string> {
-		await this._waitForStatus("full");
+	_storeObjRaw(type: "add" | "put", store: Store, obj: any): number | string {
 		const pk = this.storeInfos[store].pk;
 
 		if (Object.hasOwn(obj, pk)) {
@@ -1018,12 +1017,26 @@ class Cache {
 		return obj[pk];
 	}
 
+	async _storeObj(
+		type: "add" | "put",
+		store: Store,
+		obj: any,
+	): Promise<number | string> {
+		await this._waitForStatus("full");
+		return this._storeObjRaw(type, store, obj);
+	}
+
 	_add(store: Store, obj: any): Promise<number | string> {
 		return this._storeObj("add", store, obj);
 	}
 
 	_put(store: Store, obj: any): Promise<number | string> {
 		return this._storeObj("put", store, obj);
+	}
+
+	async _putAll(store: Store, objs: any[]): Promise<(number | string)[]> {
+		await this._waitForStatus("full");
+		return objs.map((obj) => this._storeObjRaw("put", store, obj));
 	}
 
 	async _delete(store: Store, id: number | string) {

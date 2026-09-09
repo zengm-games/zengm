@@ -36,7 +36,9 @@ const Confirm = confirmable<
 
 	return (
 		<Modal show={show} onHide={cancel}>
-			<Modal.Header closeButton>Retire {p.name}'s jersey number</Modal.Header>
+			<Modal.Header closeButton>
+				Retire {p.firstName} {p.lastName}'s jersey number
+			</Modal.Header>
 			<Modal.Body>
 				<form
 					onSubmit={(event) => {

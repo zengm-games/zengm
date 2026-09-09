@@ -23,7 +23,12 @@ const makeProject = (
 		},
 		plugins: [
 			// @ts-expect-error
-			sportFunctions("production", sport),
+			{
+				...sportFunctions("production", sport),
+
+				// Need this or Vite runs TypeScript conversion before this plugin runs, resulting in moduleType in the plugin filter being js rather than ts/tsx
+				enforce: "pre",
+			},
 		],
 
 		test: {

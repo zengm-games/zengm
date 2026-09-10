@@ -3,8 +3,12 @@ export const overridePostMessage = () => {
 	// self.postMessage causes an error because it requires a different number of arguments inside and outside of a worker.
 	const originalPostMessage = globalThis.postMessage;
 	globalThis.postMessage = (...args) => {
-		if (Array.isArray(args[0]) && JSON.stringify(args[0]) === "[2,0]") {
-			// Skip hostID message
+		const arg = args[0];
+		if (
+			Array.isArray(arg) &&
+			((arg[0] === 4 && arg.length === 2) || JSON.stringify(arg) === "[2,0]")
+		) {
+			// Skip MSGTYPE_HOST_ID and MSGTYPE_WORKER_LOCK
 		} else {
 			// @ts-expect-error
 			originalPostMessage(...args);

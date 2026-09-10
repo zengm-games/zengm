@@ -63,23 +63,23 @@ if (isSport("basketball")) {
 }
 export const AWARD_STATS_ALL = [...AWARD_STATS, ...AWARD_STATS_SPECIAL];
 
-const SKIP_BY_SPORT = new Set(
+const PLAYOFF_SERIES_SKIP_BY_SPORT = new Set(
 	bySport({
 		baseball: ["keyStatsShort", "min", "poSo", "pos"],
-		basketball: [],
+		basketball: ["ws48", "ws", "bpm"],
 		football: ["min"],
-		hockey: ["gMin", "keyStatsWithGoalieGP", "gW", "gL", "gT", "gOTL"],
+		hockey: ["gMin", "keyStatsWithGoalieGP", "gW", "gL", "gT", "gOTL", "ps"],
 	}),
 );
 
 const PLAYOFF_SERIES_AWARD_STATS_RAW = player.stats.raw.filter(
 	(key) =>
 		!SKIP_PLAYER_STATS.has(key) &&
-		!SKIP_BY_SPORT.has(key) &&
+		!PLAYOFF_SERIES_SKIP_BY_SPORT.has(key) &&
 		!key.startsWith("opp"),
 );
 const PLAYOFF_SERIES_AWARD_STATS_DERIVED = derivedPlayerStatKeys.filter(
-	(key) => !SKIP_BY_SPORT.has(key) && key !== "age",
+	(key) => !PLAYOFF_SERIES_SKIP_BY_SPORT.has(key) && key !== "age",
 );
 const PLAYOFF_SERIES_AWARD_STATS = [
 	...PLAYOFF_SERIES_AWARD_STATS_RAW,

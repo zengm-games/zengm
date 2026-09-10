@@ -880,7 +880,8 @@ const updatePlayers = async (
 					(award) =>
 						award.type === undefined &&
 						award.numTeams === undefined &&
-						award.actAs === "mvp",
+						award.actAs === "mvp" &&
+						award.rank === 1,
 				);
 
 			getValue = (p) => {
@@ -888,7 +889,8 @@ const updatePlayers = async (
 					(award) =>
 						award.type === undefined &&
 						award.numTeams === undefined &&
-						award.actAs === "mvp",
+						award.actAs === "mvp" &&
+						award.rank === 1,
 				);
 				const entries = [];
 				for (const mvp of mvpSeasons) {

@@ -1,4 +1,4 @@
 allowBuilds:
   unrs-resolver: false
 minimumReleaseAgeExclude:
-  - promise-worker-bi@6.0.0-beta.0
+  - promise-worker-bi@6.0.0-beta.0 || 6.0.0-beta.1

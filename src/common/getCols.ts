@@ -2387,6 +2387,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "APY",
 		},
+		"stat:totTD": {
+			desc: "Total Non-Passing TD",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "TD",
+		},
 		"stat:av": {
 			desc: "Approximate Value",
 			sortSequence: ["desc", "asc"],

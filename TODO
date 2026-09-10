@@ -1,9 +1,7 @@
+can web locks API be used to identify if shared worker has stopped running somehow? (seems to happen when OS sleeps or tab is idle for a long time)
+- test in pwb beta 1
+
 award settings
-- extra wards listed
-  - hockey: gRec should not be listed, it's a string
-  - baseball: why is pos listed as a stat in docs?
-  - don't break!
-- football: totTD needs description in award settings docs
 - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
   - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten
 
@@ -39,9 +37,6 @@ when navigating with ctrl+k menu, should reset scroll after navigating between p
 
 draft race condition https://discord.com/channels/290013534023057409/1536156382552789023/1536156382552789023
 - I had the 3rd and 4th lottery pick in a draft and I spam clicked to pick and sim as I usually do, but I realized by the end of the draft that I drafted the same player twice. I didn't get the player twice- just once but the 4th pick is gone now. Not sure if this is a real backend bug or just lag on my end.
-
-can web locks API be used to identify if shared worker has stopped running somehow? (seems to happen when OS sleeps or tab is idle for a long time)
-- test in pwb beta 1
 
 btn-close vs glyphicon-remove
 

@@ -37,6 +37,15 @@ export type StatOverridesByMatchup = Record<
 	>
 >;
 
+const BOTH_AWARD_STATS_SKIP = new Set(
+	bySport({
+		baseball: ["pos"],
+		basketball: [],
+		football: [],
+		hockey: ["gRec"],
+	}),
+);
+
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
 
@@ -61,11 +70,13 @@ const AWARD_STATS_SPECIAL = [
 if (isSport("basketball")) {
 	AWARD_STATS_SPECIAL.push("teamWs");
 }
-export const AWARD_STATS_ALL = [...AWARD_STATS, ...AWARD_STATS_SPECIAL];
+export const AWARD_STATS_ALL = [...AWARD_STATS, ...AWARD_STATS_SPECIAL].filter(
+	(key) => !BOTH_AWARD_STATS_SKIP.has(key),
+);
 
-const PLAYOFF_SERIES_SKIP_BY_SPORT = new Set(
+const PLAYOFF_SERIES_AWARD_STATS_SKIP = new Set(
 	bySport({
-		baseball: ["keyStatsShort", "min", "poSo", "pos"],
+		baseball: ["keyStatsShort", "min", "poSo"],
 		basketball: ["ws48", "ws", "bpm"],
 		football: ["min"],
 		hockey: ["gMin", "keyStatsWithGoalieGP", "gW", "gL", "gT", "gOTL", "ps"],
@@ -75,11 +86,14 @@ const PLAYOFF_SERIES_SKIP_BY_SPORT = new Set(
 const PLAYOFF_SERIES_AWARD_STATS_RAW = player.stats.raw.filter(
 	(key) =>
 		!SKIP_PLAYER_STATS.has(key) &&
-		!PLAYOFF_SERIES_SKIP_BY_SPORT.has(key) &&
+		!PLAYOFF_SERIES_AWARD_STATS_SKIP.has(key) &&
 		!key.startsWith("opp"),
 );
 const PLAYOFF_SERIES_AWARD_STATS_DERIVED = derivedPlayerStatKeys.filter(
-	(key) => !PLAYOFF_SERIES_SKIP_BY_SPORT.has(key) && key !== "age",
+	(key) =>
+		!PLAYOFF_SERIES_AWARD_STATS_SKIP.has(key) &&
+		!BOTH_AWARD_STATS_SKIP.has(key) &&
+		key !== "age",
 );
 const PLAYOFF_SERIES_AWARD_STATS = [
 	...PLAYOFF_SERIES_AWARD_STATS_RAW,

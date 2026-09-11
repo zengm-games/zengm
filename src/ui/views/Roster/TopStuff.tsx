@@ -260,7 +260,7 @@ const TopStuff = ({
 								<div>
 									{helpers.ordinal(t.rank)} in{" "}
 									{playoffsByConf ? "conference" : "league"}
-									{t.gb > 0 ? (
+									{t.gb >= 0 && t.rank > 1 ? (
 										<>
 											, {t.gb}{" "}
 											{usePts ? (
@@ -269,7 +269,16 @@ const TopStuff = ({
 												<span title="Games Back">GB</span>
 											)}
 										</>
-									) : null}
+									) : (
+										<>
+											, {-t.gb}{" "}
+											{usePts ? (
+												<span title="Points Ahead">PA</span>
+											) : (
+												<span title="Games Ahead">GA</span>
+											)}
+										</>
+									)}
 								</div>
 							) : null}
 							{!challengeNoRatings ? (

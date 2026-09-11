@@ -72,10 +72,25 @@ const getStandingsInfo = async (info: { season: number; tid: number }) => {
 		for (const t of confOrAllTeams) {
 			if (!playoffsByConf || t.seasonAttrs.cid === cid) {
 				if (t.tid === info.tid) {
+					let gbOtherTeam;
+					if (t.tid === firstPlaceTeam.tid) {
+						// This team is in first place, so actually show how far ahead they are
+						gbOtherTeam = confOrAllTeams[1];
+					} else {
+						// Games back from first place
+						gbOtherTeam = firstPlaceTeam;
+					}
+					let gb;
+					if (gbOtherTeam) {
+						gb = usePts
+							? gbOtherTeam.seasonAttrs.pts - t.seasonAttrs.pts
+							: helpers.gb(gbOtherTeam.seasonAttrs, t.seasonAttrs);
+					} else {
+						gb = 0;
+					}
+
 					return {
-						gb: usePts
-							? firstPlaceTeam.seasonAttrs.pts - t.seasonAttrs.pts
-							: helpers.gb(firstPlaceTeam.seasonAttrs, t.seasonAttrs),
+						gb,
 						playoffsByConf,
 						rank,
 						usePts,

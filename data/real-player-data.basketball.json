@@ -579505,6 +579505,26 @@
       "tp": 63
     },
     {
+      "diq": 63,
+      "dnk": 8,
+      "drb": 63,
+      "endu": 4,
+      "fg": 64,
+      "ft": 66,
+      "fuzz": 0,
+      "hgt": 30,
+      "ins": 34,
+      "jmp": 36,
+      "oiq": 56,
+      "pss": 56,
+      "reb": 57,
+      "season": 2026,
+      "slug": "paulch01",
+      "spd": 44,
+      "stre": 38,
+      "tp": 60
+    },
+    {
       "diq": 36,
       "dnk": 48,
       "drb": 38,
@@ -988228,6 +988248,12 @@
     {
       "abbrev": "LAC",
       "jerseyNumber": "3",
+      "season": 2026,
+      "slug": "paulch01"
+    },
+    {
+      "abbrev": -3,
+      "phase": 4,
       "season": 2026,
       "slug": "paulch01"
     },

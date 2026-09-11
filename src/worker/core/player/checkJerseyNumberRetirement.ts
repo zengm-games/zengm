@@ -273,15 +273,6 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 			continue;
 		}
 
-		console.log("retire", {
-			number,
-			p,
-			score,
-			tid,
-			scoresByTid,
-			factor: helpers.gameAndSeasonLengthScaleFactor() * g.get("hofFactor"),
-		});
-
 		await retireJerseyNumber({
 			number,
 			p,

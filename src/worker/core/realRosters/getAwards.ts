@@ -180,7 +180,7 @@ const getAwards = (
 				pid: p.pid,
 				tid: PLAYER.DOES_NOT_EXIST,
 			};
-			const stats = p.stats?.findLast((row) => row.season !== season);
+			const stats = p.stats?.findLast((row) => row.season === season);
 			if (stats) {
 				pidAndTid.tid = stats.tid;
 			} else {

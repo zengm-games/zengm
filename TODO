@@ -1,6 +1,8 @@
 can web locks API be used to identify if shared worker has stopped running somehow? (seems to happen when OS sleeps or tab is idle for a long time)
 - test in pwb beta 1
 
+Right now on the trading block, untradable contracts are only represented with a grayed out player select button, I'd love if there was a more visible indicator to show currently untradable players, right now I just manually highlight untradable players so Its easier to spot them. Again, not game breaking but would be an awesome QoL change https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/owj4a7p/
+
 award settings
 - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
   - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten
@@ -31,6 +33,33 @@ custom awards later
   - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
 - `if` function in FormulaEvaluator
 - comeback player of the year, similar to MIP
+
+numbers for ranks on stats pages. it’s annoying having to count where a guy ranks and we have it on the team stats page so that would be nice for individual stats too. https://www.reddit.com/r/BasketballGM/comments/1vc7l27/monthly_suggestions_thread/p102zhz/
+
+Id enjoy seeing something like a (+n) next to standings on the roster page, in the scenario where you are first. I often fast sim and wondering how many games ahead I am of 2nd place. Currently games back does that if you're trailing 1st place. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p4oxn31/
+
+The expansion teams should also have Bill Russell's #6 retired. Not a big deal, but I don't wanna have to enable God Mode to do it. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p6zhouk/
+
+Chris Paul should be added to the hall of fame on real player leagues (when starting after the draft). Yeah he isn’t in yet IRL, but since there’s no eligibility period in BBGM what ends up happening is he never gets inducted. Since he’s a lock at this point there isn’t harm marking him as such in the game. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/oyrj4im/
+
+I think if there was a way to show in the team history and gm history beside the record and playoff finish if there was a way to show where you ranked in terms of points per game and opponent points per game would be nice just so you can see how good you were at making offenses and defenses as well as seeing how good the teams were https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p6icjbc/
+
+I'd like an option in team History to see when you started being the GM of that team. This would make it easier to tell which championships were under your tenure. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p67almt/
+
+a News Feed of players on a Watch List https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p4trj7w/
+
+Retired jerseys should display the uniform the player wore during his peak season/most WAR accumulated - for scenarios when teams change their uniforms over the years. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p0jmqda/
+
+Injury summary at the end of a live game log simulation https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/oydrdbi/
+
+option to lock finances of teams in God Mode, for auto play or spectator mode https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/oyvyo9r/
+- all teams? just controlled teams? any other settings, like transactions, depth, etc?
+
+quality of life “Son/Brother” button in godmode that would allow you to easily give any player an extra brother/son with the press of a button, doing the automatic sibling linking for them https://www.reddit.com/r/BasketballGM/comments/1vc7l27/monthly_suggestions_thread/p1028ni/
+
+ability to see which player has the most rings in a Family details https://www.reddit.com/r/BasketballGM/comments/1vc7l27/monthly_suggestions_thread/p1028ni/
+
+When creating a new custom league, I'd love to just be able to import my settings and be able to customize the amount of teams the league starts with. Right now it's either you do everything from scratch or, if you only import settings, you are stuck with the default 32 team league. I've changed a ton of settings and I'd love to be able to import them into different league configurations, as manually adding them takes time and leads to mistakes when trying to remember them all. https://www.reddit.com/r/BasketballGM/comments/1vc7l27/monthly_suggestions_thread/p10cfd8/
 
 when navigating with ctrl+k menu, should reset scroll after navigating between player profile pages
 - since page id doesn't change, ViewManager.processUpdate doesn't mark it as firstRun, so then scrollToTop is false

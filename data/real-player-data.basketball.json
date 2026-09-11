@@ -246599,24 +246599,24 @@
       "tp": 53
     },
     {
-      "diq": 30,
-      "dnk": 33,
-      "drb": 42,
-      "endu": 27,
-      "fg": 76,
-      "ft": 61,
+      "diq": 26,
+      "dnk": 29,
+      "drb": 38,
+      "endu": 23,
+      "fg": 72,
+      "ft": 57,
       "fuzz": 0,
       "hgt": 43,
-      "ins": 42,
-      "jmp": 45,
-      "oiq": 55,
-      "pss": 43,
-      "reb": 54,
+      "ins": 38,
+      "jmp": 41,
+      "oiq": 51,
+      "pss": 39,
+      "reb": 50,
       "season": 2027,
       "slug": "branhma01",
-      "spd": 57,
-      "stre": 33,
-      "tp": 57
+      "spd": 53,
+      "stre": 29,
+      "tp": 53
     },
     {
       "diq": 49,
@@ -759598,14 +759598,6 @@
     },
     {
       "amounts": [
-        1200000
-      ],
-      "exp": 2027,
-      "slug": "branhma01",
-      "start": 2027
-    },
-    {
-      "amounts": [
         900000
       ],
       "exp": 2020,
@@ -770979,7 +770971,7 @@
     },
     {
       "amounts": [
-        2450000
+        3880000
       ],
       "exp": 2027,
       "slug": "derozde01",
@@ -783507,9 +783499,9 @@
     },
     {
       "amounts": [
-        32330000,
-        32330000,
-        32330000
+        32180000,
+        32180000,
+        32180000
       ],
       "exp": 2029,
       "slug": "hardeja01",
@@ -886046,12 +886038,6 @@
       "slug": "branhma01"
     },
     {
-      "abbrev": "ORL",
-      "jerseyNumber": "8",
-      "season": 2027,
-      "slug": "branhma01"
-    },
-    {
       "abbrev": "MIL",
       "jerseyNumber": "7",
       "season": 1950,
@@ -933669,7 +933655,7 @@
       "slug": "hawkijo01"
     },
     {
-      "abbrev": "NOL",
+      "abbrev": "MEM",
       "jerseyNumber": "24",
       "season": 2027,
       "slug": "hawkijo01"
@@ -945510,7 +945496,7 @@
       "slug": "johnsaj01"
     },
     {
-      "abbrev": "MEM",
+      "abbrev": "NOL",
       "jerseyNumber": "8",
       "season": 2027,
       "slug": "johnsaj01"
@@ -989003,7 +988989,7 @@
       "slug": "peavymi01"
     },
     {
-      "abbrev": "NOL",
+      "abbrev": "MEM",
       "jerseyNumber": "14",
       "season": 2027,
       "slug": "peavymi01"

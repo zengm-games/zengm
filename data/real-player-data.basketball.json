@@ -749409,6 +749409,13 @@
         "slug": "russebi01"
       }
     ],
+    "LV": [
+      {
+        "number": "6",
+        "season": 2022,
+        "slug": "russebi01"
+      }
+    ],
     "MEM": [
       {
         "number": "9",
@@ -749934,6 +749941,13 @@
         "season": 1983,
         "slug": "laceysa01"
       },
+      {
+        "number": "6",
+        "season": 2022,
+        "slug": "russebi01"
+      }
+    ],
+    "SET": [
       {
         "number": "6",
         "season": 2022,

@@ -48,14 +48,16 @@ describe("Smoke Tests", () => {
 				phase: 0,
 				start: Date.now(),
 			};
-			league.autoPlay();
+			await league.autoPlay();
+
+			// auto play promise chain gets broken at some point, so we need this
 			return new Promise((resolve) => {
 				intervalID = setInterval(() => {
-					if (g.get("season") === 2017) {
+					if (g.get("season") === 2017 && local.statusText === "Idle") {
 						clearInterval(intervalID);
 
 						// Wait to let it finish whatever DB activity might still be ongoing (like flushing cache)
-						setTimeout(resolve, 5000);
+						setTimeout(resolve, 100);
 					}
 				}, 500);
 			});

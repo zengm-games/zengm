@@ -127,9 +127,7 @@ const assessPayrollMinLuxury = async () => {
 		}
 	}
 
-	for (const teamSeason of teamSeasons) {
-		await idb.cache.teamSeasons.put(teamSeason);
-	}
+	await idb.cache.teamSeasons.putAll(teamSeasons);
 };
 
 export default assessPayrollMinLuxury;

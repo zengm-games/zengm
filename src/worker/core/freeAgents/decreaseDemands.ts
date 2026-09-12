@@ -66,9 +66,9 @@ const decreaseDemands = async () => {
 				};
 			}
 		}
-
-		await idb.cache.players.put(p);
 	}
+
+	await idb.cache.players.putAll(players);
 };
 
 export default decreaseDemands;

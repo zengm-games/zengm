@@ -124,15 +124,17 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 	const rosterOrders = getRosterOrderByPid(players, tid, true);
 
 	// Update rosterOrder
+	const playersToSave = [];
 	for (const p of playersFromCache) {
 		const rosterOrder = rosterOrders.get(p.pid);
 
 		// Only write to DB if this actually changes
 		if (rosterOrder !== undefined && rosterOrder !== p.rosterOrder) {
 			p.rosterOrder = rosterOrder;
-			await idb.cache.players.put(p);
+			playersToSave.push(p);
 		}
 	}
+	await idb.cache.players.putAll(playersToSave);
 };
 
 export default rosterAutoSort;

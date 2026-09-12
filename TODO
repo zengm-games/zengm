@@ -1,7 +1,10 @@
 perf
 - https://github.com/zengm-games/zengm/pull/540
 - replace promise.all with normal loop?
-- bulk cache putAll whenever we're writing in a loop
+- addAll needed?
+  - test/helpers.ts
+- individual player gets in writePlayerStats?
+- good benchmark
 
 can web locks API be used to identify if shared worker has stopped running somehow? (seems to happen when OS sleeps or tab is idle for a long time)
 - test in pwb beta 1

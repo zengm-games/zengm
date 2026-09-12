@@ -55,13 +55,13 @@ const disable = async (tid: number) => {
 
 	// Delete draft picks, and return traded ones to original owner
 	await draft.genPicks();
-	const draftPicks = await idb.cache.draftPicks.getAll();
+	const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
+		(dp) => dp.tid === t.tid,
+	);
 	for (const dp of draftPicks) {
-		if (dp.tid === t.tid) {
-			dp.tid = dp.originalTid;
-			await idb.cache.draftPicks.put(dp);
-		}
+		dp.tid = dp.originalTid;
 	}
+	await idb.cache.draftPicks.putAll(draftPicks);
 
 	// Make all players free agents
 	const players = await idb.cache.players.indexGetAll("playersByTid", t.tid);
@@ -70,8 +70,6 @@ const disable = async (tid: number) => {
 		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
 		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-		await idb.cache.players.put(p);
-
 		logEvent({
 			text: `The <a href="${helpers.leagueUrl([
 				"roster",
@@ -90,6 +88,7 @@ const disable = async (tid: number) => {
 			score: 0,
 		});
 	}
+	await idb.cache.players.putAll(players);
 
 	// In preseason, need to delete teamSeason and teamStats
 	if (actualPhase() < PHASE.PLAYOFFS) {

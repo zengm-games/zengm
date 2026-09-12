@@ -15,6 +15,7 @@ import { defaultTragicDeaths } from "../../util/defaultTragicDeaths.ts";
 import { defaultInjuries } from "../../util/defaultInjuries.ts";
 import { initUILocalGames } from "../../util/initUILocalGames.ts";
 import { disableNba2027, initializeNba2027 } from "../draft/nba2027.ts";
+import { groupByUnique } from "../../../common/utils.ts";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	await updateMeta({
@@ -121,7 +122,7 @@ const setGameAttributes = async (
 		) {
 			const value = updatedGameAttributes.salaryCap;
 
-			const teams = await idb.cache.teams.getAll();
+			const teams = groupByUnique(await idb.cache.teams.getAll(), (t) => t.tid);
 			const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 				"teamSeasonsBySeasonTid",
 				[[g.get("season")], [g.get("season"), "Z"]],
@@ -129,7 +130,7 @@ const setGameAttributes = async (
 			const popRanks = helpers.getPopRanks(teamSeasons);
 
 			for (const [i, teamSeason] of teamSeasons.entries()) {
-				const t = teams.find((t) => t.tid === teamSeason.tid);
+				const t = teams[teamSeason.tid];
 				const popRank = popRanks[i];
 				if (popRank === undefined || t === undefined) {
 					continue;

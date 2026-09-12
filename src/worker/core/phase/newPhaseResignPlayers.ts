@@ -54,10 +54,11 @@ const newPhaseResignPlayers = async (
 
 	const numPlayersTradedAwayNormalized =
 		await getNumPlayersTradedAwayNormalizedAll();
-	for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
+	const playersToMakeFreeAgents = [...existingFreeAgents, ...undraftedPlayers];
+	for (const p of playersToMakeFreeAgents) {
 		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-		await idb.cache.players.put(p);
 	}
+	await idb.cache.players.putAll(playersToMakeFreeAgents);
 
 	// Re-sign players on user's team, and some AI players
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
@@ -319,8 +320,8 @@ const newPhaseResignPlayers = async (
 			p.born.year += 1;
 			last(p.ratings).season += 1;
 			await player.updateValues(p);
-			await idb.cache.players.put(p);
 		}
+		await idb.cache.players.putAll(draftProspects);
 	} else {
 		// Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
 		for (const p of draftProspects) {

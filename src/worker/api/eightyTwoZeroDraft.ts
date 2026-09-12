@@ -448,8 +448,8 @@ const finalize = async (param: unknown, conditions: Conditions) => {
 		);
 		for (const p of oldRoster) {
 			await player.retire(p, conditions);
-			await idb.cache.players.put(p);
 		}
+		await idb.cache.players.putAll(oldRoster);
 
 		const { realPlayerPhotos } = await getRealTeamPlayerData(
 			{ fileHasPlayers: true, fileHasTeams: false },
@@ -458,8 +458,8 @@ const finalize = async (param: unknown, conditions: Conditions) => {
 
 		for (const p of playersToAdd) {
 			applyRealPlayerPhotos(realPlayerPhotos, p);
-			await idb.cache.players.put(p);
 		}
+		await idb.cache.players.putAll(playersToAdd);
 		await team.rosterAutoSort(g.get("userTid"), false);
 
 		local.eightyTwoZeroDraft = undefined;

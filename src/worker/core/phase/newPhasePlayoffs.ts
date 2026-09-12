@@ -99,18 +99,8 @@ const newPhasePlayoffs = async (
 		});
 		teamSeason.avgAge = team.avgAge(players);
 		teamSeason.ovrEnd = team.ovr(players);
-
-		await idb.cache.teamSeasons.put(teamSeason);
 	}
-
-	// Add row to player stats
-	for (const tid of tidAll) {
-		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-
-		for (const p of players) {
-			await idb.cache.players.put(p);
-		}
-	}
+	await idb.cache.teamSeasons.putAll(teamSeasons);
 
 	await finances.assessPayrollMinLuxury();
 	await season.newSchedulePlayoffsDay();

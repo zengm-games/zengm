@@ -239,8 +239,8 @@ const doThanosMode = async (conditions: Conditions) => {
 			await player.retire(p, conditions, {
 				logRetiredEvent: false,
 			});
-			await idb.cache.players.put(p);
 		}
+		await idb.cache.players.putAll(snappedPlayers);
 
 		let text = "A Thanos event has occured! ";
 		const numPlayers = userSnappedPlayers.length;
@@ -352,8 +352,8 @@ const newPhaseBeforeDraft = async (
 				season: g.get("season"),
 				type: "Won Championship",
 			});
-			await idb.cache.players.put(p);
 		}
+		await idb.cache.players.putAll(players);
 	}
 
 	// Check here after adding awards, for run_it_back
@@ -425,6 +425,7 @@ const newPhaseBeforeDraft = async (
 
 		const retiredPlayersByTeam = new Map<number, Player[]>();
 
+		const playersToSave = [];
 		for (const p of players) {
 			let update = false;
 
@@ -462,9 +463,10 @@ const newPhaseBeforeDraft = async (
 			}
 
 			if (update) {
-				await idb.cache.players.put(p);
+				playersToSave.push(p);
 			}
 		}
+		await idb.cache.players.putAll(playersToSave);
 
 		for (const [tid, retiredPlayers] of retiredPlayersByTeam) {
 			const text = retiredPlayers

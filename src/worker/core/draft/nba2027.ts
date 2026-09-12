@@ -10,12 +10,8 @@ export const RESTRICTED_5_PICK = 5;
 export const updateNba2027AfterLottery = async (tidsTop5: number[]) => {
 	const firstTid = tidsTop5[0];
 
-	const teams = await idb.cache.teams.getAll();
+	const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 	for (const t of teams) {
-		if (t.disabled) {
-			continue;
-		}
-
 		let restricted1: boolean | undefined;
 		let restricted5: boolean | undefined;
 		if (t.tid === firstTid) {
@@ -46,13 +42,12 @@ export const updateNba2027AfterLottery = async (tidsTop5: number[]) => {
 		} else {
 			delete t.draftLottery;
 		}
-		await idb.cache.teams.put(t);
 	}
+
+	await idb.cache.teams.putAll(teams);
 };
 
 export const initializeNba2027 = async () => {
-	const teams = await idb.cache.teams.getAll();
-
 	// Look back to the past 2 completed draft lotteries
 	let lastDraftLotterySeason = g.get("season");
 	const phase = actualPhase();
@@ -148,12 +143,16 @@ export const initializeNba2027 = async () => {
 		}
 	}
 
-	for (const t of teams) {
+	const teams = (await idb.cache.teams.getAll()).filter((t) => {
 		// type check is for importing leagues, cause this gets run but might already have a value
 		if (t.disabled || t.draftLottery?.type === "nba2027") {
-			continue;
+			return false;
 		}
 
+		return true;
+	});
+
+	for (const t of teams) {
 		const restricted1 = restricted1ByTid[t.tid];
 		const restricted5 = restricted5ByTid[t.tid];
 		if (restricted1 || restricted5) {
@@ -169,17 +168,16 @@ export const initializeNba2027 = async () => {
 		} else {
 			delete t.draftLottery;
 		}
-		await idb.cache.teams.put(t);
 	}
+	await idb.cache.teams.putAll(teams);
 };
 
 export const disableNba2027 = async () => {
-	const teams = await idb.cache.teams.getAll();
-
+	const teams = (await idb.cache.teams.getAll()).filter(
+		(t) => t.draftLottery?.type === "nba2027",
+	);
 	for (const t of teams) {
-		if (t.draftLottery?.type === "nba2027") {
-			delete t.draftLottery;
-			await idb.cache.teams.put(t);
-		}
+		delete t.draftLottery;
 	}
+	await idb.cache.teams.putAll(teams);
 };

@@ -491,30 +491,29 @@ const checkParticipationAchievement = async (
 };
 
 const clearInjuries = async (pids: number[] | "all") => {
-	const players =
+	const players = (
 		pids === "all"
 			? await idb.cache.players.getAll()
-			: await idb.getCopies.players({ pids }, "noCopyCache");
+			: await idb.getCopies.players({ pids }, "noCopyCache")
+	).filter((p) => p.injury.gamesRemaining > 0);
 
 	for (const p of players) {
-		if (p.injury.gamesRemaining > 0) {
-			// Adjust injuries log
-			const lastInjuriesEntry = p.injuries.at(-1);
-			if (lastInjuriesEntry?.type === p.injury.type) {
-				lastInjuriesEntry.games -= p.injury.gamesRemaining;
-				if (lastInjuriesEntry.games <= 0) {
-					// Injury was cleared before any days were simmed
-					p.injuries.pop();
-				}
+		// Adjust injuries log
+		const lastInjuriesEntry = p.injuries.at(-1);
+		if (lastInjuriesEntry?.type === p.injury.type) {
+			lastInjuriesEntry.games -= p.injury.gamesRemaining;
+			if (lastInjuriesEntry.games <= 0) {
+				// Injury was cleared before any days were simmed
+				p.injuries.pop();
 			}
-
-			p.injury = {
-				type: "Healthy",
-				gamesRemaining: 0,
-			};
-			await idb.cache.players.put(p);
 		}
+
+		p.injury = {
+			type: "Healthy",
+			gamesRemaining: 0,
+		};
 	}
+	await idb.cache.players.putAll(players);
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 	await recomputeLocalUITeamOvrs();
@@ -3292,8 +3291,8 @@ const removeLastTeam = async () => {
 		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
 		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-		await idb.cache.players.put(p);
 	}
+	await idb.cache.players.putAll(players);
 
 	// Delete draft picks, and return traded ones to original owner
 	await draft.genPicks();
@@ -3478,17 +3477,14 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 const resetPlayingTime = async (tids: number[] | undefined) => {
 	const tids2 = tids ?? [g.get("userTid")];
 
-	const players = await idb.cache.players.indexGetAll("playersByTid", [
-		0,
-		Infinity,
-	]);
+	const players = (
+		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
+	).filter((p) => tids2.includes(p.tid) && p.ptModifier !== 1);
 
 	for (const p of players) {
-		if (tids2.includes(p.tid)) {
-			p.ptModifier = 1;
-			await idb.cache.players.put(p);
-		}
+		p.ptModifier = 1;
 	}
+	await idb.cache.players.putAll(players);
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
@@ -3700,12 +3696,10 @@ const setForceWinAll = async ({
 	tid: number;
 	type: "none" | "win" | "lose" | "tie";
 }) => {
-	const games = await idb.cache.schedule.getAll();
+	const games = (await idb.cache.schedule.getAll()).filter(
+		(game) => game.homeTid === tid || game.awayTid === tid,
+	);
 	for (const game of games) {
-		if (game.homeTid !== tid && game.awayTid !== tid) {
-			continue;
-		}
-
 		if (type === "win") {
 			game.forceWin = tid;
 		} else if (type === "lose") {
@@ -3715,9 +3709,8 @@ const setForceWinAll = async ({
 		} else {
 			delete game.forceWin;
 		}
-
-		await idb.cache.schedule.put(game);
 	}
+	await idb.cache.schedule.putAll(games);
 
 	await toUI("realtimeUpdate", [["gameSim"]]);
 };
@@ -4139,14 +4132,12 @@ const updateGameAttributesGodMode = async (
 		(gameAttributes.realPlayerDeterminism !== undefined &&
 			currentRealPlayerDeterminism !== gameAttributes.realPlayerDeterminism)
 	) {
-		const players = await idb.cache.players.getAll();
+		const players = (await idb.cache.players.getAll()).filter((p) => p.real);
 		for (const p of players) {
-			if (p.real) {
-				await player.develop(p, 0);
-				await player.updateValues(p);
-				await idb.cache.players.put(p);
-			}
+			await player.develop(p, 0);
+			await player.updateValues(p);
 		}
+		await idb.cache.players.putAll(players);
 	}
 
 	await idb.cache.flush();

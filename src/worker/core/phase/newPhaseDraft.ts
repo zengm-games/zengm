@@ -67,13 +67,14 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 		}
 
 		// This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
-		const players = await idb.cache.players.getAll();
-
-		for (const p of players) {
-			if (p.draft.year === currentSeason && p.tid >= 0) {
+		const players = (await idb.cache.players.getAll()).filter(
+			(p) => p.draft.year === currentSeason && p.tid >= 0,
+		);
+		if (players.length > 0) {
+			for (const p of players) {
 				p.draft.year -= 1;
-				await idb.cache.players.put(p);
 			}
+			await idb.cache.players.putAll(players);
 		}
 	}
 

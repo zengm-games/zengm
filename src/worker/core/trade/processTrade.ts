@@ -78,6 +78,7 @@ const processTrade = async (
 
 		const duringSeason = g.get("phase") <= PHASE.PLAYOFFS;
 
+		const playersToSave = [];
 		for (const p of players) {
 			p.tid = tids[k];
 
@@ -116,7 +117,7 @@ const processTrade = async (
 
 			playerTransactionInfo.set(p, { fromTid: tids[j] });
 
-			await idb.cache.players.put(p);
+			playersToSave.push(p);
 
 			teams[k].assets.push({
 				pid: p.pid,
@@ -135,18 +136,20 @@ const processTrade = async (
 				);
 			}
 		}
+		await idb.cache.players.putAll(playersToSave);
 
 		if (teamSeason) {
 			await idb.cache.teamSeasons.put(teamSeason);
 		}
 
+		const draftPicksToSave = [];
 		for (const dpid of dpids[j]) {
 			const dp = await idb.cache.draftPicks.get(dpid);
 			if (!dp) {
 				throw new Error("Invalid dpid");
 			}
 			dp.tid = tids[k];
-			await idb.cache.draftPicks.put(dp);
+			draftPicksToSave.push(dp);
 
 			teams[k].assets.push({
 				dpid: dp.dpid,
@@ -155,6 +158,7 @@ const processTrade = async (
 				originalTid: dp.originalTid,
 			});
 		}
+		await idb.cache.draftPicks.putAll(draftPicksToSave);
 	}
 
 	// Need to reset roserOrder for other players on roster on undo
@@ -273,14 +277,13 @@ const processTrade = async (
 				if (info) {
 					Object.assign(p, info);
 				}
-
-				await idb.cache.players.put(p);
 			}
+			await idb.cache.players.putAll(players[i]);
 
 			for (const dp of draftPicks[i]) {
 				dp.tid = tids[i];
-				await idb.cache.draftPicks.put(dp);
 			}
+			await idb.cache.draftPicks.putAll(draftPicks[i]);
 		}
 
 		// Restore other various state

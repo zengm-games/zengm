@@ -372,6 +372,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	await idb.cache.playoffSeries.put(playoffSeries);
 
 	// Update hype for winning a series
+	const teamSeasonsToSave = [];
 	for (const { tid } of teamsWon) {
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsBySeasonTid",
@@ -387,8 +388,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			teamSeason.hype = 1;
 		}
 
-		await idb.cache.teamSeasons.put(teamSeason);
+		teamSeasonsToSave.push(teamSeason);
 	}
+	await idb.cache.teamSeasons.putAll(teamSeasonsToSave);
 
 	// Next time, the schedule for the first day of the next round will be set
 	return newSchedulePlayoffsDay();

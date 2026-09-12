@@ -156,6 +156,8 @@ export const updatePlayerAwards = async ({
 		}
 	}
 
+	const playersToSave = [];
+
 	for (const [pid, { toDelete, toSave }] of awardsByPid) {
 		const p = await idb.getCopy.players({ pid }, "noCopyCache");
 		if (p) {
@@ -191,9 +193,11 @@ export const updatePlayerAwards = async ({
 					}
 				}
 			}
-			await idb.cache.players.put(p);
+			playersToSave.push(p);
 		}
 	}
+
+	await idb.cache.players.putAll(playersToSave);
 };
 
 export const getLeagueLeaderAwards = async (

@@ -58,8 +58,8 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					await getNumPlayersTradedAwayNormalizedAll();
 				for (const p of playersUndrafted) {
 					player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-					await idb.cache.players.put(p);
 				}
+				await idb.cache.players.putAll(playersUndrafted);
 				await freeAgents.normalizeContractDemands({
 					type: "freeAgentsOnly",
 				});
@@ -69,11 +69,10 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					"playersByTid",
 					PLAYER.UNDRAFTED_FANTASY_TEMP,
 				);
-
 				for (const p of players) {
 					p.tid = PLAYER.UNDRAFTED;
-					await idb.cache.players.put(p);
 				}
+				await idb.cache.players.putAll(players);
 
 				// Refresh draft results without redirecting away
 				await toUI("realtimeUpdate", [["playerMovement"]]);

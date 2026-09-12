@@ -186,6 +186,10 @@ class StoreAPI<Input, Output, ID extends string | number> {
 		return this.cache._put(this.store, obj) as any;
 	}
 
+	putAll(objs: Input[]): Promise<void> {
+		return this.cache._putAll(this.store, objs);
+	}
+
 	delete(id: ID): Promise<void> {
 		return this.cache._delete(this.store, id);
 	}
@@ -967,12 +971,11 @@ class Cache {
 		return output;
 	}
 
-	async _storeObj(
+	_storeObj(
 		type: "add" | "put",
 		store: Store,
 		obj: any,
 	): Promise<number | string> {
-		await this._waitForStatus("full");
 		const pk = this.storeInfos[store].pk;
 
 		if (Object.hasOwn(obj, pk)) {
@@ -1018,12 +1021,21 @@ class Cache {
 		return obj[pk];
 	}
 
-	_add(store: Store, obj: any): Promise<number | string> {
+	async _add(store: Store, obj: any): Promise<number | string> {
+		await this._waitForStatus("full");
 		return this._storeObj("add", store, obj);
 	}
 
-	_put(store: Store, obj: any): Promise<number | string> {
+	async _put(store: Store, obj: any): Promise<number | string> {
+		await this._waitForStatus("full");
 		return this._storeObj("put", store, obj);
+	}
+
+	async _putAll(store: Store, objs: any[]): Promise<void> {
+		await this._waitForStatus("full");
+		for (const obj of objs) {
+			this._storeObj("put", store, obj);
+		}
 	}
 
 	async _delete(store: Store, id: number | string) {

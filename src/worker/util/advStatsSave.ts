@@ -8,6 +8,7 @@ const advStatsSave = async (
 	updatedStats: Record<string, number[] | number[][]>,
 ) => {
 	const playersByPid = groupByUnique(playersRaw, (p) => p.pid);
+	const playersToSave = [];
 	const keys = Object.keys(updatedStats);
 	for (const [i, { pid }] of players.entries()) {
 		const p = playersByPid[pid];
@@ -22,10 +23,11 @@ const advStatsSave = async (
 					}
 				}
 
-				await idb.cache.players.put(p);
+				playersToSave.push(p);
 			}
 		}
 	}
+	await idb.cache.players.putAll(playersToSave);
 };
 
 export default advStatsSave;

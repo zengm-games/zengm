@@ -76,6 +76,9 @@ export default defineConfig({
 			makeProject("basketball", "browser", {
 				name: "browser",
 				include: ["**/*.test.browser.ts"],
+				benchmark: {
+					include: ["**/*.bench.browser.?(c|m)[jt]s?(x)"],
+				},
 				browser: {
 					enabled: true,
 					headless: true,

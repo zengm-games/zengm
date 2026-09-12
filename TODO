@@ -8,6 +8,8 @@ can web locks API be used to identify if shared worker has stopped running someh
 
 Right now on the trading block, untradable contracts are only represented with a grayed out player select button, I'd love if there was a more visible indicator to show currently untradable players, right now I just manually highlight untradable players so Its easier to spot them. Again, not game breaking but would be an awesome QoL change https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/owj4a7p/
 
+color pass/run on drive chart https://app.fastmail.com/mail/Inbox/AgByRCv1JdRV.StmiVs0ikS43?u=433e4054
+
 award settings
 - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
   - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten

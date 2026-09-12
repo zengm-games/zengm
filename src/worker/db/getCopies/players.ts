@@ -239,7 +239,7 @@ const getCopies = async (
 	if (activeSeason !== undefined) {
 		let proceed = true;
 		if (statsTid !== undefined) {
-			// If statsTid and activeSeason are both defined, use activeSeason rather thatn statsTid based on number of seasons/teams
+			// If statsTid and activeSeason are both defined, use activeSeason rather than statsTid based on number of seasons/teams
 			const numTeams = g.get("numTeams");
 			const numSeasons = g.get("season") - g.get("startingSeason");
 

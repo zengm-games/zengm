@@ -32,6 +32,7 @@ import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { useLocal } from "../../util/local.ts";
+import clsx from "clsx";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -601,6 +602,26 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		p.draft.tid === PLAYER.UNDRAFTED ||
 		(p.draft.tid as any) === String(PLAYER.UNDRAFTED);
 
+	let invalidDraftYear:
+		| "activeBeforeDraftClass"
+		| "statsBeforeDraftClass"
+		| undefined;
+	if (p.tid !== PLAYER.UNDRAFTED) {
+		const draftYear = Number.parseInt(p.draft.year as any);
+		if (!Number.isNaN(draftYear)) {
+			if (draftYear > season || (draftYear === season && phase < PHASE.DRAFT)) {
+				invalidDraftYear = "activeBeforeDraftClass";
+			} else {
+				const firstStatSeason = p.stats.find(
+					(row) => row.tid !== PLAYER.DOES_NOT_EXIST,
+				)?.season;
+				if (firstStatSeason !== undefined && firstStatSeason <= draftYear) {
+					invalidDraftYear = "statsBeforeDraftClass";
+				}
+			}
+		}
+	}
+
 	return (
 		<>
 			{!godMode ? (
@@ -914,11 +935,25 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<label className="form-label">Draft Class</label>
 								<input
 									type="text"
-									className="form-control"
+									className={clsx(
+										"form-control",
+										invalidDraftYear !== undefined ? "is-invalid" : undefined,
+									)}
 									onChange={handleChange.bind(null, "draft", "year")}
 									value={p.draft.year}
 									disabled={!godMode}
 								/>
+								{invalidDraftYear === "activeBeforeDraftClass" ? (
+									<div className="invalid-feedback">
+										Some things may break if you have a draft class in the
+										future for a player who is not a draft prospect.
+									</div>
+								) : invalidDraftYear === "statsBeforeDraftClass" ? (
+									<div className="invalid-feedback">
+										Some things may break if you have a player with stats before
+										or during his draft class year.
+									</div>
+								) : null}
 							</div>
 							<div className="col-3 mb-3">
 								<label className="form-label">Draft Round</label>

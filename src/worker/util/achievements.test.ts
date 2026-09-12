@@ -30,9 +30,10 @@ describe("checkAchievement", () => {
 			lastSeason += 1;
 			extraSeason.tid = tid;
 			extraSeason.season = lastSeason;
-			// @ts-expect-error
-			await idb.cache.teamSeasons.add(extraSeason);
 		}
+
+		// @ts-expect-error
+		await idb.cache.teamSeasons.addAll(extraSeasons);
 	};
 
 	describe("dynasty*", () => {

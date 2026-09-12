@@ -35,6 +35,7 @@ const doSeason = async (
 	const userTids = g.get("userTids");
 	const challengeNoDraftPicks = g.get("challengeNoDraftPicks");
 
+	const draftPicksToSave = [];
 	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
 		for (const t of teams) {
 			if (t.disabled) {
@@ -63,7 +64,7 @@ const doSeason = async (
 				!skipForceHistoricalRosters &&
 				!skipRepeatSeason
 			) {
-				await idb.cache.draftPicks.add({
+				draftPicksToSave.push({
 					tid: t.tid,
 					originalTid: t.tid,
 					round,
@@ -73,6 +74,8 @@ const doSeason = async (
 			}
 		}
 	}
+
+	await idb.cache.draftPicks.addAll(draftPicksToSave);
 };
 
 // realPlayers means the picks came from a real players roster, in which case we don't want to apply this normalization because some historical drafts were weird (or were normal and we don't know originalTid). Only current year, currently. The bulk of this work is done by ongoingDraft above, not by this realPlayers option, which may not actually do anything now! Could be useful if more seasons are included in the future.

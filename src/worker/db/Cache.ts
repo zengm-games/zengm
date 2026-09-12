@@ -182,6 +182,10 @@ class StoreAPI<Input, Output, ID extends string | number> {
 		return this.cache._add(this.store, obj) as any;
 	}
 
+	addAll(objs: Iterable<Input>): Promise<void> {
+		return this.cache._addAll(this.store, objs);
+	}
+
 	put(obj: Input): Promise<ID> {
 		return this.cache._put(this.store, obj) as any;
 	}
@@ -1024,6 +1028,13 @@ class Cache {
 	async _add(store: Store, obj: any): Promise<number | string> {
 		await this._waitForStatus("full");
 		return this._storeObj("add", store, obj);
+	}
+
+	async _addAll(store: Store, objs: Iterable<any>): Promise<void> {
+		await this._waitForStatus("full");
+		for (const obj of objs) {
+			this._storeObj("add", store, obj);
+		}
 	}
 
 	async _put(store: Store, obj: any): Promise<number | string> {

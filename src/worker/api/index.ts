@@ -393,9 +393,7 @@ const allStarGameNow = async () => {
 	});
 
 	await idb.cache.schedule.clear();
-	for (const game of schedule) {
-		await idb.cache.schedule.add(game);
-	}
+	await idb.cache.schedule.addAll(schedule);
 
 	await initUILocalGames();
 	await updatePlayMenu();
@@ -5277,13 +5275,13 @@ const setScheduleFromEditor = async ({
 	}
 
 	await idb.cache.schedule.clear();
-
-	for (const game of schedule) {
-		if (game.type === "placeholder" || game.type === "completed") {
-			continue;
-		}
-		await idb.cache.schedule.add(omit(game, ["gid", "type"]));
-	}
+	await idb.cache.schedule.addAll(
+		schedule
+			.filter(
+				(game) => game.type !== "placeholder" && game.type !== "completed",
+			)
+			.map((game) => omit(game, ["gid", "type"])),
+	);
 
 	// This is needed in case the upcoming game was edited/deleted
 	await initUILocalGames();

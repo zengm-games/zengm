@@ -81,33 +81,23 @@ export const resetCache = async (
 	}
 
 	if (data.players) {
-		for (const obj of data.players) {
-			await idb.cache.players.add(obj);
-		}
+		await idb.cache.players.addAll(data.players);
 	}
 
 	if (data.teams) {
-		for (const obj of data.teams) {
-			await idb.cache.teams.add(obj);
-		}
+		await idb.cache.teams.addAll(data.teams);
 	}
 
 	if (data.teamSeasons) {
-		for (const obj of data.teamSeasons) {
-			await idb.cache.teamSeasons.add(obj);
-		}
+		await idb.cache.teamSeasons.addAll(data.teamSeasons);
 	}
 
 	if (data.teamStats) {
-		for (const obj of data.teamStats) {
-			await idb.cache.teamStats.add(obj);
-		}
+		await idb.cache.teamStats.addAll(data.teamStats);
 	}
 
 	if (data.trade) {
-		for (const obj of data.trade) {
-			await idb.cache.trade.add(obj);
-		}
+		await idb.cache.trade.addAll(data.trade);
 	}
 };
 

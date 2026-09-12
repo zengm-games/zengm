@@ -67,9 +67,10 @@ const newPhasePlayoffs = async (
 
 	const tidAll = new Set([...tidPlayoffs, ...tidPlayIn]);
 
+	const teamStatsToSave = [];
 	for (const teamSeason of teamSeasons) {
 		if (tidAll.has(teamSeason.tid)) {
-			await idb.cache.teamStats.add(team.genStatsRow(teamSeason.tid, true));
+			teamStatsToSave.push(team.genStatsRow(teamSeason.tid, true));
 
 			// Play-in teams have not made the playoffs yet, technically
 			if (tidPlayoffs.includes(teamSeason.tid)) {
@@ -100,6 +101,7 @@ const newPhasePlayoffs = async (
 		teamSeason.avgAge = team.avgAge(players);
 		teamSeason.ovrEnd = team.ovr(players);
 	}
+	await idb.cache.teamStats.addAll(teamStatsToSave);
 	await idb.cache.teamSeasons.putAll(teamSeasons);
 
 	await finances.assessPayrollMinLuxury();

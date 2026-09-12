@@ -58,9 +58,9 @@ const setSchedule = async (tids: [number, number][]) => {
 				game.finals = true;
 			}
 		}
-
-		await idb.cache.schedule.add(game);
 	}
+
+	await idb.cache.schedule.addAll(schedule);
 
 	await recomputeLocalUITeamOvrs();
 };

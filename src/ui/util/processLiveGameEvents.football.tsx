@@ -61,6 +61,9 @@ export type SportState = {
 		countsTowardsYards: boolean;
 		tagOverride: string | undefined;
 		subPlay: boolean; // subPlay is like a kick return or turnover return
+		playType: "run" | "pass" | undefined;
+		// Part of yards that came from an accepted penalty, drawn in yellow
+		penaltyYards: number;
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -516,6 +519,31 @@ export const getText = (event: PlayByPlayEventOutput, numPeriods: number) => {
 	return text;
 };
 
+/**
+ * Split a play bar's net yards into the play's own part and the penalty's
+ * part, as lengths to draw (the penalty goes at the far end). When the two
+ * point opposite ways only one can show: the penalty if it decides which way
+ * the ball moved, otherwise the play -- the flag icon still marks the penalty.
+ */
+export const penaltySegments = (yards: number, penaltyYards: number) => {
+	if (penaltyYards === 0) {
+		return { play: Math.abs(yards), penalty: 0 };
+	}
+
+	const playYards = yards - penaltyYards;
+	if (playYards === 0 || Math.sign(playYards) === Math.sign(penaltyYards)) {
+		return { play: Math.abs(playYards), penalty: Math.abs(penaltyYards) };
+	}
+
+	// Opposite directions
+	if (yards === 0) {
+		return { play: 0, penalty: 0 };
+	}
+	return Math.sign(yards) === Math.sign(penaltyYards)
+		? { play: 0, penalty: Math.abs(yards) }
+		: { play: Math.abs(yards), penalty: 0 };
+};
+
 // Mutates boxScore!!!
 const processLiveGameEvents = ({
 	events,
@@ -652,6 +680,8 @@ const processLiveGameEvents = ({
 				countsTowardsYards: false,
 				tagOverride: undefined,
 				subPlay,
+				playType: undefined,
+				penaltyYards: 0,
 			});
 		};
 
@@ -936,6 +966,13 @@ const processLiveGameEvents = ({
 					if (reversedField) {
 						scrimmageAfter = 100 - scrimmageAfter;
 					}
+
+					// A foul added on after the play keeps the play's own yards; any
+					// other accepted foul wipes the play out, so all of it is penalty
+					const penaltyBase = e.tackOn
+						? play.scrimmage + play.yards
+						: play.scrimmage;
+					play.penaltyYards = scrimmageAfter - penaltyBase;
 					play.yards = scrimmageAfter - play.scrimmage;
 				}
 
@@ -970,6 +1007,7 @@ const processLiveGameEvents = ({
 				// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
 				play.countsTowardsNumPlays = false;
 				play.yards = 0;
+				play.penaltyYards = 0;
 
 				play.flags = play.flags.map(() => {
 					return {
@@ -982,6 +1020,11 @@ const processLiveGameEvents = ({
 				e.type === "handoff" ||
 				e.type === "kneel"
 			) {
+				if (e.type === "dropback") {
+					play.playType = "pass";
+				} else if (e.type === "handoff") {
+					play.playType = "run";
+				}
 				if (!sportState.awaitingAfterTouchdown) {
 					play.countsTowardsNumPlays = true;
 					play.countsTowardsYards = true;

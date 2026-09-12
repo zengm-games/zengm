@@ -17,13 +17,23 @@ const makeProject = (
 	projectConfig: ProjectConfig,
 ): TestProjectInlineConfiguration => {
 	return {
-		define: {
-			__NODE_ENV: JSON.stringify("test"),
-			__SPORT: JSON.stringify(sport),
-		},
+		// define inconsistency should be fixed in Vitest 5.0.1 https://github.com/vitest-dev/vitest/issues/11164
+		define:
+			environment === "node"
+				? {
+						__NODE_ENV: JSON.stringify("test"),
+						__SPORT: JSON.stringify(sport),
+					}
+				: {},
 		plugins: [
 			{
 				...sportFunctions("production", sport),
+
+				configureVitest({ defineCacheKeyGenerator }) {
+					defineCacheKeyGenerator(() => {
+						return sport;
+					});
+				},
 
 				// Need this or Vite runs TypeScript conversion before this plugin runs, resulting in moduleType in the plugin filter being js rather than ts/tsx
 				enforce: "pre",
@@ -42,6 +52,9 @@ const makeProject = (
 
 export default defineConfig({
 	test: {
+		// Would like to enable this, but it seems to not work properly even with defineCacheKeyGenerator in my plugin
+		fsModuleCache: false,
+
 		projects: [
 			makeProject("basketball", "node", {
 				name: "basketball",

@@ -126,24 +126,19 @@ const play = async (
 			await writePlayerStats(results, conditions);
 
 		let gameToUi: LocalStateUI["games"][number] | undefined;
-		const gidsFinished = await Promise.all(
-			results.map(async (result) => {
-				const att = await writeTeamStats(result);
 
-				const maybeGameToUi = await writeGameStats(result, att, conditions);
-				if (maybeGameToUi) {
-					gameToUi = maybeGameToUi;
-				}
+		for (const result of results) {
+			const att = await writeTeamStats(result);
 
-				return result.gid;
-			}),
-		);
+			const maybeGameToUi = await writeGameStats(result, att, conditions);
+			if (maybeGameToUi) {
+				gameToUi = maybeGameToUi;
+			}
+		}
 
 		// Delete finished games from schedule
-		for (const gid of gidsFinished) {
-			if (typeof gid === "number") {
-				await idb.cache.schedule.delete(gid);
-			}
+		for (const { gid } of results) {
+			await idb.cache.schedule.delete(gid);
 		}
 
 		// Invalidate leaders cache, if it exists
@@ -416,7 +411,7 @@ const play = async (
 		teams: Record<number, any>,
 		dayOver: boolean,
 	) => {
-		const results: any[] = [];
+		const results = [];
 
 		for (const game of schedule) {
 			const doPlayByPlay = gidOneGame === game.gid && playByPlay;

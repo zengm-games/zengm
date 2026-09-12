@@ -1,6 +1,5 @@
 perf
 - https://github.com/zengm-games/zengm/pull/540
-- replace promise.all with normal loop?
 - individual player gets in writePlayerStats?
   - getAllByKey so we don't have to do groupByUnique
     - similar for indexGetAllByKey?

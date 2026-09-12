@@ -102,38 +102,37 @@ const getMostXTeamSeasons = async ({
 
 	const challengeNoRatings = g.get("challengeNoRatings");
 
-	const teamSeasons = await Promise.all(
-		teamSeasonsAll.map(async (ts) => {
-			return {
-				tid: ts.tid,
+	const teamSeasons = [];
+	for (const ts of teamSeasonsAll) {
+		teamSeasons.push({
+			tid: ts.tid,
+			season: ts.season,
+			abbrev: ts.abbrev ?? g.get("teamInfoCache")[ts.tid]?.abbrev,
+			region: ts.region ?? g.get("teamInfoCache")[ts.tid]?.region,
+			name: ts.name ?? g.get("teamInfoCache")[ts.tid]?.name,
+			imgURL: ts.imgURL ?? g.get("teamInfoCache")[ts.tid]?.imgURL,
+			imgURLSmall:
+				ts.imgURLSmall ?? g.get("teamInfoCache")[ts.tid]?.imgURLSmall,
+			won: ts.won,
+			lost: ts.lost,
+			tied: ts.tied,
+			otl: ts.otl,
+			winp: ts.winp,
+			standingsPts: team.evaluatePointsFormula(ts, {
 				season: ts.season,
-				abbrev: ts.abbrev ?? g.get("teamInfoCache")[ts.tid]?.abbrev,
-				region: ts.region ?? g.get("teamInfoCache")[ts.tid]?.region,
-				name: ts.name ?? g.get("teamInfoCache")[ts.tid]?.name,
-				imgURL: ts.imgURL ?? g.get("teamInfoCache")[ts.tid]?.imgURL,
-				imgURLSmall:
-					ts.imgURLSmall ?? g.get("teamInfoCache")[ts.tid]?.imgURLSmall,
-				won: ts.won,
-				lost: ts.lost,
-				tied: ts.tied,
-				otl: ts.otl,
-				winp: ts.winp,
-				standingsPts: team.evaluatePointsFormula(ts, {
-					season: ts.season,
-				}),
-				ptsPct: team.ptsPct(ts),
-				playoffRoundsWon: ts.playoffRoundsWon,
-				seed: null as null | number,
-				rank: 0,
-				mov: 0,
-				gp: 0,
-				pts: 0,
-				oppPts: 0,
-				most: after ? await after(ts.most) : ts.most,
-				ovr: !challengeNoRatings ? ts.ovrEnd : undefined,
-			};
-		}),
-	);
+			}),
+			ptsPct: team.ptsPct(ts),
+			playoffRoundsWon: ts.playoffRoundsWon,
+			seed: null as null | number,
+			rank: 0,
+			mov: 0,
+			gp: 0,
+			pts: 0,
+			oppPts: 0,
+			most: after ? await after(ts.most) : ts.most,
+			ovr: !challengeNoRatings ? ts.ovrEnd : undefined,
+		});
+	}
 
 	// Add margin of victory, playoff seed
 	const tx = idb.league.transaction(["teamStats", "playoffSeries"]);

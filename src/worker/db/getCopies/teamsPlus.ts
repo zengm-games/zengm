@@ -88,135 +88,134 @@ const processSeasonAttrs = async <
 	];
 
 	// @ts-expect-error
-	output.seasonAttrs = await Promise.all(
-		seasons.map(async (ts) => {
-			const row: any = {}; // Revenue and expenses calculation
+	output.seasonAttrs = [];
+	for (const ts of seasons) {
+		const row: any = {};
 
-			const revenue = helpers
-				.keys(ts.revenues)
-				.reduce((memo, rev) => memo + ts.revenues[rev], 0);
-			const expense = helpers
-				.keys(ts.expenses)
-				.reduce((memo, rev) => memo + ts.expenses[rev], 0);
+		const revenue = helpers
+			.keys(ts.revenues)
+			.reduce((memo, rev) => memo + ts.revenues[rev], 0);
+		const expense = helpers
+			.keys(ts.expenses)
+			.reduce((memo, rev) => memo + ts.expenses[rev], 0);
 
-			for (const temp of seasonAttrs) {
-				const attr: string = temp;
-				if (attr === "winp") {
-					row.winp = helpers.calcWinp(ts);
-				} else if (attr === "att") {
-					row.att = ts.gpHome > 0 ? ts.att / ts.gpHome : 0;
-				} else if (attr === "cash") {
-					row.cash = ts.cash / 1000; // [millions of dollars]
-				} else if (attr === "revenue") {
-					row.revenue = revenue / 1000; // [millions of dollars]
-				} else if (attr === "profit") {
-					row.profit = (revenue - expense) / 1000; // [millions of dollars]
-				} else if (attr === "salaryPaid") {
-					row.salaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
-				} else if (attr === "payroll") {
-					if (season === g.get("season")) {
-						row.payroll = (await team.getPayroll(t.tid)) / 1000;
-					} else {
-						row.payroll = undefined;
+		for (const temp of seasonAttrs) {
+			const attr: string = temp;
+			if (attr === "winp") {
+				row.winp = helpers.calcWinp(ts);
+			} else if (attr === "att") {
+				row.att = ts.gpHome > 0 ? ts.att / ts.gpHome : 0;
+			} else if (attr === "cash") {
+				row.cash = ts.cash / 1000; // [millions of dollars]
+			} else if (attr === "revenue") {
+				row.revenue = revenue / 1000; // [millions of dollars]
+			} else if (attr === "profit") {
+				row.profit = (revenue - expense) / 1000; // [millions of dollars]
+			} else if (attr === "salaryPaid") {
+				row.salaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
+			} else if (attr === "payroll") {
+				if (season === g.get("season")) {
+					row.payroll = (await team.getPayroll(t.tid)) / 1000;
+				} else {
+					row.payroll = undefined;
+				}
+			} else if (attr === "payrollOrSalaryPaid") {
+				if (season === g.get("season")) {
+					row.payrollOrSalaryPaid = (await team.getPayroll(t.tid)) / 1000;
+				} else {
+					row.payrollOrSalaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
+				}
+			} else if (attr === "lastTen") {
+				let lastTenWon = 0;
+				let lastTenLost = 0;
+				let lastTenOTL = 0;
+				let lastTenTied = 0;
+				for (const x of ts.lastTen) {
+					if (x === 1) {
+						lastTenWon += 1;
+					} else if (x === 0) {
+						lastTenLost += 1;
+					} else if (x === "OTL") {
+						lastTenOTL += 1;
+					} else if (x === -1) {
+						lastTenTied += 1;
 					}
-				} else if (attr === "payrollOrSalaryPaid") {
-					if (season === g.get("season")) {
-						row.payrollOrSalaryPaid = (await team.getPayroll(t.tid)) / 1000;
-					} else {
-						row.payrollOrSalaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
-					}
-				} else if (attr === "lastTen") {
-					let lastTenWon = 0;
-					let lastTenLost = 0;
-					let lastTenOTL = 0;
-					let lastTenTied = 0;
-					for (const x of ts.lastTen) {
-						if (x === 1) {
-							lastTenWon += 1;
-						} else if (x === 0) {
-							lastTenLost += 1;
-						} else if (x === "OTL") {
-							lastTenOTL += 1;
-						} else if (x === -1) {
-							lastTenTied += 1;
-						}
-					}
-					row.lastTen = `${lastTenWon}-${lastTenLost}`;
+				}
+				row.lastTen = `${lastTenWon}-${lastTenLost}`;
 
-					if (lastTenOTL > 0) {
-						row.lastTen += `-${lastTenOTL}`;
-					}
-					if (lastTenTied > 0) {
-						row.lastTen += `-${lastTenTied}`;
-					}
-				} else if (attr === "streak") {
-					// For standings
-					if (ts.streak === 0) {
-						row.streak = "None";
-					} else if (ts.streak > 0) {
-						row.streak = `Won ${ts.streak}`;
-					} else if (ts.streak < 0) {
-						row.streak = `Lost ${Math.abs(ts.streak)}`;
-					}
-				} else if (attr === "pts") {
-					row.pts = team.evaluatePointsFormula(ts, {
-						season: ts.season,
-					});
-				} else if (attr === "ptsMax") {
-					row.ptsMax = team.ptsMax(ts);
-				} else if (attr === "ptsPct") {
-					row.ptsPct = team.ptsPct(ts);
-				} else if (attr === "ptsDefault") {
-					row.ptsDefault = team.evaluatePointsFormula(ts, {
-						formula: DEFAULT_POINTS_FORMULA,
-						season: ts.season,
-					});
-				} else if (attr === "avgAge") {
-					// Will be undefined if not cached, in which case will need to be dynamically computed elsewhere
-					row.avgAge = ts[attr];
-				} else if (attr === "expenseLevels") {
-					if (ts.season === g.get("season")) {
-						// For current season, we want the current values, not what we spent this season. That's what we want on League Finances at least, which is the only place this is used for now.
+				if (lastTenOTL > 0) {
+					row.lastTen += `-${lastTenOTL}`;
+				}
+				if (lastTenTied > 0) {
+					row.lastTen += `-${lastTenTied}`;
+				}
+			} else if (attr === "streak") {
+				// For standings
+				if (ts.streak === 0) {
+					row.streak = "None";
+				} else if (ts.streak > 0) {
+					row.streak = `Won ${ts.streak}`;
+				} else if (ts.streak < 0) {
+					row.streak = `Lost ${Math.abs(ts.streak)}`;
+				}
+			} else if (attr === "pts") {
+				row.pts = team.evaluatePointsFormula(ts, {
+					season: ts.season,
+				});
+			} else if (attr === "ptsMax") {
+				row.ptsMax = team.ptsMax(ts);
+			} else if (attr === "ptsPct") {
+				row.ptsPct = team.ptsPct(ts);
+			} else if (attr === "ptsDefault") {
+				row.ptsDefault = team.evaluatePointsFormula(ts, {
+					formula: DEFAULT_POINTS_FORMULA,
+					season: ts.season,
+				});
+			} else if (attr === "avgAge") {
+				// Will be undefined if not cached, in which case will need to be dynamically computed elsewhere
+				row.avgAge = ts[attr];
+			} else if (attr === "expenseLevels") {
+				if (ts.season === g.get("season")) {
+					// For current season, we want the current values, not what we spent this season. That's what we want on League Finances at least, which is the only place this is used for now.
+					row.expenseLevels = {
+						coaching: t.budget.coaching,
+						facilities: t.budget.facilities,
+						health: t.budget.health,
+						scouting: t.budget.scouting,
+					};
+				} else {
+					const gp = helpers.getTeamSeasonGp(ts);
+					if (gp > 0) {
 						row.expenseLevels = {
-							coaching: t.budget.coaching,
-							facilities: t.budget.facilities,
-							health: t.budget.health,
-							scouting: t.budget.scouting,
+							coaching: Math.round(ts.expenseLevels.coaching / gp),
+							facilities: Math.round(ts.expenseLevels.facilities / gp),
+							health: Math.round(ts.expenseLevels.health / gp),
+							scouting: Math.round(ts.expenseLevels.scouting / gp),
 						};
 					} else {
-						const gp = helpers.getTeamSeasonGp(ts);
-						if (gp > 0) {
-							row.expenseLevels = {
-								coaching: Math.round(ts.expenseLevels.coaching / gp),
-								facilities: Math.round(ts.expenseLevels.facilities / gp),
-								health: Math.round(ts.expenseLevels.health / gp),
-								scouting: Math.round(ts.expenseLevels.scouting / gp),
-							};
-						} else {
-							row.expenseLevels = {
-								coaching: 0,
-								facilities: 0,
-								health: 0,
-								scouting: 0,
-							};
-						}
+						row.expenseLevels = {
+							coaching: 0,
+							facilities: 0,
+							health: 0,
+							scouting: 0,
+						};
 					}
-				} else if (attr === "gp") {
-					row.gp = ts.won + ts.lost + (ts.tied ?? 0) + (ts.otl ?? 0);
-				} else {
-					// @ts-expect-error
-					row[attr] = ts[attr];
 				}
-
-				if (row[attr] === undefined && copyFromTeamIfUndefined.includes(attr)) {
-					// @ts-expect-error
-					row[attr] = t[attr];
-				}
+			} else if (attr === "gp") {
+				row.gp = ts.won + ts.lost + (ts.tied ?? 0) + (ts.otl ?? 0);
+			} else {
+				// @ts-expect-error
+				row[attr] = ts[attr];
 			}
 
-			return row;
-		}),
-	);
+			if (row[attr] === undefined && copyFromTeamIfUndefined.includes(attr)) {
+				// @ts-expect-error
+				row[attr] = t[attr];
+			}
+		}
+
+		output.seasonAttrs.push(row);
+	}
 
 	if (season !== undefined) {
 		// @ts-expect-error
@@ -375,34 +374,33 @@ const processTeam = async <
 		processAttrs(output, t, attrs);
 	}
 
-	const promises: Promise<any>[] = [];
-
 	if (seasonAttrs) {
-		promises.push(
+		await processSeasonAttrs(
 			// @ts-expect-error
-			processSeasonAttrs(output, t, seasonAttrs, addDummySeason, season, type),
+			output,
+			t,
+			seasonAttrs,
+			addDummySeason,
+			season,
+			type,
 		);
 	}
 
 	if (stats) {
-		promises.push(
-			processStats(
-				// @ts-expect-error
-				output,
-				t,
-				stats,
-				playoffs,
-				regularSeason,
-				statType,
-				addDummySeason,
-				showNoStats,
-				season,
-				type,
-			),
+		await processStats(
+			// @ts-expect-error
+			output,
+			t,
+			stats,
+			playoffs,
+			regularSeason,
+			statType,
+			addDummySeason,
+			showNoStats,
+			season,
+			type,
 		);
 	}
-
-	await Promise.all(promises);
 
 	if (seasonAttrs && (output as never as any).seasonAttrs === undefined) {
 		return;
@@ -492,10 +490,16 @@ async function getCopies<
 			teams = teams.filter((t) => !t.disabled);
 		}
 
+		const output = [];
+		for (const t of teams) {
+			const processed = await processTeam(t, options);
+			if (processed !== undefined) {
+				output.push(processed);
+			}
+		}
+
 		// @ts-expect-error
-		return (
-			await Promise.all(teams.map((t) => processTeam(t, options)))
-		).filter((x) => x !== undefined);
+		return output;
 	}
 
 	const t = await idb.cache.teams.get(tid);

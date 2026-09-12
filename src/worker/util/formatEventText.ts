@@ -203,18 +203,20 @@ export const formatEventText = async (event: EventBBGM) => {
 	}
 
 	if (event.type === "sisyphus") {
-		const teamNames = await Promise.all(
-			event.tids.map(async (tid) => {
-				const teamInfo = await getTeamInfoBySeason(tid, event.season);
-				return teamInfo
+		const teamNames = [];
+
+		for (const tid of event.tids) {
+			const teamInfo = await getTeamInfoBySeason(tid, event.season);
+			teamNames.push(
+				teamInfo
 					? `<a href="${helpers.leagueUrl([
 							"roster",
 							`${teamInfo.abbrev}_${tid}`,
 							event.season,
 						])}">${teamInfo.name}</a>`
-					: "???";
-			}),
-		);
+					: "???",
+			);
+		}
 
 		const p = await idb.getCopy.players({ pid: event.pids[0] }, "noCopyCache");
 		const playerName = p

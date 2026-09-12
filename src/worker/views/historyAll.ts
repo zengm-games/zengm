@@ -137,125 +137,109 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// Many players win multiple awards, so cache them rather than always reading from disk
 		const playersCache = new PlayersCache();
 
-		const seasons = await Promise.all(
-			range(maxSeason, minSeason - 1).map(async (season) => {
-				const a = awardsBySeason[season];
+		const seasons = [];
+		for (const season of range(maxSeason, minSeason - 1)) {
+			const a = awardsBySeason[season];
 
-				let awards: {
-					abbrev: string;
-					awardName: string;
-					awardShortName: string;
-					count: number;
-					name: string;
-					pid: number;
-					pos: string | undefined;
-					tid: number;
-				}[];
-				if (a) {
-					// Move Finals MVP or Playoffs MVP to the front, so it's next to the championship winer
-					const awardsSorted = orderBy(a.awards, (award) =>
-						award.statRange === -1 ? 0 : award.statRange === "playoffs" ? 1 : 2,
-					);
-					awards = (
-						await Promise.all(
-							awardsSorted
-								.filter((award) => {
-									// Only want individual awards
-									return award.numTeams === undefined;
-								})
-								.filter((award) => {
-									// Also skip any non-finals series MVP since there will be multiple of them
-									return (
-										typeof award.statRange !== "number" ||
-										award.statRange === -1
-									);
-								})
-								.map(async (award) => {
-									const winner = award.winner[0];
-									if (winner?.pid === undefined) {
-										return;
-									}
-									const { pid, statOverrides } = winner;
+			const awards: {
+				abbrev: string;
+				awardName: string;
+				awardShortName: string;
+				count: number;
+				name: string;
+				pid: number;
+				pos: string | undefined;
+				tid: number;
+			}[] = [];
+			if (a) {
+				// Move Finals MVP or Playoffs MVP to the front, so it's next to the championship winer
+				const awardsSorted = orderBy(a.awards, (award) =>
+					award.statRange === -1 ? 0 : award.statRange === "playoffs" ? 1 : 2,
+				);
+				for (const award of awardsSorted) {
+					// Only want individual awards
+					if (award.numTeams !== undefined) {
+						continue;
+					}
 
-									const p = await playersCache.get(pid);
-									if (!p) {
-										return;
-									}
+					// Also skip any non-finals series MVP since there will be multiple of them
+					if (typeof award.statRange === "number" && award.statRange !== -1) {
+						continue;
+					}
 
-									const statRange = award.statRange;
+					const winner = award.winner[0];
+					if (winner?.pid === undefined) {
+						continue;
+					}
+					const { pid, statOverrides } = winner;
 
-									const p2 = await idb.getCopy.playersPlus(p, {
-										attrs: ["name"],
-										stats: ["tid"],
-										playoffs:
-											statRange === "playoffs" || typeof statRange === "number",
-										regularSeason: statRange === undefined,
-										combined: statRange === "combined",
-										mergeStats: "totOnly",
-										season,
-										showNoStats: true,
-									});
-									if (!p2) {
-										return;
-									}
+					const p = await playersCache.get(pid);
+					if (!p) {
+						continue;
+					}
 
-									// Manually add pos, since ratings could have been deleted or something
-									const pos =
-										p.ratings.findLast((row) => row.season === season)?.pos ??
-										last(p.ratings).pos;
-									p2.ratings = { pos };
+					const statRange = award.statRange;
 
-									const tid = statOverrides?.tid ?? p2.stats.tid;
+					const p2 = await idb.getCopy.playersPlus(p, {
+						attrs: ["name"],
+						stats: ["tid"],
+						playoffs: statRange === "playoffs" || typeof statRange === "number",
+						regularSeason: statRange === undefined,
+						combined: statRange === "combined",
+						mergeStats: "totOnly",
+						season,
+						showNoStats: true,
+					});
+					if (!p2) {
+						continue;
+					}
 
-									const abbrev = getAbbrev(tid, teamsByTid, season);
+					// Manually add pos, since ratings could have been deleted or something
+					const pos =
+						p.ratings.findLast((row) => row.season === season)?.pos ??
+						last(p.ratings).pos;
+					p2.ratings = { pos };
 
-									const awardName = formatAwardNamePrefix(award, season);
-									const awardShortName = formatAwardNamePrefix(
-										award,
-										season,
-										true,
-									);
+					const tid = statOverrides?.tid ?? p2.stats.tid;
 
-									if (!seenAwardTypes.has(awardShortName)) {
-										seenAwardTypes.add(awardShortName);
-										awardTypes.push({
-											name: awardName,
-											shortName: awardShortName,
-										});
-									}
+					const abbrev = getAbbrev(tid, teamsByTid, season);
 
-									return {
-										abbrev,
-										awardName,
-										awardShortName,
-										count: 0,
-										name: p2.name,
-										pid,
-										pos: bySport({
-											baseball: p2.ratings.pos,
-											basketball: undefined,
-											football: p2.ratings.pos,
-											hockey: p2.ratings.pos,
-										}),
-										tid,
-									};
-								}),
-						)
-					).filter((award) => award !== undefined);
-				} else {
-					awards = [];
+					const awardName = formatAwardNamePrefix(award, season);
+					const awardShortName = formatAwardNamePrefix(award, season, true);
+
+					if (!seenAwardTypes.has(awardShortName)) {
+						seenAwardTypes.add(awardShortName);
+						awardTypes.push({
+							name: awardName,
+							shortName: awardShortName,
+						});
+					}
+
+					awards.push({
+						abbrev,
+						awardName,
+						awardShortName,
+						count: 0,
+						name: p2.name,
+						pid,
+						pos: bySport({
+							baseball: p2.ratings.pos,
+							basketball: undefined,
+							football: p2.ratings.pos,
+							hockey: p2.ratings.pos,
+						}),
+						tid,
+					});
 				}
+			}
 
-				const row = {
-					season,
-					runnerUp: undefined as FormattedTeam | undefined,
-					champ: undefined as FormattedTeam | undefined,
-					awards,
-				};
-
-				return row;
-			}),
-		);
+			seasons.push({
+				season,
+				runnerUp: undefined as FormattedTeam | undefined,
+				champ: undefined as FormattedTeam | undefined,
+				awards,
+			});
+		}
 
 		const playoffSeries = await idb.getCopies.playoffSeries(
 			undefined,

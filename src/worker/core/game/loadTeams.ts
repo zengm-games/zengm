@@ -428,20 +428,15 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 
 		for (const tid of tids) {
 			const allStarsTeamInd = tid === -1 ? 0 : 1;
-			const players = (
-				await Promise.all(
-					allStars.teams[allStarsTeamInd].map(async ({ pid }) => {
-						const p = await idb.cache.players.get(pid);
+			const players = [];
+			for (const { pid } of allStars.teams[allStarsTeamInd]) {
+				const p = await idb.cache.players.get(pid);
 
-						if (!p) {
-							// Can happen if player was deleted before starting sim
-							return;
-						}
-
-						return p;
-					}),
-				)
-			).filter((p) => p !== undefined) as Player[];
+				// Can happen if player was deleted before starting sim
+				if (p) {
+					players.push(p);
+				}
+			}
 
 			const depth = await team.genDepth(players);
 
@@ -463,27 +458,24 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 			);
 		}
 	} else {
-		await Promise.all(
-			tids.map(async (tid) => {
-				const [players, team, teamSeason] = await Promise.all([
-					idb.cache.players.indexGetAll("playersByTid", tid),
-					idb.cache.teams.get(tid),
-					idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
-						tid,
-						g.get("season"),
-					]),
-				]);
+		for (const tid of tids) {
+			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+			const t = await idb.cache.teams.get(tid);
 
-				if (!team) {
-					throw new Error("Invalid tid");
-				}
-				if (!teamSeason) {
-					throw new Error("Team season not found");
-				}
+			if (!t) {
+				throw new Error("Invalid tid");
+			}
 
-				teams[tid] = await processTeam(team, teamSeason, players);
-			}),
-		);
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[tid, g.get("season")],
+			);
+			if (!teamSeason) {
+				throw new Error("Team season not found");
+			}
+
+			teams[tid] = await processTeam(t, teamSeason, players);
+		}
 	}
 
 	return teams;

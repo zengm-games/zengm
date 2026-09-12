@@ -36,13 +36,11 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("newPhase")
 	) {
-		const [t, latestSeason] = await Promise.all([
-			idb.cache.teams.get(g.get("userTid")),
-			idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
-				g.get("season"),
-				g.get("userTid"),
-			]),
-		]);
+		const t = await idb.cache.teams.get(g.get("userTid"));
+		const latestSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsBySeasonTid",
+			[g.get("season"), g.get("userTid")],
+		);
 
 		const playoffRoundsWon = latestSeason?.playoffRoundsWon ?? -1;
 		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));

@@ -226,22 +226,21 @@ class BasketballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOut
 	}
 
 	logEvent(event: PlayByPlayEventInput) {
+		if (!this.active) {
+			return;
+		}
+
 		if (event.type === "period" || event.type === "overtime") {
 			this.period = event.period;
 		}
 
 		if (isScoringPlay(event)) {
-			const event2 = {
+			this.playByPlay.push({
 				...event,
 				period: this.period,
-			};
-			if (this.active) {
-				this.playByPlay.push(event2);
-			}
+			});
 		} else {
-			if (this.active) {
-				this.playByPlay.push(event);
-			}
+			this.playByPlay.push(event);
 		}
 	}
 }

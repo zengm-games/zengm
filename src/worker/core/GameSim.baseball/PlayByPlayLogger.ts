@@ -197,7 +197,9 @@ class BaseballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventInput
 	}
 
 	logEvent(event: PlayByPlayEventInput) {
-		this.playByPlay.push(event);
+		if (this.active) {
+			this.playByPlay.push(event);
+		}
 
 		if (event.type === "sideStart") {
 			this.period = event.inning;

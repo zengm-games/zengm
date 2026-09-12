@@ -153,7 +153,9 @@ class HockeyPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutput>
 			...event,
 		};
 
-		this.playByPlay.push(event2);
+		if (this.active) {
+			this.playByPlay.push(event2);
+		}
 
 		const scoringSummaryEvent = formatScoringSummaryEvent(event2);
 		if (scoringSummaryEvent) {

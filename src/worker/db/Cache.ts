@@ -163,6 +163,10 @@ class StoreAPI<Input, Output, ID extends string | number> {
 		return this.cache._getAll(this.store);
 	}
 
+	getAllByKey(): Promise<Record<ID, Output>> {
+		return this.cache._getAllByKey(this.store);
+	}
+
 	// Not sure how to type key as ID in some methods below
 	indexGet(
 		index: Index,
@@ -894,6 +898,11 @@ class Cache {
 	async _getAll(store: Store): Promise<any[]> {
 		await this._waitForStatus("full");
 		return Object.values(this._data[store]);
+	}
+
+	async _getAllByKey(store: Store): Promise<Record<number | string, any>> {
+		await this._waitForStatus("full");
+		return this._data[store];
 	}
 
 	_checkIndexFreshness(index: Index) {

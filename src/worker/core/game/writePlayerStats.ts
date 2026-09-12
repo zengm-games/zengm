@@ -234,6 +234,7 @@ const writePlayerStats = async (
 
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
+	const playersByPid = await idb.cache.players.getAllByKey();
 	const playersToSave = new Set<Player>();
 
 	for (const result of results) {
@@ -324,7 +325,7 @@ const writePlayerStats = async (
 
 			for (const p of t.player) {
 				// For consistency across sports (since updatePlayer is always true in BBGM but not yet in other sports) we want to always call addStatsRow when necessary
-				const p2 = await idb.cache.players.get(p.id);
+				const p2 = playersByPid[p.id];
 				if (!p2) {
 					throw new Error("Invalid pid");
 				}

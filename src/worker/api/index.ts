@@ -2984,8 +2984,7 @@ const initGold = async () => {
 };
 
 const loadRetiredPlayers = async () => {
-	const players = await idb.cache.players.getAll();
-	const playersByPid = groupByUnique(players, "pid");
+	const playersByPid = await idb.cache.players.getAllByKey();
 
 	const playerNames: {
 		pid: number;

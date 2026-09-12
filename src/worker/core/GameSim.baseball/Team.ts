@@ -5,7 +5,7 @@ import {
 } from "../../../common/constants.baseball.ts";
 import { choice } from "../../../common/random.ts";
 import type { Position } from "../../../common/types.baseball.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../../common/utils.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher.ts";
 import type { PlayerGameSim, TeamGameSim } from "./types.ts";
@@ -65,10 +65,7 @@ class Team<DH extends boolean> {
 		this.atBat = -1;
 		this.subIndex = -1;
 
-		this.playersByPid = {};
-		for (const p of this.t.player) {
-			this.playersByPid[p.id] = p;
-		}
+		this.playersByPid = groupByUnique(this.t.player, "id");
 
 		this.playersInGameByPos = {} as any;
 		this.playersInGameByBattingOrder = [] as any;

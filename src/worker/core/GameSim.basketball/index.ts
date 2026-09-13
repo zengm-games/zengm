@@ -1319,27 +1319,23 @@ class GameSim extends GameSimBase {
 			// Update minutes (overall, court, and bench)
 			for (const p of this.team[t].player) {
 				if (playersOnCourt.includes(p)) {
-					// This is a very hot path. Do the equivalent of recordStat directly
-					// so court/bench bookkeeping does not repeatedly pass through all of
-					// recordStat's scoring and play-by-play branches.
-					p.stat.min += min;
-					this.team[t].stat.min += min;
-					if (this.playByPlay.active) {
-						this.playByPlay.logStat(t, p.id, "min", min);
-					}
-
-					p.stat.courtTime += min;
+					this.recordStat(t, p, "min", min);
+					this.recordStat(t, p, "courtTime", min);
 
 					// This used to be 0.04. Increase more to lower PT
-					p.stat.energy +=
-						-min * this.fatigueFactor * (1 - p.compositeRating.endurance);
+					this.recordStat(
+						t,
+						p,
+						"energy",
+						-min * this.fatigueFactor * (1 - p.compositeRating.endurance),
+					);
 
 					if (p.stat.energy < 0) {
 						p.stat.energy = 0;
 					}
 				} else {
-					p.stat.benchTime += min;
-					p.stat.energy += min * 0.094;
+					this.recordStat(t, p, "benchTime", min);
+					this.recordStat(t, p, "energy", min * 0.094);
 
 					if (p.stat.energy > 1) {
 						p.stat.energy = 1;

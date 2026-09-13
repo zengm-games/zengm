@@ -207,6 +207,7 @@ class GameSim extends GameSimBase {
 	possessionLength = 0;
 	lastOrbPlayer: PlayerGameSim | undefined;
 
+	ratingArrayCache: number[];
 	skillsCountCache = new Map<
 		PlayerGameSim,
 		Record<"3" | "A" | "B" | "Di" | "Dp" | "Po" | "Ps" | "R", number>
@@ -253,6 +254,7 @@ class GameSim extends GameSimBase {
 			this.team[0].player.slice(0, this.numPlayersOnCourt),
 			this.team[1].player.slice(0, this.numPlayersOnCourt),
 		];
+		this.ratingArrayCache = new Array(this.numPlayersOnCourt);
 
 		this.updatePlayersOnCourt({
 			recordStarters: true,
@@ -528,7 +530,7 @@ class GameSim extends GameSimBase {
 
 	jumpBall() {
 		const jumpers = teamNums.map((t) => {
-			const ratios = this.ratingArray("jumpBall", t);
+			const ratios = this.ratingArray("jumpBall", t, 1, this.ratingArrayCache);
 			const maxRatio = Math.max(...ratios);
 			let ind = ratios.indexOf(maxRatio);
 			if (ind < 0) {
@@ -2746,12 +2748,19 @@ class GameSim extends GameSimBase {
 	 * @param {number=} power Power that the composite rating is raised to after the components are linearly combined by  the weights and scaled from 0 to 1. This can be used to introduce nonlinearities, like making a certain stat more uniform (power < 1) or more unevenly distributed (power > 1) or making a composite rating an inverse (power = -1). Default value is 1.
 	 * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
 	 */
-	ratingArray(rating: CompositeRating, t: TeamNum, power: number = 1) {
+	ratingArray(
+		rating: CompositeRating,
+		t: TeamNum,
+		power: number,
+		array: number[],
+	) {
 		const foulLimit = rating === "fouling" ? this.getFoulTroubleLimit() : 0;
 		let total = 0;
 
 		// Scale composite ratings
-		const array = this.playersOnCourt[t].map((p, i) => {
+		for (let i = 0; i < this.numPlayersOnCourt; i++) {
+			const p = this.playersOnCourt[t][i]!;
+
 			let compositeRating = p.compositeRating[rating];
 
 			if (rating === "fouling") {
@@ -2767,10 +2776,9 @@ class GameSim extends GameSimBase {
 
 			const value = (compositeRating * this.fatigue(p.stat.energy)) ** power;
 
+			array[i] = value;
 			total += value;
-
-			return value;
-		});
+		}
 
 		// Set floor (5% of total)
 		const floor = 0.05 * total;
@@ -2790,7 +2798,7 @@ class GameSim extends GameSimBase {
 		power: number,
 		exempt?: PlayerGameSim,
 	) {
-		const ratios = this.ratingArray(rating, t, power);
+		const ratios = this.ratingArray(rating, t, power, this.ratingArrayCache);
 		const playersOnCourt = this.playersOnCourt[t];
 
 		if (exempt !== undefined) {

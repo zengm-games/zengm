@@ -47,16 +47,20 @@ const genPlayerRows = (
 						handleToggle(userOrOther, "player", "include", p.pid);
 					}}
 				/>,
-				<input
-					className="form-check-input"
-					type="checkbox"
-					title={p.untradableMsg ?? "Exclude this player from counter offers"}
-					checked={p.excluded || p.untradable}
-					disabled={p.untradable}
-					onChange={() => {
-						handleToggle(userOrOther, "player", "exclude", p.pid);
-					}}
-				/>,
+				{
+					title: p.untradableMsg ?? "Exclude this player from counter offers",
+					value: (
+						<input
+							className="form-check-input"
+							type="checkbox"
+							checked={p.excluded || p.untradable}
+							disabled={p.untradable}
+							onChange={() => {
+								handleToggle(userOrOther, "player", "exclude", p.pid);
+							}}
+						/>
+					),
+				},
 				wrappedPlayerNameLabels({
 					pid: p.pid,
 					injury: p.injury,

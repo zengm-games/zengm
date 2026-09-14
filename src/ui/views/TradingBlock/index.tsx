@@ -711,14 +711,18 @@ const TradingBlock = ({
 		return {
 			key: p.pid,
 			data: [
-				<input
-					className="form-check-input"
-					type="checkbox"
-					checked={checked}
-					disabled={p.untradable}
-					onChange={() => handleChangeAsset("pids", p.pid)}
-					title={p.untradableMsg}
-				/>,
+				{
+					title: p.untradableMsg,
+					value: (
+						<input
+							className="form-check-input"
+							type="checkbox"
+							checked={checked}
+							disabled={p.untradable}
+							onChange={() => handleChangeAsset("pids", p.pid)}
+						/>
+					),
+				},
 				wrappedPlayerNameLabels({
 					pid: p.pid,
 					injury: p.injury,

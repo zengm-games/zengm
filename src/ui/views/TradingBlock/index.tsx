@@ -615,7 +615,7 @@ const TradingBlock = ({
 		}));
 	};
 
-	const clear = async (type: "all" | "lookingFor" | "assets") => {
+	const clear = (type: "all" | "lookingFor" | "assets") => {
 		if (type === "all" || type === "lookingFor") {
 			resetLookingForState();
 		}

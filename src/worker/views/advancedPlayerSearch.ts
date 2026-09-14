@@ -1,6 +1,6 @@
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 
-const updateAdvancedPlayerSearch = async (
+const updateAdvancedPlayerSearch = (
 	{
 		seasonStart,
 		seasonEnd,

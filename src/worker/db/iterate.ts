@@ -11,7 +11,7 @@ import type { LeagueDB } from "./connectLeague.ts";
 
 // This should never be used! It's just left here for worker console backwards compatibility.
 // Instead, use async iterators https://github.com/jakearchibald/idb#idbcursor-enhancements
-const iterate = async <StoreName extends StoreNames<LeagueDB>>(
+const iterate = <StoreName extends StoreNames<LeagueDB>>(
 	store:
 		| IDBPObjectStore<
 				LeagueDB,

@@ -1911,7 +1911,7 @@ const getJerseyNumberConflict = async ({
 	};
 };
 
-const getLeagueInfo = async (
+const getLeagueInfo = (
 	options: Parameters<typeof realRosters.getLeagueInfo>[0],
 ) => {
 	return realRosters.getLeagueInfo(options);
@@ -1921,7 +1921,7 @@ const getLeagueName = () => {
 	return league.getName();
 };
 
-const getLeagues = async () => {
+const getLeagues = () => {
 	return idb.meta.getAll("leagues");
 };
 
@@ -2106,7 +2106,7 @@ const getPlayersCommandPalette = async () => {
 	});
 };
 
-const getLocal = async (name: keyof Local) => {
+const getLocal = (name: keyof Local) => {
 	return local[name];
 };
 
@@ -2540,7 +2540,7 @@ const getTradingBlockOffers = async ({
 	return augmentOffers(offers);
 };
 
-const ping = async () => {
+const ping = () => {
 	return;
 };
 
@@ -3009,7 +3009,7 @@ const lockSet = async ([name, value]: [LockName, boolean]) => {
 	await lock.set(name, value);
 };
 
-const ovr = async ({
+const ovr = ({
 	ratings,
 	pos,
 }: {
@@ -5163,7 +5163,7 @@ const updateTrade = async (teams: TradeTeams) => {
 	await toUI("realtimeUpdate", []);
 };
 
-const validatePointsFormula = async (pointsFormula: string) => {
+const validatePointsFormula = (pointsFormula: string) => {
 	if (pointsFormula !== "") {
 		new PointsFormulaEvaluator(pointsFormula);
 	}

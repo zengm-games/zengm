@@ -195,7 +195,7 @@ const handleStreamError = async (
 };
 
 // Based on https://github.com/dropbox/dropbox-sdk-js/blob/b75b1e3bfedcf4b00f613489c5291d3235f052db/examples/javascript/upload/index.html
-export const dropboxStream = async ({
+export const dropboxStream = ({
 	accessToken,
 	filename,
 	lid,

@@ -272,7 +272,7 @@ const TeamForm = ({
 				</div>
 				{face ? (
 					<div
-						onClick={async () => {
+						onClick={() => {
 							setFace(undefined);
 						}}
 						className="d-flex"

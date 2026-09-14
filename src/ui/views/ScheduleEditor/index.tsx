@@ -1130,7 +1130,7 @@ const ScheduleEditor = ({
 								Place Trade Deadline in default position
 							</Dropdown.Item>
 							<Dropdown.Item
-								onClick={async () => {
+								onClick={() => {
 									if (!canRegenerateSchedule) {
 										showNotification({
 											type: "error",

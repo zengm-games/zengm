@@ -10,7 +10,7 @@ import type { PlayerWithoutKey } from "../../../common/types.ts";
  * @memberOf core.player
  * @param {Object} p Player object.
  */
-const addToFreeAgents = async (
+const addToFreeAgents = (
 	p: PlayerWithoutKey,
 	numPlayersTradedAwayNormalized: Record<number, number>,
 ) => {

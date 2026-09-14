@@ -139,7 +139,7 @@ const untilPick = async (dpid: number, conditions: Conditions) => {
 	await runDraft({ type: "untilPick", dpid }, conditions);
 };
 
-const addToTradingBlock = async (
+const addToTradingBlock = (
 	// Require at least one of pids or dpids
 	param:
 		| {

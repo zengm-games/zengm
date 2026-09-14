@@ -68,7 +68,7 @@ export const WatchBlock = memo(
 		useEffect(() => {
 			if (defaultWatch !== undefined) {
 				// Need to listen for bulk action updates
-				const unbind = crossTabEmitter.on("updateWatch", async (watchByPid) => {
+				const unbind = crossTabEmitter.on("updateWatch", (watchByPid) => {
 					const newWatch = watchByPid[pid];
 					if (newWatch !== undefined) {
 						setLocalWatch(newWatch);

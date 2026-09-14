@@ -51,7 +51,7 @@ const maxBy = <Key extends string, T extends Record<Key, number | undefined>>(
 	return max;
 };
 
-const tallyAwards = async (
+const tallyAwards = (
 	tid: number,
 	seasons: Set<number>,
 	awards: Awards[],

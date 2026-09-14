@@ -84,6 +84,7 @@ export default defineConfig(
 			"react-hooks/set-state-in-effect": "off",
 
 			"react-hooks/react-compiler": "off",
+			"require-await": "error",
 			"sort-destructure-keys/sort-destructure-keys": "off",
 			"sort-keys-fix/sort-keys-fix": "off",
 			"typescript-sort-keys/interface": "off",

@@ -359,7 +359,7 @@ const AwardSettings = ({
 							Reset to default
 						</Dropdown.Item>
 						<Dropdown.Item
-							onClick={async () => {
+							onClick={() => {
 								setAwardsState([]);
 							}}
 						>

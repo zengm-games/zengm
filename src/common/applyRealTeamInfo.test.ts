@@ -5,7 +5,7 @@ import { resetG } from "../test/helpers.ts";
 import { helpers } from "./helpers.ts";
 import type { RealTeamInfo } from "./types.ts";
 
-beforeAll(async () => {
+beforeAll(() => {
 	resetG();
 });
 

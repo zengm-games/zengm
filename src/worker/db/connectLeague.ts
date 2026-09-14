@@ -470,7 +470,7 @@ export const upgradeGamesVersion65 = async ({
 	const LIMIT_PLAYOFF_SERIES = 1000;
 	const LIMIT_PLAYER_FEATS = 10000;
 
-	const tooMany = async () => {
+	const tooMany = () => {
 		logEvent({
 			type: "error",
 			text: `<div class="mt-2">League upgrade is taking too long, so skipping some stuff doesn't matter unless you want to save box scores from finals games or games with statistical feats.</div><div class="mt-2">If you want to finish the upgrade and use those features, <a href="/l/${lid}/upgrade65">click here</a>.</div>`,

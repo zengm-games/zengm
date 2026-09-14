@@ -29,7 +29,7 @@ import { showNotification } from "./util/showNotification.ts";
 import { toWorker } from "./util/toWorker.ts";
 window.bbgm = { api, showNotification, toWorker };
 
-const handleVersion = async () => {
+const handleVersion = () => {
 	window.addEventListener("storage", (e) => {
 		if (e.key === "bbgmVersionConflict") {
 			const bbgmVersionStored = safeLocalStorage.getItem("bbgmVersion");
@@ -139,7 +139,7 @@ const getUrlForAnalytics = (path: string) => {
 const setupRoutes = async () => {
 	let initialLoad = true;
 	await router.start({
-		routeMatched: async ({ context }) => {
+		routeMatched: ({ context }) => {
 			if (!context.state.noTrack) {
 				if (initialLoad) {
 					initialLoad = false;
@@ -235,7 +235,7 @@ const setupRoutes = async () => {
 		// @ts-expect-error
 		return api[name](...params);
 	});
-	await handleVersion();
+	handleVersion();
 	await setupEnv();
 	render();
 	await setupRoutes();

@@ -313,7 +313,7 @@ const SelectTeam = ({
 				<select
 					className="form-select"
 					value={addEditTeamInfo.addType}
-					onChange={async (event) => {
+					onChange={(event) => {
 						setAddEditTeamInfo((info) => ({
 							...info,
 							addType: event.target.value as any,

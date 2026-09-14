@@ -30,7 +30,7 @@ export const watchJs = (
 			}
 		});
 
-		eventEmitter.on("switchingSport", async () => {
+		eventEmitter.on("switchingSport", () => {
 			worker.postMessage({ type: "switchingSport" });
 		});
 

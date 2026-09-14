@@ -45,7 +45,7 @@ describe("tiebreakers", () => {
 	for (const type of ["conf", "div"] as const) {
 		const tiebreaker = `${type}RecordIfSame` as const;
 
-		test(tiebreaker, async () => {
+		test(tiebreaker, () => {
 			const teams = getBaseTeams();
 			if (type === "conf") {
 				teams[2].seasonAttrs.wonConf = 9;
@@ -84,7 +84,7 @@ describe("tiebreakers", () => {
 		});
 	}
 
-	test("commonOpponentsRecord", async () => {
+	test("commonOpponentsRecord", () => {
 		const teams = getBaseTeams();
 
 		const headToHeadEntry = (won: number, lost: number) => ({
@@ -144,7 +144,7 @@ describe("tiebreakers", () => {
 		]);
 	});
 
-	test("divWinner", async () => {
+	test("divWinner", () => {
 		const teams = getBaseTeams();
 		teams[2].seasonAttrs.wonConf = 9;
 		teams[2].seasonAttrs.lostConf = 3;
@@ -173,7 +173,7 @@ describe("tiebreakers", () => {
 		]);
 	});
 
-	test("headToHeadRecord", async () => {
+	test("headToHeadRecord", () => {
 		const teams = getBaseTeams();
 
 		const headToHeadEntry = (won: number, lost: number) => ({
@@ -226,7 +226,7 @@ describe("tiebreakers", () => {
 		]);
 	});
 
-	test("marginOfVictory", async () => {
+	test("marginOfVictory", () => {
 		const teams = getBaseTeams();
 		teams[2].stats.pts = 500;
 		teams[3].stats.pts = 400;
@@ -252,7 +252,7 @@ describe("tiebreakers", () => {
 		]);
 	});
 
-	test("strengthOfSchedule", async () => {
+	test("strengthOfSchedule", () => {
 		const teams = getBaseTeams();
 		teams[0].seasonAttrs.won = 5;
 		teams[0].seasonAttrs.lost = 15;
@@ -301,7 +301,7 @@ describe("tiebreakers", () => {
 		assert.deepStrictEqual(reasons, ["strengthOfSchedule", undefined]);
 	});
 
-	test("strengthOfVictory", async () => {
+	test("strengthOfVictory", () => {
 		const teams = getBaseTeams();
 		teams[0].seasonAttrs.won = 5;
 		teams[0].seasonAttrs.lost = 15;

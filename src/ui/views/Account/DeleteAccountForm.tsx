@@ -153,7 +153,7 @@ const DeleteAccountForm = ({
 
 			<button
 				className="btn btn-danger"
-				onClick={async () => {
+				onClick={() => {
 					setShowDialog(true);
 				}}
 			>

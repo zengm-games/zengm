@@ -353,7 +353,7 @@ type ExtraFromStream = {
 	teamHasRosterOrder: Set<number>;
 };
 
-const getSaveToDB = async ({
+const getSaveToDB = ({
 	keptKeys,
 	maxGid,
 	preProcessParams,
@@ -1891,7 +1891,7 @@ const createStream = async (
 
 	const migrationData: PreProcessParams["migrationData"] = {};
 
-	const { extraFromStream, saveToDB } = await getSaveToDB({
+	const { extraFromStream, saveToDB } = getSaveToDB({
 		keptKeys,
 		maxGid: fromFile.maxGid,
 		preProcessParams: {

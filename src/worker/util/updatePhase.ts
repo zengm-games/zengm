@@ -10,7 +10,7 @@ import type { Conditions } from "../../common/types.ts";
 import { league } from "../core/index.ts";
 
 // Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
-async function updatePhase(conditions?: Conditions) {
+function updatePhase(conditions?: Conditions) {
 	let text = PHASE_TEXT[g.get("phase")];
 
 	if (

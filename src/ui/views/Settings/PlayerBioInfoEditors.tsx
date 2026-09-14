@@ -45,7 +45,7 @@ export const RacesEditor = ({
 	const [rowsEdited, setRowsEdited] = useState([...rows]);
 	const lastSavedState = useRef<RaceRow[] | undefined>(undefined);
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		// Reset for next time
 		setRowsEdited(lastSavedState.current ?? [...rows]);
 
@@ -308,7 +308,7 @@ export const CollegesEditor = ({
 	const [fractionSkipCollegeEdited, setFractionSkipCollegeEdited] =
 		useState(fractionSkipCollege);
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		// Reset for next time
 		setRowsEdited(lastSavedState.current?.rowsEdited ?? [...rows]);
 		setFractionSkipCollegeEdited(
@@ -609,7 +609,7 @@ export const NamesEditor = ({
 	const lastSavedState = useRef<undefined | NameRows>(undefined);
 	const [firstOrLast, setFirstOrLast] = useState<"first" | "last">("first");
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		// Reset for next time
 		setRowsEdited(lastSavedState.current ?? { ...rows });
 
@@ -789,7 +789,7 @@ export const FlagEditor = ({
 	const [flagEdited, setFlagEdited] = useState(initialFlag);
 	const lastSavedState = useRef<undefined | string>(undefined);
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		// Reset for next time
 		setFlagEdited(lastSavedState.current ?? initialFlag);
 

@@ -75,7 +75,7 @@ const Note = (
 					<button
 						type="reset"
 						className="btn btn-light-bordered btn-sm"
-						onClick={async () => {
+						onClick={() => {
 							setEditing(false);
 						}}
 					>

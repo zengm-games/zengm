@@ -33,7 +33,7 @@ const seriesIsNotOver = (
 ): away is PlayoffSeriesTeam =>
 	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
 
-const getTeamsForOrderTeams = async () => {
+const getTeamsForOrderTeams = () => {
 	return idb.getCopies.teamsPlus(
 		{
 			attrs: ["tid"],

@@ -98,11 +98,11 @@ const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 				nonfluid
 				sortableRows={{
 					highlightHandle: ({ row }) => userTids.includes(row.key as number),
-					onChange: async ({ oldIndex, newIndex }) => {
+					onChange: ({ oldIndex, newIndex }) => {
 						const newSortedTids = arrayMove(sortedTids, oldIndex, newIndex);
 						setSortedTids(newSortedTids);
 					},
-					onSwap: async (index1, index2) => {
+					onSwap: (index1, index2) => {
 						const newSortedTids = [...sortedTids];
 						newSortedTids[index1] = sortedTids[index2]!;
 						newSortedTids[index2] = sortedTids[index1]!;

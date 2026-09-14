@@ -150,12 +150,13 @@ export const getAutoTicketPrice = async ({
 		playoffs: false,
 	});
 
-	return getActualAttendanceInverted({
+	const response = await getActualAttendanceInverted({
 		baseAttendance,
 		stadiumCapacity,
 		teamSeasons,
 		tid,
 	});
+	return response;
 };
 
 export const getAutoTicketPriceByTid = async (tid: number) => {

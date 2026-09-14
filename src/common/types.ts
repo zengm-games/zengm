@@ -95,7 +95,7 @@ export type Achievement = {
 	name: string;
 	category: string;
 	desc: string;
-	check?: () => Promise<boolean>;
+	check?: () => boolean | Promise<boolean>;
 	when?: AchievementWhen;
 };
 

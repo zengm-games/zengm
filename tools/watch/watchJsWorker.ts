@@ -53,7 +53,7 @@ const makeWatcher = (sport: Sport) => {
 
 let abortController = makeWatcher(initialSport);
 
-parentPort?.on("message", async (message) => {
+parentPort?.on("message", (message) => {
 	if (message.type === "switchingSport") {
 		abortController.abort();
 	} else if (message.type === "newSport") {

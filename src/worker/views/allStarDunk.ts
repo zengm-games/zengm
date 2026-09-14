@@ -11,7 +11,7 @@ import { orderBy } from "../../common/utils.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 
-const getShortTall = async (pids: [number, number]) => {
+const getShortTall = (pids: [number, number]) => {
 	if (!pids) {
 		return [];
 	}

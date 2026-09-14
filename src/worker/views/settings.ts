@@ -226,7 +226,7 @@ export type Settings = Pick<
 	numActiveTeams: number | undefined;
 };
 
-const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateSettings = (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")

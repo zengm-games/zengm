@@ -34,7 +34,7 @@ describe.skip("worker/core/league/create", () => {
 		]);
 	});
 
-	test("initialize gameAttributes object store", async () => {
+	test("initialize gameAttributes object store", () => {
 		assert.strictEqual(leagueData.gameAttributes.phase, 0);
 		assert.strictEqual(
 			leagueData.gameAttributes.season,
@@ -47,7 +47,7 @@ describe.skip("worker/core/league/create", () => {
 		assert.strictEqual(leagueData.gameAttributes.daysLeft, 0);
 	});
 
-	test("initialize teams object store", async () => {
+	test("initialize teams object store", () => {
 		const cids = leagueData.teams.map((t: { cid: number }) => t.cid);
 		const dids = leagueData.teams.map((t: { did: number }) => t.did);
 		assert.strictEqual(leagueData.teams.length, g.get("numActiveTeams"));
@@ -72,25 +72,25 @@ describe.skip("worker/core/league/create", () => {
 		}
 	});
 
-	test("initialize teamSeasons object store", async () => {
+	test("initialize teamSeasons object store", () => {
 		assert.strictEqual(leagueData.teamSeasons.length, g.get("numActiveTeams"));
 	});
 
-	test("lazily initialize teamStats object store", async () => {
+	test("lazily initialize teamStats object store", () => {
 		assert.strictEqual(leagueData.teamStats.length, 0);
 	});
 
-	test("initialize trade object store", async () => {
+	test("initialize trade object store", () => {
 		assert.strictEqual(leagueData.trade.length, 1);
 		assert.strictEqual(leagueData.trade[0].rid, 0);
 		assert.strictEqual(leagueData.trade[0].teams.length, 2);
 	});
 
-	test("initialize players object store", async () => {
+	test("initialize players object store", () => {
 		assert.strictEqual(leagueData.players.length, 30 * 13 + 150 + 70 * 3);
 	});
 
-	test("no error with restricted draftAges and forceRetireAge settings", async () => {
+	test("no error with restricted draftAges and forceRetireAge settings", () => {
 		/*const leagueData = await createWithoutSaving(
 			0,
 			{

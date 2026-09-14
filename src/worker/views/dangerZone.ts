@@ -1,6 +1,6 @@
 import { local } from "../util/index.ts";
 
-const updateDangerZone = async () => {
+const updateDangerZone = () => {
 	return {
 		autoSave: local.autoSave,
 	};

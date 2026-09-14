@@ -17,7 +17,7 @@ export class RouteNotFoundError extends Error {
 	}
 }
 
-type RouteCallback = (context: Context) => Promise<void>;
+type RouteCallback = (context: Context) => void | Promise<void>;
 
 interface Route {
 	cb: RouteCallback;

@@ -39,6 +39,7 @@ can we make Cache sync?
   - autoSave interaction
   - getDataWithAutoSaveDisabled interaction
 - benchmark - is it worth it?
+  - probably not, see sync-cache branch. does make code nicer...
 - when switching to a new league, block everything in UI (waiting for fill doesn't really do much because it could mean we switch to a new league in the middle of a function)
   - how to handle errors?
 

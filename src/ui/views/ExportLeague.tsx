@@ -574,7 +574,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 					throw new Error("Missing lid");
 				}
 				const { dropboxStream } = await import("../util/dropbox.ts");
-				fileStream = await dropboxStream({
+				fileStream = dropboxStream({
 					accessToken: dropboxAccessToken,
 					filename,
 					lid,

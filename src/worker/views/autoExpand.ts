@@ -2,7 +2,7 @@ import { g, helpers } from "../util/index.ts";
 import getTeamInfos from "../../common/getTeamInfos.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 
-const updateExpand = async (inputs: void, updateEvents: UpdateEvents) => {
+const updateExpand = (inputs: void, updateEvents: UpdateEvents) => {
 	// Ignore team updateEvent from relocateVote, and newPhase from starting the expansion draft
 	if (!updateEvents.includes("team") && !updateEvents.includes("newPhase")) {
 		const autoExpand = g.get("autoExpand");

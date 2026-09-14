@@ -214,7 +214,7 @@ const Award = ({
 									className="form-select"
 									value={winner.pos}
 									disabled={disabled}
-									onChange={async (event) => {
+									onChange={(event) => {
 										const newPos = event.target.value;
 										setWinner({
 											award,

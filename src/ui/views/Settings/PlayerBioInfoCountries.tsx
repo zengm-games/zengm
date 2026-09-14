@@ -188,7 +188,7 @@ const Controls = ({
 
 						<Dropdown.Menu>
 							<Dropdown.Item
-								onClick={async () => {
+								onClick={() => {
 									const newCountry: CountryRow = {
 										id: Math.random(),
 										country: "Country",
@@ -240,7 +240,7 @@ const Controls = ({
 
 						<Dropdown.Menu>
 							<Dropdown.Item
-								onClick={async () => {
+								onClick={() => {
 									setInfoState(formatPlayerBioInfoState(undefined, defaults));
 								}}
 							>

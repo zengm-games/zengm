@@ -652,29 +652,26 @@ const NextButton = ({
 
 	useEffect(() => {
 		let mounted = true;
-		const whatever = async () => {
-			if (autoGoToNext && nextGid !== undefined) {
-				setAutoGoToNext(false);
-				// Hack, because otherwise the updateEvent with "gameSim" comes before this one, but doesn't finish yet, so in updatePage this update gets canceled even though it's a new URL (because it's the same page)
-				setTimeout(() => {
-					realtimeUpdate(
-						[],
-						helpers.leagueUrl([
-							"game_log",
-							`${abbrev}_${tid}`,
-							boxScore.season,
-							nextGid,
-						]),
-					);
 
-					if (mounted) {
-						setClickedGoToNext(false);
-					}
-				}, 10);
-			}
-		};
+		if (autoGoToNext && nextGid !== undefined) {
+			setAutoGoToNext(false);
+			// Hack, because otherwise the updateEvent with "gameSim" comes before this one, but doesn't finish yet, so in updatePage this update gets canceled even though it's a new URL (because it's the same page)
+			setTimeout(() => {
+				realtimeUpdate(
+					[],
+					helpers.leagueUrl([
+						"game_log",
+						`${abbrev}_${tid}`,
+						boxScore.season,
+						nextGid,
+					]),
+				);
 
-		whatever();
+				if (mounted) {
+					setClickedGoToNext(false);
+				}
+			}, 10);
+		}
 
 		return () => {
 			mounted = false;

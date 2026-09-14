@@ -109,7 +109,7 @@ export const RatingsStatsPopover = ({
 		}
 
 		// Need to listen for bulk action updates
-		const unbind = crossTabEmitter.on("updateWatch", async (watchByPid) => {
+		const unbind = crossTabEmitter.on("updateWatch", (watchByPid) => {
 			const newWatch = watchByPid[pid];
 			if (newWatch !== undefined) {
 				setWatch(newWatch);

@@ -1,10 +1,7 @@
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 
-const updateExportStats = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+const updateExportStats = (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
 		const options = [
 			{

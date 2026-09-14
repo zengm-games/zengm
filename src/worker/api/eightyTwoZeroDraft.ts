@@ -471,7 +471,7 @@ const finalize = async (param: unknown, conditions: Conditions) => {
 	}
 };
 
-const cancel = async () => {
+const cancel = () => {
 	local.eightyTwoZeroDraft = undefined;
 	return getState();
 };

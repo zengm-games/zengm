@@ -725,7 +725,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 							id="gameAttributesSelect"
 							className="form-select"
 							value={gameAttributesInfo.type}
-							onChange={async (event) => {
+							onChange={(event) => {
 								const type = event.target.value;
 
 								if (type === "custom") {

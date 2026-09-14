@@ -3,7 +3,7 @@ import { RouteNotFoundError, router } from "./index.ts";
 import type { Context } from "./index.ts";
 
 const counts: Record<string, number> = {};
-const countCallback = async (context: Context) => {
+const countCallback = (context: Context) => {
 	// This is to remove the query string that vitest adds to the URL
 	const { pathname } = new URL(context.path, window.location.origin);
 
@@ -21,11 +21,11 @@ const routes = {
 	"/1": countCallback,
 	"/2": countCallback,
 	"/3/:foo": countCallback,
-	"/error": async (context: Context) => {
+	"/error": (context: Context) => {
 		countCallback(context);
 		throw new Error("runtime error");
 	},
-	"/state": async (context: Context) => {
+	"/state": (context: Context) => {
 		countCallback(context);
 		assert.deepStrictEqual(context.state, { custom: 123 });
 	},

@@ -5,7 +5,7 @@ import {
 	DEFAULT_EIGHTY_TWO_ZERO_DRAFT,
 } from "../api/eightyTwoZeroDraft.ts";
 
-const updateEightyTwoZeroDraft = async () => {
+const updateEightyTwoZeroDraft = () => {
 	try {
 		checkCanUse();
 	} catch (error) {

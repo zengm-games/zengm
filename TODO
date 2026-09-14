@@ -36,6 +36,8 @@ custom awards later
 
 can we make Cache sync?
 - add "prune" method to replace filling every year
+  - autoSave interaction
+  - getDataWithAutoSaveDisabled interaction
 - benchmark - is it worth it?
 - when switching to a new league, block everything in UI (waiting for fill doesn't really do much because it could mean we switch to a new league in the middle of a function)
   - how to handle errors?

@@ -66,12 +66,6 @@ export default defineConfig(
 			"perfectionist/sort-jsx-props": "off",
 			"perfectionist/sort-objects": "off",
 			"perfectionist/sort-object-types": "off",
-			"prefer-const": [
-				"error",
-				{
-					destructuring: "all",
-				},
-			],
 			"react/display-name": "off",
 			"react/jsx-key": "off", // Too many false positives, like on DataTableRow.data
 			"react/jsx-no-target-blank": "off", // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/noopener  Note: Setting target="_blank" on <a>, <area> and <form> elements implicitly provides the same rel behavior as setting rel="noopener" which does not set window.opener.

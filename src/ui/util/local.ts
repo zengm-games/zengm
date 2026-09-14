@@ -211,7 +211,9 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 
 							email = email.trim().toLowerCase();
 
-							let [username, domain] = email.split("@");
+							const parts = email.split("@");
+							let username = parts[0];
+							const domain = parts[1];
 
 							if (username !== undefined && domain === "gmail.com") {
 								// Remove + and everything after

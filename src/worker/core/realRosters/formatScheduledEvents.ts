@@ -238,7 +238,7 @@ const processTeams = (
 		if (event.type === "teamInfo" || event.type === "contraction") {
 			const oldTid = event.info.tid;
 			let newTid = tidOverrides[oldTid];
-			if (newTid == undefined) {
+			if (newTid === undefined) {
 				newTid = maxSeenTid + 1;
 				tidOverrides[oldTid] = newTid;
 			}
@@ -272,7 +272,7 @@ const processTeams = (
 
 						const oldTid = t.tid;
 						let newTid = tidOverrides[oldTid];
-						if (newTid == undefined) {
+						if (newTid === undefined) {
 							newTid = maxSeenTid + 1;
 							tidOverrides[oldTid] = newTid;
 						}

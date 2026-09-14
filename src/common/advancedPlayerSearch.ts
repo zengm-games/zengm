@@ -221,7 +221,7 @@ for (const [category, { options }] of Object.entries(allFilters)) {
 }
 
 export const getStatsTableByType = (statTypePlus: string) => {
-	if (statTypePlus == "bio" || statTypePlus == "ratings") {
+	if (statTypePlus === "bio" || statTypePlus === "ratings") {
 		return;
 	}
 
@@ -247,7 +247,7 @@ export const getStatsTableByType = (statTypePlus: string) => {
 export const getStats = (statTypePlus: string) => {
 	if (statTypePlus === "ratings") {
 		return ["ovr", "pot", ...RATINGS];
-	} else if (statTypePlus == "bio") {
+	} else if (statTypePlus === "bio") {
 		return ["age", "salary", "draftPosition"];
 	} else {
 		const statsTable = getStatsTableByType(statTypePlus);

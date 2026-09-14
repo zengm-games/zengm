@@ -92,7 +92,7 @@ const LeagueFinances = ({ season, teams }: View<"leagueFinances">) => {
 					`${t.seasonAttrs.abbrev}_${t.seasonAttrs.tid}`,
 				]),
 			),
-			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
+			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1_000_000)),
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
 			...(budget
 				? [

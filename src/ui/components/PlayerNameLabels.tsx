@@ -157,7 +157,9 @@ export const PlayerNameLabels = (props: Props) => {
 		defaultWatch,
 	} = props;
 
-	let { firstName, lastName } = getFirstLastNames(props);
+	const firstLastNames = getFirstLastNames(props);
+	const firstName = firstLastNames.firstName;
+	let lastName = firstLastNames.lastName;
 
 	// See if we need to truncate skills
 	let numSkillsBeforeTruncate;

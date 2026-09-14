@@ -18,12 +18,12 @@ const getStatsWithLabels = (stats: string[], statType: string) => {
 };
 
 const getStatFromPlayer = (p: any, stat: string, statType: string) => {
-	if (statType == "ratings") {
+	if (statType === "ratings") {
 		return p.ratings[stat];
-	} else if (statType == "bio") {
+	} else if (statType === "bio") {
 		return p[stat] ?? 0;
 	}
-	if (statType == "gameHighs") {
+	if (statType === "gameHighs") {
 		stat = p.stats[stat];
 		return Array.isArray(stat) ? stat[0] : stat;
 	}

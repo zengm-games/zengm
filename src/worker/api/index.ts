@@ -360,7 +360,7 @@ const allStarDraftSetPlayers = async (
 const allStarGameNow = async () => {
 	const currentPhase = g.get("phase");
 	if (
-		currentPhase != PHASE.REGULAR_SEASON &&
+		currentPhase !== PHASE.REGULAR_SEASON &&
 		currentPhase !== PHASE.AFTER_TRADE_DEADLINE
 	) {
 		return;
@@ -3368,7 +3368,7 @@ const removeLastTeam = async () => {
 				await idb.cache.scheduledEvents.put(scheduledEvent);
 			}
 		} else if (
-			scheduledEvent.type == "contraction" ||
+			scheduledEvent.type === "contraction" ||
 			scheduledEvent.type === "teamInfo"
 		) {
 			if (tid === scheduledEvent.info.tid) {

@@ -46,7 +46,7 @@ if (!Array.prototype.findLast) {
 if (!Object.hasOwn) {
 	Object.defineProperty(Object, "hasOwn", {
 		value: (object: object, property: PropertyKey) => {
-			if (object == null) {
+			if (object === null || object === undefined) {
 				throw new TypeError("Cannot convert undefined or null to object");
 			}
 			return Object.prototype.hasOwnProperty.call(Object(object), property);
@@ -236,7 +236,11 @@ declare global {
 		): IterableIterator<ZipValues<T>>;
 	}
 }
-if (typeof Iterator === "undefined" || Iterator == null) {
+if (
+	typeof Iterator === "undefined" ||
+	Iterator === undefined ||
+	Iterator === null
+) {
 	(globalThis as any).Iterator = {};
 }
 if (!Iterator.zip) {

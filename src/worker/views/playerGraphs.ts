@@ -81,7 +81,7 @@ const getPlayerStats = async (
 
 			// draft is needed to know who is undrafted, for the tooltip
 			"draft",
-			...(statTypePlus == "bio" ? ["age", "salary", "draftPosition"] : []),
+			...(statTypePlus === "bio" ? ["age", "salary", "draftPosition"] : []),
 		],
 		ratings,
 		stats: statKeys,

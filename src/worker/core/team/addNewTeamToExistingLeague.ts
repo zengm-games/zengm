@@ -134,7 +134,7 @@ const addNewTeamToExistingLeague = async (
 					await idb.cache.scheduledEvents.put(scheduledEvent);
 				}
 			} else if (
-				scheduledEvent.type == "contraction" ||
+				scheduledEvent.type === "contraction" ||
 				scheduledEvent.type === "teamInfo"
 			) {
 				if (t.tid <= scheduledEvent.info.tid) {

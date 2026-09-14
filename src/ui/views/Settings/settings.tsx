@@ -705,7 +705,7 @@ export const settings: Setting[] = (
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
-				if (value.length != 2) {
+				if (value.length !== 2) {
 					throw new Error("Must have 2 numbers");
 				}
 				if (value[0] > value[1]) {
@@ -1708,7 +1708,7 @@ export const settings: Setting[] = (
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
-				if (value.length != 3) {
+				if (value.length !== 3) {
 					throw new Error("Must have 3 numbers");
 				}
 				for (const num of value) {

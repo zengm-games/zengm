@@ -142,7 +142,7 @@ const getStatFromTeam = (t: any, stat: string, statType: string) => {
 		}
 	}
 
-	if (statType == "standings" || statType === "finances") {
+	if (statType === "standings" || statType === "finances") {
 		return t.seasonAttrs[stat] ?? 0;
 	}
 

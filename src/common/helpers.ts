@@ -1482,9 +1482,16 @@ const getRecordNumericValue = (record: string | null) => {
 		return -Infinity;
 	}
 
-	let [won = 0, lost = 0, otl, tied] = record
+	let [won, lost, otl, tied] = record
 		.split("-")
 		.map((num) => Number.parseInt(num));
+
+	if (won === undefined) {
+		won = 0;
+	}
+	if (lost === undefined) {
+		lost = 0;
+	}
 
 	// Technically, if only one of "tied" or "otl" is present, we can't distinguish. Assume it's tied, in that case.
 	if (typeof otl === "number" && typeof tied !== "number") {

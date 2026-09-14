@@ -510,7 +510,7 @@ const sumValues = (
 		playerValue += contractsFactor * p.contractValue;
 
 		// if a player was just drafted and can be released, they shouldn't have negative value
-		if (p.type == "player" && p.justDrafted) {
+		if (p.type === "player" && p.justDrafted) {
 			playerValue = Math.max(0, playerValue);
 		}
 

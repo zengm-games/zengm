@@ -255,7 +255,7 @@ export const advancedPlayerSearch = async ({
 					} else if (filter.operator === "=") {
 						return pValue === filter.value;
 					} else if (filter.operator === "!=") {
-						return pValue != filter.value;
+						return pValue !== filter.value;
 					} else {
 						throw new Error("Should never happen");
 					}

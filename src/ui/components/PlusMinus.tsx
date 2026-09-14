@@ -5,7 +5,7 @@ export const PlusMinus = ({
 	children: number | null | undefined;
 	decimalPlaces?: number;
 }) => {
-	if (children == undefined) {
+	if (children === null || children === undefined) {
 		return null;
 	}
 

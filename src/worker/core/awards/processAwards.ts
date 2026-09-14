@@ -604,7 +604,7 @@ export const processAwards = async ({
 
 					const getScore = (p: (typeof players)[number]) => {
 						// Use statOverridesByMatchup score if it exists, for old Award Races
-						if (statOverridesByMatchup && group?.type == "playoffSeries") {
+						if (statOverridesByMatchup && group?.type === "playoffSeries") {
 							const matchupKey = hashPlayoffSeries(group);
 							const statOverrides = statOverridesByMatchup[matchupKey]?.[p.pid];
 							if (statOverrides) {

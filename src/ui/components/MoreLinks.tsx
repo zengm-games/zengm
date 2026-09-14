@@ -235,12 +235,12 @@ export const MoreLinks = (
 				name: "Draft Pick Notes",
 			},
 		];
-	} else if (props.type == "awards") {
+	} else if (props.type === "awards") {
 		const { season } = props;
 
 		links = [
 			{
-				url: season == undefined ? ["award_races"] : ["award_races", season],
+				url: season === undefined ? ["award_races"] : ["award_races", season],
 				name: "Award Races",
 			},
 			{
@@ -252,7 +252,7 @@ export const MoreLinks = (
 		if (godMode) {
 			links.push({
 				url:
-					season == undefined
+					season === undefined
 						? ["edit_award_winners"]
 						: ["edit_award_winners", season],
 				name: "Edit Award Winners",

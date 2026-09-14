@@ -53,7 +53,7 @@ const PlayerStatDists = ({
 
 	// Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
 	const scale =
-		isSport("basketball") && statType == "perGame"
+		isSport("basketball") && statType === "perGame"
 			? {
 					gp: [0, numGames],
 					gs: [0, numGames],
@@ -126,7 +126,7 @@ const PlayerStatDists = ({
 								</tr>
 							);
 							let proPlot: ReactNode = null;
-							if ((proQuartiles as any)[stat] && statType == "perGame") {
+							if ((proQuartiles as any)[stat] && statType === "perGame") {
 								proPlot = (
 									<tr key={`${stat}-pro`}>
 										<td />

@@ -58,7 +58,6 @@ const PlayerList = ({
 				<input
 					className="form-check-input"
 					type="checkbox"
-					title={p.untradableMsg}
 					checked={protectedPids.includes(p.pid)}
 					disabled={numRemaining <= 0 && !protectedPids.includes(p.pid)}
 					onChange={() => {

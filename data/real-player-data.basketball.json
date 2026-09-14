@@ -272317,24 +272317,24 @@
       "tp": 45
     },
     {
-      "diq": 52,
-      "dnk": 70,
-      "drb": 52,
-      "endu": 7,
-      "fg": 74,
-      "ft": 33,
+      "diq": 48,
+      "dnk": 66,
+      "drb": 48,
+      "endu": 3,
+      "fg": 70,
+      "ft": 29,
       "fuzz": 0,
       "hgt": 36,
-      "ins": 41,
-      "jmp": 65,
-      "oiq": 51,
-      "pss": 48,
-      "reb": 75,
+      "ins": 37,
+      "jmp": 61,
+      "oiq": 47,
+      "pss": 44,
+      "reb": 71,
       "season": 2027,
       "slug": "cartede02",
-      "spd": 67,
-      "stre": 11,
-      "tp": 45
+      "spd": 63,
+      "stre": 7,
+      "tp": 41
     },
     {
       "diq": 42,
@@ -764057,20 +764057,12 @@
     {
       "amounts": [
         4689000,
-        4923720
+        4923720,
+        5158080
       ],
-      "exp": 2026,
+      "exp": 2027,
       "slug": "cartede02",
       "start": 2025
-    },
-    {
-      "amounts": [
-        5800000,
-        5800000
-      ],
-      "exp": 2028,
-      "slug": "cartede02",
-      "start": 2027
     },
     {
       "amounts": [
@@ -894110,12 +894102,6 @@
       "abbrev": "SAC",
       "jerseyNumber": "22",
       "season": 2026,
-      "slug": "cartede02"
-    },
-    {
-      "abbrev": "ATL",
-      "jerseyNumber": "22",
-      "season": 2027,
       "slug": "cartede02"
     },
     {

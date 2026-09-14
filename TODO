@@ -219,8 +219,6 @@ dev usability stuff
 - NonEmptyArray stuff
   - use for individual award winner
   - assertion function to make sure array is winner (useful in processAwards)
-    - move last() to same utils file as this
-- use scrollMarginTop for any scroll( or scrollBy(
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

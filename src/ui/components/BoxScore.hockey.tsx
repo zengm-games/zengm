@@ -358,7 +358,7 @@ const BoxScore = ({
 						key={t.abbrev}
 						id={i === 0 ? "scroll-team-1" : "scroll-team-2"}
 						style={{
-							scrollMarginTop: 136,
+							scrollMarginTop: 76,
 						}}
 					>
 						<h2>

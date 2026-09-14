@@ -330,21 +330,17 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 
 	useEffect(() => {
 		// If we were linked to a specific achievement, scroll to it
-		const timeoutId = setTimeout(() => {
-			const hash = location.hash.slice(1);
-			if (hash !== "") {
-				const achievementId = makeAchievementId(hash);
-				const achievementElement = document.getElementById(achievementId);
-				if (achievementElement) {
-					const { top } = achievementElement.getBoundingClientRect();
-					window.scroll({ top: top - 60, behavior: "smooth" });
-				}
-			}
-		}, 100);
+		const hash = location.hash.slice(1);
+		if (hash !== "") {
+			const achievementId = makeAchievementId(hash);
+			const achievementElement = document.getElementById(achievementId);
+			console.log("achievementElement", achievementElement);
 
-		return () => {
-			clearTimeout(timeoutId);
-		};
+			// setTimeout is because achievementElement is
+			requestAnimationFrame(() => {
+				achievementElement?.scrollIntoView({ block: "start" });
+			});
+		}
 	}, []);
 
 	return (

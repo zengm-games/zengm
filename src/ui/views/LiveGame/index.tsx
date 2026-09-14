@@ -252,7 +252,7 @@ const PlayByPlay = ({
 			className="live-game-playbyplay d-flex flex-column gap-3"
 			ref={playByPlayDivRef}
 			style={{
-				scrollMarginTop: 174,
+				scrollMarginTop: 130,
 			}}
 		>
 			{entries.map((entry) => (
@@ -991,13 +991,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				</p>
 			) : null}
 
-			<div
-				className="row"
-				ref={scrollTop}
-				style={{
-					scrollMarginTop: 174,
-				}}
-			>
+			<div className="row" ref={scrollTop}>
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
 						<div className="live-game-sticky mb-3" ref={setLiveGameStickyDiv}>

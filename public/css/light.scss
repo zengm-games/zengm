@@ -139,6 +139,11 @@ $flag-icon-css-path: "/img/flags";
 	}
 }
 
+html {
+	// Navbar
+	scroll-padding-top: 60px;
+}
+
 h1 {
 	font-size: 24px;
 }

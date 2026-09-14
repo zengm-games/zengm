@@ -236,7 +236,7 @@ const BoxScore = ({
 						className="mb-3"
 						id={i === 0 ? "scroll-team-1" : "scroll-team-2"}
 						style={{
-							scrollMarginTop: 136,
+							scrollMarginTop: 76,
 						}}
 					>
 						<h2>

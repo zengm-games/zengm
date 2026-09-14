@@ -52,9 +52,10 @@ const makeProject = (
 
 export default defineConfig({
 	test: {
-		// Would like to enable this, but it seems to not work properly even with defineCacheKeyGenerator in my plugin
+		// Would like to fsModuleCache this, but it seems to not work properly even with defineCacheKeyGenerator in my plugin
 		fsModuleCache: false,
-
+		isolate: false,
+		maxWorkers: 3,
 		projects: [
 			makeProject("basketball", "node", {
 				name: "basketball",

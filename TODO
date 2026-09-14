@@ -34,9 +34,13 @@ custom awards later
 - `if` function in FormulaEvaluator
 - comeback player of the year, similar to MIP
 
-numbers for ranks on stats pages. it’s annoying having to count where a guy ranks and we have it on the team stats page so that would be nice for individual stats too. https://www.reddit.com/r/BasketballGM/comments/1vc7l27/monthly_suggestions_thread/p102zhz/
+can we make Cache sync?
+- add "prune" method to replace filling every year
+- benchmark - is it worth it?
+- when switching to a new league, block everything in UI (waiting for fill doesn't really do much because it could mean we switch to a new league in the middle of a function)
+  - how to handle errors?
 
-leaguewide retired jerseys
+leaguewide jersey retirement https://discord.com/channels/290013534023057409/1522027863308501132/1522027863308501132
 - bill russell #6 in real players leagues is hardcoded per team
 
 I think if there was a way to show in the team history and gm history beside the record and playoff finish if there was a way to show where you ranked in terms of points per game and opponent points per game would be nice just so you can see how good you were at making offenses and defenses as well as seeing how good the teams were https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p6icjbc/
@@ -77,8 +81,6 @@ draft history page goes too far back in real players leagues - 20 years back sho
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/ https://discord.com/channels/290013534023057409/1521272839469142256/1521272839469142256
 - make it a select? or listen for keyboard shortcut?
 - could show arrows like dropdowns
-
-leaguewide jersey retirement https://discord.com/channels/290013534023057409/1522027863308501132/1522027863308501132
 
 if getLeaderRequirements only has gp and it's a per game stat, then use prorated value of stat for players under gp requirement to test for eligibility
 - for league leader bolding, need to keep track of both values - 1 for sort (prorated) and 1 for storing leader (actual)

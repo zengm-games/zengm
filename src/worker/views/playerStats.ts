@@ -219,17 +219,17 @@ const updatePlayers = async (
 			}
 		}
 
-		let superCols;
-		if (inputs.season === "all") {
-			if (statsTable.superCols) {
-				// Account for extra "Season" column
-				superCols = helpers.deepCopy(statsTable.superCols);
-				if (superCols[0]) {
+		const superCols = helpers.deepCopy(statsTable.superCols);
+		if (superCols && superCols[0]) {
+			if (inputs.season === "all") {
+				if (statsTable.superCols) {
+					// Account for extra "Season" column
 					superCols[0].colspan += 1;
 				}
 			}
-		} else {
-			superCols = statsTable.superCols;
+
+			// # columns
+			superCols[0].colspan += 1;
 		}
 
 		return {

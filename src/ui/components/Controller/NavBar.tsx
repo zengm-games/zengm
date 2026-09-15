@@ -7,6 +7,8 @@ import DropdownLinks from "../DropdownLinks.tsx";
 import LogoAndText from "../LogoAndText.tsx";
 import PlayMenu from "../PlayMenu.tsx";
 import { menuItems } from "../../util/menuItems.tsx";
+import type { Phase } from "../../../common/types.ts";
+import type { LeagueUrlParts } from "../../router/types.ts";
 
 const PhaseStatusBlock = () => {
 	const { liveGameInProgress, phase, phaseText, statusText } = useLocal([
@@ -26,7 +28,7 @@ const PhaseStatusBlock = () => {
 		</>
 	);
 
-	const urls = {
+	const urls: Record<Phase, LeagueUrlParts> = {
 		[PHASE.EXPANSION_DRAFT]: ["draft"],
 		[PHASE.FANTASY_DRAFT]: ["draft"],
 		[PHASE.PRESEASON]: ["roster"],

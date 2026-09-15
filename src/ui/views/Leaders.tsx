@@ -7,6 +7,7 @@ import type { View } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { LeagueUrlParts } from "../router/types.ts";
 
 export const LeadersTopText = ({
 	includeHighlight,
@@ -113,7 +114,7 @@ const Leaders = ({
 										? p.season
 										: season;
 
-							let teamUrlParts;
+							let teamUrlParts: LeagueUrlParts;
 							if (season === "career") {
 								teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
 							} else {

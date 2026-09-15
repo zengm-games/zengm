@@ -8,6 +8,7 @@ import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { NextPrevButtons } from "./NextPrevButtons.tsx";
 import type { LocalStateUI } from "../../common/types.ts";
 import { sanitize } from "../util/sanitize.ts";
+import type { LeagueUrlParts } from "../router/types.ts";
 
 // This assumes that when val is an array, it is already sorted by minWidth ascending
 export const getResponsiveValue = (
@@ -187,7 +188,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 		} else {
 			const newValues = values.slice();
 			newValues[i] = value;
-			const parts = [view, ...newValues];
+			const parts = [view, ...newValues] as LeagueUrlParts;
 			url = helpers.leagueUrl(parts);
 		}
 

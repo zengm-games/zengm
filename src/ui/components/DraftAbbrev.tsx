@@ -41,27 +41,28 @@ export const DraftAbbrev = ({
 	const abbrev = t.abbrev;
 	const originalAbbrev = originalT.abbrev;
 
-	const args1 =
-		season === undefined
-			? ["roster", `${abbrev}_${tid}`]
-			: ["roster", `${abbrev}_${tid}`, season];
-
-	const args2 =
-		season === undefined
-			? ["roster", `${originalAbbrev}_${originalTid}`]
-			: ["roster", `${originalAbbrev}_${originalTid}`, season];
-
 	return (
 		<div className="d-flex align-items-center gap-1">
 			{showLogos ? (
 				<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} />
 			) : null}
 			<div>
-				<a href={helpers.leagueUrl(args1)}>{abbrev}</a>
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}>
+					{abbrev}
+				</a>
 				{tid !== originalTid ? (
 					<>
 						{" "}
-						from <a href={helpers.leagueUrl(args2)}>{originalAbbrev}</a>
+						from{" "}
+						<a
+							href={helpers.leagueUrl([
+								"roster",
+								`${originalAbbrev}_${originalTid}`,
+								season,
+							])}
+						>
+							{originalAbbrev}
+						</a>
 					</>
 				) : null}
 			</div>

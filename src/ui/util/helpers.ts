@@ -1,8 +1,9 @@
 import { helpers as commonHelpers } from "../../common/helpers.ts";
 import { local } from "./local.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import type { LeagueUrlParts } from "../router/types.ts";
 
-const leagueUrl = (components: (number | string | undefined)[]): string => {
+const leagueUrl = (components: Readonly<LeagueUrlParts>): string => {
 	const lid = local.getState().lid;
 
 	if (typeof lid !== "number") {

@@ -12,6 +12,7 @@ import hasTies from "../core/season/hasTies.ts";
 import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
 import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import type { LeagueUrlParts } from "../../ui/router/types.ts";
 
 const augmentSeries = async (
 	series: {
@@ -183,7 +184,7 @@ const getAbbrev = (tid: number | string): string => {
 	return g.get("teamInfoCache")[tid]!.abbrev;
 };
 
-const leagueUrl = (components: (number | string | undefined)[]): string => {
+const leagueUrl = (components: Readonly<LeagueUrlParts>): string => {
 	return commonHelpers.leagueUrlBase(g.get("lid"), components);
 };
 

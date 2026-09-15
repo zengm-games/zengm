@@ -98,6 +98,7 @@ export const routeInfos = {
 	"/l/:lid/league_stats/:abbrev/:teamOpponent": "leagueStats",
 	"/l/:lid/league_stats/:abbrev/:teamOpponent/:playoffs": "leagueStats",
 	"/l/:lid/player/:pid": "player",
+	"/l/:lid/player_game_log/:pid": "playerGameLog",
 	"/l/:lid/player_game_log/:pid/:season": "playerGameLog",
 	"/l/:lid/negotiation": "negotiationList",
 	"/l/:lid/player_rating_dists": "playerRatingDists",

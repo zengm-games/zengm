@@ -208,7 +208,7 @@ const PlayerStats = ({
 					href={helpers.leagueUrl([
 						"roster",
 						`${actualAbbrev}_${actualTid}`,
-						...(season === "career" ? [] : [p.stats.season]),
+						season === "career" ? undefined : p.stats.season,
 					])}
 				>
 					{actualAbbrev}

@@ -89,7 +89,7 @@ const checkStatisticalFeat = (
 			p.name
 		}</a> had <a href="${helpers.leagueUrl([
 			"game_log",
-			tid < 0 ? "special" : g.get("teamInfoCache")[tid]?.abbrev,
+			g.get("teamInfoCache")[tid]?.abbrev ?? "special",
 			g.get("season"),
 			results.gid,
 		])}">`;

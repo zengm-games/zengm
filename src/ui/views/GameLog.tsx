@@ -182,7 +182,7 @@ const GameLog = ({
 		dropdownCustomURL: (fields) => {
 			return helpers.leagueUrl([
 				"game_log",
-				fields[dropdownTeamsKey],
+				fields[dropdownTeamsKey]!,
 				fields.seasons,
 				boxScore.gid,
 			]);

@@ -1,5 +1,6 @@
 import { assert, describe, test } from "vitest";
 import { helpers } from "./helpers.ts";
+import type { LeagueUrlParts } from "../ui/router/types.ts";
 
 describe("getTeamsDefault", () => {
 	test("return correct length array", () => {
@@ -215,24 +216,45 @@ describe("getRelativeType", () => {
 });
 
 describe("leagueUrlBase", () => {
-	test("should construct a valid URL with components", () => {
-		const lid = 123;
-		const components = ["team", 45, "roster", undefined, "stats"];
-		const assertedUrl = "/l/123/team/45/roster/stats";
-		assert.strictEqual(helpers.leagueUrlBase(lid, components), assertedUrl);
+	const lid = 123;
+
+	test("valid URLs", () => {
+		const scenarios: {
+			components: LeagueUrlParts;
+			url: string;
+		}[] = [
+			{
+				components: [],
+				url: "/l/123",
+			},
+			{
+				components: ["event_log"],
+				url: "/l/123/event_log",
+			},
+			{
+				components: ["event_log", "ATL"],
+				url: "/l/123/event_log/ATL",
+			},
+			{
+				components: ["event_log", "ATL", 2015],
+				url: "/l/123/event_log/ATL/2015",
+			},
+			{
+				components: ["event_log", "ATL", undefined],
+				url: "/l/123/event_log/ATL",
+			},
+			{
+				components: ["event_log", undefined],
+				url: "/l/123/event_log",
+			},
+		];
+		for (const { components, url } of scenarios) {
+			assert.strictEqual(helpers.leagueUrlBase(lid, components), url);
+		}
 	});
 
-	test("should construct a valid URL without undefined components", () => {
-		const lid = 456;
-		const components = ["players", undefined, "schedule", "results"];
-		const assertedUrl = "/l/456/players/schedule/results";
-		assert.strictEqual(helpers.leagueUrlBase(lid, components), assertedUrl);
-	});
-
-	test("should construct a valid URL with only the league ID", () => {
-		const lid = 789;
-		const components: (number | string | undefined)[] = [];
-		const assertedUrl = "/l/789";
-		assert.strictEqual(helpers.leagueUrlBase(lid, components), assertedUrl);
+	test("no undefined in the middle", () => {
+		// @ts-expect-error
+		const parts: LeagueUrlParts = ["event_log", undefined, 2015];
 	});
 });

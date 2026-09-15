@@ -53,10 +53,6 @@ const updatePlayMenu = async () => {
 			),
 			label: `All-Star ${ALL_STAR_GAME_ONLY ? "teams" : "events"}`,
 		},
-		viewSlam: {
-			url: helpers.leagueUrl(["slam"]),
-			label: "Slam dunk contest",
-		},
 		untilPlayoffs: {
 			label: "Until playoffs",
 			keyboardShortcut: "secondary",

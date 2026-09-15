@@ -33,9 +33,37 @@ type ParamsForView<R extends Record<string, string>, V extends R[keyof R]> =
 			}
 		: never;
 
-type RouteInfo = typeof routeInfos;
+type RouteInfos = typeof routeInfos;
 
-export type RouteParams<V extends RouteInfo[keyof RouteInfo]> = ParamsForView<
-	RouteInfo,
+export type RouteParams<V extends RouteInfos[keyof RouteInfos]> = ParamsForView<
+	RouteInfos,
 	V
 >;
+
+type PathWildcard = string | number;
+
+type PathParts<P extends string> = P extends "/"
+	? []
+	: P extends `/${infer Rest}`
+		? PathParts<Rest>
+		: P extends `${infer Head}/${infer Tail}`
+			? [Head extends `:${string}` ? PathWildcard : Head, ...PathParts<Tail>]
+			: [P extends `:${string}` ? PathWildcard : P];
+
+type LeaguePathParts<P extends string> = P extends "/l/:lid"
+	? []
+	: P extends `/l/:lid/${infer Rest}`
+		? PathParts<Rest>
+		: never;
+
+type LinkParts<R extends Record<string, string>> = {
+	[P in keyof R]: P extends string ? LeaguePathParts<P> : never;
+}[keyof R];
+
+type MakeWildcardOptional<T, U = T> = T extends [...infer Init, PathWildcard]
+	? Extract<U, Init> extends never
+		? T
+		: [...Init, PathWildcard | undefined]
+	: T;
+
+export type LeagueUrlParts = MakeWildcardOptional<LinkParts<RouteInfos>>;

@@ -19,6 +19,7 @@ import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { useLocal } from "../../util/local.ts";
 import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
 import { orderBy } from "../../../common/utils.ts";
+import type { LeagueUrlParts } from "../../router/types.ts";
 
 const Player2 = ({
 	bestPos,
@@ -65,7 +66,7 @@ const Player2 = ({
 				gameLogSeason = currentSeason;
 			}
 
-			const parts =
+			const parts: LeagueUrlParts =
 				fields.playerProfile === "gameLog"
 					? ["player_game_log", player.pid, gameLogSeason]
 					: ["player", player.pid];

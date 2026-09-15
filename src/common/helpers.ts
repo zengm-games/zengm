@@ -13,6 +13,7 @@ import getTeamInfos from "./getTeamInfos.ts";
 import { isSport } from "./sportFunctions.ts";
 import { PHASE } from "./constants.ts";
 import { orderBy } from "./utils.ts";
+import type { LeagueUrlParts } from "../ui/router/types.ts";
 
 const getPopRanks = (
 	teamSeasons: {
@@ -932,10 +933,7 @@ const deepCopy = <T>(obj: T): T => {
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
  * @return {string} URL
  */
-const leagueUrlBase = (
-	lid: number,
-	components: (number | string | undefined)[],
-) => {
+const leagueUrlBase = (lid: number, components: Readonly<LeagueUrlParts>) => {
 	let url = `/l/${lid}`;
 
 	for (let i = 0; i < components.length; i++) {

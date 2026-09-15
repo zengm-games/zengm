@@ -209,6 +209,7 @@ dev usability stuff
 - get rid of home/away tid swapping in box score and live sim
 - exactOptionalPropertyTypes would be nice
   - when enabling, then zod exactOptional starts working. otherwise, zod can't represent { a?: number } and instead makes it { a?: number | undefined }
+  - idk maybe just not worth it, confusing for JSON, etc
 - when updating GameAttributesLeagueWithHistory (for instance in setGameAttributes) we should always wrap or always not wrap based on ALWAYS_WRAP, not prior value
 - lint useLocalPartial
   - ensure all requested variables are destructured
@@ -216,9 +217,8 @@ dev usability stuff
   - sort array
 - checkNaNs still needed?
 - use registerGlobal more
-- NonEmptyArray stuff
-  - use for individual award winner
-  - assertion function to make sure array is winner (useful in processAwards)
+- oxlint
+  - annoying config - can only specify "categories" (presets basically) globally, not per plugin
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 
@@ -229,10 +229,6 @@ redesign season summary
 - add more logos and pictures and stuff
 
 in play by play, scoring/made FG/3PT streak like on the real app, and how long a run is https://discord.com/channels/290013534023057409/1476936717733728298/1477098494866096374
-
-accessability of sortable tables with screen readers
-- https://app.fastmail.com/mail/Inbox/AIwCIDm0KjvB.StqUeSQmhsS7?u=433e4054
-- https://app.fastmail.com/mail/Inbox/AE6jH4AIEhFV.StqQgfp1WjLw?u=433e4054
 
 baseball colleges https://app.fastmail.com/mail/Inbox/AJuf0DgaRdwZ.StqPbuY6AxrZ?u=433e4054
 
@@ -1163,6 +1159,7 @@ FBGM
 - options to enable canadian/arena football, and then put that as a preset for new leagues
 - completed pass + pass inferference at end of game when trailing - should take penalty even if fewer yards, but seems to not https://mail.google.com/mail/u/0/#inbox/FMfcgzGwHpWBjWmMMknKPFPrTBdNGkTq
 - weird penalty decline on punt return https://discord.com/channels/290013534023057409/290015591216054273/1180657662170501170
+  - also https://www.reddit.com/r/Football_GM/comments/1wglvi6/bug_found_in_penalties/
 - winning team late in game seems to be playing hurry up offense https://discord.com/channels/290013534023057409/290015591216054273/1180661367531905144
 - late game clock management
   - in hurryUp, should try to end play out of bounds
@@ -2415,8 +2412,6 @@ FBGM football sim bugs
 - pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
 - negative yard line https://i.imgur.com/fSHX6md.png
   - https://i.redd.it/r06r5jxc6ei51.png
-- penalty on punt gives first down plus punt yardage https://cdn.discordapp.com/attachments/726675205669388293/733114315397136505/image0.jpg
-  - https://media.discordapp.net/attachments/569726303926878219/738325008895705158/EvilQBFromChicagoZachTodd01.JPG?width=1141&height=581
 
 switch Dropdown to DropdownLinks rather than Select?
 - see how react-dropdown or react-select deal with tons of options

@@ -221,4 +221,4 @@ export const routeInfos = {
 	"/l/:lid/upgrade65": "upgrade65",
 	"/l/:lid/schedule_editor": "scheduleEditor",
 	"/l/:lid/award_settings": "awardSettings",
-};
+} as const;

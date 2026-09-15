@@ -4,12 +4,52 @@ import {
 } from "../../common/constants.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
-import type { Params } from "../../ui/router/index.ts";
 import type { boxScoreToLiveSim } from "../views/liveGame.ts";
 import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch.tsx";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 import { actualPhase } from "../util/actualPhase.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import type { routeInfos } from "../../ui/util/routeInfos.ts";
+
+type SegmentParams<S extends string> = S extends `:${infer Name}`
+	? { [K in Name]: string }
+	: Record<never, never>;
+
+type PathParams<P extends string> = P extends `${infer Head}/${infer Tail}`
+	? SegmentParams<Head> & PathParams<Tail>
+	: SegmentParams<P>;
+
+type PathsForView<
+	R extends Record<string, string>,
+	V extends R[keyof R],
+> = Extract<
+	{
+		[P in keyof R]: R[P] extends V ? P : never;
+	}[keyof R],
+	string
+>;
+
+type ParamsForPaths<P extends string> = P extends unknown
+	? PathParams<P>
+	: never;
+
+type AllKeys<T> = T extends unknown ? keyof T : never;
+
+type ParamsForView<R extends Record<string, string>, V extends R[keyof R]> =
+	ParamsForPaths<PathsForView<R, V>> extends infer P
+		? {
+				[K in keyof P]: P[K];
+			} & {
+				[K in Exclude<AllKeys<P>, keyof P>]?: string;
+			}
+		: never;
+
+type RouteInfo = typeof routeInfos;
+
+export type Params<V extends RouteInfo[keyof RouteInfo]> = ParamsForView<
+	RouteInfo,
+	V
+>;
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -92,22 +132,22 @@ const validateSeasonType = (
 	}
 };
 
-const account = (params: Params, ctxBBGM: any) => {
+const account = (params: Params<"account">, ctxBBGM: any) => {
 	return {
 		goldMessage: ctxBBGM.goldResult ? ctxBBGM.goldResult.message : undefined,
 		goldSuccess: ctxBBGM.goldResult ? !!ctxBBGM.goldResult.success : undefined,
 	};
 };
 
-const awardsRecords = (params: Params) => {
+const awardsRecords = (params: Params<"awardsRecords">) => {
 	return {
 		awardType: params.awardType ?? "champion",
 	};
 };
 
-const customizePlayer = (params: Params) => {
+const customizePlayer = (params: Params<"customizePlayer">) => {
 	let pid: number | null = null;
-	if (typeof params.pid === "string") {
+	if (params.pid !== undefined) {
 		pid = Number.parseInt(params.pid);
 		if (Number.isNaN(pid) || pid < 0) {
 			pid = null;
@@ -125,7 +165,7 @@ const customizePlayer = (params: Params) => {
 	};
 };
 
-const depth = (params: Params) => {
+const depth = (params: Params<"depth">) => {
 	// Fix broken links
 	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
 		// https://stackoverflow.com/a/59923262/786644
@@ -182,14 +222,14 @@ const draft = () => {
 	}
 };
 
-const draftLottery = (params: Params) => {
+const draftLottery = (params: Params<"draftLottery">) => {
 	const season = validateSeason(params.season);
 	return {
 		season,
 	};
 };
 
-const draftHistory = (params: Params) => {
+const draftHistory = (params: Params<"draftHistory">) => {
 	let season: number;
 
 	const draftAlreadyHappened = g.get("phase") >= PHASE.DRAFT;
@@ -220,7 +260,7 @@ const draftHistory = (params: Params) => {
 	};
 };
 
-const draftPicks = (params: Params) => {
+const draftPicks = (params: Params<"draftPicks">) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 
 	return {
@@ -229,7 +269,7 @@ const draftPicks = (params: Params) => {
 	};
 };
 
-const draftTeamHistory = (params: Params) => {
+const draftTeamHistory = (params: Params<"draftTeamHistory">) => {
 	let [tid, abbrev] = validateAbbrev(params.abbrev);
 
 	if (params.abbrev === "your_teams") {
@@ -251,7 +291,7 @@ const fantasyDraft = () => {
 	}
 };
 
-const freeAgents = (params: Params) => {
+const freeAgents = (params: Params<"freeAgents">) => {
 	if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
 		return {
 			redirectUrl: helpers.leagueUrl(["negotiation"]),
@@ -283,7 +323,7 @@ const freeAgents = (params: Params) => {
 	};
 };
 
-const frivolitiesTrades = (params: Params) => {
+const frivolitiesTrades = (params: Params<"frivolitiesTrades">) => {
 	let abbrev: string = "all";
 	let tid: number = -1;
 	if (params.abbrev && params.abbrev !== "all") {
@@ -302,7 +342,7 @@ const frivolitiesTrades = (params: Params) => {
 	};
 };
 
-const gameLog = (params: Params) => {
+const gameLog = (params: Params<"gameLog">) => {
 	const [tid, abbrev] =
 		params.abbrev === "special"
 			? [-1, "special"]
@@ -316,7 +356,7 @@ const gameLog = (params: Params) => {
 	};
 };
 
-const headToHeadAll = (params: Params) => {
+const headToHeadAll = (params: Params<"headToHeadAll">) => {
 	let season: number | "all";
 
 	if (params.season && params.season !== "all") {
@@ -331,7 +371,7 @@ const headToHeadAll = (params: Params) => {
 	};
 };
 
-const headToHead = (params: Params) => {
+const headToHead = (params: Params<"headToHead">) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 
 	return {
@@ -341,7 +381,7 @@ const headToHead = (params: Params) => {
 	};
 };
 
-const history = (params: Params) => {
+const history = (params: Params<"history">) => {
 	let season = validateSeason(params.season);
 
 	// If playoffs aren't over, season awards haven't been set
@@ -357,7 +397,7 @@ const history = (params: Params) => {
 	};
 };
 
-const injuries = (params: Params) => {
+const injuries = (params: Params<"injuries">) => {
 	let season: number | "current";
 
 	if (params.season && params.season !== "current") {
@@ -409,7 +449,7 @@ const validateStatType = (statType: string | undefined): PlayerStatType => {
 	}
 };
 
-const leaders = (params: Params) => {
+const leaders = (params: Params<"leaders">) => {
 	let season: "career" | "all" | number;
 	if (params.season === "career" || params.season === "all") {
 		season = params.season;
@@ -424,7 +464,9 @@ const leaders = (params: Params) => {
 	};
 };
 
-const leadersYears = (params: Params) => {
+const leadersYears = (
+	params: Params<"leadersProgressive"> | Params<"leadersYears">,
+) => {
 	const defaultStat = bySport({
 		baseball: "ba",
 		basketball: "pts",
@@ -439,7 +481,7 @@ const leadersYears = (params: Params) => {
 	};
 };
 
-const dailySchedule = (params: Params) => {
+const dailySchedule = (params: Params<"dailySchedule">) => {
 	let cid;
 	if (params.cid !== undefined && params.cid !== "all") {
 		cid = Number.parseInt(params.cid);
@@ -472,7 +514,7 @@ const dailySchedule = (params: Params) => {
 	};
 };
 
-const exhibitionGame = (params: Params, ctxBBGM: any) => {
+const exhibitionGame = (params: Params<"exhibitionGame">, ctxBBGM: any) => {
 	return {
 		liveSim: ctxBBGM.liveSim as
 			| Awaited<ReturnType<typeof boxScoreToLiveSim>>
@@ -480,7 +522,7 @@ const exhibitionGame = (params: Params, ctxBBGM: any) => {
 	};
 };
 
-const liveGame = (params: Params, ctxBBGM: any) => {
+const liveGame = (params: Params<"liveGame">, ctxBBGM: any) => {
 	const obj: {
 		fromAction: boolean;
 		gid?: number;
@@ -497,35 +539,26 @@ const liveGame = (params: Params, ctxBBGM: any) => {
 	return obj;
 };
 
-const message = (params: Params) => {
+const message = (params: Params<"message">) => {
 	return {
 		mid: params.mid ? Number.parseInt(params.mid) : undefined,
 	};
 };
 
-const most = (params: Params) => {
+const frivolitiesTeamSeasons = (params: Params<"frivolitiesTeamSeasons">) => {
+	return {
+		type: params.type,
+	};
+};
+
+const most = (params: Params<"most">) => {
 	return {
 		arg: params.arg,
 		type: params.type,
 	};
 };
 
-const negotiation = (params: Params) => {
-	// undefined will load whatever the active one is
-	let pid: number | undefined;
-	if (typeof params.pid === "string") {
-		pid = Number.parseInt(params.pid);
-		if (Number.isNaN(pid) || pid < 0) {
-			pid = undefined;
-		}
-	}
-
-	return {
-		pid,
-	};
-};
-
-const newLeague = (params: Params) => {
+const newLeague = (params: Params<"newLeague">) => {
 	let type: "custom" | "random" | "real" | "legends" | "crossEra" = "custom";
 	let lid;
 	if (params.x === "random") {
@@ -550,7 +583,7 @@ const newLeague = (params: Params) => {
 	};
 };
 
-const news = (params: Params) => {
+const news = (params: Params<"news">) => {
 	const season = validateSeason(params.season);
 	let level: "all" | "normal" | "big";
 	if (params.level === "all") {
@@ -587,7 +620,7 @@ const news = (params: Params) => {
 	};
 };
 
-const notes = (params: Params) => {
+const notes = (params: Params<"notes">) => {
 	const type: NoteInfo["type"] =
 		params.type === "draftPick" ||
 		params.type === "game" ||
@@ -600,13 +633,13 @@ const notes = (params: Params) => {
 	};
 };
 
-const player = (params: Params) => {
+const player = (params: Params<"player">) => {
 	return {
 		pid: params.pid !== undefined ? Number.parseInt(params.pid) : undefined,
 	};
 };
 
-const playerFeats = (params: Params) => {
+const playerFeats = (params: Params<"playerFeats">) => {
 	let abbrev;
 
 	if (
@@ -632,14 +665,16 @@ const playerFeats = (params: Params) => {
 	};
 };
 
-const playerGameLog = (params: Params) => {
+const playerGameLog = (params: Params<"playerGameLog">) => {
 	return {
 		pid: params.pid !== undefined ? Number.parseInt(params.pid) : undefined,
 		season: validateSeason(params.season),
 	};
 };
 
-const playerRatings = (params: Params) => {
+const playerRatings = (
+	params: Params<"playerBios"> | Params<"playerRatings">,
+) => {
 	let abbrev;
 	let tid: number | undefined;
 
@@ -666,7 +701,7 @@ const playerRatings = (params: Params) => {
 	};
 };
 
-const playerStats = (params: Params) => {
+const playerStats = (params: Params<"playerStats">) => {
 	let abbrev;
 
 	const [, validatedAbbrev] = validateAbbrev(params.abbrev, true);
@@ -713,7 +748,7 @@ const playerStats = (params: Params) => {
 	};
 };
 
-const playerGraphs = (params: Params) => {
+const playerGraphs = (params: Params<"playerGraphs">) => {
 	const playoffsX = validateSeasonType(params.playoffsX);
 	const playoffsY = validateSeasonType(params.playoffsY);
 
@@ -742,7 +777,7 @@ const playerGraphs = (params: Params) => {
 	};
 };
 
-const teamGraphs = (params: Params) => {
+const teamGraphs = (params: Params<"teamGraphs">) => {
 	const playoffsX =
 		params.playoffsX === "playoffs" ? "playoffs" : "regularSeason";
 	const playoffsY =
@@ -765,7 +800,7 @@ const teamGraphs = (params: Params) => {
 	};
 };
 
-const playerStatDists = (params: Params) => {
+const playerStatDists = (params: Params<"playerStatDists">) => {
 	const defaultStatType = bySport({
 		baseball: "batting",
 		basketball: "perGame",
@@ -778,13 +813,13 @@ const playerStatDists = (params: Params) => {
 	};
 };
 
-const resetPassword = (params: Params) => {
+const resetPassword = (params: Params<"resetPassword">) => {
 	return {
 		token: params.token,
 	};
 };
 
-const roster = (params: Params) => {
+const roster = (params: Params<"roster">) => {
 	// Fix broken links
 	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
 		// https://stackoverflow.com/a/59923262/786644
@@ -819,24 +854,23 @@ const roster = (params: Params) => {
 	return { abbrev, playoffs: validateSeasonType(params.playoffs), season, tid };
 };
 
-const schedule = (params: Params) => {
+const schedule = (params: Params<"schedule">) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	return { abbrev, tid };
 };
 
-const teamFinances = (params: Params) => {
+const teamFinances = (params: Params<"teamFinances">) => {
 	const show = params.show ?? "10";
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	return { abbrev, show, tid };
 };
 
-const teamHistory = (params: Params) => {
-	const show = params.show ?? "10";
+const teamHistory = (params: Params<"teamHistory">) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
-	return { abbrev, show, tid };
+	return { abbrev, tid };
 };
 
-const teamRecords = (params: Params) => {
+const teamRecords = (params: Params<"teamRecords">) => {
 	const filter: "all" | "your_teams" =
 		params.filter === "your_teams" ? "your_teams" : "all";
 	return {
@@ -845,7 +879,7 @@ const teamRecords = (params: Params) => {
 	};
 };
 
-const teamStats = (params: Params) => {
+const teamStats = (params: Params<"teamStats">) => {
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
@@ -863,7 +897,7 @@ const teamStats = (params: Params) => {
 	};
 };
 
-const leagueStats = (params: Params) => {
+const leagueStats = (params: Params<"leagueStats">) => {
 	let abbrev: string = "all";
 	let tid: number = -1;
 	if (params.abbrev && params.abbrev !== "all") {
@@ -893,7 +927,7 @@ const leagueStats = (params: Params) => {
 	};
 };
 
-const standings = (params: Params) => {
+const standings = (params: Params<"standings">) => {
 	let type: "conf" | "div" | "league" =
 		g.get("numGamesPlayoffSeries").length === 0
 			? "league"
@@ -917,20 +951,20 @@ const standings = (params: Params) => {
 	};
 };
 
-const tradeSummary = (params: Params) => {
+const tradeSummary = (params: Params<"tradeSummary">) => {
 	return {
 		eid: params.eid ? Number.parseInt(params.eid) : Number.NaN,
 	};
 };
 
-const tradingBlock = (params: Params, ctxBBGM: any) => {
+const tradingBlock = (params: Params<"tradingBlock">, ctxBBGM: any) => {
 	return {
 		pids: ctxBBGM.pids as number[],
 		dpids: ctxBBGM.dpids as number[],
 	};
 };
 
-const transactions = (params: Params) => {
+const transactions = (params: Params<"transactions">) => {
 	let abbrev: string;
 	let tid: number;
 	if (params.abbrev && params.abbrev !== "all") {
@@ -961,7 +995,7 @@ const transactions = (params: Params) => {
 	};
 };
 
-const upcomingFreeAgents = (params: Params) => {
+const upcomingFreeAgents = (params: Params<"upcomingFreeAgents">) => {
 	let season = validateSeason(params.season);
 
 	const phase = actualPhase();
@@ -978,7 +1012,7 @@ const upcomingFreeAgents = (params: Params) => {
 	};
 };
 
-const watchList = (params: Params) => {
+const watchList = (params: Params<"watchList">) => {
 	let statType: PlayerStatType;
 	if (params.statType === "per36") {
 		statType = params.statType;
@@ -991,7 +1025,7 @@ const watchList = (params: Params) => {
 	return { playoffs: validateSeasonType(params.playoffs), statType };
 };
 
-const powerRankings = (params: Params) => {
+const powerRankings = (params: Params<"powerRankings">) => {
 	let playoffs: "playoffs" | "regularSeason" =
 		g.get("phase") === PHASE.PLAYOFFS ? "playoffs" : "regularSeason";
 	if (params.playoffs === "playoffs") {
@@ -1006,13 +1040,13 @@ const powerRankings = (params: Params) => {
 	};
 };
 
-const validateSeasonOnly = (params: Params) => {
+const validateSeasonOnly = (params: { season?: string }) => {
 	return {
 		season: validateSeason(params.season),
 	};
 };
 
-const comparePlayers = (params: Params) => {
+const comparePlayers = (params: Params<"comparePlayers">) => {
 	const players: {
 		pid: number;
 		season: number | "career";
@@ -1043,7 +1077,7 @@ const comparePlayers = (params: Params) => {
 	};
 };
 
-const advancedPlayerSearch = (params: Params) => {
+const advancedPlayerSearch = (params: Params<"advancedPlayerSearch">) => {
 	const singleSeason: "totals" | "singleSeason" =
 		params.singleSeason === "totals" ? "totals" : "singleSeason";
 
@@ -1102,7 +1136,7 @@ export default {
 	exportPlayers: validateSeasonOnly,
 	fantasyDraft,
 	freeAgents,
-	frivolitiesTeamSeasons: most,
+	frivolitiesTeamSeasons,
 	frivolitiesTrades,
 	gameLog,
 	headToHead,
@@ -1117,7 +1151,6 @@ export default {
 	liveGame,
 	message,
 	most,
-	negotiation,
 	newLeague,
 	news,
 	notes,

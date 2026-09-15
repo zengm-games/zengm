@@ -8,6 +8,63 @@ import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import type { Player } from "../../../common/types.ts";
 
 let p: Player;
+
+test.each(["none", "totOnly", "totAndTeams"] as const)(
+	"keeps frozen source stats and returned game highs isolated with %s",
+	async (mergeStats) => {
+		const source = helpers.deepCopy(p);
+		source.stats[1].playoffs = false;
+		source.stats[1].tid = 20;
+		source.stats.push({ ...source.stats[0], playoffs: true });
+		for (const [i, row] of source.stats.entries()) {
+			row.ptsMax = [42 + i, 123 + i];
+		}
+		const before = helpers.deepCopy(source);
+		for (const row of source.stats) {
+			for (const value of Object.values(row)) {
+				if (value !== null && typeof value === "object") {
+					Object.freeze(value);
+				}
+			}
+			Object.freeze(row);
+		}
+		Object.freeze(source.stats);
+
+		const results = await idb.getCopies.playersPlus([source, source], {
+			stats: ["season", "tid", "gp", "fg", "ptsMax"],
+			regularSeason: true,
+			playoffs: true,
+			combined: true,
+			mergeStats,
+		});
+		assert.deepEqual(results[0], results[1]);
+		const otherResult = helpers.deepCopy(results[1]);
+		results[0]!.stats[0]!.ptsMax![0] = 99;
+		results[0]!.careerStats!.ptsMax![0] = 100;
+		assert.deepEqual(source, before);
+		assert.deepEqual(results[1], otherResult);
+	},
+);
+
+test("stat copies keep nested game highs isolated from the source and other results", async () => {
+	const source = helpers.deepCopy(p);
+	source.stats[0].ptsMax = [42, 123];
+	source.stats[0].per = null;
+	const before = helpers.deepCopy(source);
+	const results = await idb.getCopies.playersPlus([source, source], {
+		stats: ["ptsMax", "per", "fg"],
+		season: 2012,
+		tid: 4,
+		statType: "totals",
+	});
+	assert.deepEqual(source, before);
+	assert.deepEqual(results[0]!.stats.ptsMax, [42, 123]);
+	assert.strictEqual(results[0]!.stats.per, null);
+	results[0]!.stats.ptsMax![0] = 99;
+	assert.deepEqual(source.stats[0].ptsMax, [42, 123]);
+	assert.deepEqual(results[1]!.stats.ptsMax, [42, 123]);
+});
+
 beforeAll(async () => {
 	resetG();
 	g.setWithoutSavingToDB("season", 2011);

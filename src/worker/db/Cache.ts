@@ -827,9 +827,10 @@ class Cache {
 		const transaction = idb.league.transaction(stores, "readwrite");
 
 		for (const store of stores) {
+			const objectStore = transaction.objectStore(store);
 			for (const id of this._deletes[store]) {
 				// This is synchronous to prevent any race condition
-				transaction.objectStore(store).delete(id);
+				objectStore.delete(id);
 			}
 
 			this._deletes[store].clear();
@@ -840,7 +841,7 @@ class Cache {
 				// If record was deleted after being marked as dirty, it will be undefined here
 				if (record !== undefined) {
 					// This is synchronous to prevent any race condition
-					transaction.objectStore(store).put(record);
+					objectStore.put(record);
 				}
 			}
 

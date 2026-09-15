@@ -1,8 +1,59 @@
-import { assert, describe, test } from "vitest";
-import { choice } from "./random.ts";
+import { assert, describe, test, vi } from "vitest";
+import { choice, uniformSeed } from "./random.ts";
 import { helpers } from "./helpers.ts";
 
 describe("choice", () => {
+	test("matches the previous weighted calculation, including sparse and invalid weights", () => {
+		const pools = [
+			[1, 2, 3],
+			[0, 0, 0],
+			[-1, Number.NaN, 2],
+			[Number.MIN_VALUE, 1e-200, 1e200],
+			[Infinity, 1],
+			[],
+			Object.assign(Array<number>(3), { 0: 1, 2: 2 }),
+			Object.assign(Array<number>(3), { 1: 1, 2: 2 }),
+		];
+		for (const weights of pools) {
+			const original = [...weights];
+			const items = ["a", "b", "c"];
+			const cumsums = weights
+				.map((w) => (w < 0 || Number.isNaN(w) ? Number.MIN_VALUE : w))
+				.reduce<number[]>((sums, w, i) => {
+					sums[i] = i === 0 ? w : sums[i - 1]! + w;
+					return sums;
+				}, []);
+			for (let seed = 0; seed < 1000; seed++) {
+				const draw = uniformSeed(seed + 1) * cumsums.at(-1)!;
+				assert.strictEqual(
+					choice(items, weights, seed),
+					items[cumsums.findIndex((sum) => sum >= draw)],
+				);
+			}
+			assert.deepEqual([...weights], original);
+		}
+	});
+
+	test("preserves exact selection boundaries and calls weight callbacks before drawing", () => {
+		const events: string[] = [];
+		const random = vi.spyOn(Math, "random").mockImplementation(() => {
+			events.push("draw");
+			return 0.5;
+		});
+		try {
+			assert.strictEqual(
+				choice(["a", "b", "c"], (_, index) => {
+					events.push(String(index));
+					return [1, 1, 2][index]!;
+				}),
+				"b",
+			);
+			assert.deepEqual(events, ["0", "1", "2", "draw"]);
+			assert.strictEqual(random.mock.calls.length, 1);
+		} finally {
+			random.mockRestore();
+		}
+	});
 	test("works", () => {
 		const counts = {
 			a: 0,

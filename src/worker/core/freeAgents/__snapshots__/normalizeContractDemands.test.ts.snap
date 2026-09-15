@@ -1,0 +1,193 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dummyExpiringContracts, hard cap, mixed values 1`] = `
+{
+  "calls": 1267,
+  "players": "2fb055a4a58421e038b6b72c4b68eb7ded28842717c070d2ebf996f5d51082f0",
+  "state": 1981977926,
+}
+`;
+
+exports[`dummyExpiringContracts, hard cap, negative values 1`] = `
+{
+  "calls": 2330,
+  "players": "1a1c737ae7576d1dc0940934fc402bbe4ae90d18e100492fdb577bb4d67dd57d",
+  "state": 2449057003,
+}
+`;
+
+exports[`dummyExpiringContracts, hard cap, zero values 1`] = `
+{
+  "calls": 2456,
+  "players": "c928abeadfab6a7473afff6f62a910f72ecc32f2c826706e9bc45597fccfb009",
+  "state": 554489105,
+}
+`;
+
+exports[`dummyExpiringContracts, soft cap, mixed values 1`] = `
+{
+  "calls": 1267,
+  "players": "2fb055a4a58421e038b6b72c4b68eb7ded28842717c070d2ebf996f5d51082f0",
+  "state": 1981977926,
+}
+`;
+
+exports[`dummyExpiringContracts, soft cap, negative values 1`] = `
+{
+  "calls": 2330,
+  "players": "1a1c737ae7576d1dc0940934fc402bbe4ae90d18e100492fdb577bb4d67dd57d",
+  "state": 2449057003,
+}
+`;
+
+exports[`dummyExpiringContracts, soft cap, zero values 1`] = `
+{
+  "calls": 2456,
+  "players": "c928abeadfab6a7473afff6f62a910f72ecc32f2c826706e9bc45597fccfb009",
+  "state": 554489105,
+}
+`;
+
+exports[`freeAgentsOnly, hard cap, mixed values 1`] = `
+{
+  "calls": 747,
+  "players": "5ace7ac461501479ecb644b69baa575cf19ff62cb400edbc45c26e1887fb3772",
+  "state": 2817703902,
+}
+`;
+
+exports[`freeAgentsOnly, hard cap, negative values 1`] = `
+{
+  "calls": 891,
+  "players": "f825eb814978b0afe9cd1f6b0a6ce54e9e30e3c3078851a7fb289554fd2dac4b",
+  "state": 3875623470,
+}
+`;
+
+exports[`freeAgentsOnly, hard cap, zero values 1`] = `
+{
+  "calls": 891,
+  "players": "1859ebf521493cc0e0381f283a81a9ce4d44de3cc5771444e228efbe42a799df",
+  "state": 3875623470,
+}
+`;
+
+exports[`freeAgentsOnly, soft cap, mixed values 1`] = `
+{
+  "calls": 747,
+  "players": "5ace7ac461501479ecb644b69baa575cf19ff62cb400edbc45c26e1887fb3772",
+  "state": 2817703902,
+}
+`;
+
+exports[`freeAgentsOnly, soft cap, negative values 1`] = `
+{
+  "calls": 891,
+  "players": "f825eb814978b0afe9cd1f6b0a6ce54e9e30e3c3078851a7fb289554fd2dac4b",
+  "state": 3875623470,
+}
+`;
+
+exports[`freeAgentsOnly, soft cap, zero values 1`] = `
+{
+  "calls": 891,
+  "players": "1859ebf521493cc0e0381f283a81a9ce4d44de3cc5771444e228efbe42a799df",
+  "state": 3875623470,
+}
+`;
+
+exports[`includeExpiringContracts, hard cap, mixed values 1`] = `
+{
+  "calls": 1267,
+  "players": "eddfe53c20547acbf92a9d2e73a70265049a3a3dd89d494271c0b0634b9ef2c6",
+  "state": 1981977926,
+}
+`;
+
+exports[`includeExpiringContracts, hard cap, negative values 1`] = `
+{
+  "calls": 2330,
+  "players": "d672d44d6ab285bfbf882f9613adfe58e9e680b8dc01ee0b6b3aaad86c9d4760",
+  "state": 2449057003,
+}
+`;
+
+exports[`includeExpiringContracts, hard cap, zero values 1`] = `
+{
+  "calls": 2456,
+  "players": "575642ad1408b461cf818da36245b907b448afc632add95d2ef544400bc5bf32",
+  "state": 554489105,
+}
+`;
+
+exports[`includeExpiringContracts, soft cap, mixed values 1`] = `
+{
+  "calls": 1267,
+  "players": "eddfe53c20547acbf92a9d2e73a70265049a3a3dd89d494271c0b0634b9ef2c6",
+  "state": 1981977926,
+}
+`;
+
+exports[`includeExpiringContracts, soft cap, negative values 1`] = `
+{
+  "calls": 2330,
+  "players": "d672d44d6ab285bfbf882f9613adfe58e9e680b8dc01ee0b6b3aaad86c9d4760",
+  "state": 2449057003,
+}
+`;
+
+exports[`includeExpiringContracts, soft cap, zero values 1`] = `
+{
+  "calls": 2456,
+  "players": "575642ad1408b461cf818da36245b907b448afc632add95d2ef544400bc5bf32",
+  "state": 554489105,
+}
+`;
+
+exports[`newLeague, hard cap, mixed values 1`] = `
+{
+  "calls": 2054,
+  "players": "9f172269712de48aef90367c819c6406ddd7844f1177620fca7ffe6d07938497",
+  "state": 2883080631,
+}
+`;
+
+exports[`newLeague, hard cap, negative values 1`] = `
+{
+  "calls": 2555,
+  "players": "7413adafebba942c6f50cb2c7e25442e21289ac6b201225da1c1279caf13a092",
+  "state": 1777462958,
+}
+`;
+
+exports[`newLeague, hard cap, zero values 1`] = `
+{
+  "calls": 2557,
+  "players": "6159190da0a34719010007f99f2db762285ef01550fc6e5878dee9c85ecda569",
+  "state": 31277584,
+}
+`;
+
+exports[`newLeague, soft cap, mixed values 1`] = `
+{
+  "calls": 2388,
+  "players": "65afb97072a033b49bc0d364062508142af3eaf1bd1f46aaf7736e27763b961b",
+  "state": 4237181261,
+}
+`;
+
+exports[`newLeague, soft cap, negative values 1`] = `
+{
+  "calls": 2596,
+  "players": "d360f1f6e2e458b258243d051ece22cf3684291005c3f6f3a79f1ccc4756801c",
+  "state": 4226695069,
+}
+`;
+
+exports[`newLeague, soft cap, zero values 1`] = `
+{
+  "calls": 2620,
+  "players": "d6150879e25c91cc1a35cea5c2f7c9f6fb5c833f67a8bc9aaeba1735256c0469",
+  "state": 2787480693,
+}
+`;

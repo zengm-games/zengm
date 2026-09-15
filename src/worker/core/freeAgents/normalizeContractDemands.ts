@@ -1,3 +1,4 @@
+import stableSoftmax, { type SoftmaxCache } from "./stableSoftmax.ts";
 import { idb } from "../../db/index.ts";
 import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { team, player, draft } from "../index.ts";
@@ -6,7 +7,7 @@ import type { Player } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { countBy, last, orderBy } from "../../../common/utils.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { choice, randInt, shuffle, uniform } from "../../../common/random.ts";
+import { randInt, shuffle, uniform } from "../../../common/random.ts";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
@@ -48,28 +49,6 @@ const getExpiration = (
 	}
 
 	return g.get("season") + years + offset;
-};
-
-const stableSoftmax = (values: number[], param: number) => {
-	let maxValue = -Infinity;
-	for (const value of values) {
-		if (value > maxValue) {
-			maxValue = value;
-		}
-	}
-
-	const numerators = Array(values.length);
-	let denominator = 0;
-	for (const [i, value] of values.entries()) {
-		// Divide rather than subtract, because sometimes maxX was so large that this was getting rounded to 0
-		numerators[i] = Math.exp((param * value) / maxValue);
-		denominator += numerators[i];
-	}
-
-	if (maxValue === 0 || denominator === 0) {
-		return numerators.map(() => 1);
-	}
-	return numerators.map((numerator) => numerator / denominator);
 };
 
 // "includeExpiringContracts" - use this at the start of re-signing phase
@@ -157,6 +136,8 @@ const normalizeContractDemands = async ({
 			pid: p.pid,
 			dummy,
 			value: (p.value < 0 ? -1 : 1) * p.value ** 2,
+			softmaxCache: undefined as SoftmaxCache | undefined,
+			numBids: 0,
 			contractAmount: helpers.bound(
 				p.contract.amount,
 				minContract,
@@ -205,7 +186,9 @@ const normalizeContractDemands = async ({
 		const SCALE_UP = 1.0 + OFFSET;
 		const SCALE_DOWN = 1.0 - OFFSET;
 
-		const bids = new Map<number, number>();
+		for (const p of playerInfosCurrent) {
+			p.numBids = 0;
+		}
 		shuffle(randTeams);
 		for (const t of randTeams) {
 			let capSpace = salaryCap - t.payroll;
@@ -219,38 +202,48 @@ const normalizeContractDemands = async ({
 				}
 			}
 
-			const availablePlayers = new Set(
-				playerInfosCurrent.filter(
-					(p) =>
-						p.contractAmount <= capSpace &&
-						(bids.get(p.pid) ?? 0) < NUM_BIDS_BEFORE_REMOVED,
-				),
+			const availablePlayers = playerInfosCurrent.filter(
+				(p) =>
+					p.contractAmount <= capSpace &&
+					p.numBids < NUM_BIDS_BEFORE_REMOVED,
 			);
-			while (capSpace > minContract && availablePlayers.size > 0) {
-				const availablePlayersArray = Array.from(availablePlayers);
-				const probs = stableSoftmax(
-					availablePlayersArray.map((p) => p.value * TEMP),
+			const values: number[] = [];
+			while (capSpace > minContract && availablePlayers.length > 0) {
+				values.length = availablePlayers.length;
+				for (let j = 0; j < availablePlayers.length; j++) {
+					values[j] = availablePlayers[j]!.value * TEMP;
+				}
+				const cumulativeWeights = stableSoftmax(
+					values,
 					PARAM,
+					availablePlayers,
+					true,
 				);
-				const p = choice(availablePlayersArray, probs);
-				availablePlayers.delete(p);
+				const draw = Math.random() * cumulativeWeights.at(-1)!;
+				const p =
+					availablePlayers[
+						cumulativeWeights.findIndex((weight) => weight >= draw)
+					]!;
 
-				bids.set(p.pid, (bids.get(p.pid) ?? 0) + 1);
+				p.numBids += 1;
 				capSpace -= p.contractAmount;
 				if (capSpace > minContract) {
-					for (const p of availablePlayers) {
-						if (p.contractAmount > capSpace) {
-							availablePlayers.delete(p);
+					// Compact in place, preserving the order used by weighted choice.
+					let count = 0;
+					for (const candidate of availablePlayers) {
+						if (candidate !== p && !(candidate.contractAmount > capSpace)) {
+							availablePlayers[count++] = candidate;
 						}
 					}
+					availablePlayers.length = count;
 				}
 			}
 		}
 
 		// Players adjust expectations
 		for (const p of playerInfosCurrent) {
-			const playerBids = bids.get(p.pid);
-			if (playerBids === undefined) {
+			const playerBids = p.numBids;
+			if (playerBids === 0) {
 				// Got 0 bids - decrease demands
 				if (p.contractAmount >= minContract) {
 					p.contractAmount = helpers.bound(

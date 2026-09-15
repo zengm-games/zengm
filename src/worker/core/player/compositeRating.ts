@@ -8,15 +8,11 @@ const compositeRating = (
 	weights: number[] | undefined,
 	fuzz: boolean,
 ): number => {
-	if (weights === undefined) {
-		// Default: array of ones with same size as components
-		weights = Array(components.length).fill(1);
-	}
-
 	let numerator = 0;
 	let denominator = 0;
 
-	for (const [i, component] of components.entries()) {
+	for (let i = 0; i < components.length; i++) {
+		const component = components[i]!;
 		let factor: number;
 		if (typeof component === "number") {
 			factor = component;
@@ -37,8 +33,9 @@ const compositeRating = (
 			}
 		}
 
-		numerator += factor * weights[i]!;
-		denominator += 100 * weights[i]!;
+		const weight = weights === undefined ? 1 : weights[i]!;
+		numerator += factor * weight;
+		denominator += 100 * weight;
 	}
 
 	return helpers.bound(numerator / denominator, 0, 1);

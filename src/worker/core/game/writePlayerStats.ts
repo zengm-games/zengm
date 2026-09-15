@@ -236,6 +236,15 @@ const writePlayerStats = async (
 
 	const playersByPid = await idb.cache.players.getAllByKey();
 	const playersToSave = new Set<Player>();
+	const maxStats = stats.max.map(
+		(key) => [key, key.replace("Max", "")] as const,
+	);
+	const derivedMaxStats = bySport({
+		baseball: ["ab", "ip", "tb", "gmsc"],
+		basketball: ["2p", "2pa", "trb", "gmsc"],
+		hockey: ["g", "a", "pts"],
+		football: undefined,
+	});
 
 	for (const result of results) {
 		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2;
@@ -463,20 +472,12 @@ const writePlayerStats = async (
 							}
 						}
 
-						const derivedMaxStats = bySport({
-							baseball: ["ab", "ip", "tb", "gmsc"],
-							basketball: ["2p", "2pa", "trb", "gmsc"],
-							hockey: ["g", "a", "pts"],
-							football: undefined,
-						});
 						const derivedMaxValues: Record<string, number> | undefined =
 							derivedMaxStats
 								? processPlayerStats(p.stat, derivedMaxStats)
 								: undefined;
 
-						for (const key of stats.max) {
-							const stat = key.replace("Max", "");
-
+						for (const [key, stat] of maxStats) {
 							const value = p.stat[stat] ?? derivedMaxValues?.[stat];
 
 							if (value !== undefined) {

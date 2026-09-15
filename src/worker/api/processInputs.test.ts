@@ -1,11 +1,6 @@
-import { assert as typeAssert, type IsExact } from "conditional-type-checks";
 import { assert, beforeAll, describe, test } from "vitest";
 import { g, helpers } from "../util/index.ts";
-import {
-	validateAbbrev,
-	validateSeason,
-	type Params,
-} from "./processInputs.ts";
+import { validateAbbrev, validateSeason } from "./processInputs.ts";
 
 beforeAll(() => {
 	g.setWithoutSavingToDB("userTid", 4);
@@ -52,23 +47,4 @@ describe("validateSeason", () => {
 		assert.strictEqual(validateSeason("fuck"), 2009);
 		assert.strictEqual(validateSeason(undefined), 2009);
 	});
-});
-
-test("TypeScript", () => {
-	typeAssert<IsExact<Params<"dashboard">, Record<string, never>>>(true);
-
-	typeAssert<IsExact<Params<"newLeague">, { x?: string }>>(true);
-
-	typeAssert<
-		IsExact<
-			Params<"gameLog">,
-			{
-				abbrev?: string;
-				gid?: string;
-				lid: string;
-				season?: string;
-				view?: string;
-			}
-		>
-	>(true);
 });

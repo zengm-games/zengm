@@ -90,6 +90,19 @@ const takeScreenshotChunk = async () => {
 	});
 
 	try {
+		const blob = await new Promise<Blob>((resolve, reject) => {
+			// Would be nice to make this webp rather than the default png, but the imgur API returns a 400 error when I try
+			canvas.toBlob((blob) => {
+				if (blob) {
+					resolve(blob);
+				} else {
+					reject(new Error("Could not create blob"));
+				}
+			});
+		});
+
+		const formData = new FormData();
+		formData.append("image", blob);
 		const data = await fetchWrapper({
 			url: "https://imgur-apiv3.p.rapidapi.com/3/image",
 			method: "POST",
@@ -98,9 +111,7 @@ const takeScreenshotChunk = async () => {
 				"x-rapidapi-host": "imgur-apiv3.p.rapidapi.com",
 				"x-rapidapi-key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
 			},
-			data: {
-				image: canvas.toDataURL().split(",")[1]!,
-			},
+			data: formData,
 		});
 
 		if (data.data.error) {

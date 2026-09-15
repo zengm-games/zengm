@@ -200,6 +200,10 @@ move EventBBGM away from using string "text" property
 - use formatEventText for now, eventually move to something in ui to render them
 
 dev usability stuff
+- html2canvas replace
+  - html-to-image or modern-screenshot - nice, smaller, better image... but 3x slower
+  - snapdom - giant bundle size
+  - html2canvas-pro - bigger bundle size, new features don't seem to do anything for me
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
   - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
 - use zod in various places, including to replace schema/types difference

@@ -1,6 +1,7 @@
 import { promiseWorker } from "./promiseWorker.ts";
-import type { WorkerAPICategory } from "../../worker/index.ts";
+import type { WorkerAPICategory } from "../../worker/api/index.ts";
 import type api from "../../worker/api/index.ts";
+import { registerGlobal } from "../../common/registerGlobal.ts";
 
 type API = typeof api;
 
@@ -23,3 +24,5 @@ export const toWorker = <
 ): Promise<ReturnTypeUnconstrained<Func>> => {
 	return promiseWorker.postMessage([type, name, param]);
 };
+
+registerGlobal({ toWorker });

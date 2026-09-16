@@ -5,6 +5,7 @@ import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import g from "./g.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { registerGlobal } from "../../common/registerGlobal.ts";
 
 export const generateFace = (
 	options:
@@ -78,3 +79,9 @@ export const upgradeFace = async (p: PlayerWithoutKey) => {
 		await idb.cache.players.put(p);
 	}
 };
+
+registerGlobal({
+	face: {
+		generate: generateFace,
+	},
+});

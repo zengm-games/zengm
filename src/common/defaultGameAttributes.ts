@@ -4,6 +4,7 @@ import {
 	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 } from "./constants.ts";
+import { registerGlobal } from "./registerGlobal.ts";
 import { bySport, isSport } from "./sportFunctions.ts";
 import {
 	type AwardSettingIndividual,
@@ -896,3 +897,5 @@ if (isSport("football")) {
 } else if (isSport("baseball")) {
 	Object.assign(defaultGameAttributes, baseballOverrides);
 }
+
+registerGlobal({ defaultGameAttributes });

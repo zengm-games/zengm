@@ -27,7 +27,6 @@ import { unregisterServiceWorkers } from "./util/unregisterServiceWorkers.ts";
 import { safeLocalStorage } from "./util/safeLocalStorage.ts";
 import { showNotification } from "./util/showNotification.ts";
 import { toWorker } from "./util/toWorker.ts";
-window.bbgm = { api, showNotification, toWorker };
 
 const handleVersion = () => {
 	window.addEventListener("storage", (e) => {

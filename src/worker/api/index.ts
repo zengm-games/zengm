@@ -172,6 +172,7 @@ import {
 	getAwardsByPlayer,
 	updatePlayerAwards,
 } from "../core/awards/awardsByPlayer.ts";
+import { registerGlobal } from "../../common/registerGlobal.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -5286,7 +5287,7 @@ const setScheduleFromEditor = async ({
 	await initUILocalGames();
 };
 
-export default {
+const api = {
 	actions,
 	awardSettings,
 	eightyTwoZeroDraft,
@@ -5439,3 +5440,9 @@ export default {
 		validatePlayoffSettings,
 	},
 };
+
+export default api;
+
+export type WorkerAPICategory = keyof typeof api;
+
+registerGlobal({ api });

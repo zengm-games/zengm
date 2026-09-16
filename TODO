@@ -200,6 +200,8 @@ move EventBBGM away from using string "text" property
 - use formatEventText for now, eventually move to something in ui to render them
 
 dev usability stuff
+- workbox replace
+  - serwist seemed to not quite work right, notifications weren't showing up, idk maybe not worth it
 - html2canvas replace
   - html-to-image or modern-screenshot - nice, smaller, better image... but 3x slower
   - snapdom - giant bundle size

@@ -6,8 +6,6 @@ import * as db from "./db/index.ts";
 import * as util from "./util/index.ts";
 import * as random from "../common/random.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
-import { defaultGameAttributes } from "../common/defaultGameAttributes.ts";
-import { generateFace } from "./util/face.ts";
 
 self.bbgm = {
 	...self.bbgm,
@@ -15,11 +13,6 @@ self.bbgm = {
 	...core,
 	...db,
 	...util,
-	api,
-	defaultGameAttributes,
-	face: {
-		generate: generateFace,
-	},
 	random,
 };
 
@@ -28,8 +21,6 @@ if (__NODE_ENV === "development") {
 		self.bbgm.debug = debug;
 	});
 }
-
-export type WorkerAPICategory = keyof typeof api;
 
 // API functions should have at most 2 arguments. First argument is passed here from toWorker. If you need to pass multiple variables, use an object/array. Second argument is Conditions.
 promiseWorker.register(([type, name, param]: any, hostID) => {

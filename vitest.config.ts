@@ -17,14 +17,10 @@ const makeProject = (
 	projectConfig: ProjectConfig,
 ): TestProjectInlineConfiguration => {
 	return {
-		// define inconsistency should be fixed in Vitest 5.0.1 https://github.com/vitest-dev/vitest/issues/11164
-		define:
-			environment === "node"
-				? {
-						__NODE_ENV: JSON.stringify("test"),
-						__SPORT: JSON.stringify(sport),
-					}
-				: {},
+		define: {
+			__NODE_ENV: JSON.stringify("test"),
+			__SPORT: JSON.stringify(sport),
+		},
 		plugins: [
 			{
 				...sportFunctions("production", sport),
@@ -52,7 +48,7 @@ const makeProject = (
 
 export default defineConfig({
 	test: {
-		// Would like to fsModuleCache this, but it seems to not work properly even with defineCacheKeyGenerator in my plugin
+		// Would like to fsModuleCache this, but it seems to not work properly even with defineCacheKeyGenerator in my plugin https://github.com/vitest-dev/vitest/issues/11281
 		fsModuleCache: false,
 		isolate: false,
 		maxWorkers: 3,

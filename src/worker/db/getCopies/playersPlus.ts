@@ -752,22 +752,18 @@ const getPlayerStats = (
 	combined: boolean,
 	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
 ) => {
-	const rows = helpers.deepCopy(
-		playerStats.filter((ps) => {
-			// Not sure why this is needed, but might fix an error someone reported
-			if (!ps) {
-				return false;
-			}
+	const rows = playerStats.filter((ps) => {
+		// Not sure why this is needed, but might fix an error someone reported
+		if (!ps) {
+			return false;
+		}
 
-			const seasonCheck = season === undefined || ps.season === season;
-			const tidCheck = tid === undefined || ps.tid === tid;
-			const playoffsCheck =
-				(playoffs && ps.playoffs) ||
-				(regularSeason && !ps.playoffs) ||
-				combined;
-			return seasonCheck && tidCheck && playoffsCheck;
-		}),
-	);
+		const seasonCheck = season === undefined || ps.season === season;
+		const tidCheck = tid === undefined || ps.tid === tid;
+		const playoffsCheck =
+			(playoffs && ps.playoffs) || (regularSeason && !ps.playoffs) || combined;
+		return seasonCheck && tidCheck && playoffsCheck;
+	});
 
 	// Can't merge if there's only 1 row!
 	if ((mergeStats === "none" || rows.length <= 1) && !combined) {
@@ -948,6 +944,14 @@ const processPlayerStats = (
 		keepWithNoStats,
 		statSumsExtra,
 	);
+
+	// Most requests return only primitives. Copy only non-primitives that are actually returned (byPos, Max)
+	for (const key in output) {
+		const value = output[key];
+		if (value !== null && typeof value === "object") {
+			output[key] = helpers.deepCopy(value);
+		}
+	}
 
 	// More common stuff between basketball/football could be moved here... abbrev is just special cause it needs to run on the worker
 	if (stats.includes("abbrev")) {

@@ -161,11 +161,12 @@ export const choice = <T>(
 	} else {
 		weights = x.map(weightInput);
 	}
-	weights = weights.map((weight) =>
-		weight < 0 || Number.isNaN(weight) ? Number.MIN_VALUE : weight,
-	);
 
 	const cumsums = weights.reduce<number[]>((array, weight, i) => {
+		if (weight < 0 || Number.isNaN(weight)) {
+			weight = Number.MIN_VALUE;
+		}
+
 		if (i === 0) {
 			array[0] = weight;
 		} else {

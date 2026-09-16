@@ -157,6 +157,7 @@ const normalizeContractDemands = async ({
 			pid: p.pid,
 			dummy,
 			value: (p.value < 0 ? -1 : 1) * p.value ** 2,
+			numBids: 0,
 			contractAmount: helpers.bound(
 				p.contract.amount,
 				minContract,
@@ -205,7 +206,9 @@ const normalizeContractDemands = async ({
 		const SCALE_UP = 1.0 + OFFSET;
 		const SCALE_DOWN = 1.0 - OFFSET;
 
-		const bids = new Map<number, number>();
+		for (const p of playerInfosCurrent) {
+			p.numBids = 0;
+		}
 		shuffle(randTeams);
 		for (const t of randTeams) {
 			let capSpace = salaryCap - t.payroll;
@@ -222,8 +225,7 @@ const normalizeContractDemands = async ({
 			const availablePlayers = new Set(
 				playerInfosCurrent.filter(
 					(p) =>
-						p.contractAmount <= capSpace &&
-						(bids.get(p.pid) ?? 0) < NUM_BIDS_BEFORE_REMOVED,
+						p.contractAmount <= capSpace && p.numBids < NUM_BIDS_BEFORE_REMOVED,
 				),
 			);
 			while (capSpace > minContract && availablePlayers.size > 0) {
@@ -235,7 +237,7 @@ const normalizeContractDemands = async ({
 				const p = choice(availablePlayersArray, probs);
 				availablePlayers.delete(p);
 
-				bids.set(p.pid, (bids.get(p.pid) ?? 0) + 1);
+				p.numBids += 1;
 				capSpace -= p.contractAmount;
 				if (capSpace > minContract) {
 					for (const p of availablePlayers) {
@@ -249,8 +251,8 @@ const normalizeContractDemands = async ({
 
 		// Players adjust expectations
 		for (const p of playerInfosCurrent) {
-			const playerBids = bids.get(p.pid);
-			if (playerBids === undefined) {
+			const playerBids = p.numBids;
+			if (playerBids === 0) {
 				// Got 0 bids - decrease demands
 				if (p.contractAmount >= minContract) {
 					p.contractAmount = helpers.bound(

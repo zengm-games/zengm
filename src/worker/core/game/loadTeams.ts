@@ -198,6 +198,7 @@ export const processTeam = async (
 	const playThroughInjuries = actualPlayThroughInjuries[playoffs ? 1 : 0];
 
 	let game6EliminationGameOrGame7: boolean | undefined;
+	const compositeWeights = Object.entries(COMPOSITE_WEIGHTS);
 
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
@@ -237,7 +238,7 @@ export const processTeam = async (
 		const seasonStats: Record<string, number> = {};
 
 		// These use the same formulas as the skill definitions in player.skills!
-		for (const [k, weightInfo] of Object.entries(COMPOSITE_WEIGHTS)) {
+		for (const [k, weightInfo] of compositeWeights) {
 			p2.compositeRating[k] =
 				player.compositeRating(
 					rating,

@@ -13,6 +13,16 @@ import { processPlayerStats } from "../../util/processPlayerStats.ts";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
+const MAX_STATS = stats.max.map(
+	(key) => [key, key.replace("Max", "")] as const,
+);
+const DERIVED_MAX_STATS = bySport({
+	baseball: ["ab", "ip", "tb", "gmsc"],
+	basketball: ["2p", "2pa", "trb", "gmsc"],
+	hockey: ["g", "a", "pts"],
+	football: undefined,
+});
+
 const gameOrWeek = bySport({ default: "game", football: "week" });
 
 const doInjury = async (
@@ -463,20 +473,12 @@ const writePlayerStats = async (
 							}
 						}
 
-						const derivedMaxStats = bySport({
-							baseball: ["ab", "ip", "tb", "gmsc"],
-							basketball: ["2p", "2pa", "trb", "gmsc"],
-							hockey: ["g", "a", "pts"],
-							football: undefined,
-						});
 						const derivedMaxValues: Record<string, number> | undefined =
-							derivedMaxStats
-								? processPlayerStats(p.stat, derivedMaxStats)
+							DERIVED_MAX_STATS
+								? processPlayerStats(p.stat, DERIVED_MAX_STATS)
 								: undefined;
 
-						for (const key of stats.max) {
-							const stat = key.replace("Max", "");
-
+						for (const [key, stat] of MAX_STATS) {
 							const value = p.stat[stat] ?? derivedMaxValues?.[stat];
 
 							if (value !== undefined) {

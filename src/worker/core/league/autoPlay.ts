@@ -117,9 +117,7 @@ export const startAutoPlay = (
 	phase: Phase,
 	conditions: Conditions,
 ) => {
-	if (local.autoPlayUntil) {
-		throw new Error("autoPlay already running");
-	}
+	cleanupAutoPlay();
 
 	const { promise, resolve } = Promise.withResolvers<void>();
 

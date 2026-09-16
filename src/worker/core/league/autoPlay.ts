@@ -8,8 +8,8 @@ import {
 	expansionDraft,
 	team,
 } from "../index.ts";
-import { g } from "../../util/index.ts";
-import type { Conditions } from "../../../common/types.ts";
+import { g, local } from "../../util/index.ts";
+import type { Conditions, Phase } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { choice } from "../../../common/random.ts";
 
@@ -104,3 +104,34 @@ const autoPlay = async (conditions: Conditions = {}) => {
 };
 
 export default autoPlay;
+
+export const cleanupAutoPlay = () => {
+	if (local.autoPlayUntil) {
+		local.autoPlayUntil.resolve();
+		local.autoPlayUntil = undefined;
+	}
+};
+
+export const startAutoPlay = (
+	season: number,
+	phase: Phase,
+	conditions: Conditions,
+) => {
+	if (local.autoPlayUntil) {
+		throw new Error("autoPlay already running");
+	}
+
+	const { promise, resolve } = Promise.withResolvers<void>();
+
+	local.autoPlayUntil = {
+		resolve,
+		phase,
+		season,
+		start: Date.now(),
+	};
+
+	autoPlay(conditions);
+
+	// Do this rather than awaiting autoPlay because autoPlay promise chain gets too big (see freeAgents.play call)
+	return promise;
+};

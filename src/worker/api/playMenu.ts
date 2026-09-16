@@ -13,6 +13,7 @@ import {
 } from "../util/index.ts";
 import { runDraft } from "./actions.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { cleanupAutoPlay } from "../core/league/autoPlay.ts";
 
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;
@@ -302,7 +303,7 @@ const playMenu = {
 		}
 	},
 	stopAuto: async () => {
-		local.autoPlayUntil = undefined;
+		cleanupAutoPlay();
 		updatePlayMenu();
 		await playStop();
 	},

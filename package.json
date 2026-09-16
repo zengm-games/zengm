@@ -22,6 +22,7 @@
 		"pre-test": "node tools/pre-test.ts",
 		"format": "oxfmt",
 		"test": "node --run pre-test && vitest --run",
+		"bench": "node --run pre-test && vitest bench --run",
 		"prepare": "husky",
 		"postinstall": "playwright install"
 	},

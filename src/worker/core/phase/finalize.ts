@@ -92,10 +92,7 @@ const finalize = async (
 		if (
 			local.autoPlayUntil.season < g.get("season") ||
 			(local.autoPlayUntil.season === g.get("season") &&
-				local.autoPlayUntil.phase <= phase) ||
-			(local.autoPlayUntil.season === g.get("season") + 1 &&
-				local.autoPlayUntil.phase === PHASE.PRESEASON &&
-				phase === PHASE.PRESEASON)
+				local.autoPlayUntil.phase <= phase)
 		) {
 			console.log(
 				`Auto play done in ${

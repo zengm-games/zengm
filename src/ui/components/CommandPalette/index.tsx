@@ -743,13 +743,7 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	);
 };
 
-const CommandPaletteInner = ({
-	show,
-	onHide,
-}: {
-	show: boolean;
-	onHide: () => void;
-}) => {
+const CommandPaletteInner = ({ onHide }: { onHide: () => void }) => {
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 
 	const {
@@ -819,28 +813,18 @@ const CommandPaletteInner = ({
 	]);
 
 	useEffect(() => {
-		if (show) {
-			if (searchInputRef.current) {
-				searchInputRef.current.focus();
-			}
-
-			saveLastUsed();
-		} else {
-			setSearchTextInput("");
-			setMode(undefined);
-			setActiveIndex(undefined);
+		if (searchInputRef.current) {
+			searchInputRef.current.focus();
 		}
-	}, [show]);
+
+		saveLastUsed();
+	}, []);
 
 	useKeyboardShortcuts({
 		category: "commandPallete",
 		actions: KEYBOARD_SHORTCUT_KEYS_OTHER,
 		callback: useCallback(
 			(action) => {
-				if (!show) {
-					return;
-				}
-
 				if (action === "up") {
 					setActiveIndex((index) => {
 						if (index === undefined) {
@@ -867,19 +851,15 @@ const CommandPaletteInner = ({
 					});
 				}
 			},
-			[count, setActiveIndex, show],
+			[count, setActiveIndex],
 		),
 
 		// This is so it works while search box is active
 		disableWhileEditing: false,
 	});
 
-	if (!show) {
-		return null;
-	}
-
 	return (
-		<Modal show={show} onHide={onHide} scrollable>
+		<Modal show onHide={onHide} scrollable>
 			<Modal.Header className="ps-3 pe-0 py-1">
 				<span
 					className="glyphicon glyphicon-search"
@@ -1029,7 +1009,7 @@ export const CommandPalette = () => {
 	}, []);
 
 	if (show) {
-		return <CommandPaletteInner show={show} onHide={onHide} />;
+		return <CommandPaletteInner onHide={onHide} />;
 	}
 
 	return null;

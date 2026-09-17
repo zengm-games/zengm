@@ -1184,7 +1184,7 @@ const CustomizeTeams = ({
 					Randomize...
 				</button>
 				<form
-					className="btn-group ms-auto"
+					className="ms-auto"
 					onSubmit={(event) => {
 						event.preventDefault();
 
@@ -1218,7 +1218,7 @@ const CustomizeTeams = ({
 						Cancel
 					</button>
 					<button
-						className="btn btn-primary me-2"
+						className="btn btn-primary mx-2"
 						type="submit"
 						disabled={randomizingState === "modal"}
 					>

@@ -22,20 +22,14 @@ const InstructionsAndSortButtons = ({
 				<div className="mb-3">
 					<div className="d-flex flex-wrap gap-2">
 						{editable ? (
-							<div className="btn-group">
-								<button
-									className="btn btn-light-bordered"
-									onClick={handleAutoSort}
-								>
+							<>
+								<button className="btn btn-secondary" onClick={handleAutoSort}>
 									Auto sort roster
 								</button>
-								<button
-									className="btn btn-light-bordered"
-									onClick={handleResetPT}
-								>
+								<button className="btn btn-secondary" onClick={handleResetPT}>
 									Reset playing time
 								</button>
-							</div>
+							</>
 						) : null}
 					</div>
 					{editable ? (

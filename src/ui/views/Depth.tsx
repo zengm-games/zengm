@@ -417,17 +417,14 @@ const Depth = ({
 
 			{editable ? (
 				<>
-					<div className="btn-group mb-2">
+					<div className="d-flex gap-2 mb-2">
 						<button
-							className="btn btn-light-bordered"
+							className="btn btn-secondary"
 							onClick={() => handleAutoSort(pos)}
 						>
 							Auto sort {posNames ? lowerCaseWords(posNames[pos]!) : pos}
 						</button>
-						<button
-							className="btn btn-light-bordered"
-							onClick={handleAutoSortAll}
-						>
+						<button className="btn btn-secondary" onClick={handleAutoSortAll}>
 							Auto sort all
 						</button>
 					</div>

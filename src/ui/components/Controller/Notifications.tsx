@@ -59,7 +59,7 @@ const Notification = ({
 				onClick={remove}
 				title="Dismiss notification"
 			>
-				&times;
+				<CloseIcon />
 			</button>
 			{title ? (
 				<>
@@ -78,6 +78,23 @@ const initialNotifications: Message[] = [];
 const unbind = emitter.on("notification", (notification) => {
 	initialNotifications.push(notification);
 });
+
+const CloseIcon = () => {
+	// https://iconbuddy.com/rivet-icons/close
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="1em"
+			height="1em"
+			viewBox="0 0 16 16"
+		>
+			<path
+				fill="currentColor"
+				d="m3.5 2.086l4.5 4.5l4.5-4.5L13.914 3.5L9.414 8l4.5 4.5l-1.414 1.414l-4.5-4.5l-4.5 4.5L2.086 12.5l4.5-4.5l-4.5-4.5z"
+			/>
+		</svg>
+	);
+};
 
 export const Notifications = () => {
 	const { stickyFooterAd, stickyFormButtons, userTids } = useLocal([
@@ -186,7 +203,7 @@ export const Notifications = () => {
 						bottom: buttonBottom,
 					}}
 				>
-					&times;
+					<CloseIcon />
 				</button>
 			) : null}
 			<ul

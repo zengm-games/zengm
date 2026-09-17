@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import useDropdownOptions, {
 	type ResponsiveOption,
@@ -41,7 +41,8 @@ const Select = ({
 	value: number | string;
 }) => {
 	const options = useDropdownOptions(field, customOptions);
-	const [width, setWidth] = useState<number | undefined>();
+
+	const selectRef = useRef<HTMLSelectElement>(null);
 
 	const updateWidth = useCallback(() => {
 		if (SUPPORTS_FIELD_SIZING_CONTENT) {
@@ -64,9 +65,12 @@ const Select = ({
 		el.append(el2);
 
 		document.body.append(el);
-		setWidth(el.offsetWidth);
-
+		const width = el.offsetWidth;
 		document.body.removeChild(el);
+
+		if (selectRef.current) {
+			selectRef.current.style.width = `${width}px`;
+		}
 	}, [options, value]);
 
 	useLayoutEffect(() => {
@@ -108,13 +112,11 @@ const Select = ({
 		};
 	}, [options, updateWidth]);
 
-	const style: CSSProperties = SUPPORTS_FIELD_SIZING_CONTENT
+	const style: CSSProperties | undefined = SUPPORTS_FIELD_SIZING_CONTENT
 		? {
 				fieldSizing: "content",
 			}
-		: {
-				width,
-			};
+		: undefined;
 
 	if (options.length <= 1) {
 		return null;
@@ -151,6 +153,7 @@ const Select = ({
 				onChange={(event) => {
 					handleChange(event.currentTarget.value);
 				}}
+				ref={selectRef}
 				style={style}
 			>
 				{options.map((opt) => {

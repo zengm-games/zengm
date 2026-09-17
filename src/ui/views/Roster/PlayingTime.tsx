@@ -1,67 +1,74 @@
-import { useEffect, useState } from "react";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import type { View } from "../../../common/types.ts";
+import type { NonEmptyArray, View } from "../../../common/types.ts";
 import { showNotification } from "../../util/showNotification.ts";
+import { last } from "../../../common/utils.ts";
+import type { CSSProperties } from "react";
 
 type Player = View<"roster">["players"][number];
 
-export const ptStyles = {
-	0: {
-		backgroundColor: "#dc3545",
-		color: "#fff",
+export const ptModifiers: NonEmptyArray<{
+	ptModifier: number;
+	style: CSSProperties;
+	text: string;
+	title: string;
+}> = [
+	{
+		ptModifier: 0,
+		style: {
+			backgroundColor: "#dc3545",
+			color: "#fff",
+		},
+		text: "0",
+		title: "No playing time",
 	},
-	0.75: {
-		backgroundColor: "#ffc107",
-		color: "#000",
+	{
+		ptModifier: 0.75,
+		style: {
+			backgroundColor: "#ffc107",
+			color: "#000",
+		},
+		text: "-",
+		title: "Less playing time",
 	},
-	1: {
-		backgroundColor: "rgb(204, 204, 204)",
-		color: "#000",
+	{
+		ptModifier: 1,
+		style: {
+			backgroundColor: "rgb(204, 204, 204)",
+			color: "#000",
+		},
+		text: " ",
+		title: "Normal playing time",
 	},
-	1.25: {
-		backgroundColor: "#17a2b8",
-		color: "#fff",
+	{
+		ptModifier: 1.25,
+		style: {
+			backgroundColor: "#17a2b8",
+			color: "#fff",
+		},
+		text: "+",
+		title: "More playing time",
 	},
-	1.5: {
-		backgroundColor: "#007bff",
-		color: "#fff",
+	{
+		ptModifier: 1.5,
+		style: {
+			backgroundColor: "#007bff",
+			color: "#fff",
+		},
+		text: "++",
+		title: "Even more playing time",
 	},
-};
-
-export const ptModifiers = [
-	{ text: "0", ptModifier: "0", title: "No playing time" },
-	{ text: "-", ptModifier: "0.75", title: "Less playing time" },
-	{ text: " ", ptModifier: "1", title: "Normal playing time" },
-	{ text: "+", ptModifier: "1.25", title: "More playing time" },
-	{ text: "++", ptModifier: "1.5", title: "Even more playing time" },
-] as const;
+];
 
 const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
-	const [value, setValue] = useState(() => {
-		const index = ptModifiers.findIndex(
-			({ ptModifier }) => helpers.localeParseFloat(ptModifier) > p.ptModifier,
-		);
-		let value;
-		if (index === 0) {
-			value = ptModifiers[0].ptModifier;
-		} else if (index > 0) {
-			value = ptModifiers[index - 1]!.ptModifier;
-		} else {
-			value = ptModifiers.at(-1)!.ptModifier;
-		}
-		return value;
-	});
-
-	// Keep synchronized with external changes, such as from the "Reset playing time" button
-	useEffect(() => {
-		setValue(p.ptModifier);
-	}, [p]);
+	const { ptModifier, style } =
+		ptModifiers.find(({ ptModifier }) => ptModifier >= p.ptModifier) ??
+		last(ptModifiers);
 
 	return (
 		<select
 			className="form-select pt-modifier-select"
-			value={value}
+			value={ptModifier}
 			onChange={async (event) => {
 				const ptModifier = event.currentTarget.value;
 
@@ -71,8 +78,6 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 					return;
 				}
 
-				setValue(ptModifier as any);
-
 				try {
 					await toWorker("main", "updatePlayingTime", {
 						pid: p.pid,
@@ -80,7 +85,6 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 					});
 				} catch (error) {
 					// Reset if error
-					setValue(value);
 					showNotification({
 						type: "error",
 						text: `Error updating playing time: ${error.message}`,
@@ -88,7 +92,7 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 					throw error;
 				}
 			}}
-			style={ptStyles[value]}
+			style={style}
 			aria-label="Playing time modifier"
 		>
 			{ptModifiers.map(({ text, ptModifier, title }) => {

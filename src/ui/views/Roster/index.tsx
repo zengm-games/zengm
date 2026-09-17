@@ -9,7 +9,7 @@ import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
-import PlayingTime, { ptModifiers, ptStyles } from "./PlayingTime.tsx";
+import PlayingTime, { ptModifiers } from "./PlayingTime.tsx";
 import TopStuff from "./TopStuff.tsx";
 import type {
 	GameAttributesLeague,
@@ -192,7 +192,7 @@ const Roster = ({
 							<table className="mb-3">
 								{ptModifiers.map((info) => {
 									return (
-										<tr key={info.ptModifier} style={ptStyles[info.ptModifier]}>
+										<tr key={info.ptModifier} style={info.style}>
 											<td className="px-1">{info.text}</td>
 											<td className="px-1">{info.title}</td>
 										</tr>

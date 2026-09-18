@@ -1056,12 +1056,22 @@ const localeParseFloat = (string: string) => {
 	);
 };
 
+const DEFAULT_MAXIMUM_FRACTION_DIGITS = 10;
+
+const numberWithCommasFormatter = new Intl.NumberFormat("en-US", {
+	maximumFractionDigits: DEFAULT_MAXIMUM_FRACTION_DIGITS,
+});
+
 // Format a number as an integer with commas in the thousands places.
 const numberWithCommas = (
 	x: number | string,
-	maximumFractionDigits: number = 10,
+	maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS,
 ): string => {
 	const y = typeof x === "string" ? localeParseFloat(x) : x;
+
+	if (maximumFractionDigits === DEFAULT_MAXIMUM_FRACTION_DIGITS) {
+		return numberWithCommasFormatter.format(y);
+	}
 
 	return y.toLocaleString("en-US", { maximumFractionDigits });
 };

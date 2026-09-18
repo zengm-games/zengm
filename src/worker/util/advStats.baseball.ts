@@ -2,9 +2,12 @@ import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
-import type { TeamFiltered } from "../../common/types.ts";
+import type { Player, TeamFiltered } from "../../common/types.ts";
 import advStatsSave from "./advStatsSave.ts";
-import { NUM_OUTS_PER_GAME } from "../../common/processPlayerStats.baseball.ts";
+import {
+	NUM_OUTS_PER_GAME,
+	processStats,
+} from "../../common/processPlayerStats.baseball.ts";
 import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
@@ -287,14 +290,14 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 			rrep[i] = p.stats.pa / 30;
 		}
 
-		raa[i] = rbat[i]! + rbr[i]! + helpers.sum(rfld[i]!) + rpos[i]! + rpit[i]!;
+		raa[i] = rbat[i] + rbr[i]! + helpers.sum(rfld[i]!) + rpos[i]! + rpit[i]!;
 
-		waa[i] = raa[i]! / runsPerGame;
+		waa[i] = raa[i] / runsPerGame;
 
-		rar[i] = raa[i]! + rrep[i]!;
+		rar[i] = raa[i] + rrep[i]!;
 
 		// Wins Above Replacement
-		war[i] = rar[i]! / runsPerGame;
+		war[i] = rar[i] / runsPerGame;
 	}
 
 	return {
@@ -311,6 +314,50 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 	};
 };
 
+const PLAYER_STATS_FOR_WAR = [
+	"h",
+	"2b",
+	"3b",
+	"hr",
+	"bb",
+	"hbp",
+	"ab",
+	"sb",
+	"cs",
+	"gpF",
+	"po",
+	"poSo",
+	"outs",
+	"er",
+	"bf",
+	"pa",
+	"gp",
+	"gpPit",
+];
+
+// Since WAR uses current team's stats rather than mergedStats, we can avoid a playersPlus call
+const getPlayersForWAR = (players: Player[], playoffs: boolean) => {
+	const output = [];
+	for (const p of players) {
+		const ps = p.stats.at(-1);
+
+		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
+		if (!ps || !statsRowIsCurrent(ps, p.tid, playoffs)) {
+			continue;
+		}
+
+		const stats = processStats(ps, PLAYER_STATS_FOR_WAR);
+		for (const key in stats) {
+			const value = stats[key];
+			if (value !== null && typeof value === "object") {
+				stats[key] = helpers.deepCopy(value);
+			}
+		}
+		output.push({ stats, pid: p.pid, tid: p.tid });
+	}
+	return output;
+};
+
 const advStats = async () => {
 	const playoffs = PHASE.PLAYOFFS === g.get("phase");
 
@@ -318,42 +365,8 @@ const advStats = async () => {
 		0, // Active players have tid >= 0
 		Infinity,
 	]);
-	const players = (
-		await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["pid", "tid"],
-			stats: [
-				"h",
-				"2b",
-				"3b",
-				"hr",
-				"bb",
-				"hbp",
-				"ab",
-				"sb",
-				"cs",
-				"gpF",
-				"po",
-				"poSo",
-				"outs",
-				"er",
-				"bf",
-				"pa",
-				"gp",
-				"gpPit",
 
-				// For statsRowIsCurrenet
-				"tid",
-				"season",
-				"playoffs",
-			],
-			season: g.get("season"),
-			playoffs,
-			regularSeason: !playoffs,
-		})
-	).filter((p) => {
-		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
-		return statsRowIsCurrent(p.stats, p.tid, playoffs);
-	});
+	const players = getPlayersForWAR(playersRaw, playoffs);
 
 	const teams = await idb.getCopies.teamsPlus(
 		{

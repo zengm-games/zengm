@@ -11,7 +11,7 @@
   Header set Cache-Control "max-age=31536000,immutable"
 </FilesMatch>
 
-<FilesMatch "^(names|real-player|real-schedules)-.*\.json$">
+<FilesMatch "^(names|real-player)-.*\.json$">
   Header set Cache-Control "max-age=31536000,immutable"
 </FilesMatch>
 

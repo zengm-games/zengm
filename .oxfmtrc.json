@@ -5,7 +5,7 @@
 	"sortPackageJson": false,
 	"ignorePatterns": [
 		"data/real-player-*.json",
-		"data/real-schedules*.json",
+		"**/realSchedules*.json",
 		"CLA-*.md"
 	]
 }

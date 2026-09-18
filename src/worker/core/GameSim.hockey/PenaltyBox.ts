@@ -117,6 +117,10 @@ class PenaltyBox {
 	}
 
 	advanceClock(minutes: number) {
+		if (this.players[0].length === 0 && this.players[1].length === 0) {
+			return;
+		}
+
 		const shortHandedTeam = this.getShortHandedTeam();
 
 		for (const t of teamNums) {
@@ -135,6 +139,10 @@ class PenaltyBox {
 
 	checkIfPenaltiesOver() {
 		for (const t of [0, 1] as const) {
+			if (this.players[t].length === 0) {
+				continue;
+			}
+
 			this.players[t] = this.players[t].filter((entry) => {
 				if (entry.minutesLeft > 0) {
 					return true;
@@ -153,6 +161,10 @@ class PenaltyBox {
 	}
 
 	splitUpAdvanceClock(minutes: number) {
+		if (this.players[0].length === 0 && this.players[1].length === 0) {
+			return [minutes];
+		}
+
 		const needToStopAt = new Set<number>([minutes]);
 
 		for (const t of [0, 1] as const) {

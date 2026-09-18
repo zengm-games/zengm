@@ -1,3 +1,4 @@
+import { compileStats as compileFootballStats } from "../../../common/processPlayerStats.football.ts";
 import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { player, trade } from "../../core/index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -14,12 +15,15 @@ import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { last } from "../../../common/utils.ts";
 
+type FootballStatsProcessor = ReturnType<typeof compileFootballStats>;
+
 type PlayersPlusOptionsRequired = Required<
 	Omit<
 		PlayersPlusOptions,
 		"disableAbbrevsCacheDatabaseAccess" | "season" | "seasonRange" | "tid"
 	>
 > & {
+	footballStatsProcessor?: FootballStatsProcessor;
 	season?: number;
 	seasonRange?: [number, number];
 	tid?: number;
@@ -935,15 +939,18 @@ const processPlayerStats = (
 	season: number | "career" | undefined, // undefined means showNoStats was used with career totals, but this is an individual stat season so idk
 	abbrevsCache: AbbrevsCache | undefined,
 	statSumsExtra?: StatSumsExtra,
+	footballStatsProcessor?: FootballStatsProcessor,
 ) => {
-	const output = processPlayerStats2(
-		statSums,
-		stats,
-		statType,
-		p.born.year,
-		keepWithNoStats,
-		statSumsExtra,
-	);
+	const output = footballStatsProcessor
+		? footballStatsProcessor(statSums, p.born.year)
+		: processPlayerStats2(
+				statSums,
+				stats,
+				statType,
+				p.born.year,
+				keepWithNoStats,
+				statSumsExtra,
+			);
 
 	// Most requests return only primitives. Copy only non-primitives that are actually returned (byPos, Max)
 	for (const key in output) {
@@ -1040,6 +1047,7 @@ const processStats = (
 		oldStats,
 		statType,
 		stats,
+		footballStatsProcessor,
 	}: PlayersPlusOptionsRequired,
 	keepWithNoStats: boolean,
 	abbrevsCache: AbbrevsCache | undefined,
@@ -1118,6 +1126,8 @@ const processStats = (
 			keepWithNoStats,
 			ps.season ?? season,
 			abbrevsCache,
+			undefined,
+			footballStatsProcessor,
 		);
 	});
 
@@ -1218,6 +1228,7 @@ const processStats = (
 				"career",
 				undefined,
 				statSumsExtra.regularSeason,
+				footballStatsProcessor,
 			);
 		}
 
@@ -1231,6 +1242,7 @@ const processStats = (
 				"career",
 				undefined,
 				statSumsExtra.playoffs,
+				footballStatsProcessor,
 			);
 		}
 
@@ -1244,6 +1256,7 @@ const processStats = (
 				"career",
 				undefined,
 				statSumsExtra.combined,
+				footballStatsProcessor,
 			);
 		}
 	}
@@ -1457,6 +1470,12 @@ const getCopies = async (
 		}
 
 		await abbrevsCache.load();
+	}
+
+	if (isSport("football")) {
+		options.footballStatsProcessor = compileFootballStats(stats, () =>
+			g.get("fantasyPoints"),
+		);
 	}
 
 	return players

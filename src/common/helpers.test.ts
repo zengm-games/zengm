@@ -2,6 +2,99 @@ import { assert, describe, test } from "vitest";
 import { helpers } from "./helpers.ts";
 import type { LeagueUrlParts } from "../ui/router/types.ts";
 
+describe("numberWithCommas", () => {
+	const numbers = [
+		0,
+		-0,
+		1,
+		-1,
+		1234567.8901234567,
+		-1234567.8901234567,
+		0.00000000004,
+		-0.00000000004,
+		0.00000000005,
+		-0.00000000005,
+		1.99999999995,
+		Number.EPSILON,
+		Number.MIN_VALUE,
+		Number.MAX_VALUE,
+		Number.MAX_SAFE_INTEGER,
+		Number.NaN,
+		Infinity,
+		-Infinity,
+	];
+
+	test("default precision matches locale formatting for numeric edge cases", () => {
+		for (const value of numbers) {
+			const expected = value.toLocaleString("en-US", {
+				maximumFractionDigits: 10,
+			});
+			assert.strictEqual(helpers.numberWithCommas(value), expected);
+			assert.strictEqual(helpers.numberWithCommas(value, 10), expected);
+		}
+		assert.strictEqual(helpers.numberWithCommas(-0), "-0");
+	});
+
+	test("string inputs retain decimal-comma and parseFloat behavior", () => {
+		const strings = [
+			"12345,6789",
+			"  -12345.6789  ",
+			"-0",
+			"1,234,567",
+			"12.5suffix",
+			"1e20",
+			"1e-20",
+			"Infinity",
+			"-Infinity",
+			"NaN",
+			"",
+			"not a number",
+		];
+		for (const value of strings) {
+			const expected = Number.parseFloat(
+				value.replaceAll(",", "."),
+			).toLocaleString("en-US", { maximumFractionDigits: 10 });
+			assert.strictEqual(helpers.numberWithCommas(value), expected);
+		}
+		assert.strictEqual(helpers.numberWithCommas("12345,6789"), "12,345.6789");
+		assert.strictEqual(helpers.numberWithCommas("1,234,567"), "1.234");
+	});
+
+	test("custom precision matches locale formatting, including fractional precision", () => {
+		for (const maximumFractionDigits of [0, -0, 1, 2, 3, 9, 10, 10.5, 11, 20]) {
+			for (const value of numbers) {
+				assert.strictEqual(
+					helpers.numberWithCommas(value, maximumFractionDigits),
+					value.toLocaleString("en-US", { maximumFractionDigits }),
+				);
+			}
+			assert.strictEqual(
+				helpers.numberWithCommas("12345,6789", maximumFractionDigits),
+				(12345.6789).toLocaleString("en-US", { maximumFractionDigits }),
+			);
+		}
+	});
+
+	test("invalid custom precision still throws the original RangeError", () => {
+		for (const maximumFractionDigits of [
+			-1,
+			Number.NaN,
+			Infinity,
+			-Infinity,
+			101,
+		]) {
+			assert.throws(
+				() => (1).toLocaleString("en-US", { maximumFractionDigits }),
+				RangeError,
+			);
+			assert.throws(
+				() => helpers.numberWithCommas(1, maximumFractionDigits),
+				RangeError,
+			);
+		}
+	});
+});
+
 describe("getTeamsDefault", () => {
 	test("return correct length array", () => {
 		assert.strictEqual(helpers.getTeamsDefault().length, 30);

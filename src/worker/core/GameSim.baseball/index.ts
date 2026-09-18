@@ -8,7 +8,6 @@ import {
 } from "../../../common/constants.baseball.ts";
 import type { PlayerGameSim, Runner, TeamGameSim } from "./types.ts";
 import type { TeamNum } from "../../../../src/common/types.ts";
-import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import Team from "./Team.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { infoDefense } from "../player/ovr.baseball.ts";
@@ -20,6 +19,27 @@ import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 import { choice, gauss } from "../../../common/random.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
+
+const BALL_PROB_BY_COUNT: Record<number, Record<number, number>> = {
+	0: {
+		0: 0.58,
+		1: 0.53,
+		2: 0.48,
+		3: 0.18,
+	},
+	1: {
+		0: 0.63,
+		1: 0.58,
+		2: 0.53,
+		3: 0.28,
+	},
+	2: {
+		0: 0.78,
+		1: 0.68,
+		2: 0.58,
+		3: 0.38,
+	},
+};
 
 type PosNumbersDefense = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 const SECOND_BASEMAN_COVERS = new Set<PosNumbersDefense>([1, 2, 5, 6, 7, 8]);
@@ -103,8 +123,8 @@ class GameSim extends GameSimBase {
 		// If a team plays twice in a day, this needs to be a deep copy
 		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 		this.team = [
-			new Team(teams[0], dh, this.allStarGame, playoffs),
-			new Team(teams[1], dh, this.allStarGame, playoffs),
+			new Team(teams[0], dh, this.allStarGame, playoffs, this.baseInjuryRate),
+			new Team(teams[1], dh, this.allStarGame, playoffs, this.baseInjuryRate),
 		];
 
 		if (!neutralSite) {
@@ -1148,26 +1168,6 @@ class GameSim extends GameSimBase {
 	}
 
 	getPitchOutcome(pitcher: PlayerGameSim, batter: PlayerGameSim) {
-		const BALL_PROB_BY_COUNT: Record<number, Record<number, number>> = {
-			0: {
-				0: 0.58,
-				1: 0.53,
-				2: 0.48,
-				3: 0.18,
-			},
-			1: {
-				0: 0.63,
-				1: 0.58,
-				2: 0.53,
-				3: 0.28,
-			},
-			2: {
-				0: 0.78,
-				1: 0.68,
-				2: 0.58,
-				3: 0.38,
-			},
-		};
 		let ballProb = BALL_PROB_BY_COUNT[this.strikes]![this.balls]!;
 
 		if (this.balls === NUM_BALLS_PER_WALK - 1) {
@@ -1262,13 +1262,11 @@ class GameSim extends GameSimBase {
 
 		const fielder = this.team[this.d].playersInGameByPos[hitToPos].p;
 
-		const defenseWeights = {
-			infieldRange: 0,
-			outfieldRange: 0,
-			groundBallDefense: 0,
-			flyBallDefense: 0,
-			arm: 0,
-		};
+		let infieldRange = 0;
+		let outfieldRange = 0;
+		let groundBallDefense = 0;
+		let flyBallDefense = 0;
+		let arm = 0;
 		const outfielders = ["LF", "CF", "RF"] as const;
 		const infielders = ["1B", "2B", "3B", "SS"] as const;
 		if (battedBallInfo.type === "ground") {
@@ -1280,32 +1278,35 @@ class GameSim extends GameSimBase {
 				infielders.includes(hitToPos as any) ? hitToPos : "2B"
 			) as (typeof infielders)[number];
 
-			defenseWeights.infieldRange =
-				infoDefense[posToTakeRatingsFrom].infieldRange![0];
-			defenseWeights.groundBallDefense =
+			infieldRange = infoDefense[posToTakeRatingsFrom].infieldRange![0];
+			groundBallDefense =
 				infoDefense[posToTakeRatingsFrom].groundBallDefense![0];
-			defenseWeights.arm = infoDefense[posToTakeRatingsFrom].arm![0];
+			arm = infoDefense[posToTakeRatingsFrom].arm![0];
 		} else {
 			const posToTakeRatingsFrom = (
 				outfielders.includes(hitToPos as any) ? hitToPos : "LF"
 			) as (typeof outfielders)[number];
 
-			defenseWeights.outfieldRange =
-				infoDefense[posToTakeRatingsFrom].outfieldRange![0];
-			defenseWeights.flyBallDefense =
-				infoDefense[posToTakeRatingsFrom].flyBallDefense![0];
+			outfieldRange = infoDefense[posToTakeRatingsFrom].outfieldRange![0];
+			flyBallDefense = infoDefense[posToTakeRatingsFrom].flyBallDefense![0];
 
 			if (battedBallInfo.type === "line") {
-				defenseWeights.groundBallDefense = defenseWeights.flyBallDefense;
+				groundBallDefense = flyBallDefense;
 			}
 		}
 
 		let numerator = 0;
 		let denominator = 0;
-		for (const [key, value] of Object.entries(defenseWeights)) {
-			numerator += value * fielder.compositeRating[key];
-			denominator += value;
-		}
+		numerator += infieldRange * fielder.compositeRating.infieldRange;
+		denominator += infieldRange;
+		numerator += outfieldRange * fielder.compositeRating.outfieldRange;
+		denominator += outfieldRange;
+		numerator += groundBallDefense * fielder.compositeRating.groundBallDefense;
+		denominator += groundBallDefense;
+		numerator += flyBallDefense * fielder.compositeRating.flyBallDefense;
+		denominator += flyBallDefense;
+		numerator += arm * fielder.compositeRating.arm;
+		denominator += arm;
 		const fieldingFactor = 0.5 - numerator / denominator;
 
 		return (
@@ -2157,12 +2158,15 @@ class GameSim extends GameSimBase {
 		this.outs += 1;
 		const pitcher = this.team[this.d].playersInGameByPos.P.p;
 		this.recordStat(this.d, pitcher, "outs");
-		for (const [pos, p] of Object.entries(
-			this.team[this.d].playersInGameByPos,
-		)) {
-			if (pos !== "DH") {
-				this.recordStat(this.d, p.p, "outsF", 1, "fielding");
-			}
+		const team = this.team[this.d];
+		const teamOutsF = team.t.stat.outsF;
+		for (const { p } of team.fielders) {
+			const posIndex = POS_NUMBERS[team.playersInGame[p.id]!.pos] - 1;
+			p.stat.outsF[posIndex] ??= 0;
+			p.stat.outsF[posIndex] += 1;
+			teamOutsF[posIndex] ??= 0;
+			teamOutsF[posIndex] += 1;
+			this.playByPlay.logStat(this.d, p.id, "outsF", 1);
 		}
 
 		this.outsIfNoErrorsByPitcherPid[pitcher.id] ??= 0;
@@ -2679,40 +2683,26 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		const fielders = Object.entries(
-			this.team[this.d].playersInGameByPos,
-		).filter(([pos]) => pos !== "DH");
+		const batter = this.team[this.o].getBatter();
+		const fielders = this.team[this.d].fielders;
+		for (let i = -1; i < fielders.length; i++) {
+			const playerInGame = i === -1 ? batter : fielders[i]!;
+			const t = i === -1 ? this.o : this.d;
+			const weight = i === -1 || playerInGame.pos === "P" ? 5 : 1;
+			const p = playerInGame.p;
 
-		const injuryCandidates = [
-			{
-				t: this.o,
-				p: this.team[this.o].getBatter(),
-				weight: 5,
-			},
-			...fielders.map(([pos, p]) => ({
-				t: this.d,
-				p,
-				weight: pos === "P" ? 5 : 1,
-			})),
-		];
-
-		for (const info of injuryCandidates) {
-			const p = info.p.p;
-
-			const injuryRate =
-				getInjuryRate(this.baseInjuryRate, p.age, p.injury.gamesRemaining > 0) *
-				info.weight;
+			const injuryRate = playerInGame.injuryRate! * weight;
 
 			if (Math.random() < injuryRate) {
 				p.injured = true;
 				p.newInjury = true;
 
 				let replacementPlayer: PlayerGameSim | undefined;
-				if (info.p.pos === "P") {
-					replacementPlayer = this.team[info.t].getBestReliefPitcher(false)?.p;
+				if (playerInGame.pos === "P") {
+					replacementPlayer = this.team[t].getBestReliefPitcher(false)?.p;
 				} else {
-					replacementPlayer = this.team[info.t].getInjuryReplacement(
-						info.p.pos,
+					replacementPlayer = this.team[t].getInjuryReplacement(
+						playerInGame.pos,
 					);
 				}
 
@@ -2726,7 +2716,7 @@ class GameSim extends GameSimBase {
 					return;
 				}
 
-				this.substitution(info.t, info.p, replacementPlayer);
+				this.substitution(t, playerInGame, replacementPlayer);
 			}
 		}
 	}
@@ -2817,11 +2807,13 @@ class GameSim extends GameSimBase {
 		amt: number = 1,
 		type?: "fielding",
 	) {
-		const qtr = this.team[t].t.stat.ptsQtrs.length - 1;
+		const team = this.team[t];
+		const teamStat = team.t.stat;
+		let posIndex: number | undefined;
 		if (p !== undefined) {
 			if (type === "fielding") {
-				const pos = this.team[t].playersInGame[p.id]!.pos;
-				const posIndex = POS_NUMBERS[pos] - 1;
+				const pos = team.playersInGame[p.id]!.pos;
+				posIndex = POS_NUMBERS[pos] - 1;
 
 				p.stat[s][posIndex] ??= 0;
 				p.stat[s][posIndex] += amt;
@@ -2842,23 +2834,21 @@ class GameSim extends GameSimBase {
 				s !== "cgF"
 			) {
 				if (s === "r") {
-					this.team[t].t.stat.pts += amt;
-					this.team[t].t.stat.ptsQtrs[qtr] += amt;
+					const qtr = teamStat.ptsQtrs.length - 1;
+					teamStat.pts += amt;
+					teamStat.ptsQtrs[qtr] += amt;
 					this.playByPlay.logStat(t, undefined, "pts", amt);
 				} else if (s === "er") {
 					if (this.outsIfNoErrors >= NUM_OUTS_PER_INNING) {
 						// It's an ER for this reliever, but not for the team
 					} else {
-						this.team[t].t.stat.er += amt;
+						teamStat.er += amt;
 					}
 				} else if (type === "fielding") {
-					const pos = this.team[t].playersInGame[p!.id]!.pos;
-					const posIndex = POS_NUMBERS[pos] - 1;
-
-					this.team[t].t.stat[s][posIndex] ??= 0;
-					this.team[t].t.stat[s][posIndex] += amt;
+					teamStat[s][posIndex!] ??= 0;
+					teamStat[s][posIndex!] += amt;
 				} else {
-					this.team[t].t.stat[s] += amt;
+					teamStat[s] += amt;
 				}
 			}
 

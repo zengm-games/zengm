@@ -675,10 +675,12 @@ class Cache {
 		const storeInfo = this.storeInfos[store];
 
 		if (storeInfo.indexes) {
+			const rows = Object.values(this._data[store]);
 			for (const index of storeInfo.indexes) {
 				this._indexes[index.name] = {};
+				const values = this._indexes[index.name];
 
-				for (const row of Object.values(this._data[store])) {
+				for (const row of rows) {
 					if (index.filter && !index.filter(row)) {
 						continue;
 					}
@@ -686,13 +688,13 @@ class Cache {
 					const key = getIndexKey(index, row);
 
 					if (!index.unique) {
-						if (!Object.hasOwn(this._indexes[index.name], key)) {
-							this._indexes[index.name][key] = [row];
+						if (!Object.hasOwn(values, key)) {
+							values[key] = [row];
 						} else {
-							this._indexes[index.name][key].push(row);
+							values[key].push(row);
 						}
 					} else {
-						this._indexes[index.name][key] = row;
+						values[key] = row;
 					}
 				}
 			}

@@ -8,7 +8,7 @@ const getCompositeFactor = ({
 	valFunc,
 }: {
 	playersOnIce: PlayersOnIce;
-	positions: Record<"C" | "W" | "D", number>;
+	positions: readonly (readonly ["C" | "W" | "D", number])[];
 	synergyFactor: number;
 	synergyRatio: number;
 	valFunc: (a: PlayerGameSim) => number;
@@ -16,8 +16,8 @@ const getCompositeFactor = ({
 	let numerator = 0;
 	let denominator = 0;
 
-	for (const [pos, weight] of Object.entries(positions)) {
-		for (const p of playersOnIce[pos as keyof typeof positions]) {
+	for (const [pos, weight] of positions) {
+		for (const p of playersOnIce[pos]) {
 			numerator += weight * valFunc(p);
 			denominator += weight;
 		}

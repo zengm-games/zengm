@@ -199,6 +199,54 @@ export const processTeam = async (
 
 	let game6EliminationGameOrGame7: boolean | undefined;
 	const compositeWeights = Object.entries(COMPOSITE_WEIGHTS);
+	const seasonStatsKeys = bySport({
+		baseball: [
+			"pa",
+			"bb",
+			"hbp",
+			"sf",
+			"h",
+			"2b",
+			"3b",
+			"hr",
+			"er",
+			"outs",
+			"w",
+			"l",
+			"sv",
+			"bs",
+			"hld",
+			"sb",
+		],
+		basketball: undefined,
+		football: [
+			"pssTD",
+			"rusTD",
+			"recTD",
+			"defSk",
+			"fmb",
+			"defInt",
+			"pssInt",
+			"krTD",
+			"prTD",
+			"defFmbFrc",
+		],
+		hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
+	});
+	let seasonStatsByPid: Map<number, Record<string, number>> | undefined;
+	if (seasonStatsKeys !== undefined) {
+		// Only use regular-season stats for All-Star games, even during the playoffs.
+		const regularSeason = allStarGame || g.get("phase") < PHASE.PLAYOFFS;
+		const rows = await idb.getCopies.playersPlus(players, {
+			attrs: ["pid"],
+			stats: seasonStatsKeys,
+			season: g.get("season"),
+			regularSeason,
+			playoffs: !regularSeason,
+			mergeStats: "totOnly",
+		});
+		seasonStatsByPid = new Map(rows.map((p) => [p.pid, p.stats]));
+	}
 
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
@@ -211,7 +259,6 @@ export const processTeam = async (
 		const playerCompositeRatings: any = {};
 		const p2 = {
 			id: p.pid,
-			pid: p.pid, // for getDepthPlayers, eventually do it all this way
 			name: `${p.firstName} ${p.lastName}`,
 			age: g.get("season") - p.born.year,
 			pos: rating.pos,
@@ -274,52 +321,10 @@ export const processTeam = async (
 		if (isSport("basketball")) {
 			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
-		const seasonStatsKeys = bySport({
-			baseball: [
-				"pa",
-				"bb",
-				"hbp",
-				"sf",
-				"h",
-				"2b",
-				"3b",
-				"hr",
-				"er",
-				"outs",
-				"w",
-				"l",
-				"sv",
-				"bs",
-				"hld",
-				"sb",
-			],
-			basketball: undefined,
-			football: [
-				"pssTD",
-				"rusTD",
-				"recTD",
-				"defSk",
-				"fmb",
-				"defInt",
-				"pssInt",
-				"krTD",
-				"prTD",
-				"defFmbFrc",
-			],
-			hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
-		});
 		if (seasonStatsKeys !== undefined) {
-			// Only look at regular season stats for All-Star Game, in case All-Star Game is in playoffs
-			const regularSeason = allStarGame || g.get("phase") < PHASE.PLAYOFFS;
-			const pSeasonStats = await idb.getCopy.playersPlus(p, {
-				stats: seasonStatsKeys,
-				season: g.get("season"),
-				regularSeason,
-				playoffs: !regularSeason,
-				mergeStats: "totOnly",
-			});
+			const pSeasonStats = seasonStatsByPid!.get(p.pid);
 			for (const key of seasonStatsKeys) {
-				seasonStats[key] = pSeasonStats?.stats[key] ?? 0;
+				seasonStats[key] = pSeasonStats?.[key] ?? 0;
 			}
 			(p2 as any).seasonStats = seasonStats;
 		}
@@ -343,10 +348,6 @@ export const processTeam = async (
 		}
 
 		t.player.push(p2);
-	}
-
-	for (const p of t.player) {
-		delete p.pid;
 	}
 
 	if (isSport("basketball")) {

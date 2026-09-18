@@ -599,4 +599,12 @@ for (const pen of penalties) {
 	pen.probPerPlay = pen.numPerSeason / chances;
 }
 
+// Each play type keeps the original definition order, which controls RNG draws.
+export const penaltiesByPlayType = {} as Record<PenaltyPlayType, Penalty[]>;
+for (const playType of Object.keys(numPlays) as PenaltyPlayType[]) {
+	penaltiesByPlayType[playType] = penalties.filter((pen) =>
+		pen.playTypes.includes(playType),
+	);
+}
+
 export default penalties;

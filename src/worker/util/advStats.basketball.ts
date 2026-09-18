@@ -2,11 +2,10 @@ import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
-import advStatsSave from "./advStatsSave.ts";
+import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import helpers from "./helpers.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
-import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -767,46 +766,8 @@ const advStats = async () => {
 	// For USG%: min, fga, fta, tov
 	// For DRtg: min, pf, blk, stl, drb
 	// For Ortg: min, tp, ast, fg, pts, ft, fga, fta, orb
-	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-		0, // Active players have tid >= 0
-		Infinity,
-	]);
-	const players = (
-		await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["pid", "tid"],
-			stats: [
-				"min",
-				"tp",
-				"ast",
-				"fg",
-				"ft",
-				"tov",
-				"fga",
-				"fta",
-				"trb",
-				"orb",
-				"stl",
-				"blk",
-				"pf",
-				"drb",
-				"pts",
-				"pm",
 
-				// For statsRowIsCurrenet
-				"tid",
-				"season",
-				"playoffs",
-			],
-			ratings: ["pos"],
-			season: g.get("season"),
-			playoffs,
-			regularSeason: !playoffs,
-			statType: "totals",
-		})
-	).filter((p) => {
-		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
-		return statsRowIsCurrent(p.stats, p.tid, playoffs);
-	});
+	const { players, playersRaw } = await getPlayers(playoffs);
 
 	// Total team stats (not per game averages)	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb, oppPts, pace
 	// For AST%: min, fg

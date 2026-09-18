@@ -10,8 +10,8 @@ import { fetchWrapper } from "../../../common/fetchWrapper.ts";
 const Dialog = ({
 	username,
 	show,
-	cancel,
-	ok,
+	cancel: cancelRaw,
+	ok: okRaw,
 }: {
 	username: string;
 	show: boolean;
@@ -21,14 +21,20 @@ const Dialog = ({
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const [invalidPassword, setInvalidPassword] = useState(false);
-	const [password, setPassword] = useState("");
 
-	useEffect(() => {
-		if (show) {
-			setInvalidPassword(false);
-			setPassword("");
-		}
-	}, [show]);
+	const resetState = () => {
+		setInvalidPassword(false);
+	};
+
+	const ok = () => {
+		okRaw();
+		resetState();
+	};
+
+	const cancel = (errorMessage?: string) => {
+		cancelRaw(errorMessage);
+		resetState();
+	};
 
 	useEffect(() => {
 		if (inputRef.current) {
@@ -37,6 +43,11 @@ const Dialog = ({
 	}, []);
 
 	const deleteAccount = async () => {
+		const password = inputRef.current?.value;
+		if (password === undefined) {
+			return;
+		}
+
 		setInvalidPassword(false);
 
 		let response;
@@ -90,11 +101,7 @@ const Dialog = ({
 						className={clsx("form-control", {
 							"is-invalid": invalidPassword,
 						})}
-						onChange={(event) => {
-							setPassword(event.target.value);
-						}}
 						placeholder="Password"
-						value={password}
 					/>
 					{invalidPassword ? (
 						<div className="text-danger form-text">Invalid password</div>

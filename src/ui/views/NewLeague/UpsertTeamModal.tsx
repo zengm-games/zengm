@@ -501,6 +501,26 @@ const UpsertTeamModal = ({
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
 } & Pick<View<"newLeague">, "godModeLimits" | "realTeamInfo">) => {
+	const getNewControlledTeam = useCallback(
+		(t: NewLeagueTeamWithoutRank | undefined) => {
+			if (t) {
+				return {
+					...t,
+					pop: String(t.pop),
+					stadiumCapacity: String(
+						t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
+					),
+					colors: t.colors ?? DEFAULT_TEAM_COLORS,
+					jersey: t.jersey ?? DEFAULT_JERSEY,
+					did: String(addEditTeamInfo.did),
+					imgURL: t.imgURL ?? "",
+					imgURLSmall: t.imgURLSmall ?? "",
+				};
+			}
+		},
+		[addEditTeamInfo.did],
+	);
+
 	const [controlledTeam, setControlledTeam] = useState<
 		| {
 				tid: number;
@@ -518,31 +538,7 @@ const UpsertTeamModal = ({
 				players?: Player[];
 		  }
 		| undefined
-	>();
-
-	const newControlledTeam = useCallback(
-		(t: NewLeagueTeamWithoutRank | undefined) => {
-			if (!t) {
-				setControlledTeam(undefined);
-			} else {
-				setControlledTeam({
-					...t,
-					pop: String(t.pop),
-					stadiumCapacity: String(
-						t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
-					),
-					colors: t.colors ?? DEFAULT_TEAM_COLORS,
-					jersey: t.jersey ?? DEFAULT_JERSEY,
-					did: String(addEditTeamInfo.did),
-					imgURL: t.imgURL ?? "",
-					imgURLSmall: t.imgURLSmall ?? "",
-				});
-			}
-		},
-		[addEditTeamInfo.did],
-	);
-
-	useEffect(() => {
+	>(() => {
 		let t: NewLeagueTeamWithoutRank | undefined;
 		if (addEditTeamInfo.type === "edit") {
 			t = teams.find((t) => t.tid === addEditTeamInfo.tidEdit);
@@ -555,14 +551,15 @@ const UpsertTeamModal = ({
 			// Will be loaded asynchronously in SelectTeam
 		}
 
-		newControlledTeam(t);
-	}, [
-		addEditTeamInfo.addType,
-		addEditTeamInfo.type,
-		addEditTeamInfo.tidEdit,
-		newControlledTeam,
-		teams,
-	]);
+		return getNewControlledTeam(t);
+	});
+
+	const newControlledTeam = useCallback(
+		(t: NewLeagueTeamWithoutRank | undefined) => {
+			setControlledTeam(getNewControlledTeam(t));
+		},
+		[getNewControlledTeam],
+	);
 
 	const save = () => {
 		if (controlledTeam === undefined) {
@@ -642,9 +639,7 @@ const UpsertTeamModal = ({
 						addEditTeamInfo={addEditTeamInfo}
 						setAddEditTeamInfo={setAddEditTeamInfo}
 						disabled={!controlledTeam}
-						onChange={(t) => {
-							newControlledTeam(t);
-						}}
+						onChange={newControlledTeam}
 						currentTeams={teams}
 						realTeamInfo={realTeamInfo}
 					/>

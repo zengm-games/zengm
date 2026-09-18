@@ -6,6 +6,8 @@ color pass/run on drive chart
   - dropback/handoff doesn't account for qb runs
   - color coding run/pass is too much?
 
+seasonFraction maybe doesn't make much sense in basketball awards like MVP. gp/teamGp or gp/82 might be better - the former would max at 1 regardles of numGames, but the latter would give more or less weight to winp based on how long the season is, which would also scale them with EWA+VORP. fracWS should maybe also get multiplied by gp/82.
+
 award settings
 - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
   - a little tricky to do with manual editing of award winners, because if we need to re-evaluate an award, winners get overwritten. could only re-evaluate changed ones and have a note that winners will be overwritten

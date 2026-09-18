@@ -1237,9 +1237,13 @@ const CustomizeTeams = ({
 
 			<UpsertTeamModal
 				key={
-					addEditTeamInfo.type === "edit"
-						? addEditTeamInfo.tidEdit
-						: addEditTeamInfo.type
+					// key needs to distinguish anything that needs to trigger a new controlledTeam
+					JSON.stringify([
+						addEditTeamInfo.type,
+						addEditTeamInfo.type === "edit"
+							? addEditTeamInfo.tidEdit
+							: addEditTeamInfo.addType,
+					])
 				}
 				addEditTeamInfo={addEditTeamInfo}
 				setAddEditTeamInfo={setAddEditTeamInfo}

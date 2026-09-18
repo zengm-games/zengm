@@ -5,7 +5,7 @@ import { getRealSchedule } from "./getRealSchedule.football.ts";
 import newScheduleGood from "./newScheduleGood.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 
-const newSchedule = async (
+const newSchedule = (
 	teams: {
 		seasonAttrs: {
 			cid: number;
@@ -16,7 +16,7 @@ const newSchedule = async (
 	conditions?: Conditions,
 ) => {
 	if (isSport("football")) {
-		const tids = await getRealSchedule(teams);
+		const tids = getRealSchedule(teams);
 		if (tids) {
 			return tids;
 		}

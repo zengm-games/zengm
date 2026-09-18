@@ -17,7 +17,7 @@ type RealSchedules = {
 	teamInfos: Record<number, [number, number, number]>;
 };
 
-export const getRealSchedule = async (
+export const getRealSchedule = (
 	teamsInput: {
 		seasonAttrs: {
 			cid: number;

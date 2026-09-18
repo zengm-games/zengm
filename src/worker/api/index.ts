@@ -3223,7 +3223,7 @@ const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
 		"noCopyCache",
 	);
 
-	const tids = await season.newSchedule(teams, conditions);
+	const tids = season.newSchedule(teams, conditions);
 
 	const schedule = season.addDaysToSchedule(
 		tids.map(([homeTid, awayTid]) => ({
@@ -4102,7 +4102,7 @@ const updateGameAttributesGodMode = async (
 	// Check schedule, unless it'd be too slow
 	const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 	if (teams.length < TOO_MANY_TEAMS_TOO_SLOW) {
-		await season.newSchedule(
+		season.newSchedule(
 			teams.map((t) => ({
 				tid: t.tid,
 				seasonAttrs: {

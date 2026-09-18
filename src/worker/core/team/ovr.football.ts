@@ -1,5 +1,6 @@
 import type { PrimaryPosition } from "../../../common/types.football.ts";
 import ovrByPosFactory from "./ovrByPosFactory.ts";
+import prepareOvr from "./prepareOvr.football.ts";
 
 // See analysis/team-ovr-football
 
@@ -27,5 +28,8 @@ const scale = (predictedMOV: number) => {
 };
 
 const ovr = ovrByPosFactory(weights, intercept, scale);
+
+export const prepareWholeRoster = (players: Parameters<typeof prepareOvr>[0]) =>
+	prepareOvr(players, weights, intercept);
 
 export default ovr;

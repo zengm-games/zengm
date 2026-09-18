@@ -10,6 +10,7 @@ import { sportFunctions } from "./tools/lib/rolldownPlugins/sportFunctions.ts";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
 const baseballTests = ["**/*.baseball/*.test.ts", "**/*.baseball.test.ts"];
+const hockeyTests = ["**/*.hockey/*.test.ts", "**/*.hockey.test.ts"];
 
 const makeProject = (
 	sport: Sport,
@@ -60,6 +61,7 @@ export default defineConfig({
 					...configDefaults.exclude,
 					...footballTests,
 					...baseballTests,
+					...hockeyTests,
 				],
 			}),
 			makeProject("football", "node", {
@@ -69,6 +71,10 @@ export default defineConfig({
 			makeProject("baseball", "node", {
 				name: "baseball",
 				include: baseballTests,
+			}),
+			makeProject("hockey", "node", {
+				name: "hockey",
+				include: hockeyTests,
 			}),
 			makeProject("basketball", "browser", {
 				name: "browser",

@@ -4,7 +4,6 @@ import {
 	NUM_STARTING_PITCHERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball.ts";
-import { orderBy } from "../../../common/utils.ts";
 import { getDepthDefense, getDepthPitchers } from "./genDepth.baseball.ts";
 
 const DEFAULT_OVR = 0;
@@ -62,56 +61,53 @@ const ovrByPosFactory =
 			};
 		}
 
-		const playerInfo = orderBy(
-			players.map((p) => {
-				let pos;
-				if (
-					bySport({
-						baseball: true,
-						basketball: false,
-						football: false,
-						hockey: false,
-					}) &&
-					baseballInfo
-				) {
-					// First check position players
-					const index = baseballInfo.startingPositionPlayers.indexOf(
-						p.pid as any,
-					);
-					const posIndex = index + 2; // 0 is catcher
-					if (posIndex >= 2) {
-						pos = (POS_NUMBERS_INVERSE as any)[posIndex];
-					} else {
-						// Second check pitchers
-						const index = baseballInfo.depthPitchers.indexOf(p.pid as any);
-						if (index < NUM_STARTING_PITCHERS) {
-							pos = "SP";
-						} else if (pos === "SP" || pos === "RP") {
-							// Any non-pitcher in a pitcher slot is assumed to be better placed on as a position player
-							pos = "RP";
-						} else {
-							pos = p.ratings.pos;
-						}
-					}
+		const playerInfo = players.map((p) => {
+			let pos;
+			if (
+				bySport({
+					baseball: true,
+					basketball: false,
+					football: false,
+					hockey: false,
+				}) &&
+				baseballInfo
+			) {
+				// First check position players
+				const index = baseballInfo.startingPositionPlayers.indexOf(
+					p.pid as any,
+				);
+				const posIndex = index + 2; // 0 is catcher
+				if (posIndex >= 2) {
+					pos = (POS_NUMBERS_INVERSE as any)[posIndex];
 				} else {
-					pos = p.ratings.pos;
+					// Second check pitchers
+					const index = baseballInfo.depthPitchers.indexOf(p.pid as any);
+					if (index < NUM_STARTING_PITCHERS) {
+						pos = "SP";
+					} else if (pos === "SP" || pos === "RP") {
+						// Any non-pitcher in a pitcher slot is assumed to be better placed on as a position player
+						pos = "RP";
+					} else {
+						pos = p.ratings.pos;
+					}
 				}
+			} else {
+				pos = p.ratings.pos;
+			}
 
-				if (wholeRoster) {
-					return {
-						pos,
-						value: p.value,
-					};
-				}
-
+			if (wholeRoster) {
 				return {
 					pos,
-					value: p.ratings.ovrs?.[pos] ?? p.ratings.ovr,
+					value: p.value,
 				};
-			}),
-			"value",
-			"desc",
-		);
+			}
+
+			return {
+				pos,
+				value: p.ratings.ovrs?.[pos] ?? p.ratings.ovr,
+			};
+		});
+		playerInfo.sort((a, b) => (b.value ?? Infinity) - (a.value ?? Infinity));
 
 		const valuesByPos: Record<string, number[]> = {};
 

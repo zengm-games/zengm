@@ -1,0 +1,36 @@
+// Read stable player inputs directly and reuse scratch space for weighted choice.
+const getCumulativeWeights = (
+	players: { softmaxValue: number }[],
+	param: number,
+	weights: number[],
+) => {
+	weights.length = players.length;
+	let maxValue = -Infinity;
+	for (const p of players) {
+		if (p.softmaxValue > maxValue) {
+			maxValue = p.softmaxValue;
+		}
+	}
+
+	let denominator = 0;
+	for (let i = 0; i < players.length; i++) {
+		// Preserve the division used by stableSoftmax for very large values.
+		const weight = Math.exp((param * players[i]!.softmaxValue) / maxValue);
+		weights[i] = weight;
+		denominator += weight;
+	}
+
+	const equalWeights = maxValue === 0 || denominator === 0;
+	let total = 0;
+	for (let i = 0; i < weights.length; i++) {
+		let weight = equalWeights ? 1 : weights[i]! / denominator;
+		if (weight < 0 || Number.isNaN(weight)) {
+			weight = Number.MIN_VALUE;
+		}
+		total = i === 0 ? weight : total + weight;
+		weights[i] = total;
+	}
+	return weights;
+};
+
+export default getCumulativeWeights;

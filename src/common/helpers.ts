@@ -1056,12 +1056,20 @@ const localeParseFloat = (string: string) => {
 	);
 };
 
+const numberWithCommasFormatter = new Intl.NumberFormat("en-US", {
+	maximumFractionDigits: 10,
+});
+
 // Format a number as an integer with commas in the thousands places.
 const numberWithCommas = (
 	x: number | string,
 	maximumFractionDigits: number = 10,
 ): string => {
 	const y = typeof x === "string" ? localeParseFloat(x) : x;
+
+	if (maximumFractionDigits === 10) {
+		return numberWithCommasFormatter.format(y);
+	}
 
 	return y.toLocaleString("en-US", { maximumFractionDigits });
 };

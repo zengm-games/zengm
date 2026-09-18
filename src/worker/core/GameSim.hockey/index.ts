@@ -27,6 +27,17 @@ const teamNums: [TeamNum, TeamNum] = [0, 1];
 
 const GOALS = new Set(["evG", "ppG", "shG"]);
 
+const DEFENSIVE_COMPOSITE_WEIGHTS = [
+	["D", 1],
+	["W", 0.5],
+	["C", 0.25],
+] as const;
+const OFFENSIVE_COMPOSITE_WEIGHTS = [
+	["C", 1],
+	["W", 0.5],
+	["D", 0.25],
+] as const;
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -58,6 +69,7 @@ class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnIce: [PlayersOnIce, PlayersOnIce];
+	playersOnBench?: [PlayerGameSim[], PlayerGameSim[]];
 
 	clock: number;
 
@@ -1302,11 +1314,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.hitting = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
+				positions: DEFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.enforcer) / 2,
@@ -1314,23 +1322,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.penalties = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
-				synergyFactor: this.synergyFactor,
-				synergyRatio,
-				valFunc: (p) => p.compositeRating.penalties / 2,
-			});
-
-			this.team[t].compositeRating.penalties = getCompositeFactor({
-				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
+				positions: DEFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => p.compositeRating.enforcer / 2,
@@ -1338,11 +1330,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.puckControl = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					C: 1,
-					W: 0.5,
-					D: 0.25,
-				},
+				positions: OFFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => p.compositeRating.playmaker,
@@ -1350,11 +1338,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.takeaway = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
+				positions: DEFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.grinder) / 2,
@@ -1362,11 +1346,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.blocking = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
+				positions: DEFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.blocking) / 2,
@@ -1374,11 +1354,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.scoring = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					C: 1,
-					W: 0.5,
-					D: 0.25,
-				},
+				positions: OFFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => p.compositeRating.scoring,
@@ -1426,6 +1402,7 @@ class GameSim extends GameSimBase {
 		pos: "F" | "D",
 		playersRemainingOn: PlayerGameSim[],
 	) {
+		this.playersOnBench = undefined;
 		this.minutesSinceLineChange[t][pos] = 0;
 		this.currentLine[t][pos] += 1;
 
@@ -1689,12 +1666,13 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			const currentlyOnIce = Object.values(this.playersOnIce[t]).flat();
-			for (const p of currentlyOnIce) {
-				if (options.type === "starters") {
-					this.recordStat(t, p, "gs");
+			for (const pos of helpers.keys(this.playersOnIce[t])) {
+				for (const p of this.playersOnIce[t][pos]) {
+					if (options.type === "starters") {
+						p.stat.gs += 1;
+					}
+					p.stat.gp = 1;
 				}
-				this.recordStat(t, p, "gp");
 			}
 
 			if (substitutions || options.type === "starters") {
@@ -1707,23 +1685,49 @@ class GameSim extends GameSimBase {
 					}
 				}
 
-				this.playByPlay.logEvent({
-					type: "playersOnIce",
-					t,
-					pids: Object.values(this.playersOnIce[t])
-						.flat()
-						.map((p) => p.id),
-				});
+				if (this.playByPlay.active) {
+					this.playByPlay.logEvent({
+						type: "playersOnIce",
+						t,
+						pids: Object.values(this.playersOnIce[t])
+							.flat()
+							.map((p) => p.id),
+					});
+				}
 			}
 		}
 
 		if (substitutions || options.type === "starters") {
 			this.updateTeamCompositeRatings();
+			this.updatePlayersOnBench();
 		}
 	}
 
+	updatePlayersOnBench() {
+		const onField = new Set<number>();
+		const playersOnBench: [PlayerGameSim[], PlayerGameSim[]] = [[], []];
+		for (const t of teamNums) {
+			for (const pos of helpers.keys(this.playersOnIce[t])) {
+				for (const p of this.playersOnIce[t][pos]) {
+					onField.add(p.id);
+				}
+			}
+			// Keep the original ID-based membership and team order. For duplicate
+			// imported IDs, the second team's check includes the first team's IDs.
+			for (const p of this.team[t].player) {
+				if (!onField.has(p.id)) {
+					playersOnBench[t].push(p);
+				}
+			}
+		}
+		this.playersOnBench = playersOnBench;
+	}
+
 	updatePlayingTime(possessionTime: number) {
-		const onField = new Set();
+		if (this.playersOnBench === undefined) {
+			this.updatePlayersOnBench();
+		}
+		const logStats = this.playByPlay.active;
 
 		for (const t of teamNums) {
 			const t2 = t === 0 ? 1 : 0;
@@ -1738,21 +1742,36 @@ class GameSim extends GameSimBase {
 
 			for (const pos of helpers.keys(this.playersOnIce[t])) {
 				for (const p of this.playersOnIce[t][pos]) {
-					onField.add(p.id);
-					this.recordStat(t, p, "min", possessionTime);
+					p.stat.min += possessionTime;
+					this.team[t].stat.min += possessionTime;
 					if (strengthType === "pp") {
-						this.recordStat(t, p, "ppMin", possessionTime);
+						p.stat.ppMin += possessionTime;
 					} else if (strengthType === "sh") {
-						this.recordStat(t, p, "shMin", possessionTime);
+						p.stat.shMin += possessionTime;
 					}
-					this.recordStat(t, p, "courtTime", possessionTime);
+					p.stat.courtTime += possessionTime;
 
 					if (pos === "G") {
-						this.recordStat(t, p, "gMin", possessionTime);
+						p.stat.gMin += possessionTime;
+					}
+
+					if (logStats) {
+						this.playByPlay.logStat(t, p.id, "min", possessionTime);
+						if (strengthType !== "ev") {
+							this.playByPlay.logStat(
+								t,
+								p.id,
+								`${strengthType}Min`,
+								possessionTime,
+							);
+						}
+						if (pos === "G") {
+							this.playByPlay.logStat(t, p.id, "gMin", possessionTime);
+						}
 					}
 
 					// This used to be 0.04. Increase more to lower PT
-					this.recordStat(t, p, "energy", -0.25 * possessionTime);
+					p.stat.energy += -0.25 * possessionTime;
 
 					if (p.stat.energy < 0) {
 						p.stat.energy = 0;
@@ -1760,13 +1779,11 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			for (const p of this.team[t].player) {
-				if (!onField.has(p.id)) {
-					this.recordStat(t, p, "benchTime", possessionTime);
+			for (const p of this.playersOnBench![t]) {
+				p.stat.benchTime += possessionTime;
 
-					// Any player on the bench is full strength the next time he comes on
-					p.stat.energy = 1;
-				}
+				// Any player on the bench is full strength the next time he comes on
+				p.stat.energy = 1;
 			}
 		}
 	}
@@ -1898,13 +1915,25 @@ class GameSim extends GameSimBase {
 		rating: CompositeRating,
 		positions: Position[] = POSITIONS,
 	) {
-		const players = orderBy(
-			getPlayers(this.playersOnIce[t], positions),
-			(p) => p.compositeRating[rating] * fatigue(p.stat.energy),
-			"desc",
-		);
-
-		return players[0]!;
+		const players = getPlayers(this.playersOnIce[t], positions);
+		let bestPlayer = players[0];
+		let bestValue = -Infinity;
+		for (const p of players) {
+			const value = p.compositeRating[rating] * fatigue(p.stat.energy);
+			if (Number.isNaN(value)) {
+				// Preserve sort behavior for malformed ratings.
+				return orderBy(
+					players,
+					(p2) => p2.compositeRating[rating] * fatigue(p2.stat.energy),
+					"desc",
+				)[0]!;
+			}
+			if (value > bestValue) {
+				bestPlayer = p;
+				bestValue = value;
+			}
+		}
+		return bestPlayer!;
 	}
 
 	// Pass undefined as p for some team-only stats

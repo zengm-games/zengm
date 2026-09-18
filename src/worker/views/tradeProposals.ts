@@ -165,6 +165,7 @@ const updateTradeProposals = async (
 
 		return {
 			offers,
+			seed,
 		};
 	}
 };

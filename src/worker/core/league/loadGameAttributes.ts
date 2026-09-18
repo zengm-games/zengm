@@ -58,6 +58,11 @@ const loadGameAttributes = async () => {
 
 	// Set defaults to avoid IndexedDB upgrade
 	for (const key of helpers.keys(defaultGameAttributes)) {
+		// Would be nice to uncomment, but too many places break
+		/*if (gameAttributesKeysOtherSports.has(key)) {
+			continue;
+		}*/
+
 		// @ts-expect-error
 		if (g[key] === undefined) {
 			if (key === "teamInfoCache") {

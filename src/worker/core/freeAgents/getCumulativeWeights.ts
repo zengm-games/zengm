@@ -1,11 +1,10 @@
 export const getCumulativeWeights = (
 	players: { softmaxValue: number }[],
 	param: number,
-
-	// This is just to reuse the array, value is not used
-	weights: number[],
 ) => {
+	const weights: number[] = [];
 	weights.length = players.length;
+
 	let maxValue = -Infinity;
 	for (const p of players) {
 		if (p.softmaxValue > maxValue) {

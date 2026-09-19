@@ -208,9 +208,8 @@ const normalizeContractDemands = async ({
 				(p) =>
 					p.contractAmount <= capSpace && p.numBids < NUM_BIDS_BEFORE_REMOVED,
 			);
-			const weights: number[] = [];
 			while (capSpace > minContract && availablePlayers.length > 0) {
-				getCumulativeWeights(availablePlayers, PARAM, weights);
+				const weights = getCumulativeWeights(availablePlayers, PARAM);
 				const draw = Math.random() * weights.at(-1)!;
 				const p =
 					availablePlayers[weights.findIndex((weight) => weight >= draw)]!;

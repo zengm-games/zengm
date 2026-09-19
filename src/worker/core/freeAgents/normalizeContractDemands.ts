@@ -6,7 +6,8 @@ import type { Player } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { countBy, last, orderBy } from "../../../common/utils.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { choice, randInt, shuffle, uniform } from "../../../common/random.ts";
+import { randInt, shuffle, uniform } from "../../../common/random.ts";
+import { getCumulativeWeights } from "./getCumulativeWeights.ts";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
@@ -48,28 +49,6 @@ const getExpiration = (
 	}
 
 	return g.get("season") + years + offset;
-};
-
-const stableSoftmax = (values: number[], param: number) => {
-	let maxValue = -Infinity;
-	for (const value of values) {
-		if (value > maxValue) {
-			maxValue = value;
-		}
-	}
-
-	const numerators = Array(values.length);
-	let denominator = 0;
-	for (const [i, value] of values.entries()) {
-		// Divide rather than subtract, because sometimes maxX was so large that this was getting rounded to 0
-		numerators[i] = Math.exp((param * value) / maxValue);
-		denominator += numerators[i];
-	}
-
-	if (maxValue === 0 || denominator === 0) {
-		return numerators.map(() => 1);
-	}
-	return numerators.map((numerator) => numerator / denominator);
 };
 
 // "includeExpiringContracts" - use this at the start of re-signing phase
@@ -153,10 +132,13 @@ const normalizeContractDemands = async ({
 			dummy = true;
 		}
 
+		const value = (p.value < 0 ? -1 : 1) * p.value ** 2;
+
 		return {
 			pid: p.pid,
 			dummy,
-			value: (p.value < 0 ? -1 : 1) * p.value ** 2,
+			value,
+			softmaxValue: value * TEMP,
 			numBids: 0,
 			contractAmount: helpers.bound(
 				p.contract.amount,
@@ -222,29 +204,28 @@ const normalizeContractDemands = async ({
 				}
 			}
 
-			const availablePlayers = new Set(
-				playerInfosCurrent.filter(
-					(p) =>
-						p.contractAmount <= capSpace && p.numBids < NUM_BIDS_BEFORE_REMOVED,
-				),
+			const availablePlayers = playerInfosCurrent.filter(
+				(p) =>
+					p.contractAmount <= capSpace && p.numBids < NUM_BIDS_BEFORE_REMOVED,
 			);
-			while (capSpace > minContract && availablePlayers.size > 0) {
-				const availablePlayersArray = Array.from(availablePlayers);
-				const probs = stableSoftmax(
-					availablePlayersArray.map((p) => p.value * TEMP),
-					PARAM,
-				);
-				const p = choice(availablePlayersArray, probs);
-				availablePlayers.delete(p);
+			const weights: number[] = [];
+			while (capSpace > minContract && availablePlayers.length > 0) {
+				getCumulativeWeights(availablePlayers, PARAM, weights);
+				const draw = Math.random() * weights.at(-1)!;
+				const p =
+					availablePlayers[weights.findIndex((weight) => weight >= draw)]!;
 
 				p.numBids += 1;
 				capSpace -= p.contractAmount;
 				if (capSpace > minContract) {
-					for (const p of availablePlayers) {
-						if (p.contractAmount > capSpace) {
-							availablePlayers.delete(p);
+					// Preserve the order used by weighted choice while removing unavailable players.
+					let count = 0;
+					for (const candidate of availablePlayers) {
+						if (candidate !== p && !(candidate.contractAmount > capSpace)) {
+							availablePlayers[count++] = candidate;
 						}
 					}
+					availablePlayers.length = count;
 				}
 			}
 		}

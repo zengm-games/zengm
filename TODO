@@ -1,8 +1,11 @@
 https://github.com/zengm-games/zengm/pull/543
+- getCumulativeWeights
+  - reusing weights array necessary?
+- see comments on PR about some things worth doing but not quite right in the PR
+- prepareWholeRoster - better version would be nice
 - football game sim
   - selectionstamps stuff
     - >>> necessary?
-    - why does it need to track the different stamp values? isn't each run independent completely?
   - recordStat on min
 
 FA page should show merged stats https://discord.com/channels/@me/778760871911751700/1546991655666847834

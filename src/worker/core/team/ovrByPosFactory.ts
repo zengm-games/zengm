@@ -4,7 +4,6 @@ import {
 	NUM_STARTING_PITCHERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball.ts";
-import { orderBy } from "../../../common/utils.ts";
 import { getDepthDefense, getDepthPitchers } from "./genDepth.baseball.ts";
 
 const DEFAULT_OVR = 0;

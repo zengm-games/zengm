@@ -3,10 +3,14 @@ import { FATIGUE_POS, POSITIONS } from "../../../common/constants.football.ts";
 import PlayByPlayLogger, {
 	type PlayByPlayEventScore,
 } from "./PlayByPlayLogger.ts";
-import getCompositeFactor from "./getCompositeFactor.ts";
+import {
+	getBlockingFactors,
+	getCompositeFactor,
+	type CompositeFactorParams,
+} from "./getCompositeFactor.ts";
 import getPlayers from "./getPlayers.ts";
 import formations from "./formations.ts";
-import penalties from "./penalties.ts";
+import { penaltiesByPlayType } from "./penalties.ts";
 import type { Position } from "../../../common/types.football.ts";
 import type {
 	CompositeRating,
@@ -48,6 +52,51 @@ const FEWER_INJURIES_POS = new Set(["QB", "P", "K"]);
 
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;
+
+const COMPOSITE_FACTOR_OPTIONS = {
+	receiving: {
+		positions: ["WR", "TE", "RB"],
+		orderFunc: (p) => p.ovrs.WR,
+		weightsMain: [5, 3, 2],
+		weightsBonus: [0.5, 0.25],
+		valFunc: (p) => p.ovrs.WR / 100,
+	},
+	rushing: {
+		positions: ["RB", "WR", "QB"],
+		orderFunc: (p) => p.ovrs.RB,
+		weightsMain: [1],
+		weightsBonus: [0.1],
+		valFunc: (p) => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
+	},
+	passRushing: {
+		positions: ["DL", "LB"],
+		orderFunc: (p) => p.ovrs.DL,
+		weightsMain: [5, 4, 3, 2, 1],
+		weightsBonus: [],
+		valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
+	},
+	runStopping: {
+		positions: ["DL", "LB", "S"],
+		orderFunc: (p) => p.ovrs.DL,
+		weightsMain: [5, 4, 3, 2, 2, 1, 1],
+		weightsBonus: [0.5, 0.5],
+		valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
+	},
+	passCoverage: {
+		positions: ["CB", "S", "LB"],
+		orderFunc: (p) => p.ovrs.CB,
+		weightsMain: [5, 4, 3, 2, 1, 1],
+		weightsBonus: [0.5, 0.5],
+		valFunc: (p) => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
+	},
+	tackling: {
+		positions: ["DL", "LB", "S"],
+		orderFunc: (p) => p.ovrs.LB,
+		weightsMain: [5, 4, 3, 2, 1],
+		weightsBonus: [],
+		valFunc: (p) => (p.ovrs.LB / 100 + p.compositeRating.tackling) / 2,
+	},
+} satisfies Record<string, CompositeFactorParams>;
 
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
@@ -1096,14 +1145,6 @@ class GameSim extends GameSimBase {
 
 		// For non-sacks, record tackler(s)
 		if (Math.random() < 0.9) {
-			let playersDefense: PlayerGameSim[] = [];
-
-			for (const playersAtPos of Object.values(this.playersOnField[d])) {
-				if (playersAtPos) {
-					playersDefense = playersDefense.concat(playersAtPos);
-				}
-			}
-
 			// Bias position of tackler based on how far from scrimmage the play is
 			let positions: Position[] | undefined;
 			if (ydsFromScrimmage !== undefined) {
@@ -1154,73 +1195,36 @@ class GameSim extends GameSimBase {
 	}
 
 	updateTeamCompositeRatings() {
-		// Top 3 receivers, plus a bit more for others
-		this.team[this.o].compositeRating.receiving = getCompositeFactor({
-			playersOnField: this.playersOnField[this.o],
-			positions: ["WR", "TE", "RB"],
-			orderFunc: (p) => p.ovrs.WR,
-			weightsMain: [5, 3, 2],
-			weightsBonus: [0.5, 0.25],
-			valFunc: (p) => p.ovrs.WR / 100,
-		});
-		this.team[this.o].compositeRating.rushing = getCompositeFactor({
-			playersOnField: this.playersOnField[this.o],
-			positions: ["RB", "WR", "QB"],
-			orderFunc: (p) => p.ovrs.RB,
-			weightsMain: [1],
-			weightsBonus: [0.1],
-			valFunc: (p) => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
-		});
+		this.team[this.o].compositeRating.receiving = getCompositeFactor(
+			this.playersOnField[this.o],
+			COMPOSITE_FACTOR_OPTIONS.receiving,
+		);
+		this.team[this.o].compositeRating.rushing = getCompositeFactor(
+			this.playersOnField[this.o],
+			COMPOSITE_FACTOR_OPTIONS.rushing,
+		);
+		this.team[this.d].compositeRating.passRushing = getCompositeFactor(
+			this.playersOnField[this.d],
+			COMPOSITE_FACTOR_OPTIONS.passRushing,
+		);
+		this.team[this.d].compositeRating.runStopping = getCompositeFactor(
+			this.playersOnField[this.d],
+			COMPOSITE_FACTOR_OPTIONS.runStopping,
+		);
+		this.team[this.d].compositeRating.passCoverage = getCompositeFactor(
+			this.playersOnField[this.d],
+			COMPOSITE_FACTOR_OPTIONS.passCoverage,
+		);
+		this.team[this.d].compositeRating.tackling = getCompositeFactor(
+			this.playersOnField[this.d],
+			COMPOSITE_FACTOR_OPTIONS.tackling,
+		);
 
-		// Top 5 blockers, plus a bit more from TE/RB if they exist
-		this.team[this.o].compositeRating.passBlocking = getCompositeFactor({
-			playersOnField: this.playersOnField[this.o],
-			positions: ["OL", "TE", "RB"],
-			orderFunc: (p) => p.ovrs.OL,
-			weightsMain: [5, 4, 3, 3, 3],
-			weightsBonus: [1, 0.5],
-			valFunc: (p) => (p.ovrs.OL / 100 + p.compositeRating.passBlocking) / 2,
-		});
-		this.team[this.o].compositeRating.runBlocking = getCompositeFactor({
-			playersOnField: this.playersOnField[this.o],
-			positions: ["OL", "TE", "RB"],
-			orderFunc: (p) => p.ovrs.OL,
-			weightsMain: [5, 4, 3, 3, 3],
-			weightsBonus: [1, 0.5],
-			valFunc: (p) => (p.ovrs.OL / 100 + p.compositeRating.runBlocking) / 2,
-		});
-		this.team[this.d].compositeRating.passRushing = getCompositeFactor({
-			playersOnField: this.playersOnField[this.d],
-			positions: ["DL", "LB"],
-			orderFunc: (p) => p.ovrs.DL,
-			weightsMain: [5, 4, 3, 2, 1],
-			weightsBonus: [],
-			valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
-		});
-		this.team[this.d].compositeRating.runStopping = getCompositeFactor({
-			playersOnField: this.playersOnField[this.d],
-			positions: ["DL", "LB", "S"],
-			orderFunc: (p) => p.ovrs.DL,
-			weightsMain: [5, 4, 3, 2, 2, 1, 1],
-			weightsBonus: [0.5, 0.5],
-			valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
-		});
-		this.team[this.d].compositeRating.passCoverage = getCompositeFactor({
-			playersOnField: this.playersOnField[this.d],
-			positions: ["CB", "S", "LB"],
-			orderFunc: (p) => p.ovrs.CB,
-			weightsMain: [5, 4, 3, 2, 1, 1],
-			weightsBonus: [0.5, 0.5],
-			valFunc: (p) => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
-		});
-		this.team[this.d].compositeRating.tackling = getCompositeFactor({
-			playersOnField: this.playersOnField[this.d],
-			positions: ["DL", "LB", "S"],
-			orderFunc: (p) => p.ovrs.LB,
-			weightsMain: [5, 4, 3, 2, 1],
-			weightsBonus: [],
-			valFunc: (p) => (p.ovrs.LB / 100 + p.compositeRating.tackling) / 2,
-		});
+		const [passBlocking, runBlocking] = getBlockingFactors(
+			this.playersOnField[this.o],
+		);
+		this.team[this.o].compositeRating.passBlocking = passBlocking;
+		this.team[this.o].compositeRating.runBlocking = runBlocking;
 		/*globalThis.valuesPass ??= [];
 		globalThis.valuesPass.push(this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing)
 		globalThis.valuesRun ??= [];
@@ -2669,13 +2673,9 @@ class GameSim extends GameSimBase {
 
 		const foulRateFactor = g.get("foulRateFactor");
 
-		let called = penalties.filter((pen) => {
-			if (!pen.playTypes.includes(playType)) {
-				return false;
-			}
-
-			return Math.random() < pen.probPerPlay * foulRateFactor;
-		});
+		let called = penaltiesByPlayType[playType].filter(
+			(pen) => Math.random() < pen.probPerPlay * foulRateFactor,
+		);
 
 		if (called.length === 0) {
 			// if (called.length === 0 && playType !== "puntReturn") {
@@ -2683,13 +2683,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// Always do multiple penalties for testing
-		/*called = penalties.filter(pen => {
-			if (!pen.playTypes.includes(playType)) {
-				return false;
-			}
-
-			return true;
-		});*/
+		/*called = penaltiesByPlayType[playType].slice();*/
 
 		if (called.length > maxNumPenaltiesAllowed) {
 			shuffle(called);
@@ -2822,15 +2816,10 @@ class GameSim extends GameSimBase {
 				for (const p of this.playersOnField[t][pos]) {
 					onField.add(p.id);
 					this.recordStat(t, p, "min", possessionTime);
-					this.recordStat(t, p, "courtTime", possessionTime);
+					p.stat.courtTime += possessionTime;
 
 					// This used to be 0.04. Increase more to lower PT
-					this.recordStat(
-						t,
-						p,
-						"energy",
-						-0.08 * (1 - p.compositeRating.endurance),
-					);
+					p.stat.energy += -0.08 * (1 - p.compositeRating.endurance);
 
 					if (p.stat.energy < 0) {
 						p.stat.energy = 0;
@@ -2840,8 +2829,8 @@ class GameSim extends GameSimBase {
 
 			for (const p of this.team[t].player) {
 				if (!onField.has(p.id)) {
-					this.recordStat(t, p, "benchTime", possessionTime);
-					this.recordStat(t, p, "energy", 0.5);
+					p.stat.benchTime += possessionTime;
+					p.stat.energy += 0.5;
 
 					if (p.stat.energy > 1) {
 						p.stat.energy = 1;
@@ -2924,8 +2913,6 @@ class GameSim extends GameSimBase {
 		amt: number = 1,
 		remove?: boolean,
 	) {
-		const qtr = this.team[t].stat.ptsQtrs.length - 1;
-
 		const signedAmount = remove ? -amt : amt;
 
 		const isLng = s.endsWith("Lng");
@@ -2969,6 +2956,7 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logStat(t, undefined, s, signedAmount);
 
 				if (s === "pts") {
+					const qtr = this.team[t].stat.ptsQtrs.length - 1;
 					this.team[t].stat.ptsQtrs[qtr] += signedAmount;
 				}
 			}

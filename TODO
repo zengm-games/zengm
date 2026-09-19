@@ -1,5 +1,9 @@
-https://github.com/zengm-games/zengm/pull/542
-- other normalizeContractDemands changes
+https://github.com/zengm-games/zengm/pull/543
+- football game sim
+  - selectionstamps stuff
+  - recordStat on min
+
+FA page should show merged stats https://discord.com/channels/@me/778760871911751700/1546991655666847834
 
 color pass/run on drive chart
 - https://github.com/zengm-games/zengm/pull/540
@@ -7,6 +11,7 @@ color pass/run on drive chart
   - color coding run/pass is too much?
 
 seasonFraction maybe doesn't make much sense in basketball awards like MVP. gp/teamGp or gp/82 might be better - the former would max at 1 regardles of numGames, but the latter would give more or less weight to winp based on how long the season is, which would also scale them with EWA+VORP. fracWS should maybe also get multiplied by gp/82.
+- if we edit default, what to do about achievements?
 
 award settings
 - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting

@@ -1,37 +1,37 @@
 import getPlayers from "./getPlayers.ts";
 import type { Position } from "../../../common/types.football.ts";
 import type { PlayerGameSim, PlayersOnField } from "./types.ts";
-import { orderBy } from "../../../common/utils.ts";
 
-// weightsBonus is not added to denominator, it just gives a bonus in situations e.g. with extra receivers or blockers beyond normal
-const getCompositeFactor = ({
-	playersOnField,
-	positions,
-	orderFunc,
-	weightsMain,
-	weightsBonus,
-	valFunc,
-}: {
-	playersOnField: PlayersOnField;
+export type CompositeFactorParams = {
 	positions: Position[];
 	orderFunc: (a: PlayerGameSim) => number;
 	weightsMain: number[];
 	weightsBonus: number[];
 	valFunc: (a: PlayerGameSim) => number;
-}) => {
-	const maxNum = weightsMain.length + weightsBonus.length;
-	const players = orderBy(
-		getPlayers(playersOnField, positions),
-		orderFunc,
-		"desc",
-	).slice(0, maxNum);
-	let factor = 0;
+};
 
-	if (players.length > 0) {
+// weightsBonus is not added to denominator, it just gives a bonus in situations e.g. with extra receivers or blockers beyond normal
+export const getCompositeFactor = (
+	playersOnField: PlayersOnField,
+	{
+		positions,
+		orderFunc,
+		weightsMain,
+		weightsBonus,
+		valFunc,
+	}: CompositeFactorParams,
+) => {
+	const maxNum = weightsMain.length + weightsBonus.length;
+	const players = getPlayers(playersOnField, positions);
+	players.sort((a, b) => orderFunc(b) - orderFunc(a));
+	const numPlayers = Math.min(players.length, maxNum);
+
+	if (numPlayers > 0) {
 		let numerator = 0;
 		let denominator = 0;
 
-		for (const [i, p] of players.entries()) {
+		for (let i = 0; i < numPlayers; i++) {
+			const p = players[i]!;
 			const main = i < weightsMain.length;
 			const weight = main
 				? weightsMain[i]
@@ -48,10 +48,63 @@ const getCompositeFactor = ({
 			}
 		}
 
-		factor = numerator / denominator;
+		return numerator / denominator;
 	}
 
-	return factor;
+	return 0;
 };
 
-export default getCompositeFactor;
+// Pass and run blocking use the same players, order, and weights
+// Top 5 blockers, plus a bit more from TE/RB if they exist
+const BLOCKING_COMMON: Omit<CompositeFactorParams, "valFunc"> = {
+	positions: ["OL", "TE", "RB"],
+	orderFunc: (p) => p.ovrs.OL,
+	weightsMain: [5, 4, 3, 3, 3],
+	weightsBonus: [1, 0.5],
+};
+
+export const getBlockingFactors = (
+	playersOnField: PlayersOnField,
+): [number, number] => {
+	const { positions, orderFunc, weightsMain, weightsBonus } = BLOCKING_COMMON;
+
+	const maxNum = weightsMain.length + weightsBonus.length;
+	const players = getPlayers(playersOnField, positions);
+	players.sort((a, b) => orderFunc(b) - orderFunc(a));
+	const numPlayers = Math.min(players.length, maxNum);
+
+	if (numPlayers > 0) {
+		let numeratorPassBlocking = 0;
+		let numeratorRunBlocking = 0;
+		let denominator = 0;
+
+		for (let i = 0; i < numPlayers; i++) {
+			const p = players[i]!;
+			const main = i < weightsMain.length;
+			const weight = main
+				? weightsMain[i]
+				: weightsBonus[i - weightsMain.length];
+
+			if (typeof weight !== "number") {
+				throw new Error("weight should always be number");
+			}
+
+			const ovr = p.ovrs.OL / 100;
+			numeratorPassBlocking +=
+				weight * ((ovr + p.compositeRating.passBlocking) / 2);
+			numeratorRunBlocking +=
+				weight * ((ovr + p.compositeRating.runBlocking) / 2);
+
+			if (main) {
+				denominator += weight;
+			}
+		}
+
+		return [
+			numeratorPassBlocking / denominator,
+			numeratorRunBlocking / denominator,
+		];
+	}
+
+	return [0, 0];
+};

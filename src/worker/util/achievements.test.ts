@@ -402,7 +402,10 @@ describe("checkAchievement", () => {
 					},
 					{
 						...defaultAwards.fmvp,
-						group: undefined,
+						group: {
+							type: "playoffSeries",
+							tids: [tid, tid + 1],
+						},
 						winner: [{ pid: 0, tid }],
 					},
 					{

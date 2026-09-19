@@ -10,7 +10,7 @@ describe("Smoke Tests", () => {
 		async ({ bench }) => {
 			await bench("sim", { perProject: true }, async () => {
 				await createAndSim();
-			}).run({ iterations: 10, warmupIterations: 1 });
+			}).run({ iterations: 20, warmupIterations: 1 });
 		},
 	);
 

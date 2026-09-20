@@ -5,6 +5,18 @@ import type { Player, PlayerFiltered } from "../../../common/types.ts";
 import { groupByUnique, last, maxBy } from "../../../common/utils.ts";
 import { shuffle } from "../../../common/random.ts";
 
+const getScorePosBonus = (pos: Position) => {
+	if (pos === "C") {
+		// More likely to put actual catcher at catcher
+		return 25;
+	} else if (pos !== "RP") {
+		// Relief pitcher, who cares about "right" position
+		return 10;
+	}
+
+	return 0;
+};
+
 const score = (p: PlayerFiltered, pos?: Position) => {
 	if (pos === undefined) {
 		return p.ratings.ovr;
@@ -13,13 +25,7 @@ const score = (p: PlayerFiltered, pos?: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
-		if (pos === "C") {
-			// More likely to put actual catcher at catcher
-			tempScore += 25;
-		} else if (pos !== "RP") {
-			// Relief pitcher, who cares about "right" position
-			tempScore += 10;
-		}
+		tempScore += getScorePosBonus(pos);
 	}
 
 	return tempScore;
@@ -191,9 +197,20 @@ export const getDepthDefense = (
 
 	if (playersRemaining.length > 0) {
 		for (const scorePos of defPositions) {
-			const maxIndex = findMaxBy(playersRemaining, 1, (p) =>
-				score(p, scorePos),
-			)[0]!.index;
+			const positionBonus = getScorePosBonus(scorePos);
+			let maxIndex = 0;
+			let maxScore = -Infinity;
+			for (let i = 0; i < playersRemaining.length; i++) {
+				const ratings = playersRemaining[i]!.ratings;
+				let currentScore = ratings.ovrs[scorePos]!;
+				if (ratings.pos === scorePos) {
+					currentScore += positionBonus;
+				}
+				if (currentScore > maxScore) {
+					maxIndex = i;
+					maxScore = currentScore;
+				}
+			}
 
 			defensivePlayersSorted.push(playersRemaining[maxIndex]!);
 			playersRemaining.splice(maxIndex, 1);

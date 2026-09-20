@@ -2159,15 +2159,8 @@ class GameSim extends GameSimBase {
 		this.outs += 1;
 		const pitcher = this.team[this.d].playersInGameByPos.P.p;
 		this.recordStat(this.d, pitcher, "outs");
-		const team = this.team[this.d];
-		const teamOutsF = team.t.stat.outsF;
-		for (const { p } of team.fielders) {
-			const posIndex = POS_NUMBERS[team.playersInGame[p.id]!.pos] - 1;
-			p.stat.outsF[posIndex] ??= 0;
-			p.stat.outsF[posIndex] += 1;
-			teamOutsF[posIndex] ??= 0;
-			teamOutsF[posIndex] += 1;
-			this.playByPlay.logStat(this.d, p.id, "outsF", 1);
+		for (const { p } of this.team[this.d].fielders) {
+			this.recordStat(this.d, p, "outsF", 1, "fielding");
 		}
 
 		this.outsIfNoErrorsByPitcherPid[pitcher.id] ??= 0;

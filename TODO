@@ -1,8 +1,4 @@
 https://github.com/zengm-games/zengm/pull/543
-- baseball game sim
-  - ugly changes necessary?
-    - probHit
-    - logOut
 - see comments on PR about some things worth doing but not quite right in the PR
 - prepareWholeRoster - better version would be nice
 - football game sim

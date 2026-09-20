@@ -39,6 +39,27 @@ const DEF_POSITIONS_DH = [
 ] as const;
 const NUM_STARTERS = 5;
 
+// Only the deterministic traversal order is shared; roster evaluations remain
+// independent. Keep at most five permutations for each DH setting this season.
+let positionIndexesCache:
+	| { season: number; dh: number[][]; noDh: number[][] }
+	| undefined;
+
+const getPositionIndexes = (dh: boolean, attempt: number) => {
+	const season = g.get("season");
+	if (!positionIndexesCache || positionIndexesCache.season !== season) {
+		positionIndexesCache = { season, dh: [], noDh: [] };
+	}
+	const permutations = dh ? positionIndexesCache.dh : positionIndexesCache.noDh;
+	let indexes = permutations[attempt];
+	if (indexes === undefined) {
+		indexes = (dh ? DEF_POSITIONS_DH : DEF_POSITIONS).map((_, i) => i);
+		shuffle(indexes, season + attempt);
+		permutations[attempt] = indexes;
+	}
+	return indexes;
+};
+
 const sortBattingOrder = (
 	starters: {
 		i: number;
@@ -127,6 +148,9 @@ const findMaxBy = <T>(
 				return;
 			} else if (output[i]!.score < x.score) {
 				output.splice(i, 0, x);
+				if (output.length > count) {
+					output.pop();
+				}
 				return;
 			}
 		}
@@ -134,7 +158,8 @@ const findMaxBy = <T>(
 		output[count - 1] = x;
 	};
 
-	for (const [i, record] of records.entries()) {
+	for (let i = 0; i < records.length; i++) {
+		const record = records[i]!;
 		const score = getScore(record);
 		if (output.length < count || score > output[count - 1]!.score) {
 			addToOutput({
@@ -145,7 +170,7 @@ const findMaxBy = <T>(
 		}
 	}
 
-	return output.slice(0, count);
+	return output;
 };
 
 export const getDepthDefense = (
@@ -202,34 +227,39 @@ export const getDepthDefense = (
 	for (let numSwapTries = 0; numSwapTries < 5; numSwapTries++) {
 		let swapped = false;
 
-		const defPositionsShuffled = defPositions.map((pos, i) => ({
-			pos,
-			i,
-		}));
-		shuffle(defPositionsShuffled, g.get("season") + numSwapTries);
+		const positionIndexes = getPositionIndexes(dh, numSwapTries);
 
-		for (const { i, pos } of defPositionsShuffled) {
+		for (const i of positionIndexes) {
+			let p = defensivePlayersSorted[i];
+			// Needed for empty rosters, like expansion drafts.
+			if (!p) {
+				continue;
+			}
+
+			const pos = defPositions[i]!;
+			let currentOvrs = p.ratings.ovrs;
+			let currentPosOvr = currentOvrs[pos]!;
 			for (let j = 0; j < numPlayersToTest; j++) {
 				if (i === j) {
 					continue;
 				}
 
-				const p = defensivePlayersSorted[i];
 				const p2 = defensivePlayersSorted[j];
-				const pos2 = defPositions[j]!;
-
-				// Needed for empty roster, like expansion draft
-				if (!p || !p2) {
+				if (!p2) {
 					continue;
 				}
 
+				const pos2 = defPositions[j]!;
+				const otherOvrs = p2.ratings.ovrs;
 				if (
-					p.ratings.ovrs[pos2]! + p2.ratings.ovrs[pos]! >
-					p.ratings.ovrs[pos]! + p2.ratings.ovrs[pos2]!
+					currentOvrs[pos2]! + otherOvrs[pos]! >
+					currentPosOvr + otherOvrs[pos2]!
 				) {
-					const temp: any = defensivePlayersSorted[i];
-					defensivePlayersSorted[i] = defensivePlayersSorted[j]!;
-					defensivePlayersSorted[j] = temp;
+					defensivePlayersSorted[i] = p2;
+					defensivePlayersSorted[j] = p;
+					p = p2;
+					currentOvrs = otherOvrs;
+					currentPosOvr = currentOvrs[pos]!;
 					swapped = true;
 				}
 			}

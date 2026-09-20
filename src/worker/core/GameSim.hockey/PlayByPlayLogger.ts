@@ -148,6 +148,14 @@ class HockeyPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutput>
 			this.quarter += 1;
 		}
 
+		if (
+			!this.active &&
+			event.type !== "goal" &&
+			event.type !== "shootoutShot"
+		) {
+			return;
+		}
+
 		const event2: PlayByPlayEventOutput = {
 			quarter: this.quarter,
 			...event,

@@ -2827,7 +2827,7 @@ class GameSim extends GameSimBase {
 	recordStat(
 		t: TeamNum,
 		p: PlayerGameSim | undefined,
-		s: Stat,
+		s: Exclude<Stat, "benchTime" | "courtTime" | "energy">,
 		amt: number = 1,
 	) {
 		if (p !== undefined) {
@@ -2838,34 +2838,32 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
-			if (s !== "gs" && s !== "gp") {
-				this.team[t].stat[s] += amt; // Record quarter-by-quarter scoring too
+		if (s !== "gs" && s !== "gp") {
+			const teamStat = this.team[t].stat;
+			teamStat[s] += amt; // Record quarter-by-quarter scoring too
 
-				if (s === "pts") {
-					this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] +=
-						amt;
+			if (s === "pts") {
+				teamStat.ptsQtrs[teamStat.ptsQtrs.length - 1] += amt;
 
-					for (const i of [0, 1] as const) {
-						for (let j = 0; j < this.numPlayersOnCourt; j++) {
-							const p2 = this.playersOnCourt[i][j]!;
-							p2.stat.pm += i === t ? amt : -amt;
-						}
-					}
-
-					if (
-						this.elamActive &&
-						(this.team[this.d].stat.pts >= this.elamTarget ||
-							this.team[this.o].stat.pts >= this.elamTarget)
-					) {
-						this.elamDone = true;
+				for (const i of [0, 1] as const) {
+					for (let j = 0; j < this.numPlayersOnCourt; j++) {
+						const p2 = this.playersOnCourt[i][j]!;
+						p2.stat.pm += i === t ? amt : -amt;
 					}
 				}
-			}
 
-			if (this.playByPlay?.active) {
-				this.playByPlay.logStat(t, p === undefined ? undefined : p.id, s, amt);
+				if (
+					this.elamActive &&
+					(this.team[this.d].stat.pts >= this.elamTarget ||
+						this.team[this.o].stat.pts >= this.elamTarget)
+				) {
+					this.elamDone = true;
+				}
 			}
+		}
+
+		if (this.playByPlay?.active) {
+			this.playByPlay.logStat(t, p === undefined ? undefined : p.id, s, amt);
 		}
 	}
 }

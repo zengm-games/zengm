@@ -2311,9 +2311,6 @@ class GameSim extends GameSimBase {
 				delete p.compositeRating;
 				// @ts-expect-error
 				delete p.ptModifier;
-				delete p.stat.benchTime;
-				delete p.stat.courtTime;
-				delete p.stat.energy;
 				// @ts-expect-error
 				delete p.pFatigue;
 			}
@@ -2816,39 +2813,36 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		// Filter out stats that don't get saved to box score
-		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
-			// Filter out stats that are only for player, not team
-			if (
-				s !== "gp" &&
-				s !== "gs" &&
-				s !== "gsF" &&
-				s !== "gpF" &&
-				s !== "poSo" &&
-				s !== "cgF"
-			) {
-				if (s === "r") {
-					const qtr = teamStat.ptsQtrs.length - 1;
-					teamStat.pts += amt;
-					teamStat.ptsQtrs[qtr] += amt;
-					this.playByPlay.logStat(t, undefined, "pts", amt);
-				} else if (s === "er") {
-					if (this.outsIfNoErrors >= NUM_OUTS_PER_INNING) {
-						// It's an ER for this reliever, but not for the team
-					} else {
-						teamStat.er += amt;
-					}
-				} else if (type === "fielding") {
-					teamStat[s][posIndex!] ??= 0;
-					teamStat[s][posIndex!] += amt;
+		// Filter out stats that are only for player, not team
+		if (
+			s !== "gp" &&
+			s !== "gs" &&
+			s !== "gsF" &&
+			s !== "gpF" &&
+			s !== "poSo" &&
+			s !== "cgF"
+		) {
+			if (s === "r") {
+				const qtr = teamStat.ptsQtrs.length - 1;
+				teamStat.pts += amt;
+				teamStat.ptsQtrs[qtr] += amt;
+				this.playByPlay.logStat(t, undefined, "pts", amt);
+			} else if (s === "er") {
+				if (this.outsIfNoErrors >= NUM_OUTS_PER_INNING) {
+					// It's an ER for this reliever, but not for the team
 				} else {
-					teamStat[s] += amt;
+					teamStat.er += amt;
 				}
+			} else if (type === "fielding") {
+				teamStat[s][posIndex!] ??= 0;
+				teamStat[s][posIndex!] += amt;
+			} else {
+				teamStat[s] += amt;
 			}
+		}
 
-			if (p !== undefined || s === "sAtt" || s === "sPts") {
-				this.playByPlay.logStat(t, p?.id, s, amt);
-			}
+		if (p !== undefined || s === "sAtt" || s === "sPts") {
+			this.playByPlay.logStat(t, p?.id, s, amt);
 		}
 	}
 }

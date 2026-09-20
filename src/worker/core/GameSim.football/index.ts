@@ -2928,17 +2928,13 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		if (
-			s !== "gs" &&
-			s !== "gp" &&
-			s !== "courtTime" &&
-			s !== "benchTime" &&
-			s !== "energy"
-		) {
+		if (s !== "gs" && s !== "gp") {
+			const teamStat = this.team[t].stat;
+
 			if (isLng) {
-				this.team[t].stat[s] = this.lngTracker.log("player", t, s, amt, remove);
+				teamStat[s] = this.lngTracker.log("player", t, s, amt, remove);
 			} else {
-				this.team[t].stat[s] += signedAmount;
+				teamStat[s] += signedAmount;
 			}
 
 			if (p !== undefined && s !== "min") {
@@ -2956,8 +2952,8 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logStat(t, undefined, s, signedAmount);
 
 				if (s === "pts") {
-					const qtr = this.team[t].stat.ptsQtrs.length - 1;
-					this.team[t].stat.ptsQtrs[qtr] += signedAmount;
+					const qtr = teamStat.ptsQtrs.length - 1;
+					teamStat.ptsQtrs[qtr] += signedAmount;
 				}
 			}
 		}

@@ -1131,7 +1131,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		);
 	}
 
-	const createLeagueText = importing ? "Import League" : "Create League";
+	const createLeagueText = importing ? "Import league" : "Create league";
 
 	if (currentScreen === "settings") {
 		subPage = (
@@ -1555,7 +1555,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										setCurrentScreen("settings");
 									}}
 								>
-									Customize Settings
+									Customize settings
 								</button>
 							</div>
 

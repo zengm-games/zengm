@@ -2,15 +2,11 @@ import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
-import type { Player, TeamFiltered } from "../../common/types.ts";
-import advStatsSave from "./advStatsSave.ts";
-import {
-	NUM_OUTS_PER_GAME,
-	processStats,
-} from "../../common/processPlayerStats.baseball.ts";
+import type { TeamFiltered } from "../../common/types.ts";
+import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
+import { NUM_OUTS_PER_GAME } from "../../common/processPlayerStats.baseball.ts";
 import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
-import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
 const teamStats = [
@@ -290,14 +286,14 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 			rrep[i] = p.stats.pa / 30;
 		}
 
-		raa[i] = rbat[i]! + rbr[i]! + helpers.sum(rfld[i]!) + rpos[i]! + rpit[i]!;
+		raa[i] = rbat[i] + rbr[i]! + helpers.sum(rfld[i]!) + rpos[i]! + rpit[i]!;
 
-		waa[i] = raa[i]! / runsPerGame;
+		waa[i] = raa[i] / runsPerGame;
 
-		rar[i] = raa[i]! + rrep[i]!;
+		rar[i] = raa[i] + rrep[i]!;
 
 		// Wins Above Replacement
-		war[i] = rar[i]! / runsPerGame;
+		war[i] = rar[i] / runsPerGame;
 	}
 
 	return {
@@ -314,80 +310,10 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 	};
 };
 
-export const playerStatsForWAR = [
-	"h",
-	"2b",
-	"3b",
-	"hr",
-	"bb",
-	"hbp",
-	"ab",
-	"sb",
-	"cs",
-	"gpF",
-	"po",
-	"poSo",
-	"outs",
-	"er",
-	"bf",
-	"pa",
-	"gp",
-	"gpPit",
-
-	// For statsRowIsCurrent
-	"tid",
-	"season",
-	"playoffs",
-];
-
-// WAR uses the latest matching stint, not merged season or career totals.
-// Keep this asynchronous so the caller filters current rows after the same
-// microtask boundary as the generic playersPlus request.
-export const getPlayersForWAR = (
-	players: Player[],
-	season: number,
-	playoffs: boolean,
-) => {
-	const output = [];
-	for (const p of players) {
-		if (p.ratings.length === 0) {
-			continue;
-		}
-		const ps = p.stats.findLast(
-			(row) =>
-				row &&
-				row.season === season &&
-				(playoffs ? row.playoffs : !row.playoffs),
-		);
-		if (!ps) {
-			continue;
-		}
-		const stats = processStats(ps, playerStatsForWAR, "perGame", p.born.year);
-		for (const key in stats) {
-			const value = stats[key];
-			if (value !== null && typeof value === "object") {
-				stats[key] = helpers.deepCopy(value);
-			}
-		}
-		stats.tid = ps.tid === undefined ? p.tid : ps.tid;
-		output.push({ stats, pid: p.pid, tid: p.tid });
-	}
-	return Promise.resolve(output);
-};
-
 const advStats = async () => {
 	const playoffs = PHASE.PLAYOFFS === g.get("phase");
 
-	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-		0, // Active players have tid >= 0
-		Infinity,
-	]);
-	const players = (
-		await getPlayersForWAR(playersRaw, g.get("season"), playoffs)
-	).filter((p) => {
-		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
-		return statsRowIsCurrent(p.stats, p.tid, playoffs);
-	});
+	const { players, playersRaw } = await getPlayers(playoffs);
 
 	const teams = await idb.getCopies.teamsPlus(
 		{

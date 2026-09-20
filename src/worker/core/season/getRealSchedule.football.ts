@@ -1,5 +1,6 @@
 import { choice, shuffle } from "../../../common/random.ts";
 import g from "../../util/g.ts";
+import realSchedules from "./realSchedules.football.json";
 
 const NUM_CONFS = 2;
 const NUM_DIVS_PER_CONF = 4;
@@ -16,20 +17,7 @@ type RealSchedules = {
 	teamInfos: Record<number, [number, number, number]>;
 };
 
-let cachedJSON: RealSchedules;
-const loadData = async () => {
-	if (cachedJSON) {
-		return cachedJSON;
-	}
-	const response = await fetch("/gen/real-schedules.json");
-	if (!response.ok) {
-		throw new Error(`HTTP error ${response.status}`);
-	}
-	cachedJSON = await response.json();
-	return cachedJSON;
-};
-
-export const getRealSchedule = async (
+export const getRealSchedule = (
 	teamsInput: {
 		seasonAttrs: {
 			cid: number;
@@ -71,7 +59,7 @@ export const getRealSchedule = async (
 		return;
 	}
 
-	const { schedules, teamInfos } = await loadData();
+	const { schedules, teamInfos } = realSchedules as unknown as RealSchedules;
 
 	const schedule = choice(schedules);
 

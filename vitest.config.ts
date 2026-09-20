@@ -39,12 +39,31 @@ const makeProject = (
 
 		test: {
 			...projectConfig,
-			setupFiles:
-				environment === "node"
-					? ["./src/test/setup.ts", "./src/worker/index.ts"]
-					: ["./src/test/setup-e2e.ts"],
+			...(environment === "node"
+				? {
+						setupFiles: ["./src/test/setup.ts", "./src/worker/index.ts"],
+					}
+				: {
+						setupFiles: ["./src/test/setup-e2e.ts"],
+						browser: {
+							enabled: true,
+							headless: true,
+							provider: playwright(),
+							instances: [
+								{ browser: "chromium" },
+								// firefox and webkit have been flaky lately...
+								// { browser: "firefox" },
+								// { browser: "webkit" },
+							],
+							screenshotFailures: false,
+						},
+					}),
 		},
 	};
+};
+
+const benchmark = {
+	include: ["**/*.bench.browser.?(c|m)[jt]s?(x)"],
 };
 
 export default defineConfig({
@@ -77,23 +96,24 @@ export default defineConfig({
 				include: hockeyTests,
 			}),
 			makeProject("basketball", "browser", {
-				name: "browser",
+				name: "browser-basketball",
 				include: ["**/*.test.browser.ts"],
-				benchmark: {
-					include: ["**/*.bench.browser.?(c|m)[jt]s?(x)"],
-				},
-				browser: {
-					enabled: true,
-					headless: true,
-					provider: playwright(),
-					instances: [
-						{ browser: "chromium" },
-						// firefox and webkit have been flaky lately...
-						// { browser: "firefox" },
-						// { browser: "webkit" },
-					],
-					screenshotFailures: false,
-				},
+				benchmark,
+			}),
+			makeProject("football", "browser", {
+				name: "browser-football",
+				include: [],
+				benchmark,
+			}),
+			makeProject("baseball", "browser", {
+				name: "browser-baseball",
+				include: [],
+				benchmark,
+			}),
+			makeProject("hockey", "browser", {
+				name: "browser-hockey",
+				include: [],
+				benchmark,
 			}),
 		],
 	},

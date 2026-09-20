@@ -243,7 +243,7 @@ const ManageConfs = ({
 
 			<StickyBottomButtons>
 				<form
-					className="btn-group ms-auto"
+					className="ms-auto"
 					onSubmit={async (event) => {
 						event.preventDefault();
 

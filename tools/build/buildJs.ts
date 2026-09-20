@@ -51,7 +51,6 @@ export const buildJs = async (sport: Sport, versionNumber: string) => {
 		"names-female",
 		"real-player-data",
 		"real-player-stats",
-		"real-schedules",
 	];
 	const replaces = [];
 	for (const filename of jsonFiles) {

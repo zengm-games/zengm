@@ -79,7 +79,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 				throw new Error(`Unknown phase number ${phase}`);
 			}
 		} catch (error) {
-			cleanupAutoPlay();
+			cleanupAutoPlay(error);
 			await lock.set("newPhase", false);
 			await updatePlayMenu();
 			logEvent(

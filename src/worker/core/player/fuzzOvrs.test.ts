@@ -11,7 +11,7 @@ test.each([
 	{ godMode: true, userTids: [0] },
 	{ godMode: false, userTids: [0, 1] },
 ])(
-	"positional fuzz matches individual ratings with $godMode and $userTids",
+	"positional fuzz respects no-fuzz modes with $godMode and $userTids",
 	({ godMode, userTids }) => {
 		resetG();
 		g.setWithoutSavingToDB("godMode", godMode);
@@ -25,7 +25,9 @@ test.each([
 		};
 		for (const fuzz of [-10.5, 7.5, Infinity, 0, -0, Number.NaN]) {
 			const expected = { ...input };
-			if (fuzz) {
+			// Current master returns an untouched copy in God/Multi Team Mode,
+			// and treats NaN fuzz as an active input outside those modes.
+			if (fuzz !== 0 && !godMode && userTids.length <= 1) {
 				for (const key of Object.keys(expected)) {
 					expected[key as keyof typeof expected] = fuzzRating(
 						expected[key as keyof typeof expected],

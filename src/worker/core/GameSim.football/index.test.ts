@@ -106,6 +106,51 @@ test.each(["healthy", "fatigued", "injured"] as const)(
 	},
 );
 
+test("consecutive selections replace a fatigued starter and restore him after recovery", async () => {
+	const game = await initGameSim();
+	game.o = 0;
+	game.d = 1;
+	// Isolate one RB spot so every random draw belongs to these two players.
+	for (const t of game.team) {
+		for (const pos of helpers.keys(t.depth)) {
+			t.depth[pos] = [];
+		}
+	}
+	const starter = game.team[0].player[0]!;
+	const backup = game.team[0].player[1]!;
+	starter.injured = false;
+	backup.injured = false;
+	backup.stat.energy = 1;
+	const depth = [starter, backup];
+	game.team[0].depth.RB = depth;
+
+	const random = vi.spyOn(Math, "random").mockReturnValue(0.5);
+	try {
+		for (const energy of [1, 0, 1]) {
+			starter.stat.energy = energy;
+			random.mockClear();
+			// The original filter/slice selection for this healthy, distinct-ID
+			// depth draws for both players, including when the starter fills the spot.
+			const expected = depth
+				.filter((p) => !p.injured)
+				.filter((p) => Math.random() < Math.min(1, p.stat.energy + 0.05))
+				.slice(0, 1);
+			const expectedDraws = random.mock.calls.length;
+
+			random.mockClear();
+			game.updatePlayersOnField("startersFake");
+			assert.strictEqual(game.playersOnField[0].RB![0], expected[0]);
+			assert.strictEqual(
+				game.playersOnField[0].RB![0],
+				energy === 0 ? backup : starter,
+			);
+			assert.strictEqual(random.mock.calls.length, expectedDraws);
+		}
+	} finally {
+		random.mockRestore();
+	}
+});
+
 test("playing time updates team totals, player fatigue, and bench recovery without live events", async () => {
 	const game = await initGameSim();
 	game.o = 0;

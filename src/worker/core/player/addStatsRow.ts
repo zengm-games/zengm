@@ -2,7 +2,7 @@ import stats from "./stats.ts";
 import { helpers } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
-import statsRowIsCurrent from "./statsRowIsCurrent.ts";
+import { statsRowIsCurrent } from "./statsRowIsCurrent.ts";
 
 /**
  * Add a new row of stats to the playerStats database.

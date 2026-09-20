@@ -11,11 +11,11 @@ import {
 	pickScore,
 	playerScore,
 } from "./TradingBlock/index.tsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ActionButton } from "../components/ActionButton.tsx";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
-const TradeProposals = ({ offers }: View<"tradeProposals">) => {
+const TradeProposals = ({ offers, seed }: View<"tradeProposals">) => {
 	const {
 		challengeNoRatings,
 		challengeNoTrades,
@@ -37,20 +37,13 @@ const TradeProposals = ({ offers }: View<"tradeProposals">) => {
 	]);
 
 	const [removedTids, setRemovedTids] = useState<number[]>([]);
-	const [prevOffers, setPrevOffers] = useState(offers);
 
-	// Without this, we'd still see the old offers even after 10 games are played and there are new offers
-	useEffect(() => {
-		const tids = JSON.stringify(offers.map((offer) => offer.tid).sort());
-		const prevTids = JSON.stringify(
-			prevOffers.map((offer) => offer.tid).sort(),
-		);
-
-		if (tids !== prevTids) {
-			setRemovedTids([]);
-			setPrevOffers(offers);
-		}
-	}, [offers, prevOffers]);
+	// Without this, we'd still see the old removedTids even after 10 games are played and there are new offers
+	const [prevSeed, setPrevSeed] = useState(seed);
+	if (seed !== prevSeed) {
+		setRemovedTids([]);
+		setPrevSeed(seed);
+	}
 
 	useTitleBar({ title: "Trade Proposals" });
 

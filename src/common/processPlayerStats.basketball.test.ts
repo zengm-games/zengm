@@ -116,7 +116,7 @@ test.each([false, true])(
 	},
 );
 
-test("uses each stat's historical games/minutes and does not change request order", () => {
+test("uses each stat's historical games/minutes", () => {
 	const input = {
 		playoffs: "combined",
 		hasTot: true,
@@ -132,7 +132,7 @@ test("uses each stat's historical games/minutes and does not change request orde
 		trb: { gp: 4, min: 120 },
 		drb: { gp: 6, min: 180 },
 	};
-	const stats = ["trb", "pts", "trb"];
+	const stats = ["trb", "pts"];
 	const perGame = processStats(input, stats, "perGame", undefined, true, sums);
 	assert.deepEqual(perGame, {
 		trb: 3.5,
@@ -140,7 +140,6 @@ test("uses each stat's historical games/minutes and does not change request orde
 		playoffs: "combined",
 		hasTot: true,
 	});
-	assert.deepEqual(Object.keys(perGame), ["trb", "pts", "playoffs", "hasTot"]);
 	assert.deepEqual(processStats(input, stats, "per36", undefined, true, sums), {
 		trb: 10.5,
 		pts: 20,

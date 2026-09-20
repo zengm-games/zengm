@@ -12,9 +12,7 @@ import type {
 import { player, team } from "../index.ts";
 import { last } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
-import { prepareWholeRoster as prepareWholeRosterFootball } from "../team/ovr.football.ts";
-import { prepareWholeRoster as prepareWholeRosterBaseball } from "../team/ovr.baseball.ts";
+import prepareWholeRoster from "../team/prepareWholeRoster.ts";
 
 export const getTeamOvrDiffs = (
 	teamPlayers: PlayerWithoutKey[],
@@ -38,11 +36,7 @@ export const getTeamOvrDiffs = (
 		};
 	});
 
-	const prepared = isSport("football")
-		? prepareWholeRosterFootball(teamPlayers2)
-		: isSport("baseball")
-			? prepareWholeRosterBaseball(teamPlayers2)
-			: undefined;
+	const prepared = prepareWholeRoster(teamPlayers2);
 	const baseline =
 		prepared?.baseline ??
 		team.ovr(teamPlayers2, {

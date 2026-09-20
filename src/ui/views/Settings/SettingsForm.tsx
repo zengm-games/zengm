@@ -608,7 +608,7 @@ const SettingsForm = ({
 				<StickyBottomButtons isInsideModal={isInsideModal}>
 					<div className="d-flex justify-content-between w-100">
 						{!hideGodModeToggle ? (
-							<div className="btn-group">
+							<div className="d-flex gap-2">
 								<button
 									className={clsx(
 										"btn text-nowrap",
@@ -644,7 +644,7 @@ const SettingsForm = ({
 							}}
 						/>
 
-						<div className="btn-group">
+						<div className="d-flex gap-2">
 							{onCancel ? (
 								<button
 									className="btn btn-secondary text-nowrap"

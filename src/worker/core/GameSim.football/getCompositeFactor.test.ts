@@ -1,5 +1,6 @@
 import { assert, test } from "vitest";
-import getCompositeFactor, {
+import {
+	getCompositeFactor,
 	getBlockingFactors,
 } from "./getCompositeFactor.ts";
 import type { PlayerGameSim } from "./types.ts";

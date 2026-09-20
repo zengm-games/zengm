@@ -2,14 +2,13 @@ import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
-import advStatsSave from "./advStatsSave.ts";
+import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import {
 	defaultAwards,
 	defaultGameAttributes,
 } from "../../common/defaultGameAttributes.ts";
 import helpers from "./helpers.ts";
-import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
 import { processAwards } from "../core/awards/processAwards.ts";
 
 type Team = TeamFiltered<
@@ -302,70 +301,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 const advStats = async () => {
 	const playoffs = PHASE.PLAYOFFS === g.get("phase");
 
-	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-		0, // Active players have tid >= 0
-		Infinity,
-	]);
-	const players = (
-		await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["pid", "tid"],
-			stats: [
-				"gp",
-				"gs",
-				"pss",
-				"pssYds",
-				"pssAdjYdsPerAtt",
-				"rus",
-				"rusYds",
-				"rusYdsPerAtt",
-				"rec",
-				"recYds",
-				"defSk",
-				"defFmbRec",
-				"defFmbFrc",
-				"defInt",
-				"defPssDef",
-				"defIntTD",
-				"defFmbTD",
-				"defTck",
-				"prTD",
-				"krTD",
-				"fg0",
-				"fg20",
-				"fg30",
-				"fg40",
-				"fg50",
-				"fga0",
-				"fga20",
-				"fga30",
-				"fga40",
-				"fga50",
-				"xp",
-				"xpa",
-				"pnt",
-				"pntYds",
-				"pntBlk",
-				"pbw",
-				"pba",
-				"pbwr",
-				"rbw",
-				"rba",
-				"rbwr",
-
-				// For statsRowIsCurrenet
-				"tid",
-				"season",
-				"playoffs",
-			],
-			ratings: ["pos"],
-			season: g.get("season"),
-			playoffs,
-			regularSeason: !playoffs,
-		})
-	).filter((p) => {
-		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
-		return statsRowIsCurrent(p.stats, p.tid, playoffs);
-	});
+	const { players, playersRaw } = await getPlayers(playoffs);
 
 	const teamStats = [
 		"gp",

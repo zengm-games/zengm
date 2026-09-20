@@ -3,8 +3,10 @@ import { FATIGUE_POS, POSITIONS } from "../../../common/constants.football.ts";
 import PlayByPlayLogger, {
 	type PlayByPlayEventScore,
 } from "./PlayByPlayLogger.ts";
-import getCompositeFactor, {
+import {
 	getBlockingFactors,
+	getCompositeFactor,
+	type CompositeFactorParams,
 } from "./getCompositeFactor.ts";
 import getPlayers from "./getPlayers.ts";
 import SelectionStamps from "./SelectionStamps.ts";
@@ -52,26 +54,6 @@ const FEWER_INJURIES_POS = new Set(["QB", "P", "K"]);
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;
 
-/**
- * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
- *
- * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
- * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
- */
-const fatigue = (energy: number, injured: boolean): number => {
-	if (injured) {
-		return 0;
-	}
-
-	energy += 0.05;
-
-	if (energy > 1) {
-		energy = 1;
-	}
-
-	return energy;
-};
-
 const COMPOSITE_FACTOR_OPTIONS = {
 	receiving: {
 		positions: ["WR", "TE", "RB"],
@@ -115,7 +97,27 @@ const COMPOSITE_FACTOR_OPTIONS = {
 		weightsBonus: [],
 		valFunc: (p) => (p.ovrs.LB / 100 + p.compositeRating.tackling) / 2,
 	},
-} satisfies Record<string, Parameters<typeof getCompositeFactor>[1]>;
+} satisfies Record<string, CompositeFactorParams>;
+
+/**
+ * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
+ *
+ * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
+ * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
+ */
+const fatigue = (energy: number, injured: boolean): number => {
+	if (injured) {
+		return 0;
+	}
+
+	energy += 0.05;
+
+	if (energy > 1) {
+		energy = 1;
+	}
+
+	return energy;
+};
 
 class GameSim extends GameSimBase {
 	private selectionStamps = new SelectionStamps();
@@ -1195,7 +1197,6 @@ class GameSim extends GameSimBase {
 	}
 
 	updateTeamCompositeRatings() {
-		// Top 3 receivers, plus a bit more for others
 		this.team[this.o].compositeRating.receiving = getCompositeFactor(
 			this.playersOnField[this.o],
 			COMPOSITE_FACTOR_OPTIONS.receiving,
@@ -1204,13 +1205,6 @@ class GameSim extends GameSimBase {
 			this.playersOnField[this.o],
 			COMPOSITE_FACTOR_OPTIONS.rushing,
 		);
-
-		// Top 5 blockers, plus a bit more from TE/RB if they exist
-		const [passBlocking, runBlocking] = getBlockingFactors(
-			this.playersOnField[this.o],
-		);
-		this.team[this.o].compositeRating.passBlocking = passBlocking;
-		this.team[this.o].compositeRating.runBlocking = runBlocking;
 		this.team[this.d].compositeRating.passRushing = getCompositeFactor(
 			this.playersOnField[this.d],
 			COMPOSITE_FACTOR_OPTIONS.passRushing,
@@ -1227,6 +1221,12 @@ class GameSim extends GameSimBase {
 			this.playersOnField[this.d],
 			COMPOSITE_FACTOR_OPTIONS.tackling,
 		);
+
+		const [passBlocking, runBlocking] = getBlockingFactors(
+			this.playersOnField[this.o],
+		);
+		this.team[this.o].compositeRating.passBlocking = passBlocking;
+		this.team[this.o].compositeRating.runBlocking = runBlocking;
 		/*globalThis.valuesPass ??= [];
 		globalThis.valuesPass.push(this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing)
 		globalThis.valuesRun ??= [];
@@ -1266,6 +1266,9 @@ class GameSim extends GameSimBase {
 			const t = i === 0 ? this.o : this.d;
 			const side = sides[i];
 
+			// Reset used IDs for each team lineup, even on repeated calls in one
+			// play. Only ID-to-slot bookkeeping survives; energy and injury state
+			// are read below for this selection, so substitutions are recalculated.
 			// Don't let one player be used at two positions!
 			const selection = this.selectionStamps;
 			selection.start();
@@ -2836,8 +2839,7 @@ class GameSim extends GameSimBase {
 				// @ts-expect-error
 				for (const p of this.playersOnField[t][pos]) {
 					onField.add(p.id);
-					p.stat.min += possessionTime;
-					this.team[t].stat.min += possessionTime;
+					this.recordStat(t, p, "min", possessionTime);
 					p.stat.courtTime += possessionTime;
 
 					// This used to be 0.04. Increase more to lower PT
@@ -2935,8 +2937,6 @@ class GameSim extends GameSimBase {
 		amt: number = 1,
 		remove?: boolean,
 	) {
-		const qtr = this.team[t].stat.ptsQtrs.length - 1;
-
 		const signedAmount = remove ? -amt : amt;
 
 		const isLng = s.endsWith("Lng");
@@ -2980,6 +2980,7 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logStat(t, undefined, s, signedAmount);
 
 				if (s === "pts") {
+					const qtr = this.team[t].stat.ptsQtrs.length - 1;
 					this.team[t].stat.ptsQtrs[qtr] += signedAmount;
 				}
 			}

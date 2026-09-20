@@ -601,7 +601,7 @@ const TopStuff = ({
 						</div>
 					</div>
 
-					<div className="btn-group mt-2">
+					<div className="d-flex gap-2 mt-2">
 						<a
 							href={helpers.leagueUrl(["customize_player", player.pid])}
 							className={clsx(
@@ -657,7 +657,9 @@ const TopStuff = ({
 					</div>
 					{godMode ? (
 						<div className="mt-2">
-							<div className="btn-group">{buttonsAvailableOutsideGodMode}</div>
+							<div className="d-flex gap-2">
+								{buttonsAvailableOutsideGodMode}
+							</div>
 						</div>
 					) : null}
 					{player.careerStats.gp! > 0 ? (

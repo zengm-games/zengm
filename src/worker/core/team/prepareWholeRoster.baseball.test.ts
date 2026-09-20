@@ -2,11 +2,13 @@ import { assert, beforeEach, test } from "vitest";
 import { POSITIONS } from "../../../common/constants.baseball.ts";
 import { resetG } from "../../../test/helpers.ts";
 import { g } from "../../util/index.ts";
-import ovr, { prepareWholeRoster } from "./ovr.baseball.ts";
-import prepareOvr from "./prepareOvr.baseball.ts";
+import ovr from "./ovr.baseball.ts";
+import prepareWholeRoster from "./prepareWholeRoster.ts";
 import ovrByPosFactory from "./ovrByPosFactory.ts";
 
-type Player = Parameters<typeof ovr>[0][number];
+type Player = Parameters<typeof ovr>[0][number] & {
+	ratings: { ovrs: Record<string, number> };
+};
 
 const values = [0, -0, 45, 45, 99, 1e17, -1e17, Number.MIN_VALUE, 0.001];
 
@@ -107,7 +109,7 @@ test("coefficient reuse retains cancellation, sparse weights, and changing group
 	] as Record<string, number[]>[];
 	for (const weights of cases) {
 		const original = ovrByPosFactory(weights, -4.7, (value) => value);
-		const prepared = prepareOvr(players, weights, -4.7)!;
+		const prepared = original.prepareWholeRoster(players)!;
 		assert(
 			Object.is(prepared.baseline, original(players, { wholeRoster: true })),
 		);

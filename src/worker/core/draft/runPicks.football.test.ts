@@ -68,8 +68,8 @@ test("draft and free-agent roster differences retain exact scores and unchanged 
 
 test("malformed candidate or baseline values retain the original fallback scores", () => {
 	const roster = [makePlayer("QB", 70, 1), makePlayer("WR", 50, 2)];
-	const candidates = [Number.NaN, Infinity, -Infinity].map((value, i) =>
-		makePlayer("QB", value, i + 3),
+	const candidates = [Number.NaN, Infinity, -Infinity, undefined, null].map(
+		(value, i) => makePlayer("QB", value as number, i + 3),
 	);
 	assert.deepEqual(
 		getTeamOvrDiffs(roster, candidates),
@@ -80,6 +80,26 @@ test("malformed candidate or baseline values retain the original fallback scores
 		getTeamOvrDiffs(roster, candidates),
 		originalDiffs(roster, candidates),
 	);
+});
+
+test("each comparison batch observes picks, changed values, and changed positions", () => {
+	const roster = [makePlayer("QB", 70, 1), makePlayer("WR", 50, 2)];
+	const candidates = [makePlayer("QB", 80, 3), makePlayer("RB", 60, 4)];
+	const check = () => {
+		const before = structuredClone({ roster, candidates });
+		assert.deepEqual(
+			getTeamOvrDiffs(roster, candidates),
+			originalDiffs(roster, candidates),
+		);
+		assert.deepEqual({ roster, candidates }, before);
+	};
+	check();
+	roster.push(candidates.shift()!);
+	check();
+	roster[0]!.value = 95;
+	roster[0]!.ratings.at(-1)!.pos = "WR";
+	candidates[0]!.ratings.at(-1)!.fuzz = 15;
+	check();
 });
 
 test("unsupported positions retain the original error", () => {

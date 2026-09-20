@@ -8,9 +8,9 @@ describe("Smoke Tests", () => {
 			timeout: 100 * 60 * 1000, // 100 minutes
 		},
 		async ({ bench }) => {
-			await bench("sim", async () => {
+			await bench("sim", { perProject: true }, async () => {
 				await createAndSim();
-			}).run();
+			}).run({ iterations: 10, warmupIterations: 1 });
 		},
 	);
 

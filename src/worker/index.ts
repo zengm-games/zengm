@@ -6,19 +6,19 @@ import * as db from "./db/index.ts";
 import * as util from "./util/index.ts";
 import * as random from "../common/random.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
+import { registerGlobal } from "../common/registerGlobal.ts";
 
-self.bbgm = {
-	...self.bbgm,
+registerGlobal({
 	...common,
 	...core,
 	...db,
 	...util,
 	random,
-};
+});
 
 if (__NODE_ENV === "development") {
 	import("./core/debug/index.ts").then(({ default: debug }) => {
-		self.bbgm.debug = debug;
+		registerGlobal({ debug });
 	});
 }
 

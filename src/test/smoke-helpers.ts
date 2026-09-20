@@ -38,6 +38,7 @@ export const createAndSim = async () => {
 			teamsFromInput: helpers.addPopRank(helpers.getTeamsDefault()),
 			tid: 0,
 		});
+		await league.loadGameAttributes();
 		await startAutoPlay(2017, PHASE.PRESEASON, {});
 	} finally {
 		clearInterval(intervalId);

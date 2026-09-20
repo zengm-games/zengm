@@ -54,7 +54,11 @@ const findAwards = <
 		}
 
 		// Allow award to have no group even if we're searching for an award with a group, because that's more restrictive. Similarly could allow a conf award to count for div, but not worth the complexity because there are no built-in div awards
-		if (award.group !== undefined && award.group.type !== searchFor.group) {
+		if (
+			award.group !== undefined &&
+			award.group.type !== searchFor.group &&
+			award.group.type !== "playoffSeries"
+		) {
 			continue;
 		}
 

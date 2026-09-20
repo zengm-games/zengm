@@ -59,7 +59,6 @@ export default defineConfig(
 			"jsx-a11y/no-static-element-interactions": "off",
 			"no-console": "off",
 			"no-empty": "off",
-			"no-extra-parens": "off",
 			"no-self-compare": "error",
 			"no-undef": "error", // TypeScript catches most of these, except worker/browser differences. Would be nice to somehow get TypeScript to place nicely here, but it doens't like my cross-folder imports, even type imports
 			"perfectionist/sort-interfaces": "off",
@@ -77,7 +76,6 @@ export default defineConfig(
 			"react-hooks/refs": "off",
 			"react-hooks/set-state-in-effect": "off",
 
-			"react-hooks/react-compiler": "off",
 			"require-await": "error",
 			"sort-destructure-keys/sort-destructure-keys": "off",
 			"sort-keys-fix/sort-keys-fix": "off",
@@ -86,7 +84,7 @@ export default defineConfig(
 			"unicorn/numeric-separators-style": "off",
 			"unicorn/prefer-string-replace-all": "off", // replaceAll fails in some cases, idk why, but shows up in error logs and someone complained
 			"unicorn/prefer-ternary": "off",
-			"unicorn/prefer-top-level-await": "off", // Chrome 89, Safari ?
+			"unicorn/prefer-top-level-await": "off", // Chrome 89, Safari 27
 
 			// Nice for catching if(0){} but too many false positives for object checks that can't be disabled
 			/*"@typescript-eslint/strict-boolean-expressions": ["error", {

@@ -1,10 +1,17 @@
-https://github.com/zengm-games/zengm/pull/542
-- other normalizeContractDemands changes
+https://github.com/zengm-games/zengm/pull/543
+- football game sim
+  - selectionstamps stuff
+  - recordStat on min
+
+FA page should show merged stats https://discord.com/channels/@me/778760871911751700/1546991655666847834
 
 color pass/run on drive chart
 - https://github.com/zengm-games/zengm/pull/540
   - dropback/handoff doesn't account for qb runs
   - color coding run/pass is too much?
+
+seasonFraction maybe doesn't make much sense in basketball awards like MVP. gp/teamGp or gp/82 might be better - the former would max at 1 regardles of numGames, but the latter would give more or less weight to winp based on how long the season is, which would also scale them with EWA+VORP. fracWS should maybe also get multiplied by gp/82.
+- if we edit default, what to do about achievements?
 
 award settings
 - support editing metadata of past awards, like name and shortName. maybe even formula too... and adding/deleting
@@ -74,7 +81,7 @@ when navigating with ctrl+k menu, should reset scroll after navigating between p
 draft race condition https://discord.com/channels/290013534023057409/1536156382552789023/1536156382552789023
 - I had the 3rd and 4th lottery pick in a draft and I spam clicked to pick and sim as I usually do, but I realized by the end of the draft that I drafted the same player twice. I didn't get the player twice- just once but the 4th pick is gone now. Not sure if this is a real backend bug or just lag on my end.
 
-btn-close vs glyphicon-remove
+btn-close vs glyphicon-remove vs CloseIcon
 
 default new league settings import should handle gameAttribute with history (take latest value)
 
@@ -203,30 +210,30 @@ move EventBBGM away from using string "text" property
 - use formatEventText for now, eventually move to something in ui to render them
 
 dev usability stuff
-- workbox replace
-  - serwist seemed to not quite work right, notifications weren't showing up, idk maybe not worth it
-- html2canvas replace
-  - html-to-image or modern-screenshot - nice, smaller, better image... but 3x slower
-  - snapdom - giant bundle size
-  - html2canvas-pro - bigger bundle size, new features don't seem to do anything for me
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
   - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
 - use zod in various places, including to replace schema/types difference
 - DRY stuff for adding a new setting
 - typescript for playersPlus
 - get rid of home/away tid swapping in box score and live sim
-- exactOptionalPropertyTypes would be nice
-  - when enabling, then zod exactOptional starts working. otherwise, zod can't represent { a?: number } and instead makes it { a?: number | undefined }
-  - idk maybe just not worth it, confusing for JSON, etc
 - when updating GameAttributesLeagueWithHistory (for instance in setGameAttributes) we should always wrap or always not wrap based on ALWAYS_WRAP, not prior value
 - lint useLocalPartial
   - ensure all requested variables are destructured
   - ensure called only once in a component
   - sort array
-- checkNaNs still needed?
-- use registerGlobal more
-- oxlint
-  - annoying config - can only specify "categories" (presets basically) globally, not per plugin
+- maybe later
+  - checkNaNs still needed?
+  - oxlint
+    - annoying config - can only specify "categories" (presets basically) globally, not per plugin
+  - workbox replace
+    - serwist seemed to not quite work right, notifications weren't showing up, idk maybe not worth it
+  - html2canvas replace
+    - html-to-image or modern-screenshot - nice, smaller, better image... but 3x slower
+    - snapdom - giant bundle size
+    - html2canvas-pro - bigger bundle size, new features don't seem to do anything for me
+  - exactOptionalPropertyTypes would be nice
+    - when enabling, then zod exactOptional starts working. otherwise, zod can't represent { a?: number } and instead makes it { a?: number | undefined }
+    - idk maybe just not worth it, confusing for JSON, etc
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 
@@ -492,6 +499,7 @@ use import with json attribute for loading json files, rather than special effor
   - or will rollup/rolldown handle something like this automatically, maybe converting into JS chunk? it seems to be trying to do that, but not succeeding completely.
     - currently rolldown handles it automatically (converting to js chunk) and rolldown kind of does but it doesn't work right unless you remove the import attribute https://github.com/rolldown/rolldown/issues/2758
   - https://chatgpt.com/c/68e53261-8960-8325-b295-c99adf21fb59 are some ideas, not sure if it's worth it really
+- realSchedules.football.json too
 
 add legends mode based on league to UI somehow
 - should be able to select from "New legends league" or "New custom league"

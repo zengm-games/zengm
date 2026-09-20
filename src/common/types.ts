@@ -1374,6 +1374,7 @@ export type PlayerBioInfoProcessed = {
 
 export type Local = {
 	autoPlayUntil?: {
+		reject: (error: Error) => void;
 		resolve: () => void;
 		phase: number;
 		season: number;

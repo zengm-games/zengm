@@ -105,9 +105,13 @@ const autoPlay = async (conditions: Conditions = {}) => {
 
 export default autoPlay;
 
-export const cleanupAutoPlay = () => {
+export const cleanupAutoPlay = (error?: Error) => {
 	if (local.autoPlayUntil) {
-		local.autoPlayUntil.resolve();
+		if (error) {
+			local.autoPlayUntil.reject(error);
+		} else {
+			local.autoPlayUntil.resolve();
+		}
 		local.autoPlayUntil = undefined;
 	}
 };
@@ -117,13 +121,12 @@ export const startAutoPlay = (
 	phase: Phase,
 	conditions: Conditions,
 ) => {
-	if (local.autoPlayUntil) {
-		throw new Error("autoPlay already running");
-	}
+	cleanupAutoPlay();
 
-	const { promise, resolve } = Promise.withResolvers<void>();
+	const { promise, reject, resolve } = Promise.withResolvers<void>();
 
 	local.autoPlayUntil = {
+		reject,
 		resolve,
 		phase,
 		season,

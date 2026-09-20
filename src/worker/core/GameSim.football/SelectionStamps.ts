@@ -5,8 +5,12 @@ type DepthSlots = {
 	slots: number[];
 };
 
-// All storage belongs to one game. Player IDs use Map's SameValueZero equality,
-// matching Set even when separate player objects share an ID.
+// Reusable "already selected" set for one team's lineup. start() logically clears
+// it before every team selection, including repeated selections within one play.
+// Only ID-to-slot bookkeeping persists: energy, injury state, and selection
+// decisions are never cached. The caller reads current player state each time.
+// Storage belongs to one game. Map's SameValueZero ID equality matches Set even
+// when separate player objects share an ID.
 export default class SelectionStamps {
 	private slotsById = new Map<number, number>();
 	private slotsByDepth = new WeakMap<PlayerGameSim[], DepthSlots>();
@@ -14,6 +18,7 @@ export default class SelectionStamps {
 	private stamp = 0;
 
 	start() {
+		// Earlier marks no longer match, so no ID is marked as already selected.
 		this.stamp = (this.stamp + 1) >>> 0;
 		if (this.stamp === 0) {
 			this.used.fill(0);

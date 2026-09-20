@@ -1,4 +1,5 @@
 import type { Position } from "../../../common/types.football.ts";
+import helpers from "../../util/helpers.ts";
 import type { PenaltyPlayType } from "./types.ts";
 
 type Penalty = {
@@ -20,7 +21,8 @@ type Penalty = {
 	// undefined means no player is assigned the penalty (like delay of game). An empty object means all players will be given equal weight.
 	posOdds?: Partial<Record<Position, number>>;
 };
-const penalties: Penalty[] = [
+
+export const penalties: Penalty[] = [
 	{
 		name: "Holding",
 		side: "offense",
@@ -579,7 +581,7 @@ const penalties: Penalty[] = [
 ];
 
 // Total each season, to compare with penalty.numPerSeason for frequency calculation
-const numPlays = {
+const numPlays: Record<PenaltyPlayType, number> = {
 	kickoffReturn: 2500,
 	punt: 2000,
 	puntReturn: 2000,
@@ -601,10 +603,8 @@ for (const pen of penalties) {
 
 // Each play type keeps the original definition order, which controls RNG draws.
 export const penaltiesByPlayType = {} as Record<PenaltyPlayType, Penalty[]>;
-for (const playType of Object.keys(numPlays) as PenaltyPlayType[]) {
+for (const playType of helpers.keys(numPlays)) {
 	penaltiesByPlayType[playType] = penalties.filter((pen) =>
 		pen.playTypes.includes(playType),
 	);
 }
-
-export default penalties;

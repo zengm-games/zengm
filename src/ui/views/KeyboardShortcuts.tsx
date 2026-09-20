@@ -1,5 +1,5 @@
 import fastDeepEqual from "fast-deep-equal";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { showNotification } from "../util/showNotification.ts";
@@ -18,41 +18,29 @@ import { Modal } from "../components/Modal.tsx";
 
 type ShortcutOrNull = KeyboardShortcutInfo["shortcut"] | null;
 
-const KeyboardShortcutModal = ({
+const KeyboardShortcutModalContents = ({
 	cancel,
-	save,
 	initialShortcut,
-	categoryAndAction,
+	modalRef,
+	save,
+	show,
 }: {
 	cancel: () => void;
-	categoryAndAction: [KeyboardShortcutCategories, string] | undefined;
-	save: (shortcut: ShortcutOrNull) => void;
 	initialShortcut: ShortcutOrNull;
+	modalRef: RefObject<{
+		dialog: HTMLDivElement;
+	} | null>;
+	save: (shortcut: ShortcutOrNull) => void;
+	show: boolean;
 }) => {
 	const [shortcut, setShortcut] = useState(initialShortcut);
 
-	const category = categoryAndAction?.[0];
-	const action = categoryAndAction?.[1];
-
 	useEffect(() => {
-		setShortcut(initialShortcut);
-	}, [initialShortcut, category, action]);
-
-	const show = categoryAndAction !== undefined;
-
-	const modalRef = useRef<{
-		dialog: HTMLDivElement;
-	} | null>(null);
-
-	useEffect(() => {
-		if (!show) {
+		if (!show || !modalRef.current) {
 			return;
 		}
 
-		const modalElement = modalRef.current?.dialog;
-		if (!modalElement) {
-			return;
-		}
+		const modalElement = modalRef.current.dialog;
 
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.isComposing) {
@@ -88,10 +76,10 @@ const KeyboardShortcutModal = ({
 		return () => {
 			modalElement.removeEventListener("keydown", handleKeydown);
 		};
-	}, [save, shortcut, show]);
+	}, [modalRef, save, shortcut, show]);
 
 	return (
-		<Modal animation show={show} onHide={cancel} ref={modalRef}>
+		<>
 			<Modal.Body>
 				<div className="text-center mb-3">
 					Press the desired key combination and then press ENTER
@@ -121,6 +109,37 @@ const KeyboardShortcutModal = ({
 					Save
 				</button>
 			</Modal.Footer>
+		</>
+	);
+};
+
+const KeyboardShortcutModal = ({
+	cancel,
+	categoryAndAction,
+	initialShortcut,
+	save,
+}: {
+	cancel: () => void;
+	categoryAndAction: [KeyboardShortcutCategories, string] | undefined;
+	initialShortcut: ShortcutOrNull;
+	save: (shortcut: ShortcutOrNull) => void;
+}) => {
+	const show = categoryAndAction !== undefined;
+
+	const modalRef = useRef<{
+		dialog: HTMLDivElement;
+	} | null>(null);
+
+	return (
+		<Modal animation show={show} onHide={cancel} ref={modalRef}>
+			<KeyboardShortcutModalContents
+				key={JSON.stringify(categoryAndAction)}
+				cancel={cancel}
+				initialShortcut={initialShortcut}
+				modalRef={modalRef}
+				save={save}
+				show={show}
+			/>
 		</Modal>
 	);
 };

@@ -4,7 +4,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, lock, logEvent } from "../../util/index.ts";
 import type { Conditions, GameResults, Player } from "../../../common/types.ts";
 import stats from "../player/stats.ts";
-import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
+import { statsRowIsCurrent } from "../player/statsRowIsCurrent.ts";
 import { last, maxBy } from "../../../common/utils.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";

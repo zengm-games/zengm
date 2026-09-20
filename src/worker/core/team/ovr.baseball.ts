@@ -1,6 +1,5 @@
 import type { Position } from "../../../common/types.baseball.ts";
 import ovrByPosFactory from "./ovrByPosFactory.ts";
-import prepareOvr from "./prepareOvr.baseball.ts";
 
 // See analysis/team-ovr-baseball
 
@@ -30,8 +29,5 @@ const scale = (predictedMOV: number) => {
 };
 
 const ovr = ovrByPosFactory(weights, intercept, scale);
-
-export const prepareWholeRoster = (players: Parameters<typeof prepareOvr>[0]) =>
-	prepareOvr(players, weights, intercept);
 
 export default ovr;

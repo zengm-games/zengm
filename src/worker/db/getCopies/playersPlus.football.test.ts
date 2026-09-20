@@ -119,7 +119,7 @@ test("each request uses the current stat list when a caller reuses and edits its
 	assert.isFalse(Object.hasOwn(first.careerStats, "cmpPct"));
 });
 
-test("compiled projections retain metadata and isolate nested returned stats", async () => {
+test("projections retain metadata and isolate nested returned stats", async () => {
 	for (const row of p.stats) {
 		row.customMax = null;
 	}
@@ -147,7 +147,7 @@ test("compiled projections retain metadata and isolate nested returned stats", a
 	assert.deepEqual(p, before);
 });
 
-test("compiles the current request after awaiting abbreviation loading", async () => {
+test("uses the current request after awaiting abbreviation loading", async () => {
 	let release!: () => void;
 	const gate = new Promise<void>((resolve) => {
 		release = resolve;

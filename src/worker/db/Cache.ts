@@ -677,8 +677,8 @@ class Cache {
 		if (storeInfo.indexes) {
 			const rows = Object.values(this._data[store]);
 			for (const index of storeInfo.indexes) {
-				this._indexes[index.name] = {};
-				const values = this._indexes[index.name];
+				const values: Record<string, any> = {};
+				this._indexes[index.name] = values;
 
 				for (const row of rows) {
 					if (index.filter && !index.filter(row)) {
@@ -688,11 +688,8 @@ class Cache {
 					const key = getIndexKey(index, row);
 
 					if (!index.unique) {
-						if (!Object.hasOwn(values, key)) {
-							values[key] = [row];
-						} else {
-							values[key].push(row);
-						}
+						values[key] ??= [];
+						values[key].push(row);
 					} else {
 						values[key] = row;
 					}

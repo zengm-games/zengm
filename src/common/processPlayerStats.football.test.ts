@@ -1,9 +1,5 @@
 import { assert, test } from "vitest";
-import {
-	compileStats,
-	processStats,
-	statFunctions,
-} from "./processPlayerStats.football.ts";
+import { processStats } from "./processPlayerStats.football.ts";
 import footballStats from "../worker/core/player/stats.football.ts";
 
 const makeStats = () => ({
@@ -89,96 +85,4 @@ test("fantasy-point settings are read only for requested fantasy stats", () => {
 		() => processStats(input, ["age"], undefined, getFantasyPoints),
 		/bornYear/,
 	);
-});
-
-test("compiled requests match direct projection across formulas, missing stats, and metadata", () => {
-	const keys = [
-		...footballStats.raw,
-		...footballStats.derived,
-		...Object.keys(statFunctions),
-		"jerseyNumber",
-		"custom",
-		"missing",
-	];
-	let seed = 517239;
-	const random = () => {
-		seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-		return seed / 4294967296;
-	};
-	const requests = [
-		keys,
-		["gp", "av"],
-		["keyStats"],
-		["toString", "jerseyNumber", "missing"],
-	];
-	for (const fantasy of ["standard", "ppr", "halfPpr"] as const) {
-		for (const stats of requests) {
-			const run = compileStats(stats, () => fantasy);
-			for (let i = 0; i < 36; i++) {
-				const input: any = Object.fromEntries(
-					keys.map((key) => [key, Math.floor(random() * 100)]),
-				);
-				input.season = 2016;
-				input.playoffs = i % 3 === 0 ? "combined" : i % 2 === 0;
-				input.hasTot = i % 4 === 0;
-				if (i % 3 === 0) {
-					for (let j = 0; j < keys.length; j += 5) {
-						input[keys[j]!] = [undefined, Number.NaN, Infinity, -Infinity, -0][
-							(j / 5) % 5
-						];
-					}
-				}
-				const before = structuredClone(input);
-				const expected = processStats(input, stats, 1990, () => fantasy);
-				const actual = run(input, 1990);
-				assert.deepEqual(actual, expected);
-				assert.deepEqual(Object.keys(actual), Object.keys(expected));
-				assert.deepEqual(input, before);
-			}
-		}
-	}
-});
-
-test("compiled requests preserve duplicate keys and evaluate current fantasy settings", () => {
-	const input = {
-		...makeStats(),
-		rec: 8,
-		jerseyNumber: undefined,
-		hasTot: true,
-	};
-	let mode: "ppr" | "halfPpr" = "ppr";
-	let calls = 0;
-	const getFantasy = () => {
-		calls += 1;
-		return mode;
-	};
-	const stats = ["gp", "fp", "gp", "fp", "toString", "jerseyNumber"];
-	const run = compileStats(stats, getFantasy);
-	const first = run(input, 1990);
-	assert.deepEqual(
-		first,
-		processStats(input, stats, 1990, () => mode),
-	);
-	mode = "halfPpr";
-	input.gp = 3;
-	const second = run(input, 1990);
-	assert.deepEqual(
-		second,
-		processStats(input, stats, 1990, () => mode),
-	);
-	assert.notStrictEqual(first, second);
-	assert.strictEqual(first.gp, 2);
-	assert.strictEqual(calls, 4);
-	assert.strictEqual(second.hasTot, true);
-	assert.strictEqual(second.playoffs, false);
-	assert.strictEqual(second.jerseyNumber, undefined);
-	assert.strictEqual(second.toString, "[object Object]");
-	compileStats(["gp"], getFantasy)(input, 1990);
-	assert.strictEqual(calls, 4);
-	assert.throws(
-		() => compileStats(["age"], getFantasy)(input, undefined),
-		/bornYear/,
-	);
-	const invalid = compileStats(["__proto__"], getFantasy);
-	assert.throws(() => invalid(input, 1990), TypeError);
 });

@@ -1742,16 +1742,17 @@ class GameSim extends GameSimBase {
 
 			for (const pos of helpers.keys(this.playersOnIce[t])) {
 				for (const p of this.playersOnIce[t][pos]) {
-					this.recordStat(t, p, "min", possessionTime);
+					p.stat.min += possessionTime;
+					this.team[t].stat.min += possessionTime;
 					if (strengthType === "pp") {
-						this.recordStat(t, p, "ppMin", possessionTime);
+						p.stat.ppMin += possessionTime;
 					} else if (strengthType === "sh") {
-						this.recordStat(t, p, "shMin", possessionTime);
+						p.stat.shMin += possessionTime;
 					}
 					p.stat.courtTime += possessionTime;
 
 					if (pos === "G") {
-						this.recordStat(t, p, "gMin", possessionTime);
+						p.stat.gMin += possessionTime;
 					}
 
 					// This used to be 0.04. Increase more to lower PT
@@ -1925,14 +1926,7 @@ class GameSim extends GameSimBase {
 		// Filter out stats that don't get saved to box score
 		if (s !== "gs" && s !== "gp") {
 			// Filter out stats that are only for player, not team
-			if (
-				s !== "ppMin" &&
-				s !== "shMin" &&
-				s !== "gpSkater" &&
-				s !== "gpGoalie" &&
-				s !== "ga" &&
-				s !== "gMin"
-			) {
+			if (s !== "gpSkater" && s !== "gpGoalie" && s !== "ga") {
 				const teamStat = this.team[t].stat;
 				teamStat[s] += amt;
 

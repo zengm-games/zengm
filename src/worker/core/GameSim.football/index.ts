@@ -2815,7 +2815,8 @@ class GameSim extends GameSimBase {
 				// @ts-expect-error
 				for (const p of this.playersOnField[t][pos]) {
 					onField.add(p.id);
-					this.recordStat(t, p, "min", possessionTime);
+					p.stat.min += possessionTime;
+					this.team[t].stat.min += possessionTime;
 					p.stat.courtTime += possessionTime;
 
 					// This used to be 0.04. Increase more to lower PT
@@ -2937,7 +2938,7 @@ class GameSim extends GameSimBase {
 				teamStat[s] += signedAmount;
 			}
 
-			if (p !== undefined && s !== "min") {
+			if (p !== undefined) {
 				const logAmount = isLng ? p.stat[s] : signedAmount;
 				this.playByPlay.logStat(t, p.id, s, logAmount);
 			} else if (

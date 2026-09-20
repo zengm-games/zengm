@@ -1309,8 +1309,12 @@ class GameSim extends GameSimBase {
 			// Update minutes (overall, court, and bench)
 			for (const p of this.team[t].player) {
 				if (playersOnCourt.includes(p)) {
-					this.recordStat(t, p, "min", min);
-					// These internal stats do not affect team totals or play-by-play.
+					p.stat.min += min;
+					this.team[t].stat.min += min;
+					if (this.playByPlay.active) {
+						this.playByPlay.logStat(t, p.id, "min", min);
+					}
+
 					p.stat.courtTime += min;
 
 					// This used to be 0.04. Increase more to lower PT
@@ -2827,7 +2831,7 @@ class GameSim extends GameSimBase {
 	recordStat(
 		t: TeamNum,
 		p: PlayerGameSim | undefined,
-		s: Exclude<Stat, "benchTime" | "courtTime" | "energy">,
+		s: Exclude<Stat, "benchTime" | "courtTime" | "energy" | "min">,
 		amt: number = 1,
 	) {
 		if (p !== undefined) {

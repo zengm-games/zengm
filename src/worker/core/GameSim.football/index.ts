@@ -1279,7 +1279,6 @@ class GameSim extends GameSimBase {
 				const FATIGUE_MODIFIER = pos === "WR" ? 0.75 : 1;
 
 				const depth = this.team[t].depth[pos];
-				const depthSlots = selection.getDepthSlots(depth);
 				const players: PlayerGameSim[] = [];
 				if (FATIGUE_POS.has(pos)) {
 					for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
@@ -1288,7 +1287,7 @@ class GameSim extends GameSimBase {
 						}
 
 						const p = depth[depthIndex]!;
-						if (p.injured || selection.has(p.id, depthSlots, depthIndex)) {
+						if (p.injured || selection.has(p.id)) {
 							continue;
 						}
 
@@ -1306,7 +1305,7 @@ class GameSim extends GameSimBase {
 						}
 
 						const p = depth[depthIndex]!;
-						if (!p.injured && !selection.has(p.id, depthSlots, depthIndex)) {
+						if (!p.injured && !selection.has(p.id)) {
 							players.push(p);
 						}
 					}
@@ -1323,7 +1322,7 @@ class GameSim extends GameSimBase {
 						if (players.length >= numPlayers) {
 							break;
 						}
-						if (!p.injured && !selection.has(p.id, depthSlots, depthIndex)) {
+						if (!p.injured && !selection.has(p.id)) {
 							players.push(p);
 						}
 					}
@@ -1338,7 +1337,7 @@ class GameSim extends GameSimBase {
 							if (players.length >= numPlayers) {
 								break;
 							}
-							if (!selection.has(p.id, depthSlots, depthIndex)) {
+							if (!selection.has(p.id)) {
 								players.push(p);
 							}
 						}

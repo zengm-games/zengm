@@ -9,6 +9,7 @@ import {
 	type CompositeFactorParams,
 } from "./getCompositeFactor.ts";
 import getPlayers from "./getPlayers.ts";
+import SelectionStamps from "./SelectionStamps.ts";
 import formations from "./formations.ts";
 import { penaltiesByPlayType } from "./penalties.ts";
 import type { Position } from "../../../common/types.football.ts";
@@ -119,6 +120,8 @@ const fatigue = (energy: number, injured: boolean): number => {
 };
 
 class GameSim extends GameSimBase {
+	private selectionStamps = new SelectionStamps();
+
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnField: [PlayersOnField, PlayersOnField];
@@ -1265,7 +1268,8 @@ class GameSim extends GameSimBase {
 			const side = sides[i];
 
 			// Don't let one player be used at two positions!
-			const pidsUsed = new Set();
+			const selection = this.selectionStamps;
+			selection.start();
 			this.playersOnField[t] = {};
 
 			for (const pos of helpers.keys(formation[side])) {
@@ -1274,52 +1278,72 @@ class GameSim extends GameSimBase {
 				// Not sure why this adjustment is needed, but without it, basically only the top 3 WR play. Maybe because formations with fewer than 3 WR let some of them rest, so you'd need 3 WR sets called very frequently to ever get them all tired.
 				const FATIGUE_MODIFIER = pos === "WR" ? 0.75 : 1;
 
-				const players = this.team[t].depth[pos]
-					.filter((p) => !p.injured)
-					.filter((p) => !pidsUsed.has(p.id))
-					.filter((p) => {
-						if (!FATIGUE_POS.has(pos)) {
-							return true;
+				const depth = this.team[t].depth[pos];
+				const depthSlots = selection.getDepthSlots(depth);
+				const players: PlayerGameSim[] = [];
+				if (FATIGUE_POS.has(pos)) {
+					for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
+						if (players.length >= numPlayers) {
+							break;
 						}
 
-						return (
+						const p = depth[depthIndex]!;
+						if (p.injured || selection.has(p.id, depthSlots, depthIndex)) {
+							continue;
+						}
+
+						if (
 							Math.random() <
 							FATIGUE_MODIFIER * fatigue(p.stat.energy, p.injured)
-						);
-					});
-				this.playersOnField[t][pos] = players.slice(0, numPlayers);
-				for (const p of this.playersOnField[t][pos]) {
-					pidsUsed.add(p.id);
+						) {
+							players.push(p);
+						}
+					}
+				} else {
+					for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
+						if (players.length >= numPlayers) {
+							break;
+						}
+
+						const p = depth[depthIndex]!;
+						if (!p.injured && !selection.has(p.id, depthSlots, depthIndex)) {
+							players.push(p);
+						}
+					}
+				}
+				this.playersOnField[t][pos] = players;
+				for (const p of players) {
+					selection.mark(p.id);
 				}
 
-				if (this.playersOnField[t][pos].length < numPlayers) {
+				if (players.length < numPlayers) {
 					// Retry without ignoring fatigued players
-					const players = this.team[t].depth[pos]
-						.filter((p) => !p.injured)
-						.filter((p) => !pidsUsed.has(p.id));
-					this.playersOnField[t][pos].push(
-						...players.slice(
-							0,
-							numPlayers - this.playersOnField[t][pos].length,
-						),
-					);
-					for (const p of this.playersOnField[t][pos]) {
-						pidsUsed.add(p.id);
+					for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
+						const p = depth[depthIndex]!;
+						if (players.length >= numPlayers) {
+							break;
+						}
+						if (!p.injured && !selection.has(p.id, depthSlots, depthIndex)) {
+							players.push(p);
+						}
+					}
+					for (const p of players) {
+						selection.mark(p.id);
 					}
 
 					// Retry without ignoring injured players
-					if (this.playersOnField[t][pos].length < numPlayers) {
-						const players = this.team[t].depth[pos].filter(
-							(p) => !pidsUsed.has(p.id),
-						);
-						this.playersOnField[t][pos].push(
-							...players.slice(
-								0,
-								numPlayers - this.playersOnField[t][pos].length,
-							),
-						);
-						for (const p of this.playersOnField[t][pos]) {
-							pidsUsed.add(p.id);
+					if (players.length < numPlayers) {
+						for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
+							const p = depth[depthIndex]!;
+							if (players.length >= numPlayers) {
+								break;
+							}
+							if (!selection.has(p.id, depthSlots, depthIndex)) {
+								players.push(p);
+							}
+						}
+						for (const p of players) {
+							selection.mark(p.id);
 						}
 					}
 				}

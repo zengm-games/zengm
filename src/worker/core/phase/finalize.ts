@@ -16,6 +16,11 @@ import { getGlobalSettings } from "../../util/getGlobalSettings.ts";
 import { processScheduledEvents } from "./processScheduledEvents.ts";
 import { cleanupAutoPlay } from "../league/autoPlay.ts";
 
+const save = async () => {
+	await updateStatus("Saving...");
+	await idb.cache.flush();
+};
+
 /**
  * Common tasks run after a new phrase is set.
  *
@@ -32,18 +37,21 @@ const finalize = async (
 	conditions: Conditions,
 	{ redirect, updateEvents = [] }: PhaseReturn,
 ) => {
-	await updateStatus("Saving...");
-
 	// Set phase before saving to database
 	await league.setGameAttributes({
 		phase,
 	});
 
-	// Fill only in preseason, because not much changes before then
-	await idb.cache.flush();
-
+	let saved = false;
 	if (phase === PHASE.PRESEASON) {
+		// Fill only in preseason, because not much changes before then
+		await save();
+		saved = true;
 		await idb.cache.fill();
+	} else if (!local.autoPlayUntil && phase !== PHASE.AFTER_TRADE_DEADLINE) {
+		// Flush on other phase changes only outside of auto play, except never for trade deadline one cause who cares
+		await save();
+		saved = true;
 	}
 
 	await lock.set("newPhase", false);
@@ -94,12 +102,17 @@ const finalize = async (
 			(local.autoPlayUntil.season === g.get("season") &&
 				local.autoPlayUntil.phase <= phase)
 		) {
+			if (!saved) {
+				await save();
+				await updateStatus();
+			}
 			console.log(
 				`Auto play done in ${
 					(Date.now() - local.autoPlayUntil.start) / 1000
 				} seconds`,
 			);
 			cleanupAutoPlay();
+			await updatePlayMenu();
 		} else {
 			await league.autoPlay(conditions);
 		}

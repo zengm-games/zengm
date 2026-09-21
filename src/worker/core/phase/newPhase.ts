@@ -68,7 +68,10 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		try {
 			await lock.set("newPhase", true);
 
-			await updateStatus("Processing...");
+			if (phase !== PHASE.AFTER_TRADE_DEADLINE) {
+				// Adter trade deadline is so fast that it's not worth the flicker, maybe applies to others too sometimes
+				await updateStatus("Processing...");
+			}
 			await updatePlayMenu();
 
 			if (doPhaseChange[phase]) {

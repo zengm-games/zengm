@@ -319,10 +319,12 @@ export const StatsTable = ({
 						{formatStatGameHigh(ps, stat)}
 					</MaybeBold>
 				)),
-				wrappedSeasonAwards({
-					awards: awardsBySeason.get(ps.season),
-					season: ps.season,
-				}),
+				ps.hasTot
+					? undefined
+					: wrappedSeasonAwards({
+							awards: awardsBySeason.get(ps.season),
+							season: ps.season,
+						}),
 			],
 			classNames: className,
 		});

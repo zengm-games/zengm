@@ -1,10 +1,9 @@
 https://github.com/zengm-games/zengm/pull/543
-- see comments on PR about some things worth doing but not quite right in the PR
-- prepareWholeRoster - better version would be nice
+- add comment about wholeroster withplayer purpose
 - football game sim
   - selectionstamps stuff
     - >>> necessary?
-  - recordStat on min
+  - updateTeamCompositeRatings removal
 
 FA page should show merged stats https://discord.com/channels/@me/778760871911751700/1546991655666847834
 

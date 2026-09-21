@@ -100,4 +100,4 @@ const ovr = (
 	return Math.round(rawOVR);
 };
 
-export default ovr;
+export { ovr };

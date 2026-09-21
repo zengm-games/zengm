@@ -1,10 +1,10 @@
 import { bySport } from "../../../common/sportFunctions.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
 import type { PlayerInjury } from "../../../common/types.ts";
-import ovrBaseball from "./ovr.baseball.ts";
-import ovrBasketball from "./ovr.basketball.ts";
-import ovrFootball from "./ovr.football.ts";
-import ovrHockey from "./ovr.hockey.ts";
+import * as ovrBaseball from "./ovr.baseball.ts";
+import * as ovrBasketball from "./ovr.basketball.ts";
+import * as ovrFootball from "./ovr.football.ts";
+import * as ovrHockey from "./ovr.hockey.ts";
 
 // pos is used for position-specific rankings
 // wholeRoster=true is used for computing team value of the whole roster, like for determining who to draft or sign
@@ -62,11 +62,18 @@ const ovr = (
 	}
 
 	return bySport<(players: any, options: any) => number>({
-		baseball: ovrBaseball,
-		basketball: ovrBasketball,
-		football: ovrFootball,
-		hockey: ovrHockey,
+		baseball: ovrBaseball.ovr,
+		basketball: ovrBasketball.ovr,
+		football: ovrFootball.ovr,
+		hockey: ovrHockey.ovr,
 	})(players2, options);
 };
 
 export default ovr;
+
+export const prepareWholeRoster = bySport({
+	baseball: ovrBaseball.prepareWholeRoster,
+	basketball: undefined,
+	football: ovrFootball.prepareWholeRoster,
+	hockey: ovrHockey.prepareWholeRoster,
+});

@@ -128,7 +128,7 @@ const ovrByPosFactory = (
 		return onlyPos || wholeRoster ? predictedMOV : scale(predictedMOV);
 	};
 
-	// A preparation belongs to one roster at a point in time. Then you can more efficiently evaluate how adding one player to the team changes ovr, for a set of candidate players (such as draft prospects). Overall this is just like 2% faster for simming an entire season in FBGM when used for drafting only, so not a huge improvement given the complexity, but maybe worth it.
+	// A preparation belongs to one roster at a point in time. Then you can more efficiently evaluate how adding one player to the team changes ovr, for a set of candidate players (such as draft prospects or free agents). Overall this is just like 2% faster for simming an entire season in FBGM, so not a huge improvement given the complexity, but maybe worth it.
 	const prepareWholeRoster = (players: Player[]) => {
 		const coefficientsByPos: Record<string, number[]> = {};
 		const getWholeRosterTerms = (pos: string, values: number[]) =>

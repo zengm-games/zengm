@@ -533,7 +533,6 @@ class GameSim extends GameSimBase {
 	probPass() {
 		// Hack!! Basically, we want to see what kind of talent we have before picking if it's a run or pass play, so put the starter (minus fatigue) out there and compute these
 		this.updatePlayersOnField("startersFake");
-		this.updateTeamCompositeRatings();
 
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[0].stat.ptsQtrs.length;

@@ -9,7 +9,6 @@ import {
 	type CompositeFactorParams,
 } from "./getCompositeFactor.ts";
 import getPlayers from "./getPlayers.ts";
-import SelectionStamps from "./SelectionStamps.ts";
 import formations from "./formations.ts";
 import { penaltiesByPlayType } from "./penalties.ts";
 import type { Position } from "../../../common/types.football.ts";
@@ -120,8 +119,6 @@ const fatigue = (energy: number, injured: boolean): number => {
 };
 
 class GameSim extends GameSimBase {
-	private selectionStamps = new SelectionStamps();
-
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnField: [PlayersOnField, PlayersOnField];
@@ -1268,8 +1265,7 @@ class GameSim extends GameSimBase {
 			const side = sides[i];
 
 			// Don't let one player be used at two positions!
-			const selection = this.selectionStamps;
-			selection.start();
+			const pidsUsed = new Set();
 			this.playersOnField[t] = {};
 
 			for (const pos of helpers.keys(formation[side])) {
@@ -1287,7 +1283,7 @@ class GameSim extends GameSimBase {
 						}
 
 						const p = depth[depthIndex]!;
-						if (p.injured || selection.has(p.id)) {
+						if (p.injured || pidsUsed.has(p.id)) {
 							continue;
 						}
 
@@ -1296,6 +1292,7 @@ class GameSim extends GameSimBase {
 							FATIGUE_MODIFIER * fatigue(p.stat.energy, p.injured)
 						) {
 							players.push(p);
+							pidsUsed.add(p.id);
 						}
 					}
 				} else {
@@ -1305,15 +1302,13 @@ class GameSim extends GameSimBase {
 						}
 
 						const p = depth[depthIndex]!;
-						if (!p.injured && !selection.has(p.id)) {
+						if (!p.injured && !pidsUsed.has(p.id)) {
 							players.push(p);
+							pidsUsed.add(p.id);
 						}
 					}
 				}
 				this.playersOnField[t][pos] = players;
-				for (const p of players) {
-					selection.mark(p.id);
-				}
 
 				if (players.length < numPlayers) {
 					// Retry without ignoring fatigued players
@@ -1322,12 +1317,10 @@ class GameSim extends GameSimBase {
 						if (players.length >= numPlayers) {
 							break;
 						}
-						if (!p.injured && !selection.has(p.id)) {
+						if (!p.injured && !pidsUsed.has(p.id)) {
 							players.push(p);
+							pidsUsed.add(p.id);
 						}
-					}
-					for (const p of players) {
-						selection.mark(p.id);
 					}
 
 					// Retry without ignoring injured players
@@ -1337,12 +1330,10 @@ class GameSim extends GameSimBase {
 							if (players.length >= numPlayers) {
 								break;
 							}
-							if (!selection.has(p.id)) {
+							if (!pidsUsed.has(p.id)) {
 								players.push(p);
+								pidsUsed.add(p.id);
 							}
-						}
-						for (const p of players) {
-							selection.mark(p.id);
 						}
 					}
 				}

@@ -1,8 +1,7 @@
 https://github.com/zengm-games/zengm/pull/543
-- add comment about wholeroster withplayer purpose
+- prepareWholeRoster
+  - use anywhere else? signing?
 - football game sim
-  - selectionstamps stuff
-    - >>> necessary?
   - updateTeamCompositeRatings removal
 
 FA page should show merged stats https://discord.com/channels/@me/778760871911751700/1546991655666847834

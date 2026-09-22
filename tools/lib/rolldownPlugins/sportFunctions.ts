@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
-import { transformAsync } from "@babel/core";
+import { statSync } from "node:fs";
+import { transformSync } from "@babel/core";
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import babelPluginSyntaxJsx from "@babel/plugin-syntax-jsx";
 import type { RolldownPlugin, SourceMapInput, TransformResult } from "rolldown";
@@ -21,13 +21,10 @@ export const sportFunctions = (
 
 	const babelPluginSportFunctions = babelPluginSportFunctionsFactory(sport);
 
-	const compile = async (
-		code: string,
-		moduleType: string,
-	): Promise<TransformResult> => {
+	const compile = (code: string, moduleType: string): TransformResult => {
 		const isTsx = moduleType === "tsx";
 
-		const babelResult = await transformAsync(code, {
+		const babelResult = transformSync(code, {
 			babelrc: false,
 			configFile: false,
 			sourceMaps: true,
@@ -51,18 +48,18 @@ export const sportFunctions = (
 				moduleType: ["ts", "tsx"],
 				code: ["bySport", "isSport"],
 			},
-			async handler(
+			handler(
 				code: string,
 				id: string,
 				{ moduleType }: { moduleType: string },
 			) {
 				if (nodeEnv === "development") {
-					const mtimeMs = (await fs.stat(id)).mtimeMs;
+					const { mtimeMs } = statSync(id);
 					const cached = compileCache[id];
 					if (cached?.mtimeMs === mtimeMs) {
 						return cached.result;
 					} else {
-						const result = await compile(code, moduleType);
+						const result = compile(code, moduleType);
 						compileCache[id] = {
 							mtimeMs,
 							result,

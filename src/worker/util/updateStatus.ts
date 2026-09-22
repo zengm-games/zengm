@@ -3,20 +3,20 @@ import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import local from "./local.ts";
 import toUI from "./toUI.ts";
-import type { Conditions } from "../../common/types.ts";
 import { helpers } from "./index.ts";
 
-/*Save status to database and push to client.
+const updateStatusIfNew = (statusText: string) => {
+	if (statusText !== local.statusText) {
+		local.statusText = statusText;
+		toUI("updateLocal", [
+			{
+				statusText,
+			},
+		]);
+	}
+};
 
-If no status is given, set a default status based on game state.
-
-Pass conditions only if you want to force update a single tab (like beforeView).
-
-Args:
-    status: A string containing the current status message to be pushed to
-        the client.
-*/
-const updateStatus = async (statusText?: string, conditions?: Conditions) => {
+const updateStatus = async (statusText?: string) => {
 	if (statusText === undefined) {
 		let computedStatusText = "Idle";
 
@@ -40,29 +40,9 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 			}
 		}
 
-		local.statusText = computedStatusText;
-		toUI("updateLocal", [
-			{
-				statusText: computedStatusText,
-			},
-		]);
-	} else if (statusText !== local.statusText) {
-		local.statusText = statusText;
-		toUI("updateLocal", [
-			{
-				statusText,
-			},
-		]);
-	} else if (conditions !== undefined) {
-		toUI(
-			"updateLocal",
-			[
-				{
-					statusText,
-				},
-			],
-			conditions,
-		);
+		updateStatusIfNew(computedStatusText);
+	} else {
+		updateStatusIfNew(statusText);
 	}
 };
 

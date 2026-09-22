@@ -42,6 +42,9 @@ type Props = {
 	// Allow overriding settings, for places where we're sure there is always room
 	fullNames?: boolean;
 
+	// Maybe this is confusing along with fullNames, which does more than affect names...
+	alwaysUseFirstNameShort?: boolean;
+
 	// Pass to override firstName and lastName
 	legacyName?: string;
 
@@ -140,6 +143,7 @@ export const PlayerNameLabels = (props: Props) => {
 
 	const {
 		abbrev,
+		alwaysUseFirstNameShort,
 		awards,
 		awardsSeason,
 		count,
@@ -197,19 +201,34 @@ export const PlayerNameLabels = (props: Props) => {
 		}
 	}
 
-	const name = (
-		<>
-			{firstNameShort && !fullNames ? (
-				<>
-					<span className="d-inline-block d-sm-none">{firstNameShort}</span>
-					<span className="d-none d-sm-inline">{firstName}</span>
-				</>
-			) : (
-				firstName
-			)}{" "}
-			{lastName}
-		</>
-	);
+	let name;
+	if (firstNameShort && alwaysUseFirstNameShort) {
+		name = (
+			<span
+				title={
+					firstNameShort && alwaysUseFirstNameShort
+						? `${firstName} ${lastName}`
+						: undefined
+				}
+			>
+				{firstNameShort} {lastName}
+			</span>
+		);
+	} else {
+		name = (
+			<>
+				{firstNameShort && !fullNames ? (
+					<>
+						<span className="d-inline-block d-sm-none">{firstNameShort}</span>
+						<span className="d-none d-sm-inline">{firstName}</span>
+					</>
+				) : (
+					firstName
+				)}{" "}
+				{lastName}
+			</>
+		);
+	}
 
 	const nameLabelsBlock = (
 		<span style={style}>

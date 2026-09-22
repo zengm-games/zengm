@@ -150,9 +150,10 @@ const Leaders = ({
 											season={numericSeason}
 											skills={p.skills}
 											defaultWatch={p.watch}
-											firstName={p.firstNameShort}
+											firstName={p.firstName}
 											firstNameShort={p.firstNameShort}
 											lastName={p.lastName}
+											alwaysUseFirstNameShort
 										/>
 										<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
 											{p.abbrev}

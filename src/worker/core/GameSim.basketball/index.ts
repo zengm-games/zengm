@@ -1618,7 +1618,11 @@ class GameSim extends GameSimBase {
 			if (inBonus) {
 				this.doPf({ t: this.d, type: "pfBonus", shooter });
 			} else {
-				this.doPf({ t: this.d, type: "pfNonShooting" });
+				this.doPf({
+					t: this.d,
+					type: "pfNonShooting",
+					intentional: clockFactor === "intentionalFoul",
+				});
 			}
 
 			if (inBonus) {
@@ -2624,6 +2628,7 @@ class GameSim extends GameSimBase {
 					type: "pfNonShooting";
 					shooter?: undefined;
 					fouler?: PlayerGameSim;
+					intentional: boolean;
 			  }
 			| {
 					t: TeamNum;
@@ -2647,6 +2652,7 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logEvent({
 					...baseLogInformation,
 					type: info.type,
+					intentional: info.intentional,
 				});
 			} else {
 				this.playByPlay.logEvent({

@@ -693,7 +693,7 @@ class GameSim extends GameSimBase {
 		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
 		const target = this.pickPlayer(t2, undefined, ["C", "W", "D"]);
 
-		target.stat.energy -= -0.5;
+		target.stat.energy += -0.5;
 
 		this.recordStat(t, hitter, "hit", 1);
 		this.playByPlay.logEvent({

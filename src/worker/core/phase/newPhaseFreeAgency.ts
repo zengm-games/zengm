@@ -1,4 +1,4 @@
-import { contractNegotiation, freeAgents, player } from "../index.ts";
+import { contractNegotiation, freeAgents, league, player } from "../index.ts";
 import { helpers } from "../../util/index.ts";
 import type { PhaseReturn } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
@@ -26,6 +26,10 @@ const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
 		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 	}
 	await idb.cache.players.putAll(players);
+
+	await league.setGameAttributes({
+		freeAgencySigningsThisDay: 0,
+	});
 
 	return {
 		redirect: {

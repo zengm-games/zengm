@@ -394,23 +394,23 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			saving: true,
 		}));
 
-		const p = props.p;
-
-		// Copy over values from state, if they're valid
-		const recomputePosOvrPot = copyValidValues(
-			state.p,
-			p,
-			minContract,
-			phase,
-			season,
-		);
-
-		// Only save image URL if it's selected
-		if (state.appearanceOption !== "Image URL") {
-			p.imgURL = "";
-		}
-
 		try {
+			const p = props.p;
+
+			// Copy over values from state, if they're valid
+			const recomputePosOvrPot = copyValidValues(
+				state.p,
+				p,
+				minContract,
+				phase,
+				season,
+			);
+
+			// Only save image URL if it's selected
+			if (state.appearanceOption !== "Image URL") {
+				p.imgURL = "";
+			}
+
 			const pid = await toWorker("main", "upsertCustomizedPlayer", {
 				p,
 				originalTid: props.originalTid,

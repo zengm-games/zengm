@@ -1479,7 +1479,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											disabled={disableWhileLoadingLeagueFile}
 											processing={showLoadingIndicator}
 											onClick={generateCrossEraTeams}
-											processingText="Selecting Teams"
+											processingText="Selecting teams"
 										>
 											Regenerate Historical Teams
 										</ActionButton>

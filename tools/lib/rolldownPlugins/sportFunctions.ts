@@ -11,7 +11,7 @@ export const sportFunctions = (
 	nodeEnv: "development" | "production" | "test",
 	sport: Sport,
 ) => {
-	const babelCache: Record<
+	const compileCache: Record<
 		string,
 		{
 			mtimeMs: number;
@@ -20,6 +20,29 @@ export const sportFunctions = (
 	> = {};
 
 	const babelPluginSportFunctions = babelPluginSportFunctionsFactory(sport);
+
+	const compile = async (
+		code: string,
+		moduleType: string,
+	): Promise<TransformResult> => {
+		const isTsx = moduleType === "tsx";
+
+		const babelResult = await transformAsync(code, {
+			babelrc: false,
+			configFile: false,
+			sourceMaps: true,
+			plugins: [
+				babelPluginSyntaxTypescript,
+				...(isTsx ? [babelPluginSyntaxJsx] : []),
+				babelPluginSportFunctions,
+			],
+		});
+
+		return {
+			code: babelResult!.code!,
+			map: babelResult!.map as SourceMapInput,
+		};
+	};
 
 	return {
 		name: "sport-functions",
@@ -33,41 +56,22 @@ export const sportFunctions = (
 				id: string,
 				{ moduleType }: { moduleType: string },
 			) {
-				let mtimeMs;
 				if (nodeEnv === "development") {
-					mtimeMs = (await fs.stat(id)).mtimeMs;
-					const cached = babelCache[id];
+					const mtimeMs = (await fs.stat(id)).mtimeMs;
+					const cached = compileCache[id];
 					if (cached?.mtimeMs === mtimeMs) {
 						return cached.result;
+					} else {
+						const result = await compile(code, moduleType);
+						compileCache[id] = {
+							mtimeMs,
+							result,
+						};
+						return result;
 					}
+				} else {
+					return compile(code, moduleType);
 				}
-
-				const isTsx = moduleType === "tsx";
-
-				const babelResult = await transformAsync(code, {
-					babelrc: false,
-					configFile: false,
-					sourceMaps: true,
-					plugins: [
-						babelPluginSyntaxTypescript,
-						...(isTsx ? [babelPluginSyntaxJsx] : []),
-						babelPluginSportFunctions,
-					],
-				});
-
-				const result = {
-					code: babelResult!.code!,
-					map: babelResult!.map as SourceMapInput,
-				};
-
-				if (nodeEnv === "development") {
-					babelCache[id] = {
-						mtimeMs: mtimeMs!,
-						result,
-					};
-				}
-
-				return result;
 			},
 		},
 	} satisfies RolldownPlugin;

@@ -41,7 +41,7 @@ const BOTH_AWARD_STATS_SKIP = new Set(
 	bySport({
 		baseball: ["pos"],
 		basketball: [],
-		football: [],
+		football: ["qbRec"],
 		hockey: ["gRec"],
 	}),
 );

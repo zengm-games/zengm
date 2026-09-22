@@ -181,6 +181,7 @@ const updateFreeAgents = async (
 				showRookies: true,
 				fuzz: true,
 				oldStats: true,
+				mergeStats: "totOnly",
 			}),
 		);
 

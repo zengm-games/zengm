@@ -19,6 +19,7 @@ import {
 	getScoreInfo,
 	getScoreInfoOld,
 	getText,
+	penaltySegments,
 	scrimmageToFieldPos,
 	type SportState,
 } from "../util/processLiveGameEvents.football.tsx";
@@ -572,6 +573,7 @@ const VerticalLine = ({
 };
 
 const blue = "#80bdff";
+const orange = "#fd7e14";
 const yellow = "#ffc107";
 const lightGreen = "lightgreen";
 const darkGreen = "#1e7e34";
@@ -631,6 +633,20 @@ const PlayBar = ({
 	const yardsPercent = yardsToPercent(play.yards);
 
 	const showTag = !play.subPlay;
+
+	// Yards from an accepted penalty, in yellow at the far end of the bar. The
+	// fill takes whatever width is left after the tags -- which is exactly the
+	// bar's yardage -- and splits it between play and penalty by yards.
+	const segments = penaltySegments(play.yards, play.penaltyYards);
+	const penaltyFill =
+		segments.penalty > 0 ? (
+			<div
+				className={`d-flex flex-grow-1${barGoingLeft ? " flex-row-reverse" : ""}`}
+			>
+				<div style={{ flexGrow: segments.play }} />
+				<div style={{ flexGrow: segments.penalty, backgroundColor: yellow }} />
+			</div>
+		) : null;
 
 	// Extra 2px is to account for border
 	let margin;
@@ -730,7 +746,9 @@ const PlayBar = ({
 							? lightGreen
 							: play.intendedPossessionChange
 								? darkGray
-								: blue,
+								: play.playType === "run"
+									? orange
+									: blue,
 					[driveDirection ? "marginLeft" : "marginRight"]: margin,
 					width: `calc(${
 						(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +
@@ -740,6 +758,7 @@ const PlayBar = ({
 				{...props}
 			>
 				{score && barGoingLeft ? scoreTag : null}
+				{barGoingLeft ? penaltyFill : null}
 				{showTag ? (
 					<div
 						className={`${
@@ -772,6 +791,7 @@ const PlayBar = ({
 				) : (
 					<>&nbsp;</>
 				)}
+				{!barGoingLeft ? penaltyFill : null}
 			</div>
 			{score && !barGoingLeft ? scoreTag : null}
 			{driveDirection ? flags : null}

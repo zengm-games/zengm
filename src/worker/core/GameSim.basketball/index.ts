@@ -749,6 +749,30 @@ class GameSim extends GameSimBase {
 		return intentionalFoul;
 	}
 
+	probNonShootingFoul() {
+		let probability = 0.08;
+		const defensiveLead =
+			this.team[this.d].stat.pts - this.team[this.o].stat.pts;
+
+		// Protect a close lead (or a tie) without giving away free throws. Keep
+		// fouls to give and intentional fouling separate from this adjustment.
+		// Calibrated to 2021-24 NBA play-by-play: roughly 4-5 non-shooting
+		// penalty fouls per 100 possessions in this situation. The probability
+		// here is per check, so it is not directly a per-possession rate.
+		if (
+			!this.elamActive &&
+			this.team[this.o].stat.ptsQtrs.length >= this.numPeriods &&
+			this.t <= 60 &&
+			defensiveLead >= 0 &&
+			defensiveLead <= 2 &&
+			this.getNumFoulsUntilBonus() <= 1
+		) {
+			probability *= 0.5;
+		}
+
+		return probability * g.get("foulRateFactor");
+	}
+
 	// When a shot is made and the clock is still running, some time runs off the clock before the next possession starts. No need to worry about going into negative clock values, since the clock stops after made baskets with under 2 minutes left
 	dtInbound() {
 		let dt = 0;
@@ -1576,7 +1600,7 @@ class GameSim extends GameSimBase {
 
 		// Non-shooting foul?
 		if (
-			Math.random() < 0.08 * g.get("foulRateFactor") ||
+			Math.random() < this.probNonShootingFoul() ||
 			clockFactor === "intentionalFoul"
 		) {
 			let dt;

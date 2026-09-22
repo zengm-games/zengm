@@ -163,7 +163,7 @@ const playStop = async () => {
 
 	if (g.get("phase") !== PHASE.FREE_AGENCY) {
 		// This is needed because we can't be sure if core.game.play will be called again
-		await updateStatus("Idle");
+		await updateStatus();
 	}
 
 	await lock.set("gameSim", false);

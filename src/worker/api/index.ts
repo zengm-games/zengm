@@ -3958,7 +3958,7 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 	const userTid = g.get("userTid");
 	if (userTid !== tid) {
 		await team.switchTo(tid);
-		await updateStatus("Idle");
+		await updateStatus();
 		await updatePlayMenu();
 	}
 
@@ -3966,7 +3966,7 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 		await league.setGameAttributes({
 			otherTeamsWantToHire: false,
 		});
-		await updateStatus("Idle");
+		await updateStatus();
 		await updatePlayMenu();
 	}
 

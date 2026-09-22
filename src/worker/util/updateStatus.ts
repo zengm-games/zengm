@@ -18,19 +18,17 @@ Args:
 */
 const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 	if (statusText === undefined) {
-		// This should only be triggered on loading a league from DB for now, but eventually this could actually
-		// populate statusText in most situations (just call with no argument).
-		let defaultStatusText = "Idle";
+		let computedStatusText = "Idle";
 
 		if (g.get("gameOver")) {
 			const t = await idb.cache.teams.get(g.get("userTid"));
 			if (t && t.disabled) {
-				defaultStatusText = "Your team folded!";
+				computedStatusText = "Your team folded!";
 			} else {
-				defaultStatusText = "You're fired!";
+				computedStatusText = "You're fired!";
 			}
 		} else if (g.get("phase") === PHASE.FREE_AGENCY) {
-			defaultStatusText = helpers.daysLeft(true);
+			computedStatusText = helpers.daysLeft(true);
 		} else if (g.get("phase") === PHASE.DRAFT) {
 			const drafted = await idb.cache.players.indexGetAll("playersByTid", [
 				0,
@@ -38,14 +36,14 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 			]);
 
 			if (drafted.some((p) => p.draft.year === g.get("season"))) {
-				defaultStatusText = "Draft in progress...";
+				computedStatusText = "Draft in progress...";
 			}
 		}
 
-		local.statusText = defaultStatusText;
+		local.statusText = computedStatusText;
 		toUI("updateLocal", [
 			{
-				statusText: defaultStatusText,
+				statusText: computedStatusText,
 			},
 		]);
 	} else if (statusText !== local.statusText) {

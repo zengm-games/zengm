@@ -23,7 +23,7 @@ const close = async (disconnect?: boolean) => {
 		if (local.leagueLoaded && idb.cache._dirty) {
 			await updateStatus("Saving...");
 			await idb.cache.flush();
-			await updateStatus("Idle");
+			await updateStatus();
 		}
 
 		if (disconnect) {

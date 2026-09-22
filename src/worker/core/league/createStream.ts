@@ -1716,7 +1716,7 @@ const afterDBStream = async ({
 
 	if (!skipNewPhase || realPlayers) {
 		await updatePhase();
-		await updateStatus("Idle");
+		await updateStatus();
 
 		// Auto sort rosters
 		for (const t of teams) {

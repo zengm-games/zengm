@@ -169,7 +169,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 
 	local.leagueLoaded = true;
 
-	await updateStatus(undefined);
+	await updateStatus();
 	if (loadingNewLid !== newLid) {
 		return;
 	}

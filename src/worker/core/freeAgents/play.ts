@@ -28,10 +28,10 @@ async function play(
 	// This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
 	const cbNoDays = async () => {
 		await lock.set("gameSim", false);
-		await updatePlayMenu(); // Check to see if free agency is over
+		await updatePlayMenu();
 
+		// Check to see if free agency is over
 		if (g.get("daysLeft") <= 0) {
-			await updateStatus("Idle");
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		}
 	};

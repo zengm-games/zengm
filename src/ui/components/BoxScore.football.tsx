@@ -573,7 +573,6 @@ const VerticalLine = ({
 };
 
 const blue = "#80bdff";
-const orange = "#fd7e14";
 const yellow = "#ffc107";
 const lightGreen = "lightgreen";
 const darkGreen = "#1e7e34";
@@ -746,9 +745,7 @@ const PlayBar = ({
 							? lightGreen
 							: play.intendedPossessionChange
 								? darkGray
-								: play.playType === "run"
-									? orange
-									: blue,
+								: blue,
 					[driveDirection ? "marginLeft" : "marginRight"]: margin,
 					width: `calc(${
 						(score && barGoingLeft ? SCORE_TAG_WIDTH : 0) +

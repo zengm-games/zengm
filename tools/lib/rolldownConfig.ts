@@ -96,6 +96,9 @@ export const rolldownConfig = (
 		platform: "browser",
 		plugins,
 		preserveEntrySignatures: false,
+		experimental: {
+			nativeMagicString: true,
+		},
 		checks: {
 			moduleLevelDirective: false,
 			pluginTimings: false,

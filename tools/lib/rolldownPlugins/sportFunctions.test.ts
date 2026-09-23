@@ -1,25 +1,27 @@
 import { rolldown, type RolldownPlugin } from "rolldown";
+import { exactRegex } from "rolldown/filter";
+import { format } from "oxfmt";
 import { assert, describe, test } from "vitest";
 import { sportFunctions } from "./sportFunctions.ts";
-import { format } from "oxfmt";
 
+// https://vite.dev/guide/api-plugin#importing-a-virtual-file
 const testFixturePlugin = (code: string): RolldownPlugin => {
+	const virtualModuleId = "virtual:test-fixture";
+	const resolvedVirtualModuleId = `\0${virtualModuleId}.ts`;
+
 	return {
 		name: "test-fixture-plugin",
-
-		resolveId(id) {
-			if (id === "test-fixture") {
-				// \0 is from https://github.com/rollup/rollup/wiki/Plugins/d8fce05333818df339387aeb777b0c70ec327d82#conventions
-				return "\0test-fixture.ts";
-			}
-			return null;
+		resolveId: {
+			filter: { id: exactRegex(virtualModuleId) },
+			handler() {
+				return resolvedVirtualModuleId;
+			},
 		},
-
-		load(id) {
-			if (id === "\0test-fixture.ts") {
-				return { code };
-			}
-			return null;
+		load: {
+			filter: { id: exactRegex(resolvedVirtualModuleId) },
+			handler() {
+				return code;
+			},
 		},
 	};
 };
@@ -29,7 +31,7 @@ const compile = async (code: string) => {
 		experimental: {
 			attachDebugInfo: "none",
 		},
-		input: "test-fixture",
+		input: "virtual:test-fixture",
 		plugins: [
 			testFixturePlugin(code),
 			sportFunctions("production", "basketball"),

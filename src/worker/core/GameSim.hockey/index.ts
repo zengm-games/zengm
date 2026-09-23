@@ -1744,6 +1744,10 @@ class GameSim extends GameSimBase {
 				for (const p of this.playersOnIce[t][pos]) {
 					p.stat.min += possessionTime;
 					this.team[t].stat.min += possessionTime;
+					if (this.playByPlay.active) {
+						this.playByPlay.logStat(t, p.id, "min", possessionTime);
+					}
+
 					if (strengthType === "pp") {
 						p.stat.ppMin += possessionTime;
 					} else if (strengthType === "sh") {

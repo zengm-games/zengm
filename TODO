@@ -198,6 +198,8 @@ move EventBBGM away from using string "text" property
 - use formatEventText for now, eventually move to something in ui to render them
 
 dev usability stuff
+- get rid of babel
+  - see nativeMagicString branch, but tests are broken and nativeMagicString is experimental
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
   - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
 - use zod in various places, including to replace schema/types difference

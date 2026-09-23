@@ -150,7 +150,7 @@ import type { NewLeagueSettings } from "../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { generateContractOptions } from "../core/contractNegotiation/generateContractOptions.ts";
 import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
 import * as z from "zod";
@@ -1428,7 +1428,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 						return false;
 					}
 
-					if (isSport("baseball")) {
+					if (__SPORT === "baseball") {
 						if (stat === "pos") {
 							return false;
 						}

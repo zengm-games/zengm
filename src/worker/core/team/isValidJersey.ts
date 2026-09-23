@@ -1,5 +1,4 @@
 import { svgsIndex } from "facesjs";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 const isValidJersey = (jersey: unknown) => {
 	if (typeof jersey !== "string") {
@@ -7,7 +6,7 @@ const isValidJersey = (jersey: unknown) => {
 	}
 
 	// Make sure string is a valid jersey, regardless of sport
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		const [jerseyId, accessoryId] = jersey.split(":");
 		if (jerseyId === undefined || accessoryId === undefined) {
 			return false;
@@ -27,8 +26,8 @@ const isValidJersey = (jersey: unknown) => {
 
 	// Make sure sport matches
 	return (
-		(isSport("basketball") && jersey.startsWith("jersey")) ||
-		(!isSport("basketball") && jersey.startsWith(__SPORT))
+		(__SPORT === "basketball" && jersey.startsWith("jersey")) ||
+		(__SPORT !== "basketball" && jersey.startsWith(__SPORT))
 	);
 };
 

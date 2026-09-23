@@ -11,7 +11,7 @@ import { getCols } from "../../../common/getCols.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type { Col } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const suffixes = {
 	Home: "Home",
@@ -303,7 +303,7 @@ type UpdateUrlParam = {
 };
 
 const actuallyAddSuffix = (text: string) => {
-	if (isSport("basketball") && text.includes("Feats")) {
+	if (__SPORT === "basketball" && text.includes("Feats")) {
 		return text;
 	}
 
@@ -458,7 +458,7 @@ const PickStat = ({
 						if (
 							state.statType === "standings" ||
 							state.statType === "finances" ||
-							(!isSport("basketball") && state.statType === "powerRankings")
+							(__SPORT !== "basketball" && state.statType === "powerRankings")
 						) {
 							// No playoff version of these stats
 							return false;

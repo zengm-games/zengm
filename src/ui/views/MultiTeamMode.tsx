@@ -6,7 +6,7 @@ import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
 
 const handleAutoSort = async (tids: number[]) => {
@@ -200,7 +200,7 @@ const MultiTeamMode = ({ teams }: View<"multiTeamMode">) => {
 				>
 					Auto sort {bySport({ football: "depth charts", default: "rosters" })}
 				</button>
-				{isSport("basketball") ? (
+				{__SPORT === "basketball" ? (
 					<button
 						className="btn btn-secondary"
 						onClick={() => handleResetPT(userTids)}

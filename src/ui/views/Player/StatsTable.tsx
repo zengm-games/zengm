@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { PlayerAward, View } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts";
 import { formatStatGameHigh } from "../PlayerStats.tsx";
@@ -111,13 +110,13 @@ export const StatsTable = ({
 		}
 	}
 
-	if (isSport("basketball") && name === "Shot Locations") {
+	if (__SPORT === "basketball" && name === "Shot Locations") {
 		cols.at(-3)!.title = "M";
 		cols.at(-2)!.title = "A";
 		cols.at(-1)!.title = "%";
 	}
 
-	const isBaseballFielding = isSport("baseball") && name === "Fielding";
+	const isBaseballFielding = __SPORT === "baseball" && name === "Fielding";
 
 	let footer: FooterRow[];
 	if (isBaseballFielding) {

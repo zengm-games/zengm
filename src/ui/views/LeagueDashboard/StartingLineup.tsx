@@ -6,7 +6,6 @@ import { DEPTH_CHART_NAME } from "../../../common/constants.ts";
 import { Contract } from "../../components/contract.tsx";
 import { ResponsiveTableWrapper } from "../../components/ResponsiveTableWrapper.tsx";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { useLocal } from "../../util/local.ts";
 
 const StartingLineup = ({
@@ -24,8 +23,8 @@ const StartingLineup = ({
 	return (
 		<>
 			<h2>
-				{(isSport("basketball") && numPlayersOnCourt >= starters.length) ||
-				(isSport("hockey") && numPlayersOnCourt === starters.length)
+				{(__SPORT === "basketball" && numPlayersOnCourt >= starters.length) ||
+				(__SPORT === "hockey" && numPlayersOnCourt === starters.length)
 					? "Starting Lineup"
 					: "Top Players"}
 			</h2>

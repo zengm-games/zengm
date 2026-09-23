@@ -1,9 +1,7 @@
-import { isSport } from "./sportFunctions.ts";
-
 // For basketball: convert clock in seconds to min:sec, or x.y if under 1 minute
 // For other sports: convert clock in minutes to min:sec, like 1.5 -> 1:30
 export const formatClock = (clock: number) => {
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		if (clock <= 59.9) {
 			const centiSecondsRounded = Math.ceil(clock * 10);
 			const remainingSeconds = Math.floor(centiSecondsRounded / 10);

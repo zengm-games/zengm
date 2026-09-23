@@ -1,5 +1,5 @@
 import { useId, type ChangeEvent, type ReactNode } from "react";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import {
 	NOT_REAL_POSITIONS_AWARDS,
@@ -16,7 +16,7 @@ import type {
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import { POS_NUMBERS } from "../../../common/constants.baseball.ts";
 
-const SUPPORT_OPOY_STUFF = isSport("football");
+const SUPPORT_OPOY_STUFF = __SPORT === "football";
 const OPOY_FORMULA_NAME = "OPOY (including QB)";
 
 export const awardToEditingState = (award: InputAward) => {

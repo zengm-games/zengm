@@ -16,7 +16,7 @@ import genWeight from "./genWeight.ts";
 import potEstimator from "./potEstimator.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
@@ -51,7 +51,7 @@ export const monteCarloPot = async ({
 		let ovr;
 		let pot;
 
-		if (!isSport("basketball")) {
+		if (__SPORT !== "basketball") {
 			if (pos === undefined) {
 				throw new Error("pos is required for potEstimator");
 			}
@@ -143,7 +143,7 @@ const develop = async (
 	// years===0 condition is so editing locked player in God Mode will update ovr and pot
 	if (!ratings.locked || years === 0) {
 		// Run these even for players developing 0 seasons
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			ratings.ovr = ovr(ratings);
 
 			if (!skipPot) {
@@ -199,7 +199,7 @@ const develop = async (
 
 	if (!ratings.locked && years > 0) {
 		// In the NBA displayed weights seem to never change and seem inaccurate
-		if (isSport("football")) {
+		if (__SPORT === "football") {
 			const newWeight = genWeight(
 				ratings.hgt,
 				(ratings as any).stre,

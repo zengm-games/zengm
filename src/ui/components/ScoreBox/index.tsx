@@ -9,7 +9,7 @@ import { PlayerNameLabels } from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
 import { getCol } from "../../../common/getCol.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -366,7 +366,7 @@ export const ScoreBox = memo(
 
 										let title = col.title;
 										// Add back in prefix for some football ones
-										if (isSport("football")) {
+										if (__SPORT === "football") {
 											if (!stat.startsWith("def")) {
 												title = helpers.upperCaseFirstLetter(stat);
 											}

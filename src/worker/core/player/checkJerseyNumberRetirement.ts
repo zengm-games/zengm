@@ -1,4 +1,4 @@
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import type { Player, PlayerStats, Team } from "../../../common/types.ts";
 import { maxBy, orderBy } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
@@ -6,7 +6,8 @@ import { g, local, logEvent, helpers } from "../../util/index.ts";
 import { getThreshold } from "./madeHof.football.ts";
 
 // Higher in basketball, because real player leagues have a lot
-const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = isSport("basketball") ? 30 : 12;
+const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM =
+	__SPORT === "basketball" ? 30 : 12;
 
 export const getValueStatsRow = (ps: any) => {
 	const value = bySport({

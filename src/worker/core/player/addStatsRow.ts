@@ -1,7 +1,6 @@
 import stats from "./stats.ts";
 import { helpers } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { statsRowIsCurrent } from "./statsRowIsCurrent.ts";
 
 /**
@@ -53,7 +52,7 @@ const addStatsRow = (
 			statsRow[key] = [];
 		}
 	}
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		statsRow.rfld = [];
 	}
 

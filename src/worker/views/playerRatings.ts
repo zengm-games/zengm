@@ -17,7 +17,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "./depth.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { season } from "../core/index.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 export const extraRatings = bySport({
 	baseball: ["ovrs", "pots"],
@@ -197,7 +197,7 @@ export const getPlayers = async (
 		players = players.filter((p) => p.stats.tid === tid);
 	}
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		for (const p of players) {
 			buffOvrDH(p);
 		}

@@ -8,7 +8,7 @@ import {
 import { useLocal } from "../util/local.ts";
 import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
 import { leaderAwardCategories } from "../../common/awards.ts";
 
@@ -136,7 +136,7 @@ for (const { key, val } of leaderInfos) {
 	dropdownValues[key] = val;
 }
 
-if (isSport("baseball")) {
+if (__SPORT === "baseball") {
 	Object.assign(dropdownValues, {
 		batting: PLAYER_STATS_TABLES.batting!.name,
 		pitching: PLAYER_STATS_TABLES.pitching!.name,
@@ -144,7 +144,7 @@ if (isSport("baseball")) {
 	});
 }
 
-if (isSport("hockey")) {
+if (__SPORT === "hockey") {
 	Object.assign(dropdownValues, {
 		F: "Forwards",
 		D: "Defense",

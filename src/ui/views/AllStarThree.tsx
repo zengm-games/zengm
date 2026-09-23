@@ -4,7 +4,6 @@ import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
 import { useEffect, useState } from "react";
-import { isSport } from "../../common/sportFunctions.ts";
 import {
 	ContestantProfiles,
 	EditContestants,
@@ -104,7 +103,7 @@ const AllStarThree = ({
 	started,
 	three,
 }: View<"allStarThree">) => {
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		throw new Error("Not implemented");
 	}
 

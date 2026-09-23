@@ -4,7 +4,6 @@ import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import getGameAttributes from "./getGameAttributes.ts";
 import type { GetLeagueOptions } from "../../../common/types.ts";
 import addSeasonInfoToTeams from "./addSeasonInfoToTeams.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 export const legendsInfo = {
 	"1950s": {
@@ -46,7 +45,7 @@ export const legendsInfo = {
 };
 
 const getLeagueInfo = async (options: GetLeagueOptions) => {
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		throw new Error(`Not supported for ${__SPORT}`);
 	}
 

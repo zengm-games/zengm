@@ -17,13 +17,12 @@ import {
 	getStats,
 	getStatsTableByType,
 } from "../../common/advancedPlayerSearch.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { choice } from "../../common/random.ts";
 
 export const statTypes = [
 	"bio",
 	"ratings",
-	...(isSport("basketball")
+	...(__SPORT === "basketball"
 		? ["perGame", "per36", "totals", "shotLocations", "advanced", "gameHighs"]
 		: Object.keys(PLAYER_STATS_TABLES)),
 ];
@@ -43,7 +42,7 @@ const getPlayerStats = async (
 
 	const ratings = statTypePlus === "ratings" ? ["ovr", "pot", ...RATINGS] : [];
 	let statType: PlayerStatType;
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		if (statTypePlus === "totals") {
 			statType = "totals";
 		} else if (statTypePlus === "per36") {
@@ -116,7 +115,7 @@ const getPlayerStats = async (
 	}
 
 	// HACKY! Sum up fielding stats, rather than by position
-	if (isSport("baseball") && statTypePlus === "fielding") {
+	if (__SPORT === "baseball" && statTypePlus === "fielding") {
 		for (const p of players) {
 			// Ignore DH games played, so that filtering on GP in the Player Graphs UI does something reasonable. Otherwise DHs with 0 fielding stats appear in all the fielding graphs.
 			const dhIndex = POS_NUMBERS.DH - 1;
@@ -148,7 +147,7 @@ const getPlayerStats = async (
 		}
 	}
 
-	if (statsTable?.onlyShowIf && !isSport("basketball")) {
+	if (statsTable?.onlyShowIf && __SPORT !== "basketball") {
 		// Ensure some non-zero stat for this position
 		const onlyShowIf = statsTable.onlyShowIf;
 

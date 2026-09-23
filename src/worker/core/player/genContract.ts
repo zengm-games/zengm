@@ -3,7 +3,6 @@ import type {
 	PlayerContract,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 import { realGauss } from "../../../common/random.ts";
 
@@ -24,11 +23,11 @@ const genContract = (
 	let factor = g.get("salaryCapType") === "hard" ? 1.6 : 2;
 	let factor2 = 1;
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		factor *= 1.7;
 	}
 
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		if (ratings.pos === "QB") {
 			if (p.value >= 75) {
 				factor2 *= 1.25;
@@ -40,11 +39,11 @@ const genContract = (
 		}
 	}
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		factor *= 1.4;
 	}
 
-	if (isSport("hockey")) {
+	if (__SPORT === "hockey") {
 		factor *= 1.4;
 	}
 

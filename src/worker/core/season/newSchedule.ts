@@ -3,7 +3,6 @@ import type { Conditions } from "../../../common/types.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import { getRealSchedule } from "./getRealSchedule.football.ts";
 import newScheduleGood from "./newScheduleGood.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 const newSchedule = (
 	teams: {
@@ -15,7 +14,7 @@ const newSchedule = (
 	}[],
 	conditions?: Conditions,
 ) => {
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		const tids = getRealSchedule(teams);
 		if (tids) {
 			return tids;

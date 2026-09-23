@@ -7,7 +7,6 @@ import type {
 	MenuItemText,
 } from "../../common/types.ts";
 import { GAME_NAME } from "../../common/constants.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import type { LeagueUrlParts } from "../router/types.ts";
 
 const style = { maxWidth: 1000 };
@@ -191,7 +190,7 @@ export const frivolities: Record<Category, FrivolityInfo[]> = {
 			name: "Hall of Good",
 			description: "The best retired players who didn't make the Hall of Fame.",
 		},
-		...(isSport("basketball")
+		...(__SPORT === "basketball"
 			? [
 					{
 						urlParts: ["most", "hall_of_shame"],

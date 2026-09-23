@@ -6,7 +6,7 @@ import {
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { useLocal } from "../util/local.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import type { LeagueUrlParts } from "../router/types.ts";
 
 export const MoreLinks = (
@@ -129,7 +129,7 @@ export const MoreLinks = (
 				hockey: true,
 			})
 		) {
-			if (isSport("baseball")) {
+			if (__SPORT === "baseball") {
 				links.unshift(
 					{
 						url: ["depth", "L", `${abbrev}_${tid}`],
@@ -276,7 +276,9 @@ export const MoreLinks = (
 					"player_stats",
 					"all",
 					"career",
-					isSport("basketball") || statType === undefined ? "totals" : statType,
+					__SPORT === "basketball" || statType === undefined
+						? "totals"
+						: statType,
 				],
 				name: "Career Totals",
 			});

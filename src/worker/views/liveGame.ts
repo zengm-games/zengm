@@ -15,7 +15,7 @@ import type {
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/constants.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 export const boxScoreToLiveSim = async ({
 	allStars,
@@ -44,7 +44,7 @@ export const boxScoreToLiveSim = async ({
 
 	const initialBoxScore: any = boxScore;
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		resetStatsTeam.push("ba");
 
 		initialBoxScore.elam = allStars ? g.get("elamASG") : g.get("elam");
@@ -64,9 +64,10 @@ export const boxScoreToLiveSim = async ({
 	});
 
 	// Basketball clock is in seconds
-	const clock = isSport("basketball")
-		? g.get("quarterLength") * 60
-		: g.get("quarterLength");
+	const clock =
+		__SPORT === "basketball"
+			? g.get("quarterLength") * 60
+			: g.get("quarterLength");
 	initialBoxScore.time = formatClock(clock);
 	initialBoxScore.gameOver = false;
 	delete initialBoxScore.shootout;

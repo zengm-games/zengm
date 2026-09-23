@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { View, Game } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import getWinner from "../../common/getWinner.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import { BoxScoreWrapper } from "../components/BoxScoreWrapper.tsx";
@@ -109,7 +109,7 @@ const GamesList = ({
 						const overtimes =
 							overtimeText === ""
 								? ""
-								: isSport("baseball")
+								: __SPORT === "baseball"
 									? ` (${overtimeText})`
 									: ` ${overtimeText}`;
 

@@ -4,7 +4,6 @@ import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Phase, Player, PlayerContract } from "../../../common/types.ts";
 import genJerseyNumber from "./genJerseyNumber.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 const sign = async (
 	p: Player,
@@ -28,7 +27,7 @@ const sign = async (
 	}
 
 	let score = p.valueFuzz - 45;
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		score -= 7;
 	}
 	score = Math.round(helpers.bound(score, 0, Infinity));

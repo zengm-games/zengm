@@ -3,7 +3,6 @@ import { finances, player, realRosters } from "../index.ts";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 const genPlayers = async (
 	draftYear: number,
@@ -60,7 +59,7 @@ const genPlayers = async (
 	}
 
 	// Easter eggs!
-	if (isSport("basketball") && !forceScrubs && g.get("easterEggPlayers")) {
+	if (__SPORT === "basketball" && !forceScrubs && g.get("easterEggPlayers")) {
 		if (Math.random() < 1 / 100000) {
 			const p = player.generate(
 				PLAYER.UNDRAFTED,

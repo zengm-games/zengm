@@ -1,5 +1,4 @@
 import { PLAYER_STATS_TABLES, RATINGS } from "./constants.ts";
-import { isSport } from "./sportFunctions.ts";
 import type { Col } from "../ui/components/DataTable/index.tsx";
 
 type AdvancedPlayerSearchField = {
@@ -158,7 +157,7 @@ const allFiltersTemp: Record<
 const processStatsTable = (
 	statsTable: (typeof PLAYER_STATS_TABLES)[string],
 ) => {
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		const index = statsTable.stats.indexOf("qbRec");
 		if (index >= 0) {
 			const stats = [...statsTable.stats];
@@ -169,7 +168,7 @@ const processStatsTable = (
 			};
 		}
 	}
-	if (isSport("hockey")) {
+	if (__SPORT === "hockey") {
 		const index = statsTable.stats.indexOf("gRec");
 		if (index >= 0) {
 			const stats = [...statsTable.stats];
@@ -227,7 +226,7 @@ export const getStatsTableByType = (statTypePlus: string) => {
 
 	// Keep in sync with statTypesAdv
 	let table;
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		if (statTypePlus === "advanced") {
 			table = PLAYER_STATS_TABLES.advanced!;
 		} else if (statTypePlus === "shotLocations") {
@@ -256,7 +255,7 @@ export const getStats = (statTypePlus: string) => {
 		}
 
 		// Remove pos for fielding stats
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			return statsTable.stats.filter((stat) => stat !== "pos");
 		}
 

@@ -9,7 +9,7 @@ import { useLocal } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { NUM_LINES } from "../../common/constants.hockey.ts";
 import {
 	NUM_ACTIVE_BATTERS,
@@ -32,7 +32,7 @@ const lowerCaseWords = (string: string) => {
 	return string
 		.split(" ")
 		.map((word) =>
-			isSport("baseball") && word === "DH)"
+			__SPORT === "baseball" && word === "DH)"
 				? "DH)"
 				: `${word.charAt(0).toLowerCase()}${word.slice(1)}`,
 		)
@@ -94,9 +94,8 @@ const posNames = bySport<Record<string, string> | undefined>({
 	default: undefined,
 });
 
-const numLinesByPos: Record<string, number> | undefined = isSport("hockey")
-	? NUM_LINES
-	: undefined;
+const numLinesByPos: Record<string, number> | undefined =
+	__SPORT === "hockey" ? NUM_LINES : undefined;
 
 const Depth = ({
 	abbrev,
@@ -111,7 +110,11 @@ const Depth = ({
 	stats,
 	tid,
 }: View<"depth">) => {
-	if (!isSport("baseball") && !isSport("football") && !isSport("hockey")) {
+	if (
+		__SPORT !== "baseball" &&
+		__SPORT !== "football" &&
+		__SPORT !== "hockey"
+	) {
 		throw new Error("Not implemented");
 	}
 
@@ -176,7 +179,7 @@ const Depth = ({
 	const numLines = numLinesByPos ? numLinesByPos[pos]! : 1;
 
 	let rowLabels: string[] | undefined;
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		if (pos === "L" || pos === "LP") {
 			rowLabels = range(1, 10).map(String);
 		} else if (pos === "D") {
@@ -206,7 +209,7 @@ const Depth = ({
 
 	const getIDsToSave = (pids: number[]): number[] => {
 		// For baseball lineup where saved IDs are not player IDs
-		if (isSport("baseball") && (pos === "L" || pos === "LP")) {
+		if (__SPORT === "baseball" && (pos === "L" || pos === "LP")) {
 			return pids.map((pid) => {
 				const p2 = players.find((p) => p.pid === pid);
 				if (!p2) {
@@ -232,7 +235,7 @@ const Depth = ({
 			"Pos",
 			"Age",
 			...positions.flatMap((position) => {
-				if (isSport("baseball") && pos !== "P") {
+				if (__SPORT === "baseball" && pos !== "P") {
 					return ["Ovr", "Pot"];
 				} else {
 					return [`rating:ovr${position}`, `rating:pot${position}`];
@@ -246,9 +249,9 @@ const Depth = ({
 
 	const rows: DataTableRow[] = playersSorted.map((p, i) => {
 		let highlightPosOvr: string | undefined;
-		if (isSport("hockey") && pos === "F" && i < numLines * numStarters) {
+		if (__SPORT === "hockey" && pos === "F" && i < numLines * numStarters) {
 			highlightPosOvr = i % numStarters === 0 ? "C" : "W";
-		} else if (isSport("baseball") && pos === "P") {
+		} else if (__SPORT === "baseball" && pos === "P") {
 			if (i < 5) {
 				highlightPosOvr = "SP";
 			} else if (i < numStarters) {
@@ -257,7 +260,7 @@ const Depth = ({
 		}
 
 		let lineupPos;
-		if (isSport("baseball") && pos === "D" && rowLabels?.[i]) {
+		if (__SPORT === "baseball" && pos === "D" && rowLabels?.[i]) {
 			lineupPos = rowLabels[i];
 		} else {
 			lineupPos = p.lineupPos ?? p.ratings.pos;
@@ -275,9 +278,9 @@ const Depth = ({
 			classNames: ({ isDragged }) => ({
 				separator:
 					!isDragged &&
-					((isSport("baseball") && pos === "P" && i === 4) ||
-						(isSport("baseball") && pos === "D" && i === 8) ||
-						(isSport("baseball") && pos === "DP" && i === 7) ||
+					((__SPORT === "baseball" && pos === "P" && i === 4) ||
+						(__SPORT === "baseball" && pos === "D" && i === 8) ||
+						(__SPORT === "baseball" && pos === "DP" && i === 7) ||
 						((i % numStarters) + 1 === numStarters &&
 							i < numLines * numStarters &&
 							i !== playersSorted.length - 1)),
@@ -297,7 +300,7 @@ const Depth = ({
 					: null,
 				{
 					value:
-						isSport("baseball") && (pos === "D" || pos === "DP")
+						__SPORT === "baseball" && (pos === "D" || pos === "DP")
 							? p.ratings.pos
 							: p.pid >= 0
 								? lineupPos
@@ -306,15 +309,15 @@ const Depth = ({
 									: null,
 					classNames: {
 						"text-danger":
-							isSport("baseball") && p.lineupPos !== undefined
+							__SPORT === "baseball" && p.lineupPos !== undefined
 								? p.pid >= 0 &&
 									p.lineupPos !== "DH" &&
 									p.lineupPos !== p.ratings.pos
-								: isSport("baseball") && (pos === "D" || pos === "DP")
+								: __SPORT === "baseball" && (pos === "D" || pos === "DP")
 									? rowLabels?.[i] !== undefined &&
 										rowLabels[i] !== "DH" &&
 										rowLabels[i] !== p.ratings.pos
-									: !isSport("baseball") &&
+									: __SPORT !== "baseball" &&
 										p.pid >= 0 &&
 										pos !== "KR" &&
 										pos !== "PR" &&
@@ -322,7 +325,7 @@ const Depth = ({
 					},
 				},
 				p.age,
-				...(isSport("baseball") && pos !== "P"
+				...(__SPORT === "baseball" && pos !== "P"
 					? [
 							!challengeNoRatings && p.pid >= 0
 								? (p.ratings.ovrs[lineupPos] ?? p.ratings.ovr)
@@ -359,14 +362,14 @@ const Depth = ({
 		<>
 			<MoreLinks type="team" page="depth" abbrev={abbrev} tid={tid} />
 			<p>
-				{isSport("football") ? (
+				{__SPORT === "football" ? (
 					<>
 						Click or drag row handles to move players between the starting
 						lineup <span className="table-info legend-square" /> and the bench{" "}
 						<span className="table-secondary legend-square" />.
 					</>
 				) : null}
-				{isSport("hockey")
+				{__SPORT === "hockey"
 					? "There are four lines of forwards (centers and wings) and three lines of defensive players. The top lines play the most. All the players in a line will generally play together, but when injuries or other disruptions occur, a player will be moved up from below."
 					: null}
 			</p>
@@ -379,7 +382,7 @@ const Depth = ({
 
 			<ul
 				className={`nav nav-tabs mb-3 ${
-					isSport("baseball") ? "" : "d-none d-sm-flex"
+					__SPORT === "baseball" ? "" : "d-none d-sm-flex"
 				}`}
 			>
 				{Object.keys(numStartersByPos).map((pos2) => {
@@ -392,7 +395,7 @@ const Depth = ({
 
 					let text = posNames ? posNames[pos2] : pos2;
 					if (
-						isSport("baseball") &&
+						__SPORT === "baseball" &&
 						posNames &&
 						showDH === "noDH" &&
 						(pos2 === "DP" || pos2 === "LP")
@@ -451,14 +454,14 @@ const Depth = ({
 				</>
 			) : null}
 
-			{isSport("hockey") && pos === "F" ? (
+			{__SPORT === "hockey" && pos === "F" ? (
 				<div className="alert alert-info d-inline-block">
 					Each line of forwards is made up of one center and two wings. The
 					center is the first of the three players in each line.
 				</div>
 			) : null}
 
-			{isSport("hockey") && pos === "G" ? (
+			{__SPORT === "hockey" && pos === "G" ? (
 				<div className="alert alert-info">
 					During the regular season, your starting goalie will automatically get
 					some rest days. Rest days are based on how many consecutive games your
@@ -468,7 +471,7 @@ const Depth = ({
 				</div>
 			) : null}
 
-			{isSport("baseball") && pos === "L" ? (
+			{__SPORT === "baseball" && pos === "L" ? (
 				<div className="alert alert-info d-inline-block">
 					To move players in and out of the starting lineup, switch to the{" "}
 					<a href={helpers.leagueUrl(["depth", "D", `${abbrev}_${tid}`])}>
@@ -478,7 +481,7 @@ const Depth = ({
 				</div>
 			) : null}
 
-			{isSport("baseball") && pos === "LP" ? (
+			{__SPORT === "baseball" && pos === "LP" ? (
 				<div className="alert alert-info d-inline-block">
 					To move players in and out of the starting lineup, switch to the{" "}
 					<a href={helpers.leagueUrl(["depth", "DP", `${abbrev}_${tid}`])}>
@@ -493,7 +496,7 @@ const Depth = ({
 					cols={cols}
 					defaultSort="disableSort"
 					// Different value for baseball is because that uses showRowLabels, which adds an extra column
-					defaultStickyCols={window.mobile ? 0 : isSport("baseball") ? 3 : 2}
+					defaultStickyCols={window.mobile ? 0 : __SPORT === "baseball" ? 3 : 2}
 					name={`Depth${pos}`}
 					rows={rows}
 					hideAllControls={editable}

@@ -8,7 +8,7 @@ import {
 	PHASE,
 } from "../../../common/constants.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
@@ -162,7 +162,7 @@ export const processTeam = async (
 				teamStats[key] = 0;
 			}
 		}
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			// ba is still recorded as a player stat for some reason, but not a team stat, so we need to add it here so it gets tracked for the box score correctly
 			teamStats.ba = 0;
 		}
@@ -177,7 +177,7 @@ export const processTeam = async (
 	// Initialize team composite rating object
 	const compositeRating: any = {};
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
 			compositeRating[rating] = 0;
 		}
@@ -297,7 +297,7 @@ export const processTeam = async (
 					false,
 				) * injuryFactor;
 
-			if (isSport("hockey") && k === "goalkeeping") {
+			if (__SPORT === "hockey" && k === "goalkeeping") {
 				const numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
 
 				if (p.numConsecutiveGamesG !== undefined) {
@@ -321,7 +321,7 @@ export const processTeam = async (
 			}
 		}
 
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
 		if (SEASON_STATS_KEYS !== undefined) {
@@ -331,7 +331,7 @@ export const processTeam = async (
 			}
 			(p2 as any).seasonStats = seasonStats;
 		}
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			(p2 as any).pFatigue = p.pFatigue ?? 0;
 		}
 
@@ -353,7 +353,7 @@ export const processTeam = async (
 		t.player.push(p2);
 	}
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		t.pace = 0;
 
 		let numPlayers = 0;
@@ -378,7 +378,7 @@ export const processTeam = async (
 		}
 	}
 
-	t.stat = { ...teamStats, pts: 0, ptsQtrs: isSport("baseball") ? [] : [0] };
+	t.stat = { ...teamStats, pts: 0, ptsQtrs: __SPORT === "baseball" ? [] : [0] };
 
 	if (team.stats.byPos) {
 		for (const key of team.stats.byPos) {

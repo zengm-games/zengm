@@ -13,7 +13,6 @@ import { buffOvrDH } from "../views/depth.ts";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
 import type { SeasonType } from "./processInputs.ts";
 import { actualPhase } from "../util/actualPhase.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 
 const getPlayers = async (
 	season: number | undefined,
@@ -83,7 +82,7 @@ const getPlayers = async (
 		players = players.filter((p) => p.stats.tid === tid);
 	}
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		for (const p of players) {
 			buffOvrDH(p);
 		}

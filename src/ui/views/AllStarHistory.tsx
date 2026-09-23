@@ -5,7 +5,6 @@ import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
-import { isSport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
 
 const playerName = (p?: { pid: number; name: string; count: number }) => {
@@ -71,7 +70,7 @@ const resultText = ({
 	let overtimeText = "";
 
 	// Ignore baseball, don't want to worry about numPeriods
-	if (!isSport("baseball")) {
+	if (__SPORT !== "baseball") {
 		if (overtimes === 1) {
 			overtimeText = " (OT)";
 		} else if (overtimes > 1) {
@@ -142,7 +141,7 @@ const AllStarHistory = ({ allAllStars }: View<"allStarHistory">) => {
 			sortType: "name",
 		},
 		"Team",
-		...(isSport("basketball")
+		...(__SPORT === "basketball"
 			? ["Dunk Winner", "Team", "Three-Point Winner", "Team"]
 			: []),
 		"Links",
@@ -216,7 +215,7 @@ const AllStarHistory = ({ allAllStars }: View<"allStarHistory">) => {
 						</PlayerTeam>
 					),
 				},
-				...(isSport("basketball")
+				...(__SPORT === "basketball"
 					? [
 							{
 								...playerName(row.dunk),
@@ -248,7 +247,7 @@ const AllStarHistory = ({ allAllStars }: View<"allStarHistory">) => {
 					<a href={helpers.leagueUrl(["all_star", "teams", row.season])}>
 						{row.type === "draft" ? "Draft Results" : "View Teams"}
 					</a>
-					{isSport("basketball") ? (
+					{__SPORT === "basketball" ? (
 						<>
 							{row.dunk ? (
 								<>

@@ -10,7 +10,7 @@ import skills from "./skills.ts";
 import stats from "./stats.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
 
 /**
@@ -187,7 +187,7 @@ const augmentPartialPlayer = async (
 	}
 
 	// Height rescaling
-	if (isSport("basketball") && (version === undefined || version <= 23)) {
+	if (__SPORT === "basketball" && (version === undefined || version <= 23)) {
 		for (const r of p.ratings) {
 			r.hgt = heightToRating(p.hgt);
 		}
@@ -209,7 +209,7 @@ const augmentPartialPlayer = async (
 	}
 
 	// Rating rescaling
-	if (isSport("basketball") && (version === undefined || version <= 26)) {
+	if (__SPORT === "basketball" && (version === undefined || version <= 26)) {
 		for (const r of p.ratings) {
 			let scaleRatings = false;
 
@@ -307,7 +307,7 @@ const augmentPartialPlayer = async (
 		}
 
 		if (
-			isSport("basketball") &&
+			__SPORT === "basketball" &&
 			(r.pot === undefined || r.pot < r.ovr || appliedFuzz)
 		) {
 			// Only basketball, in case position is not known at this point
@@ -395,7 +395,7 @@ const augmentPartialPlayer = async (
 				ps.yearsWithTeam = yearsWithTeam;
 			}
 
-			if (isSport("baseball") && stats.byPos) {
+			if (__SPORT === "baseball" && stats.byPos) {
 				for (const key of stats.byPos) {
 					if (ps[key]) {
 						for (let i = 0; i < ps[key].length; i++) {
@@ -412,7 +412,7 @@ const augmentPartialPlayer = async (
 		}
 	}
 
-	if (isSport("hockey") && version !== undefined && version <= 60) {
+	if (__SPORT === "hockey" && version !== undefined && version <= 60) {
 		for (const row of p.stats) {
 			if (row.gp > 0) {
 				row.gMin = (row.min * row.gpGoalie) / row.gp;

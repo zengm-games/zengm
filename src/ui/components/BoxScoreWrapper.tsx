@@ -19,7 +19,6 @@ import { TeamLogoInline } from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { useLocal } from "../util/local.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 
 const TeamNameLink = ({
 	children,
@@ -201,7 +200,7 @@ export const HeadlineScoreLive = ({
 		? "F"
 		: boxScore.elamTarget !== undefined
 			? `Target: ${boxScore.elamTarget} pts`
-			: isSport("baseball")
+			: __SPORT === "baseball"
 				? `${
 						boxScore.teams[0].ptsQtrs.length ===
 						boxScore.teams[1].ptsQtrs.length
@@ -829,13 +828,13 @@ const DetailedScore = ({
 	}[] = range(numPeriods).map((i) => {
 		return {
 			label:
-				i < boxScore.numPeriods || isSport("baseball")
+				i < boxScore.numPeriods || __SPORT === "baseball"
 					? `${i + 1}`
 					: `OT${i - boxScore.numPeriods + 1}`,
 		};
 	});
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		qtrs.push(
 			{
 				label: "R",
@@ -937,7 +936,7 @@ const DetailedScore = ({
 										<td key={i}>-</td>
 									))}
 									<th>{t.pts}</th>
-									{isSport("baseball") ? (
+									{__SPORT === "baseball" ? (
 										<>
 											<th>{t.h}</th>
 											<th>
@@ -956,22 +955,22 @@ const DetailedScore = ({
 						</tbody>
 					</table>
 				</div>
-				{isSport("baseball") && liveGameSim ? (
+				{__SPORT === "baseball" && liveGameSim ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-start">
 						<BaseballDiamond {...sportState} />
 					</div>
 				) : null}
-				{isSport("basketball") ? (
+				{__SPORT === "basketball" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
 						<FourFactors teams={boxScore.teams} />
 					</div>
 				) : null}
-				{isSport("football") ? (
+				{__SPORT === "football" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
 						<FourFactorsFootball teams={boxScore.teams} />
 					</div>
 				) : null}
-				{isSport("hockey") ? (
+				{__SPORT === "hockey" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
 						<FourFactorsHockey teams={boxScore.teams} />
 					</div>

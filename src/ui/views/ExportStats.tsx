@@ -5,7 +5,6 @@ import type { View } from "../../common/types.ts";
 import { GAME_ACRONYM } from "../../common/constants.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 
 const genFilename = (
 	leagueName: string,
@@ -84,7 +83,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 				<div className="col-auto">
 					<select className="form-select" onChange={resetState}>
 						<option value="averages">Season Averages</option>
-						{isSport("basketball") ? (
+						{__SPORT === "basketball" ? (
 							<option value="games">Individual Games</option>
 						) : null}
 					</select>

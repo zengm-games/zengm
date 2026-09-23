@@ -3,7 +3,6 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, lock } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
 import { season } from "../index.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { chunk, groupByUnique } from "../../../common/utils.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
 
@@ -247,7 +246,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		teamsWon.push(teamWon);
 
 		// In hockey, if team won by more than 1 game, goalie fatigue resets
-		if (isSport("hockey")) {
+		if (__SPORT === "hockey") {
 			if (!away || Math.abs(home.won - away.won) > 1) {
 				const players = await idb.cache.players.indexGetAll(
 					"playersByTid",

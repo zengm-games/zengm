@@ -1,4 +1,3 @@
-import { isSport } from "../common/sportFunctions.ts";
 import { Cache, idb } from "../worker/db/index.ts";
 import { STORES, type Store } from "../worker/db/Cache.ts";
 import { g, helpers } from "../worker/util/index.ts";
@@ -106,7 +105,7 @@ export const resetG = () => {
 	const teams = helpers.getTeamsDefault();
 	Object.assign(g, defaultGameAttributes);
 
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		Object.assign(g, footballOverrides);
 	}
 

@@ -1,4 +1,3 @@
-import { isSport } from "../../../common/sportFunctions.ts";
 import { POSITION_COUNTS } from "../../../common/constants.ts";
 import {
 	NUM_STARTING_PITCHERS,
@@ -26,7 +25,7 @@ const getPlayerInfo = (
 ) => {
 	let startingPositionPlayers: number[] | undefined;
 	let depthPitchers: number[] | undefined;
-	if (isSport("baseball") && players.length > 0) {
+	if (__SPORT === "baseball" && players.length > 0) {
 		// Hypothetical additions can change every starter, so always build fresh
 		// depth charts using the original roster order.
 		startingPositionPlayers = getDepthDefense(players as any, true).slice(0, 9);
@@ -134,7 +133,7 @@ const ovrByPosFactory = (
 		const getWholeRosterTerms = (pos: string, values: number[]) =>
 			getTerms(pos, values, true, (coefficientsByPos[pos] ??= []));
 
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			const sorted = players.slice().sort((a, b) => b.value - a.value);
 			const evaluate = (candidate?: Player) => {
 				const roster = candidate ? [...players, candidate] : players;

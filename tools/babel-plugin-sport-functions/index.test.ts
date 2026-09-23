@@ -14,45 +14,6 @@ const compare = (input: string, output: string) => {
 	assert.strictEqual(compiled, output);
 };
 
-describe("isSport", () => {
-	test("should replace isSport in if", () => {
-		compare(
-			`if (isSport("basketball")) {
-  console.log("foo");
-}`,
-			`if (true) {
-  console.log("foo");
-}`,
-		);
-	});
-
-	test("should replace isSport in if, for other sport", () => {
-		compare(
-			`if (isSport("football")) {
-  console.log("foo");
-}`,
-			`if (false) {
-  console.log("foo");
-}`,
-		);
-	});
-
-	test("should replace !isSport in if", () => {
-		compare(
-			`if (!isSport("basketball")) {
-  console.log("foo");
-}`,
-			`if (!true) {
-  console.log("foo");
-}`,
-		);
-	});
-
-	test("should replace isSport in ternary", () => {
-		compare(`isSport("basketball") ? 1 : 0;`, `true ? 1 : 0;`);
-	});
-});
-
 describe("bySport", () => {
 	test("should replace bySport", () => {
 		compare(

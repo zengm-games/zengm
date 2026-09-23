@@ -6,7 +6,7 @@ import type { Player, UpdateEvents } from "../../common/types.ts";
 import { processEvents } from "./news.ts";
 import { getMaxPlayoffSeed } from "./standings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { orderTeams } from "../util/orderTeams.ts";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -187,7 +187,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 						if (
 							stat.startsWith("opp") ||
-							(isSport("baseball") && stat === "era")
+							(__SPORT === "baseball" && stat === "era")
 						) {
 							entry.rank = teams.length + 1 - entry.rank;
 						}
@@ -349,10 +349,10 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// Find starters or top 5 players
 		let starters;
 		const numPlayersOnCourt = g.get("numPlayersOnCourt");
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder);
 			starters = userPlayers.slice(0, Math.max(5, numPlayersOnCourt));
-		} else if (isSport("hockey")) {
+		} else if (__SPORT === "hockey") {
 			const t = await idb.cache.teams.get(g.get("userTid"));
 			if (t) {
 				const depth = t.depth as any;

@@ -30,9 +30,3 @@ export const bySport = <T>(
 
 	throw new Error("No value for sport and no default");
 };
-
-export const isSport = (
-	sport: "baseball" | "basketball" | "football" | "hockey",
-) => {
-	return sport === __SPORT;
-};

@@ -11,7 +11,6 @@ import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
 import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import type { LeagueUrlParts } from "../../ui/router/types.ts";
 
 const augmentSeries = async (
@@ -325,7 +324,7 @@ const sigmoid = (x: number, a: number, b: number): number => {
 
 const effectiveGameLength = () => {
 	let gameLength = g.get("numPeriods") * g.get("quarterLength");
-	if (isSport("basketball") && g.get("elam") && !g.get("elamOvertime")) {
+	if (__SPORT === "basketball" && g.get("elam") && !g.get("elamOvertime")) {
 		gameLength -= g.get("elamMinutes");
 
 		// Assume 2.3 pts per minute

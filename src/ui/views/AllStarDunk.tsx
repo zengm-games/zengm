@@ -5,7 +5,6 @@ import { useLocal } from "../util/local.ts";
 import type { DunkAttempt, Player, View } from "../../common/types.ts";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { useEffect, useState } from "react";
-import { isSport } from "../../common/sportFunctions.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import {
 	dunkInfos,
@@ -776,7 +775,7 @@ const AllStarDunk = ({
 	season,
 	started,
 }: View<"allStarDunk">) => {
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		throw new Error("Not implemented");
 	}
 

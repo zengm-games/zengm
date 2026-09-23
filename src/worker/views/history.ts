@@ -8,7 +8,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import { showStatsByType } from "../../common/awards.ts";
@@ -103,7 +103,7 @@ const updateHistory = async (
 			}
 
 			const allStats = [...stats];
-			if (isSport("baseball")) {
+			if (__SPORT === "baseball") {
 				allStats.push("gpF");
 			}
 

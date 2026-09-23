@@ -14,7 +14,6 @@ import { headToHead, season } from "../index.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 const allStarMVP = async (
 	game: Game,
@@ -24,7 +23,7 @@ const allStarMVP = async (
 	let mvp;
 
 	// Why special case for basketball? No real reason, but it was there before the other sports and seems to work better than getBestPlayer because efficiency gets factored into gmSc.
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		let maxScore = -Infinity;
 
 		for (const t of game.teams) {
@@ -264,7 +263,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 
 		for (const p0 of results.team[t].player) {
 			// In basketball, players who didn't play are shown in box score. In other sports, they aren't. So only save box score stats for players who actually played
-			if (!isSport("basketball")) {
+			if (__SPORT !== "basketball") {
 				if (p0.stat.gp === 0) {
 					continue;
 				}
@@ -295,7 +294,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 			}
 			p.jerseyNumber = p0.jerseyNumber;
 
-			if (isSport("baseball")) {
+			if (__SPORT === "baseball") {
 				p.seasonStats = p0.seasonStats;
 
 				// These are either integers or undefined

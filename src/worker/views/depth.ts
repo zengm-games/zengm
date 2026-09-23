@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { posRatings } from "../../common/posRatings.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
@@ -146,7 +146,11 @@ const updateDepth = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	if (!isSport("baseball") && !isSport("football") && !isSport("hockey")) {
+	if (
+		__SPORT !== "baseball" &&
+		__SPORT !== "football" &&
+		__SPORT !== "hockey"
+	) {
 		throw new Error("Not implemented");
 	}
 
@@ -162,7 +166,7 @@ const updateDepth = async (
 	) {
 		let showDH: "noDH" | "dh" | "both" | undefined;
 		let pos2 = pos;
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			const dh = g.get("dh");
 			if (dh === "none") {
 				showDH = "noDH";
@@ -197,7 +201,7 @@ const updateDepth = async (
 
 		const editable = tid === g.get("userTid") && !g.get("spectator");
 		const ratings = [
-			...(isSport("baseball")
+			...(__SPORT === "baseball"
 				? pos2 === "P"
 					? []
 					: ["hgt", "spd"]
@@ -234,7 +238,7 @@ const updateDepth = async (
 		const players2: any[] = depthPlayers[pos2] ?? [];
 
 		let multiplePositionsWarning: string | undefined;
-		if (isSport("hockey") && players.length >= g.get("minRosterSize")) {
+		if (__SPORT === "hockey" && players.length >= g.get("minRosterSize")) {
 			const playerInfoByPid = new Map<
 				any,
 				{
@@ -280,7 +284,7 @@ const updateDepth = async (
 			}
 		}
 
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			for (const p of players2) {
 				buffOvrDH(p);
 			}

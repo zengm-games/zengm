@@ -6,7 +6,6 @@ import {
 } from "../../common/constants.ts";
 import { showNotification } from "./showNotification.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 
 const takeScreenshotChunk = async () => {
 	const theme = window.getTheme();
@@ -27,7 +26,7 @@ const takeScreenshotChunk = async () => {
 	watermark.innerHTML = `<nav class="navbar navbar-light bg-light rounded-3 px-3"><a class="navbar-brand me-auto" href="#">${logoHTML}${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text" style="color: ${
 		theme === "dark" ? "#fff" : "#000"
 	}; font-weight: bold">Play your own league free at ${__SPORT}${
-		!isSport("hockey") ? "-gm" : ".zengm"
+		__SPORT !== "hockey" ? "-gm" : ".zengm"
 	}.com</span></nav>
 	<nav class="navbar navbar-border navbar-light mb-2 px-0"><h1 class="mb-0">${
 		document.title

@@ -10,7 +10,6 @@ import type {
 	ByConf,
 } from "./types.ts";
 import getTeamInfos from "./getTeamInfos.ts";
-import { isSport } from "./sportFunctions.ts";
 import { PHASE } from "./constants.ts";
 import { orderBy } from "./utils.ts";
 import type { LeagueUrlParts } from "../ui/router/types.ts";
@@ -116,7 +115,7 @@ const gameScoreBaseball = (
 
 const getTeamsDefault = (): TeamBasic[] => {
 	let teams: TeamBasic[];
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		teams = getTeamInfos([
 			{
 				tid: 0,
@@ -299,7 +298,7 @@ const getTeamsDefault = (): TeamBasic[] => {
 				abbrev: "WAS",
 			},
 		]);
-	} else if (isSport("basketball")) {
+	} else if (__SPORT === "basketball") {
 		teams = getTeamInfos([
 			{
 				tid: 0,
@@ -512,7 +511,7 @@ const getTeamsDefault = (): TeamBasic[] => {
 				abbrev: "WAS",
 			},
 		]);
-	} else if (isSport("hockey")) {
+	} else if (__SPORT === "hockey") {
 		teams = getTeamInfos([
 			{
 				tid: 0,
@@ -1385,7 +1384,7 @@ const overtimeText = (
 	let overtimes = "";
 
 	if (numOvertimes !== undefined && numOvertimes > 0) {
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			overtimes = `${(numPeriods ?? 0) + numOvertimes}`;
 		} else {
 			if (numOvertimes === 1) {

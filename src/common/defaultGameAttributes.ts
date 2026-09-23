@@ -5,7 +5,7 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 } from "./constants.ts";
 import { registerGlobal } from "./registerGlobal.ts";
-import { bySport, isSport } from "./sportFunctions.ts";
+import { bySport } from "./sportFunctions.ts";
 import {
 	type AwardSettingIndividual,
 	type AwardSettingTeam,
@@ -728,7 +728,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
 export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
-	__NODE_ENV === "test" || isSport("football")
+	__NODE_ENV === "test" || __SPORT === "football"
 		? {
 				numGames: wrapFromStart(17),
 				numGamesDiv: 6,
@@ -795,7 +795,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 		: {};
 
 export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
-	__NODE_ENV === "test" || isSport("hockey")
+	__NODE_ENV === "test" || __SPORT === "hockey"
 		? {
 				numGames: wrapFromStart(84),
 				numGamesDiv: 28,
@@ -845,7 +845,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
 export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
-	__NODE_ENV === "test" || isSport("baseball")
+	__NODE_ENV === "test" || __SPORT === "baseball"
 		? {
 				numGames: wrapFromStart(162),
 				numGamesDiv: 76,
@@ -890,11 +890,11 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 			}
 		: {};
 
-if (isSport("football")) {
+if (__SPORT === "football") {
 	Object.assign(defaultGameAttributes, footballOverrides);
-} else if (isSport("hockey")) {
+} else if (__SPORT === "hockey") {
 	Object.assign(defaultGameAttributes, hockeyOverrides);
-} else if (isSport("baseball")) {
+} else if (__SPORT === "baseball") {
 	Object.assign(defaultGameAttributes, baseballOverrides);
 }
 

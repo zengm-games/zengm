@@ -5,7 +5,7 @@ import { PLAYOFF_ATTENDANCE_FACTOR } from "../../../common/getAdjustedTicketPric
 import type { TeamSeason } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { gauss } from "../../../common/random.ts";
 
 export const getBaseAttendance = ({
@@ -19,9 +19,9 @@ export const getBaseAttendance = ({
 }) => {
 	let baseAttendance = 10000 + (0.1 + 0.9 * hype ** 2) * pop * 1000000 * 0.01;
 
-	if (isSport("hockey")) {
+	if (__SPORT === "hockey") {
 		baseAttendance *= 1.05;
-	} else if (isSport("football")) {
+	} else if (__SPORT === "football") {
 		baseAttendance *= 28;
 	}
 

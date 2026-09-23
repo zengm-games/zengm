@@ -1,7 +1,6 @@
 import type { MouseEvent } from "react";
 import { PlayerNameLabels } from "./PlayerNameLabels.tsx";
 import { helpers } from "../util/helpers.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { BaseballDecision } from "../views/PlayerGameLog.tsx";
 
 const width100 = {
@@ -31,7 +30,7 @@ const BoxScoreRow = ({
 }) => {
 	return (
 		<tr className={className} onClick={onClick}>
-			<td>{isSport("baseball") && !p.gs ? null : p.pos}</td>
+			<td>{__SPORT === "baseball" && !p.gs ? null : p.pos}</td>
 			<td style={width100}>
 				<PlayerNameLabels
 					injury={p.injury}
@@ -42,7 +41,7 @@ const BoxScoreRow = ({
 					disableNameLink={exhibition}
 					season={season}
 				/>
-				{isSport("baseball") ? (
+				{__SPORT === "baseball" ? (
 					<BaseballDecision
 						className="ms-2"
 						p={p}
@@ -58,7 +57,7 @@ const BoxScoreRow = ({
 						highlightCols?.includes(i) ? "sorting_highlight" : undefined
 					}
 				>
-					{isSport("baseball") && stat === "gmsc" && p.gsPit === 0
+					{__SPORT === "baseball" && stat === "gmsc" && p.gsPit === 0
 						? null
 						: helpers.roundStat(p.processed[stat], stat, true)}
 				</td>

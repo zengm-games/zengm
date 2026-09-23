@@ -2,7 +2,7 @@ import fuzzRating from "./fuzzRating.ts";
 import { g } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
 import valueCombineOvrPot from "./valueCombineOvrPot.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 
 /**
@@ -88,7 +88,7 @@ const value = (
 	let current = ovr;
 
 	// No stats at all? Just look at ratings more, then.
-	if (isSport("basketball") && ps.length > 0) {
+	if (__SPORT === "basketball" && ps.length > 0) {
 		const ps1 = ps.at(-1); // Most recent stats
 
 		// PER may be undefined for exhibition game players from old historical seasons. See ps2 check below too.
@@ -127,7 +127,7 @@ const value = (
 	// 2. Potential
 	let potential = pot;
 
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		if (pos === "QB") {
 			current *= 1.1;
 			potential *= 1.1;

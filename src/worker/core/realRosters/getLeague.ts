@@ -32,7 +32,6 @@ import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatin
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
@@ -42,7 +41,7 @@ const FREE_AGENTS_SEASON = 2020;
 const INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS = false;
 
 const getLeague = async (options: GetLeagueOptions) => {
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		throw new Error(`Not supported for ${__SPORT}`);
 	}
 

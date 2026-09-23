@@ -41,7 +41,6 @@ import {
 	getOneUpcomingGame,
 	recomputeLocalUITeamOvrs,
 } from "../../util/recomputeLocalUITeamOvrs.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 import { advStats } from "../../util/advStats.ts";
 
@@ -196,7 +195,11 @@ const play = async (
 					changed = true;
 				}
 
-				if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+				if (
+					__SPORT === "baseball" &&
+					p.pFatigue !== undefined &&
+					p.pFatigue > 0
+				) {
 					p.pFatigue = helpers.bound(
 						p.pFatigue - P_FATIGUE_DAILY_REDUCTION,
 						0,
@@ -368,7 +371,7 @@ const play = async (
 		neutralSite?: boolean;
 	}) => {
 		let dh;
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			const dhSetting = g.get("dh");
 			const cidHome = teams[0].cid;
 			dh =

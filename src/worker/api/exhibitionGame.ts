@@ -24,7 +24,6 @@ import { g, helpers, local, toUI } from "../util/index.ts";
 import { boxScoreToLiveSim } from "../views/liveGame.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { randInt } from "../../common/random.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
@@ -172,11 +171,15 @@ const getSeasonInfoLeague = async ({
 				pid += 1;
 
 				// No fatigue in exhibition game
-				if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+				if (
+					__SPORT === "baseball" &&
+					p.pFatigue !== undefined &&
+					p.pFatigue > 0
+				) {
 					p.pFatigue = 0;
 				}
 				if (
-					isSport("hockey") &&
+					__SPORT === "hockey" &&
 					p.numConsecutiveGamesG !== undefined &&
 					p.numConsecutiveGamesG > 0
 				) {
@@ -185,7 +188,7 @@ const getSeasonInfoLeague = async ({
 
 				// Reset to default, because we don't know what it should be
 				if (!isCurrentOngoingSeason) {
-					if (isSport("basketball")) {
+					if (__SPORT === "basketball") {
 						p.ptModifier = 1;
 					}
 
@@ -209,7 +212,7 @@ const getSeasonInfoLeague = async ({
 				}
 
 				// Reset rosterOrder for past seasons, since we don't store it
-				if (isSport("basketball")) {
+				if (__SPORT === "basketball") {
 					const rosterOrderByPid = getRosterOrderByPid(
 						teamPlayers.map((p) => ({
 							pid: p.pid,
@@ -234,7 +237,7 @@ const getSeasonInfoLeague = async ({
 				}
 
 				for (const [key, pids] of Object.entries(depth)) {
-					if (isSport("baseball") && (key === "L" || key === "LP")) {
+					if (__SPORT === "baseball" && (key === "L" || key === "LP")) {
 						// These are not actually pids
 						continue;
 					}
@@ -399,7 +402,7 @@ export const simExhibitionGame = async (
 			let depth: Team["depth"];
 			if (t.depth) {
 				depth = t.depth;
-			} else if (!isSport("basketball")) {
+			} else if (__SPORT !== "basketball") {
 				depth = await team.genDepth(t.players);
 			}
 

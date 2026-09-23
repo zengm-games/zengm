@@ -8,7 +8,7 @@ import {
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
 import { frivolities } from "../views/Frivolities.tsx";
 import { takeScreenshot } from "./takeScreenshot.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const depthChart: MenuItemLink[] =
 	DEPTH_CHART_NAME !== undefined
@@ -17,7 +17,7 @@ const depthChart: MenuItemLink[] =
 					type: "link",
 					active: (pageID, pathname) =>
 						pageID === "depth" &&
-						(!isSport("baseball") ||
+						(__SPORT !== "baseball" ||
 							!pathname ||
 							(!pathname.includes("/D") && !pathname.includes("/P"))),
 					league: true,
@@ -28,7 +28,7 @@ const depthChart: MenuItemLink[] =
 			]
 		: [];
 
-if (isSport("baseball")) {
+if (__SPORT === "baseball") {
 	depthChart.push(
 		{
 			type: "link",
@@ -810,7 +810,7 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["schedule_editor"],
 				text: "Schedule Editor",
 			},
-			...(isSport("basketball") ? [scheduledEvents] : []),
+			...(__SPORT === "basketball" ? [scheduledEvents] : []),
 			{
 				type: "link",
 				league: true,

@@ -1,5 +1,3 @@
-import { isSport } from "../../../common/sportFunctions.ts";
-
 const avgAge = (
 	players: {
 		age: number;
@@ -17,8 +15,9 @@ const avgAge = (
 	let denominator = 0;
 
 	for (const p of players) {
-		numerator += p.age * p.stats.min * (isSport("basketball") ? p.stats.gp : 1);
-		denominator += p.stats.min * (isSport("basketball") ? p.stats.gp : 1);
+		numerator +=
+			p.age * p.stats.min * (__SPORT === "basketball" ? p.stats.gp : 1);
+		denominator += p.stats.min * (__SPORT === "basketball" ? p.stats.gp : 1);
 	}
 
 	// Just do raw average if no mins

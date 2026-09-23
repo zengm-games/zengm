@@ -6,11 +6,10 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import { getNegotiationPids } from "../../views/negotiationList.ts";
 import { getNumPlayersTradedAwayNormalized } from "./getNumPlayersTradedAwayNormalized.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		return 0;
 	}
 
@@ -229,7 +228,7 @@ const moodComponents = async (
 					winp += 0.15;
 				}
 
-				if (isSport("hockey")) {
+				if (__SPORT === "hockey") {
 					// 40% to 60% -> -2 to 2
 					components.teamPerformance = -2 + ((winp - 0.4) * 4) / 0.2;
 				} else {
@@ -238,7 +237,7 @@ const moodComponents = async (
 				}
 
 				// Negative matters more
-				if (isSport("basketball") && components.teamPerformance < 0) {
+				if (__SPORT === "basketball" && components.teamPerformance < 0) {
 					components.teamPerformance *= 2;
 				}
 
@@ -276,7 +275,7 @@ const moodComponents = async (
 		}
 
 		if (wantsToReSign) {
-			components.loyalty += isSport("football") ? 5 : 2;
+			components.loyalty += __SPORT === "football" ? 5 : 2;
 		}
 	}
 

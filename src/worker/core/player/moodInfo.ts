@@ -3,7 +3,7 @@ import { g, helpers } from "../../util/index.ts";
 import { idb } from "../../db/index.ts";
 import moodComponents from "./moodComponents.ts";
 import type { Player } from "../../../common/types.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 import { uniformSeed } from "../../../common/random.ts";
 
@@ -132,7 +132,7 @@ const moodInfo = async (
 			last(p.ratings).ovr +
 			(p.stats.at(-1)?.min ?? 0);
 
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			// Since min is 0 in baseball
 			seed += (p.stats.at(-1)?.pa ?? 0) + (p.stats.at(-1)?.outs ?? 0);
 		}

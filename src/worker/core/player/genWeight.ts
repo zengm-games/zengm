@@ -1,5 +1,4 @@
 import { randInt } from "../../../common/random.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { g } from "../../util/index.ts";
 
 const genWeight = (hgt: number, stre?: number, pos?: string) => {
@@ -13,7 +12,7 @@ const genWeight = (hgt: number, stre?: number, pos?: string) => {
 	const female = g.get("gender") === "female";
 
 	let weight;
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		if (pos === "OL") {
 			if (!female) {
 				MIN_WEIGHT = 280;

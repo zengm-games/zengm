@@ -5,7 +5,6 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 
 export const formatMaybeInteger = (x: number) =>
@@ -93,7 +92,7 @@ const LeagueStats = ({
 	}
 
 	if (
-		isSport("baseball") &&
+		__SPORT === "baseball" &&
 		(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 	) {
 		seasons = expandFieldingStats({
@@ -170,7 +169,7 @@ const LeagueStats = ({
 
 		return {
 			key:
-				isSport("baseball") &&
+				__SPORT === "baseball" &&
 				(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 					? `${s.season}-${(s.stats as any).pos}`
 					: s.season,

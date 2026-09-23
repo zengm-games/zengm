@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { WEBSITE_ROOT } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import type { Category } from "./types.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 // Specified order for UI
 const categories: {
@@ -85,7 +84,7 @@ const categories: {
 					based on the parameters set below (min, max, average, and standard
 					deviation).
 				</p>
-				{isSport("basketball") ? (
+				{__SPORT === "basketball" ? (
 					<p>
 						If you have any scheduled events containing specific finance changes
 						then these settings will be ignored until all those scheduled events

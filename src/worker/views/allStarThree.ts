@@ -4,7 +4,6 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { PHASE } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 
 const updateAllStarThree = async (
@@ -12,7 +11,7 @@ const updateAllStarThree = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		throw new Error("Not implemented");
 	}
 

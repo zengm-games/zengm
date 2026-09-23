@@ -1,13 +1,12 @@
 import { svgsIndex } from "facesjs";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { choice } from "../../../common/random.ts";
 
 const genRandomJersey = () => {
 	const jerseys = svgsIndex.jersey.filter((id) =>
-		id.startsWith(isSport("basketball") ? "jersey" : __SPORT),
+		id.startsWith(__SPORT === "basketball" ? "jersey" : __SPORT),
 	);
 	const jersey = choice(jerseys);
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		const hats = svgsIndex.accessories.filter((id) => id.startsWith("hat"));
 
 		return `${jersey}:${choice(hats)}`;

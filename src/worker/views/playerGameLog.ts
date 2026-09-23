@@ -6,7 +6,6 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { getCommon } from "./player.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 
@@ -105,7 +104,7 @@ const updatePlayerGameLog = async (
 					types.push(type);
 				}
 			}
-			if (isSport("baseball")) {
+			if (__SPORT === "baseball") {
 				// bestPos is career, would be better to look at just this season, but that should very rarely matter
 				if (
 					(topStuff.bestPos === "SP" || topStuff.bestPos === "RP") &&
@@ -154,7 +153,7 @@ const updatePlayerGameLog = async (
 					gameStats[stat] = p.processed[stat];
 				}
 
-				if (isSport("baseball")) {
+				if (__SPORT === "baseball") {
 					const extraBaseballStats = ["w", "l", "sv", "bs", "hld"];
 					gameStats.seasonStats = {};
 					for (const key of extraBaseballStats) {

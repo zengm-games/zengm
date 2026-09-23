@@ -1,4 +1,4 @@
-import { bySport, isSport } from "../../../../common/sportFunctions.ts";
+import { bySport } from "../../../../common/sportFunctions.ts";
 import type { OldAwards } from "./types.ts";
 import type { AwardByPlayerMigrate73 } from "./updatePlayerAwards.ts";
 
@@ -89,7 +89,7 @@ export const getOldAwardsByPlayer = (awards: OldAwards) => {
 
 		const type = AWARD_NAMES[key]!;
 
-		if (key === "allRookie" || key === "sfmvp" || isSport("baseball")) {
+		if (key === "allRookie" || key === "sfmvp" || __SPORT === "baseball") {
 			for (const p of (awards as any)[key]) {
 				if (p && typeof p.pid === "number") {
 					awardsByPlayer.push({

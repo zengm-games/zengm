@@ -6,7 +6,7 @@ import type { RolldownPlugin, SourceMapInput, TransformResult } from "rolldown";
 import { babelPluginSportFunctionsFactory } from "../../babel-plugin-sport-functions/index.ts";
 import type { Sport } from "../getSport.ts";
 
-// Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport in dev mode.
+// Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors.
 export const sportFunctions = (
 	nodeEnv: "development" | "production" | "test",
 	sport: Sport,
@@ -46,7 +46,7 @@ export const sportFunctions = (
 		transform: {
 			filter: {
 				moduleType: ["ts", "tsx"],
-				code: ["bySport", "isSport"],
+				code: "bySport",
 			},
 			handler(
 				code: string,

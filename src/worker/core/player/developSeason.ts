@@ -8,7 +8,7 @@ import { RATINGS } from "../../../common/constants.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import type { Ratings } from "../realRosters/loadData.basketball.ts";
 import limitRating from "./limitRating.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 // Cache for performance
 let groupedRatings: Record<string, Ratings> | undefined;
@@ -27,7 +27,7 @@ const developSeason = async (
 		hockey: developSeasonHockey(ratings as any, age, coachingLevel),
 	});
 
-	if (!isSport("basketball") || !Object.hasOwn(g, "realPlayerDeterminism")) {
+	if (__SPORT !== "basketball" || !Object.hasOwn(g, "realPlayerDeterminism")) {
 		return;
 	}
 

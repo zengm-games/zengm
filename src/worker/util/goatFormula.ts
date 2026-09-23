@@ -4,7 +4,7 @@ import { weightByMinutes } from "../db/getCopies/playersPlus.ts";
 import { FormulaEvaluator } from "./FormulaEvaluator.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const DEFAULT_FORMULA = bySport({
 	baseball: "20 * mvp + war",
@@ -206,7 +206,7 @@ const evaluate = (
 				if (weightStatByMinutes) {
 					object[playoffs] += row[stat] * row.min;
 					minSumPlayoffs += row.min;
-				} else if (isSport("football") && stat.endsWith("Lng")) {
+				} else if (__SPORT === "football" && stat.endsWith("Lng")) {
 					if (row[stat] > object[playoffs]) {
 						object[playoffs] = row[stat] as number;
 					}
@@ -228,7 +228,7 @@ const evaluate = (
 				if (weightStatByMinutes) {
 					object[tot] += row[stat] * row.min;
 					minSum += row.min;
-				} else if (isSport("football") && stat.endsWith("Lng")) {
+				} else if (__SPORT === "football" && stat.endsWith("Lng")) {
 					if (row[stat] > object[tot]) {
 						object[tot] = row[stat] as number;
 					}

@@ -1,5 +1,4 @@
 import { uniform, shuffle } from "../../../common/random.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import type { Div } from "../../../common/types.ts";
 
 type Clusters = {
@@ -55,7 +54,7 @@ export const DEFAULT_COORDS: Record<string, [number, number]> = {
 	// extra
 	Northeast: [43.7, -74.1],
 };
-if (isSport("hockey")) {
+if (__SPORT === "hockey") {
 	// Override basketball ones with same names
 	DEFAULT_COORDS.Atlantic = [41.4, -81.2];
 	DEFAULT_COORDS.Central = [42.5, -100.8];

@@ -1,4 +1,4 @@
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { maxBy } from "../../common/utils.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 
@@ -42,7 +42,7 @@ export const processPlayersHallOfFame = <
 
 		const posBySeason: Record<number, string> = {};
 
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			// In baseball, go based on games played on defense by position - this is not ideal for traded players, will just use last entry
 			for (const row of filteredStats) {
 				if (!row.playoffs && row.gpF && row.tid > 0) {
@@ -56,7 +56,7 @@ export const processPlayersHallOfFame = <
 
 		for (const row of p.ratings) {
 			if (row.pos !== undefined && row.season !== undefined) {
-				if (isSport("baseball") && posBySeason[row.season] !== undefined) {
+				if (__SPORT === "baseball" && posBySeason[row.season] !== undefined) {
 					// Skip if already found from defensive stats above
 					continue;
 				}

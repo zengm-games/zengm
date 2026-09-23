@@ -7,7 +7,7 @@ import stats from "../player/stats.ts";
 import { statsRowIsCurrent } from "../player/statsRowIsCurrent.ts";
 import { last, maxBy } from "../../../common/utils.ts";
 import getWinner from "../../../common/getWinner.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
 import { processPlayerStats } from "../../util/processPlayerStats.ts";
 
@@ -111,7 +111,7 @@ const doInjury = async (
 	let score;
 	// 0 to 25, where 0 is role player and 25 is star
 	let playerQuality = helpers.bound(p2.valueNoPotFuzz - 50, 0, 25);
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		playerQuality -= 7;
 	}
 
@@ -253,14 +253,14 @@ const writePlayerStats = async (
 		const winner = getWinner([result.team[0].stat, result.team[1].stat]);
 
 		const qbgResults = new Map<number, "W" | "L" | "OTL" | "T">();
-		if (isSport("football") || isSport("hockey")) {
+		if (__SPORT === "football" || __SPORT === "hockey") {
 			const otl = result.overtimes > 0 && g.get("otl", "current");
 
 			for (let i = 0; i < result.team.length; i++) {
 				let maxStat = 0;
 				let id;
 
-				const stat = isSport("football") ? "pss" : "sv";
+				const stat = __SPORT === "football" ? "pss" : "sv";
 
 				for (const p of result.team[i].player) {
 					if (p.stat[stat] > maxStat) {
@@ -292,7 +292,7 @@ const writePlayerStats = async (
 
 			// This needs to be before checkStatisticalFeat
 			// This might be better in GameSim.run, like it is for basebal...
-			if (isSport("hockey")) {
+			if (__SPORT === "hockey") {
 				const goalies = t.player.filter((p: any) => p.stat.gpGoalie === 1);
 
 				// As in NHL, shutout only is credited if a single goalie plays the whole game
@@ -365,7 +365,7 @@ const writePlayerStats = async (
 				}
 
 				// In theory this could be used by checkStatisticalFeat, but wouldn't really make sense because that scales the cutoff by game length
-				if (isSport("basketball")) {
+				if (__SPORT === "basketball") {
 					let numDoubles = 0;
 					let numFives = 0;
 					const doubleStats = ["pts", "ast", "stl", "blk", "trb"];
@@ -410,7 +410,7 @@ const writePlayerStats = async (
 				}
 
 				if (!allStarGame) {
-					if (isSport("hockey")) {
+					if (__SPORT === "hockey") {
 						if (p2.pid === goaliePID) {
 							if (p2.numConsecutiveGamesG === undefined) {
 								p2.numConsecutiveGamesG = 0;
@@ -419,7 +419,7 @@ const writePlayerStats = async (
 						} else if (p2.numConsecutiveGamesG !== undefined) {
 							p2.numConsecutiveGamesG = 0;
 						}
-					} else if (isSport("baseball")) {
+					} else if (__SPORT === "baseball") {
 						if (p.stat.pc > 0) {
 							if (p2.pFatigue === undefined) {
 								p2.pFatigue = 0;
@@ -434,7 +434,7 @@ const writePlayerStats = async (
 					const playedInGame = p.stat.gp > 0;
 					if (playedInGame) {
 						// Too many other parts of the codebase use "min", so put a dummy value there
-						if (isSport("baseball")) {
+						if (__SPORT === "baseball") {
 							p.stat.min = 1;
 						}
 
@@ -443,7 +443,7 @@ const writePlayerStats = async (
 								ps[key] = 0;
 							}
 
-							if (isSport("football") && key.endsWith("Lng")) {
+							if (__SPORT === "football" && key.endsWith("Lng")) {
 								if (p.stat[key] > ps[key]) {
 									ps[key] = p.stat[key];
 								}
@@ -462,10 +462,11 @@ const writePlayerStats = async (
 							}
 						}
 
-						if (isSport("football") || isSport("hockey")) {
+						if (__SPORT === "football" || __SPORT === "hockey") {
 							const result = qbgResults.get(p.id);
 							if (result) {
-								const key = isSport("football") ? `qb${result}` : `g${result}`;
+								const key =
+									__SPORT === "football" ? `qb${result}` : `g${result}`;
 								if (ps[key] === undefined) {
 									ps[key] = 0;
 								}

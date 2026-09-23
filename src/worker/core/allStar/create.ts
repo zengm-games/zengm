@@ -11,7 +11,7 @@ import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import { last, orderBy, range } from "../../../common/utils.ts";
 import { getPosByGpF } from "../player/getPosByGpF.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 
 // This is from the old football awards sytem. Eventually should make All-Star teams use the same formulas as the default All-League awards...
@@ -162,7 +162,7 @@ const create = async (conditions: Conditions) => {
 			hockey: p.stats.ps,
 		});
 
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		// For mvpScore
 		for (const p of players) {
 			p.currentStats = p.stats;
@@ -177,7 +177,7 @@ const create = async (conditions: Conditions) => {
 
 	let allStarType = g.get("allStarType");
 	const confs = g.get("confs");
-	if (!isSport("basketball") && allStarType === "draft") {
+	if (__SPORT !== "basketball" && allStarType === "draft") {
 		allStarType = "byConf";
 	}
 	if (allStarType === "byConf" && confs.length !== 2) {
@@ -230,7 +230,7 @@ const create = async (conditions: Conditions) => {
 			shuffle(positions);
 
 			const playersByPos = Object.groupBy(candidates, (p) => {
-				if (isSport("baseball")) {
+				if (__SPORT === "baseball") {
 					// Find actual played position based on highest gpF value
 					const pos = getPosByGpF(p.stats.gpF);
 					if (pos !== undefined) {
@@ -477,7 +477,7 @@ const create = async (conditions: Conditions) => {
 
 	allStars.type = allStarType;
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		const lastYear = await idb.getCopy.allStars(
 			{
 				season: g.get("season") - 1,

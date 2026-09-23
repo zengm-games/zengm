@@ -8,7 +8,7 @@ import type {
 } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { getActivePlayoffTids } from "./playerRatings.ts";
 
 const updatePlayers = async (
@@ -27,7 +27,7 @@ const updatePlayers = async (
 	) {
 		let statsTable;
 
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			if (inputs.statType === "advanced") {
 				statsTable = PLAYER_STATS_TABLES.advanced;
 			} else if (inputs.statType === "shotLocations") {
@@ -89,7 +89,7 @@ const updatePlayers = async (
 		}
 
 		let statType: PlayerStatType;
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			if (inputs.statType === "totals") {
 				statType = "totals";
 			} else if (inputs.statType === "per36") {
@@ -153,7 +153,7 @@ const updatePlayers = async (
 		}
 
 		// Only keep players who actually played
-		if (inputs.abbrev !== "watch" && isSport("basketball")) {
+		if (inputs.abbrev !== "watch" && __SPORT === "basketball") {
 			players = players.filter((p) => {
 				if (inputs.season !== "career") {
 					return p.stats.gp > 0;
@@ -168,7 +168,7 @@ const updatePlayers = async (
 		} else if (
 			inputs.abbrev !== "watch" &&
 			statsTable.onlyShowIf &&
-			!isSport("basketball")
+			__SPORT !== "basketball"
 		) {
 			// Ensure some non-zero stat for this position
 			const onlyShowIf = statsTable.onlyShowIf;

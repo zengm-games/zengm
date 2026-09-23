@@ -1,6 +1,5 @@
 // See data/injuries.csv for basketball data
 
-import { isSport } from "../../common/sportFunctions.ts";
 import helpers from "./helpers.ts";
 
 export let defaultInjuries: {
@@ -9,7 +8,7 @@ export let defaultInjuries: {
 	games: number;
 }[];
 
-if (isSport("hockey")) {
+if (__SPORT === "hockey") {
 	// https://discord.com/channels/@me/778760871911751700/1340867968325652480
 	defaultInjuries = [
 		{
@@ -388,7 +387,7 @@ if (isSport("hockey")) {
 			games: 0.2,
 		},
 	];
-} else if (isSport("basketball")) {
+} else if (__SPORT === "basketball") {
 	defaultInjuries = [
 		{
 			name: "Sprained Ankle",
@@ -933,11 +932,11 @@ if (isSport("hockey")) {
 }
 
 // Hack for football
-if (isSport("football")) {
+if (__SPORT === "football") {
 	for (const row of defaultInjuries) {
 		row.games = helpers.localeParseFloat((row.games / 3).toFixed(2));
 	}
-} else if (isSport("baseball")) {
+} else if (__SPORT === "baseball") {
 	for (const row of defaultInjuries) {
 		row.games *= 1.5;
 	}

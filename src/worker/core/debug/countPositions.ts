@@ -1,7 +1,6 @@
 import { PLAYER, POSITION_COUNTS } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { player } from "../index.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 
 const countPositions = async () => {
@@ -42,7 +41,7 @@ const countPositions = async () => {
 		posOvrs[position]! /= posCounts[position]!;
 	}
 
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		let positionCountsTotal = 0;
 
 		for (const target of Object.values(POSITION_COUNTS)) {

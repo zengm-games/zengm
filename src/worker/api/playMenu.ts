@@ -12,7 +12,7 @@ import {
 	toUI,
 } from "../util/index.ts";
 import { runDraft } from "./actions.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { cleanupAutoPlay } from "../core/league/autoPlay.ts";
 
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
@@ -117,7 +117,7 @@ const playAmount = async (
 		numDays = 1;
 	} else if (amount === "week") {
 		numDays =
-			!isSport("football") || g.get("phase") === PHASE.FREE_AGENCY ? 7 : 1;
+			__SPORT !== "football" || g.get("phase") === PHASE.FREE_AGENCY ? 7 : 1;
 	} else if (amount === "month") {
 		numDays = bySport({
 			football: 4,

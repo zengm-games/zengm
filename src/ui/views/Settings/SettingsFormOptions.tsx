@@ -2,7 +2,6 @@
 import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import gameSimPresets from "./gameSimPresets.ts";
 import {
@@ -388,7 +387,7 @@ const SettingsFormOptions = ({
 							) : null}
 						</h2>
 						{category.name === "Tendencies" &&
-						isSport("basketball") &&
+						__SPORT === "basketball" &&
 						gameSimPresets &&
 						(godMode || showGodModeSettings) ? (
 							<select

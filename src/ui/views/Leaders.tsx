@@ -4,7 +4,7 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { LeagueUrlParts } from "../router/types.ts";
@@ -75,7 +75,7 @@ const Leaders = ({
 	const colClassName =
 		season === "all" ? "col-12 col-md-6 col-xl-4" : "col-12 col-sm-6 col-lg-4";
 
-	const totals = statType === "totals" && isSport("basketball");
+	const totals = statType === "totals" && __SPORT === "basketball";
 
 	const noQualifiedLeaders = categories.every(
 		(cat) => cat.leaders.length === 0,

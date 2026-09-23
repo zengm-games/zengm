@@ -31,7 +31,6 @@ import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { PlusMinus } from "../components/PlusMinus.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { getCol } from "../../common/getCol.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
@@ -260,14 +259,14 @@ const Filters = ({
 		{ key: "ratings", value: "Ratings" },
 		...Object.entries(PLAYER_STATS_TABLES).map(([key, info]) => {
 			const value =
-				key === "regular" && isSport("basketball")
+				key === "regular" && __SPORT === "basketball"
 					? "Traditional Stats"
 					: info.name;
 			return { key, value };
 		}),
 	];
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		statTypes = statTypes.filter((row) => row.key !== "fielding");
 	}
 
@@ -418,7 +417,7 @@ const ShowStatTypes = ({
 	const allStatTypes = [
 		{ key: "bio", value: "Bio" },
 		{ key: "ratings", value: "Ratings" },
-		...(isSport("basketball")
+		...(__SPORT === "basketball"
 			? [
 					{ key: "regular", value: "Traditional Stats" },
 					...dropdownOptions.filter(
@@ -428,7 +427,7 @@ const ShowStatTypes = ({
 							row.key !== "totals",
 					),
 				]
-			: isSport("baseball")
+			: __SPORT === "baseball"
 				? dropdownOptions.filter((row) => row.key !== "fielding")
 				: dropdownOptions),
 	];
@@ -716,7 +715,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							return showRatings ? value : null;
 						} else {
 							if (
-								isSport("basketball") &&
+								__SPORT === "basketball" &&
 								(info.key === "pm100" || info.key === "onOff100")
 							) {
 								return <PlusMinus>{value as number}</PlusMinus>;
@@ -844,7 +843,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						</select>
 					</div>
 
-					{isSport("basketball") ? (
+					{__SPORT === "basketball" ? (
 						<div className="col-12 col-sm-6">
 							<select
 								className="form-select"

@@ -9,7 +9,6 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../../common/constants.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 class GameHasYourTeamCache {
 	cache: Record<number, boolean> = {};
@@ -218,7 +217,7 @@ const newPhaseRegularSeason = async (
 							text: `<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/${TWITTER_HANDLE}">Follow ${GAME_NAME} on Twitter</a></p><p><a href="https://www.facebook.com/${FACEBOOK_USERNAME}">Like ${GAME_NAME} on Facebook</a></p><p><a href="http://www.reddit.com/r/${SUBREDDIT_NAME}/">Discuss ${GAME_NAME} on Reddit</a></p><p><a href="https://zengm.com/discord/">Chat with ${GAME_NAME} players and devs on Discord</a></p><p>The more people that play ${GAME_NAME}, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:${EMAIL_ADDRESS}">email me</a>.</p>`,
 						});
 					} else if (
-						isSport("basketball") &&
+						__SPORT === "basketball" &&
 						nagged >= 2 &&
 						nagged <= 3 &&
 						Math.random() < 0.5

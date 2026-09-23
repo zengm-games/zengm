@@ -30,7 +30,7 @@ import { CountryFlag } from "../../components/CountryFlag.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { confirm } from "../../util/confirm.tsx";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -271,15 +271,15 @@ const Roster = ({
 			classNames: ({ isDragged, isFiltered, sortBys }) => ({
 				separator:
 					!isDragged &&
-					(!isFiltered || !isSport("basketball")) &&
+					(!isFiltered || __SPORT !== "basketball") &&
 					(sortBys === undefined ||
-						(!isSport("basketball") &&
+						(__SPORT !== "basketball" &&
 							sortBys.length === 1 &&
 							sortBys[0]![0] === defaultSortCol)) &&
-					((isSport("basketball") &&
+					((__SPORT === "basketball" &&
 						i === numPlayersOnCourt - 1 &&
 						season === currentSeason) ||
-						(!isSport("basketball") &&
+						(__SPORT !== "basketball" &&
 							playersSorted[i + 1] &&
 							p.ratings.pos !== playersSorted[i + 1].ratings.pos)),
 				"table-danger": p.hof,
@@ -418,7 +418,7 @@ const Roster = ({
 					basketball: "disableSort",
 					default: [defaultSortCol, "asc"],
 				})}
-				defaultStickyCols={window.mobile ? 0 : isSport("basketball") ? 2 : 1}
+				defaultStickyCols={window.mobile ? 0 : __SPORT === "basketball" ? 2 : 1}
 				extraBulkActions={[
 					...(showRelease
 						? ([

@@ -1,11 +1,11 @@
 import type { Col } from "../ui/components/DataTable/index.tsx";
-import { bySport, isSport } from "./sportFunctions.ts";
+import { bySport } from "./sportFunctions.ts";
 
 type ColTemp = Omit<Col, "title"> & {
 	title?: string;
 };
 
-const gp = isSport("hockey") ? "GP" : "G";
+const gp = __SPORT === "hockey" ? "GP" : "G";
 
 const sportSpecificCols = bySport<{
 	[key: string]: ColTemp;
@@ -3327,28 +3327,28 @@ const cols: {
 		sortType: "number",
 	},
 	PA: {
-		desc: `${isSport("hockey") ? "Goals" : "Points"} Against`,
+		desc: `${__SPORT === "hockey" ? "Goals" : "Points"} Against`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "GA" : undefined,
+		title: __SPORT === "hockey" ? "GA" : undefined,
 	},
 	PS: {
-		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored`,
+		desc: `${__SPORT === "hockey" ? "Goals" : "Points"} Scored`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "GF" : undefined,
+		title: __SPORT === "hockey" ? "GF" : undefined,
 	},
 	"PA/g": {
-		desc: `${isSport("hockey") ? "Goals" : "Points"} Against Per Game`,
+		desc: `${__SPORT === "hockey" ? "Goals" : "Points"} Against Per Game`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "GA" : undefined,
+		title: __SPORT === "hockey" ? "GA" : undefined,
 	},
 	"PS/g": {
-		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored Per Game`,
+		desc: `${__SPORT === "hockey" ? "Goals" : "Points"} Scored Per Game`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "GF" : undefined,
+		title: __SPORT === "hockey" ? "GF" : undefined,
 	},
 	Payroll: {
 		sortSequence: ["desc", "asc"],
@@ -3615,10 +3615,10 @@ const cols: {
 		title: "#",
 	},
 	"stat:min": {
-		desc: isSport("hockey") ? "Time On Ice" : "Minutes",
+		desc: __SPORT === "hockey" ? "Time On Ice" : "Minutes",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "TOI" : "MP",
+		title: __SPORT === "hockey" ? "TOI" : "MP",
 	},
 	"stat:mov": {
 		desc: "Average Margin of Victory",

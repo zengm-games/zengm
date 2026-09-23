@@ -19,7 +19,6 @@ import type {
 	ViewInput,
 } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import { upgradeFace } from "../util/face.ts";
 import { choice } from "../../common/random.ts";
@@ -421,7 +420,7 @@ export const getCommon = async (
 	const statSummary = Object.values(PLAYER_SUMMARY);
 
 	let statTables;
-	if (isSport("baseball") && (bestPos === "SP" || bestPos === "RP")) {
+	if (__SPORT === "baseball" && (bestPos === "SP" || bestPos === "RP")) {
 		// Primarily a pitcher, so show pitching stats first - keep in sync with playerGameLog.ts
 		statTables = Object.keys(PLAYER_STATS_TABLES).map((type) => {
 			if (type === "pitching") {

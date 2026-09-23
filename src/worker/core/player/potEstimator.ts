@@ -1,5 +1,5 @@
 import { randInt } from "../../../common/random.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 // This needs to be manually kept in sync with ovr.SPORT.ts because they use various different mechanisms to enforce this
 const POS_UNDER_100_MAX = bySport<Record<string, number> | undefined>({
@@ -15,7 +15,7 @@ let potEstimator: (ovr: number, age: number, pos?: string) => number;
 // coefficients for predicting pot. See analysis/pot-estimator-*. This is needed for football/hockey
 // because pot is calculated for many different positions, making it unreasonably slow. For basketball,
 // it is only used in one place.
-if (!isSport("basketball")) {
+if (__SPORT !== "basketball") {
 	const coeffsByPos = bySport<
 		Record<
 			string,

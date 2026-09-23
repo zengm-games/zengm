@@ -13,7 +13,6 @@ import {
 } from "../../common/constants.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 
 const otherToRanks = (
 	teams: {
@@ -74,7 +73,7 @@ export const addPowerRankingsStuffToTeams = async <
 			}
 
 			const ratings = ["ovr", "pos", "ovrs"];
-			if (isSport("basketball")) {
+			if (__SPORT === "basketball") {
 				ratings.push(...RATINGS);
 			}
 
@@ -121,7 +120,7 @@ export const addPowerRankingsStuffToTeams = async <
 
 			const other: Record<string, number> = {};
 			const otherCurrent: Record<string, number> = {};
-			if (isSport("basketball")) {
+			if (__SPORT === "basketball") {
 				for (const rating of RATINGS) {
 					other[rating] = team.ovr(teamPlayers, {
 						playoffs: playoffs === "playoffs",

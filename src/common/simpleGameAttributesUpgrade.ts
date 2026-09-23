@@ -1,4 +1,3 @@
-import { isSport } from "./sportFunctions.ts";
 import type {
 	GameAttributeWithHistory,
 	GameAttributesLeagueWithHistory,
@@ -36,7 +35,7 @@ const simpleGameAttributesUpgrade = (
 		delete gameAttributes.hardCap;
 	}
 
-	if (!isSport("basketball") && (version === undefined || version <= 51)) {
+	if (__SPORT !== "basketball" && (version === undefined || version <= 51)) {
 		if (gameAttributes.pace === 100) {
 			gameAttributes.pace = 1;
 		}

@@ -5,7 +5,7 @@ import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { countBy, last, orderBy } from "../../../common/utils.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt, shuffle, uniform } from "../../../common/random.ts";
 import { getCumulativeWeights } from "./getCumulativeWeights.ts";
 
@@ -290,7 +290,7 @@ const normalizeContractDemands = async ({
 		}
 	}
 	if (
-		isSport("football") &&
+		__SPORT === "football" &&
 		numRounds === 0 &&
 		type === "freeAgentsOnly" &&
 		maxContract !== minContract

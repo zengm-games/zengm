@@ -13,7 +13,7 @@ import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { season } from "../core/index.ts";
 import { extraStats } from "./hallOfFame.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { getLeaderRequirementsStats } from "../core/season/getLeaderRequirements.ts";
@@ -646,7 +646,11 @@ export const playerMeetsCategoryRequirements = ({
 		for (const [minStat, minValue] of Object.entries(cat.minStats)) {
 			// In basketball, everything except gp is a per-game average, so we need to scale them by games played
 			let playerValue;
-			if (!isSport("basketball") || minStat === "gp" || statType === "totals") {
+			if (
+				__SPORT !== "basketball" ||
+				minStat === "gp" ||
+				statType === "totals"
+			) {
 				playerValue = playerStats[minStat];
 			} else if (statType === "per36") {
 				playerValue =

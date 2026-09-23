@@ -5,7 +5,7 @@ import type { Sport } from "../lib/getSport.ts";
 
 type ObjectProperty = BabelCoreNamespace.types.ObjectProperty;
 
-// The purpose of this is to do dead code elimination (or allow the minifier to do it) by sport, without requiring ugly syntax like nested ternaries for handling multiple sports. Instead, we have these nicer isSport and bySport functions.
+// The purpose of this is to do dead code elimination (or allow the minifier to do it) by sport, without requiring ugly syntax like nested ternaries for handling multiple sports. Instead, we have this nicer bySport function. Also, when not using the "default" parameter, it forces all sports to be enumerated so we can't forget one.
 //
 // Based on https://github.com/4Catalyzer/babel-plugin-dev-expression/blob/293b8716d3df93b3c5fb23cf3181c8bb296ec449/dev-expression.js
 
@@ -25,32 +25,13 @@ const getObjectKey = (property: ObjectProperty) => {
 export const babelPluginSportFunctionsFactory =
 	(sport: Sport) =>
 	(babel: PluginAPI): PluginObject => {
-		const t = babel.types;
-
 		return {
 			visitor: {
 				CallExpression: {
 					exit(path) {
 						const callee = path.get("callee");
 
-						if (callee.isIdentifier({ name: "isSport" })) {
-							// Turns this code:
-							//
-							// isSport("basketball");
-							//
-							// into either true or false, depending on if the current sport is basketball or not.
-
-							const argument = path.node.arguments[0];
-							if (argument?.type !== "StringLiteral") {
-								throw new Error(
-									`Unexpected isSport argument type "${argument?.type}"`,
-								);
-							}
-
-							const localSport = argument.value;
-							const value = t.booleanLiteral(localSport === sport);
-							path.replaceWith(value);
-						} else if (callee.isIdentifier({ name: "bySport" })) {
+						if (callee.isIdentifier({ name: "bySport" })) {
 							// Turns this code:
 							//
 							// const whatever = bySport({

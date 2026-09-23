@@ -1,6 +1,6 @@
 import { PHASE } from "../../../common/constants.ts";
 import { g } from "../../util/index.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 class GameSimBase {
 	id: number;
@@ -91,7 +91,7 @@ class GameSimBase {
 	}
 
 	getOvertimeLength() {
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			throw new Error("Should never happen");
 		}
 

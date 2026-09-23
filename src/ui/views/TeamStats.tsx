@@ -5,7 +5,6 @@ import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { formatMaybeInteger } from "./LeagueStats.tsx";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
@@ -155,7 +154,7 @@ const TeamStats = ({
 			data[stat] = helpers.roundStat(value, stat);
 		}
 
-		if (isSport("basketball") || isSport("hockey")) {
+		if (__SPORT === "basketball" || __SPORT === "hockey") {
 			const plusMinusCols = [prefixStatOpp(teamOpponent, "mov"), "nrtg"];
 			for (const plusMinusCol of plusMinusCols) {
 				if (Object.hasOwn(data, plusMinusCol)) {
@@ -170,7 +169,7 @@ const TeamStats = ({
 	};
 
 	if (
-		isSport("baseball") &&
+		__SPORT === "baseball" &&
 		(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 	) {
 		teams = expandFieldingStats({
@@ -211,7 +210,7 @@ const TeamStats = ({
 
 		return {
 			key:
-				isSport("baseball") &&
+				__SPORT === "baseball" &&
 				(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 					? `${t.tid}-${(t.stats as any).pos}`
 					: t.tid,
@@ -233,7 +232,7 @@ const TeamStats = ({
 	const footer =
 		averages &&
 		!(
-			isSport("baseball") &&
+			__SPORT === "baseball" &&
 			(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 		)
 			? {

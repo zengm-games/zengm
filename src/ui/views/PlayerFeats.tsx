@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { useLocal } from "../util/local.ts";
@@ -95,38 +95,39 @@ const PlayerFeats = ({
 		};
 	});
 
-	const superCols = isSport("football")
-		? [
-				{
-					title: "",
-					colspan: 3,
-				},
-				{
-					title: "Passing",
-					colspan: 4,
-				},
-				{
-					title: "Rushing",
-					colspan: 3,
-				},
-				{
-					title: "Receiving",
-					colspan: 3,
-				},
-				{
-					title: "Defense",
-					colspan: 7,
-				},
-				{
-					title: "Returns",
-					colspan: 2,
-				},
-				{
-					title: "",
-					colspan: 4,
-				},
-			]
-		: undefined;
+	const superCols =
+		__SPORT === "football"
+			? [
+					{
+						title: "",
+						colspan: 3,
+					},
+					{
+						title: "Passing",
+						colspan: 4,
+					},
+					{
+						title: "Rushing",
+						colspan: 3,
+					},
+					{
+						title: "Receiving",
+						colspan: 3,
+					},
+					{
+						title: "Defense",
+						colspan: 7,
+					},
+					{
+						title: "Returns",
+						colspan: 2,
+					},
+					{
+						title: "",
+						colspan: 4,
+					},
+				]
+			: undefined;
 
 	const scaleMinimum = (amount: number) => {
 		return Math.ceil(amount * quarterLengthFactor);

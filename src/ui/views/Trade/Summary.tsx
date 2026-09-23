@@ -4,7 +4,6 @@ import clsx from "clsx";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { ContractAmount, ContractExp } from "../../components/contract.tsx";
 import type { HandleToggle } from "./index.tsx";
-import { isSport } from "../../../common/sportFunctions.ts";
 import type { MissingAsset } from "../../../worker/views/savedTrades.ts";
 import type { Ref } from "react";
 import { orderBy } from "../../../common/utils.ts";
@@ -202,7 +201,7 @@ export const SummaryTeam = ({
 										</>
 									) : null}
 									,{" "}
-									{isSport("basketball") ? (
+									{__SPORT === "basketball" ? (
 										<>
 											{" "}
 											{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}

@@ -16,7 +16,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../../util/processLiveGameEvents.football.tsx";
@@ -133,7 +133,7 @@ const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntryInfo }) => {
 		let scoreBlock = null;
 		if (entry.score) {
-			if (isSport("basketball")) {
+			if (__SPORT === "basketball") {
 				scoreBlock = entry.score;
 			} else {
 				scoreBlock = (
@@ -141,7 +141,7 @@ const PlayByPlayEntry = memo(
 						<span
 							className={`fw-bold ${
 								entry.scoreDiff >= 0 &&
-								(!isSport("football") || entry.scoreType !== "Safety")
+								(__SPORT !== "football" || entry.scoreType !== "Safety")
 									? "text-success"
 									: "text-danger"
 							}`}
@@ -194,12 +194,12 @@ const PlayByPlayEntry = memo(
 							{entry.time ? (
 								<div className="text-body-secondary me-auto">{entry.time}</div>
 							) : null}
-							{isSport("basketball") ? scoreBlock : null}
+							{__SPORT === "basketball" ? scoreBlock : null}
 						</div>
 					) : null}
-					{isSport("hockey") ? scoreBlock : null}
+					{__SPORT === "hockey" ? scoreBlock : null}
 					{entry.text}
-					{!isSport("basketball") && !isSport("hockey") ? (
+					{__SPORT !== "basketball" && __SPORT !== "hockey" ? (
 						<div>{scoreBlock}</div>
 					) : null}
 					{entry.outs !== undefined ? (
@@ -353,19 +353,19 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			if (text !== undefined) {
 				let outs;
-				if (isSport("baseball") && output.sportState.outs > prevOuts) {
+				if (__SPORT === "baseball" && output.sportState.outs > prevOuts) {
 					outs = output.sportState.outs;
 				}
 
 				// For baseball, always show logo of the batting team, since t is not always sent in output (or maybe never sent)
-				const t = isSport("baseball") ? sportState.current.o : output.t;
+				const t = __SPORT === "baseball" ? sportState.current.o : output.t;
 
 				let score;
 				let scoreType;
 				if (scoreDiff !== 0) {
 					// Swap team for safety
 					const scoreT =
-						isSport("football") &&
+						__SPORT === "football" &&
 						sportState.current.plays.at(-1)?.scoreInfo?.type === "SF"
 							? t === 0
 								? 1
@@ -389,7 +389,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 							</>
 						) : undefined;
 
-					if (isSport("football")) {
+					if (__SPORT === "football") {
 						// If no score type, then it must be a penalty overturning a score
 						scoreType =
 							sportState.current.plays.at(-1)?.scoreInfo?.long ??
@@ -410,7 +410,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					if (shootout && t !== undefined) {
 						time = `Attempt ${boxScore.current.teams[t].sAtt}`;
 					} else if (
-						isSport("basketball") &&
+						__SPORT === "basketball" &&
 						boxScore.current.elamTarget !== undefined
 					) {
 						time = `Target: ${boxScore.current.elamTarget}`;
@@ -654,7 +654,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 		// elamTarget check is because clock is set to Infinity in Elam ending, so we can't skip ahead minutes
 		let skipMinutes =
-			isSport("baseball") ||
+			__SPORT === "baseball" ||
 			boxScore.current.elamTarget !== undefined ||
 			boxScore.current.shootout
 				? []
@@ -709,7 +709,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 						},
 					}) as FastForward,
 			),
-			...(isSport("baseball")
+			...(__SPORT === "baseball"
 				? !boxScore.current.shootout
 					? ([
 							{
@@ -881,7 +881,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		if (
 			!boxScore.current.elam &&
 			!boxScore.current.shootout &&
-			!isSport("baseball")
+			__SPORT !== "baseball"
 		) {
 			menuItems.push({
 				label: "Last 2 minutes",
@@ -1038,7 +1038,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 									>
 										Top
 									</button>
-									{!isSport("football") ? (
+									{__SPORT !== "football" ? (
 										<>
 											<button
 												className="btn btn-light-bordered"

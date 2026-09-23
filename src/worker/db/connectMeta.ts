@@ -4,7 +4,6 @@ import type {
 	IDBPTransaction,
 	StoreNames,
 } from "@dumbmatter/idb";
-import { isSport } from "../../common/sportFunctions.ts";
 import type {
 	League,
 	Options,
@@ -84,7 +83,7 @@ const migrate = async ({
 		`Upgrading meta database from version ${oldVersion} to version ${db.version}`,
 	);
 
-	if (isSport("basketball") || isSport("football")) {
+	if (__SPORT === "basketball" || __SPORT === "football") {
 		if (oldVersion < 7) {
 			db.createObjectStore("achievements", {
 				keyPath: "aid",

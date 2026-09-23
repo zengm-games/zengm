@@ -11,7 +11,6 @@ import { team } from "../core/index.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 
 type Most = {
 	value: number;
@@ -149,7 +148,7 @@ const getMostXTeamSeasons = async ({
 			ts.oppPts = row.oppPts;
 
 			// MovOrDiff is expecting this to be per game
-			if (isSport("basketball")) {
+			if (__SPORT === "basketball") {
 				ts.pts /= row.gp;
 				ts.oppPts /= row.gp;
 			}

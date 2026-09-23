@@ -5,7 +5,7 @@ import type {
 	Player,
 	PlayerAward,
 } from "../../../common/types.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
 import getLeaderRequirements, {
 	getLeaderRequirementsStats,
@@ -47,7 +47,7 @@ const BOTH_AWARD_STATS_SKIP = new Set(
 );
 
 const AWARD_STATS = [
-	...(isSport("basketball") ? [] : ["keyStats"]),
+	...(__SPORT === "basketball" ? [] : ["keyStats"]),
 
 	// Anything that appears in a player stats table
 	...Object.values(PLAYER_STATS_TABLES).flatMap((x) => x.stats),
@@ -67,7 +67,7 @@ const AWARD_STATS_SPECIAL = [
 	"numWon",
 	"numWonConsecutive",
 ];
-if (isSport("basketball")) {
+if (__SPORT === "basketball") {
 	AWARD_STATS_SPECIAL.push("teamWs");
 }
 export const AWARD_STATS_ALL = [...AWARD_STATS, ...AWARD_STATS_SPECIAL].filter(
@@ -465,7 +465,7 @@ export const getPlayers = async (
 			p.ratings.findLast((row) => row.season === season) ?? last(p.ratings)
 		).pos;
 
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			// Playoff series do not have gpF but everything else should
 			const bestCurrentStats =
 				p.currentStats.regularSeason ??
@@ -483,7 +483,7 @@ export const getPlayers = async (
 		// Do this after we've already used gpF above, and currentStats contains references to stats array which will be updated by this
 		if (player.stats.byPos) {
 			const byPosStatsSum = [...player.stats.byPos];
-			if (isSport("baseball")) {
+			if (__SPORT === "baseball") {
 				byPosStatsSum.push(
 					// byPos advanced stats
 					"rfld",
@@ -491,7 +491,7 @@ export const getPlayers = async (
 			}
 
 			const byPosStatsPos = [];
-			if (isSport("baseball")) {
+			if (__SPORT === "baseball") {
 				byPosStatsPos.push(
 					// byPos dynamic
 					"ch",
@@ -588,7 +588,7 @@ export const getPlayers = async (
 	}
 
 	// Add fracWS for basketball current season
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		for (const statRange of statRanges) {
 			if (typeof statRange !== "number") {
 				const totalWS: Record<number, number> = {};

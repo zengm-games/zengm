@@ -8,7 +8,7 @@ import type { boxScoreToLiveSim } from "../views/liveGame.ts";
 import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch.tsx";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 import { actualPhase } from "../util/actualPhase.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 
 /**
@@ -702,7 +702,7 @@ const playerStats = (params: RouteParams<"playerStats">) => {
 	let statType = params.statType ?? defaultStatType;
 
 	// Handle upgrade without breaking URLs
-	if (isSport("football") && statType === "rushing") {
+	if (__SPORT === "football" && statType === "rushing") {
 		statType = "rushingReceiving";
 	}
 

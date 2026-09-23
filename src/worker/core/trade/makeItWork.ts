@@ -4,7 +4,6 @@ import type { DraftPick, Player, TradeTeams } from "../../../common/types.ts";
 import isUntradable from "./isUntradable.ts";
 import { helpers } from "../../util/index.ts";
 import { COMPOSITE_WEIGHTS, POSITIONS } from "../../../common/constants.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 import type { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
 
@@ -79,7 +78,7 @@ const tryAddAsset = async (
 	// If lookingFor is set, make sure first asset added is from one of the requested positions only
 	let lookingForSpecificPositions;
 	if (firstTry && lookingFor && lookingFor.positions.size > 0) {
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			// For basketball, convert G/F/C into real positions
 			lookingForSpecificPositions = new Set(
 				POSITIONS.filter((pos) => {

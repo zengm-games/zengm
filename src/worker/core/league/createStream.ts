@@ -69,7 +69,6 @@ import {
 import type { NewLeagueSettings } from "../../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 import { newLeagueGodModeLimits } from "../../util/newLeagueGodModeLimits.ts";
 import { choice, shuffle } from "../../../common/random.ts";
@@ -271,7 +270,7 @@ const preProcess = async (
 		}
 	} else if (key === "games") {
 		// Fix missing +/-, blocks against in boxscore
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			if (x.teams[0].ba === undefined) {
 				x.teams[0].ba = 0;
 				x.teams[1].ba = 0;
@@ -432,7 +431,7 @@ const getSaveToDB = ({
 						extraFromStream.activePlayers.push(processed);
 
 						if (
-							!isSport("basketball") ||
+							__SPORT !== "basketball" ||
 							typeof value.rosterOrder === "number"
 						) {
 							extraFromStream.teamHasRosterOrder.add(value.tid);
@@ -1010,7 +1009,7 @@ const processTeamInfos = async ({
 		for (const ts of teamStatsLocal) {
 			ts.tid = t.tid;
 
-			if (isSport("basketball")) {
+			if (__SPORT === "basketball") {
 				if (
 					(typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) &&
 					ts.ba !== undefined
@@ -1780,7 +1779,7 @@ const afterDBStream = async ({
 	// Memorials
 	if (!fileHasPlayers && !g.get("playerBioInfo")) {
 		let memorials;
-		if (isSport("hockey")) {
+		if (__SPORT === "hockey") {
 			// https://discord.com/channels/@me/896580823057326130
 			memorials = [
 				{

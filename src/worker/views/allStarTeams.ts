@@ -12,7 +12,7 @@ import { PHASE, POSITIONS } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 
 const sortByPos = (p: {
@@ -59,7 +59,7 @@ const getPlayerInfo = async (
 		(await getTeamInfoBySeason(tid, season))?.abbrev ??
 		helpers.getAbbrev(p.tid);
 	p2.bestPos =
-		(isSport("baseball") && p2.stats.gpF
+		(__SPORT === "baseball" && p2.stats.gpF
 			? getPosByGpF(p2.stats.gpF)
 			: undefined) ?? p2.ratings.pos;
 
@@ -78,7 +78,7 @@ const augment = async (allStars: AllStars) => {
 		),
 	)) as [any[], any[]];
 
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		for (const t of teams) {
 			t.sort((a, b) => sortByPos(b) - sortByPos(a));
 		}

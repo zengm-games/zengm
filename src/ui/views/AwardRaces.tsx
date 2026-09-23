@@ -12,7 +12,6 @@ import { StatWithChange } from "../components/StatWithChange.tsx";
 import { useLocal } from "../util/local.ts";
 import { getCol } from "../../common/getCol.ts";
 import { Fragment, type ReactNode } from "react";
-import { isSport } from "../../common/sportFunctions.ts";
 import { formatPlayerAwardName } from "../../common/awards.ts";
 import clsx from "clsx";
 import type { getAwardCandidates } from "../../worker/core/awards/getAwardCandidates.ts";
@@ -240,7 +239,7 @@ export const AwardRaceTable = ({
 	const { mip, rookie, stats } = award;
 
 	const asterisk =
-		isSport("football") &&
+		__SPORT === "football" &&
 		award.numTeams === undefined &&
 		award.opoyFormula !== undefined;
 

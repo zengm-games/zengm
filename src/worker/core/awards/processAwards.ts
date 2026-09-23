@@ -26,7 +26,7 @@ import {
 	type StatOverridesByMatchup,
 	getPlayers,
 } from "./getPlayers.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import helpers from "../../util/helpers.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import g from "../../util/g.ts";
@@ -84,7 +84,7 @@ const filterPlayersForAward = (
 		const seasonForRookieCheck =
 			g.get("repeatSeason")?.startingSeason ?? season;
 
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			const defaultNumGames = defaultGameAttributes.numGames[0].value;
 			const statRange = award.statRange ?? "regularSeason";
 
@@ -240,7 +240,7 @@ export class FormulaEvaluators {
 			playoffSeries: new Set<string>(extraStats),
 		};
 
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			// Needed for baseball rookie stuff - these might already be picked up elsewhere, but let's be sure
 			this.variables.normal.add("ab");
 			this.variables.normal.add("outs");
@@ -706,7 +706,7 @@ export const processAwards = async ({
 							const playersByPos: Record<string, typeof players> = {};
 
 							// In baseball, have to do special stuff to handle if the DH setting is enabled or not
-							if (isSport("baseball")) {
+							if (__SPORT === "baseball") {
 								const dhOrPIndex = positions.indexOf("DH_OR_P");
 								const dhIfExistsIndex = positions.indexOf("DH_IF_EXISTS");
 
@@ -860,7 +860,7 @@ export const processAwards = async ({
 		)
 	).map(pruneEmptyWinners);
 
-	if (hasOpoy && isSport("football")) {
+	if (hasOpoy && __SPORT === "football") {
 		const flatRealizedAwards = realizedAwards.flat();
 		for (const opoyAward of flatRealizedAwards) {
 			if (

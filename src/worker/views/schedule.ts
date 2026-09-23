@@ -19,7 +19,7 @@ import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
 import playThroughInjuriesFactor from "../../common/playThroughInjuriesFactor.ts";
 import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
 import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
 
 export const getUpcoming = async ({
@@ -284,14 +284,15 @@ export const getTopPlayers = async <T extends any[]>(
 					pFatigue: p.pFatigue ?? 0,
 					numConsecutiveGamesG: p.numConsecutiveGamesG ?? 0,
 					compositeRating: {
-						goalkeeping: isSport("hockey")
-							? player.compositeRating(
-									ratings,
-									COMPOSITE_WEIGHTS.goalkeeping!.ratings,
-									COMPOSITE_WEIGHTS.goalkeeping!.weights,
-									false,
-								)
-							: 0,
+						goalkeeping:
+							__SPORT === "hockey"
+								? player.compositeRating(
+										ratings,
+										COMPOSITE_WEIGHTS.goalkeeping!.ratings,
+										COMPOSITE_WEIGHTS.goalkeeping!.weights,
+										false,
+									)
+								: 0,
 					},
 					pos: ratings.pos,
 				};
@@ -333,13 +334,13 @@ export const getTopPlayers = async <T extends any[]>(
 					const injuryFactor = playThroughInjuriesFactor(
 						info.injury.gamesRemaining,
 					);
-					if (isSport("baseball")) {
+					if (__SPORT === "baseball") {
 						return {
 							...p,
 							injured: info.injury.gamesRemaining > 0,
 							pFatigue: info.pFatigue,
 						};
-					} else if (isSport("hockey")) {
+					} else if (__SPORT === "hockey") {
 						return {
 							...p,
 							injured: info.injury.gamesRemaining > 0,
@@ -362,9 +363,9 @@ export const getTopPlayers = async <T extends any[]>(
 
 			const getStarter = async (players: any[]) => {
 				const augmentedPlayers = await addExtraInfo(players);
-				if (isSport("baseball")) {
+				if (__SPORT === "baseball") {
 					return getStartingPitcher(augmentedPlayers, false);
-				} else if (isSport("hockey")) {
+				} else if (__SPORT === "hockey") {
 					return getStartingAndBackupGoalies(augmentedPlayers)[0];
 				}
 
@@ -407,9 +408,9 @@ export const getTopPlayers = async <T extends any[]>(
 
 					for (const starter of [p0, p1]) {
 						const info = extraInfo[starter.pid]!;
-						if (isSport("baseball")) {
+						if (__SPORT === "baseball") {
 							info.pFatigue = P_FATIGUE_DAILY_REDUCTION * 5;
-						} else if (isSport("hockey")) {
+						} else if (__SPORT === "hockey") {
 							info.numConsecutiveGamesG += 1;
 
 							for (const p of processedPlayersByTid[starter.tid]!) {

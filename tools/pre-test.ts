@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 
 const FILENAME = "build/files/league-schema.json";
 
@@ -9,7 +9,7 @@ const makeFile = async () => {
 };
 
 try {
-	const text = await readFile(FILENAME, "utf8");
+	const text = readFileSync(FILENAME, "utf8");
 	try {
 		JSON.parse(text);
 

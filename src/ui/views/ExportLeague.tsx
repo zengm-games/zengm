@@ -579,7 +579,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 					filename,
 					lid,
 					onAbortDone: () => {
-						// This (and all "aborting/setAborting" code) is needed because there is no good way to abort an upload https://github.com/dropbox/dropbox-sdk-js/issues/159 until the next chunk, which can take a few seconds. So need this intermediate state where it is aborting, but has not aborted yet.
+						// This (and all "aborting/setAborting" code) is needed because there is no good way to abort an upload https://github.com/dropbox/dropbox-sdk-js/issues/223 until the next chunk, which can take a few seconds. So need this intermediate state where it is aborting, but has not aborted yet.
 						cleanupAfterStream();
 					},
 					onComplete: (url) => {

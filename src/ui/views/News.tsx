@@ -33,7 +33,7 @@ const News = ({
 		title: "News Feed",
 		dropdownView: "news",
 		dropdownFields: {
-			teamsAndAll: abbrev,
+			teamsAndAllWatch: abbrev,
 			seasons: season,
 			newsLevels: level,
 			newestOldestFirst: order,

@@ -204,6 +204,8 @@ const useDropdownOptions = (
 		keys = ["special", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAll") {
 		keys = ["all|||teams", ...Object.keys(sortedTeams)];
+	} else if (field === "teamsAndAllWatch") {
+		keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAllWatchPlayoffs") {
 		keys = [
 			"all|||teams",

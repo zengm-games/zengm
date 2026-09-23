@@ -18,7 +18,7 @@ const PlayerFeats = ({
 	useTitleBar({
 		title: "Statistical Feats",
 		dropdownView: "player_feats",
-		dropdownFields: { teamsAndAll: abbrev, seasonsAndAll: season },
+		dropdownFields: { teamsAndAllWatch: abbrev, seasonsAndAll: season },
 	});
 	const { userTid } = useLocal(["userTid"]);
 

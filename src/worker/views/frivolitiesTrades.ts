@@ -9,6 +9,7 @@ import type {
 } from "../../common/types.ts";
 import { processAssets } from "./tradeSummary.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
+import { getWatchPids } from "./news.ts";
 
 type Most = {
 	value: number;
@@ -183,8 +184,11 @@ const frivolitiesTrades = async (
 			throw new Error(`Unknown type "${type}"`);
 		}
 
-		if (tid >= 0) {
+		if (tid !== undefined) {
 			filter = (event) => event.tids.includes(tid);
+		} else if (abbrev === "watch") {
+			const watchPids = await getWatchPids();
+			filter = (event) => event.pids.some((pid) => watchPids.has(pid));
 		}
 
 		const trades = await getMostXRows({

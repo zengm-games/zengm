@@ -284,14 +284,15 @@ const freeAgents = (params: RouteParams<"freeAgents">) => {
 };
 
 const frivolitiesTrades = (params: RouteParams<"frivolitiesTrades">) => {
-	let abbrev: string = "all";
-	let tid: number = -1;
-	if (params.abbrev && params.abbrev !== "all") {
-		[tid, abbrev] = validateAbbrev(params.abbrev);
-	}
-
-	if (tid < 0) {
-		tid = -1;
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
 		abbrev = "all";
 	}
 
@@ -565,13 +566,11 @@ const news = (params: RouteParams<"news">) => {
 	let abbrev;
 	let tid: number | undefined;
 	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
-	if (
-		params.abbrev !== undefined &&
-		params.abbrev !== "all" &&
-		validatedAbbrev !== "???"
-	) {
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
 		abbrev = validatedAbbrev;
 		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
 	} else {
 		abbrev = "all";
 	}
@@ -606,12 +605,13 @@ const player = (params: RouteParams<"player">) => {
 
 const playerFeats = (params: RouteParams<"playerFeats">) => {
 	let abbrev;
-
-	if (
-		params.abbrev !== undefined &&
-		g.get("teamInfoCache").some((t) => t.abbrev === params.abbrev)
-	) {
-		abbrev = params.abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
 	} else {
 		abbrev = "all";
 	}
@@ -627,6 +627,7 @@ const playerFeats = (params: RouteParams<"playerFeats">) => {
 	return {
 		abbrev,
 		season,
+		tid,
 	};
 };
 
@@ -930,16 +931,16 @@ const tradingBlock = (params: RouteParams<"tradingBlock">, ctxBBGM: any) => {
 };
 
 const transactions = (params: RouteParams<"transactions">) => {
-	let abbrev: string;
-	let tid: number;
-	if (params.abbrev && params.abbrev !== "all") {
-		[tid, abbrev] = validateAbbrev(params.abbrev);
-	} else if (params.abbrev === "all") {
-		tid = -1;
-		abbrev = "all";
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
 	} else {
-		tid = g.get("userTid");
-		abbrev = g.get("teamInfoCache")[tid]!.abbrev;
+		abbrev = "all";
 	}
 
 	let season: number | "all";

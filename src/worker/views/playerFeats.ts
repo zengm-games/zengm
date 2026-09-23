@@ -3,6 +3,7 @@ import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
+import { getWatchPids } from "./news.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerFeats">,
@@ -31,10 +32,11 @@ const updatePlayers = async (
 			}
 		}
 
-		if (inputs.abbrev !== "all") {
-			feats = feats.filter(
-				(feat) => g.get("teamInfoCache")[feat.tid]?.abbrev === inputs.abbrev,
-			);
+		if (inputs.tid !== undefined) {
+			feats = feats.filter((feat) => feat.tid === inputs.tid);
+		} else if (inputs.abbrev === "watch") {
+			const watchPids = await getWatchPids();
+			feats = feats.filter((feat) => watchPids.has(feat.pid));
 		}
 
 		if (inputs.season !== "all") {

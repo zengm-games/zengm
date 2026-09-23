@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { getWatchPids } from "./news.ts";
 
 const updateEventLog = async (
 	inputs: ViewInput<"transactions">,
@@ -29,8 +30,12 @@ const updateEventLog = async (
 		events.reverse(); // Newest first
 
 		if (inputs.abbrev !== "all") {
+			const watchPids =
+				inputs.abbrev === "watch" ? await getWatchPids() : undefined;
 			events = events.filter(
-				(event) => event.tids !== undefined && event.tids.includes(inputs.tid),
+				(event) =>
+					(inputs.tid === undefined || event.tids?.includes(inputs.tid)) &&
+					(!watchPids || event.pids?.some((pid) => watchPids.has(pid))),
 			);
 		}
 

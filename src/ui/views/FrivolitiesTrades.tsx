@@ -51,7 +51,7 @@ const FrivolitiesTrades = ({
 		customMenu: frivolitiesMenu,
 		dropdownView: `frivolities/trades/${type}`,
 		dropdownFields: {
-			teamsAndAll: abbrev,
+			teamsAndAllWatch: abbrev,
 		},
 	});
 

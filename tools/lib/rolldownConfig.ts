@@ -94,6 +94,7 @@ export const rolldownConfig = (
 			}
 		},
 		checks: {
+			moduleLevelDirective: false,
 			pluginTimings: false,
 		},
 		onLog(level, log, defaultHandler) {

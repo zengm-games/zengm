@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 
 const FILENAME = "build/files/league-schema.json";
@@ -9,16 +8,22 @@ const makeFile = async () => {
 	await createJsonSchemaFile("test");
 };
 
-if (!existsSync(FILENAME)) {
-	console.log("[pre-test] No league-schema.json found, creating...");
-	await makeFile();
-} else {
+try {
 	const text = await readFile(FILENAME, "utf8");
 	try {
 		JSON.parse(text);
+
+		// Valid JSON, nothing else to do
 	} catch {
 		// Invalid JSON in file somehow
 		console.log("[pre-test] Invalid league-schema.json found, replacing...");
 		await makeFile();
+	}
+} catch (error) {
+	if (error.code === "ENOENT") {
+		console.log("[pre-test] No league-schema.json found, creating...");
+		await makeFile();
+	} else {
+		throw error;
 	}
 }

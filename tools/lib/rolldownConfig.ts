@@ -87,6 +87,9 @@ export const rolldownConfig = (
 		platform: "browser",
 		plugins,
 		preserveEntrySignatures: false,
+		experimental: {
+			nativeMagicString: true,
+		},
 		external(id, parentId) {
 			// These are in the dropbox package but never actually get executed
 			if ((id === "crypto" || id === "util") && parentId?.includes("dropbox")) {

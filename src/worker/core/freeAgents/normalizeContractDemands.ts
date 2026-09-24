@@ -211,11 +211,8 @@ const normalizeContractDemands = async ({
 			while (capSpace > minContract && availablePlayers.length > 0) {
 				const weights = getCumulativeWeights(availablePlayers, PARAM);
 				const draw = Math.random() * weights.at(-1)!;
-				let p = availablePlayers[weights.findIndex((weight) => weight >= draw)];
-				if (!p) {
-					// Not sure why this would happen but it's in the error logs
-					p = availablePlayers.at(1)!;
-				}
+				const p =
+					availablePlayers[weights.findIndex((weight) => weight >= draw)]!;
 
 				p.numBids += 1;
 				capSpace -= p.contractAmount;

@@ -307,12 +307,12 @@ export const getAwardsByPlayer = (
 					extra.actAs = award.actAs;
 				}
 
-				const p = playersByPid[pid]!;
+				const p = playersByPid[pid];
 
 				awardsByPlayer.push({
 					pid,
 					tid,
-					name: p.name,
+					name: p?.name ?? "???",
 					award: {
 						...common,
 						...extra,

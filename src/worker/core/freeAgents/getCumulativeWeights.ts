@@ -23,7 +23,12 @@ export const getCumulativeWeights = (
 	const equalWeights = maxValue === 0 || denominator === 0;
 	let total = 0;
 	for (let i = 0; i < weights.length; i++) {
-		const weight = equalWeights ? 1 : weights[i]! / denominator;
+		let weight = equalWeights ? 1 : weights[i]! / denominator;
+		// Match random.choice's sanitization before accumulating. Overflow in
+		// the exponent (for example, an all-negative pool) can produce NaN.
+		if (weight < 0 || Number.isNaN(weight)) {
+			weight = Number.MIN_VALUE;
+		}
 		total += weight;
 		weights[i] = total;
 	}

@@ -1,5 +1,5 @@
 import { helpers } from "../../util/index.ts";
-import type { Store } from "../Cache.ts";
+import { storeInfos, type Store } from "../Cache.ts";
 import { idb } from "../../db/index.ts";
 import type { GetCopyType } from "../../../common/types.ts";
 
@@ -10,7 +10,7 @@ export const maybeDeepCopy = <T>(row: T, type: GetCopyType | undefined) =>
 // Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Return value is cloned.
 export const mergeByPk = <
 	MyStore extends Store,
-	PrimaryKey extends (typeof idb.cache.storeInfos)[MyStore]["pk"],
+	PrimaryKey extends (typeof storeInfos)[MyStore]["pk"],
 	T extends Record<PrimaryKey, any>,
 >(
 	fromDb: T[],
@@ -25,7 +25,7 @@ export const mergeByPk = <
 		[key: string]: boolean;
 	} = {};
 
-	const pk = idb.cache.storeInfos[storeName].pk as PrimaryKey;
+	const pk = storeInfos[storeName].pk as PrimaryKey;
 
 	for (const [i, row] of fromCache.entries()) {
 		cacheKeys[row[pk]] = i;

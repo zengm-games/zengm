@@ -19,6 +19,7 @@ import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
 import useLocalStorageState from "use-local-storage-state";
 import { LeagueFileUpload } from "../components/LeagueFileUpload.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
+import { showNotification } from "../util/showNotification.ts";
 
 export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 	const {
@@ -429,36 +430,44 @@ export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 					onClick={async () => {
 						setStatus("loadingReal");
 
-						const players2 = await toWorker(
-							"main",
-							"importPlayersGetReal",
-							undefined,
-						);
+						try {
+							const players2 = await toWorker(
+								"main",
+								"importPlayersGetReal",
+								undefined,
+							);
 
-						const players = players2.map((p) => {
-							// Rookie season, not draft prospect season, when possible
-							const season = (p.ratings[1] ?? p.ratings[0]).season;
+							const players = players2.map((p) => {
+								// Rookie season, not draft prospect season, when possible
+								const season = (p.ratings[1] ?? p.ratings[0]).season;
 
-							const seasonOffset = currentSeason - season;
+								const seasonOffset = currentSeason - season;
 
-							return {
-								p,
-								checked: false,
-								contractAmount: String(p.contract.amount / 1000),
-								contractExp: String(p.contract.exp),
-								draftYear: String(
-									currentSeason + (phase >= PHASE.DRAFT ? 1 : 0),
-								),
-								season: season + seasonOffset,
-								seasonOffset,
-								tid: PLAYER.FREE_AGENT,
-							};
-						});
+								return {
+									p,
+									checked: false,
+									contractAmount: String(p.contract.amount / 1000),
+									contractExp: String(p.contract.exp),
+									draftYear: String(
+										currentSeason + (phase >= PHASE.DRAFT ? 1 : 0),
+									),
+									season: season + seasonOffset,
+									seasonOffset,
+									tid: PLAYER.FREE_AGENT,
+								};
+							});
 
-						selectedRows.clear();
-						setPlayers(players);
-						setLeagueFileVersion(LEAGUE_DATABASE_VERSION);
-						setStatus(undefined);
+							selectedRows.clear();
+							setPlayers(players);
+							setLeagueFileVersion(LEAGUE_DATABASE_VERSION);
+						} catch (error) {
+							showNotification({
+								type: "error",
+								text: error.message,
+							});
+						} finally {
+							setStatus(undefined);
+						}
 					}}
 					processing={status === "loadingReal"}
 					processingText="Loading..."

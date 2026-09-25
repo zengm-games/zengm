@@ -2443,7 +2443,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// At end of game, don't put tying/winning run on
-		const runsWithHR = this.bases.filter((p) => !p).length + 1;
+		const runsWithHR = this.bases.filter(Boolean).length + 1;
 		const tyingRunUp = diffPts === runsWithHR;
 		const tyingRunOnDeck = diffPts === runsWithHR + 1;
 		if (

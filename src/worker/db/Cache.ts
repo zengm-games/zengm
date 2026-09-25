@@ -802,6 +802,13 @@ class Cache {
 		this._setStatus("full");
 	}
 
+	_hasPendingWrites() {
+		return STORES.some(
+			(store) =>
+				this._deletes[store].size > 0 || this._dirtyRecords[store].size > 0,
+		);
+	}
+
 	// Take current contents in database and write to disk
 	async flush(storesToCheck = STORES) {
 		if (!local.autoSave) {
@@ -816,12 +823,14 @@ class Cache {
 				this._deletes[store].size > 0 || this._dirtyRecords[store].size > 0,
 		);
 		if (stores.length === 0) {
-			// Not sure if this is needed - prior to this short circuit, if this._dirty was somehow true it would have been set false at the bottom of this function. So put it here just in case.
-			this._dirty = false;
+			// storesToCheck might not include every dirty store
+			this._dirty = this._hasPendingWrites();
 
 			// Skip making any transaction if possible
 			return;
 		}
+
+		const updateLastPlayed = this._dirty;
 
 		const transaction = idb.league.transaction(stores, "readwrite");
 
@@ -849,9 +858,10 @@ class Cache {
 
 		await transaction.done;
 
-		if (this._dirty) {
-			this._dirty = false;
+		// Recompute rather than setting to false, because there may be new writes that happened while waiting for the transaction, or dirty stores not in storesToCheck
+		this._dirty = this._hasPendingWrites();
 
+		if (updateLastPlayed) {
 			// Update lastPlayed
 			await league.updateMeta({
 				lastPlayed: new Date(),
@@ -867,7 +877,10 @@ class Cache {
 		// Only flush if cache is dirty and nothing is going on
 		if (this._dirty) {
 			const skipFlush =
-				lock.get("gameSim") || lock.get("newPhase") || !!local.autoPlayUntil;
+				this._status !== "full" ||
+				lock.get("gameSim") ||
+				lock.get("newPhase") ||
+				!!local.autoPlayUntil;
 
 			if (!skipFlush) {
 				await this.flush();
@@ -875,14 +888,14 @@ class Cache {
 		}
 
 		setTimeout(() => {
-			this._autoFlush();
+			void this._autoFlush();
 		}, AUTO_FLUSH_INTERVAL);
 	}
 
 	startAutoFlush() {
 		this._stopAutoFlush = false;
 		setTimeout(() => {
-			this._autoFlush();
+			void this._autoFlush();
 		}, AUTO_FLUSH_INTERVAL);
 	}
 

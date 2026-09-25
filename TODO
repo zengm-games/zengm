@@ -1,3 +1,6 @@
+should promise-worker-bi listen for unhandledrejection?
+- after this, make _autoFlush robust to an error saving - should still schedule next flush
+
 seasonFraction maybe doesn't make much sense in basketball awards like MVP. gp/teamGp or gp/82 might be better - the former would max at 1 regardles of numGames, but the latter would give more or less weight to winp based on how long the season is, which would also scale them with EWA+VORP. fracWS should maybe also get multiplied by gp/82.
 - if we edit default, what to do about achievements?
 

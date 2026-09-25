@@ -3,7 +3,11 @@ import {
 	PLAYER,
 	POSITIONS,
 } from "../../../common/constants.ts";
-import developSeason from "./developSeason.ts";
+import {
+	developSeason,
+	developSeasonSync,
+	getRealPlayerDeterminismInfo,
+} from "./developSeason.ts";
 import ovr from "./ovr.ts";
 import pos from "./pos.ts";
 import skills from "./skills.ts";
@@ -72,12 +76,24 @@ export const monteCarloPot = async ({
 
 	const maxOvrs = [];
 
+	// Only do the async part once, rather than in every iteration of the loop
+	const realPlayerDeterminismInfo = await getRealPlayerDeterminismInfo(
+		srID,
+		true,
+	);
+
 	for (let i = 0; i < NUM_SIMULATIONS; i++) {
-		const copiedRatings = helpers.deepCopy(ratings);
+		// Shallow copy is sufficient because developSeason (only basketball gets here) only modifies top level numeric ratings
+		const copiedRatings = { ...ratings };
 		let maxOvr = pos ? ratings.ovrs[pos] : ratings.ovr;
 
 		for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
-			await developSeason(copiedRatings, ageTemp, srID, DEFAULT_LEVEL, true);
+			developSeasonSync(
+				copiedRatings,
+				ageTemp,
+				DEFAULT_LEVEL,
+				realPlayerDeterminismInfo,
+			);
 
 			const currentOvr = ovr(copiedRatings, pos);
 

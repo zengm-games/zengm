@@ -97,10 +97,22 @@ export const getUpcoming = async ({
 	);
 	const teamsByTid = groupByUnique(teams, "tid");
 
-	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-		0, // Active players have tid >= 0
-		Infinity,
-	]);
+	// Only load players on teams that are actually needed, since often this is just for one game (such as updating the user's next game after every day of the regular season). Active players have tid >= 0
+	const tidsNeeded = new Set<number>();
+	for (const game of filteredSchedule) {
+		if (game.homeTid >= 0) {
+			tidsNeeded.add(game.homeTid);
+		}
+		if (game.awayTid >= 0) {
+			tidsNeeded.add(game.awayTid);
+		}
+	}
+	const playersRaw = [];
+	for (const tid of tidsNeeded) {
+		playersRaw.push(
+			...(await idb.cache.players.indexGetAll("playersByTid", tid)),
+		);
+	}
 	const players = await idb.getCopies.playersPlus(playersRaw, {
 		attrs: ["injury", "pid", "value", "tid"],
 		ratings: ["ovr", "pos", "ovrs"],

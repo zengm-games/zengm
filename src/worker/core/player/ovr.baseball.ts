@@ -68,16 +68,25 @@ const infoOffense: RatingWeights = {
 	speed: [0.2, 1],
 };
 
-const getScore = (
-	compositeRatings: Record<string, number>,
-	info: RatingWeights,
-) => {
+// Only computes the composite ratings that are actually needed, since this is called a lot (for every position, every time a player develops)
+const getScore = (ratings: PlayerRatings, info: RatingWeights) => {
 	let r = 0;
 	let sumCoeffs = 0;
 
 	for (const [key, [coeff, power]] of Object.entries(info)) {
+		const compositeWeight = COMPOSITE_WEIGHTS[key];
+		if (!compositeWeight) {
+			throw new Error(`Unknown composite rating "${key}"`);
+		}
+		const value = compositeRating(
+			ratings,
+			compositeWeight.ratings,
+			compositeWeight.weights,
+			false,
+		);
+
 		const powerFactor = 100 / 100 ** power;
-		r += coeff * powerFactor * compositeRatings[key]! ** power;
+		r += coeff * powerFactor * value ** power;
 		sumCoeffs += coeff;
 	}
 
@@ -87,22 +96,12 @@ const getScore = (
 };
 
 const ovr = (ratings: PlayerRatings, pos?: Position): number => {
-	const compositeRatings: Record<string, number> = {
-		constant0: 0,
-	};
-
-	for (const [key, value] of Object.entries(COMPOSITE_WEIGHTS)) {
-		compositeRatings[key] = compositeRating(
-			ratings,
-			value.ratings,
-			value.weights,
-			false,
-		);
-	}
-
 	const pos2 = pos ?? (ratings.pos as Position);
-	const offense = getScore(compositeRatings, infoOffense);
-	const defense = getScore(compositeRatings, infoDefense[pos2]);
+
+	// Offense is not used for pitchers
+	const offense =
+		pos2 === "RP" || pos2 === "SP" ? 0 : getScore(ratings, infoOffense);
+	const defense = getScore(ratings, infoDefense[pos2]);
 
 	// The idea here is some positions are just easier to play (they have constants added to them) and are less important (they max out below 1). This is roughly based on WAR position adjustments.
 	let r;

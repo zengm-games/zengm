@@ -10,7 +10,6 @@ import checkStatisticalFeat from "./checkStatisticalFeat.ts";
 import compositeRating from "./compositeRating.ts";
 import contractSeasonsRemaining from "./contractSeasonsRemaining.ts";
 import develop from "./develop.ts";
-import developSeason from "./developSeason.ts";
 import fuzzRating from "./fuzzRating.ts";
 import fuzzOvrs from "./fuzzOvrs.ts";
 import genContract from "./genContract.ts";
@@ -59,7 +58,6 @@ export default {
 	compositeRating,
 	contractSeasonsRemaining,
 	develop,
-	developSeason,
 	fuzzRating,
 	fuzzOvrs,
 	genContract,

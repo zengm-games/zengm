@@ -78,7 +78,7 @@ export const getNumConsecutiveGamesGFactor = (
 };
 
 let playerStats: Record<string, number | number[]>;
-let teamStats: Record<string, number>;
+let teamStats: Record<string, number | number[]>;
 
 export const getActualPlayThroughInjuries = (
 	t: { tid: number; playThroughInjuries: [number, number] } | "default",
@@ -147,25 +147,37 @@ export const processTeam = async (
 	exhibitionGame?: boolean,
 ) => {
 	if (!playerStats) {
-		playerStats = {};
-		for (const key of player.stats.raw) {
-			if (!SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp")) {
-				playerStats[key] = 0;
-			}
-		}
+		playerStats = Object.fromEntries([
+			...player.stats.raw
+				.filter((key) => !SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp"))
+				.map((key) => [key, 0]),
+
+			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter
+			["courtTime", -3],
+			["benchTime", 0],
+			["energy", 1],
+
+			// Placeholders, replaced with a new array for each player below. Including them here avoids adding new properties to the object, which is slow
+			...(player.stats.byPos ?? []).map((key) => [key, []]),
+		]);
 	}
 
 	if (!teamStats) {
-		teamStats = {};
-		for (const key of team.stats.raw) {
-			if (!key.startsWith("opp")) {
-				teamStats[key] = 0;
-			}
-		}
-		if (__SPORT === "basketball") {
+		// Same idea as playerStats above
+		teamStats = Object.fromEntries([
+			...team.stats.raw
+				.filter((key) => !key.startsWith("opp"))
+				.map((key) => [key, 0]),
+
 			// ba is still recorded as a player stat for some reason, but not a team stat, so we need to add it here so it gets tracked for the box score correctly
-			teamStats.ba = 0;
-		}
+			...(__SPORT === "basketball" ? [["ba", 0]] : []),
+
+			["pts", 0],
+			["ptsQtrs", []],
+			...(team.stats.byPos ?? [])
+				.filter((key) => !key.startsWith("opp"))
+				.map((key) => [key, []]),
+		]);
 	}
 
 	const allStarGame = teamInput.tid === -1 || teamInput.tid === -2;
@@ -335,14 +347,8 @@ export const processTeam = async (
 			(p2 as any).pFatigue = p.pFatigue ?? 0;
 		}
 
-		p2.stat = {
-			...playerStats,
-
-			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter
-			courtTime: -3,
-			benchTime: 0,
-			energy: 1,
-		};
+		// playerStats is created with Object.fromEntries and contains all properties, so that this spread is fast and produces an object with fast properties. Otherwise, with a lot of stats (like in ZGMB), it's slow to create and the object is slow to use in GameSim
+		p2.stat = { ...playerStats };
 
 		if (player.stats.byPos) {
 			for (const key of player.stats.byPos) {
@@ -378,7 +384,8 @@ export const processTeam = async (
 		}
 	}
 
-	t.stat = { ...teamStats, pts: 0, ptsQtrs: __SPORT === "baseball" ? [] : [0] };
+	t.stat = { ...teamStats };
+	t.stat.ptsQtrs = __SPORT === "baseball" ? [] : [0];
 
 	if (team.stats.byPos) {
 		for (const key of team.stats.byPos) {

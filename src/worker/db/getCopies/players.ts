@@ -202,10 +202,10 @@ const getCopies = async (
 		}
 
 		// This works if tid is a number or [min, max]
-		const fromDB = (
+		const fromCache = (
 			await idb.cache.players.indexGetAll("playersByTid", tid)
 		).filter(filter);
-		return type === "noCopyCache" ? fromDB : helpers.deepCopy(fromDB);
+		return type === "noCopyCache" ? fromCache : helpers.deepCopy(fromCache);
 	}
 
 	if (activeAndRetired === true) {

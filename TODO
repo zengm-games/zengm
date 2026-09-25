@@ -1,3 +1,10 @@
+add helpers.entries similar to helpers.keys, if possible
+- use in developSeason.basketball.ts
+
+Cache.indexGetAllByKey
+- similar to getAllByKey
+- use in getUpcoming for playersByTid
+
 seasonFraction maybe doesn't make much sense in basketball awards like MVP. gp/teamGp or gp/82 might be better - the former would max at 1 regardles of numGames, but the latter would give more or less weight to winp based on how long the season is, which would also scale them with EWA+VORP. fracWS should maybe also get multiplied by gp/82.
 - if we edit default, what to do about achievements?
 

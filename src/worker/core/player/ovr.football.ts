@@ -6,7 +6,7 @@ import type {
 import { COMPOSITE_WEIGHTS } from "../../../common/constants.football.ts";
 import compositeRating from "./compositeRating.ts";
 
-const info = {
+const info: Record<Position, Record<string, [number, number]>> = {
 	QB: {
 		passingAccuracy: [3, 1],
 		passingDeep: [3, 1],
@@ -87,31 +87,56 @@ const info = {
 	},
 };
 
-const ovr = (ratings: PlayerRatings, pos?: Position): number => {
-	const compositeRatings: Record<string, number> = {
-		constant0: 0,
-	};
+type Term = {
+	compositeWeight: (typeof COMPOSITE_WEIGHTS)[string] | undefined;
+	coeff: number;
+	power: number;
+	powerFactor: number;
+};
 
-	for (const [key, value] of Object.entries(COMPOSITE_WEIGHTS)) {
-		compositeRatings[key] = compositeRating(
-			ratings,
-			value.ratings,
-			value.weights,
-			false,
-		);
+// Precomputed so ovr only needs to compute the composite ratings actually used by a position, since this is called a lot (for every position, every time a player develops)
+const termsByPos: Record<string, { terms: Term[]; sumCoeffs: number }> = {};
+for (const [pos, posInfo] of Object.entries(info)) {
+	const terms: Term[] = [];
+	let sumCoeffs = 0;
+	for (const [key, [coeff, power]] of Object.entries(posInfo)) {
+		// undefined means constant0
+		let compositeWeight;
+		if (key !== "constant0") {
+			compositeWeight = COMPOSITE_WEIGHTS[key];
+			if (!compositeWeight) {
+				throw new Error(`Unknown composite rating "${key}"`);
+			}
+		}
+		terms.push({
+			compositeWeight,
+			coeff,
+			power,
+			powerFactor: 100 / 100 ** power,
+		});
+		sumCoeffs += coeff;
 	}
+	termsByPos[pos] = { terms, sumCoeffs };
+}
 
+const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	const pos2 = pos ?? ratings.pos;
 	let r = 0;
 
-	if (Object.hasOwn(info, pos2)) {
-		let sumCoeffs = 0;
+	if (Object.hasOwn(termsByPos, pos2)) {
+		const { terms, sumCoeffs } = termsByPos[pos2]!;
 
-		// @ts-expect-error
-		for (const [key, [coeff, power]] of Object.entries(info[pos2])) {
-			const powerFactor = 100 / 100 ** power;
-			r += coeff * powerFactor * compositeRatings[key]! ** power;
-			sumCoeffs += coeff;
+		for (const { compositeWeight, coeff, power, powerFactor } of terms) {
+			const value =
+				compositeWeight === undefined
+					? 0
+					: compositeRating(
+							ratings,
+							compositeWeight.ratings,
+							compositeWeight.weights,
+							false,
+						);
+			r += coeff * powerFactor * value ** power;
 		}
 
 		r /= sumCoeffs;

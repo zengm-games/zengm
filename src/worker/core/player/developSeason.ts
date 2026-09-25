@@ -13,20 +13,17 @@ import { bySport } from "../../../common/sportFunctions.ts";
 // Cache for performance
 let groupedRatings: Record<string, Ratings> | undefined;
 
-const developSeason = async (
-	ratings: MinimalPlayerRatings,
-	age: number,
-	srID: string | undefined,
-	coachingLevel: number,
-	forPot: boolean,
-) => {
-	bySport({
-		baseball: developSeasonBaseball(ratings as any, age, coachingLevel),
-		basketball: developSeasonBasketball(ratings as any, age, coachingLevel),
-		football: developSeasonFootball(ratings as any, age, coachingLevel),
-		hockey: developSeasonHockey(ratings as any, age, coachingLevel),
-	});
+type RealPlayerDeterminismInfo = {
+	bornYear: number;
+	realPlayerDeterminism: number;
+	srID: string;
+};
 
+// Async part of developSeason, split out so it can be done only once when calling developSeasonSync many times (like in monteCarloPot)
+export const getRealPlayerDeterminismInfo = async (
+	srID: string | undefined,
+	forPot: boolean,
+): Promise<RealPlayerDeterminismInfo | undefined> => {
 	if (__SPORT !== "basketball" || !Object.hasOwn(g, "realPlayerDeterminism")) {
 		return;
 	}
@@ -58,8 +55,34 @@ const developSeason = async (
 		}
 	}
 
+	return {
+		bornYear: bio.bornYear,
+		realPlayerDeterminism,
+		srID,
+	};
+};
+
+export const developSeasonSync = (
+	ratings: MinimalPlayerRatings,
+	age: number,
+	coachingLevel: number,
+	realPlayerDeterminismInfo: RealPlayerDeterminismInfo | undefined,
+) => {
+	bySport({
+		baseball: developSeasonBaseball(ratings as any, age, coachingLevel),
+		basketball: developSeasonBasketball(ratings as any, age, coachingLevel),
+		football: developSeasonFootball(ratings as any, age, coachingLevel),
+		hockey: developSeasonHockey(ratings as any, age, coachingLevel),
+	});
+
+	if (!realPlayerDeterminismInfo || !groupedRatings) {
+		return;
+	}
+
+	const { bornYear, realPlayerDeterminism, srID } = realPlayerDeterminismInfo;
+
 	// Find real ratings with same age - can't just use season to look it up, because legends and random debut
-	const targetSeason = bio.bornYear + age;
+	const targetSeason = bornYear + age;
 	const realRatings = groupedRatings[`${srID}_${targetSeason}`];
 
 	if (realRatings) {
@@ -72,4 +95,16 @@ const developSeason = async (
 	}
 };
 
-export default developSeason;
+export const developSeason = async (
+	ratings: MinimalPlayerRatings,
+	age: number,
+	srID: string | undefined,
+	coachingLevel: number,
+	forPot: boolean,
+) => {
+	const realPlayerDeterminismInfo = await getRealPlayerDeterminismInfo(
+		srID,
+		forPot,
+	);
+	developSeasonSync(ratings, age, coachingLevel, realPlayerDeterminismInfo);
+};

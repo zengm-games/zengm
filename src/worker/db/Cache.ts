@@ -815,31 +815,59 @@ class Cache {
 
 		const updateLastPlayed = this._dirty;
 
-		const transaction = idb.league.transaction(stores, "readwrite");
+		// Take the pending writes out of the cache up front, so that writes that happen while waiting for the transaction go into new sets. If the transaction fails, these are merged back in so they will be retried on the next flush.
+		const pending = stores.map((store) => {
+			const deletes = this._deletes[store];
+			const dirtyRecords = this._dirtyRecords[store];
+			this._deletes[store] = new Set();
+			this._dirtyRecords[store] = new Set();
+			return { store, deletes, dirtyRecords };
+		});
 
-		for (const store of stores) {
-			const objectStore = transaction.objectStore(store);
-			for (const id of this._deletes[store]) {
-				// This is synchronous to prevent any race condition
-				objectStore.delete(id);
-			}
+		let transaction:
+			| IDBPTransaction<LeagueDB, Store[], "readwrite">
+			| undefined;
+		try {
+			transaction = idb.league.transaction(stores, "readwrite");
 
-			this._deletes[store].clear();
-
-			for (const id of this._dirtyRecords[store]) {
-				const record = this._data[store][id];
-
-				// If record was deleted after being marked as dirty, it will be undefined here
-				if (record !== undefined) {
+			for (const { store, deletes, dirtyRecords } of pending) {
+				const objectStore = transaction.objectStore(store);
+				for (const id of deletes) {
 					// This is synchronous to prevent any race condition
-					objectStore.put(record);
+					objectStore.delete(id);
+				}
+
+				for (const id of dirtyRecords) {
+					const record = this._data[store][id];
+
+					// If record was deleted after being marked as dirty, it will be undefined here
+					if (record !== undefined) {
+						// This is synchronous to prevent any race condition
+						objectStore.put(record);
+					}
 				}
 			}
 
-			this._dirtyRecords[store].clear();
-		}
+			await transaction.done;
+		} catch (error) {
+			// If put or delete threw synchronously, the transaction is still active and would commit a partial write
+			try {
+				transaction?.abort();
+			} catch {}
 
-		await transaction.done;
+			// Deletes are applied before puts, and puts use the current value in the cache, so this is correct even if some of these records were updated or deleted while waiting for the transaction
+			for (const { store, deletes, dirtyRecords } of pending) {
+				for (const id of deletes) {
+					this._deletes[store].add(id);
+				}
+				for (const id of dirtyRecords) {
+					this._dirtyRecords[store].add(id);
+				}
+			}
+			this._dirty = true;
+
+			throw error;
+		}
 
 		// Recompute rather than setting to false, because there may be new writes that happened while waiting for the transaction, or dirty stores not in storesToCheck
 		this._dirty = this._hasPendingWrites();

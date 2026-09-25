@@ -16,7 +16,7 @@ const getDraftTids = async () => {
 
 const loadTeamSeasons = async () => {
 	resetG();
-	await resetCache();
+	await resetCache({});
 
 	const teamsToSave = [];
 	const teamSeasonsToSave: TeamSeasonWithoutKey[] = [];

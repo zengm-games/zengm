@@ -1,4 +1,5 @@
 allowBuilds:
   unrs-resolver: false
 minimumReleaseAgeExclude:
-  - promise-worker-bi@6.0.1 || 6.0.2
+  - json-web-streams@1.2.0
+  - promise-worker-bi@6.0.2

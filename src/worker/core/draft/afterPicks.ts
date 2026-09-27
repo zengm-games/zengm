@@ -73,29 +73,23 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					p.tid = PLAYER.UNDRAFTED;
 				}
 				await idb.cache.players.putAll(players);
-
-				// Refresh draft results without redirecting away
-				await toUI("realtimeUpdate", [["playerMovement"]]);
-
-				local.fantasyDraftResults = [];
-				await league.setGameAttributes({
-					phase: g.get("nextPhase"),
-					nextPhase: undefined,
-				});
 			} else if (currentPhase === PHASE.EXPANSION_DRAFT) {
-				// Refresh draft results without redirecting away
-				await toUI("realtimeUpdate", [["playerMovement"]]);
-
-				local.fantasyDraftResults = [];
-				await league.setGameAttributes({
-					phase: g.get("nextPhase"),
-					nextPhase: undefined,
-				});
-
 				await expansionDraft.finalize();
 			}
 		} finally {
 			await lock.set("newPhase", false);
+
+			// Refresh draft results without redirecting away
+			await toUI("realtimeUpdate", [["playerMovement"]]);
+
+			// After refreshing, clear results
+			local.fantasyDraftResults = [];
+
+			// This is a bit of a race condition. Should not be changing g.get("phase") outside of newPhase lock, cause user taking some action (nagivating to a new page or whatever) could see weird results. But it's needed currently for updating the UI with the results of the fantasy/expansion draft.
+			await league.setGameAttributes({
+				phase: g.get("nextPhase"),
+				nextPhase: undefined,
+			});
 
 			// Do this after unlocking newPhase or it messes up the menu
 			await updatePhase();

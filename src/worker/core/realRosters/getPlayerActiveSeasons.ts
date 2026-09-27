@@ -50,12 +50,14 @@ export const getPlayerActiveSeasons = async () => {
 			}
 		}
 
-		for (const row of basketball.teams) {
-			if (
-				(row.phase === undefined || row.phase <= PHASE.PLAYOFFS) &&
-				typeof row.abbrev === "string"
-			) {
-				addRecord(row.slug, row.abbrev, row.season);
+		for (const [slug, rows] of Object.entries(basketball.teams)) {
+			for (const row of rows) {
+				if (
+					(row.phase === undefined || row.phase <= PHASE.PLAYOFFS) &&
+					typeof row.abbrev === "string"
+				) {
+					addRecord(slug, row.abbrev, row.season);
+				}
 			}
 		}
 

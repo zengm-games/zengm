@@ -1,5 +1,5 @@
 import { helpers } from "../../util/index.ts";
-import fuzzRating from "./fuzzRating.ts";
+import { applyFuzz, getFuzz } from "./fuzzRating.ts";
 import type { MinimalPlayerRatings } from "../../../common/types.ts";
 
 const compositeRating = (
@@ -10,6 +10,9 @@ const compositeRating = (
 ): number => {
 	let numerator = 0;
 	let denominator = 0;
+
+	// Only compute this once, rather than for every component
+	const fuzzValue = fuzz ? getFuzz(ratings.fuzz) : 0;
 
 	for (let i = 0; i < components.length; i++) {
 		const component = components[i]!;
@@ -26,8 +29,7 @@ const compositeRating = (
 
 			if (fuzz) {
 				// Don't fuzz height
-				factor =
-					component === "hgt" ? rating : fuzzRating(rating, ratings.fuzz);
+				factor = component === "hgt" ? rating : applyFuzz(rating, fuzzValue);
 			} else {
 				factor = rating;
 			}

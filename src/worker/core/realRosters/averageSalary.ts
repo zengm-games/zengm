@@ -2,7 +2,7 @@ import { helpers } from "../../util/index.ts";
 import type { Basketball } from "./loadData.basketball.ts";
 
 export const averageSalary = (
-	row: Basketball["salaries"][number],
+	row: Basketball["salaries"][string][number],
 	start: number,
 	exp: number,
 ) => {

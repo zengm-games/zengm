@@ -664,20 +664,27 @@ const finalizeDBExceptPlayers = async ({
 		}
 	}
 
+	// Don't await each put individually, since that is slow when there are many rows
+	const promises: Promise<unknown>[] = [];
+
 	const teamsStore = tx.objectStore("teams");
 	for (const t of teams) {
-		await teamsStore.put(t);
+		promises.push(teamsStore.put(t));
 	}
 
 	const teamSeasonsStore = tx.objectStore("teamSeasons");
 	for (const ts of teamSeasons) {
-		await teamSeasonsStore.put(ts);
+		promises.push(teamSeasonsStore.put(ts));
 	}
 
 	const teamStatsStore = tx.objectStore("teamStats");
 	for (const ts of teamStats) {
-		await teamStatsStore.put(ts);
+		promises.push(teamStatsStore.put(ts));
 	}
+
+	promises.push(tx.done);
+
+	await Promise.all(promises);
 };
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {

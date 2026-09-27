@@ -1,5 +1,4 @@
-import fuzzRating from "./fuzzRating.ts";
-import g from "../../util/g.ts";
+import { applyFuzz, getFuzz } from "./fuzzRating.ts";
 
 const fuzzOvrs = (ovrs: Record<string, number> | undefined, fuzz: number) => {
 	if (ovrs === undefined) {
@@ -8,17 +7,10 @@ const fuzzOvrs = (ovrs: Record<string, number> | undefined, fuzz: number) => {
 
 	const fuzzed = { ...ovrs };
 
-	if (fuzz !== 0) {
-		if (
-			(Object.hasOwn(g, "userTids") && g.get("userTids").length > 1) ||
-			(Object.hasOwn(g, "godMode") && g.get("godMode"))
-		) {
-			// In God Mode or Multi Team Mode, no fuzz is applied
-			return fuzzed;
-		}
-
+	const fuzzValue = getFuzz(fuzz);
+	if (fuzzValue !== 0) {
 		for (const key of Object.keys(fuzzed)) {
-			fuzzed[key] = fuzzRating(fuzzed[key]!, fuzz);
+			fuzzed[key] = applyFuzz(fuzzed[key]!, fuzzValue);
 		}
 	}
 

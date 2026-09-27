@@ -1079,6 +1079,17 @@ const NewLeague = (props: View<"newLeague">) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// Start loading historical stats before the league is actually created, since it's a large file
+	const prefetchRealPlayerStats =
+		state.customize === "real" &&
+		state.settings.realStats !== "none" &&
+		state.keptKeys.includes("players");
+	useEffect(() => {
+		if (prefetchRealPlayerStats) {
+			void toWorker("main", "prefetchRealPlayerStats", undefined);
+		}
+	}, [prefetchRealPlayerStats]);
+
 	let pageTitle = title;
 	if (currentScreen === "teams") {
 		pageTitle = "Customize Teams";

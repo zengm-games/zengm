@@ -138,6 +138,7 @@ import { getPlayer } from "../views/player.ts";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 import { beforeLeague, beforeNonLeague } from "../util/beforeView.ts";
 import loadData from "../core/realRosters/loadData.basketball.ts";
+import loadStatsBasketball from "../core/realRosters/loadStats.basketball.ts";
 import formatPlayerFactory from "../core/realRosters/formatPlayerFactory.ts";
 import { applyRealPlayerPhotos } from "../core/league/processPlayerNewLeague.ts";
 import { actualPhase } from "../util/actualPhase.ts";
@@ -1916,6 +1917,13 @@ const getLeagueInfo = (
 	options: Parameters<typeof realRosters.getLeagueInfo>[0],
 ) => {
 	return realRosters.getLeagueInfo(options);
+};
+
+// Start downloading real player stats before the user clicks "Create League", since it's a big file. Not awaited by the UI, and errors are ignored here because they will be handled when the stats are actually needed
+const prefetchRealPlayerStats = () => {
+	if (__SPORT === "basketball") {
+		loadStatsBasketball().catch(() => {});
+	}
 };
 
 const getLeagueName = () => {
@@ -5367,6 +5375,7 @@ const api = {
 		getTeamGraphStat,
 		getTradingBlockOffers,
 		ping,
+		prefetchRealPlayerStats,
 		handleUploadedDraftClass,
 		idbCacheFlush,
 		importPlayers,

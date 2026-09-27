@@ -780,8 +780,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 					srID: string;
 				}) => {
 					// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
-					const salaryRow = basketball.salaries.find(
-						(row) => row.start <= options.season + 1 && row.slug === p.srID,
+					const salaryRow = basketball.salaries[p.srID]?.find(
+						(row) => row.start <= options.season + 1,
 					);
 					if (salaryRow) {
 						if (p.draft.round === undefined) {
@@ -871,8 +871,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 						bio.draftRound > 0
 					) {
 						// Search forwards - first team a player was on that season
-						const statsRow = basketball.teams.find(
-							(row) => row.slug === p.srID && row.season === options.season + 1,
+						const statsRow = basketball.teams[p.srID]?.find(
+							(row) => row.season === options.season + 1,
 						);
 
 						if (statsRow) {

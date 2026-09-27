@@ -257,8 +257,7 @@ const RetiredJerseyNumbers = ({
 		);
 	}
 
-	const deleteRetiredJersey = async (j: number) => {
-		const i = page * PAGE_SIZE + j;
+	const deleteRetiredJersey = async (i: number) => {
 		const row = retiredJerseyNumbers[i];
 		if (!row) {
 			return;
@@ -275,8 +274,7 @@ const RetiredJerseyNumbers = ({
 		}
 	};
 
-	const editRetiredJersey = (j: number) => {
-		const i = page * PAGE_SIZE + j;
+	const editRetiredJersey = (i: number) => {
 		const row = retiredJerseyNumbers[i];
 		if (!row) {
 			return;
@@ -380,7 +378,7 @@ const RetiredJerseyNumbers = ({
 
 	const findUnsortedIndex = (sortedIndex: number) => {
 		const target = sortedJerseyNumbers[indexStart + sortedIndex]!;
-		const unsortedIndex = retiredJerseyNumbers.indexOf(target) - indexStart;
+		const unsortedIndex = retiredJerseyNumbers.indexOf(target);
 		if (unsortedIndex < 0) {
 			throw new Error("Should never happen");
 		}

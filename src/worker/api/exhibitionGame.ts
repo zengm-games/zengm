@@ -465,8 +465,7 @@ export const simExhibitionGame = async (
 		teamSeasonOverrides: teams,
 	});
 	for (const i of [0, 1] as const) {
-		const j = i === 0 ? 1 : 0;
-		liveSim.initialBoxScore.teams[i].season = teams[j].season;
+		liveSim.initialBoxScore.teams[i].season = teams[i].season;
 	}
 
 	liveSim.initialBoxScore.exhibition = true;

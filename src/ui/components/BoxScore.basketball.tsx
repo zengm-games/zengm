@@ -6,6 +6,7 @@ import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
 import { type MouseEvent, useState } from "react";
 import type { SortBy } from "./DataTable/index.tsx";
 import updateSortBys from "./DataTable/updateSortBys.ts";
+import { teamsInDisplayOrder } from "../util/boxScoreDisplayOrder.ts";
 
 const StatsTable = ({
 	Row,
@@ -229,7 +230,7 @@ const BoxScore = ({
 
 	return (
 		<>
-			{boxScore.teams.map((t: any, i: number) => {
+			{teamsInDisplayOrder(boxScore.teams as [any, any]).map((t, i) => {
 				return (
 					<div
 						key={t.abbrev}

@@ -427,8 +427,8 @@ const processLiveGameEvents = ({
 
 		const eAny = e as any;
 
-		// Swap teams order, so home team is at bottom in box score
-		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
+		const eventT: 0 | 1 | undefined =
+			eAny.t === 0 || eAny.t === 1 ? eAny.t : undefined;
 
 		// Hacky quarter stuff, ugh
 		if (
@@ -469,9 +469,9 @@ const processLiveGameEvents = ({
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
+				const ptsQtrs = boxScore.teams[eventT!].ptsQtrs;
 				ptsQtrs[ptsQtrs.length - 1] += e.amt;
-				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
+				boxScore.teams[eventT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
@@ -495,14 +495,14 @@ const processLiveGameEvents = ({
 			) {
 				const p = playersByPid[e.pid!];
 				(p as any)[e.s] += e.amt;
-				boxScore.teams[actualT!][e.s] += e.amt;
+				boxScore.teams[eventT!][e.s] += e.amt;
 
 				if (e.s === "pts") {
 					for (let j = 0; j < 2; j++) {
 						for (let k = 0; k < boxScore.teams[j].players.length; k++) {
 							if (boxScore.teams[j].players[k].inGame) {
 								boxScore.teams[j].players[k].pm +=
-									actualT === j ? e.amt : -e.amt;
+									eventT === j ? e.amt : -e.amt;
 							}
 						}
 					}
@@ -512,15 +512,14 @@ const processLiveGameEvents = ({
 				p.inGame = true;
 			} else if (e.s === "sPts" || e.s === "sAtt") {
 				// Shootout
-				boxScore.teams[actualT!][e.s] += e.amt;
+				boxScore.teams[eventT!][e.s] += e.amt;
 			}
 		} else if (e.type === "timeouts") {
-			// Reversed for actualT
-			boxScore.teams[0].timeouts = e.timeouts[1];
-			boxScore.teams[1].timeouts = e.timeouts[0];
+			boxScore.teams[0].timeouts = e.timeouts[0];
+			boxScore.teams[1].timeouts = e.timeouts[1];
 		} else if (e.type !== "init") {
 			text = getText(e, boxScore);
-			t = actualT;
+			t = eventT;
 			textOnly =
 				e.type === "gameOver" ||
 				e.type === "period" ||
@@ -563,8 +562,8 @@ const processLiveGameEvents = ({
 
 			if (Object.hasOwn(newPossessionTypes, eAny.type)) {
 				boxScore.possession = newPossessionTypes[eAny.type]
-					? actualT
-					: actualT === 0
+					? eventT
+					: eventT === 0
 						? 1
 						: 0;
 			}

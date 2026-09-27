@@ -19,6 +19,10 @@ import { TeamLogoInline } from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { useLocal } from "../util/local.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../util/boxScoreDisplayOrder.ts";
 
 const TeamNameLink = ({
 	children,
@@ -90,6 +94,22 @@ const TeamLogo = ({
 			</div>
 		</div>
 	) : null;
+};
+
+// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering (winner first), but live games won't, so for them show the away team first. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll change in the future.
+const getHeadlineTeams = (boxScore: any) => {
+	if (boxScore.won?.name !== undefined) {
+		return {
+			t0: boxScore.won,
+			t1: boxScore.lost,
+		};
+	}
+
+	const [t0Num, t1Num] = TEAM_NUMS_DISPLAY_ORDER;
+	return {
+		t0: boxScore.teams[t0Num],
+		t1: boxScore.teams[t1Num],
+	};
 };
 
 const TeamNameAndScore = ({
@@ -186,13 +206,7 @@ export const HeadlineScoreLive = ({
 	boxScore: any;
 	isStuck: boolean;
 }) => {
-	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
-	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
-	// change in the future.
-	const t0 =
-		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
-	const t1 =
-		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
+	const { t0, t1 } = getHeadlineTeams(boxScore);
 
 	const shootout = t0.sPts !== undefined;
 
@@ -217,7 +231,7 @@ export const HeadlineScoreLive = ({
 				<div className="d-flex h2 mb-0">
 					<TeamNameAndScore
 						boxScore={boxScore}
-						possessionNum={0}
+						possessionNum={TEAM_NUMS_DISPLAY_ORDER[0]}
 						live
 						shootout={shootout}
 						t={t0}
@@ -226,7 +240,7 @@ export const HeadlineScoreLive = ({
 				<div className="d-flex h2 mb-0 ms-3">
 					<TeamNameAndScore
 						boxScore={boxScore}
-						possessionNum={1}
+						possessionNum={TEAM_NUMS_DISPLAY_ORDER[1]}
 						live
 						shootout={shootout}
 						t={t1}
@@ -250,13 +264,7 @@ export const HeadlineScoreLive = ({
 };
 
 const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
-	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
-	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
-	// change in the future.
-	const t0 =
-		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
-	const t1 =
-		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
+	const { t0, t1 } = getHeadlineTeams(boxScore);
 
 	const shootout = t0.sPts !== undefined;
 
@@ -266,7 +274,7 @@ const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 				<div className="d-flex">
 					<TeamNameAndScore
 						boxScore={boxScore}
-						possessionNum={0}
+						possessionNum={TEAM_NUMS_DISPLAY_ORDER[0]}
 						live={false}
 						shootout={shootout}
 						t={t0}
@@ -275,7 +283,7 @@ const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 				<div className="d-flex">
 					<TeamNameAndScore
 						boxScore={boxScore}
-						possessionNum={1}
+						possessionNum={TEAM_NUMS_DISPLAY_ORDER[1]}
 						live={false}
 						shootout={shootout}
 						t={t1}
@@ -816,9 +824,12 @@ const DetailedScore = ({
 	sportState: any;
 	tid?: number;
 }) => {
-	// Quarter/overtime labels
+	const teams = teamsInDisplayOrder(boxScore.teams as [any, any]);
+
+	// Quarter/overtime labels. Check both teams because in baseball the home team may have fewer innings
 	const numPeriods = Math.max(
 		boxScore.teams[0].ptsQtrs.length,
+		boxScore.teams[1].ptsQtrs.length,
 		boxScore.numPeriods ?? 0,
 	);
 	const qtrs: {
@@ -912,7 +923,7 @@ const DetailedScore = ({
 							</tr>
 						</thead>
 						<tbody>
-							{boxScore.teams.map((t: any) => (
+							{teams.map((t) => (
 								<tr key={t.abbrev}>
 									<th>
 										{t.tid >= 0 ? (
@@ -962,17 +973,17 @@ const DetailedScore = ({
 				) : null}
 				{__SPORT === "basketball" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
-						<FourFactors teams={boxScore.teams} />
+						<FourFactors teams={teams} />
 					</div>
 				) : null}
 				{__SPORT === "football" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
-						<FourFactorsFootball teams={boxScore.teams} />
+						<FourFactorsFootball teams={teams} />
 					</div>
 				) : null}
 				{__SPORT === "hockey" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
-						<FourFactorsHockey teams={boxScore.teams} />
+						<FourFactorsHockey teams={teams} />
 					</div>
 				) : null}
 			</div>
@@ -1135,13 +1146,7 @@ export const BoxScoreWrapper = ({
 		),
 	});
 
-	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
-	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
-	// change in the future.
-	const t0 =
-		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
-	const t1 =
-		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
+	const { t0, t1 } = getHeadlineTeams(boxScore);
 
 	let forcedWinText = null;
 	if (boxScore.forceWin !== undefined) {

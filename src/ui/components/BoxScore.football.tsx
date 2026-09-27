@@ -28,6 +28,10 @@ import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/Pl
 import { range } from "../../common/utils.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../util/boxScoreDisplayOrder.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 
@@ -223,7 +227,7 @@ const StatsTable = ({
 }) => {
 	return (
 		<>
-			{boxScore.teams.map((t, i) => (
+			{teamsInDisplayOrder(boxScore.teams).map((t, i) => (
 				<StatsTableIndividual
 					key={i}
 					Row={Row}
@@ -401,19 +405,19 @@ const ScoringSummary = memo(
 									<td>{teams[event.t].abbrev}</td>
 									<td>{event.scoreType === "SH" ? "FG" : event.scoreType}</td>
 									<td>
-										{event.score.map((pts, i) => {
+										{TEAM_NUMS_DISPLAY_ORDER.map((t, i) => {
 											return (
-												<Fragment key={i}>
+												<Fragment key={t}>
 													<span
 														className={
-															!event.noPoints && event.t === i
+															!event.noPoints && event.t === t
 																? "fw-bold"
-																: event.noPoints && event.t === i
+																: event.noPoints && event.t === t
 																	? "text-danger"
 																	: "text-body-secondary"
 														}
 													>
-														{pts}
+														{event.score[t]}
 													</span>
 													{i === 0 ? "-" : null}
 												</Fragment>
@@ -820,8 +824,10 @@ const FieldAndDrive = ({
 	const latestPlay = sportState.plays.at(-1);
 	const latestText = latestPlay?.texts.at(-1);
 
-	// true means the drive is going from left to right, left means the opposite
-	const driveDirection = sportState.t === 0;
+	const [leftT, rightT] = TEAM_NUMS_DISPLAY_ORDER;
+
+	// true means the drive is going from left to right, left means the opposite. The team on the left (the away team) drives to the right.
+	const driveDirection = sportState.t === leftT;
 
 	return (
 		<div className="mb-3">
@@ -832,8 +838,8 @@ const FieldAndDrive = ({
 				}}
 			>
 				<FieldBackground
-					t={boxScore.teams[0]}
-					t2={boxScore.teams[1]}
+					t={boxScore.teams[leftT]}
+					t2={boxScore.teams[rightT]}
 					neutralSite={boxScore.neutralSite}
 				/>
 				{!sportState.newPeriodText ? (

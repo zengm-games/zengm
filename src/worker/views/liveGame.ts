@@ -149,9 +149,6 @@ export const boxScoreToLiveSim = async ({
 	}
 	makeAbbrevsUnique(initialBoxScore.teams);
 
-	// Swap teams order, so home team is at bottom in box score
-	initialBoxScore.teams.reverse();
-
 	// For FBGM, build up scoringSummary from events, to handle deleting a score due to penalty
 	if (
 		bySport({

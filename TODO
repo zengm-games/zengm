@@ -207,7 +207,6 @@ dev usability stuff
 - use zod in various places, including to replace schema/types difference
 - DRY stuff for adding a new setting
 - typescript for playersPlus
-- get rid of home/away tid swapping in box score and live sim
 - when updating GameAttributesLeagueWithHistory (for instance in setGameAttributes) we should always wrap or always not wrap based on ALWAYS_WRAP, not prior value
 - lint useLocalPartial
   - ensure all requested variables are destructured

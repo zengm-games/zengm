@@ -595,16 +595,11 @@ const processLiveGameEvents = ({
 
 		const eAny = e as any;
 
-		// Swap teams order, so home team is at bottom in box score
-		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
-		const otherT = actualT === 0 ? 1 : 0;
+		const eventT: 0 | 1 | undefined =
+			eAny.t === 0 || eAny.t === 1 ? eAny.t : undefined;
+		const otherT = eventT === 0 ? 1 : 0;
 
 		const scoringSummaryEvent = formatScoringSummaryEvent(e, quarters.length);
-		if (scoringSummaryEvent) {
-			// Swap rather than using actualT in case it's a score for the other team
-			(scoringSummaryEvent as any).t =
-				(scoringSummaryEvent as any).t === 0 ? 1 : 0;
-		}
 
 		let quarterText;
 		if (quarters.length === 0) {
@@ -660,7 +655,7 @@ const processLiveGameEvents = ({
 			subPlay: boolean;
 			tOverride?: 0 | 1;
 		}) => {
-			const t = tOverride ?? actualT;
+			const t = tOverride ?? eventT;
 			if (t === undefined) {
 				throw new Error("Should never happen");
 			}
@@ -696,14 +691,16 @@ const processLiveGameEvents = ({
 			sportState.awaitingShootout = true;
 			sportState.scrimmage = 1;
 			sportState.toGo = 10;
-			sportState.t = 0;
+
+			// Away team
+			sportState.t = 1;
 			addNewPlay({
 				down: 1,
 				toGo: 10,
 				scrimmage: 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
-				tOverride: 0,
+				tOverride: 1,
 			});
 		}
 
@@ -743,7 +740,8 @@ const processLiveGameEvents = ({
 			addNewPlay({
 				down: 1,
 				toGo: 10,
-				scrimmage: actualT === 1 ? 33 : 100 - 33,
+				// Home team is kicking in the opposite direction
+				scrimmage: eventT === 0 ? 33 : 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
 			});
@@ -761,7 +759,7 @@ const processLiveGameEvents = ({
 				} else {
 					const fieldPos = scrimmageToFieldPos(
 						e.scrimmage,
-						boxScore.teams[actualT!].abbrev,
+						boxScore.teams[eventT!].abbrev,
 						boxScore.teams[otherT].abbrev,
 					);
 
@@ -770,7 +768,7 @@ const processLiveGameEvents = ({
 						fieldPos,
 					);
 				}
-				t = actualT;
+				t = eventT;
 
 				text = (
 					<>
@@ -787,10 +785,10 @@ const processLiveGameEvents = ({
 			}
 
 			if (
-				actualT !== undefined &&
-				(awaitingKickoff || sportState.t !== actualT)
+				eventT !== undefined &&
+				(awaitingKickoff || sportState.t !== eventT)
 			) {
-				sportState.t = actualT;
+				sportState.t = eventT;
 				sportState.plays = [];
 			}
 			sportState.awaitingAfterTouchdown = e.awaitingAfterTouchdown;
@@ -824,18 +822,18 @@ const processLiveGameEvents = ({
 				}
 			}
 
-			boxScore.possession = actualT;
+			boxScore.possession = eventT;
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const { ptsQtrs } = boxScore.teams[actualT!];
+				const { ptsQtrs } = boxScore.teams[eventT!];
 				// eslint-disable-next-line unicorn/prefer-at
 				ptsQtrs[ptsQtrs.length - 1]! += e.amt;
-				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
+				boxScore.teams[eventT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
-			if (boxScore.teams[actualT!][e.s] !== undefined && e.s !== "min") {
+			if (boxScore.teams[eventT!][e.s] !== undefined && e.s !== "min") {
 				if (e.pid != undefined) {
 					const p = playersByPid[e.pid] as any;
 					if (e.s.endsWith("Lng")) {
@@ -844,9 +842,9 @@ const processLiveGameEvents = ({
 						p[e.s] += e.amt;
 					}
 				}
-				let stat = boxScore.teams[actualT!][e.s] as number;
+				let stat = boxScore.teams[eventT!][e.s] as number;
 				stat += e.amt;
-				boxScore.teams[actualT!][e.s] = stat;
+				boxScore.teams[eventT!][e.s] = stat;
 			}
 		} else if (e.type === "removeLastScore") {
 			// This happens a tick after sportState is updated, which I think is okay
@@ -861,9 +859,8 @@ const processLiveGameEvents = ({
 				sportState.plays = [];
 			}
 		} else if (e.type === "timeouts") {
-			// Reversed for actualT
-			boxScore.teams[0].timeouts = e.timeouts[1];
-			boxScore.teams[1].timeouts = e.timeouts[0];
+			boxScore.teams[0].timeouts = e.timeouts[0];
+			boxScore.teams[1].timeouts = e.timeouts[1];
 		} else if (e.type !== "init") {
 			let play = sportState.plays.at(-1);
 			if (!play) {
@@ -888,7 +885,7 @@ const processLiveGameEvents = ({
 				text = initialText;
 				boxScore.time = formatClock(e.clock);
 				stop = true;
-				t = actualT;
+				t = eventT;
 				textOnly =
 					e.type === "twoMinuteWarning" ||
 					e.type === "gameOver" ||
@@ -940,9 +937,8 @@ const processLiveGameEvents = ({
 				const accept = e.decision === "accept";
 				if (accept) {
 					/*// Penalty could have changed possession
-					const actualT2 = e.possessionAfter === 0 ? 1 : 0;
-					if (play.t !== actualT2) {
-						play.t = actualT2;
+					if (play.t !== e.possessionAfter) {
+						play.t = e.possessionAfter;
 					}*/
 
 					removeLastScoreOrTurnoversOrPuntReturnIfNecessary();
@@ -1101,7 +1097,7 @@ const processLiveGameEvents = ({
 				e.type === "interception" ||
 				(e.type === "fumbleRecovery" && e.lost)
 			) {
-				boxScore.possession = actualT;
+				boxScore.possession = eventT;
 			} else if (e.type === "turnoverOnDowns") {
 				boxScore.possession = otherT;
 			}

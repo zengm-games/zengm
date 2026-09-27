@@ -17,6 +17,10 @@ import { formatClock } from "../../common/formatClock.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../util/boxScoreDisplayOrder.ts";
 
 type Team = {
 	abbrev: string;
@@ -266,19 +270,19 @@ const ScoringSummary = ({
 							<tr>
 								<td>{teams[event.t].abbrev}</td>
 								<td>
-									{event.score.map((pts, i) => {
+									{TEAM_NUMS_DISPLAY_ORDER.map((t, i) => {
 										return (
-											<Fragment key={i}>
+											<Fragment key={t}>
 												<span
 													className={
-														!event.noPoints && event.t === i
+														!event.noPoints && event.t === t
 															? "fw-bold"
-															: event.noPoints && event.t === i
+															: event.noPoints && event.t === t
 																? "text-danger"
 																: "text-body-secondary"
 													}
 												>
-													{pts}
+													{event.score[t]}
 												</span>
 												{i === 0 ? "-" : null}
 											</Fragment>
@@ -352,7 +356,7 @@ const BoxScore = ({
 				teams={boxScore.teams}
 			/>
 
-			{boxScore.teams.map((t, i) => {
+			{teamsInDisplayOrder(boxScore.teams).map((t, i) => {
 				return (
 					<div
 						key={t.abbrev}

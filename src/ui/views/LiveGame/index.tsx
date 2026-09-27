@@ -10,6 +10,7 @@ import {
 	type ReactNode,
 	memo,
 	type MutableRefObject,
+	Fragment,
 } from "react";
 import { TeamLogoInline } from "../../components/TeamLogoInline.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
@@ -34,6 +35,10 @@ import {
 import { Confetti } from "./Confetti.tsx";
 import { BoxScoreRow } from "../../components/BoxScoreRow.tsx";
 import { getPeriodName } from "../../../common/getPeriodName.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../../util/boxScoreDisplayOrder.ts";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -373,19 +378,20 @@ export const LiveGame = (props: View<"liveGame">) => {
 							: t;
 
 					score =
-						scoreT === 0 ? (
+						scoreT !== undefined ? (
 							<>
-								<b>{boxScore.current.teams[0][ptsKey]}</b>-
-								<span className="text-body-secondary">
-									{boxScore.current.teams[1][ptsKey]}
-								</span>
-							</>
-						) : scoreT === 1 ? (
-							<>
-								<span className="text-body-secondary">
-									{boxScore.current.teams[0][ptsKey]}
-								</span>
-								-<b>{boxScore.current.teams[1][ptsKey]}</b>
+								{TEAM_NUMS_DISPLAY_ORDER.map((t2, i) => (
+									<Fragment key={t2}>
+										{i > 0 ? "-" : null}
+										{t2 === scoreT ? (
+											<b>{boxScore.current.teams[t2][ptsKey]}</b>
+										) : (
+											<span className="text-body-secondary">
+												{boxScore.current.teams[t2][ptsKey]}
+											</span>
+										)}
+									</Fragment>
+								))}
 							</>
 						) : undefined;
 
@@ -1038,30 +1044,23 @@ export const LiveGame = (props: View<"liveGame">) => {
 									>
 										Top
 									</button>
-									{__SPORT !== "football" ? (
-										<>
-											<button
-												className="btn btn-light-bordered"
-												onClick={() => {
-													document
-														.getElementById("scroll-team-1")
-														?.scrollIntoView();
-												}}
-											>
-												{boxScore.current.teams[0].abbrev}
-											</button>
-											<button
-												className="btn btn-light-bordered"
-												onClick={() => {
-													document
-														.getElementById("scroll-team-2")
-														?.scrollIntoView();
-												}}
-											>
-												{boxScore.current.teams[1].abbrev}
-											</button>
-										</>
-									) : null}
+									{__SPORT !== "football"
+										? teamsInDisplayOrder(
+												boxScore.current.teams as [any, any],
+											).map((t, i) => (
+												<button
+													key={i}
+													className="btn btn-light-bordered"
+													onClick={() => {
+														document
+															.getElementById(`scroll-team-${i + 1}`)
+															?.scrollIntoView();
+													}}
+												>
+													{t.abbrev}
+												</button>
+											))
+										: null}
 									<button
 										className="btn btn-light-bordered"
 										onClick={() => {

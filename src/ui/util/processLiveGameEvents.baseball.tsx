@@ -545,15 +545,15 @@ const processLiveGameEvents = ({
 
 		const eAny = e as any;
 
-		// Swap teams order, so home team is at bottom in box score
-		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
+		const eventT: 0 | 1 | undefined =
+			eAny.t === 0 || eAny.t === 1 ? eAny.t : undefined;
 
 		if (e.type === "sideStart") {
 			quarters.push(e.inning);
-			boxScore.teams[actualT!].ptsQtrs.push(0);
+			boxScore.teams[eventT!].ptsQtrs.push(0);
 
-			if (actualT === 0) {
-				const inning = boxScore.teams[0].ptsQtrs.length;
+			if (eventT === 1) {
+				const inning = boxScore.teams[1].ptsQtrs.length;
 				if (inning > boxScore.numPeriods) {
 					overtimes += 1;
 					boxScore.overtime = `(${boxScore.numPeriods + overtimes})`;
@@ -566,9 +566,9 @@ const processLiveGameEvents = ({
 			Object.assign(sportState, DEFAULT_SPORT_STATE);
 			sportState.pitcherPid = e.pitcherPid;
 			sportState.batterPid = -1;
-			sportState.o = actualT!;
-			boxScore.possession = actualT;
-			t = actualT;
+			sportState.o = eventT!;
+			boxScore.possession = eventT;
+			t = eventT;
 		} else if (e.type === "reliefPitcher") {
 			sportState.pitcherPid = e.pidOn;
 		} else if (e.type === "ball" || e.type === "strike" || e.type === "foul") {
@@ -619,16 +619,16 @@ const processLiveGameEvents = ({
 		} else if (e.type === "shootoutTeam" || e.type === "shootoutShot") {
 			sportState.batterPid = e.pid;
 			sportState.pitcherPid = e.pitcherPid;
-			sportState.o = actualT!;
+			sportState.o = eventT!;
 		}
 
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
+				const ptsQtrs = boxScore.teams[eventT!].ptsQtrs;
 				// eslint-disable-next-line unicorn/prefer-at
 				ptsQtrs[ptsQtrs.length - 1]! += e.amt;
-				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
+				boxScore.teams[eventT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
@@ -640,9 +640,9 @@ const processLiveGameEvents = ({
 					p[e.s] += e.amt;
 				}
 			}
-			if (Object.hasOwn(boxScore.teams[actualT!], e.s)) {
+			if (Object.hasOwn(boxScore.teams[eventT!], e.s)) {
 				// @ts-expect-error
-				boxScore.teams[actualT][e.s] += e.amt;
+				boxScore.teams[eventT][e.s] += e.amt;
 			}
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
@@ -682,9 +682,6 @@ const processLiveGameEvents = ({
 			const inning = Math.ceil(quarters.length / 2);
 			const scoringSummaryEvent = formatScoringSummaryEvent(e, inning);
 			if (scoringSummaryEvent) {
-				// Swap rather than using actualT in case it's a score for the other team
-				(scoringSummaryEvent as any).t =
-					(scoringSummaryEvent as any).t === 0 ? 1 : 0;
 				boxScore.scoringSummary = [
 					...boxScore.scoringSummary,
 					scoringSummaryEvent,

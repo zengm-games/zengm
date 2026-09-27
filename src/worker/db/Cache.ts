@@ -824,14 +824,12 @@ class Cache {
 			return { store, deletes, dirtyRecords };
 		});
 
-		let transaction:
-			| IDBPTransaction<LeagueDB, Store[], "readwrite">
-			| undefined;
+		let tx: IDBPTransaction<LeagueDB, Store[], "readwrite"> | undefined;
 		try {
-			transaction = idb.league.transaction(stores, "readwrite");
+			tx = idb.league.transaction(stores, "readwrite");
 
 			for (const { store, deletes, dirtyRecords } of pending) {
-				const objectStore = transaction.objectStore(store);
+				const objectStore = tx.objectStore(store);
 				for (const id of deletes) {
 					// This is synchronous to prevent any race condition
 					objectStore.delete(id);
@@ -848,11 +846,11 @@ class Cache {
 				}
 			}
 
-			await transaction.done;
+			await tx.done;
 		} catch (error) {
 			// If put or delete threw synchronously, the transaction is still active and would commit a partial write
 			try {
-				transaction?.abort();
+				tx?.abort();
 			} catch {}
 
 			// Deletes are applied before puts, and puts use the current value in the cache, so this is correct even if some of these records were updated or deleted while waiting for the transaction

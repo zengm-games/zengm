@@ -12,10 +12,10 @@ const updateMeta = async (
 	}
 
 	if (local.autoSave) {
-		const transation = await idb.meta.transaction("leagues", "readwrite");
+		const tx = await idb.meta.transaction("leagues", "readwrite");
 
 		const lid = lidInput ?? g.get("lid");
-		const l = await transation.store.get(lid);
+		const l = await tx.store.get(lid);
 		if (!l) {
 			throw new Error(`No league with lid ${lid} found`);
 		}
@@ -50,8 +50,7 @@ const updateMeta = async (
 			}
 		}
 
-		await transation.store.put(l);
-		await transation.done;
+		await Promise.all([tx.store.put(l), tx.done]);
 	}
 };
 

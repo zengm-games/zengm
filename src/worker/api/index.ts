@@ -831,7 +831,7 @@ const deleteOldData = async (options: {
 	playerStatsUnnotable: boolean;
 	playerStats: boolean;
 }) => {
-	const transaction = idb.league.transaction(
+	const tx = idb.league.transaction(
 		[
 			"allStars",
 			"draftLotteryResults",
@@ -847,27 +847,27 @@ const deleteOldData = async (options: {
 	);
 
 	if (options.boxScores) {
-		transaction.objectStore("games").clear();
+		tx.objectStore("games").clear();
 	}
 
 	if (options.teamHistory) {
-		for await (const cursor of transaction.objectStore("teamSeasons")) {
+		for await (const cursor of tx.objectStore("teamSeasons")) {
 			if (cursor.value.season < g.get("season")) {
 				await cursor.delete();
 			}
 		}
 
-		transaction.objectStore("draftLotteryResults").clear();
+		tx.objectStore("draftLotteryResults").clear();
 
-		transaction.objectStore("headToHeads").clear();
+		tx.objectStore("headToHeads").clear();
 
-		for await (const cursor of transaction.objectStore("allStars")) {
+		for await (const cursor of tx.objectStore("allStars")) {
 			if (cursor.value.season < g.get("season")) {
 				await cursor.delete();
 			}
 		}
 
-		for await (const cursor of transaction.objectStore("teams")) {
+		for await (const cursor of tx.objectStore("teams")) {
 			const t = cursor.value;
 			t.retiredJerseyNumbers = [];
 			await cursor.update(t);
@@ -875,7 +875,7 @@ const deleteOldData = async (options: {
 	}
 
 	if (options.teamStats) {
-		for await (const cursor of transaction.objectStore("teamStats")) {
+		for await (const cursor of tx.objectStore("teamStats")) {
 			if (cursor.value.season < g.get("season")) {
 				await cursor.delete();
 			}
@@ -883,14 +883,14 @@ const deleteOldData = async (options: {
 	}
 
 	if (options.retiredPlayers) {
-		for await (const cursor of transaction
+		for await (const cursor of tx
 			.objectStore("players")
 			.index("tid")
 			.iterate(PLAYER.RETIRED)) {
 			await cursor.delete();
 		}
 	} else if (options.retiredPlayersUnnotable) {
-		for await (const cursor of transaction
+		for await (const cursor of tx
 			.objectStore("players")
 			.index("tid")
 			.iterate(PLAYER.RETIRED)) {
@@ -959,7 +959,7 @@ const deleteOldData = async (options: {
 	};
 
 	if (options.playerStats) {
-		for await (const cursor of transaction.objectStore("players")) {
+		for await (const cursor of tx.objectStore("players")) {
 			const p = cursor.value;
 			const p2 = deletePlayerStats(p);
 			if (p2) {
@@ -967,7 +967,7 @@ const deleteOldData = async (options: {
 			}
 		}
 	} else if (options.playerStatsUnnotable) {
-		for await (const cursor of transaction.objectStore("players")) {
+		for await (const cursor of tx.objectStore("players")) {
 			const p = cursor.value;
 			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
 				const p2 = deletePlayerStats(p);
@@ -979,10 +979,10 @@ const deleteOldData = async (options: {
 	}
 
 	if (options.events) {
-		transaction.objectStore("events").clear();
+		tx.objectStore("events").clear();
 	}
 
-	await transaction.done;
+	await tx.done;
 
 	// Without this, cached values will still exist
 	await idb.cache.fill();

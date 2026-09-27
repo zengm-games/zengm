@@ -2,8 +2,10 @@ import { createReadStream, existsSync } from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import os from "node:os";
-import getPort from "get-port";
 import { styleText } from "node:util";
+import type { AddressInfo } from "node:net";
+
+const DEFAULT_PORT = 3000;
 
 const mimeTypes: Record<string, string> = {
 	".bmp": "image/bmp",
@@ -107,6 +109,43 @@ const styleUrl = (url: string) => {
 	return styleText("cyan", url);
 };
 
+const listen = (server: http.Server, host: string, port: number) =>
+	new Promise((resolve, reject) => {
+		const onError = (error: any) => {
+			server.off("listening", onListening);
+
+			if (error.code === "EADDRINUSE") {
+				resolve(false);
+			} else {
+				reject(error);
+			}
+		};
+
+		const onListening = () => {
+			server.off("error", onError);
+			resolve(true);
+		};
+
+		server.once("error", onError);
+		server.once("listening", onListening);
+		server.listen(port, host);
+	});
+
+const listenOnAvailablePort = async (server: http.Server, host: string) => {
+	const NUM_PORTS_TO_TRY = 100;
+	const maxPort = DEFAULT_PORT + NUM_PORTS_TO_TRY - 1;
+	for (let port = DEFAULT_PORT; port <= maxPort; port++) {
+		if (await listen(server, host, port)) {
+			return port;
+		}
+	}
+
+	// Fall back to arbitrary port
+	await listen(server, host, 0);
+	const { port } = server.address() as AddressInfo;
+	return port;
+};
+
 export const startServer = async ({
 	exposeToNetwork,
 	waitForBuild,
@@ -114,9 +153,6 @@ export const startServer = async ({
 	exposeToNetwork: boolean;
 	waitForBuild: (() => Promise<void> | undefined) | undefined;
 }) => {
-	const port = await getPort({ port: 3000 });
-	const localUrl = `http://localhost:${port}`;
-
 	const server = http.createServer(async (req, res) => {
 		if (waitForBuild) {
 			const wait = waitForBuild();
@@ -134,18 +170,17 @@ export const startServer = async ({
 		}
 	});
 
-	return new Promise<void>((resolve) => {
-		server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
-			console.log("🏀🏈 ZenGM dev server ⚾🏒\n");
-			console.log(`> Local: ${styleUrl(localUrl)}`);
-			if (exposeToNetwork) {
-				console.log(
-					`> Network: ${styleUrl(`http://${getIpAddress()}:${port}`)}`,
-				);
-			} else {
-				console.log(`> Network: ${styleText("dim", "use --host to expose")}`);
-			}
-			resolve();
-		});
-	});
+	const port = await listenOnAvailablePort(
+		server,
+		exposeToNetwork ? "0.0.0.0" : "localhost",
+	);
+	const localUrl = `http://localhost:${port}`;
+
+	console.log("🏀🏈 ZenGM dev server ⚾🏒\n");
+	console.log(`> Local: ${styleUrl(localUrl)}`);
+	if (exposeToNetwork) {
+		console.log(`> Network: ${styleUrl(`http://${getIpAddress()}:${port}`)}`);
+	} else {
+		console.log(`> Network: ${styleText("dim", "use --host to expose")}`);
+	}
 };

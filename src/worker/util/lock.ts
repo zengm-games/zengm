@@ -12,10 +12,49 @@ const locks: Locks = {
 	stopGameSim: false,
 };
 
+// Views and phase changes are mutually exclusive, because a phase change temporarily leaves data in an inconsistent state (like g.season being incremented before players get ratings for the new season). So views wait for any phase change to finish before running, and a phase change waits for any running views to finish before starting.
+let numViewsRunning = 0;
+let onViewsDone: (() => void)[] = [];
+let onNewPhaseDone: (() => void)[] = [];
+
+const resolveAll = (callbacks: (() => void)[]) => {
+	for (const callback of callbacks) {
+		callback();
+	}
+};
+
+const runView = async <T>(cb: () => Promise<T>) => {
+	// Loop in case another phase change starts before this gets a chance to run, like during auto play
+	while (locks.newPhase) {
+		const { promise, resolve } = Promise.withResolvers<void>();
+		onNewPhaseDone.push(resolve);
+		await promise;
+	}
+
+	numViewsRunning += 1;
+	try {
+		return await cb();
+	} finally {
+		numViewsRunning -= 1;
+		if (numViewsRunning === 0) {
+			const callbacks = onViewsDone;
+			onViewsDone = [];
+			resolveAll(callbacks);
+		}
+	}
+};
+
+const newPhaseUnlocked = () => {
+	const callbacks = onNewPhaseDone;
+	onNewPhaseDone = [];
+	resolveAll(callbacks);
+};
+
 const reset = () => {
 	for (const key of helpers.keys(locks)) {
 		locks[key] = false;
 	}
+	newPhaseUnlocked();
 };
 
 const get = (name: keyof Locks): boolean => {
@@ -30,8 +69,18 @@ const set = async (name: keyof Locks, value: boolean) => {
 
 	locks[name] = value;
 
-	if (name === "newPhase" && value) {
-		local.undoLog.invalidate("newPhase");
+	if (name === "newPhase") {
+		if (value) {
+			local.undoLog.invalidate("newPhase");
+
+			if (numViewsRunning > 0) {
+				await new Promise<void>((resolve) => {
+					onViewsDone.push(resolve);
+				});
+			}
+		} else {
+			newPhaseUnlocked();
+		}
 	}
 
 	if (name === "gameSim") {
@@ -92,6 +141,7 @@ const unreadMessage = async () => {
 export default {
 	reset,
 	get,
+	runView,
 	set,
 	canStartGames,
 	unreadMessage,

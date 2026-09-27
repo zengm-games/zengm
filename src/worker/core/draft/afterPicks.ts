@@ -73,8 +73,6 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					p.tid = PLAYER.UNDRAFTED;
 				}
 				await idb.cache.players.putAll(players);
-			} else if (currentPhase === PHASE.EXPANSION_DRAFT) {
-				await expansionDraft.finalize();
 			}
 		} finally {
 			await lock.set("newPhase", false);
@@ -90,6 +88,10 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 				phase: g.get("nextPhase"),
 				nextPhase: undefined,
 			});
+
+			if (currentPhase === PHASE.EXPANSION_DRAFT) {
+				await expansionDraft.finalize();
+			}
 
 			// Do this after unlocking newPhase or it messes up the menu
 			await updatePhase();

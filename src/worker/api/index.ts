@@ -3649,7 +3649,7 @@ const runBefore = async (
 		return;
 	}
 
-	let inputs;
+	let inputs: any;
 	if (Object.hasOwn(processInputs, viewId)) {
 		// https://github.com/microsoft/TypeScript/issues/21732
 		// @ts-expect-error
@@ -3672,7 +3672,9 @@ const runBefore = async (
 	const view = views[viewId];
 
 	if (view) {
-		const data = await view(inputs, updateEvents, prevData, conditions);
+		const data = await lock.runView(() =>
+			view(inputs, updateEvents, prevData, conditions),
+		);
 		return data ?? {};
 	}
 

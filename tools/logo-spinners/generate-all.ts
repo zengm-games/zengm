@@ -4,8 +4,8 @@ import * as render from "./render/index.ts";
 const colors: Record<
 	Sport,
 	{
-		gold: string[];
-		normal: string[];
+		gold: [string, string];
+		normal: [string, string];
 	}
 > = {
 	baseball: {
@@ -44,13 +44,14 @@ const variantsBase: {
 const sizeMultipliers = [1, 2];
 
 const variants = [];
-for (const base of variantsBase) {
-	for (const color of base.colors) {
-		const gold = color === "gold";
+for (const sport of SPORTS) {
+	for (const base of variantsBase) {
+		for (const color of base.colors) {
+			const gold = color === "gold";
 
-		for (const sport of SPORTS) {
 			for (const sizeMultiplier of sizeMultipliers) {
 				const size = sizeMultiplier * base.size;
+				//const filename = `public/${sport}/ico/spinner-${size}${gold ? "-gold" : ""}.avif`;
 				const filename = `tools/logo-spinners/${sport}-${size}${gold ? "-gold" : ""}.avif`;
 
 				variants.push({
@@ -65,7 +66,5 @@ for (const base of variantsBase) {
 }
 
 for (const variant of variants) {
-	if (variant.sport === "basketball") {
-		await render.basketball(variant);
-	}
+	await render[variant.sport](variant);
 }

@@ -10,8 +10,6 @@
 import { f } from "../geometry.ts";
 import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
 
-const DURATION = 2; // [seconds]
-
 export type FootballColors = {
 	ball: string;
 	seam: string;
@@ -242,8 +240,8 @@ export const football = ({
 	size,
 }: SpinnerOptions<FootballColors>) =>
 	renderSpinner({
-		duration: DURATION,
 		filename,
 		frameSvg: (t) => frameSvg(colors, t),
 		size,
+		sport: "football",
 	});

@@ -18,8 +18,6 @@ import {
 } from "../geometry.ts";
 import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
 
-const DURATION = 2; // [seconds]
-
 export type BaseballColors = {
 	ball: string;
 	stitches: string;
@@ -202,8 +200,8 @@ export const baseball = ({
 	size,
 }: SpinnerOptions<BaseballColors>) =>
 	renderSpinner({
-		duration: DURATION,
 		filename,
 		frameSvg: (t) => frameSvg(colors, t),
 		size,
+		sport: "baseball",
 	});

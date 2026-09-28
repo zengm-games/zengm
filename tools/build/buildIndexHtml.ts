@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { minify } from "html-minifier-terser";
+import { getLogoSpinnerCssVars } from "../../common/logoSpinners.ts";
 import { type ReplaceInfo } from "./replace.ts";
 import { bySport } from "../lib/bySport.ts";
 import { getBannerAdsCode } from "./getBannerAdsCode.ts";
@@ -79,6 +80,12 @@ export const buildIndexHtml = async ({
 		{
 			searchValue: "VERSION_NUMBER",
 			replaceValue: versionNumber,
+		},
+		{
+			searchValue: "LOGO_SPINNER_CSS_VARS",
+			replaceValue: Object.entries(getLogoSpinnerCssVars(sport, 48))
+				.map(([key, value]) => `${key}: ${value}`)
+				.join("; "),
 		},
 		{
 			searchValue: "BANNER_ADS_CODE",

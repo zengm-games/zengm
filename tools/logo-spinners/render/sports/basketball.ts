@@ -4,8 +4,6 @@
 import { applyMatrix, f, normalize, rotate, type Vec3 } from "../geometry.ts";
 import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
 
-const DURATION = 4; // [seconds]
-
 // Ball gradient: [outer, inner]
 export type BasketballColors = [string, string];
 
@@ -117,8 +115,8 @@ export const basketball = ({
 	size,
 }: SpinnerOptions<BasketballColors>) =>
 	renderSpinner({
-		duration: DURATION,
 		filename,
 		frameSvg: (t) => frameSvg(colors, t),
 		size,
+		sport: "basketball",
 	});

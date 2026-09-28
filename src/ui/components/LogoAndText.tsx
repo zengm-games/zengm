@@ -1,5 +1,34 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { GAME_NAME } from "../../common/constants.ts";
+import LogoSpinner from "./LogoSpinner.tsx";
+import { useLocal } from "../util/local.ts";
+
+// Spinner looks janky if it gets turned on/off rapidly
+const PAUSE_DELAY_MS = 100;
+
+const useSpinning = (updating: boolean) => {
+	const { gameSimInProgress } = useLocal(["gameSimInProgress"]);
+	const busy = updating || gameSimInProgress;
+
+	const [spinning, setSpinning] = useState(busy);
+
+	useEffect(() => {
+		if (busy) {
+			setSpinning(true);
+			return;
+		}
+
+		const timeoutId = setTimeout(() => {
+			setSpinning(false);
+		}, PAUSE_DELAY_MS);
+
+		return () => {
+			clearTimeout(timeoutId);
+		};
+	}, [busy]);
+
+	return busy || spinning;
+};
 
 type Props = {
 	gold?: boolean;
@@ -7,6 +36,8 @@ type Props = {
 	updating: boolean;
 };
 const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
+	const spinning = useSpinning(updating);
+
 	return (
 		<a
 			className={
@@ -16,16 +47,7 @@ const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
 			}
 			href="/"
 		>
-			<img
-				alt=""
-				className="spin"
-				width="18"
-				height="18"
-				src={gold ? "/ico/logo-gold.png" : "/ico/logo.png"}
-				style={{
-					animationPlayState: updating ? "running" : "paused",
-				}}
-			/>
+			<LogoSpinner gold={gold} size={18} spinning={spinning} />
 
 			<span className={inLeague ? "d-none d-lg-inline" : undefined}>
 				{GAME_NAME}

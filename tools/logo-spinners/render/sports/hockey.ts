@@ -17,8 +17,6 @@ import {
 } from "../geometry.ts";
 import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
 
-const DURATION = 1.5; // [seconds]
-
 export type HockeyColors = {
 	top: string;
 	side: string;
@@ -160,8 +158,8 @@ export const hockey = ({
 	size,
 }: SpinnerOptions<HockeyColors>) =>
 	renderSpinner({
-		duration: DURATION,
 		filename,
 		frameSvg: (t) => frameSvg(colors, t),
 		size,
+		sport: "hockey",
 	});

@@ -1,4 +1,12 @@
 spinner animations
+- benchmark
+- old versions of Chrome/Safari
+- spin in response to...
+  - draft auto pick
+  - creating league
+  - cloning league
+  - auto play
+  - toWorker - would this cover it all?
 - versions
   - 48px (index.html)
     - 1x
@@ -16,8 +24,8 @@ spinner animations
 - how to pause spinner
 - existing images in /ico/ still all needed? maybe not gold ones
 - remove old "spin" class
+- basketball spin axis
 - smaller images?
-  - frame rate
   - compression
   - yuv420p
 

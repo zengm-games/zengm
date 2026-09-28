@@ -12,6 +12,53 @@
 		<link rel="icon" href="/ico/icon.svg" />
 		<link rel="apple-touch-icon" href="/ico/apple-touch-icon.png" />
 
+		<style>
+			/*
+			Spinning logo, from a sprite sheet that is a grid of frames (see
+			common/logoSpinners.ts). The image has two animations: one steps down
+			through the rows, and the other steps across the columns within each
+			row. Rows use transform and columns use the separate translate
+			property, since two animations of the same property would not combine.
+			Browsers without translate (Chrome < 104) only step through the rows,
+			which is still a full turn, just choppier.
+
+			This is here rather than in the theme CSS so it works before that
+			loads, and the React LogoSpinner component uses it too.
+			*/
+			.logo-spinner {
+				display: inline-block;
+				overflow: hidden;
+				vertical-align: middle;
+				width: var(--logo-spinner-size);
+				height: var(--logo-spinner-size);
+			}
+			.logo-spinner img {
+				display: block;
+				max-width: none;
+				width: calc(var(--logo-spinner-size) * var(--logo-spinner-cols));
+				height: calc(var(--logo-spinner-size) * var(--logo-spinner-rows));
+				animation:
+					logo-spinner-rows var(--logo-spinner-duration)
+						steps(var(--logo-spinner-rows)) infinite,
+					logo-spinner-cols
+						calc(var(--logo-spinner-duration) / var(--logo-spinner-rows))
+						steps(var(--logo-spinner-cols)) infinite;
+			}
+			.logo-spinner-paused img {
+				animation-play-state: paused;
+			}
+			@keyframes logo-spinner-rows {
+				to {
+					transform: translateY(-100%);
+				}
+			}
+			@keyframes logo-spinner-cols {
+				to {
+					translate: -100% 0;
+				}
+			}
+		</style>
+
 		<meta
 			name="description"
 			content="A single-player SPORT simulation game. Make trades, set rosters, draft players, and try to build the next dynasty."
@@ -107,15 +154,17 @@
 			<div style="margin: 0 15px">
 				<div style="max-width: 360px; margin: 0 auto">
 					<div style="text-align: center; margin: 48px 0 100px 0">
-						<img
+						<span
 							id="loading-icon"
-							src="/ico/icon.svg"
-							width="48"
-							height="48"
-							class="spin"
-							style="animation-play-state: runnung"
-							alt=""
-						/>
+							class="logo-spinner"
+							style="LOGO_SPINNER_CSS_VARS"
+						>
+							<img
+								alt=""
+								src="/ico/spinner-48.avif"
+								srcset="/ico/spinner-48.avif 1x, /ico/spinner-96.avif 2x"
+							/>
+						</span>
 					</div>
 
 					<p>GAME_NAME vVERSION_NUMBER</p>
@@ -257,8 +306,9 @@
 					startupError.innerHTML = errorMsg;
 					startupError.style.display = "block";
 
-					document.getElementById("loading-icon").style.animationPlayState =
-						"paused";
+					document
+						.getElementById("loading-icon")
+						.classList.add("logo-spinner-paused");
 
 					clearTimeout(timeoutID);
 				} else {

@@ -66,6 +66,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		);
 	} else {
 		try {
+			// While this lock is held, don't await toUI("realtimeUpdate") from anywhere in the phase change code, or anywhere else that could block setting the newPhase lock to false. Views wait for the newPhase lock to be released before running and newPhase waits for the views to all finish, so that could deadlock.
 			await lock.set("newPhase", true);
 
 			if (phase !== PHASE.AFTER_TRADE_DEADLINE) {

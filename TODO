@@ -1,3 +1,24 @@
+spinner animations
+- versions
+  - 48px (index.html)
+    - 1x
+    - 2x
+  - 18px (LogoAndText, AllStarThree)
+    - 1x
+    - 2x
+    - gold 1x
+    - gold 2x
+- places to use
+  - index.html
+  - LogoAndText
+  - AllStarThree
+  - buildSw
+- what 
+- other sports
+  - football
+  - hockey
+  - baseball
+
 add helpers.entries similar to helpers.keys, if possible
 - use in developSeason.basketball.ts
 

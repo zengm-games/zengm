@@ -347,9 +347,9 @@ export const ScoreBox = memo(
 											}`,
 											basketball: `${
 												!challengeNoRatings ? ", " : ""
-											}${p.stats.pts.toFixed(1)} / ${p.stats.trb.toFixed(
-												1,
-											)} / ${p.stats.ast.toFixed(1)}`,
+											}${(p.stats.pts ?? 0).toFixed(1)} / ${(
+												p.stats.trb ?? 0
+											).toFixed(1)} / ${(p.stats.ast ?? 0).toFixed(1)}`,
 											football: null,
 											hockey: `${!challengeNoRatings && p.stats.keyStats ? ", " : ""}${
 												p.stats.keyStats

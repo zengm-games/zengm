@@ -4,6 +4,8 @@
 // screens. --crf is AV1 quality (lower = better/bigger).
 
 import { spawn } from "node:child_process";
+import { once } from "node:events";
+import { parseArgs } from "node:util";
 import { Resvg } from "@resvg/resvg-js";
 import ffmpegPath from "ffmpeg-static";
 
@@ -39,8 +41,10 @@ const CONFIG = {
 
 type Vec3 = [number, number, number];
 
-// Geometry of the original logo SVG (viewBox units)
-const VIEWBOX = "0 0 252.263 251.88";
+// Geometry of the original logo SVG (viewBox units). The original is 252.263 x
+// 251.88; the viewBox is padded vertically to make it square, so rendered
+// frames are exactly size x size.
+const VIEWBOX = "0 -0.1915 252.263 252.263";
 const CX = 126.13;
 const CY = 125.94;
 const R = 123.57;
@@ -125,55 +129,56 @@ const seamPath = (seams: Vec3[][], th: number) => {
 const frameSvg = (seams: Vec3[][], th: number) =>
 	`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}"><defs><linearGradient id="a"><stop offset="0" stop-color="${CONFIG.gradient[0]}"/><stop offset="1" stop-color="${CONFIG.gradient[1]}"/></linearGradient><radialGradient href="#a" xlink:href="#a" xmlns:xlink="http://www.w3.org/1999/xlink" id="b" cx="362.177" cy="386.004" r="126.131" gradientTransform="matrix(1.13773 .88039 -.61106 .78967 186 -238)" gradientUnits="userSpaceOnUse"/></defs><g stroke="#000" stroke-width="${CONFIG.strokeWidth}" fill="none"><path fill="url(#b)" d="M290.079 500.005c-30.113-61.16-4.838-135.198 56.417-165.265 61.255-30.066 135.41-4.83 165.522 56.33 30.113 61.16 4.838 135.199-56.417 165.265-61.2 30.039-135.271 4.89-165.444-56.171" transform="translate(-274.917 -319.599)"/><path stroke-linejoin="round" stroke-linecap="round" d="${seamPath(seams, th)}"/></g></svg>`;
 
-const parseArgs = () => {
-	const args = process.argv.slice(2);
-	const get = (name: string, def: string) => {
-		const i = args.indexOf(`--${name}`);
-		return i >= 0 ? args[i + 1] : def;
-	};
-	return {
-		size: Number(get("size", "128")),
-		fps: Number(get("fps", "30")),
-		duration: Number(get("duration", "4")),
-		out: get("out", "bbgm-spinner"),
-		crf: Number(get("crf", "32")),
-		svgFrame: get("svg-frame", ""),
-	};
+const { values: args } = parseArgs({
+	options: {
+		size: { type: "string", default: "128" },
+		fps: { type: "string", default: "30" },
+		duration: { type: "string", default: "4" },
+		out: { type: "string", default: "bbgm-spinner" },
+		crf: { type: "string", default: "32" },
+		"svg-frame": { type: "string" },
+	},
+});
+
+const toNumber = (name: keyof typeof args) => {
+	const value = Number(args[name]);
+	if (!Number.isFinite(value) || value <= 0) {
+		throw new Error(`--${name} must be a positive number, got ${args[name]}`);
+	}
+	return value;
 };
 
-// Pipe raw RGBA frames into ffmpeg
-const encode = (
-	frames: Buffer[],
-	size: number,
-	fps: number,
-	outArgs: string[],
-) =>
-	new Promise<void>((resolve, reject) => {
-		// ffmpeg-static's types resolve oddly under NodeNext; it is a path or null
-		const ffmpeg = ffmpegPath as unknown as string | null;
-		if (!ffmpeg) {
-			throw new Error("ffmpeg-static has no binary for this platform");
-		}
-		const proc = spawn(
-			ffmpeg,
-			[
-				"-y",
-				"-loglevel",
-				"error",
-				"-f",
-				"rawvideo",
-				"-pix_fmt",
-				"rgba",
-				"-s",
-				`${size}x${size}`,
-				"-r",
-				String(fps),
-				"-i",
-				"-",
-				...outArgs,
-			],
-			{ stdio: ["pipe", "inherit", "inherit"] },
-		);
+// Spawn ffmpeg reading raw RGBA frames from stdin. write() respects
+// backpressure, and if ffmpeg dies early, its exit error is reported rather
+// than an EPIPE from stdin.
+const startEncoder = (size: number, fps: number, outArgs: string[]) => {
+	// ffmpeg-static's types resolve oddly under NodeNext; it is a path or null
+	const ffmpeg = ffmpegPath as unknown as string | null;
+	if (!ffmpeg) {
+		throw new Error("ffmpeg-static has no binary for this platform");
+	}
+	const proc = spawn(
+		ffmpeg,
+		[
+			"-y",
+			"-loglevel",
+			"error",
+			"-f",
+			"rawvideo",
+			"-pix_fmt",
+			"rgba",
+			"-s",
+			`${size}x${size}`,
+			"-r",
+			String(fps),
+			"-i",
+			"-",
+			...outArgs,
+		],
+		{ stdio: ["pipe", "inherit", "inherit"] },
+	);
+
+	const done = new Promise<void>((resolve, reject) => {
 		proc.on("error", reject);
 		proc.on("close", (code: number | null) => {
 			if (code === 0) {
@@ -182,36 +187,46 @@ const encode = (
 				reject(new Error(`ffmpeg exited with ${code}`));
 			}
 		});
-		for (const frame of frames) {
-			proc.stdin.write(frame);
-		}
-		proc.stdin.end();
 	});
 
-const { size, fps, duration, out, crf, svgFrame } = parseArgs();
+	// Ignore stdin errors (EPIPE); the close handler above reports the failure
+	proc.stdin.on("error", () => {});
+
+	return {
+		write: async (frame: Buffer) => {
+			if (!proc.stdin.write(frame)) {
+				// once() rejects on a stdin error, so fall back to done, which
+				// rejects with ffmpeg's exit code
+				await Promise.race([once(proc.stdin, "drain").catch(() => done), done]);
+			}
+		},
+		end: async () => {
+			proc.stdin.end();
+			await done;
+		},
+	};
+};
+
+const size = toNumber("size");
+const fps = toNumber("fps");
+const duration = toNumber("duration");
+const crf = toNumber("crf");
+const { out, "svg-frame": svgFrame } = args;
 const seams = buildSeams();
 const numFrames = Math.round(fps * duration);
 const dir = CONFIG.direction;
 
-if (svgFrame) {
-	// Handy for checking a single frame: --svg-frame 0.25 (fraction of a turn)
+if (svgFrame !== undefined) {
 	process.stdout.write(frameSvg(seams, dir * 2 * Math.PI * Number(svgFrame)));
 	process.exit(0);
 }
 
-const frames: Buffer[] = [];
-for (let i = 0; i < numFrames; i++) {
-	const svg = frameSvg(seams, (dir * 2 * Math.PI * i) / numFrames);
-	const png = new Resvg(svg, {
-		fitTo: { mode: "width", value: size },
-	}).render();
-	frames.push(Buffer.from(png.pixels));
-}
-
-// AVIF: color and alpha are encoded as two AV1 streams in one file
-await encode(frames, size, fps, [
+// AVIF: color and alpha are encoded as two AV1 streams in one file. resvg
+// outputs premultiplied alpha, but ffmpeg treats rgba input as straight alpha,
+// so unpremultiply first to avoid dark fringes on semi-transparent edges.
+const encoder = startEncoder(size, fps, [
 	"-filter_complex",
-	"[0:v]format=yuva444p,split[main][alpha];[alpha]alphaextract[alpha]",
+	"[0:v]unpremultiply=inplace=1,format=yuva444p,split[main][alpha];[alpha]alphaextract[alpha]",
 	"-map",
 	"[main]",
 	"-map",
@@ -232,5 +247,19 @@ await encode(frames, size, fps, [
 	"avif",
 	`${out}.avif`,
 ]);
+
+for (let i = 0; i < numFrames; i++) {
+	const svg = frameSvg(seams, (dir * 2 * Math.PI * i) / numFrames);
+	const png = new Resvg(svg, {
+		fitTo: { mode: "width", value: size },
+	}).render();
+	if (png.width !== size || png.height !== size) {
+		throw new Error(
+			`Rendered frame is ${png.width}x${png.height}, expected ${size}x${size}`,
+		);
+	}
+	await encoder.write(Buffer.from(png.pixels));
+}
+await encoder.end();
 
 console.log(`Wrote ${out}.avif (${numFrames} frames, ${size}px)`);

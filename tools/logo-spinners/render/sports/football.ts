@@ -12,6 +12,16 @@ import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
 
 const DURATION = 2; // [seconds]
 
+export type FootballColors = {
+	ball: string;
+	seam: string;
+	// Gradient: [bottom, top]
+	stripes: [string, string];
+	// The wide line under the laces
+	laceBackbone: string;
+	laces: string;
+};
+
 const CONFIG = {
 	// 1 = laces roll toward the bottom-left edge first, -1 = toward the top-right
 	direction: 1,
@@ -153,7 +163,8 @@ const groupOpacity = (pts: SurfacePt[], th: number) =>
 const BODY_PATH =
 	"M-154.88 526.72c42.6-.91 78.679 29.96 78.589 47.48-.087 17.1-33.639 46.68-77.239 46.68-43.29 0-79.84-31.66-80.42-47.48-.59-15.83 36.47-45.77 79.07-46.68z";
 
-const DEFS = `<defs><linearGradient id="b"><stop stop-color="#722e00" offset="0"/><stop stop-color="#722e00" offset=".5"/><stop stop-color="#722e00" stop-opacity="0" offset="1"/></linearGradient><linearGradient id="a"><stop stop-color="#dcdcdc" offset="0"/><stop stop-color="#fff" offset="1"/></linearGradient><linearGradient id="c" href="#a" gradientUnits="userSpaceOnUse" gradientTransform="translate(123.92 444.08) scale(.42762)" x1="-746.71" y1="401.66" x2="-746.71" y2="273.73"/><radialGradient id="e" href="#b" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 1.2 0 -52.03)" cx="-601.8" cy="260.15" r="2.525"/><clipPath id="clip"><path d="${BODY_PATH}"/></clipPath></defs>`;
+const defs = (colors: FootballColors) =>
+	`<defs><linearGradient id="b"><stop stop-color="#722e00" offset="0"/><stop stop-color="#722e00" offset=".5"/><stop stop-color="#722e00" stop-opacity="0" offset="1"/></linearGradient><linearGradient id="a"><stop stop-color="${colors.stripes[0]}" offset="0"/><stop stop-color="${colors.stripes[1]}" offset="1"/></linearGradient><linearGradient id="c" href="#a" gradientUnits="userSpaceOnUse" gradientTransform="translate(123.92 444.08) scale(.42762)" x1="-746.71" y1="401.66" x2="-746.71" y2="273.73"/><radialGradient id="e" href="#b" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 1.2 0 -52.03)" cx="-601.8" cy="260.15" r="2.525"/><clipPath id="clip"><path d="${BODY_PATH}"/></clipPath></defs>`;
 
 // One stripe: the visible half of the ring between x = a and x = b
 const stripePath = (a: number, b: number) => {
@@ -183,7 +194,7 @@ const OUTLINE = `<path d="M-154.94 524.72c-21.75.46-41.97 8.29-56.78 18.06-7.4 4
 const VIEWBOX = "0 -0.67 128.493 128.493";
 
 // t = fraction of a full turn (0 to 1)
-const frameSvg = (t: number) => {
+const frameSvg = (colors: FootballColors, t: number) => {
 	const th = rotationAt(t);
 
 	const seamPath = seams.map((s) => surfacePath(s, th)).join("");
@@ -218,17 +229,21 @@ const frameSvg = (t: number) => {
 		})
 		.join("");
 
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}">${DEFS}<g transform="rotate(-45 -660.87 54.697)"><path fill="#ad4700" d="${BODY_PATH}"/><g clip-path="url(#clip)"><path fill="none" stroke="#722e00" stroke-width=".855" stroke-linecap="round" d="${seamPath}"/>${STRIPES}${
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}">${defs(colors)}<g transform="rotate(-45 -660.87 54.697)"><path fill="${colors.ball}" d="${BODY_PATH}"/><g clip-path="url(#clip)"><path fill="none" stroke="${colors.seam}" stroke-width=".855" stroke-linecap="round" d="${seamPath}"/>${STRIPES}${
 		backboneOpacity > 0
-			? `<g opacity="${f(backboneOpacity)}" fill="none" stroke-linecap="round"><path stroke="#ececec" stroke-width="4.276" d="${backbonePath}"/><path stroke="#722e00" stroke-width=".47" d="${backbonePath}"/></g>`
+			? `<g opacity="${f(backboneOpacity)}" fill="none" stroke-linecap="round"><path stroke="${colors.laceBackbone}" stroke-width="4.276" d="${backbonePath}"/><path stroke="#722e00" stroke-width=".47" d="${backbonePath}"/></g>`
 			: ""
-	}${shadowEls}<g fill="none" stroke="#fff" stroke-width="2.095" stroke-linecap="round" stroke-linejoin="round">${stitchEls}</g></g>${OUTLINE}</g></svg>`;
+	}${shadowEls}<g fill="none" stroke="${colors.laces}" stroke-width="2.095" stroke-linecap="round" stroke-linejoin="round">${stitchEls}</g></g>${OUTLINE}</g></svg>`;
 };
 
-export const football = ({ filename, size }: SpinnerOptions) =>
+export const football = ({
+	colors,
+	filename,
+	size,
+}: SpinnerOptions<FootballColors>) =>
 	renderSpinner({
 		duration: DURATION,
 		filename,
-		frameSvg,
+		frameSvg: (t) => frameSvg(colors, t),
 		size,
 	});

@@ -6,9 +6,10 @@ import ffmpegPath from "ffmpeg-static";
 const FPS = 30;
 const CRF = 32; // AV1 quality (lower = better/bigger)
 
-// Options shared by every sport's render function
-export type SpinnerOptions = {
-	colors: [string, string];
+// Options shared by every sport's render function. Each sport defines its own
+// Colors type.
+export type SpinnerOptions<Colors> = {
+	colors: Colors;
 	filename: string;
 	size: number;
 };

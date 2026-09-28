@@ -20,6 +20,11 @@ import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
 
 const DURATION = 2; // [seconds]
 
+export type BaseballColors = {
+	ball: string;
+	stitches: string;
+};
+
 const CONFIG = {
 	// Spin axis in screen space (x right, y down, z toward the viewer).
 	// [1, 0, 0] = around the horizontal axis, like a fastball's backspin.
@@ -47,9 +52,6 @@ const CONFIG = {
 
 	// Degrees of rotation over which stitches fade out near the ball's edge
 	edgeFade: 10,
-
-	color: "#C03018",
-	ballColor: "#E3DCDA",
 };
 
 // Ball in the original SVG (it is very slightly oval)
@@ -150,10 +152,11 @@ const xy = (v: Vec3) => `${f(CX + RX * v[0])} ${f(CY + RY * v[1])}`;
 // Square viewBox around the original 357.588 x 347.967 drawing
 const VIEWBOX = "0 -4.81 357.588 357.588";
 
-const BALL = `<path fill="${CONFIG.ballColor}" d="M.732 173.92c0 96.05 79.885 173.92 178.43 173.92s178.43-77.865 178.43-173.92S277.702 0 179.162 0 .732 77.865.732 173.92z"/>`;
+const BALL_PATH =
+	"M.732 173.92c0 96.05 79.885 173.92 178.43 173.92s178.43-77.865 178.43-173.92S277.702 0 179.162 0 .732 77.865.732 173.92z";
 
 // t = fraction of a full turn (0 to 1)
-const frameSvg = (t: number) => {
+const frameSvg = (colors: BaseballColors, t: number) => {
 	const th = CONFIG.direction * 2 * Math.PI * t;
 	const view = (v: Vec3) => rotate(applyMatrix(ORIENT, v), AXIS, th);
 
@@ -186,17 +189,21 @@ const frameSvg = (t: number) => {
 		}
 	}
 
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}">${BALL}<g fill="${CONFIG.color}" stroke="${CONFIG.color}" stroke-width="2" stroke-linejoin="round">${stitches}</g>${
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}"><path fill="${colors.ball}" d="${BALL_PATH}"/><g fill="${colors.stitches}" stroke="${colors.stitches}" stroke-width="2" stroke-linejoin="round">${stitches}</g>${
 		line
-			? `<path fill="none" stroke="${CONFIG.color}" stroke-width="${CONFIG.seamLineWidth}" stroke-linecap="round" d="${line}"/>`
+			? `<path fill="none" stroke="${colors.stitches}" stroke-width="${CONFIG.seamLineWidth}" stroke-linecap="round" d="${line}"/>`
 			: ""
 	}</svg>`;
 };
 
-export const baseball = ({ filename, size }: SpinnerOptions) =>
+export const baseball = ({
+	colors,
+	filename,
+	size,
+}: SpinnerOptions<BaseballColors>) =>
 	renderSpinner({
 		duration: DURATION,
 		filename,
-		frameSvg,
+		frameSvg: (t) => frameSvg(colors, t),
 		size,
 	});

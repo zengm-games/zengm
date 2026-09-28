@@ -6,6 +6,9 @@ import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
 
 const DURATION = 4; // [seconds]
 
+// Ball gradient: [outer, inner]
+export type BasketballColors = [string, string];
+
 const CONFIG = {
 	// Curved seam oval: tan of its angular radius where it crosses the great
 	// circle (A) and halfway between the crossings (B). B = 1 puts that midpoint
@@ -103,12 +106,16 @@ const seamPath = (th: number) => {
 };
 
 // t = fraction of a full turn (0 to 1)
-const frameSvg = (colors: [string, string], t: number) => {
+const frameSvg = (colors: BasketballColors, t: number) => {
 	const th = CONFIG.direction * 2 * Math.PI * t;
 	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}"><defs><linearGradient id="a"><stop offset="0" stop-color="${colors[1]}"/><stop offset="1" stop-color="${colors[0]}"/></linearGradient><radialGradient href="#a" xlink:href="#a" xmlns:xlink="http://www.w3.org/1999/xlink" id="b" cx="362.177" cy="386.004" r="126.131" gradientTransform="matrix(1.13773 .88039 -.61106 .78967 186 -238)" gradientUnits="userSpaceOnUse"/></defs><g stroke="#000" stroke-width="${CONFIG.strokeWidth}" fill="none"><path fill="url(#b)" d="M290.079 500.005c-30.113-61.16-4.838-135.198 56.417-165.265 61.255-30.066 135.41-4.83 165.522 56.33 30.113 61.16 4.838 135.199-56.417 165.265-61.2 30.039-135.271 4.89-165.444-56.171" transform="translate(-274.917 -319.599)"/><path stroke-linejoin="round" stroke-linecap="round" d="${seamPath(th)}"/></g></svg>`;
 };
 
-export const basketball = ({ colors, filename, size }: SpinnerOptions) =>
+export const basketball = ({
+	colors,
+	filename,
+	size,
+}: SpinnerOptions<BasketballColors>) =>
 	renderSpinner({
 		duration: DURATION,
 		filename,

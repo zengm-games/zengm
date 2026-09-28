@@ -19,6 +19,16 @@ import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
 
 const DURATION = 1.5; // [seconds]
 
+export type HockeyColors = {
+	top: string;
+	side: string;
+	// Highlight gradient over the side, left to right: [edge, highlight,
+	// fade-out]. Colors can have alpha, like #ffffff34.
+	sideGradient: [string, string, string];
+	// [outer, inner]
+	rings: [string, string];
+};
+
 const CONFIG = {
 	// Maximum tilt, in degrees
 	tilt: 10,
@@ -37,11 +47,8 @@ const ELEVATION = Math.asin(50 / RADIUS);
 const HEIGHT = 100 / Math.cos(ELEVATION);
 // Screen position of the puck's center (halfway between top and bottom faces)
 const CENTER: Pt = [149.64, 101.33 + (HEIGHT * Math.cos(ELEVATION)) / 2];
-// Rings on the top face, as fractions of the radius
-const RINGS = [
-	{ r: 0.782, color: "#393939" },
-	{ r: 0.758, color: "#272d39" },
-];
+// Rings on the top face, as fractions of the radius: [outer, inner]
+const RING_RADII = [0.782, 0.758];
 const RING_WIDTH = 5.3;
 
 // World axes: x right, y up, z toward the viewer (ice is the x-z plane)
@@ -107,7 +114,8 @@ const pathD = (pts: Pt[]) =>
 	`M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L")}Z`;
 
 // Side highlight from the original, fixed in screen space
-const DEFS = `<defs><linearGradient id="a" gradientUnits="userSpaceOnUse" x1="0.65" y1="0" x2="201.53" y2="0"><stop offset="0"/><stop stop-color="#fff" stop-opacity=".203" offset=".211"/><stop stop-opacity="0" offset="1"/></linearGradient></defs>`;
+const defs = (colors: HockeyColors) =>
+	`<defs><linearGradient id="a" gradientUnits="userSpaceOnUse" x1="0.65" y1="0" x2="201.53" y2="0"><stop stop-color="${colors.sideGradient[0]}" offset="0"/><stop stop-color="${colors.sideGradient[1]}" offset=".211"/><stop stop-color="${colors.sideGradient[2]}" offset="1"/></linearGradient></defs>`;
 
 // The tilting puck can reach past the original's edges, so frame the
 // viewBox around every pose (square, same for all frames)
@@ -134,22 +142,26 @@ const VIEWBOX = (() => {
 })();
 
 // t = fraction of a wobble cycle (0 to 1)
-const frameSvg = (t: number) => {
+const frameSvg = (colors: HockeyColors, t: number) => {
 	const axis = axisAt(t);
 	const top = circle(axis, HEIGHT / 2, RADIUS);
 	const bottom = circle(axis, -HEIGHT / 2, RADIUS);
 	const outline = pathD(hull([...top, ...bottom]));
-	const rings = RINGS.map(
-		({ r, color }) =>
-			`<path fill="none" stroke="${color}" stroke-width="${RING_WIDTH}" d="${pathD(circle(axis, HEIGHT / 2, RADIUS * r))}"/>`,
+	const rings = RING_RADII.map(
+		(r, i) =>
+			`<path fill="none" stroke="${colors.rings[i]}" stroke-width="${RING_WIDTH}" d="${pathD(circle(axis, HEIGHT / 2, RADIUS * r))}"/>`,
 	).join("");
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}">${DEFS}<path fill="#333" d="${outline}"/><path fill="url(#a)" d="${outline}"/><path d="${pathD(top)}"/>${rings}</svg>`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}">${defs(colors)}<path fill="${colors.side}" d="${outline}"/><path fill="url(#a)" d="${outline}"/><path fill="${colors.top}" d="${pathD(top)}"/>${rings}</svg>`;
 };
 
-export const hockey = ({ filename, size }: SpinnerOptions) =>
+export const hockey = ({
+	colors,
+	filename,
+	size,
+}: SpinnerOptions<HockeyColors>) =>
 	renderSpinner({
 		duration: DURATION,
 		filename,
-		frameSvg,
+		frameSvg: (t) => frameSvg(colors, t),
 		size,
 	});

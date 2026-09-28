@@ -20,10 +20,6 @@ spinner animations
   - frame rate
   - compression
   - yuv420p
-- other sports
-  - football
-  - hockey
-  - baseball
 
 add helpers.entries similar to helpers.keys, if possible
 - use in developSeason.basketball.ts

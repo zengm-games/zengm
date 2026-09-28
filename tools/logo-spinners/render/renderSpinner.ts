@@ -100,7 +100,7 @@ export const renderSpinner = async ({
 		"-c:v",
 		"libaom-av1",
 		"-pix_fmt:0",
-		"yuv420p",
+		"yuv444p",
 		"-crf",
 		String(CRF),
 		"-b:v",

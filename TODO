@@ -14,8 +14,12 @@ spinner animations
   - AllStarThree
   - buildSw
 - how to pause spinner
-- best axes to rotate?
 - existing images in /ico/ still all needed? maybe not gold ones
+- remove old "spin" class
+- smaller images?
+  - frame rate
+  - compression
+  - yuv420p
 - other sports
   - football
   - hockey

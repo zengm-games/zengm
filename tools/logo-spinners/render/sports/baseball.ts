@@ -23,7 +23,7 @@ const DURATION = 2; // [seconds]
 const CONFIG = {
 	// Spin axis in screen space (x right, y down, z toward the viewer).
 	// [1, 0, 0] = around the horizontal axis, like a fastball's backspin.
-	axis: [1, 0, 0] as Vec3,
+	axis: [1, 1, 0] as Vec3,
 
 	// 1 or -1: which way the ball spins
 	direction: 1,

@@ -71,6 +71,8 @@ const normalizeContractDemands = async ({
 		return;
 	}
 
+	const pidsSet = pids ? new Set(pids) : undefined;
+
 	// Higher means more unequal salaries
 	const PARAM = bySport({
 		baseball: 1,
@@ -123,8 +125,8 @@ const normalizeContractDemands = async ({
 	// Store contracts here, so they can be edited without editing player object (for including dummy players in pool)
 	const playerInfos = players.map((p) => {
 		let dummy = false;
-		if (pids) {
-			dummy = !pids.includes(p.pid);
+		if (pidsSet) {
+			dummy = !pidsSet.has(p.pid);
 		} else if (
 			type === "dummyExpiringContracts" &&
 			p.tid !== PLAYER.FREE_AGENT
@@ -167,7 +169,7 @@ const normalizeContractDemands = async ({
 		}));
 	for (const t of teams) {
 		const contracts = (await team.getContracts(t.tid)).filter((contract) => {
-			if (pids && pids.includes(contract.pid)) {
+			if (pidsSet?.has(contract.pid)) {
 				return false;
 			}
 

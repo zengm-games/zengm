@@ -639,6 +639,9 @@ const finalizeDBExceptPlayers = async ({
 		});
 	}
 
+	// Don't await each put individually, since that is slow when there are many rows
+	const promises: Promise<unknown>[] = [];
+
 	// Handle schedule with no "day" property
 	const scheduleStore = tx.objectStore("schedule");
 	const schedule = await scheduleStore.getAll();
@@ -659,14 +662,10 @@ const finalizeDBExceptPlayers = async ({
 			);
 
 			for (const game of updatedSchedule) {
-				await scheduleStore.put(game);
+				promises.push(scheduleStore.put(game));
 			}
 		}
 	}
-
-	// Don't await each put individually, since that is slow when there are many rows
-	const promises: Promise<unknown>[] = [];
-
 	const teamsStore = tx.objectStore("teams");
 	for (const t of teams) {
 		promises.push(teamsStore.put(t));
@@ -1094,8 +1093,10 @@ const finalizeActivePlayers = async ({
 		}
 
 		await player.updateValues(p);
-		await idb.cache.players.put(p);
 	}
+
+	// players1 are the objects stored in the cache, so mutations above are already visible to cache reads. This just marks them as dirty
+	await idb.cache.players.putAll(players1);
 
 	const pidsToNormalize = players1
 		.filter((p) => p.contract.temp)
@@ -1650,16 +1651,15 @@ const afterDBStream = async ({
 	}
 
 	// Unless we got strategy from a league file, calculate it here
+	const activePlayersByTid = Object.groupBy(activePlayers, (p) => p.tid);
 	for (const [i, t] of teams.entries()) {
 		if (teamInfos[i].strategy === undefined) {
-			const teamPlayers = activePlayers
-				.filter((p) => p.tid === i)
-				.map((p) => ({
-					pid: p.pid,
-					injury: p.injury,
-					value: p.value,
-					ratings: last(p.ratings),
-				}));
+			const teamPlayers = (activePlayersByTid[i] ?? []).map((p) => ({
+				pid: p.pid,
+				injury: p.injury,
+				value: p.value,
+				ratings: last(p.ratings),
+			}));
 			const ovr = team.ovr(teamPlayers);
 			t.strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}
@@ -1915,32 +1915,43 @@ const createStream = async (
 	});
 	// console.timeLog("createStream");
 
-	await stream.pipeTo(saveToDB);
-	// console.timeLog("createStream");
+	try {
+		await stream.pipeTo(saveToDB);
+		// console.timeLog("createStream");
 
-	setLeagueCreationStatus("Finalizing...");
+		setLeagueCreationStatus("Finalizing...");
 
-	await afterDBStream({
-		activeTids,
-		extraFromStream,
-		fromFile,
-		gameAttributes,
-		getLeagueOptions,
-		hasRookieContracts: fromFile.hasRookieContracts,
-		lid,
-		migrationData,
-		noStartingInjuries,
-		randomization: settings.randomization,
-		realPlayerPhotos,
-		repeatSeason,
-		scoutingLevel,
-		shuffleRosters,
-		teamInfos,
-		teamSeasons,
-		teamStats,
-		teams,
-	});
-	// console.timeEnd("createStream");
+		await afterDBStream({
+			activeTids,
+			extraFromStream,
+			fromFile,
+			gameAttributes,
+			getLeagueOptions,
+			hasRookieContracts: fromFile.hasRookieContracts,
+			lid,
+			migrationData,
+			noStartingInjuries,
+			randomization: settings.randomization,
+			realPlayerPhotos,
+			repeatSeason,
+			scoutingLevel,
+			shuffleRosters,
+			teamInfos,
+			teamSeasons,
+			teamStats,
+			teams,
+		});
+		// console.timeEnd("createStream");
+	} catch (error) {
+		// League was already added to the meta database in beforeDBStream, so delete it rather than leave a broken partial league in the list
+		try {
+			await remove(lid);
+		} catch (error_) {
+			console.error(error_);
+		}
+
+		throw error;
+	}
 };
 
 export default createStream;

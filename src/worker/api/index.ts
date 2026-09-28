@@ -707,119 +707,121 @@ const createLeague = async (
 
 	setLeagueCreationStatus("Initializing...");
 
-	let actualTid = tid;
-	let stream: ReadableStream | undefined;
-	if (getLeagueOptions) {
-		const realLeague = await realRosters.getLeague(getLeagueOptions);
+	try {
+		let actualTid = tid;
+		let stream: ReadableStream | undefined;
+		if (getLeagueOptions) {
+			const realLeague = await realRosters.getLeague(getLeagueOptions);
 
-		if (getLeagueOptions.type === "real") {
-			if (getLeagueOptions.realStats === "all") {
-				keys.add("awards");
-				keys.add("playoffSeries");
+			if (getLeagueOptions.type === "real") {
+				if (getLeagueOptions.realStats === "all") {
+					keys.add("awards");
+					keys.add("playoffSeries");
+				}
+
+				if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
+					keys.add("awards");
+					keys.add("draftLotteryResults");
+					keys.add("draftPicks");
+					keys.add("playoffSeries");
+				}
 			}
 
-			if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
-				keys.add("awards");
-				keys.add("draftLotteryResults");
-				keys.add("draftPicks");
-				keys.add("playoffSeries");
+			// Since inactive teams are included if realStats=="all", need to translate tid and overwrite fromFile.teams
+			if (
+				getLeagueOptions.type === "real" &&
+				getLeagueOptions.realStats === "all"
+			) {
+				const srID = fromFile.teams![tid].srID;
+				actualTid = realLeague.teams.findIndex((t) => t.srID === srID);
+				if (!srID || actualTid < 0) {
+					throw new Error("Error finding tid");
+				}
 			}
-		}
 
-		// Since inactive teams are included if realStats=="all", need to translate tid and overwrite fromFile.teams
-		if (
-			getLeagueOptions.type === "real" &&
-			getLeagueOptions.realStats === "all"
-		) {
-			const srID = fromFile.teams![tid].srID;
-			actualTid = realLeague.teams.findIndex((t) => t.srID === srID);
-			if (!srID || actualTid < 0) {
-				throw new Error("Error finding tid");
+			// Definitley need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
+			fromFile.gameAttributes = realLeague.gameAttributes;
+			fromFile.startingSeason = realLeague.startingSeason;
+			fromFile.teams = realLeague.teams;
+
+			stream = createStreamFromLeagueObject(realLeague);
+		} else if (file || url) {
+			let baseStream: ReadableStream;
+			let sizeInBytes: number | undefined;
+			if (file) {
+				baseStream = file.stream();
+				sizeInBytes = file.size;
+			} else {
+				const response = await fetch(url!);
+				if (!response.ok) {
+					throw new Error(`HTTP error ${response.status}`);
+				}
+				baseStream = response.body as ReadableStream;
+				const size = response.headers.get("content-length");
+				if (size) {
+					sizeInBytes = Number(size);
+				}
 			}
-		}
 
-		// Definitley need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
-		fromFile.gameAttributes = realLeague.gameAttributes;
-		fromFile.startingSeason = realLeague.startingSeason;
-		fromFile.teams = realLeague.teams;
+			const stream0 = baseStream;
 
-		stream = createStreamFromLeagueObject(realLeague);
-	} else if (file || url) {
-		let baseStream: ReadableStream;
-		let sizeInBytes: number | undefined;
-		if (file) {
-			baseStream = file.stream();
-			sizeInBytes = file.size;
-		} else {
-			const response = await fetch(url!);
-			if (!response.ok) {
-				throw new Error(`HTTP error ${response.status}`);
-			}
-			baseStream = response.body as ReadableStream;
-			const size = response.headers.get("content-length");
-			if (size) {
-				sizeInBytes = Number(size);
-			}
-		}
+			// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
+			(self as any).stream0 = stream0;
 
-		const stream0 = baseStream;
-
-		// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
-		(self as any).stream0 = stream0;
-
-		stream = (
-			await decompressStreamIfNecessary(
-				stream0.pipeThrough(
-					emitProgressStream(leagueCreationID, sizeInBytes, conditions),
-				),
+			stream = (
+				await decompressStreamIfNecessary(
+					stream0.pipeThrough(
+						emitProgressStream(leagueCreationID, sizeInBytes, conditions),
+					),
+				)
 			)
-		)
-			.pipeThrough(new TextDecoderStream())
-			.pipeThrough(parseJSON());
-	} else {
-		stream = createStreamFromLeagueObject({});
+				.pipeThrough(new TextDecoderStream())
+				.pipeThrough(parseJSON());
+		} else {
+			stream = createStreamFromLeagueObject({});
+		}
+
+		if (!stream) {
+			throw new Error("No stream");
+		}
+
+		const lid = importLid ?? (await getNewLeagueLid());
+
+		await league.createStream(stream, {
+			conditions,
+			confs,
+			divs,
+			fromFile,
+			getLeagueOptions,
+			lid,
+			keptKeys: keys,
+			name,
+			setLeagueCreationStatus,
+			settings,
+			shuffleRosters,
+			startingSeasonFromInput,
+			teamsFromInput,
+			tid: actualTid,
+		});
+
+		if (settings.giveMeWorstRoster) {
+			await league.swapWorstRoster(false);
+		}
+
+		return lid;
+	} finally {
+		delete (self as any).stream0;
+
+		toUI(
+			"updateLocal",
+			[
+				{
+					leagueCreation: undefined,
+				},
+			],
+			conditions,
+		);
 	}
-
-	if (!stream) {
-		throw new Error("No stream");
-	}
-
-	const lid = importLid ?? (await getNewLeagueLid());
-
-	await league.createStream(stream, {
-		conditions,
-		confs,
-		divs,
-		fromFile,
-		getLeagueOptions,
-		lid,
-		keptKeys: keys,
-		name,
-		setLeagueCreationStatus,
-		settings,
-		shuffleRosters,
-		startingSeasonFromInput,
-		teamsFromInput,
-		tid: actualTid,
-	});
-
-	delete (self as any).stream0;
-
-	if (settings.giveMeWorstRoster) {
-		await league.swapWorstRoster(false);
-	}
-
-	toUI(
-		"updateLocal",
-		[
-			{
-				leagueCreation: undefined,
-			},
-		],
-		conditions,
-	);
-
-	return lid;
 };
 
 const deleteOldData = async (options: {

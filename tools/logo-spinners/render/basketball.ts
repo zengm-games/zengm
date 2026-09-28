@@ -1,13 +1,11 @@
-//   node tools/logo-spinners/basketball.ts [--size 128] [--fps 30] [--duration 4] [--out bbgm-spinner] [--crf 32]
-//
-// --size is in pixels; use 2x the display size for sharp results on high-DPI
-// screens. --crf is AV1 quality (lower = better/bigger).
-
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-import { parseArgs } from "node:util";
 import { Resvg } from "@resvg/resvg-js";
 import ffmpegPath from "ffmpeg-static";
+
+const FPS = 30;
+const DURATION = 4; // [seconds]
+const CRF = 32; // AV1 quality (lower = better/bigger)
 
 const CONFIG = {
 	// Curved seam oval: tan of its angular radius where it crosses the great
@@ -32,7 +30,6 @@ const CONFIG = {
 	direction: 1,
 
 	strokeWidth: 4.924,
-	gradient: ["#ffd52a", "#ff7f2a"],
 
 	// Points per seam. More = smoother curves, bigger SVG (only matters for the
 	// intermediate SVG, not the output image).
@@ -126,27 +123,8 @@ const seamPath = (seams: Vec3[][], th: number) => {
 	return d;
 };
 
-const frameSvg = (seams: Vec3[][], th: number) =>
-	`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}"><defs><linearGradient id="a"><stop offset="0" stop-color="${CONFIG.gradient[0]}"/><stop offset="1" stop-color="${CONFIG.gradient[1]}"/></linearGradient><radialGradient href="#a" xlink:href="#a" xmlns:xlink="http://www.w3.org/1999/xlink" id="b" cx="362.177" cy="386.004" r="126.131" gradientTransform="matrix(1.13773 .88039 -.61106 .78967 186 -238)" gradientUnits="userSpaceOnUse"/></defs><g stroke="#000" stroke-width="${CONFIG.strokeWidth}" fill="none"><path fill="url(#b)" d="M290.079 500.005c-30.113-61.16-4.838-135.198 56.417-165.265 61.255-30.066 135.41-4.83 165.522 56.33 30.113 61.16 4.838 135.199-56.417 165.265-61.2 30.039-135.271 4.89-165.444-56.171" transform="translate(-274.917 -319.599)"/><path stroke-linejoin="round" stroke-linecap="round" d="${seamPath(seams, th)}"/></g></svg>`;
-
-const { values: args } = parseArgs({
-	options: {
-		size: { type: "string", default: "128" },
-		fps: { type: "string", default: "30" },
-		duration: { type: "string", default: "4" },
-		out: { type: "string", default: "bbgm-spinner" },
-		crf: { type: "string", default: "32" },
-		"svg-frame": { type: "string" },
-	},
-});
-
-const toNumber = (name: keyof typeof args) => {
-	const value = Number(args[name]);
-	if (!Number.isFinite(value) || value <= 0) {
-		throw new Error(`--${name} must be a positive number, got ${args[name]}`);
-	}
-	return value;
-};
+const frameSvg = (colors: [string, string], seams: Vec3[][], th: number) =>
+	`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}"><defs><linearGradient id="a"><stop offset="0" stop-color="${colors[1]}"/><stop offset="1" stop-color="${colors[0]}"/></linearGradient><radialGradient href="#a" xlink:href="#a" xmlns:xlink="http://www.w3.org/1999/xlink" id="b" cx="362.177" cy="386.004" r="126.131" gradientTransform="matrix(1.13773 .88039 -.61106 .78967 186 -238)" gradientUnits="userSpaceOnUse"/></defs><g stroke="#000" stroke-width="${CONFIG.strokeWidth}" fill="none"><path fill="url(#b)" d="M290.079 500.005c-30.113-61.16-4.838-135.198 56.417-165.265 61.255-30.066 135.41-4.83 165.522 56.33 30.113 61.16 4.838 135.199-56.417 165.265-61.2 30.039-135.271 4.89-165.444-56.171" transform="translate(-274.917 -319.599)"/><path stroke-linejoin="round" stroke-linecap="round" d="${seamPath(seams, th)}"/></g></svg>`;
 
 // Spawn ffmpeg reading raw RGBA frames from stdin. write() respects
 // backpressure, and if ffmpeg dies early, its exit error is reported rather
@@ -207,59 +185,62 @@ const startEncoder = (size: number, fps: number, outArgs: string[]) => {
 	};
 };
 
-const size = toNumber("size");
-const fps = toNumber("fps");
-const duration = toNumber("duration");
-const crf = toNumber("crf");
-const { out, "svg-frame": svgFrame } = args;
-const seams = buildSeams();
-const numFrames = Math.round(fps * duration);
-const dir = CONFIG.direction;
+export const basketball = async ({
+	colors,
+	filename,
+	size,
+}: {
+	colors: [string, string];
+	filename: string;
+	size: number;
+}) => {
+	const seams = buildSeams();
+	const numFrames = Math.round(FPS * DURATION);
+	const dir = CONFIG.direction;
 
-if (svgFrame !== undefined) {
-	process.stdout.write(frameSvg(seams, dir * 2 * Math.PI * Number(svgFrame)));
-	process.exit(0);
-}
+	//process.stdout.write(frameSvg(colors, seams, dir * 2 * Math.PI * Number(svgFrame)));
+	//process.exit(0);
 
-// AVIF: color and alpha are encoded as two AV1 streams in one file. resvg
-// outputs premultiplied alpha, but ffmpeg treats rgba input as straight alpha,
-// so unpremultiply first to avoid dark fringes on semi-transparent edges.
-const encoder = startEncoder(size, fps, [
-	"-filter_complex",
-	"[0:v]unpremultiply=inplace=1,format=yuva444p,split[main][alpha];[alpha]alphaextract[alpha]",
-	"-map",
-	"[main]",
-	"-map",
-	"[alpha]",
-	"-c:v",
-	"libaom-av1",
-	"-pix_fmt:0",
-	"yuv420p",
-	"-crf",
-	String(crf),
-	"-b:v",
-	"0",
-	"-cpu-used",
-	"4",
-	"-loop",
-	"0",
-	"-f",
-	"avif",
-	`${out}.avif`,
-]);
+	// AVIF: color and alpha are encoded as two AV1 streams in one file. resvg
+	// outputs premultiplied alpha, but ffmpeg treats rgba input as straight alpha,
+	// so unpremultiply first to avoid dark fringes on semi-transparent edges.
+	const encoder = startEncoder(size, FPS, [
+		"-filter_complex",
+		"[0:v]unpremultiply=inplace=1,format=yuva444p,split[main][alpha];[alpha]alphaextract[alpha]",
+		"-map",
+		"[main]",
+		"-map",
+		"[alpha]",
+		"-c:v",
+		"libaom-av1",
+		"-pix_fmt:0",
+		"yuv420p",
+		"-crf",
+		String(CRF),
+		"-b:v",
+		"0",
+		"-cpu-used",
+		"4",
+		"-loop",
+		"0",
+		"-f",
+		"avif",
+		filename,
+	]);
 
-for (let i = 0; i < numFrames; i++) {
-	const svg = frameSvg(seams, (dir * 2 * Math.PI * i) / numFrames);
-	const png = new Resvg(svg, {
-		fitTo: { mode: "width", value: size },
-	}).render();
-	if (png.width !== size || png.height !== size) {
-		throw new Error(
-			`Rendered frame is ${png.width}x${png.height}, expected ${size}x${size}`,
-		);
+	for (let i = 0; i < numFrames; i++) {
+		const svg = frameSvg(colors, seams, (dir * 2 * Math.PI * i) / numFrames);
+		const png = new Resvg(svg, {
+			fitTo: { mode: "width", value: size },
+		}).render();
+		if (png.width !== size || png.height !== size) {
+			throw new Error(
+				`Rendered frame is ${png.width}x${png.height}, expected ${size}x${size}`,
+			);
+		}
+		await encoder.write(Buffer.from(png.pixels));
 	}
-	await encoder.write(Buffer.from(png.pixels));
-}
-await encoder.end();
+	await encoder.end();
 
-console.log(`Wrote ${out}.avif (${numFrames} frames, ${size}px)`);
+	console.log(`Wrote ${filename} (${numFrames} frames, ${size}px)`);
+};

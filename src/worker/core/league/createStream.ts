@@ -88,7 +88,7 @@ export type TeamInfo = TeamBasic & {
 };
 
 // Doesn't seem to make a difference no matter what this is, but keeping at 1 makes the progress bar nicer
-export const highWaterMark = 1;
+const highWaterMark = 1;
 
 const addLeagueMeta = async ({
 	lid,
@@ -377,86 +377,78 @@ const getSaveToDB = ({
 
 	let currentPid = -1;
 
-	const writableStream = new WritableStream<{
+	const write = async ({
+		key,
+		value,
+	}: {
 		key: LeagueDBStoreNames;
 		value: any;
-	}>(
-		{
-			async write(chunk) {
-				const { key, value } = chunk;
+	}) => {
+		if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
+			// Currently skipped:
+			// - meta because it doesn't get written to DB
+			// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
+			return;
+		}
 
-				if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
-					// Currently skipped:
-					// - meta because it doesn't get written to DB
-					// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
-					return;
+		if (key !== prevKey) {
+			// console.timeLog("createStream");
+			// console.log("loading", key);
+			setLeagueCreationStatus(`Processing ${key}...`);
+			prevKey = key;
+		}
+
+		// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
+		if (key === "schedule" && keptKeys.has("schedule")) {
+			currentScheduleGid += 1;
+			value.gid = currentScheduleGid;
+		}
+
+		if (key === "events" && keptKeys.has("events")) {
+			extraFromStream.hasEvents = true;
+		}
+
+		const isPlayers = key === "players" && keptKeys.has("players");
+
+		if (isPlayers) {
+			if (value.pid === undefined) {
+				currentPid += 1;
+				value.pid = currentPid;
+			} else if (value.pid > currentPid) {
+				currentPid = value.pid;
+			}
+		}
+
+		if (keptKeys.has(key)) {
+			const processed = await preProcess(key, value, preProcessParams);
+
+			if (
+				isPlayers &&
+				(processed.tid >= PLAYER.UNDRAFTED ||
+					processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
+			) {
+				extraFromStream.activePlayers.push(processed);
+
+				if (__SPORT !== "basketball" || typeof value.rosterOrder === "number") {
+					extraFromStream.teamHasRosterOrder.add(value.tid);
 				}
-
-				if (key !== prevKey) {
-					// console.timeLog("createStream");
-					// console.log("loading", key);
-					setLeagueCreationStatus(`Processing ${key}...`);
-					prevKey = key;
+			} else {
+				buffer.addRow([key, processed]);
+				if (buffer.isFull()) {
+					await buffer.flush();
 				}
+			}
+		}
+	};
 
-				// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
-				if (key === "schedule" && keptKeys.has("schedule")) {
-					currentScheduleGid += 1;
-					value.gid = currentScheduleGid;
-				}
-
-				if (key === "events" && keptKeys.has("events")) {
-					extraFromStream.hasEvents = true;
-				}
-
-				const isPlayers = key === "players" && keptKeys.has("players");
-
-				if (isPlayers) {
-					if (value.pid === undefined) {
-						currentPid += 1;
-						value.pid = currentPid;
-					} else if (value.pid > currentPid) {
-						currentPid = value.pid;
-					}
-				}
-
-				if (keptKeys.has(key)) {
-					const processed = await preProcess(key, value, preProcessParams);
-
-					if (
-						isPlayers &&
-						(processed.tid >= PLAYER.UNDRAFTED ||
-							processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
-					) {
-						extraFromStream.activePlayers.push(processed);
-
-						if (
-							__SPORT !== "basketball" ||
-							typeof value.rosterOrder === "number"
-						) {
-							extraFromStream.teamHasRosterOrder.add(value.tid);
-						}
-					} else {
-						buffer.addRow([key, processed]);
-						if (buffer.isFull()) {
-							await buffer.flush();
-						}
-					}
-				}
-			},
-
-			async close() {
-				await buffer.finalize();
-			},
-		},
-		new CountQueuingStrategy({
-			highWaterMark,
-		}),
-	);
+	const close = async () => {
+		await buffer.finalize();
+	};
 
 	return {
+		close,
 		extraFromStream,
-		saveToDB: writableStream,
+		write,
 	};
 };
 
@@ -1847,7 +1839,7 @@ const afterDBStream = async ({
 };
 
 const createStream = async (
-	stream: ReadableStream,
+	leagueData: ReadableStream | Record<string, unknown>,
 	{
 		conditions,
 		confs,
@@ -1897,7 +1889,7 @@ const createStream = async (
 
 	const migrationData: PreProcessParams["migrationData"] = {};
 
-	const { extraFromStream, saveToDB } = getSaveToDB({
+	const { close, extraFromStream, write } = getSaveToDB({
 		keptKeys,
 		maxGid: fromFile.maxGid,
 		preProcessParams: {
@@ -1916,7 +1908,26 @@ const createStream = async (
 	// console.timeLog("createStream");
 
 	try {
-		await stream.pipeTo(saveToDB);
+		if (leagueData instanceof ReadableStream) {
+			await leagueData.pipeTo(
+				new WritableStream(
+					{ write, close },
+					new CountQueuingStrategy({
+						highWaterMark,
+					}),
+				),
+			);
+		} else {
+			// Already in memory (real players leagues, random players leagues), so skip the overhead of streaming it one row at a time
+			for (const [key, rows] of Object.entries(leagueData)) {
+				if (Array.isArray(rows)) {
+					for (const value of rows) {
+						await write({ key: key as LeagueDBStoreNames, value });
+					}
+				}
+			}
+			await close();
+		}
 		// console.timeLog("createStream");
 
 		setLeagueCreationStatus("Finalizing...");

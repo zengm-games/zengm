@@ -93,7 +93,6 @@ import getRandomTeams from "./getRandomTeams.ts";
 import { withState } from "../core/player/name.ts";
 import { initDefaults, loadNames } from "../util/loadNames.ts";
 import type { PlayerRatings } from "../../common/types.basketball.ts";
-import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject.ts";
 import type { IDBPIndex, IDBPObjectStore } from "@dumbmatter/idb";
 import {
 	upgradeGamesVersion65,
@@ -709,7 +708,7 @@ const createLeague = async (
 
 	try {
 		let actualTid = tid;
-		let stream: ReadableStream | undefined;
+		let leagueData: ReadableStream | Record<string, unknown>;
 		if (getLeagueOptions) {
 			const realLeague = await realRosters.getLeague(getLeagueOptions);
 
@@ -744,7 +743,7 @@ const createLeague = async (
 			fromFile.startingSeason = realLeague.startingSeason;
 			fromFile.teams = realLeague.teams;
 
-			stream = createStreamFromLeagueObject(realLeague);
+			leagueData = realLeague;
 		} else if (file || url) {
 			let baseStream: ReadableStream;
 			let sizeInBytes: number | undefined;
@@ -768,7 +767,7 @@ const createLeague = async (
 			// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
 			(self as any).stream0 = stream0;
 
-			stream = (
+			leagueData = (
 				await decompressStreamIfNecessary(
 					stream0.pipeThrough(
 						emitProgressStream(leagueCreationID, sizeInBytes, conditions),
@@ -778,16 +777,12 @@ const createLeague = async (
 				.pipeThrough(new TextDecoderStream())
 				.pipeThrough(parseJSON());
 		} else {
-			stream = createStreamFromLeagueObject({});
-		}
-
-		if (!stream) {
-			throw new Error("No stream");
+			leagueData = {};
 		}
 
 		const lid = importLid ?? (await getNewLeagueLid());
 
-		await league.createStream(stream, {
+		await league.createStream(leagueData, {
 			conditions,
 			confs,
 			divs,

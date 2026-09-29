@@ -22,12 +22,12 @@ spinner animations
   - AllStarThree
   - buildSw
 - how to pause spinner
-- existing images in /ico/ still all needed? maybe not gold ones
-- remove old "spin" class
-- basketball spin axis
 - smaller images?
   - compression
-  - yuv420p
+
+monorepo with zengm.com
+- use spritesheet logos
+- delete logo.png (after removing from dumbmatter.com too)
 
 add helpers.entries similar to helpers.keys, if possible
 - use in developSeason.basketball.ts

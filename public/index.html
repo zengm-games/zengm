@@ -14,13 +14,8 @@
 
 		<style>
 			/*
-			Spinning logo, from a sprite sheet that is a grid of frames (see
-			common/logoSpinners.ts). The image has two animations: one steps down
-			through the rows, and the other steps across the columns within each
-			row. Rows use transform and columns use the separate translate
-			property, since two animations of the same property would not combine.
-			Browsers without translate (Chrome < 104) only step through the rows,
-			which is still a full turn, just choppier.
+			Spinning logo, from a sprite sheet that is a single row of frames (see
+			common/logoSpinners.ts), stepped through by moving the image left.
 
 			This is here rather than in the theme CSS so it works before that
 			loads, and the React LogoSpinner component uses it too.
@@ -35,14 +30,10 @@
 			.logo-spinner img {
 				display: block;
 				max-width: none;
-				width: calc(var(--logo-spinner-size) * var(--logo-spinner-cols));
-				height: calc(var(--logo-spinner-size) * var(--logo-spinner-rows));
-				animation:
-					logo-spinner-rows var(--logo-spinner-duration)
-						steps(var(--logo-spinner-rows)) infinite,
-					logo-spinner-cols
-						calc(var(--logo-spinner-duration) / var(--logo-spinner-rows))
-						steps(var(--logo-spinner-cols)) infinite;
+				width: calc(var(--logo-spinner-size) * var(--logo-spinner-frames));
+				height: var(--logo-spinner-size);
+				animation: logo-spinner var(--logo-spinner-duration)
+					steps(var(--logo-spinner-frames)) infinite;
 			}
 			.logo-spinner-paused img {
 				animation-play-state: paused;
@@ -53,14 +44,9 @@
 					animation: none;
 				}
 			}
-			@keyframes logo-spinner-rows {
+			@keyframes logo-spinner {
 				to {
-					transform: translateY(-100%);
-				}
-			}
-			@keyframes logo-spinner-cols {
-				to {
-					translate: -100% 0;
+					transform: translateX(-100%);
 				}
 			}
 		</style>

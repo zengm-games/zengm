@@ -36,8 +36,8 @@ const toCssVars = (
 	);
 };
 
-// Render one loop of an animation to an SVG sprite sheet: a grid of frames, laid
-// out as described in common/logoSpinners.ts.
+// Render one loop of an animation to an SVG sprite sheet: a single row of
+// frames, as described in common/logoSpinners.ts.
 //
 // Every frame is drawn in the same coordinate system, given by viewBox (square:
 // [minX, minY, size]). defs returns everything shared by all frames
@@ -68,7 +68,7 @@ export const renderSpinner = async <Colors>({
 	sport: Sport;
 	viewBox: [number, number, number];
 }) => {
-	const { cols, frames, rows } = getLogoSpinnerInfo(sport);
+	const { frames } = getLogoSpinnerInfo(sport);
 	const [minX, minY, size] = viewBox;
 
 	const normalEntries: [string, string][] = [];
@@ -86,19 +86,15 @@ export const renderSpinner = async <Colors>({
 
 	let cells = "";
 	for (let i = 0; i < frames; i++) {
-		const x = r3((i % cols) * size);
-		const y = r3(Math.floor(i / cols) * size);
 		// A nested <svg> gives each frame its own coordinate system, and clips it
 		// to its cell
-		cells += `<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="${minX} ${minY} ${size} ${size}">${frame(cssVars, i / frames)}</svg>`;
+		cells += `<svg x="${r3(i * size)}" y="0" width="${size}" height="${size}" viewBox="${minX} ${minY} ${size} ${size}">${frame(cssVars, i / frames)}</svg>`;
 	}
 
-	const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${r3(cols * size)} ${r3(rows * size)}">${style}<defs>${defs(cssVars)}</defs>${cells}</svg>`;
+	const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${r3(frames * size)} ${size}">${style}<defs>${defs(cssVars)}</defs>${cells}</svg>`;
 	await fs.writeFile(filename, svg);
 
 	const kilobytes = (Buffer.byteLength(svg) / 1024).toFixed(2);
 
-	console.log(
-		`Wrote ${filename} (${frames} frames, ${cols}x${rows} grid, ${kilobytes} KB)`,
-	);
+	console.log(`Wrote ${filename} (${frames} frames, ${kilobytes} KB)`);
 };

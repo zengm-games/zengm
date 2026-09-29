@@ -185,5 +185,5 @@ export default {
 	unreadMessage,
 	isWorkerBusy,
 	updateWorkerBusy,
-	whileBusy: whileWorkerBusy,
+	whileWorkerBusy,
 };

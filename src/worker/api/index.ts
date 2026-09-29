@@ -5307,10 +5307,10 @@ const setScheduleFromEditor = async ({
 };
 
 // Marks the worker as busy (which spins the logo in the UI) while function runs. For slow things.
-const whileBusy =
+const whileWorkerBusy =
 	<Args extends unknown[], Return>(cb: (...args: Args) => Promise<Return>) =>
 	(...args: Args) =>
-		lock.whileBusy(() => cb(...args));
+		lock.whileWorkerBusy(() => cb(...args));
 
 const api = {
 	actions,
@@ -5342,9 +5342,9 @@ const api = {
 		clearTrade,
 		clearWatchList,
 		countNegotiations,
-		createLeague: whileBusy(createLeague),
+		createLeague: whileWorkerBusy(createLeague),
 		createTrade,
-		deleteOldData: whileBusy(deleteOldData),
+		deleteOldData: whileWorkerBusy(deleteOldData),
 		deleteScheduledEvents,
 		discardUnsavedProgress,
 		draftLottery,
@@ -5410,7 +5410,7 @@ const api = {
 		releasePlayer,
 		expandVote,
 		relocateVote,
-		cloneLeague: whileBusy(cloneLeague),
+		cloneLeague: whileWorkerBusy(cloneLeague),
 		removeLeague,
 		removePlayers,
 		reorderDepthDrag,

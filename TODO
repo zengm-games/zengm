@@ -1,3 +1,5 @@
+hockey auto sort should play C/W out of position if that is the difference between being on the bench or not https://discord.com/channels/290013534023057409/1553484440796397708/1553484440796397708 - currently there is a bonus in `score` but maybe we should ignore that for players who are not in the starting lines
+
 zengm.com
 - use spritesheet logos and icon.svg
 - delete logo.png (after removing from dumbmatter.com too)

@@ -169,9 +169,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 };
 
 // Cached for performance, since developSeason is called a lot in monteCarloPot
-const ratingsFormulasEntries = helpers
-	.keys(ratingsFormulas)
-	.map((key) => [key, ratingsFormulas[key]] as const);
+const ratingsFormulasEntries = helpers.entries(ratingsFormulas);
 
 const calcBaseChange = (age: number, coachingLevel: number): number => {
 	let val: number;

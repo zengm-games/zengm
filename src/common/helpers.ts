@@ -1098,6 +1098,15 @@ const keys = <O extends object>(obj: O): Array<keyof O> => {
 	return Object.keys(obj) as Array<keyof O>;
 };
 
+// Distributes over keys, so each key is paired only with its own value type, like ["a", number] | ["b", string] rather than ["a" | "b", number | string]
+type Entries<O> = Array<
+	keyof O extends infer K ? (K extends keyof O ? [K, O[K]] : never) : never
+>;
+
+const entries = <O extends object>(obj: O): Entries<O> => {
+	return Object.entries(obj) as Entries<O>;
+};
+
 const states = new Set([
 	"AL",
 	"AK",
@@ -1598,6 +1607,7 @@ export const helpers = {
 	roundWinp,
 	upperCaseFirstLetter,
 	keys,
+	entries,
 	ratio,
 	percentage,
 	formatRecord,

@@ -172851,6 +172851,12 @@
       {
         "gamesRemaining": 50,
         "phase": 0,
+        "season": 2027,
+        "type": "Injured"
+      },
+      {
+        "gamesRemaining": 50,
+        "phase": 0,
         "season": 2025,
         "type": "Injured"
       },
@@ -317567,24 +317573,24 @@
       "tp": 45
     },
     {
-      "diq": 43,
-      "dnk": 10,
-      "drb": 40,
-      "endu": 38,
-      "fg": 86,
-      "ft": 51,
+      "diq": 39,
+      "dnk": 6,
+      "drb": 36,
+      "endu": 34,
+      "fg": 82,
+      "ft": 47,
       "fuzz": 0,
       "hgt": 29,
-      "ins": 54,
-      "jmp": 41,
-      "oiq": 65,
-      "pss": 49,
-      "reb": 58,
+      "ins": 50,
+      "jmp": 37,
+      "oiq": 61,
+      "pss": 45,
+      "reb": 54,
       "season": 2027,
       "slug": "dilliro01",
-      "spd": 65,
-      "stre": 12,
-      "tp": 45
+      "spd": 61,
+      "stre": 8,
+      "tp": 41
     },
     {
       "diq": 53,
@@ -335073,24 +335079,24 @@
       "tp": 9
     },
     {
-      "diq": 44,
-      "dnk": 94,
-      "drb": 37,
-      "endu": 40,
-      "fg": 78,
-      "ft": 43,
+      "diq": 48,
+      "dnk": 98,
+      "drb": 41,
+      "endu": 44,
+      "fg": 82,
+      "ft": 47,
       "fuzz": 0,
       "hgt": 67,
-      "ins": 56,
-      "jmp": 47,
-      "oiq": 61,
-      "pss": 43,
-      "reb": 94,
+      "ins": 60,
+      "jmp": 51,
+      "oiq": 65,
+      "pss": 47,
+      "reb": 98,
       "season": 2027,
       "slug": "durenja01",
-      "spd": 49,
-      "stre": 89,
-      "tp": 5
+      "spd": 53,
+      "stre": 93,
+      "tp": 9
     },
     {
       "diq": 35,
@@ -399594,24 +399600,24 @@
       "tp": 61
     },
     {
-      "diq": 53,
-      "dnk": 12,
-      "drb": 38,
-      "endu": 32,
-      "fg": 32,
-      "ft": 56,
+      "diq": 49,
+      "dnk": 8,
+      "drb": 34,
+      "endu": 28,
+      "fg": 28,
+      "ft": 52,
       "fuzz": 0,
       "hgt": 37,
-      "ins": 31,
-      "jmp": 71,
-      "oiq": 55,
-      "pss": 39,
-      "reb": 45,
+      "ins": 27,
+      "jmp": 67,
+      "oiq": 51,
+      "pss": 35,
+      "reb": 41,
       "season": 2027,
       "slug": "harriga01",
-      "spd": 49,
-      "stre": 41,
-      "tp": 61
+      "spd": 45,
+      "stre": 37,
+      "tp": 57
     },
     {
       "diq": 38,
@@ -519608,24 +519614,24 @@
       "tp": 40
     },
     {
-      "diq": 39,
-      "dnk": 42,
-      "drb": 41,
-      "endu": 32,
-      "fg": 55,
-      "ft": 49,
+      "diq": 43,
+      "dnk": 46,
+      "drb": 45,
+      "endu": 36,
+      "fg": 59,
+      "ft": 53,
       "fuzz": 0,
       "hgt": 44,
-      "ins": 38,
-      "jmp": 36,
-      "oiq": 40,
-      "pss": 40,
-      "reb": 54,
+      "ins": 42,
+      "jmp": 40,
+      "oiq": 44,
+      "pss": 44,
+      "reb": 58,
       "season": 2027,
       "slug": "mcculke01",
-      "spd": 47,
-      "stre": 35,
-      "tp": 36
+      "spd": 51,
+      "stre": 39,
+      "tp": 40
     },
     {
       "diq": 44,
@@ -556394,24 +556400,24 @@
       "tp": 54
     },
     {
-      "diq": 31,
-      "dnk": 11,
-      "drb": 52,
-      "endu": 69,
-      "fg": 81,
-      "ft": 52,
+      "diq": 27,
+      "dnk": 7,
+      "drb": 48,
+      "endu": 65,
+      "fg": 77,
+      "ft": 48,
       "fuzz": 0,
       "hgt": 25,
-      "ins": 30,
-      "jmp": 25,
-      "oiq": 60,
-      "pss": 56,
-      "reb": 65,
+      "ins": 26,
+      "jmp": 21,
+      "oiq": 56,
+      "pss": 52,
+      "reb": 61,
       "season": 2027,
       "slug": "nembhry01",
-      "spd": 59,
-      "stre": 33,
-      "tp": 54
+      "spd": 55,
+      "stre": 29,
+      "tp": 50
     },
     {
       "diq": 58,
@@ -595275,24 +595281,24 @@
       "tp": 11
     },
     {
-      "diq": 38,
-      "dnk": 81,
-      "drb": 22,
-      "endu": 31,
-      "fg": 5,
-      "ft": 33,
+      "diq": 42,
+      "dnk": 85,
+      "drb": 26,
+      "endu": 35,
+      "fg": 9,
+      "ft": 37,
       "fuzz": 0,
       "hgt": 60,
-      "ins": 25,
-      "jmp": 38,
-      "oiq": 51,
-      "pss": 44,
-      "reb": 57,
+      "ins": 29,
+      "jmp": 42,
+      "oiq": 55,
+      "pss": 48,
+      "reb": 61,
       "season": 2027,
       "slug": "poweldw01",
-      "spd": 44,
-      "stre": 47,
-      "tp": 7
+      "spd": 48,
+      "stre": 51,
+      "tp": 11
     },
     {
       "diq": 43,
@@ -627212,24 +627218,24 @@
       "tp": 53
     },
     {
-      "diq": 32,
-      "dnk": 58,
-      "drb": 54,
-      "endu": 32,
-      "fg": 73,
-      "ft": 50,
+      "diq": 28,
+      "dnk": 54,
+      "drb": 50,
+      "endu": 28,
+      "fg": 69,
+      "ft": 46,
       "fuzz": 0,
       "hgt": 42,
-      "ins": 59,
-      "jmp": 57,
-      "oiq": 65,
-      "pss": 51,
-      "reb": 52,
+      "ins": 55,
+      "jmp": 53,
+      "oiq": 61,
+      "pss": 47,
+      "reb": 48,
       "season": 2027,
       "slug": "russeda01",
-      "spd": 60,
-      "stre": 9,
-      "tp": 53
+      "spd": 56,
+      "stre": 5,
+      "tp": 49
     },
     {
       "diq": 40,
@@ -641505,24 +641511,24 @@
       "tp": 58
     },
     {
-      "diq": 40,
-      "dnk": 55,
-      "drb": 21,
-      "endu": 22,
-      "fg": 27,
-      "ft": 10,
+      "diq": 36,
+      "dnk": 51,
+      "drb": 17,
+      "endu": 18,
+      "fg": 23,
+      "ft": 6,
       "fuzz": 0,
       "hgt": 85,
-      "ins": 48,
-      "jmp": 43,
-      "oiq": 33,
-      "pss": 23,
-      "reb": 50,
+      "ins": 44,
+      "jmp": 39,
+      "oiq": 29,
+      "pss": 19,
+      "reb": 46,
       "season": 2027,
       "slug": "sharpja01",
-      "spd": 28,
-      "stre": 41,
-      "tp": 3
+      "spd": 24,
+      "stre": 37,
+      "tp": 0
     },
     {
       "diq": 28,
@@ -768113,11 +768119,19 @@
           48070014,
           51915615,
           55761216,
-          59606817,
-          62587158
+          59606817
         ],
-        "exp": 2027,
+        "exp": 2026,
         "start": 2018
+      },
+      {
+        "amounts": [
+          57928000,
+          57928000,
+          57928000
+        ],
+        "exp": 2029,
+        "start": 2027
       }
     ],
     "cvetkra01": [
@@ -772458,6 +772472,13 @@
         ],
         "exp": 2026,
         "start": 2026
+      },
+      {
+        "amounts": [
+          9600000
+        ],
+        "exp": 2027,
+        "start": 2027
       }
     ],
     "durhapa01": [
@@ -796430,11 +796451,19 @@
           42492492,
           45640084,
           49205800,
-          50000000,
-          50300000
+          50000000
         ],
-        "exp": 2027,
+        "exp": 2026,
         "start": 2020
+      },
+      {
+        "amounts": [
+          57500000,
+          57500000,
+          57500000
+        ],
+        "exp": 2029,
+        "start": 2027
       }
     ],
     "leoname01": [
@@ -801531,6 +801560,13 @@
         ],
         "exp": 2026,
         "start": 2026
+      },
+      {
+        "amounts": [
+          600000
+        ],
+        "exp": 2027,
+        "start": 2027
       }
     ],
     "mcdancl01": [
@@ -813800,6 +813836,13 @@
         ],
         "exp": 2026,
         "start": 2024
+      },
+      {
+        "amounts": [
+          3880000
+        ],
+        "exp": 2027,
+        "start": 2027
       }
     ],
     "powele01": [
@@ -821009,15 +821052,6 @@
         ],
         "exp": 2029,
         "start": 2028
-      }
-    ],
-    "sharpja01": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
       }
     ],
     "sharpsh01": [
@@ -900429,11 +900463,6 @@
         "abbrev": "CHI",
         "jerseyNumber": "7",
         "season": 2026
-      },
-      {
-        "abbrev": "CHI",
-        "jerseyNumber": "7",
-        "season": 2027
       }
     ],
     "dilloho01": [
@@ -903666,6 +903695,11 @@
         "abbrev": "DET",
         "jerseyNumber": "0",
         "season": 2026
+      },
+      {
+        "abbrev": "DET",
+        "jerseyNumber": "0",
+        "season": 2027
       }
     ],
     "durenjo01": [
@@ -908487,7 +908521,7 @@
         "season": 2026
       },
       {
-        "abbrev": "CHA",
+        "abbrev": "ATL",
         "jerseyNumber": "2",
         "season": 2027
       }
@@ -921814,11 +921848,6 @@
         "abbrev": "MIL",
         "jerseyNumber": "11",
         "season": 2026
-      },
-      {
-        "abbrev": "DET",
-        "jerseyNumber": "11",
-        "season": 2027
       }
     ],
     "harrija01": [
@@ -925398,7 +925427,7 @@
         "season": 2026
       },
       {
-        "abbrev": "ATL",
+        "abbrev": "CHI",
         "jerseyNumber": "8",
         "season": 2027
       }
@@ -955163,6 +955192,11 @@
         "abbrev": "NYC",
         "jerseyNumber": "9",
         "season": 2026
+      },
+      {
+        "abbrev": "NYC",
+        "jerseyNumber": "9",
+        "season": 2027
       }
     ],
     "mcdancl01": [
@@ -965682,11 +965716,6 @@
         "abbrev": "DAL",
         "jerseyNumber": "9",
         "season": 2026
-      },
-      {
-        "abbrev": "ATL",
-        "jerseyNumber": "9",
-        "season": 2027
       }
     ],
     "nesbyty01": [
@@ -976448,6 +976477,11 @@
         "abbrev": "DAL",
         "jerseyNumber": "7",
         "season": 2026
+      },
+      {
+        "abbrev": "DAL",
+        "jerseyNumber": "7",
+        "season": 2027
       }
     ],
     "powele01": [
@@ -979478,7 +979512,7 @@
         "season": 2026
       },
       {
-        "abbrev": "DEN",
+        "abbrev": "NOL",
         "jerseyNumber": "15",
         "season": 2027
       }
@@ -985451,11 +985485,6 @@
         "abbrev": "WAS",
         "jerseyNumber": "5",
         "season": 2026
-      },
-      {
-        "abbrev": "MEM",
-        "jerseyNumber": "5",
-        "season": 2027
       }
     ],
     "russefr01": [
@@ -989377,13 +989406,6 @@
       {
         "abbrev": "SAC",
         "jerseyNumber": "34",
-        "season": 2027
-      }
-    ],
-    "sharpja01": [
-      {
-        "abbrev": "LAC",
-        "jerseyNumber": "33",
         "season": 2027
       }
     ],

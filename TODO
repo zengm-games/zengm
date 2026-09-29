@@ -4,13 +4,6 @@ zengm.com
 - use spritesheet logos and icon.svg
 - delete logo.png (after removing from dumbmatter.com too)
 
-add helpers.entries similar to helpers.keys, if possible
-- use in developSeason.basketball.ts
-
-Cache.indexGetAllByKey
-- similar to getAllByKey
-- use in getUpcoming for playersByTid
-
 seasonFraction maybe doesn't make much sense in basketball awards like MVP. gp/teamGp or gp/82 might be better - the former would max at 1 regardles of numGames, but the latter would give more or less weight to winp based on how long the season is, which would also scale them with EWA+VORP. fracWS should maybe also get multiplied by gp/82.
 - if we edit default, what to do about achievements?
 
@@ -207,6 +200,7 @@ move EventBBGM away from using string "text" property
 
 dev usability stuff
 - monorepo
+- oxfmt width
 - get rid of babel
   - see nativeMagicString branch, but tests are broken and nativeMagicString is experimental
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open

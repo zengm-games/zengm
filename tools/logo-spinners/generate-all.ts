@@ -1,7 +1,4 @@
-import {
-	getLogoSpinnerUrl,
-	type LogoSpinnerSize,
-} from "../../common/logoSpinners.ts";
+import { getLogoSpinnerUrl } from "../../common/logoSpinners.ts";
 import { SPORTS, type Sport } from "../lib/getSport.ts";
 import * as render from "./render/index.ts";
 import type { SpinnerOptions } from "./render/renderSpinner.ts";
@@ -68,39 +65,12 @@ const renderers: {
 	[S in Sport]: (options: SpinnerOptions<Colors[S]>) => Promise<void>;
 } = render;
 
-const variantsBase: {
-	colors: ("gold" | "normal")[];
-	size: LogoSpinnerSize;
-}[] = [
-	{
-		colors: ["gold", "normal"],
-		size: 18,
-	},
-	{
-		colors: ["normal"],
-		size: 48,
-	},
-];
-
-// For high-DPI screens
-const sizeMultipliers = [1, 2];
-
 const renderSport = async <S extends Sport>(sport: S) => {
-	for (const base of variantsBase) {
-		for (const color of base.colors) {
-			const gold = color === "gold";
-
-			for (const sizeMultiplier of sizeMultipliers) {
-				const size = sizeMultiplier * base.size;
-				const filename = `public/${sport}${getLogoSpinnerUrl(size, gold)}`;
-
-				await renderers[sport]({
-					colors: colors[sport][color],
-					filename,
-					size,
-				});
-			}
-		}
+	for (const color of ["normal", "gold"] as const) {
+		await renderers[sport]({
+			colors: colors[sport][color],
+			filename: `public/${sport}${getLogoSpinnerUrl(color === "gold")}`,
+		});
 	}
 };
 

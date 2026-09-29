@@ -10,13 +10,13 @@ import {
 	add,
 	applyMatrix,
 	cross,
-	f,
 	normalize,
 	rotate,
 	scale,
 	type Vec3,
 } from "../geometry.ts";
 import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
+import { num, pathData, type Pt } from "../svg.ts";
 
 export type BaseballColors = {
 	ball: string;
@@ -139,69 +139,81 @@ const STITCHES = seamSamples(CONFIG.stitchSpacing / R).map(
 		polygons: stitchPolygons(p, tangent),
 	}),
 );
-const SEAM_LINE = Array.from({ length: 601 }, (_, i) =>
-	seamPoint((2 * Math.PI * i) / 600),
+// Enough points that the line looks smooth, but no more, since every point is
+// in every frame of the output
+const SEAM_LINE = Array.from({ length: 201 }, (_, i) =>
+	seamPoint((2 * Math.PI * i) / 200),
 );
 const AXIS = normalize(CONFIG.axis);
 const FADE_SIN = Math.sin((CONFIG.edgeFade * Math.PI) / 180);
 
-const xy = (v: Vec3) => `${f(CX + RX * v[0])} ${f(CY + RY * v[1])}`;
+const toSvg = (v: Vec3): Pt => [CX + RX * v[0], CY + RY * v[1]];
 
 // Square viewBox around the original 357.588 x 347.967 drawing
-const VIEWBOX = "0 -4.81 357.588 357.588";
+const VIEWBOX: [number, number, number] = [0, -4.81, 357.588];
 
-const BALL_PATH =
-	"M.732 173.92c0 96.05 79.885 173.92 178.43 173.92s178.43-77.865 178.43-173.92S277.702 0 179.162 0 .732 77.865.732 173.92z";
+// The ball, which doesn't move
+const defs = (colors: BaseballColors) =>
+	`<path id="ball" fill="${colors.ball}" d="M.732 173.92c0 96.05 79.885 173.92 178.43 173.92s178.43-77.865 178.43-173.92S277.702 0 179.162 0 .732 77.865.732 173.92z"/>`;
 
 // t = fraction of a full turn (0 to 1)
-const frameSvg = (colors: BaseballColors, t: number) => {
+const frame = (colors: BaseballColors, t: number) => {
 	const th = CONFIG.direction * 2 * Math.PI * t;
 	const view = (v: Vec3) => rotate(applyMatrix(ORIENT, v), AXIS, th);
 
-	// Stitches
-	let stitches = "";
+	// Stitches. The fully visible ones are combined into one path, and the ones
+	// fading out near the edge each get their own opacity. They're most of the
+	// file size, so their coordinates are rounded to whole units, which is still
+	// invisible even at 48px on a 3x screen.
+	const solid: Pt[][] = [];
+	let fading = "";
 	for (const { p, polygons } of STITCHES) {
 		const z = view(p)[2];
 		const opacity = Math.min(1, z / FADE_SIN);
 		if (opacity <= 0) {
 			continue;
 		}
-		const d = polygons
-			.map((poly) => `M${poly.map((v) => xy(view(v))).join("L")}Z`)
-			.join("");
-		stitches += `<path opacity="${f(opacity)}" d="${d}"/>`;
+		const shapes = polygons.map((poly) => poly.map((v) => toSvg(view(v))));
+		if (opacity === 1) {
+			solid.push(...shapes);
+		} else {
+			fading += `<path opacity="${num(opacity)}" d="${pathData(shapes, { closed: true, decimals: 0 })}"/>`;
+		}
 	}
 
 	// Thin line along the seam, front half only
-	let line = "";
+	const lines: Pt[][] = [];
 	if (CONFIG.seamLineWidth > 0) {
-		let penDown = false;
+		let line: Pt[] | undefined;
 		for (const p of SEAM_LINE) {
 			const v = view(p);
 			if (v[2] > FADE_SIN) {
-				line += `${penDown ? "L" : "M"}${xy(v)}`;
-				penDown = true;
+				if (!line) {
+					line = [];
+					lines.push(line);
+				}
+				line.push(toSvg(v));
 			} else {
-				penDown = false;
+				line = undefined;
 			}
 		}
 	}
 
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}"><path fill="${colors.ball}" d="${BALL_PATH}"/><g fill="${colors.stitches}" stroke="${colors.stitches}" stroke-width="2" stroke-linejoin="round">${stitches}</g>${
-		line
-			? `<path fill="none" stroke="${colors.stitches}" stroke-width="${CONFIG.seamLineWidth}" stroke-linecap="round" d="${line}"/>`
+	return `<use href="#ball"/><g fill="${colors.stitches}" stroke="${colors.stitches}" stroke-width="2" stroke-linejoin="round"><path d="${pathData(solid, { closed: true, decimals: 0 })}"/>${fading}</g>${
+		lines.length > 0
+			? `<path fill="none" stroke="${colors.stitches}" stroke-width="${CONFIG.seamLineWidth}" stroke-linecap="round" d="${pathData(lines)}"/>`
 			: ""
-	}</svg>`;
+	}`;
 };
 
 export const baseball = ({
 	colors,
 	filename,
-	size,
 }: SpinnerOptions<BaseballColors>) =>
 	renderSpinner({
+		defs: defs(colors),
 		filename,
-		frameSvg: (t) => frameSvg(colors, t),
-		size,
+		frame: (t) => frame(colors, t),
 		sport: "baseball",
+		viewBox: VIEWBOX,
 	});

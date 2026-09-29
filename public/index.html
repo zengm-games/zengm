@@ -47,6 +47,12 @@
 			.logo-spinner-paused img {
 				animation-play-state: paused;
 			}
+			@media (prefers-reduced-motion: reduce) {
+				.logo-spinner img {
+					/* Stay on the first frame */
+					animation: none;
+				}
+			}
 			@keyframes logo-spinner-rows {
 				to {
 					transform: translateY(-100%);
@@ -159,11 +165,7 @@
 							class="logo-spinner"
 							style="LOGO_SPINNER_CSS_VARS"
 						>
-							<img
-								alt=""
-								src="/ico/spinner-48.avif"
-								srcset="/ico/spinner-48.avif 1x, /ico/spinner-96.avif 2x"
-							/>
+							<img alt="" src="/ico/spinner.svg" />
 						</span>
 					</div>
 

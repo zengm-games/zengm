@@ -9,13 +9,13 @@
 import {
 	add,
 	cross,
-	f,
 	normalize,
 	rotate,
 	scale,
 	type Vec3,
 } from "../geometry.ts";
 import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
+import { num, pathData, type Pt } from "../svg.ts";
 
 export type HockeyColors = {
 	top: string;
@@ -34,8 +34,6 @@ const CONFIG = {
 	// 1 or -1: which way the wobble goes around
 	direction: 1,
 };
-
-type Pt = [number, number];
 
 // Measurements from the original SVG
 const RADIUS = 149.64;
@@ -66,13 +64,17 @@ const axisAt = (t: number): Vec3 => {
 	return rotate([0, 1, 0], hinge, tilt);
 };
 
-// Points on a circle of radius r centered on the axis at height h
-const circle = (axis: Vec3, h: number, r: number, n = 96): Pt[] => {
-	// Two directions perpendicular to the axis
+// Two directions perpendicular to the axis
+const basis = (axis: Vec3) => {
 	const u = normalize(
 		cross(axis, Math.abs(axis[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0]),
 	);
-	const v = cross(axis, u);
+	return [u, cross(axis, u)] as const;
+};
+
+// Points on a circle of radius r centered on the axis at height h
+const circle = (axis: Vec3, h: number, r: number, n = 48): Pt[] => {
+	const [u, v] = basis(axis);
 	const pts: Pt[] = [];
 	for (let i = 0; i < n; i++) {
 		const a = (2 * Math.PI * i) / n;
@@ -87,6 +89,29 @@ const circle = (axis: Vec3, h: number, r: number, n = 96): Pt[] => {
 		);
 	}
 	return pts;
+};
+
+// The same circle as an exact SVG ellipse. The projection is linear, so the
+// circle becomes an ellipse whose conjugate semi-axes are the projections of
+// r * u and r * v. Its actual semi-axes and rotation come from the singular
+// value decomposition of that 2x2 matrix.
+const ellipse = (axis: Vec3, h: number, r: number) => {
+	const [u, v] = basis(axis);
+	const [cx, cy] = project(scale(axis, h));
+	const linear = (w: Vec3): Pt => {
+		const [x, y] = project(scale(w, r));
+		return [x - CENTER[0], y - CENTER[1]];
+	};
+	const [a, c] = linear(u);
+	const [b, d] = linear(v);
+	const e = (a + d) / 2;
+	const ff = (a - d) / 2;
+	const g = (c + b) / 2;
+	const hh = (c - b) / 2;
+	const q = Math.hypot(e, hh);
+	const rr = Math.hypot(ff, g);
+	const angle = ((Math.atan2(g, ff) + Math.atan2(hh, e)) / 2) * (180 / Math.PI);
+	return `cx="${num(cx)}" cy="${num(cy)}" rx="${num(q + rr)}" ry="${num(Math.abs(q - rr))}" transform="rotate(${num(angle)} ${num(cx)} ${num(cy)})"`;
 };
 
 // Convex hull (monotone chain): the outline of the whole puck
@@ -108,16 +133,13 @@ const hull = (pts: Pt[]): Pt[] => {
 	return [...half(sorted), ...half(sorted.reverse())];
 };
 
-const pathD = (pts: Pt[]) =>
-	`M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L")}Z`;
-
 // Side highlight from the original, fixed in screen space
 const defs = (colors: HockeyColors) =>
-	`<defs><linearGradient id="a" gradientUnits="userSpaceOnUse" x1="0.65" y1="0" x2="201.53" y2="0"><stop stop-color="${colors.sideGradient[0]}" offset="0"/><stop stop-color="${colors.sideGradient[1]}" offset=".211"/><stop stop-color="${colors.sideGradient[2]}" offset="1"/></linearGradient></defs>`;
+	`<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="0.65" y1="0" x2="201.53" y2="0"><stop stop-color="${colors.sideGradient[0]}" offset="0"/><stop stop-color="${colors.sideGradient[1]}" offset=".211"/><stop stop-color="${colors.sideGradient[2]}" offset="1"/></linearGradient>`;
 
 // The tilting puck can reach past the original's edges, so frame the
 // viewBox around every pose (square, same for all frames)
-const VIEWBOX = (() => {
+const VIEWBOX = ((): [number, number, number] => {
 	let [minX, minY, maxX, maxY] = [Infinity, Infinity, -Infinity, -Infinity];
 	for (let i = 0; i < 48; i++) {
 		const axis = axisAt(i / 48);
@@ -136,30 +158,33 @@ const VIEWBOX = (() => {
 	const size = Math.max(maxX - minX, maxY - minY) + 2 * pad;
 	const cx = (minX + maxX) / 2;
 	const cy = (minY + maxY) / 2;
-	return `${f(cx - size / 2)} ${f(cy - size / 2)} ${f(size)} ${f(size)}`;
+	return [
+		Number(num(cx - size / 2)),
+		Number(num(cy - size / 2)),
+		Number(num(size)),
+	];
 })();
 
 // t = fraction of a wobble cycle (0 to 1)
-const frameSvg = (colors: HockeyColors, t: number) => {
+const frame = (colors: HockeyColors, t: number) => {
 	const axis = axisAt(t);
 	const top = circle(axis, HEIGHT / 2, RADIUS);
 	const bottom = circle(axis, -HEIGHT / 2, RADIUS);
-	const outline = pathD(hull([...top, ...bottom]));
+	// Unique within the sprite sheet
+	const id = `o${Math.round(t * 1000)}`;
 	const rings = RING_RADII.map(
 		(r, i) =>
-			`<path fill="none" stroke="${colors.rings[i]}" stroke-width="${RING_WIDTH}" d="${pathD(circle(axis, HEIGHT / 2, RADIUS * r))}"/>`,
+			`<ellipse fill="none" stroke="${colors.rings[i]}" stroke-width="${RING_WIDTH}" ${ellipse(axis, HEIGHT / 2, RADIUS * r)}/>`,
 	).join("");
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}">${defs(colors)}<path fill="${colors.side}" d="${outline}"/><path fill="url(#a)" d="${outline}"/><path fill="${colors.top}" d="${pathD(top)}"/>${rings}</svg>`;
+	// The outline is filled twice: the side color, then the highlight over it
+	return `<defs><path id="${id}" d="${pathData([hull([...top, ...bottom])], { closed: true })}"/></defs><use href="#${id}" fill="${colors.side}"/><use href="#${id}" fill="url(#a)"/><ellipse fill="${colors.top}" ${ellipse(axis, HEIGHT / 2, RADIUS)}/>${rings}`;
 };
 
-export const hockey = ({
-	colors,
-	filename,
-	size,
-}: SpinnerOptions<HockeyColors>) =>
+export const hockey = ({ colors, filename }: SpinnerOptions<HockeyColors>) =>
 	renderSpinner({
+		defs: defs(colors),
 		filename,
-		frameSvg: (t) => frameSvg(colors, t),
-		size,
+		frame: (t) => frame(colors, t),
 		sport: "hockey",
+		viewBox: VIEWBOX,
 	});

@@ -8,7 +8,6 @@ import type { AddressInfo } from "node:net";
 const DEFAULT_PORT = 3000;
 
 const mimeTypes: Record<string, string> = {
-	".avif": "image/avif",
 	".bmp": "image/bmp",
 	".css": "text/css",
 	".gif": "image/gif",

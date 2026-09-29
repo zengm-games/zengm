@@ -1,10 +1,9 @@
 spinner animations
-- svg animation?
-- svg sprite sheet?
+- rename logos?
 - benchmark
 - old versions of Chrome/Safari
 - football seam lines
-- basketball notch on left
+- svgo
 - spin in response to...
   - draft auto pick
   - creating league
@@ -27,7 +26,7 @@ spinner animations
   - buildSw
 - how to pause spinner
 
-monorepo with zengm.com
+zengm.com
 - use spritesheet logos
 - delete logo.png (after removing from dumbmatter.com too)
 

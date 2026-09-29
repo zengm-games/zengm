@@ -1,5 +1,4 @@
 allowBuilds:
-  ffmpeg-static: true
   unrs-resolver: false
 minimumReleaseAgeExclude:
   - json-web-streams@1.2.0

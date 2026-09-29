@@ -7,8 +7,8 @@
 // projected back. The stripes are drawn as true rings around the ball, so
 // their distance to the laces stays constant as the ball turns.
 
-import { f } from "../geometry.ts";
 import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
+import { num, pathData } from "../svg.ts";
 
 export type FootballColors = {
 	ball: string;
@@ -130,21 +130,23 @@ const project = (x: number, ang: number): Pt => {
 	return [x + CONFIG.curve * r * Math.cos(ang), centerY(x) + r * Math.sin(ang)];
 };
 
-// Path for the visible part of a curve on the surface, rotated by th
-const surfacePath = (pts: SurfacePt[], th: number) => {
-	let d = "";
-	let penDown = false;
+// The visible parts of a curve on the surface, rotated by th
+const surfaceLines = (pts: SurfacePt[], th: number) => {
+	const lines: Pt[][] = [];
+	let line: Pt[] | undefined;
 	for (const [x, a] of pts) {
 		const ang = a + th;
 		if (Math.cos(ang) > 0) {
-			const [px, py] = project(x, ang);
-			d += `${penDown ? "L" : "M"}${f(px)} ${f(py)}`;
-			penDown = true;
+			if (!line) {
+				line = [];
+				lines.push(line);
+			}
+			line.push(project(x, ang));
 		} else {
-			penDown = false;
+			line = undefined;
 		}
 	}
-	return d;
+	return lines;
 };
 
 // 0 at the edge of the ball, 1 once edgeFade degrees onto the front
@@ -161,11 +163,8 @@ const groupOpacity = (pts: SurfacePt[], th: number) =>
 const BODY_PATH =
 	"M-154.88 526.72c42.6-.91 78.679 29.96 78.589 47.48-.087 17.1-33.639 46.68-77.239 46.68-43.29 0-79.84-31.66-80.42-47.48-.59-15.83 36.47-45.77 79.07-46.68z";
 
-const defs = (colors: FootballColors) =>
-	`<defs><linearGradient id="b"><stop stop-color="#722e00" offset="0"/><stop stop-color="#722e00" offset=".5"/><stop stop-color="#722e00" stop-opacity="0" offset="1"/></linearGradient><linearGradient id="a"><stop stop-color="${colors.stripes[0]}" offset="0"/><stop stop-color="${colors.stripes[1]}" offset="1"/></linearGradient><linearGradient id="c" href="#a" gradientUnits="userSpaceOnUse" gradientTransform="translate(123.92 444.08) scale(.42762)" x1="-746.71" y1="401.66" x2="-746.71" y2="273.73"/><radialGradient id="e" href="#b" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 1.2 0 -52.03)" cx="-601.8" cy="260.15" r="2.525"/><clipPath id="clip"><path d="${BODY_PATH}"/></clipPath></defs>`;
-
 // One stripe: the visible half of the ring between x = a and x = b
-const stripePath = (a: number, b: number) => {
+const stripePoints = (a: number, b: number) => {
 	const N = 48;
 	const pts: Pt[] = [];
 	for (let i = 0; i <= N; i++) {
@@ -174,34 +173,54 @@ const stripePath = (a: number, b: number) => {
 	for (let i = N; i >= 0; i--) {
 		pts.push(project(b, -Math.PI / 2 + (Math.PI * i) / N));
 	}
-	return `<path fill="url(#c)" d="M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L")}Z"/>`;
+	return pts;
 };
 
 // The stripes don't move, so they're the same in every frame
-const STRIPES = (() => {
+const STRIPES_PATH = (() => {
 	const { stripeInner: inner, stripeWidth: width } = CONFIG;
-	return (
-		stripePath(MIDDLE - inner - width, MIDDLE - inner) +
-		stripePath(MIDDLE + inner, MIDDLE + inner + width)
+	return pathData(
+		[
+			stripePoints(MIDDLE - inner - width, MIDDLE - inner),
+			stripePoints(MIDDLE + inner, MIDDLE + inner + width),
+		],
+		{ closed: true },
 	);
 })();
 
-const OUTLINE = `<path d="M-154.94 524.72c-21.75.46-41.97 8.29-56.78 18.06-7.4 4.89-13.46 10.27-17.69 15.53-4.22 5.26-6.7 10.4-6.53 15.16.18 4.7 2.82 9.89 7.16 15.28 4.34 5.39 10.45 10.92 17.9 15.97 14.92 10.09 35.21 18.15 57.35 18.16 22.25 0 41.9-7.54 56.061-17.29 14.166-9.75 23.137-21.52 23.188-31.37.026-5.07-2.458-10.6-6.657-16.16-4.198-5.56-10.177-11.15-17.5-16.15-14.642-10.01-34.702-17.66-56.502-17.19zm.1 4c20.8-.44 40.1 6.89 54.12 16.47 7.012 4.79 12.722 10.15 16.595 15.28 3.873 5.13 5.863 10.03 5.844 13.72-.037 7.24-7.905 18.81-21.438 28.12-13.531 9.32-32.461 16.57-53.811 16.57-21.16-.01-40.76-7.78-55.09-17.47-7.17-4.85-13.01-10.16-17.04-15.16-4.03-5-6.19-9.72-6.31-12.94-.12-3.15 1.8-7.66 5.69-12.5 3.89-4.83 9.67-9.99 16.78-14.69 14.23-9.38 33.81-16.96 54.66-17.4z"/>`;
+const OUTLINE_PATH =
+	"M-154.94 524.72c-21.75.46-41.97 8.29-56.78 18.06-7.4 4.89-13.46 10.27-17.69 15.53-4.22 5.26-6.7 10.4-6.53 15.16.18 4.7 2.82 9.89 7.16 15.28 4.34 5.39 10.45 10.92 17.9 15.97 14.92 10.09 35.21 18.15 57.35 18.16 22.25 0 41.9-7.54 56.061-17.29 14.166-9.75 23.137-21.52 23.188-31.37.026-5.07-2.458-10.6-6.657-16.16-4.198-5.56-10.177-11.15-17.5-16.15-14.642-10.01-34.702-17.66-56.502-17.19zm.1 4c20.8-.44 40.1 6.89 54.12 16.47 7.012 4.79 12.722 10.15 16.595 15.28 3.873 5.13 5.863 10.03 5.844 13.72-.037 7.24-7.905 18.81-21.438 28.12-13.531 9.32-32.461 16.57-53.811 16.57-21.16-.01-40.76-7.78-55.09-17.47-7.17-4.85-13.01-10.16-17.04-15.16-4.03-5-6.19-9.72-6.31-12.94-.12-3.15 1.8-7.66 5.69-12.5 3.89-4.83 9.67-9.99 16.78-14.69 14.23-9.38 33.81-16.96 54.66-17.4z";
+
+// Gradients, and the shapes that don't move: the ball, stripes, outline and
+// each lace shadow (which moves, but always has the same shape)
+const defs = (colors: FootballColors) =>
+	`<linearGradient id="b"><stop stop-color="#722e00" offset="0"/><stop stop-color="#722e00" offset=".5"/><stop stop-color="#722e00" stop-opacity="0" offset="1"/></linearGradient><linearGradient id="a"><stop stop-color="${colors.stripes[0]}" offset="0"/><stop stop-color="${colors.stripes[1]}" offset="1"/></linearGradient><linearGradient id="c" href="#a" gradientUnits="userSpaceOnUse" gradientTransform="translate(123.92 444.08) scale(.42762)" x1="-746.71" y1="401.66" x2="-746.71" y2="273.73"/><radialGradient id="e" href="#b" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 1.2 0 -52.03)" cx="-601.8" cy="260.15" r="2.525"/><clipPath id="clip"><path d="${BODY_PATH}"/></clipPath><path id="ball" fill="${colors.ball}" d="${BODY_PATH}"/><path id="stripes" fill="url(#c)" d="${STRIPES_PATH}"/><path id="outline" d="${OUTLINE_PATH}"/>${shadows
+		.map(
+			(s, i) =>
+				`<ellipse id="s${i}" fill="url(#e)" cx="-601.798" cy="260.15" rx="2.525" ry="3.03" transform="matrix(${s.m.join(" ")})"/>`,
+		)
+		.join("")}`;
 
 // Square viewBox around the original 128.493 x 127.15 drawing
-const VIEWBOX = "0 -0.67 128.493 128.493";
+const VIEWBOX: [number, number, number] = [0, -0.67, 128.493];
 
 // t = fraction of a full turn (0 to 1)
-const frameSvg = (colors: FootballColors, t: number) => {
+const frame = (colors: FootballColors, t: number) => {
 	const th = rotationAt(t);
+	// Unique within the sprite sheet
+	const id = `k${Math.round(t * 1000)}`;
 
-	const seamPath = seams.map((s) => surfacePath(s, th)).join("");
+	const seamPath = pathData(seams.flatMap((s) => surfaceLines(s, th)));
 
+	// The line under the laces, drawn twice (wide and light, then thin and dark)
 	const backboneOpacity = groupOpacity(backbone, th);
-	const backbonePath = surfacePath(backbone, th);
+	const backboneEl =
+		backboneOpacity > 0
+			? `<path id="${id}" d="${pathData(surfaceLines(backbone, th))}"/>`
+			: "";
 
 	const shadowEls = shadows
-		.map((s) => {
+		.map((s, i) => {
 			const ang = s.angle + th;
 			const op = edgeOpacity(ang);
 			if (op <= 0) {
@@ -214,34 +233,42 @@ const frameSvg = (colors: FootballColors, t: number) => {
 				0.05,
 				Math.cos(ang) / Math.max(0.05, Math.cos(s.angle)),
 			);
-			return `<g opacity="${f(op)}" transform="translate(${f(nx)} ${f(ny)}) scale(1 ${f(k)}) translate(${f(-cx)} ${f(-cy)})"><ellipse fill="url(#e)" cx="-601.798" cy="260.15" rx="2.525" ry="3.03" transform="matrix(${s.m.join(" ")})"/></g>`;
+			return `<use href="#s${i}"${op < 1 ? ` opacity="${num(op)}"` : ""} transform="translate(${num(nx)} ${num(ny)}) scale(1 ${num(k)}) translate(${num(-cx)} ${num(-cy)})"/>`;
 		})
 		.join("");
 
-	const stitchEls = stitches
-		.map((s) => {
-			const op = groupOpacity(s, th);
-			return op > 0
-				? `<path opacity="${f(op)}" d="${surfacePath(s, th)}"/>`
-				: "";
-		})
-		.join("");
+	// Laces. The fully visible ones are combined into one path, and the ones
+	// fading out near the edge each get their own opacity.
+	const solid: Pt[][] = [];
+	let fading = "";
+	for (const s of stitches) {
+		const op = groupOpacity(s, th);
+		if (op <= 0) {
+			continue;
+		}
+		const lines = surfaceLines(s, th);
+		if (op === 1) {
+			solid.push(...lines);
+		} else {
+			fading += `<path opacity="${num(op)}" d="${pathData(lines)}"/>`;
+		}
+	}
 
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}">${defs(colors)}<g transform="rotate(-45 -660.87 54.697)"><path fill="${colors.ball}" d="${BODY_PATH}"/><g clip-path="url(#clip)"><path fill="none" stroke="${colors.seam}" stroke-width=".855" stroke-linecap="round" d="${seamPath}"/>${STRIPES}${
-		backboneOpacity > 0
-			? `<g opacity="${f(backboneOpacity)}" fill="none" stroke-linecap="round"><path stroke="${colors.laceBackbone}" stroke-width="4.276" d="${backbonePath}"/><path stroke="#722e00" stroke-width=".47" d="${backbonePath}"/></g>`
+	return `<g transform="rotate(-45 -660.87 54.697)"><use href="#ball"/><g clip-path="url(#clip)"><path fill="none" stroke="${colors.seam}" stroke-width=".855" stroke-linecap="round" d="${seamPath}"/><use href="#stripes"/>${
+		backboneEl
+			? `<g opacity="${num(backboneOpacity)}" fill="none" stroke-linecap="round"><defs>${backboneEl}</defs><use href="#${id}" stroke="${colors.laceBackbone}" stroke-width="4.276"/><use href="#${id}" stroke="#722e00" stroke-width=".47"/></g>`
 			: ""
-	}${shadowEls}<g fill="none" stroke="${colors.laces}" stroke-width="2.095" stroke-linecap="round" stroke-linejoin="round">${stitchEls}</g></g>${OUTLINE}</g></svg>`;
+	}${shadowEls}<g fill="none" stroke="${colors.laces}" stroke-width="2.095" stroke-linecap="round" stroke-linejoin="round">${solid.length > 0 ? `<path d="${pathData(solid)}"/>` : ""}${fading}</g></g><use href="#outline"/></g>`;
 };
 
 export const football = ({
 	colors,
 	filename,
-	size,
 }: SpinnerOptions<FootballColors>) =>
 	renderSpinner({
+		defs: defs(colors),
 		filename,
-		frameSvg: (t) => frameSvg(colors, t),
-		size,
+		frame: (t) => frame(colors, t),
 		sport: "football",
+		viewBox: VIEWBOX,
 	});

@@ -1,8 +1,9 @@
 // Basketball spinning like a sphere around the vertical axis. The ball's fill,
 // shading and outline stay fixed; only the seams rotate.
 
-import { applyMatrix, f, normalize, rotate, type Vec3 } from "../geometry.ts";
+import { applyMatrix, normalize, rotate, type Vec3 } from "../geometry.ts";
 import { renderSpinner, type SpinnerOptions } from "../renderSpinner.ts";
+import { pathData, type Pt } from "../svg.ts";
 
 // Ball gradient: [outer, inner]
 export type BasketballColors = [string, string];
@@ -31,14 +32,14 @@ const CONFIG = {
 
 	strokeWidth: 4.924,
 
-	// Points per seam. More = smoother curves, bigger SVG (only matters for the
-	// intermediate SVG, not the output image).
-	samples: 120,
+	// Points per seam. More = smoother curves, bigger SVG. At 60, the curves are
+	// within 0.2 units of a true circle, invisible even at 48px on a 3x screen.
+	samples: 60,
 };
 
-// Geometry of the original logo SVG (viewBox units). The original is 252.263 x
-// 251.88; the viewBox is padded vertically to make it square.
-const VIEWBOX = "0 -0.1915 252.263 252.263";
+// Geometry of the original logo SVG. The original is 252.263 x 251.88; the
+// viewBox is padded vertically to make it square.
+const VIEWBOX: [number, number, number] = [0, -0.1915, 252.263];
 const CX = 126.13;
 const CY = 125.94;
 const R = 123.57;
@@ -69,12 +70,13 @@ const buildSeams = (): Vec3[][] => {
 const SEAMS = buildSeams();
 const AXIS = normalize(CONFIG.axis);
 
-// SVG path of the visible (front-facing) half of the seams, rotated by th
-const seamPath = (th: number) => {
-	let d = "";
+// The visible (front-facing) parts of the seams, rotated by th
+const seamLines = (th: number) => {
+	const lines: Pt[][] = [];
+	const toSvg = (x: number, y: number): Pt => [CX + R * x, CY + R * y];
 	for (const seam of SEAMS) {
 		let prev: Vec3 | undefined;
-		let first = true;
+		let line: Pt[] | undefined;
 		for (const p0 of seam) {
 			const p = rotate(p0, AXIS, th);
 			if (prev && (p[2] > 0 || prev[2] > 0)) {
@@ -91,32 +93,38 @@ const seamPath = (th: number) => {
 						[qx, qy] = [ex, ey];
 					}
 				}
-				if (prev[2] <= 0 || first) {
-					d += `M${f(CX + R * px)} ${f(CY + R * py)}`;
+				if (prev[2] <= 0 || !line) {
+					line = [toSvg(px, py)];
+					lines.push(line);
 				}
-				d += `L${f(CX + R * qx)} ${f(CY + R * qy)}`;
-				first = false;
+				line.push(toSvg(qx, qy));
+			} else {
+				line = undefined;
 			}
 			prev = p;
 		}
 	}
-	return d;
+	return lines;
 };
 
+// The ball, which doesn't move
+const defs = (colors: BasketballColors) =>
+	`<linearGradient id="a"><stop offset="0" stop-color="${colors[1]}"/><stop offset="1" stop-color="${colors[0]}"/></linearGradient><radialGradient href="#a" id="b" cx="362.177" cy="386.004" r="126.131" gradientTransform="matrix(1.13773 .88039 -.61106 .78967 186 -238)" gradientUnits="userSpaceOnUse"/><path id="ball" fill="url(#b)" stroke="#000" stroke-width="${CONFIG.strokeWidth}" d="M290.079 500.005c-30.113-61.16-4.838-135.198 56.417-165.265 61.255-30.066 135.41-4.83 165.522 56.33 30.113 61.16 4.838 135.199-56.417 165.265-61.2 30.039-135.271 4.89-165.444-56.171" transform="translate(-274.917 -319.599)"/>`;
+
 // t = fraction of a full turn (0 to 1)
-const frameSvg = (colors: BasketballColors, t: number) => {
+const frame = (t: number) => {
 	const th = CONFIG.direction * 2 * Math.PI * t;
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEWBOX}"><defs><linearGradient id="a"><stop offset="0" stop-color="${colors[1]}"/><stop offset="1" stop-color="${colors[0]}"/></linearGradient><radialGradient href="#a" xlink:href="#a" xmlns:xlink="http://www.w3.org/1999/xlink" id="b" cx="362.177" cy="386.004" r="126.131" gradientTransform="matrix(1.13773 .88039 -.61106 .78967 186 -238)" gradientUnits="userSpaceOnUse"/></defs><g stroke="#000" stroke-width="${CONFIG.strokeWidth}" fill="none"><path fill="url(#b)" d="M290.079 500.005c-30.113-61.16-4.838-135.198 56.417-165.265 61.255-30.066 135.41-4.83 165.522 56.33 30.113 61.16 4.838 135.199-56.417 165.265-61.2 30.039-135.271 4.89-165.444-56.171" transform="translate(-274.917 -319.599)"/><path stroke-linejoin="round" stroke-linecap="round" d="${seamPath(th)}"/></g></svg>`;
+	return `<use href="#ball"/><path fill="none" stroke="#000" stroke-width="${CONFIG.strokeWidth}" stroke-linejoin="round" stroke-linecap="round" d="${pathData(seamLines(th))}"/>`;
 };
 
 export const basketball = ({
 	colors,
 	filename,
-	size,
 }: SpinnerOptions<BasketballColors>) =>
 	renderSpinner({
+		defs: defs(colors),
 		filename,
-		frameSvg: (t) => frameSvg(colors, t),
-		size,
+		frame,
 		sport: "basketball",
+		viewBox: VIEWBOX,
 	});

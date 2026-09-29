@@ -12,13 +12,12 @@ const SPINNERS = {
 
 type Sport = keyof typeof SPINNERS;
 
-// Sizes the logo is displayed at, in CSS pixels. Each has a 2x version too.
-export type LogoSpinnerSize = 18 | 48;
-
 export const getLogoSpinnerInfo = (sport: Sport) => {
 	const { duration, frames } = SPINNERS[sport];
 
-	// Most square grid, to keep the sheet's dimensions small
+	// Most square grid. Browsers rasterize the whole sheet at its displayed size
+	// times the screen density, and a single long row of frames could exceed GPU
+	// texture limits.
 	let cols = 1;
 	for (let c = 1; c * c <= frames; c++) {
 		if (frames % c === 0) {
@@ -34,8 +33,9 @@ export const getLogoSpinnerInfo = (sport: Sport) => {
 	};
 };
 
-// CSS variables used by the .logo-spinner styles
-export const getLogoSpinnerCssVars = (sport: Sport, size: LogoSpinnerSize) => {
+// CSS variables used by the .logo-spinner styles. size is the display size, in
+// CSS pixels.
+export const getLogoSpinnerCssVars = (sport: Sport, size: number) => {
 	const { cols, duration, rows } = getLogoSpinnerInfo(sport);
 	return {
 		"--logo-spinner-size": `${size}px`,
@@ -45,7 +45,7 @@ export const getLogoSpinnerCssVars = (sport: Sport, size: LogoSpinnerSize) => {
 	};
 };
 
-// URL of a sprite sheet, relative to the site root. size is in actual pixels,
-// so 2x the display size for the high-DPI versions.
-export const getLogoSpinnerUrl = (size: number, gold: boolean) =>
-	`/ico/spinner-${size}${gold ? "-gold" : ""}.avif`;
+// URL of a sprite sheet, relative to the site root. They're SVGs, so the same
+// file works at any size.
+export const getLogoSpinnerUrl = (gold: boolean) =>
+	`/ico/spinner${gold ? "-gold" : ""}.svg`;

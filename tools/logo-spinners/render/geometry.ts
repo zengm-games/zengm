@@ -34,6 +34,3 @@ export const applyMatrix = (m: readonly Vec3[], v: Vec3): Vec3 => [
 	dot(m[1]!, v),
 	dot(m[2]!, v),
 ];
-
-// Number formatting for SVG coordinates
-export const f = (v: number) => v.toFixed(2);

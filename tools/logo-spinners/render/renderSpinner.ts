@@ -36,8 +36,8 @@ const toCssVars = (
 	);
 };
 
-// Render one loop of an animation to an SVG sprite sheet: a single row of
-// frames, as described in common/logoSpinners.ts.
+// Render one loop of an animation to an SVG sprite sheet as a single row of
+// frames.
 //
 // Every frame is drawn in the same coordinate system, given by viewBox (square:
 // [minX, minY, size]). defs returns everything shared by all frames
@@ -50,6 +50,10 @@ const toCssVars = (
 // attributes like fill), which are set to the normal colors by default. Loading
 // the file as spinner.svg#gold makes the <g id="gold"> element the :target,
 // which switches the variables to the gold colors.
+//
+// src/ui/util/takeScreenshotChunk.ts edits this SVG to make a static first
+// frame, so it depends on the format of the root viewBox and the
+// "#gold:target~*" selector. Update it if either of those changes.
 export const renderSpinner = async <Colors>({
 	colors,
 	defs,

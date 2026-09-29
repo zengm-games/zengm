@@ -23,8 +23,7 @@ const LookingFor = ({
 			<ResponsiveTableWrapper>
 				<table>
 					<tbody>
-						{helpers.keys(categories).map((categoryKey) => {
-							const category = categories[categoryKey];
+						{helpers.entries(categories).map(([categoryKey, category]) => {
 							return (
 								<tr className="pt-2" key={categoryKey}>
 									<td style={{ width: 0 }} className="p-0 pt-2 text-end">

@@ -262,9 +262,9 @@ const TeamForm = ({
 								zIndex: 1,
 							}}
 						>
-							{helpers.keys(JERSEYS).map((jersey) => (
+							{helpers.entries(JERSEYS).map(([jersey, jerseyName]) => (
 								<option key={jersey} value={jersey}>
-									{JERSEYS[jersey]}
+									{jerseyName}
 								</option>
 							))}
 						</select>

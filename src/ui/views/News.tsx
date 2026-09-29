@@ -44,8 +44,7 @@ const News = ({
 	return (
 		<>
 			<div className="mt-1" style={{ marginLeft: "-0.5rem" }}>
-				{helpers.keys(categories).map((category) => {
-					const info = categories[category];
+				{helpers.entries(categories).map(([category, info]) => {
 					return (
 						<div
 							key={category}

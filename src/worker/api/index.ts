@@ -2493,8 +2493,7 @@ const getTradingBlockOffers = async ({
 	let saveLookingFor;
 	let positionAndNotDraftPicks = false;
 	let draftPicksAndNothingElse = lookingFor.assets.draftPicks;
-	for (const type of helpers.keys(lookingFor)) {
-		const obj = lookingFor[type];
+	for (const [type, obj] of helpers.entries(lookingFor)) {
 		for (const [key, value] of Object.entries(obj)) {
 			if (value) {
 				saveLookingFor = true;

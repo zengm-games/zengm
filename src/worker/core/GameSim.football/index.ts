@@ -2822,11 +2822,9 @@ class GameSim extends GameSimBase {
 				continue;
 			}
 
-			for (const pos of helpers.keys(this.playersOnField[t])) {
+			for (const players of Object.values(this.playersOnField[t])) {
 				// Update minutes (overall, court, and bench)
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-expect-error
-				for (const p of this.playersOnField[t][pos]) {
+				for (const p of players) {
 					onField.add(p.id);
 					p.stat.min += possessionTime;
 					this.team[t].stat.min += possessionTime;
@@ -2867,10 +2865,8 @@ class GameSim extends GameSimBase {
 
 			const onField = new Set<any>();
 
-			for (const pos of helpers.keys(this.playersOnField[t])) {
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-expect-error
-				for (const p of this.playersOnField[t][pos]) {
+			for (const players of Object.values(this.playersOnField[t])) {
+				for (const p of players) {
 					onField.add(p);
 				}
 			}

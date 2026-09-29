@@ -144,8 +144,8 @@ const updateStandings = async (
 			),
 		};
 
-		for (const type of helpers.keys(rankingGroups)) {
-			for (const group of rankingGroups[type]) {
+		for (const [type, groups] of helpers.entries(rankingGroups)) {
+			for (const group of groups) {
 				for (const [i, t] of group.entries()) {
 					if (!usePts) {
 						t.gb[type] =

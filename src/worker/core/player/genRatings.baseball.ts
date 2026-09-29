@@ -196,8 +196,7 @@ const genRatings = (
 
 	const ratingsToBoost = getRatingsToBoost(pos);
 
-	for (const rating of helpers.keys(ratingsToBoost)) {
-		const factor = ratingsToBoost[rating];
+	for (const [rating, factor] of helpers.entries(ratingsToBoost)) {
 		if (factor !== undefined) {
 			rawRatings[rating] = limitRating(
 				(rawRatings[rating] += factor * truncGauss(10, 15, 8, 30)),

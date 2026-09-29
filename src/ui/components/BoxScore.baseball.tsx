@@ -493,8 +493,7 @@ const BoxScore = ({
 							{t.season !== undefined ? `${t.season} ` : null}
 							{t.region} {t.name}
 						</h2>
-						{helpers.keys(PLAYER_GAME_STATS).map((type) => {
-							const info = PLAYER_GAME_STATS[type];
+						{helpers.entries(PLAYER_GAME_STATS).map(([type, info]) => {
 							return (
 								<StatsTable
 									key={type}

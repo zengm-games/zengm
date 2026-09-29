@@ -107,17 +107,17 @@ const updateTeamFinances = async (
 				| `revenues${Capitalize<keyof TeamSeason["revenues"]>}`,
 				number
 			>;
-			for (const key of helpers.keys(teamSeason.revenues)) {
+			for (const [key, value] of helpers.entries(teamSeason.revenues)) {
 				const outputKey = `revenues${helpers.upperCaseFirstLetter(
 					key,
 				)}` as const;
-				output[outputKey] = teamSeason.revenues[key];
+				output[outputKey] = value;
 			}
-			for (const key of helpers.keys(teamSeason.expenses)) {
+			for (const [key, value] of helpers.entries(teamSeason.expenses)) {
 				const outputKey = `expenses${helpers.upperCaseFirstLetter(
 					key,
 				)}` as const;
-				output[outputKey] = teamSeason.expenses[key];
+				output[outputKey] = value;
 			}
 			return output;
 		};

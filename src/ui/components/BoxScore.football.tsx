@@ -960,8 +960,7 @@ const BoxScore = ({
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>
-			{helpers.keys(PLAYER_GAME_STATS).map((type) => {
-				const info = PLAYER_GAME_STATS[type];
+			{helpers.entries(PLAYER_GAME_STATS).map(([type, info]) => {
 				return (
 					<Fragment key={type}>
 						<h2>{info.name}</h2>

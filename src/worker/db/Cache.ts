@@ -385,8 +385,7 @@ export const storeInfos: Record<Store, StoreInfo> = {
 };
 
 const index2store = {} as Record<Index, Store>;
-for (const store of helpers.keys(storeInfos)) {
-	const indexes = storeInfos[store].indexes;
+for (const [store, { indexes }] of helpers.entries(storeInfos)) {
 	if (indexes) {
 		for (const index of indexes) {
 			index2store[index.name] = store;

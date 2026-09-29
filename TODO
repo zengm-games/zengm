@@ -1,11 +1,5 @@
 spinner animations
 - benchmark
-- spin in response to...
-  - draft auto pick
-  - creating league
-  - cloning league
-  - auto play
-  - toWorker - would this cover it all?
 - places to use
   - index.html
   - LogoAndText

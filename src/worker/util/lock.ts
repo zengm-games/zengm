@@ -44,6 +44,41 @@ const runView = async <T>(cb: () => Promise<T>) => {
 	}
 };
 
+// Long-running work that isn't covered by the locks above, like creating a
+// league. A count, since these can overlap.
+let numBusyTasks = 0;
+let workerBusyInUI = false;
+
+// Is the worker doing something that takes a while? The UI spins the logo when
+// it is.
+const isWorkerBusy = () =>
+	locks.gameSim ||
+	locks.newPhase ||
+	locks.drafting ||
+	local.autoPlayUntil !== undefined ||
+	numBusyTasks > 0;
+
+// Call after anything that could change isWorkerBusy, to keep the UI in sync
+const updateWorkerBusy = async () => {
+	const workerBusy = isWorkerBusy();
+	if (workerBusy !== workerBusyInUI) {
+		workerBusyInUI = workerBusy;
+		await toUI("updateLocal", [{ workerBusy }]);
+	}
+};
+
+// Mark the worker as busy while cb runs
+const whileWorkerBusy = async <T>(cb: () => Promise<T>) => {
+	numBusyTasks += 1;
+	await updateWorkerBusy();
+	try {
+		return await cb();
+	} finally {
+		numBusyTasks -= 1;
+		await updateWorkerBusy();
+	}
+};
+
 const newPhaseUnlocked = () => {
 	const callbacks = onNewPhaseDone;
 	onNewPhaseDone = [];
@@ -55,6 +90,7 @@ const reset = () => {
 		locks[key] = false;
 	}
 	newPhaseUnlocked();
+	void updateWorkerBusy();
 };
 
 const get = (name: keyof Locks): boolean => {
@@ -94,6 +130,8 @@ const set = async (name: keyof Locks, value: boolean) => {
 			},
 		]);
 	}
+
+	await updateWorkerBusy();
 };
 
 /**
@@ -145,4 +183,7 @@ export default {
 	set,
 	canStartGames,
 	unreadMessage,
+	isWorkerBusy,
+	updateWorkerBusy,
+	whileBusy: whileWorkerBusy,
 };

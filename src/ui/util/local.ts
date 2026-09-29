@@ -99,6 +99,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 		userTid: 0,
 		userTids: [],
 		username: undefined,
+		workerBusy: false,
 		title: undefined,
 		hideNewWindow: false,
 		jumpTo: false,

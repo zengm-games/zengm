@@ -7,8 +7,9 @@ import { useLocal } from "../util/local.ts";
 const PAUSE_DELAY_MS = 100;
 
 const useSpinning = (updating: boolean) => {
-	const { gameSimInProgress } = useLocal(["gameSimInProgress"]);
-	const busy = updating || gameSimInProgress;
+	// workerBusy covers game sims, phase changes, the draft, auto play, etc.
+	const { workerBusy } = useLocal(["workerBusy"]);
+	const busy = updating || workerBusy;
 
 	const [spinning, setSpinning] = useState(busy);
 

@@ -8,7 +8,7 @@ import {
 	expansionDraft,
 	team,
 } from "../index.ts";
-import { g, local } from "../../util/index.ts";
+import { g, local, lock } from "../../util/index.ts";
 import type { Conditions, Phase } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { choice } from "../../../common/random.ts";
@@ -113,6 +113,7 @@ export const cleanupAutoPlay = (error?: Error) => {
 			local.autoPlayUntil.resolve();
 		}
 		local.autoPlayUntil = undefined;
+		void lock.updateWorkerBusy();
 	}
 };
 
@@ -132,6 +133,7 @@ export const startAutoPlay = (
 		season,
 		start: Date.now(),
 	};
+	void lock.updateWorkerBusy();
 
 	autoPlay(conditions);
 

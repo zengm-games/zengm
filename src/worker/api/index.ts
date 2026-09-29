@@ -2972,7 +2972,9 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		})();
 	}
 
-	// Send options to all new tabs
+	// Send options and current state to all new tabs, since they won't hear about
+	// it until it changes. This matters when another tab is already open, like if
+	// it's in the middle of auto play.
 	const attributesStore = (await idb.meta.transaction("attributes")).store;
 	const options = ((await attributesStore.get("options")) ?? {}) as Options;
 	const keyboardShortcuts = (await attributesStore.get(
@@ -2980,7 +2982,15 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 	)) as KeyboardShortcutsLocal;
 	await toUI(
 		"updateLocal",
-		[{ fullNames: options.fullNames, keyboardShortcuts, units: options.units }],
+		[
+			{
+				fullNames: options.fullNames,
+				gameSimInProgress: lock.get("gameSim"),
+				keyboardShortcuts,
+				units: options.units,
+				workerBusy: lock.isWorkerBusy(),
+			},
+		],
 		conditions,
 	);
 };
@@ -5296,6 +5306,12 @@ const setScheduleFromEditor = async ({
 	await initUILocalGames();
 };
 
+// Marks the worker as busy (which spins the logo in the UI) while function runs. For slow things.
+const whileBusy =
+	<Args extends unknown[], Return>(cb: (...args: Args) => Promise<Return>) =>
+	(...args: Args) =>
+		lock.whileBusy(() => cb(...args));
+
 const api = {
 	actions,
 	awardSettings,
@@ -5326,9 +5342,9 @@ const api = {
 		clearTrade,
 		clearWatchList,
 		countNegotiations,
-		createLeague,
+		createLeague: whileBusy(createLeague),
 		createTrade,
-		deleteOldData,
+		deleteOldData: whileBusy(deleteOldData),
 		deleteScheduledEvents,
 		discardUnsavedProgress,
 		draftLottery,
@@ -5394,7 +5410,7 @@ const api = {
 		releasePlayer,
 		expandVote,
 		relocateVote,
-		cloneLeague,
+		cloneLeague: whileBusy(cloneLeague),
 		removeLeague,
 		removePlayers,
 		reorderDepthDrag,

@@ -176,8 +176,9 @@ const frame = (colors: HockeyColors, t: number) => {
 		(r, i) =>
 			`<ellipse fill="none" stroke="${colors.rings[i]}" stroke-width="${RING_WIDTH}" ${ellipse(axis, HEIGHT / 2, RADIUS * r)}/>`,
 	).join("");
-	// The outline is filled twice: the side color, then the highlight over it
-	return `<defs><path id="${id}" d="${pathData([hull([...top, ...bottom])], { closed: true })}"/></defs><use href="#${id}" fill="${colors.side}"/><use href="#${id}" fill="url(#a)"/><ellipse fill="${colors.top}" ${ellipse(axis, HEIGHT / 2, RADIUS)}/>${rings}`;
+	// The outline is filled twice: the side color, then the highlight over it.
+	// It's big, so whole-unit coordinates are plenty.
+	return `<defs><path id="${id}" d="${pathData([hull([...top, ...bottom])], { closed: true, decimals: 0 })}"/></defs><use href="#${id}" fill="${colors.side}"/><use href="#${id}" fill="url(#a)"/><ellipse fill="${colors.top}" ${ellipse(axis, HEIGHT / 2, RADIUS)}/>${rings}`;
 };
 
 export const hockey = ({ colors, filename }: SpinnerOptions<HockeyColors>) =>

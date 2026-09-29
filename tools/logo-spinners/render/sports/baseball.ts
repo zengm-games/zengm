@@ -181,7 +181,8 @@ const frame = (colors: BaseballColors, t: number) => {
 		}
 	}
 
-	// Thin line along the seam, front half only
+	// Thin line along the seam, front half only. Whole-unit coordinates are
+	// still smooth at the sizes the logo is shown.
 	const lines: Pt[][] = [];
 	if (CONFIG.seamLineWidth > 0) {
 		let line: Pt[] | undefined;
@@ -201,7 +202,7 @@ const frame = (colors: BaseballColors, t: number) => {
 
 	return `<use href="#ball"/><g fill="${colors.stitches}" stroke="${colors.stitches}" stroke-width="2" stroke-linejoin="round"><path d="${pathData(solid, { closed: true, decimals: 0 })}"/>${fading}</g>${
 		lines.length > 0
-			? `<path fill="none" stroke="${colors.stitches}" stroke-width="${CONFIG.seamLineWidth}" stroke-linecap="round" d="${pathData(lines)}"/>`
+			? `<path fill="none" stroke="${colors.stitches}" stroke-width="${CONFIG.seamLineWidth}" stroke-linecap="round" d="${pathData(lines, { decimals: 0 })}"/>`
 			: ""
 	}`;
 };

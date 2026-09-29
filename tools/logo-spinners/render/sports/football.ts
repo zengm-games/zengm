@@ -258,7 +258,13 @@ const frame = (colors: FootballColors, t: number) => {
 	// Unique within the sprite sheet
 	const id = `k${Math.round(t * 1000)}`;
 
-	const seamPath = pathData(seams.flatMap((s) => surfaceLines(s, phase)));
+	// The seams are long, smooth curves, so whole-unit coordinates are plenty.
+	// The laces are small, so they keep 1 decimal, since rounding them to whole
+	// units visibly distorts their shape.
+	const seamPath = pathData(
+		seams.flatMap((s) => surfaceLines(s, phase)),
+		{ decimals: 0 },
+	);
 
 	// The line under the laces, drawn twice (wide and light, then thin and dark)
 	const backboneOpacity = groupOpacity(backbone, phase);
@@ -281,7 +287,7 @@ const frame = (colors: FootballColors, t: number) => {
 				0.05,
 				Math.cos(ang) / Math.max(0.05, Math.cos(s.angle)),
 			);
-			return `<use href="#s${i}"${op < 1 ? ` opacity="${num(op)}"` : ""} transform="translate(${num(nx)} ${num(ny)}) scale(1 ${num(k)}) translate(${num(-cx)} ${num(-cy)})"/>`;
+			return `<use href="#s${i}"${op < 1 ? ` opacity="${num(op)}"` : ""} transform="translate(${num(nx, 1)} ${num(ny, 1)}) scale(1 ${num(k)}) translate(${num(-cx, 1)} ${num(-cy, 1)})"/>`;
 		})
 		.join("");
 

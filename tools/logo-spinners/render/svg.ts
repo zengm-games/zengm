@@ -72,5 +72,8 @@ export const pathData = (
 	return d;
 };
 
-// Number for an attribute, rounded to 2 decimals without trailing zeros
-export const num = (v: number) => String(Math.round(v * 100) / 100);
+// Number for an attribute, rounded without trailing zeros
+export const num = (v: number, decimals: number = 2) => {
+	const factor = 10 ** decimals;
+	return String(Math.round(v * factor) / factor);
+};

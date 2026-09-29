@@ -1,6 +1,10 @@
 spinner animations
+- svg animation?
+- svg sprite sheet?
 - benchmark
 - old versions of Chrome/Safari
+- football seam lines
+- basketball notch on left
 - spin in response to...
   - draft auto pick
   - creating league
@@ -22,8 +26,6 @@ spinner animations
   - AllStarThree
   - buildSw
 - how to pause spinner
-- smaller images?
-  - compression
 
 monorepo with zengm.com
 - use spritesheet logos

@@ -5,13 +5,10 @@ import ffmpegPath from "ffmpeg-static";
 import { getLogoSpinnerInfo } from "../../../common/logoSpinners.ts";
 import type { Sport } from "../../lib/getSport.ts";
 
-const CRF = 32; // AV1 quality (lower = better/bigger)
+const CRF = 36; // AV1 quality (lower = better/bigger)
 
-// Options shared by every sport's render function. Each sport defines its own
-// Colors type.
 export type SpinnerOptions<Colors> = {
 	colors: Colors;
-	// Output path, ending in .avif
 	filename: string;
 	size: number;
 };
@@ -19,12 +16,10 @@ export type SpinnerOptions<Colors> = {
 // Run ffmpeg with raw RGBA image data on stdin
 const runFfmpeg = (args: string[], input: Buffer) =>
 	new Promise<void>((resolve, reject) => {
-		// ffmpeg-static's types resolve oddly under NodeNext; it is a path or null
-		const ffmpeg = ffmpegPath as unknown as string | null;
-		if (!ffmpeg) {
+		if (!ffmpegPath) {
 			throw new Error("ffmpeg-static has no binary for this platform");
 		}
-		const proc = spawn(ffmpeg, ["-y", "-loglevel", "error", ...args], {
+		const proc = spawn(ffmpegPath, ["-y", "-loglevel", "error", ...args], {
 			stdio: ["pipe", "inherit", "inherit"],
 		});
 		proc.on("error", reject);
@@ -119,6 +114,11 @@ export const renderSpinner = async ({
 			"1",
 			"-aom-params",
 			"tune-content=screen",
+			// Multithreaded encoding gives slightly different output each run, so
+			// regenerating would change every file in git even when nothing else
+			// changed. One thread is about 2.5x slower, but deterministic.
+			"-threads",
+			"1",
 			"-frames:v",
 			"1",
 			"-f",

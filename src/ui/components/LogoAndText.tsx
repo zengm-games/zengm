@@ -2,6 +2,7 @@ import { memo } from "react";
 import { GAME_NAME } from "../../common/constants.ts";
 import LogoSpinner from "./LogoSpinner.tsx";
 import { useLocal } from "../util/local.ts";
+import clsx from "clsx";
 
 type Props = {
 	gold?: boolean;
@@ -24,7 +25,12 @@ const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
 		>
 			<LogoSpinner gold={gold} size={18} spinning={spinning} />
 
-			<span className={inLeague ? "d-none d-lg-inline" : undefined}>
+			<span
+				className={clsx(
+					"logo-text",
+					inLeague ? "d-none d-lg-inline" : undefined,
+				)}
+			>
 				{GAME_NAME}
 			</span>
 		</a>

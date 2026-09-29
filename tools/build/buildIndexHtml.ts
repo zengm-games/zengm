@@ -5,6 +5,7 @@ import { type ReplaceInfo } from "./replace.ts";
 import { bySport } from "../lib/bySport.ts";
 import { getBannerAdsCode } from "./getBannerAdsCode.ts";
 import type { Sport } from "../lib/getSport.ts";
+import { LOGO_SPINNERS } from "../logo-spinners/render/constants.ts";
 
 const genModulepreloads = async (modulepreloadPaths: string[]) => {
 	const infos = [];
@@ -79,6 +80,14 @@ export const buildIndexHtml = async ({
 		{
 			searchValue: "VERSION_NUMBER",
 			replaceValue: versionNumber,
+		},
+		{
+			searchValue: "LOGO_SPINNER_FRAMES",
+			replaceValue: String(LOGO_SPINNERS[sport].frames),
+		},
+		{
+			searchValue: "LOGO_SPINNER_DURATION",
+			replaceValue: `${LOGO_SPINNERS[sport].duration}s`,
 		},
 		{
 			searchValue: "BANNER_ADS_CODE",

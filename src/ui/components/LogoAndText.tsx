@@ -1,5 +1,8 @@
 import { memo } from "react";
 import { GAME_NAME } from "../../common/constants.ts";
+import LogoSpinner from "./LogoSpinner.tsx";
+import { useLocal } from "../util/local.ts";
+import clsx from "clsx";
 
 type Props = {
 	gold?: boolean;
@@ -7,6 +10,10 @@ type Props = {
 	updating: boolean;
 };
 const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
+	// workerBusy covers game sims, phase changes, the draft, auto play, etc.
+	const { workerBusy } = useLocal(["workerBusy"]);
+	const spinning = updating || workerBusy;
+
 	return (
 		<a
 			className={
@@ -16,18 +23,14 @@ const LogoAndText = memo(({ gold, inLeague, updating }: Props) => {
 			}
 			href="/"
 		>
-			<img
-				alt=""
-				className="spin"
-				width="18"
-				height="18"
-				src={gold ? "/ico/logo-gold.png" : "/ico/logo.png"}
-				style={{
-					animationPlayState: updating ? "running" : "paused",
-				}}
-			/>
+			<LogoSpinner gold={gold} size={18} spinning={spinning} />
 
-			<span className={inLeague ? "d-none d-lg-inline" : undefined}>
+			<span
+				className={clsx(
+					"logo-text",
+					inLeague ? "d-none d-lg-inline" : undefined,
+				)}
+			>
 				{GAME_NAME}
 			</span>
 		</a>

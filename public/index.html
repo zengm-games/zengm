@@ -12,6 +12,41 @@
 		<link rel="icon" href="/ico/icon.svg" />
 		<link rel="apple-touch-icon" href="/ico/apple-touch-icon.png" />
 
+		<style>
+			.logo-spinner {
+				/* Each spinner sets --logo-spinner-size itself. */
+				--logo-spinner-frames: LOGO_SPINNER_FRAMES;
+				--logo-spinner-duration: LOGO_SPINNER_DURATION;
+				display: inline-block;
+				overflow: hidden;
+				vertical-align: middle;
+				width: var(--logo-spinner-size);
+				height: var(--logo-spinner-size);
+			}
+			.logo-spinner img {
+				display: block;
+				max-width: none;
+				width: calc(var(--logo-spinner-size) * var(--logo-spinner-frames));
+				height: var(--logo-spinner-size);
+				animation: logo-spinner var(--logo-spinner-duration)
+					steps(var(--logo-spinner-frames)) infinite;
+			}
+			.logo-spinner-paused img {
+				animation-play-state: paused;
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.logo-spinner img {
+					/* Stay on the first frame */
+					animation: none;
+				}
+			}
+			@keyframes logo-spinner {
+				to {
+					transform: translateX(-100%);
+				}
+			}
+		</style>
+
 		<meta
 			name="description"
 			content="A single-player SPORT simulation game. Make trades, set rosters, draft players, and try to build the next dynasty."
@@ -107,15 +142,13 @@
 			<div style="margin: 0 15px">
 				<div style="max-width: 360px; margin: 0 auto">
 					<div style="text-align: center; margin: 48px 0 100px 0">
-						<img
+						<span
 							id="loading-icon"
-							src="/ico/icon.svg"
-							width="48"
-							height="48"
-							class="spin"
-							style="animation-play-state: runnung"
-							alt=""
-						/>
+							class="logo-spinner"
+							style="--logo-spinner-size: 48px"
+						>
+							<img alt="" src="/ico/spinner.svg" />
+						</span>
 					</div>
 
 					<p>GAME_NAME vVERSION_NUMBER</p>
@@ -125,6 +158,11 @@
 							<b>Error!</b> JavaScript is disabled in your browser. Please
 							enable JavaScript to play GAME_NAME.
 						</p>
+						<style>
+							.logo-spinner img {
+								animation: none;
+							}
+						</style>
 					</noscript>
 					<div id="startup-ui"></div>
 					<div id="startup-worker"></div>
@@ -257,8 +295,9 @@
 					startupError.innerHTML = errorMsg;
 					startupError.style.display = "block";
 
-					document.getElementById("loading-icon").style.animationPlayState =
-						"paused";
+					document
+						.getElementById("loading-icon")
+						.classList.add("logo-spinner-paused");
 
 					clearTimeout(timeoutID);
 				} else {

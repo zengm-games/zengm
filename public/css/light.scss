@@ -180,22 +180,12 @@ h5 {
 	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
 	height: 35px;
 
-	img {
+	.logo-spinner {
 		vertical-align: -3px;
 	}
 
-	span {
+	.logo-text {
 		padding-left: 5px;
-	}
-}
-
-.spin {
-	animation: spin 4s linear infinite;
-}
-
-@keyframes spin {
-	100% {
-		transform: rotate(360deg);
 	}
 }
 

@@ -1065,6 +1065,7 @@ export type LocalStateUI = {
 	statusText: string;
 	units: "metric" | "us";
 	username?: string;
+	workerBusy: boolean;
 	title?: string;
 	hideNewWindow: boolean;
 	jumpTo: boolean;

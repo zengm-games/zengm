@@ -1,5 +1,9 @@
 import { statSync } from "node:fs";
-import type { RolldownMagicString, Plugin, TransformResult } from "rolldown";
+import {
+	RolldownMagicString,
+	type Plugin,
+	type TransformResult,
+} from "rolldown";
 import { parseAndWalk } from "oxc-walker";
 import type {
 	Node,
@@ -134,10 +138,10 @@ export const sportFunctions = (
 				moduleType: ["ts", "tsx"],
 				code: "bySport",
 			},
-			handler(code, id, { magicString }) {
-				if (!magicString) {
-					throw new Error("Requires nativeMagicString");
-				}
+			handler(code, id, meta) {
+				// meta.magicString is only provided by Rolldown with experimental.nativeMagicString enabled. Vite's dev plugin container (used by Vitest) doesn't provide it, so create one ourselves in that case.
+				const isNative = meta.magicString !== undefined;
+				const magicString = meta.magicString ?? new RolldownMagicString(code);
 
 				if (nodeEnv === "development") {
 					const { mtimeMs } = statSync(id);
@@ -158,7 +162,13 @@ export const sportFunctions = (
 					}
 				} else {
 					processCode(code, id, magicString);
-					return { code: magicString };
+					if (isNative) {
+						return { code: magicString };
+					}
+					return {
+						code: magicString.toString(),
+						map: magicString.generateMap({ hires: true }).toString(),
+					};
 				}
 			},
 		},

@@ -3,7 +3,6 @@ import { SPORTS, type Sport } from "../lib/getSport.ts";
 import * as render from "./render/index.ts";
 import type { SpinnerOptions } from "./render/renderSpinner.ts";
 
-// Each sport has its own set of colors
 type Colors = {
 	[S in Sport]: Parameters<(typeof render)[S]>[0]["colors"]["normal"];
 };
@@ -60,12 +59,10 @@ const colors: {
 	},
 };
 
-// Typed per sport, so each sport's render function gets its own colors
 const renderers: {
 	[S in Sport]: (options: SpinnerOptions<Colors[S]>) => Promise<void>;
 } = render;
 
-// Normal and gold are in one file, see renderSpinner
 const renderSport = async <S extends Sport>(sport: S) => {
 	await renderers[sport]({
 		colors: colors[sport],

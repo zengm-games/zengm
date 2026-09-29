@@ -13,18 +13,8 @@
 		<link rel="apple-touch-icon" href="/ico/apple-touch-icon.png" />
 
 		<style>
-			/*
-			Spinning logo, from a sprite sheet that is a single row of frames (see
-			common/logoSpinners.ts), stepped through by moving the image left.
-
-			This is here rather than in the theme CSS so it works before that
-			loads, and the React LogoSpinner component uses it too.
-			*/
 			.logo-spinner {
-				/*
-				Filled in for each sport by tools/build/buildIndexHtml.ts. Each
-				spinner sets --logo-spinner-size itself.
-				*/
+				/* Each spinner sets --logo-spinner-size itself. */
 				--logo-spinner-frames: LOGO_SPINNER_FRAMES;
 				--logo-spinner-duration: LOGO_SPINNER_DURATION;
 				display: inline-block;

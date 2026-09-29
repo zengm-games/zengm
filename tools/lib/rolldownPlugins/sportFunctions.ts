@@ -4,7 +4,7 @@ import {
 	type Plugin,
 	type TransformResult,
 } from "rolldown";
-import { parseAndWalk } from "oxc-walker";
+import { parseAndWalk, type WalkerCallbackContext } from "oxc-walker";
 import type {
 	Node,
 	ObjectExpression,
@@ -13,6 +13,8 @@ import type {
 import type { Sport } from "../getSport.ts";
 
 // The purpose of this is to do dead code elimination (or allow the minifier to do it) by sport, without requiring ugly syntax like nested ternaries for handling multiple sports. Instead, we have this nicer bySport function.
+
+// This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors.
 
 // Handles quoted and unquoted keys, like {key: 1} vs {"key": 1}
 const getObjectKey = (property: ObjectProperty): string => {
@@ -52,7 +54,45 @@ const NEVER_NEEDS_PARENS = new Set([
 	"ImportExpression",
 ]);
 
-// Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors.
+// Positions (parent node type -> key within parent) that accept any AssignmentExpression-level expression, so a bySport value can be spliced in without parens. Avoiding unnecessary parens matters beyond aesthetics, because the minifier preserves parens around functions (they're a hint to V8 to eagerly compile the function).
+const SAFE_POSITIONS: Record<string, string[]> = {
+	ArrayExpression: ["elements"],
+	AssignmentExpression: ["right"],
+	AssignmentPattern: ["right"],
+	CallExpression: ["arguments"],
+	ConditionalExpression: ["consequent", "alternate"],
+	JSXExpressionContainer: ["expression"],
+	NewExpression: ["arguments"],
+	ParenthesizedExpression: ["expression"],
+	Property: ["value"],
+	PropertyDefinition: ["value"],
+	ReturnStatement: ["argument"],
+	SpreadElement: ["argument"],
+	TemplateLiteral: ["expressions"],
+	VariableDeclarator: ["init"],
+};
+
+const needsParens = (
+	value: Node,
+	parent: Node | null,
+	key: WalkerCallbackContext["key"],
+) => {
+	if (NEVER_NEEDS_PARENS.has(value.type)) {
+		return false;
+	}
+
+	// Would be ambiguous with multiple arguments/elements/etc, if it wasn't already wrapped in a ParenthesizedExpression
+	if (value.type === "SequenceExpression") {
+		return true;
+	}
+
+	if (parent && typeof key === "string") {
+		return !SAFE_POSITIONS[parent.type]?.includes(key);
+	}
+
+	return true;
+};
+
 export const sportFunctions = (
 	nodeEnv: "development" | "production" | "test",
 	sport: Sport,
@@ -72,7 +112,7 @@ export const sportFunctions = (
 	) => {
 		parseAndWalk(code, id, {
 			// Use `leave` (post-order) rather than `enter`, so nested bySport calls (e.g. inside a bySport value) are already resolved before their parent is handled.
-			leave(node: Node) {
+			leave(node, parent, { key }) {
 				if (node.type !== "CallExpression") {
 					return;
 				}
@@ -122,9 +162,9 @@ export const sportFunctions = (
 					}
 
 					const raw = magicString.slice(value.start, value.end);
-					const replacement = NEVER_NEEDS_PARENS.has(value.type)
-						? raw
-						: `(${raw})`;
+					const replacement = needsParens(value, parent, key)
+						? `(${raw})`
+						: raw;
 					magicString.overwrite(node.start, node.end, replacement);
 				}
 			},

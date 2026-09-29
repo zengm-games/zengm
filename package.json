@@ -87,9 +87,6 @@
 		"zustand": "5.0.15"
 	},
 	"devDependencies": {
-		"@babel/core": "8.0.6",
-		"@babel/plugin-syntax-jsx": "8.0.1",
-		"@babel/plugin-syntax-typescript": "8.0.3",
 		"@nkzw/eslint-config": "3.3.0",
 		"@oxc-project/types": "0.150.0",
 		"@restart/ui": "1.9.4",

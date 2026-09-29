@@ -157,7 +157,7 @@ const transform = (code: string) => {
 	const { handler } = plugin.transform as {
 		handler: (code: string, id: string, meta: any) => { code: string };
 	};
-	return handler(code, "test.ts", {}).code;
+	return handler(code, "test.ts", { moduleType: "ts" }).code;
 };
 
 describe("bySport parens", () => {
@@ -193,6 +193,45 @@ describe("bySport parens", () => {
 				`const f = bySport({ basketball: bySport({ basketball: (x) => x, default: 1 }), default: 1 });`,
 			),
 			`const f = (x) => x;`,
+		);
+		assert.strictEqual(
+			transform(
+				`x = bySport({ basketball: bySport({ basketball: a + b, default: 1 }), default: 1 }) * 2;`,
+			),
+			`x = (a + b) * 2;`,
+		);
+		assert.strictEqual(
+			transform(
+				`bySport({ basketball: bySport({ basketball: (x) => x, default: 1 }), default: 1 })();`,
+			),
+			`((x) => x)();`,
+		);
+	});
+});
+
+describe("bySport errors", () => {
+	test("should throw on methods", () => {
+		assert.throws(
+			() =>
+				transform(`x = bySport({ basketball() { return 1; }, default: 1 });`),
+			/plain non-computed/,
+		);
+	});
+
+	test("should throw on getters", () => {
+		assert.throws(
+			() =>
+				transform(
+					`x = bySport({ get basketball() { return 1; }, default: 1 });`,
+				),
+			/plain non-computed/,
+		);
+	});
+
+	test("should throw on computed keys", () => {
+		assert.throws(
+			() => transform(`x = bySport({ [football]: 1, default: 2 });`),
+			/plain non-computed/,
 		);
 	});
 });

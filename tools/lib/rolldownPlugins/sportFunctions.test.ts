@@ -117,3 +117,49 @@ foo(whatever);`,
 		);
 	});
 });
+
+// Calls the transform directly, since formatting the output (like compare does) would normalize parens
+const transform = (code: string) => {
+	const plugin = sportFunctions("production", "basketball");
+	const { handler } = plugin.transform as {
+		handler: (code: string, id: string, meta: any) => { code: string };
+	};
+	return handler(code, "test.ts", {}).code;
+};
+
+describe("bySport parens", () => {
+	test("should not wrap when not needed", () => {
+		assert.strictEqual(
+			transform(`const f = bySport({ basketball: (x) => x, default: 1 });`),
+			`const f = (x) => x;`,
+		);
+		assert.strictEqual(
+			transform(`foo(bySport({ basketball: a + b, default: 1 }), 2);`),
+			`foo(a + b, 2);`,
+		);
+	});
+
+	test("should wrap when needed", () => {
+		assert.strictEqual(
+			transform(`bySport({ basketball: (x) => x, default: 1 })();`),
+			`((x) => x)();`,
+		);
+		assert.strictEqual(
+			transform(`bySport({ basketball: a + b, default: 1 }) * 2;`),
+			`(a + b) * 2;`,
+		);
+		assert.strictEqual(
+			transform(`bySport({ basketball: a ? b : c, default: 1 }).foo;`),
+			`(a ? b : c).foo;`,
+		);
+	});
+
+	test("should handle nested bySport", () => {
+		assert.strictEqual(
+			transform(
+				`const f = bySport({ basketball: bySport({ basketball: (x) => x, default: 1 }), default: 1 });`,
+			),
+			`const f = (x) => x;`,
+		);
+	});
+});

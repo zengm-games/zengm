@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { getLogoSpinnerInfo } from "../../../common/logoSpinners.ts";
+import { LOGO_SPINNERS } from "./constants.ts";
 import type { Sport } from "../../lib/getSport.ts";
 
 // Avoid floating point noise like 756.7890000000001 in the output
@@ -68,7 +68,7 @@ export const renderSpinner = async <Colors>({
 	sport: Sport;
 	viewBox: [number, number, number];
 }) => {
-	const { frames } = getLogoSpinnerInfo(sport);
+	const { frames } = LOGO_SPINNERS[sport];
 	const [minX, minY, size] = viewBox;
 
 	const normalEntries: [string, string][] = [];

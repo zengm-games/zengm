@@ -21,6 +21,12 @@
 			loads, and the React LogoSpinner component uses it too.
 			*/
 			.logo-spinner {
+				/*
+				Filled in for each sport by tools/build/buildIndexHtml.ts. Each
+				spinner sets --logo-spinner-size itself.
+				*/
+				--logo-spinner-frames: LOGO_SPINNER_FRAMES;
+				--logo-spinner-duration: LOGO_SPINNER_DURATION;
 				display: inline-block;
 				overflow: hidden;
 				vertical-align: middle;
@@ -149,7 +155,7 @@
 						<span
 							id="loading-icon"
 							class="logo-spinner"
-							style="LOGO_SPINNER_CSS_VARS"
+							style="--logo-spinner-size: 48px"
 						>
 							<img alt="" src="/ico/spinner.svg" />
 						</span>

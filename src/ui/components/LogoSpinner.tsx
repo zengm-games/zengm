@@ -1,9 +1,6 @@
 import clsx from "clsx";
 import type { CSSProperties } from "react";
-import {
-	getLogoSpinnerCssVars,
-	getLogoSpinnerUrl,
-} from "../../../common/logoSpinners.ts";
+import { getLogoSpinnerUrl } from "../../../common/logoSpinners.ts";
 
 const LogoSpinner = ({
 	alt = "",
@@ -23,7 +20,7 @@ const LogoSpinner = ({
 	return (
 		<span
 			className={clsx("logo-spinner", !spinning && "logo-spinner-paused")}
-			style={{ ...getLogoSpinnerCssVars(__SPORT, size), ...style }}
+			style={{ "--logo-spinner-size": `${size}px`, ...style } as CSSProperties}
 			title={title}
 		>
 			<img alt={alt} src={getLogoSpinnerUrl(gold)} />

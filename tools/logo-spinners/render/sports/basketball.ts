@@ -109,7 +109,7 @@ const seamLines = (th: number) => {
 
 // The ball, which doesn't move
 const defs = (colors: BasketballColors) =>
-	`<linearGradient id="a"><stop offset="0" stop-color="${colors[1]}"/><stop offset="1" stop-color="${colors[0]}"/></linearGradient><radialGradient href="#a" id="b" cx="362.177" cy="386.004" r="126.131" gradientTransform="matrix(1.13773 .88039 -.61106 .78967 186 -238)" gradientUnits="userSpaceOnUse"/><path id="ball" fill="url(#b)" stroke="#000" stroke-width="${CONFIG.strokeWidth}" d="M290.079 500.005c-30.113-61.16-4.838-135.198 56.417-165.265 61.255-30.066 135.41-4.83 165.522 56.33 30.113 61.16 4.838 135.199-56.417 165.265-61.2 30.039-135.271 4.89-165.444-56.171" transform="translate(-274.917 -319.599)"/>`;
+	`<linearGradient id="a"><stop offset="0" style="stop-color:${colors[1]}"/><stop offset="1" style="stop-color:${colors[0]}"/></linearGradient><radialGradient href="#a" id="b" cx="362.177" cy="386.004" r="126.131" gradientTransform="matrix(1.13773 .88039 -.61106 .78967 186 -238)" gradientUnits="userSpaceOnUse"/><path id="ball" fill="url(#b)" stroke="#000" stroke-width="${CONFIG.strokeWidth}" d="M290.079 500.005c-30.113-61.16-4.838-135.198 56.417-165.265 61.255-30.066 135.41-4.83 165.522 56.33 30.113 61.16 4.838 135.199-56.417 165.265-61.2 30.039-135.271 4.89-165.444-56.171" transform="translate(-274.917 -319.599)"/>`;
 
 // t = fraction of a full turn (0 to 1). The seams are thick lines, so whole-unit
 // coordinates look the same as more precise ones and halve the file size.
@@ -123,9 +123,10 @@ export const basketball = ({
 	filename,
 }: SpinnerOptions<BasketballColors>) =>
 	renderSpinner({
-		defs: defs(colors),
+		colors,
+		defs,
 		filename,
-		frame,
+		frame: (_colors, t) => frame(t),
 		sport: "basketball",
 		viewBox: VIEWBOX,
 	});

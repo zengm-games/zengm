@@ -135,7 +135,7 @@ const hull = (pts: Pt[]): Pt[] => {
 
 // Side highlight from the original, fixed in screen space
 const defs = (colors: HockeyColors) =>
-	`<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="0.65" y1="0" x2="201.53" y2="0"><stop stop-color="${colors.sideGradient[0]}" offset="0"/><stop stop-color="${colors.sideGradient[1]}" offset=".211"/><stop stop-color="${colors.sideGradient[2]}" offset="1"/></linearGradient>`;
+	`<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="0.65" y1="0" x2="201.53" y2="0"><stop style="stop-color:${colors.sideGradient[0]}" offset="0"/><stop style="stop-color:${colors.sideGradient[1]}" offset=".211"/><stop style="stop-color:${colors.sideGradient[2]}" offset="1"/></linearGradient>`;
 
 // The tilting puck can reach past the original's edges, so frame the
 // viewBox around every pose (square, same for all frames)
@@ -174,18 +174,19 @@ const frame = (colors: HockeyColors, t: number) => {
 	const id = `o${Math.round(t * 1000)}`;
 	const rings = RING_RADII.map(
 		(r, i) =>
-			`<ellipse fill="none" stroke="${colors.rings[i]}" stroke-width="${RING_WIDTH}" ${ellipse(axis, HEIGHT / 2, RADIUS * r)}/>`,
+			`<ellipse fill="none" style="stroke:${colors.rings[i]}" stroke-width="${RING_WIDTH}" ${ellipse(axis, HEIGHT / 2, RADIUS * r)}/>`,
 	).join("");
 	// The outline is filled twice: the side color, then the highlight over it.
 	// It's big, so whole-unit coordinates are plenty.
-	return `<defs><path id="${id}" d="${pathData([hull([...top, ...bottom])], { closed: true, decimals: 0 })}"/></defs><use href="#${id}" fill="${colors.side}"/><use href="#${id}" fill="url(#a)"/><ellipse fill="${colors.top}" ${ellipse(axis, HEIGHT / 2, RADIUS)}/>${rings}`;
+	return `<defs><path id="${id}" d="${pathData([hull([...top, ...bottom])], { closed: true, decimals: 0 })}"/></defs><use href="#${id}" style="fill:${colors.side}"/><use href="#${id}" fill="url(#a)"/><ellipse style="fill:${colors.top}" ${ellipse(axis, HEIGHT / 2, RADIUS)}/>${rings}`;
 };
 
 export const hockey = ({ colors, filename }: SpinnerOptions<HockeyColors>) =>
 	renderSpinner({
-		defs: defs(colors),
+		colors,
+		defs,
 		filename,
-		frame: (t) => frame(colors, t),
+		frame,
 		sport: "hockey",
 		viewBox: VIEWBOX,
 	});

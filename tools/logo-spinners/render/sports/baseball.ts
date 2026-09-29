@@ -154,7 +154,7 @@ const VIEWBOX: [number, number, number] = [0, -4.81, 357.588];
 
 // The ball, which doesn't move
 const defs = (colors: BaseballColors) =>
-	`<path id="ball" fill="${colors.ball}" d="M.732 173.92c0 96.05 79.885 173.92 178.43 173.92s178.43-77.865 178.43-173.92S277.702 0 179.162 0 .732 77.865.732 173.92z"/>`;
+	`<path id="ball" style="fill:${colors.ball}" d="M.732 173.92c0 96.05 79.885 173.92 178.43 173.92s178.43-77.865 178.43-173.92S277.702 0 179.162 0 .732 77.865.732 173.92z"/>`;
 
 // t = fraction of a full turn (0 to 1)
 const frame = (colors: BaseballColors, t: number) => {
@@ -200,9 +200,9 @@ const frame = (colors: BaseballColors, t: number) => {
 		}
 	}
 
-	return `<use href="#ball"/><g fill="${colors.stitches}" stroke="${colors.stitches}" stroke-width="2" stroke-linejoin="round"><path d="${pathData(solid, { closed: true, decimals: 0 })}"/>${fading}</g>${
+	return `<use href="#ball"/><g style="fill:${colors.stitches};stroke:${colors.stitches}" stroke-width="2" stroke-linejoin="round"><path d="${pathData(solid, { closed: true, decimals: 0 })}"/>${fading}</g>${
 		lines.length > 0
-			? `<path fill="none" stroke="${colors.stitches}" stroke-width="${CONFIG.seamLineWidth}" stroke-linecap="round" d="${pathData(lines, { decimals: 0 })}"/>`
+			? `<path fill="none" style="stroke:${colors.stitches}" stroke-width="${CONFIG.seamLineWidth}" stroke-linecap="round" d="${pathData(lines, { decimals: 0 })}"/>`
 			: ""
 	}`;
 };
@@ -212,9 +212,10 @@ export const baseball = ({
 	filename,
 }: SpinnerOptions<BaseballColors>) =>
 	renderSpinner({
-		defs: defs(colors),
+		colors,
+		defs,
 		filename,
-		frame: (t) => frame(colors, t),
+		frame,
 		sport: "baseball",
 		viewBox: VIEWBOX,
 	});

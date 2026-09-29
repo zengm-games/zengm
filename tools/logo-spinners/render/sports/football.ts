@@ -241,7 +241,7 @@ const OUTLINE_PATH =
 // Gradients, and the shapes that don't move: the ball, stripes, outline and
 // each lace shadow (which moves, but always has the same shape)
 const defs = (colors: FootballColors) =>
-	`<linearGradient id="b"><stop stop-color="#722e00" offset="0"/><stop stop-color="#722e00" offset=".5"/><stop stop-color="#722e00" stop-opacity="0" offset="1"/></linearGradient><linearGradient id="a"><stop stop-color="${colors.stripes[0]}" offset="0"/><stop stop-color="${colors.stripes[1]}" offset="1"/></linearGradient><linearGradient id="c" href="#a" gradientUnits="userSpaceOnUse" gradientTransform="translate(123.92 444.08) scale(.42762)" x1="-746.71" y1="401.66" x2="-746.71" y2="273.73"/><radialGradient id="e" href="#b" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 1.2 0 -52.03)" cx="-601.8" cy="260.15" r="2.525"/><clipPath id="clip"><path d="${BODY_PATH}"/></clipPath><path id="ball" fill="${colors.ball}" d="${BODY_PATH}"/><path id="stripes" fill="url(#c)" d="${STRIPES_PATH}"/><path id="outline" d="${OUTLINE_PATH}"/>${shadows
+	`<linearGradient id="b"><stop stop-color="#722e00" offset="0"/><stop stop-color="#722e00" offset=".5"/><stop stop-color="#722e00" stop-opacity="0" offset="1"/></linearGradient><linearGradient id="a"><stop style="stop-color:${colors.stripes[0]}" offset="0"/><stop style="stop-color:${colors.stripes[1]}" offset="1"/></linearGradient><linearGradient id="c" href="#a" gradientUnits="userSpaceOnUse" gradientTransform="translate(123.92 444.08) scale(.42762)" x1="-746.71" y1="401.66" x2="-746.71" y2="273.73"/><radialGradient id="e" href="#b" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 1.2 0 -52.03)" cx="-601.8" cy="260.15" r="2.525"/><clipPath id="clip"><path d="${BODY_PATH}"/></clipPath><path id="ball" style="fill:${colors.ball}" d="${BODY_PATH}"/><path id="stripes" fill="url(#c)" d="${STRIPES_PATH}"/><path id="outline" d="${OUTLINE_PATH}"/>${shadows
 		.map(
 			(s, i) =>
 				`<ellipse id="s${i}" fill="url(#e)" cx="-601.798" cy="260.15" rx="2.525" ry="3.03" transform="matrix(${s.m.join(" ")})"/>`,
@@ -308,11 +308,11 @@ const frame = (colors: FootballColors, t: number) => {
 		}
 	}
 
-	return `<g transform="rotate(-45 -660.87 54.697)"><use href="#ball"/><g clip-path="url(#clip)"><path fill="none" stroke="${colors.seam}" stroke-width=".855" stroke-linecap="round" d="${seamPath}"/><use href="#stripes"/>${
+	return `<g transform="rotate(-45 -660.87 54.697)"><use href="#ball"/><g clip-path="url(#clip)"><path fill="none" style="stroke:${colors.seam}" stroke-width=".855" stroke-linecap="round" d="${seamPath}"/><use href="#stripes"/>${
 		backboneEl
-			? `<g opacity="${num(backboneOpacity)}" fill="none" stroke-linecap="round"><defs>${backboneEl}</defs><use href="#${id}" stroke="${colors.laceBackbone}" stroke-width="4.276"/><use href="#${id}" stroke="#722e00" stroke-width=".47"/></g>`
+			? `<g opacity="${num(backboneOpacity)}" fill="none" stroke-linecap="round"><defs>${backboneEl}</defs><use href="#${id}" style="stroke:${colors.laceBackbone}" stroke-width="4.276"/><use href="#${id}" stroke="#722e00" stroke-width=".47"/></g>`
 			: ""
-	}${shadowEls}<g fill="none" stroke="${colors.laces}" stroke-width="2.095" stroke-linecap="round" stroke-linejoin="round">${solid.length > 0 ? `<path d="${pathData(solid)}"/>` : ""}${fading}</g></g><use href="#outline"/></g>`;
+	}${shadowEls}<g fill="none" style="stroke:${colors.laces}" stroke-width="2.095" stroke-linecap="round" stroke-linejoin="round">${solid.length > 0 ? `<path d="${pathData(solid)}"/>` : ""}${fading}</g></g><use href="#outline"/></g>`;
 };
 
 export const football = ({
@@ -320,9 +320,10 @@ export const football = ({
 	filename,
 }: SpinnerOptions<FootballColors>) =>
 	renderSpinner({
-		defs: defs(colors),
+		colors,
+		defs,
 		filename,
-		frame: (t) => frame(colors, t),
+		frame,
 		sport: "football",
 		viewBox: VIEWBOX,
 	});

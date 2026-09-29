@@ -5,7 +5,7 @@ import type { SpinnerOptions } from "./render/renderSpinner.ts";
 
 // Each sport has its own set of colors
 type Colors = {
-	[S in Sport]: Parameters<(typeof render)[S]>[0]["colors"];
+	[S in Sport]: Parameters<(typeof render)[S]>[0]["colors"]["normal"];
 };
 
 const colors: {
@@ -65,13 +65,12 @@ const renderers: {
 	[S in Sport]: (options: SpinnerOptions<Colors[S]>) => Promise<void>;
 } = render;
 
+// Normal and gold are in one file, see renderSpinner
 const renderSport = async <S extends Sport>(sport: S) => {
-	for (const color of ["normal", "gold"] as const) {
-		await renderers[sport]({
-			colors: colors[sport][color],
-			filename: `public/${sport}${getLogoSpinnerUrl(color === "gold")}`,
-		});
-	}
+	await renderers[sport]({
+		colors: colors[sport],
+		filename: `public/${sport}${getLogoSpinnerUrl(false)}`,
+	});
 };
 
 for (const sport of SPORTS) {

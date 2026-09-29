@@ -46,6 +46,8 @@ export const getLogoSpinnerCssVars = (sport: Sport, size: number) => {
 };
 
 // URL of a sprite sheet, relative to the site root. They're SVGs, so the same
-// file works at any size.
+// file works at any size. The gold version is in the same file, selected by the
+// #gold fragment (see tools/logo-spinners/render/renderSpinner.ts), so both
+// share one download.
 export const getLogoSpinnerUrl = (gold: boolean) =>
-	`/ico/spinner${gold ? "-gold" : ""}.svg`;
+	`/ico/spinner.svg${gold ? "#gold" : ""}`;

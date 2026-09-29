@@ -3,7 +3,6 @@ import { g } from "../../util/index.ts";
 import type {
 	AllStars,
 	Conditions,
-	PlayerFiltered,
 	AllStarPlayer,
 } from "../../../common/types.ts";
 import { PLAYER } from "../../../common/constants.ts";
@@ -19,7 +18,13 @@ const POS_FACTOR: Record<string, number> = {
 	CB: 1.05,
 	S: 0.95,
 };
-const dpoyScore = (p: PlayerFiltered) => {
+// Football players from playersPlus, with currentStats added in create. pos is never set, it's only here because these functions came from the old awards system where it was set
+type PlayerWithCurrentStats = {
+	currentStats: Record<string, number>;
+	pos?: string;
+};
+
+const dpoyScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 
 	const posFactor = POS_FACTOR[p.pos] ?? 1;
@@ -36,7 +41,7 @@ const dpoyScore = (p: PlayerFiltered) => {
 			s.defPssDef * 2)
 	);
 };
-const opoyScore = (p: PlayerFiltered) => {
+const opoyScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 	let rushing = s.rusYds * 0.125 + s.rusTD * 6 - s.fmbLost * 2;
 	const receiving = s.recYds * 0.0975 + s.recTD * 6;
@@ -48,14 +53,14 @@ const opoyScore = (p: PlayerFiltered) => {
 
 	return rushing + receiving;
 };
-const offScore = (p: PlayerFiltered) => {
+const offScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 	const passing = s.pssYds * 0.04 + s.pssTD * 4 - s.pssInt * 2.5;
 	const rushingReceiving = opoyScore(p);
 
 	return 1.1 * passing + rushingReceiving;
 };
-const poyScore = (p: PlayerFiltered) => {
+const poyScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 	const attempts = s.pba + s.rba;
 	if (attempts === 0) {
@@ -65,7 +70,7 @@ const poyScore = (p: PlayerFiltered) => {
 	// Account for rate and volume
 	return ((s.pbw + s.rbw) / attempts) * Math.sqrt(attempts);
 };
-const mvpScore = (p: PlayerFiltered) => {
+const mvpScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 	const offense = offScore(p);
 	const defense = 2.25 * dpoyScore(p);
@@ -154,7 +159,7 @@ const create = async (conditions: Conditions) => {
 
 	const allStarNum = g.get("allStarNum");
 
-	const score = (p: PlayerFiltered) =>
+	const score = (p: (typeof players)[number]) =>
 		bySport({
 			baseball: p.stats.war,
 			football: mvpScore(p),

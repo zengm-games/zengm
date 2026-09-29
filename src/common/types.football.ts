@@ -1,4 +1,6 @@
 import type teamStats from "../worker/core/team/stats.football.ts";
+import type playerStats from "../worker/core/player/stats.football.ts";
+import type { statFunctions as playerStatFunctions } from "./processPlayerStats.football.ts";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
@@ -110,6 +112,19 @@ export type TeamStatAttr =
 	| "oppSkAlwPct"
 	| "oppPntTBPct"
 	| "oppPntIn20Pct";
+
+type PlayerStatAttrString = "keyStats" | "qbRec";
+
+export type PlayerStatsPlus = Record<
+	Exclude<
+		| (typeof playerStats)["raw"][number]
+		| (typeof playerStats)["derived"][number]
+		| keyof typeof playerStatFunctions,
+		PlayerStatAttrString
+	>,
+	number
+> &
+	Record<PlayerStatAttrString, string>;
 
 export type PrimaryPosition =
 	| "QB"

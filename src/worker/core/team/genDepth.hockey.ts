@@ -8,7 +8,13 @@ import type { Position } from "../../../common/types.hockey.ts";
 import type { Player, PlayerFiltered } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
 
-const score = (p: PlayerFiltered, pos: Position) => {
+type PlayerForDepth = PlayerFiltered<{
+	attrs: ["pid"];
+	ratings: ["pos", "ovrs"];
+	season: number;
+}>;
+
+const score = (p: PlayerForDepth, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
@@ -19,7 +25,7 @@ const score = (p: PlayerFiltered, pos: Position) => {
 };
 
 const sortFunction =
-	(pos: Position) => (a: PlayerFiltered, b: PlayerFiltered) => {
+	(pos: Position) => (a: PlayerForDepth, b: PlayerForDepth) => {
 		const diff = score(b, pos) - score(a, pos);
 		if (diff === 0) {
 			// Deterministic order
@@ -28,16 +34,7 @@ const sortFunction =
 		return diff;
 	};
 
-const getPlayersInLines = <
-	T extends {
-		ratings: {
-			ovrs: Record<string, number>;
-			pos: string;
-		};
-	},
->(
-	players: T[],
-) => {
+const getPlayersInLines = <T extends PlayerForDepth>(players: T[]) => {
 	const info = {
 		C: {
 			selected: [] as T[],

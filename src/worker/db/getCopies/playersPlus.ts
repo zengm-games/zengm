@@ -5,6 +5,7 @@ import { processPlayerStats as processPlayerStats2 } from "../../util/processPla
 import type {
 	Player,
 	PlayerFiltered,
+	PlayerStatAttr,
 	PlayerStatType,
 	PlayersPlusOptions,
 } from "../../../common/types.ts";
@@ -145,7 +146,7 @@ class AbbrevsCache {
 }
 
 const processAttrs = (
-	output: PlayerFiltered,
+	output: any,
 	p: Player,
 	{
 		attrs,
@@ -387,14 +388,13 @@ const processAttrs = (
 			output.experience = seasons.size;
 		} else {
 			// Several other attrs are not primitive types, so deepCopy
-			// @ts-expect-error
 			output[attr] = helpers.deepCopy(p[attr]);
 		}
 	}
 };
 
 const processRatings = (
-	output: PlayerFiltered,
+	output: any,
 	p: Player,
 	playerRatingsInput: any[],
 	{
@@ -929,7 +929,7 @@ const getPlayerStats = (
 const processPlayerStats = (
 	p: any,
 	statSums: any,
-	stats: string[],
+	stats: Readonly<PlayerStatAttr[]>,
 	statType: PlayerStatType,
 	keepWithNoStats: boolean,
 	season: number | "career" | undefined, // undefined means showNoStats was used with career totals, but this is an individual stat season so idk
@@ -1026,7 +1026,7 @@ const getAttrsToSum = (statsRows: any[]) => {
 };
 
 const processStats = (
-	output: PlayerFiltered,
+	output: any,
 	p: Player,
 	playerStatsInput: any[],
 	{
@@ -1366,9 +1366,12 @@ const processPlayer = (
  * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */
-const getCopies = async (
+const getCopies = async <Options extends PlayersPlusOptions>(
 	players: Player[],
-	{
+	optionsInput: Options &
+		Record<Exclude<keyof Options, keyof PlayersPlusOptions>, never>,
+): Promise<PlayerFiltered<Options>[]> => {
+	const {
 		season,
 		seasonRange,
 		tid,
@@ -1388,8 +1391,8 @@ const getCopies = async (
 		statType = "perGame",
 		mergeStats = "none",
 		disableAbbrevsCacheDatabaseAccess = false,
-	}: PlayersPlusOptions,
-): Promise<PlayerFiltered[]> => {
+	}: PlayersPlusOptions = optionsInput;
+
 	if (mergeStats === "totAndTeams" && season !== undefined) {
 		throw new Error(
 			"mergeStats totAndTeams is not supported for individual seasons",

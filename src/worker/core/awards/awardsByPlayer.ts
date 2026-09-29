@@ -7,7 +7,6 @@ import type {
 	DistributiveOmit,
 	PlayerAward,
 	PlayerAwardBuiltIn,
-	PlayerFiltered,
 	PlayerStatType,
 } from "../../../common/types.ts";
 import addAward from "../player/addAward.ts";
@@ -19,6 +18,7 @@ import {
 	playerMeetsCategoryRequirements,
 } from "../../views/leaders.ts";
 import { leaderAwardCategories } from "../../../common/awards.ts";
+import type { getPlayers } from "./getPlayers.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type { processAwards } from "./processAwards.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
@@ -201,7 +201,7 @@ export const updatePlayerAwards = async ({
 };
 
 export const getLeagueLeaderAwards = async (
-	players: PlayerFiltered[],
+	players: Awaited<ReturnType<typeof getPlayers>>["players"],
 	season: number,
 ) => {
 	const requirements = getLeaderRequirements();

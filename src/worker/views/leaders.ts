@@ -3,7 +3,6 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
-	PlayerFiltered,
 	PlayerInjury,
 	PlayerStatType,
 	UpdateEvents,
@@ -25,7 +24,7 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 			stat: string;
 			minStats?: Record<string, number>;
 			sortAscending?: true;
-			filter?: (p: any) => boolean;
+			filter?: (p: unknown) => boolean;
 		}[]
 	>({
 		baseball: [
@@ -616,7 +615,7 @@ export const playerMeetsCategoryRequirements = ({
 	career: boolean;
 	cat: Category;
 	gamesPlayedCache: GamesPlayedCache;
-	p: PlayerFiltered;
+	p: unknown;
 	playerStats: Record<string, any>;
 	seasonType: "regularSeason" | "playoffs" | "combined";
 	season: number;

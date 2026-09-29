@@ -1,7 +1,7 @@
 import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import type { Position } from "../../../common/types.baseball.ts";
-import type { Player, PlayerFiltered } from "../../../common/types.ts";
+import type { Player } from "../../../common/types.ts";
 import { groupByUnique, last, maxBy } from "../../../common/utils.ts";
 import { shuffle } from "../../../common/random.ts";
 
@@ -17,19 +17,43 @@ const getScorePosBonus = (pos: Position) => {
 	return 0;
 };
 
-const score = (p: PlayerFiltered, pos?: Position) => {
+// Players come from playersPlus or are constructed manually, so this is just what score needs. With pos, it uses ovrs. Without pos, it uses ovr
+function score(
+	p: {
+		ratings: {
+			pos?: string;
+			ovrs: Record<Position, number>;
+		};
+	},
+	pos: Position,
+): number;
+function score(p: {
+	ratings: {
+		ovr: number;
+	};
+}): number;
+function score(
+	p: {
+		ratings: {
+			ovr?: number;
+			pos?: string;
+			ovrs?: Record<Position, number>;
+		};
+	},
+	pos?: Position,
+) {
 	if (pos === undefined) {
-		return p.ratings.ovr;
+		return p.ratings.ovr!;
 	}
 
-	let tempScore = p.ratings.ovrs[pos];
+	let tempScore = p.ratings.ovrs![pos];
 
 	if (p.ratings.pos === pos) {
 		tempScore += getScorePosBonus(pos);
 	}
 
 	return tempScore;
-};
+}
 
 const DEF_POSITIONS = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"] as const;
 const DEF_POSITIONS_DH = [
@@ -294,7 +318,7 @@ export const getDepthPitchers = (
 	players: {
 		pid: number;
 		ratings: {
-			ovrs: Record<string, number>;
+			ovrs: Record<Position, number>;
 		};
 	}[],
 ) => {

@@ -1,4 +1,7 @@
 import type teamStats from "../worker/core/team/stats.hockey.ts";
+import type playerStats from "../worker/core/player/stats.hockey.ts";
+import type { statFunctions as playerStatFunctions } from "./processPlayerStats.hockey.ts";
+import type { PlayerStatMax } from "./types.ts";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
@@ -19,6 +22,20 @@ export type TeamStatAttr =
 	| "oppFoPct"
 	| "oppPpPct"
 	| "oppGaa";
+
+type PlayerStatAttrString = "keyStats" | "keyStatsWithGoalieGP" | "gRec";
+
+export type PlayerStatsPlus = Record<
+	Exclude<
+		| (typeof playerStats)["raw"][number]
+		| (typeof playerStats)["derived"][number]
+		| keyof typeof playerStatFunctions,
+		PlayerStatAttrString
+	>,
+	number
+> &
+	Record<PlayerStatAttrString, string> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
 
 export type Position = "C" | "W" | "D" | "G";
 

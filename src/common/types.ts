@@ -1131,8 +1131,6 @@ export type PlayerFeat = PlayerFeatWithoutKey & {
 	fid: number;
 };
 
-export type PlayerFiltered = any;
-
 export type PlayerInjury = {
 	gamesRemaining: number;
 	type: string;
@@ -1297,13 +1295,119 @@ export type Player<PlayerRatings = MinimalPlayerRatings> = {
 
 export type PlayerStatType = "per36" | "perGame" | "totals";
 
+// For keys present in multiple sports, the value type is the union of the types from each sport
+type MergeBySport<A, B, C, D> = {
+	[K in keyof A | keyof B | keyof C | keyof D]:
+		| (K extends keyof A ? A[K] : never)
+		| (K extends keyof B ? B[K] : never)
+		| (K extends keyof C ? C[K] : never)
+		| (K extends keyof D ? D[K] : never);
+};
+
+// Season rows are [value, gid]. Career rows add [abbrev, tid, season] of when the max happened. null means not yet initialized, undefined is for upgraded rows from before this existed
+export type PlayerStatMax =
+	| [number, number]
+	| [number, number, string, number, number]
+	| null
+	| undefined;
+
+// Not using a homomorphic mapped type, so optional properties become required but still include undefined, since playersPlus always sets the key
+type PlayerKey = keyof Player;
+type PlayerAllKeys = {
+	[K in PlayerKey]: Player[K];
+};
+
+type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
+	PlayerAllKeys,
+	"contract" | "diedYear" | "draft" | "hof" | "jerseyNumber" | "watch"
+> & {
+	abbrev: string;
+	age: number;
+	ageAtDeath: number | null;
+	cashOwed: number;
+	contract: Contract;
+	diedYear: number | null;
+	draft: Player["draft"] & {
+		abbrev: string;
+		age: number;
+		originalAbbrev: string;
+	};
+	draftPosition: number;
+	experience: number;
+	hof: boolean;
+	jerseyNumber: string | undefined;
+	lastSalary: number | undefined;
+	latestTransaction: string;
+	latestTransactionSeason: number | undefined;
+	name: string;
+	numAllStar: number;
+	numBrothers: number;
+	numFathers: number;
+	numSons: number;
+	salaries: {
+		amount: number;
+		season: number;
+		type: "past" | "current" | "future";
+	}[];
+	salariesTotal: number;
+	salary: number;
+	untradable: boolean;
+	watch: number;
+};
+export type PlayerAttr = keyof PlayerAttrsPlus;
+
+type PlayerRatingsPlus = Record<
+	RatingKeyBaseball | RatingKeyBasketball | RatingKeyFootball | RatingKeyHockey,
+	number
+> & {
+	abbrev: string;
+	age: number;
+	dovr: number;
+	dpot: number;
+	fuzz: number;
+	injuryIndex: number | undefined;
+	locked: boolean | undefined;
+	ovr: number;
+	pos: string;
+	pot: number;
+	season: number;
+	skills: string[];
+	tid: number | undefined;
+
+	// Not in basketball
+	ovrs: Record<PositionBaseball | PositionFootball | PositionHockey, number>;
+	pots: Record<PositionBaseball | PositionFootball | PositionHockey, number>;
+};
+export type PlayerRatingAttr = keyof PlayerRatingsPlus;
+
+type PlayerStatsPlusCommon = {
+	abbrev: string;
+	age: number;
+	jerseyNumber: string | undefined;
+	playoffs: boolean | "combined";
+	season: number;
+	tid: number;
+	yearsWithTeam: number;
+};
+type PlayerStatsPlus = Omit<
+	MergeBySport<
+		PlayerStatsPlusBaseball,
+		PlayerStatsPlusBasketball,
+		PlayerStatsPlusFootball,
+		PlayerStatsPlusHockey
+	>,
+	keyof PlayerStatsPlusCommon
+> &
+	PlayerStatsPlusCommon;
+export type PlayerStatAttr = keyof PlayerStatsPlus;
+
 export type PlayersPlusOptions = {
 	season?: number;
 	seasonRange?: [number, number];
 	tid?: number;
-	attrs?: string[];
-	ratings?: string[];
-	stats?: string[];
+	attrs?: Readonly<PlayerAttr[]>;
+	ratings?: Readonly<PlayerRatingAttr[]>;
+	stats?: Readonly<PlayerStatAttr[]>;
 	playoffs?: boolean;
 	regularSeason?: boolean;
 	combined?: boolean;
@@ -1318,6 +1422,213 @@ export type PlayersPlusOptions = {
 	mergeStats?: "none" | "totOnly" | "totAndTeams";
 	disableAbbrevsCacheDatabaseAccess?: boolean;
 };
+
+// Is exactly one of playoffs/regularSeason/combined true? If any are boolean, result is boolean
+type IsOneSeasonType<
+	Playoffs extends boolean,
+	RegularSeason extends boolean,
+	Combined extends boolean,
+> = Playoffs extends true
+	? RegularSeason extends true
+		? false
+		: Combined extends true
+			? false
+			: true
+	: RegularSeason extends true
+		? Combined extends true
+			? false
+			: true
+		: Combined;
+
+type RowOrRows<
+	Single extends boolean,
+	Row,
+	SingleExtra = never,
+> = Single extends true ? Row | SingleExtra : Row[];
+
+// Rows added by showNoStats have no playoffs value
+type PlayerStatsRow<
+	Stats extends Readonly<PlayerStatAttr[]>,
+	Combined extends boolean,
+	ShowNoStats extends boolean,
+> = Pick<PlayerStatsPlus, Stats[number]> & {
+	playoffs:
+		| boolean
+		| ([Combined] extends [false] ? never : "combined")
+		| ([ShowNoStats] extends [false] ? never : undefined);
+	hasTot?: true;
+};
+
+// playoffs is not in ignoredKeys when summing career stats, so it's the sum of the playoffs values of all rows (number for regular season and playoffs, string for combined since those rows have "combined"), or undefined if there are no stats rows
+type PlayerCareerStatsRow<
+	Stats extends Readonly<PlayerStatAttr[]>,
+	PlayoffsValue,
+> = Omit<Pick<PlayerStatsPlus, Stats[number]>, "playoffs"> & {
+	playoffs: PlayoffsValue | undefined;
+	hasTot?: true;
+};
+
+// Career stats are only present when season is undefined and the corresponding flag is true. If either is ambiguous, it's optional
+type CareerStatsKey<
+	Key extends string,
+	Row,
+	Season extends number | undefined,
+	Flag extends boolean,
+> = [Season] extends [number]
+	? unknown
+	: [Flag] extends [false]
+		? unknown
+		: [Season] extends [undefined]
+			? [Flag] extends [true]
+				? { [K in Key]: Row }
+				: { [K in Key]?: Row }
+			: { [K in Key]?: Row };
+
+// With seasonRange and no season, contract is the sum of salaries in the range, with exp set to the (undefined) season
+type PlayerContractFiltered<
+	Season extends number | undefined,
+	SeasonRange extends [number, number] | undefined,
+> = [SeasonRange] extends [undefined]
+	? Player["contract"]
+	: [Season] extends [number]
+		? Player["contract"]
+		: Omit<Player["contract"], "exp"> & { exp: number | undefined };
+
+type PlayerAttrsPart<
+	Attrs extends Readonly<PlayerAttr[]>,
+	Season extends number | undefined,
+	SeasonRange extends [number, number] | undefined,
+> = Pick<
+	PlayerAttrsPlus<PlayerContractFiltered<Season, SeasonRange>>,
+	Attrs[number]
+> &
+	("untradable" extends Attrs[number] ? { untradableMsg?: string } : unknown);
+
+type PlayerRatingsPart<
+	Ratings extends Readonly<PlayerRatingAttr[]>,
+	Season extends number | undefined,
+> = {
+	ratings: Season extends number
+		? Pick<PlayerRatingsPlus, Ratings[number]>
+		: Pick<PlayerRatingsPlus, Ratings[number]>[];
+};
+
+// For a single season, stats can be undefined if showRookies kept a player with no stats rows. showNoStats prevents that by adding an empty row
+type PlayerStatsSingleUndefined<
+	ShowNoStats extends boolean,
+	ShowRookies extends boolean,
+> = [ShowRookies] extends [false]
+	? never
+	: [ShowNoStats] extends [true]
+		? never
+		: undefined;
+
+type PlayerStatsPart<
+	Stats extends Readonly<PlayerStatAttr[]>,
+	Season extends number | undefined,
+	Playoffs extends boolean,
+	RegularSeason extends boolean,
+	Combined extends boolean,
+	ShowNoStats extends boolean,
+	ShowRookies extends boolean,
+> = {
+	stats: Season extends number
+		? RowOrRows<
+				IsOneSeasonType<Playoffs, RegularSeason, Combined>,
+				PlayerStatsRow<Stats, Combined, ShowNoStats>,
+				PlayerStatsSingleUndefined<ShowNoStats, ShowRookies>
+			>
+		: PlayerStatsRow<Stats, Combined, ShowNoStats>[];
+} & CareerStatsKey<
+	"careerStats",
+	PlayerCareerStatsRow<Stats, number>,
+	Season,
+	RegularSeason
+> &
+	CareerStatsKey<
+		"careerStatsPlayoffs",
+		PlayerCareerStatsRow<Stats, number>,
+		Season,
+		Playoffs
+	> &
+	CareerStatsKey<
+		"careerStatsCombined",
+		PlayerCareerStatsRow<Stats, string>,
+		Season,
+		Combined
+	>;
+
+// If it's not known whether attrs/ratings/stats were requested (like the type includes undefined), then its properties are optional
+type PlayerFilteredInner<
+	Attrs extends Readonly<PlayerAttr[]> | undefined,
+	Ratings extends Readonly<PlayerRatingAttr[]> | undefined,
+	Stats extends Readonly<PlayerStatAttr[]> | undefined,
+	Season extends number | undefined,
+	SeasonRange extends [number, number] | undefined,
+	Playoffs extends boolean,
+	RegularSeason extends boolean,
+	Combined extends boolean,
+	ShowNoStats extends boolean,
+	ShowRookies extends boolean,
+> = ([Attrs] extends [undefined]
+	? unknown
+	: [Attrs] extends [Readonly<PlayerAttr[]>]
+		? PlayerAttrsPart<Attrs, Season, SeasonRange>
+		: Partial<PlayerAttrsPart<NonNullable<Attrs>, Season, SeasonRange>>) &
+	([Ratings] extends [undefined]
+		? unknown
+		: [Ratings] extends [Readonly<PlayerRatingAttr[]>]
+			? PlayerRatingsPart<Ratings, Season>
+			: Partial<PlayerRatingsPart<NonNullable<Ratings>, Season>>) &
+	([Stats] extends [undefined]
+		? unknown
+		: [Stats] extends [Readonly<PlayerStatAttr[]>]
+			? PlayerStatsPart<
+					Stats,
+					Season,
+					Playoffs,
+					RegularSeason,
+					Combined,
+					ShowNoStats,
+					ShowRookies
+				>
+			: Partial<
+					PlayerStatsPart<
+						NonNullable<Stats>,
+						Season,
+						Playoffs,
+						RegularSeason,
+						Combined,
+						ShowNoStats,
+						ShowRookies
+					>
+				>);
+
+// Value of an option, or its default value if it may be missing. Uses Options[Key] rather than inferring from an optional property, because that would drop undefined from the type
+type PlayersPlusOptionValue<
+	Options,
+	Key extends keyof PlayersPlusOptions,
+	Default,
+> = Key extends keyof Options
+	?
+			| Exclude<Options[Key], undefined>
+			| (undefined extends Options[Key] ? Default : never)
+	: Default;
+
+// Output of playersPlus for a given set of options
+export type PlayerFiltered<Options extends PlayersPlusOptions> =
+	PlayerFilteredInner<
+		PlayersPlusOptionValue<Options, "attrs", undefined>,
+		PlayersPlusOptionValue<Options, "ratings", undefined>,
+		PlayersPlusOptionValue<Options, "stats", undefined>,
+		PlayersPlusOptionValue<Options, "season", undefined>,
+		PlayersPlusOptionValue<Options, "seasonRange", undefined>,
+		PlayersPlusOptionValue<Options, "playoffs", false>,
+		PlayersPlusOptionValue<Options, "regularSeason", true>,
+		PlayersPlusOptionValue<Options, "combined", false>,
+		PlayersPlusOptionValue<Options, "showNoStats", false>,
+		PlayersPlusOptionValue<Options, "showRookies", false>
+	>;
 
 export type Race = "asian" | "black" | "brown" | "white";
 
@@ -1672,12 +1983,29 @@ type TeamSeasonPlus = Omit<TeamSeason, "lastTen"> & {
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
 import type {
+	PlayerStatsPlus as PlayerStatsPlusBaseball,
+	Position as PositionBaseball,
+	RatingKey as RatingKeyBaseball,
 	TeamStatAttr as TeamStatAttrBaseball,
 	TeamStatAttrByPos as TeamStatAttrByPosBaseball,
 } from "./types.baseball.ts";
-import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball.ts";
-import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football.ts";
-import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey.ts";
+import type {
+	PlayerStatsPlus as PlayerStatsPlusBasketball,
+	RatingKey as RatingKeyBasketball,
+	TeamStatAttr as TeamStatAttrBasketball,
+} from "./types.basketball.ts";
+import type {
+	PlayerStatsPlus as PlayerStatsPlusFootball,
+	Position as PositionFootball,
+	RatingKey as RatingKeyFootball,
+	TeamStatAttr as TeamStatAttrFootball,
+} from "./types.football.ts";
+import type {
+	PlayerStatsPlus as PlayerStatsPlusHockey,
+	Position as PositionHockey,
+	RatingKey as RatingKeyHockey,
+	TeamStatAttr as TeamStatAttrHockey,
+} from "./types.hockey.ts";
 import type { TIEBREAKERS } from "./constants.ts";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
@@ -1861,7 +2189,12 @@ type TradeSummaryTeam = {
 		desc: string;
 	}[];
 	total: number;
-	trade: PlayerFiltered[];
+	trade: PlayerFiltered<{
+		attrs: ["pid", "name", "contract", "draft"];
+		season: number;
+		showRookies: true;
+		showNoStats: true;
+	}>[];
 };
 
 export type TradeSummary = {

@@ -5,7 +5,10 @@ import type { Position } from "../../../common/types.football.ts";
 import type { Player, PlayerFiltered } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
 
-const score = (p: PlayerFiltered, pos: Position) => {
+const score = (
+	p: PlayerFiltered<{ ratings: ["pos", "ovrs"]; season: number }>,
+	pos: Position,
+) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {

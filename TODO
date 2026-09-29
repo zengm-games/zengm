@@ -1,8 +1,6 @@
 spinner animations
 - rename logos?
 - benchmark
-- old versions of Chrome/Safari
-- football seam lines
 - svgo
 - spin in response to...
   - draft auto pick
@@ -24,10 +22,9 @@ spinner animations
   - LogoAndText
   - AllStarThree
   - buildSw
-- how to pause spinner
 
 zengm.com
-- use spritesheet logos
+- use spritesheet logos and icon.svg
 - delete logo.png (after removing from dumbmatter.com too)
 
 add helpers.entries similar to helpers.keys, if possible

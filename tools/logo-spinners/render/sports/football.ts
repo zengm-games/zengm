@@ -29,8 +29,9 @@ const CONFIG = {
 	edgeFade: 12,
 
 	// Fraction of each turn the laces spend on the back of the ball. 0.5 is a
-	// real spiral at constant speed. Lower values speed the ball up while the
-	// laces are hidden and slow it down while they're in view, smoothly.
+	// real spiral. Lower values keep the ball turning at a constant speed but
+	// pretend its surface is shorter around than it really is, so features come
+	// back into view sooner (see CIRCUMFERENCE).
 	hiddenFraction: 0.3,
 
 	// Stripes, in the original SVG's units measured along the ball from its
@@ -84,10 +85,78 @@ const toAngle = ([x, y]: Pt) => {
 type SurfacePt = [x: number, angle: number];
 const lift = (pts: Pt[]): SurfacePt[] => pts.map((p) => [p[0], toAngle(p)]);
 
+// The seam along the bottom of the ball: the half of the original SVG's seam
+// path that goes from the right tip, under the ball, to the left tip. It's two
+// cubic Bezier curves, given here as absolute points [start, control 1,
+// control 2, end].
+const SEAM_BOTTOM_CURVES: [Pt, Pt, Pt, Pt][] = [
+	[
+		[-76.291, 574.2],
+		[-75.76, 590.76],
+		[-119.42, 605.3],
+		[-155.28, 604.04],
+	],
+	[
+		[-155.28, 604.04],
+		[-191.57, 602.79],
+		[-233.94, 583.4],
+		[-233.95, 573.4],
+	],
+];
+const SEAM_BOTTOM = SEAM_BOTTOM_CURVES.flatMap(([p0, p1, p2, p3], i) => {
+	const N = 48;
+	const pts: Pt[] = [];
+	// Skip the first point of the second curve, since it's the end of the first
+	for (let k = i === 0 ? 0 : 1; k <= N; k++) {
+		const t = k / N;
+		const u = 1 - t;
+		const b = [u * u * u, 3 * u * u * t, 3 * u * t * t, t * t * t] as const;
+		pts.push([
+			b[0] * p0[0] + b[1] * p1[0] + b[2] * p2[0] + b[3] * p3[0],
+			b[0] * p0[1] + b[1] * p1[1] + b[2] * p2[1] + b[3] * p3[1],
+		]);
+	}
+	return pts;
+});
+
+// The ball turns at a constant speed, but pretends its surface is only
+// CIRCUMFERENCE radians around (less than 2pi), so the laces spend less of each
+// turn hidden. A feature that reaches the far back jumps ahead to the other
+// side, which is always out of sight, since it happens more than 90 degrees
+// from the front. Only the front half (pi) is visible, so the laces are hidden
+// for 1 - pi / CIRCUMFERENCE of each turn.
+const CIRCUMFERENCE =
+	Math.PI / (1 - Math.min(0.5, Math.max(0.05, CONFIG.hiddenFraction)));
+
+// Angle of a surface point (0 = facing the viewer) after turning by phase,
+// wrapped into -CIRCUMFERENCE / 2 to CIRCUMFERENCE / 2
+const turn = (angle: number, phase: number) => {
+	const a = angle + phase;
+	return a - CIRCUMFERENCE * Math.round(a / CIRCUMFERENCE);
+};
+
+// Angle of a seam at the middle of the ball, where it's farthest from the tips
+const seamAngle = (seam: SurfacePt[]) => {
+	const middle = (X0 + X1) / 2;
+	return seam.reduce((best, p) =>
+		Math.abs(p[0] - middle) < Math.abs(best[0] - middle) ? p : best,
+	)[1];
+};
+
+// Seams running from tip to tip: the two in the original drawing, plus one on
+// the back, spaced evenly between them on the shortened circumference so the
+// seams pass by at a steady rhythm. A real football has a fourth, but with the
+// shortened circumference, three are already about as far apart on the back as
+// the front two.
 const seamTop = lift(SEAM_TOP);
-// Only the seam under the laces. The original's second seam (and the two a
-// real football has on the back) read as stray faint lines when spinning.
-const seams = [seamTop];
+const seamBottom = lift(SEAM_BOTTOM);
+const backSeamOffset =
+	(CIRCUMFERENCE - (seamAngle(seamBottom) - seamAngle(seamTop))) / 2;
+const seams = [
+	seamTop,
+	seamBottom,
+	seamBottom.map(([x, angle]): SurfacePt => [x, angle + backSeamOffset]),
+];
 const backboneBase = lift(LACE_BACKBONE);
 const stitchesBase = STITCHES.map(lift);
 const shadows = SHADOWS.map((s) => ({ ...s, angle: toAngle(s.c) }));
@@ -102,40 +171,18 @@ const shiftLaces = (pts: SurfacePt[]): SurfacePt[] =>
 const backbone = shiftLaces(backboneBase);
 const stitches = stitchesBase.map(shiftLaces);
 
-// Angle of the laces around the ball in the original drawing
-const laceAngle =
-	backboneBase.reduce((sum, [, a]) => sum + a, 0) / backboneBase.length;
-
-// Smooth, periodic time warp: warp(s, k) moves slower than s near 0 and
-// faster near pi when k < 1, with warp(s + 2pi) = warp(s) + 2pi. Its inverse
-// is warp(s, 1 / k).
-const warp = (s: number, k: number) => {
-	const c = Math.cos(s / 2);
-	const sn = Math.sin(s / 2);
-	return s + 2 * Math.atan(((k - 1) * sn * c) / (c * c + k * sn * sn));
-};
-
-// Rotation of the ball at time t (fraction of a turn), with the laces facing
-// the viewer at warp angle 0 and frame 0 matching the original drawing
-const rotationAt = (t: number) => {
-	const h = Math.min(0.95, Math.max(0.05, CONFIG.hiddenFraction));
-	const k = Math.tan((Math.PI * h) / 2);
-	const s0 = warp(laceAngle, 1 / k);
-	return warp(s0 + CONFIG.direction * 2 * Math.PI * t, k) - laceAngle;
-};
-
 // Point on the surface (x along the ball, angle around it) -> 2D drawing
 const project = (x: number, ang: number): Pt => {
 	const r = radius(x);
 	return [x + CONFIG.curve * r * Math.cos(ang), centerY(x) + r * Math.sin(ang)];
 };
 
-// The visible parts of a curve on the surface, rotated by th
-const surfaceLines = (pts: SurfacePt[], th: number) => {
+// The visible parts of a curve on the surface, turned by phase
+const surfaceLines = (pts: SurfacePt[], phase: number) => {
 	const lines: Pt[][] = [];
 	let line: Pt[] | undefined;
 	for (const [x, a] of pts) {
-		const ang = a + th;
+		const ang = turn(a, phase);
 		if (Math.cos(ang) > 0) {
 			if (!line) {
 				line = [];
@@ -157,8 +204,8 @@ const edgeOpacity = (ang: number) =>
 	);
 
 // Opacity for a group of points: fades with the point nearest the edge
-const groupOpacity = (pts: SurfacePt[], th: number) =>
-	Math.min(...pts.map(([, a]) => edgeOpacity(a + th)));
+const groupOpacity = (pts: SurfacePt[], phase: number) =>
+	Math.min(...pts.map(([, a]) => edgeOpacity(turn(a, phase))));
 
 const BODY_PATH =
 	"M-154.88 526.72c42.6-.91 78.679 29.96 78.589 47.48-.087 17.1-33.639 46.68-77.239 46.68-43.29 0-79.84-31.66-80.42-47.48-.59-15.83 36.47-45.77 79.07-46.68z";
@@ -206,22 +253,23 @@ const VIEWBOX: [number, number, number] = [0, -0.67, 128.493];
 
 // t = fraction of a full turn (0 to 1)
 const frame = (colors: FootballColors, t: number) => {
-	const th = rotationAt(t);
+	// Frame 0 matches the original drawing
+	const phase = CONFIG.direction * CIRCUMFERENCE * t;
 	// Unique within the sprite sheet
 	const id = `k${Math.round(t * 1000)}`;
 
-	const seamPath = pathData(seams.flatMap((s) => surfaceLines(s, th)));
+	const seamPath = pathData(seams.flatMap((s) => surfaceLines(s, phase)));
 
 	// The line under the laces, drawn twice (wide and light, then thin and dark)
-	const backboneOpacity = groupOpacity(backbone, th);
+	const backboneOpacity = groupOpacity(backbone, phase);
 	const backboneEl =
 		backboneOpacity > 0
-			? `<path id="${id}" d="${pathData(surfaceLines(backbone, th))}"/>`
+			? `<path id="${id}" d="${pathData(surfaceLines(backbone, phase))}"/>`
 			: "";
 
 	const shadowEls = shadows
 		.map((s, i) => {
-			const ang = s.angle + th;
+			const ang = turn(s.angle, phase);
 			const op = edgeOpacity(ang);
 			if (op <= 0) {
 				return "";
@@ -242,11 +290,11 @@ const frame = (colors: FootballColors, t: number) => {
 	const solid: Pt[][] = [];
 	let fading = "";
 	for (const s of stitches) {
-		const op = groupOpacity(s, th);
+		const op = groupOpacity(s, phase);
 		if (op <= 0) {
 			continue;
 		}
-		const lines = surfaceLines(s, th);
+		const lines = surfaceLines(s, phase);
 		if (op === 1) {
 			solid.push(...lines);
 		} else {

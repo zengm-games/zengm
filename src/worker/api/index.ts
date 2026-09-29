@@ -2972,9 +2972,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		})();
 	}
 
-	// Send options and current state to all new tabs, since they won't hear about
-	// it until it changes. This matters when another tab is already open, like if
-	// it's in the middle of auto play.
+	// Send options and current state to all new tabs
 	const attributesStore = (await idb.meta.transaction("attributes")).store;
 	const options = ((await attributesStore.get("options")) ?? {}) as Options;
 	const keyboardShortcuts = (await attributesStore.get(

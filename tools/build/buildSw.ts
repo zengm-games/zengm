@@ -14,7 +14,7 @@ export const buildSw = async () => {
 			"img/logos-primary/*.svg",
 			"img/logos-secondary/*.svg",
 			"ico/icon.svg",
-			"ico/spinner*.svg",
+			"ico/spinner.svg",
 		],
 		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
 		globIgnores: ["gen/real-player-*.json", "upgrade-50/*"],

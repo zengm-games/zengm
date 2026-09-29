@@ -4,6 +4,7 @@ import {
 	type Plugin,
 	type TransformResult,
 } from "rolldown";
+import { parseSync } from "rolldown/utils";
 import { parseAndWalk, type WalkerCallbackContext } from "oxc-walker";
 import type {
 	Node,
@@ -73,16 +74,16 @@ const SAFE_POSITIONS: Record<string, string[]> = {
 };
 
 const needsParens = (
-	value: Node,
+	valueType: Node["type"],
 	parent: Node | null,
 	key: WalkerCallbackContext["key"],
 ) => {
-	if (NEVER_NEEDS_PARENS.has(value.type)) {
+	if (NEVER_NEEDS_PARENS.has(valueType)) {
 		return false;
 	}
 
 	// Would be ambiguous with multiple arguments/elements/etc, if it wasn't already wrapped in a ParenthesizedExpression
-	if (value.type === "SequenceExpression") {
+	if (valueType === "SequenceExpression") {
 		return true;
 	}
 
@@ -108,9 +109,17 @@ export const sportFunctions = (
 	const processCode = (
 		code: string,
 		id: string,
+		lang: "ts" | "tsx",
 		magicString: RolldownMagicString,
 	) => {
+		// For nested bySport calls, the inner call is replaced before the outer one is handled, so when the outer one is deciding whether to wrap its value in parens, it needs to know what the inner call was replaced with, not the original CallExpression node type. This maps each replaced bySport CallExpression to the type of its replacement.
+		const replacementTypes = new Map<Node, Node["type"]>();
+
 		parseAndWalk(code, id, {
+			parseSync,
+			parseOptions: {
+				lang,
+			},
 			// Use `leave` (post-order) rather than `enter`, so nested bySport calls (e.g. inside a bySport value) are already resolved before their parent is handled.
 			leave(node, parent, { key }) {
 				if (node.type !== "CallExpression") {
@@ -152,6 +161,16 @@ export const sportFunctions = (
 							);
 						}
 
+						if (
+							property.method ||
+							property.kind !== "init" ||
+							property.computed
+						) {
+							throw new Error(
+								"bySport properties must be plain non-computed key/value pairs",
+							);
+						}
+
 						propertiesByKey[getObjectKey(property)] = property;
 					}
 
@@ -161,11 +180,15 @@ export const sportFunctions = (
 						throw new Error(`Missing sport (${sport}) and default`);
 					}
 
+					const valueType = replacementTypes.get(value) ?? value.type;
 					const raw = magicString.slice(value.start, value.end);
-					const replacement = needsParens(value, parent, key)
-						? `(${raw})`
-						: raw;
-					magicString.overwrite(node.start, node.end, replacement);
+					if (needsParens(valueType, parent, key)) {
+						magicString.overwrite(node.start, node.end, `(${raw})`);
+						replacementTypes.set(node, "ParenthesizedExpression");
+					} else {
+						magicString.overwrite(node.start, node.end, raw);
+						replacementTypes.set(node, valueType);
+					}
 				}
 			},
 		});
@@ -183,13 +206,15 @@ export const sportFunctions = (
 				const isNative = meta.magicString !== undefined;
 				const magicString = meta.magicString ?? new RolldownMagicString(code);
 
+				const lang = meta.moduleType === "tsx" ? "tsx" : "ts";
+
 				if (nodeEnv === "development") {
 					const { mtimeMs } = statSync(id);
 					const cached = compileCache[id];
 					if (cached?.mtimeMs === mtimeMs) {
 						return cached.result;
 					} else {
-						processCode(code, id, magicString);
+						processCode(code, id, lang, magicString);
 						const result = {
 							code: magicString.toString(),
 							map: magicString.generateMap({ hires: true }).toString(),
@@ -201,7 +226,7 @@ export const sportFunctions = (
 						return result;
 					}
 				} else {
-					processCode(code, id, magicString);
+					processCode(code, id, lang, magicString);
 					if (isNative) {
 						return { code: magicString };
 					}

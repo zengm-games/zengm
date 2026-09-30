@@ -52,3 +52,23 @@ export const getTeamInfoBySeason = async (tid: number, season: number) => {
 
 	// Could be an invalid tid, like PLAYER.TOT or PLAYER.DOES_NOT_EXIST
 };
+
+// Make one instance of this per season
+export class CacheTeamInfoSeason {
+	cache = new Map<number, Awaited<ReturnType<typeof getTeamInfoBySeason>>>();
+	season: number;
+
+	constructor(season: number) {
+		this.season = season;
+	}
+
+	async get(tid: number) {
+		if (this.cache.has(tid)) {
+			return this.cache.get(tid);
+		}
+
+		const info = await getTeamInfoBySeason(tid, this.season);
+		this.cache.set(tid, info);
+		return info;
+	}
+}

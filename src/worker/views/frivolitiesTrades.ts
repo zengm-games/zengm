@@ -1,5 +1,8 @@
 import { idb } from "../db/index.ts";
-import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import {
+	CacheTeamInfoSeason,
+	getTeamInfoBySeason,
+} from "../util/getTeamInfoBySeason.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -40,9 +43,13 @@ type Trade = {
 	most: Most;
 };
 
-const genTeam = async (event: TradeEvent, i: 0 | 1): Promise<Team> => {
+const genTeam = async (
+	event: TradeEvent,
+	i: 0 | 1,
+	cacheTeamInfoSeason: CacheTeamInfoSeason,
+): Promise<Team> => {
 	const tid = event.tids[i]!;
-	const teamInfo = await getTeamInfoBySeason(tid, event.season);
+	const teamInfo = await cacheTeamInfoSeason.get(tid);
 	if (!teamInfo) {
 		throw new Error("teamInfo not found");
 	}
@@ -68,6 +75,8 @@ const genTeam = async (event: TradeEvent, i: 0 | 1): Promise<Team> => {
 	};
 };
 
+type RequireOnly<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+
 const getMostXRows = async ({
 	filter,
 	getValue,
@@ -80,46 +89,52 @@ const getMostXRows = async ({
 	const LIMIT = 100;
 	const trades: Trade[] = [];
 
-	const events: TradeEvent[] = [];
+	const events: RequireOnly<TradeEvent, "phase" | "teams">[] = [];
 
 	// Would be nice to not read these all into memory, but then would have to pass around the transaction to genTeam and others
 	const store = await idb.league.transaction("events").store;
 	for await (const cursor of store) {
 		const event = cursor.value;
 		if (isTradeEvent(event)) {
+			if (event.phase === undefined || !event.teams) {
+				continue;
+			}
+
+			if (filter !== undefined && !filter(event)) {
+				continue;
+			}
+
 			events.push(event);
 		}
 	}
 
-	for (const event of events) {
-		if (event.phase === undefined || !event.teams) {
-			continue;
-		}
+	const eventsBySeason = Map.groupBy(events, (event) => event.season);
 
-		if (filter !== undefined && !filter(event)) {
-			continue;
-		}
+	for (const [season, eventsSeason] of eventsBySeason) {
+		const cache = new CacheTeamInfoSeason(season);
 
-		const teams = [await genTeam(event, 0), await genTeam(event, 1)] as [
-			Team,
-			Team,
-		];
+		for (const event of eventsSeason) {
+			const teams = [
+				await genTeam(event, 0, cache),
+				await genTeam(event, 1, cache),
+			] as [Team, Team];
 
-		const most = getValue(teams);
+			const most = getValue(teams);
 
-		trades.push({
-			rank: 0,
-			eid: event.eid,
-			season: event.season,
-			phase: event.phase,
-			teams,
-			most,
-		});
+			trades.push({
+				rank: 0,
+				eid: event.eid,
+				season: event.season,
+				phase: event.phase,
+				teams,
+				most,
+			});
 
-		trades.sort((a, b) => b.most.value - a.most.value);
+			trades.sort((a, b) => b.most.value - a.most.value);
 
-		if (trades.length > LIMIT) {
-			trades.pop();
+			if (trades.length > LIMIT) {
+				trades.pop();
+			}
 		}
 	}
 

@@ -3,8 +3,15 @@ import {
 	allFilters,
 	getExtraStatTypeKeys,
 } from "../../common/advancedPlayerSearch.ts";
-import type { Player, PlayerStatType, ViewInput } from "../../common/types.ts";
-import { maxBy } from "../../common/utils.ts";
+import type {
+	Player,
+	PlayerAttr,
+	PlayerRatingAttr,
+	PlayerStatAttr,
+	PlayerStatType,
+	ViewInput,
+} from "../../common/types.ts";
+import { last, maxBy } from "../../common/utils.ts";
 import { normalizeIntl } from "../../common/normalizeIntl.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
@@ -15,10 +22,11 @@ import type { SeasonType } from "./processInputs.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 
 const getPlayers = async (
-	season: number | undefined,
-	attrs: string[],
-	ratings: string[],
-	stats: string[],
+	// Ignored if seasonRange is set
+	season: number,
+	attrs: PlayerAttr[],
+	ratings: PlayerRatingAttr[],
+	stats: PlayerStatAttr[],
 	tidInput: number | undefined,
 	playersAll: Player[],
 	playoffs: SeasonType = "regularSeason",
@@ -34,7 +42,7 @@ const getPlayers = async (
 		tid = tidInput;
 	}
 
-	let players = await idb.getCopies.playersPlus(playersAll, {
+	const options = {
 		attrs: [
 			"pid",
 			"firstName",
@@ -53,7 +61,6 @@ const getPlayers = async (
 		],
 		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
 		stats: ["abbrev", "tid", "jerseyNumber", ...stats],
-		season,
 		tid,
 		mergeStats: "totOnly",
 		showNoStats: tid === undefined, // If this is true and tid is set, then a bunch of false positives come back
@@ -61,35 +68,88 @@ const getPlayers = async (
 		fuzz: true,
 		statType,
 		seasonType: playoffs,
-		seasonRange,
+	} as const;
+
+	if (seasonRange) {
+		// Sum up totals within seasonRange, and use peak ratings
+		const players = await idb.getCopies.playersPlus(playersAll, {
+			...options,
+			seasonRange,
+		});
+
+		return players.map(
+			({
+				careerStats,
+				careerStatsPlayoffs,
+				careerStatsCombined,
+				ratings,
+				stats,
+				...p
+			}) => {
+				const totals =
+					playoffs === "playoffs"
+						? careerStatsPlayoffs
+						: playoffs === "combined"
+							? careerStatsCombined
+							: careerStats;
+				if (!totals) {
+					throw new Error("Should never happen");
+				}
+
+				// Copy some over from first/last stats entry
+				const firstStats = stats[0];
+				const lastStats = stats.at(-1);
+				const useStatsSeasons = stats.length > 1 || firstStats?.abbrev !== "FA";
+
+				return {
+					...p,
+					ratings: maxBy(ratings, (row) => row.ovr) ?? last(ratings),
+					stats: {
+						...totals,
+						seasonStart: useStatsSeasons
+							? firstStats?.season
+							: ratings[0].season,
+						seasonEnd: useStatsSeasons
+							? lastStats?.season
+							: last(ratings).season,
+						abbrev: lastStats?.abbrev,
+						tid: lastStats?.tid,
+						jerseyNumber: lastStats?.jerseyNumber,
+					},
+				};
+			},
+		);
+	}
+
+	const players = await idb.getCopies.playersPlus(playersAll, {
+		...options,
+		season,
 	});
 
 	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
 	// For the current season, use the current abbrev (including FA), not the last stats abbrev
 	// For other seasons, use the stats abbrev for filtering
 	if (g.get("season") === season) {
-		if (tid !== undefined) {
-			players = players.filter((p) => p.tid === tid);
-		}
-
-		for (const p of players) {
-			p.stats.abbrev = p.abbrev;
-			p.stats.tid = p.tid;
-		}
-	} else if (tid !== undefined && seasonRange === undefined) {
-		players = players.filter((p) => p.stats.tid === tid);
+		return players
+			.filter((p) => tid === undefined || p.tid === tid)
+			.map((p) => ({
+				...p,
+				stats: {
+					...p.stats,
+					abbrev: p.abbrev,
+					tid: p.tid,
+				},
+			}));
 	}
 
-	if (__SPORT === "baseball") {
-		for (const p of players) {
-			buffOvrDH(p);
-		}
+	if (tid !== undefined) {
+		return players.filter((p) => p.stats?.tid === tid);
 	}
 
 	return players;
 };
 
-const unique = (array: string[]) => Array.from(new Set(array));
+const unique = <T>(array: T[]) => Array.from(new Set(array));
 
 export const advancedPlayerSearch = async ({
 	seasonStart,
@@ -100,28 +160,29 @@ export const advancedPlayerSearch = async ({
 	filters,
 	showStatTypes,
 }: ViewInput<"advancedPlayerSearch">) => {
-	let extraAttrs: string[] = [];
-	let extraRatings: string[] = ["season", "pos", "ovr", "pot"];
-	let extraStats: string[] = ["season"];
+	// Keys come from the filter definitions in allFilters, which are all valid attrs/ratings/stats
+	let extraAttrs: PlayerAttr[] = [];
+	let extraRatings: PlayerRatingAttr[] = ["season", "pos", "ovr", "pot"];
+	let extraStats: PlayerStatAttr[] = ["season"];
 	for (const filter of filters) {
 		if (filter.category === "ratings") {
-			extraRatings.push(filter.key);
+			extraRatings.push(filter.key as PlayerRatingAttr);
 		} else if (filter.category === "bio") {
 			const filterInfo = allFilters[filter.category]!.options[filter.key];
 			if (filterInfo && filterInfo.workerFieldOverride !== null) {
 				const key = filterInfo.workerFieldOverride ?? filter.key;
-				extraAttrs.push(key);
+				extraAttrs.push(key as PlayerAttr);
 			}
 		} else {
 			// Must be stats
-			extraStats.push(filter.key);
+			extraStats.push(filter.key as PlayerStatAttr);
 		}
 	}
 
 	const more = getExtraStatTypeKeys(showStatTypes, true);
-	extraAttrs.push(...more.attrs);
-	extraRatings.push(...more.ratings);
-	extraStats.push(...more.stats);
+	extraAttrs.push(...(more.attrs as PlayerAttr[]));
+	extraRatings.push(...(more.ratings as PlayerRatingAttr[]));
+	extraStats.push(...(more.stats as PlayerStatAttr[]));
 
 	extraAttrs = unique(extraAttrs);
 	extraRatings = unique(extraRatings);
@@ -133,7 +194,7 @@ export const advancedPlayerSearch = async ({
 		seasonRange = [seasonStart, seasonEnd];
 	}
 
-	const matchedPlayers = [];
+	const matchedPlayers: Awaited<ReturnType<typeof getPlayers>>[number][] = [];
 
 	// Special case for tid
 	const abbrevFilter = filters.find(
@@ -185,7 +246,7 @@ export const advancedPlayerSearch = async ({
 	)) {
 		const playersPlus = await getPlayers(
 			// Math.min is for draft prospects in future seasons
-			seasonRange ? undefined : Math.min(season, seasonEnd),
+			Math.min(season, seasonEnd),
 			extraAttrs,
 			extraRatings,
 			extraStats,
@@ -197,37 +258,9 @@ export const advancedPlayerSearch = async ({
 		);
 
 		for (const p of playersPlus) {
-			// Fix stats vs careerStats
-			let obj:
-				| "careerStatsPlayoffs"
-				| "careerStatsCombined"
-				| "careerStats"
-				| "stats";
-			if (seasonRange) {
-				if (playoffs === "playoffs") {
-					obj = "careerStatsPlayoffs";
-				} else if (playoffs === "combined") {
-					obj = "careerStatsCombined";
-				} else {
-					obj = "careerStats";
-				}
-
-				// Copy some over from first/last stats entry
-				if (p.stats.length > 1 || p.stats[0]?.abbrev !== "FA") {
-					p[obj].seasonStart = p.stats[0]?.season;
-					p[obj].seasonEnd = p.stats.at(-1)?.season;
-				} else {
-					p[obj].seasonStart = p.ratings[0]?.season;
-					p[obj].seasonEnd = p.ratings.at(-1)?.season;
-				}
-				p[obj].abbrev = p.stats.at(-1)?.abbrev;
-				p[obj].tid = p.stats.at(-1)?.tid;
-				p[obj].jerseyNumber = p.stats.at(-1)?.jerseyNumber;
-				p.ratings = maxBy(p.ratings, (row) => row.ovr);
-			} else {
-				obj = "stats";
+			if (__SPORT === "baseball") {
+				buffOvrDH(p);
 			}
-			p.stats = p[obj];
 
 			const matchesAll = filters.every((filter) => {
 				const filterInfo = allFilters[filter.category]!.options[filter.key];

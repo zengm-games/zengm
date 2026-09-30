@@ -56,7 +56,7 @@ const updateDraftTeamHistory = async (
 	const players = [];
 	for (const p of playersAll) {
 		const currentPr = last(p.ratings);
-		const peakPr: any = maxBy(p.ratings, "ovr");
+		const peakPr = maxBy(p.ratings, "ovr")!;
 
 		let preLotteryRank: number | undefined;
 		let lotteryChange: number | undefined;

@@ -46,7 +46,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	const summaryStat = bySport({
 		baseball: "war",

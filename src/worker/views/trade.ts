@@ -113,14 +113,14 @@ const updateTrade = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		"watch",
 		"untradable",
 		"jerseyNumber",
-	];
-	const ratings = ["ovr", "pot", "skills", "pos"];
+	] as const;
+	const ratings = ["ovr", "pot", "skills", "pos"] as const;
 	const stats = bySport({
 		baseball: ["gp", "keyStats", "war"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 	const userRoster = addFirstNameShort(
 		await idb.getCopies.playersPlus(userRosterAll, {
 			attrs,

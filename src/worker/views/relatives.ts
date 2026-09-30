@@ -113,7 +113,7 @@ const updatePlayers = async (
 			],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 
 		let playersAll: Player[] = [];
 		const generations: number[] = [];

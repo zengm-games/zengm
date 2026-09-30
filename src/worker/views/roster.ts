@@ -133,7 +133,7 @@ const updateRoster = async (
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 
 		const editable =
 			inputs.season === g.get("season") &&
@@ -185,6 +185,7 @@ const updateRoster = async (
 			return returnValue;
 		}
 
+		// tid and draft are used for checking if a player can be released without paying his salary
 		const attrs = [
 			"pid",
 			"tid",
@@ -205,10 +206,24 @@ const updateRoster = async (
 			"mood",
 			"value",
 			"awards",
-		]; // tid and draft are used for checking if a player can be released without paying his salary
+		] as const;
 
-		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
-		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber", "min", "gp"];
+		const ratings = [
+			"ovr",
+			"pot",
+			"dovr",
+			"dpot",
+			"skills",
+			"pos",
+			"ovrs",
+		] as const;
+		const stats2 = [
+			...stats,
+			"yearsWithTeam",
+			"jerseyNumber",
+			"min",
+			"gp",
+		] as const;
 
 		let players: any[];
 		let payroll: number | undefined;

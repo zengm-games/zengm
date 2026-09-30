@@ -30,7 +30,7 @@ const stats = bySport({
 	basketball: ["pts", "trb", "ast"],
 	football: ["keyStats"],
 	hockey: ["keyStats"],
-});
+} as const);
 
 const getPlayerInfo = async (
 	{ pid, tid, name }: AllStarPlayer,

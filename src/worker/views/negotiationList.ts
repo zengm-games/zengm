@@ -17,7 +17,7 @@ export const getNegotiationPids = async (tid: number) => {
 };
 
 const updateNegotiationList = async () => {
-	const stats = ["yearsWithTeam", ...freeAgentStats];
+	const stats = ["yearsWithTeam", ...freeAgentStats] as const;
 
 	const userTid = g.get("userTid");
 

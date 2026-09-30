@@ -39,7 +39,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			],
 			football: ["keyStats", "av"],
 			hockey: ["keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 		const playersAll = await idb.getCopies.players(
 			{
 				pids,

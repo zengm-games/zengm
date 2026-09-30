@@ -12,7 +12,7 @@ export const extraStats = bySport({
 	basketball: [],
 	football: [],
 	hockey: [],
-});
+} as const);
 
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
@@ -35,7 +35,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			],
 			football: ["keyStats", "av"],
 			hockey: ["keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 		const playersAll = await idb.getCopies.players(
 			{
 				hof: true,

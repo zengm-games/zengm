@@ -2375,7 +2375,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	// Take the pids and dpids in each offer and get the info needed to display the offer
 	return Promise.all(

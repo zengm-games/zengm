@@ -14,7 +14,7 @@ const updateUpcomingFreeAgents = async (
 		basketball: ["min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	const showActualFreeAgents =
 		g.get("phase") === PHASE.RESIGN_PLAYERS &&

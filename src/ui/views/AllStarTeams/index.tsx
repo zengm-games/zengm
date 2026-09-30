@@ -34,7 +34,7 @@ const PlayersTable = ({
 	players: View<"allStarTeams">["teams"][number];
 	remaining?: View<"allStarTeams">["remaining"];
 	season: number;
-	stats: string[];
+	stats: readonly string[];
 	userTids: number[];
 	usersTurn?: boolean;
 }) => {

@@ -24,7 +24,7 @@ const updateDraftTeamHistory = async (
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 	const playersAll2 = await idb.getCopies.players(
 		{
 			filter,

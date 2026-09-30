@@ -220,13 +220,13 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 		const leaderStats = bySport({
 			baseball: ["hr", "h", "w"],
 			basketball: ["pts", "trb", "ast"],
 			football: ["pssYds", "rusYds", "recYds"],
 			hockey: ["g", "a", "pts"],
-		});
+		} as const);
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
 			Infinity,

@@ -127,7 +127,7 @@ const SEASON_STATS_KEYS = bySport({
 		"defFmbFrc",
 	],
 	hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
-});
+} as const);
 
 export const processTeam = async (
 	teamInput: {

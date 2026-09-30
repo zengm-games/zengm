@@ -29,7 +29,7 @@ export const formatPlayersWatchList = async (
 		],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	const players = addFirstNameShort(
 		await idb.getCopies.playersPlus(playersAll, {

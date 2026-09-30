@@ -53,7 +53,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		basketball: "ws",
 		football: "av",
 		hockey: "ps",
-	});
+	} as const);
 
 	let playersAll;
 

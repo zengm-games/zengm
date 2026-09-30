@@ -28,23 +28,29 @@ const updatePlayers = async (
 			hockey: ["keyStats"],
 		} as const);
 
-		const players = addFirstNameShort(
+		const playersWithoutMood = addFirstNameShort(
 			await getPlayers(
 				inputs.season,
 				inputs.abbrev,
-				["born", "college", "hgt", "weight", "draft", "experience"],
+				// name is for the mood popover
+				["born", "college", "hgt", "weight", "draft", "experience", "name"],
 				["ovr", "pot"],
 				[...stats, "jerseyNumber"],
 				inputs.tid,
 			),
 		);
 
-		for (const p of players) {
-			if (p.tid !== PLAYER.RETIRED) {
-				const p2 = await idb.cache.players.get(p.pid);
-				if (p2) {
-					p.mood = await player.moodInfos(p2);
-				}
+		// No mood for retired players
+		const players = [];
+		for (const p of playersWithoutMood) {
+			const p2 =
+				p.tid !== PLAYER.RETIRED
+					? await idb.cache.players.get(p.pid)
+					: undefined;
+			if (p2) {
+				players.push({ ...p, mood: await player.moodInfos(p2) });
+			} else {
+				players.push(p);
 			}
 		}
 

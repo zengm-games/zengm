@@ -1,4 +1,9 @@
-import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common/constants.ts";
+import {
+	getPlayerStatsTableStats,
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
@@ -65,7 +70,7 @@ const updatePlayers = async (
 
 		players = await idb.getCopies.playersPlus(players, {
 			ratings: ["skills"],
-			stats,
+			stats: getPlayerStatsTableStats(stats),
 			season: inputs.season,
 			statType,
 		});

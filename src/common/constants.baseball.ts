@@ -1,4 +1,10 @@
-import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
+import type {
+	CompositeWeights,
+	Conf,
+	Div,
+	NonEmptyArray,
+	PlayerStatsTables,
+} from "./types.ts";
 import type { Position, RatingKey } from "./types.baseball.ts";
 
 export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -350,7 +356,7 @@ export const PLAYER_STATS_TABLES = {
 			"gmscMax",
 		],
 	},
-};
+} satisfies PlayerStatsTables;
 
 export const TEAM_STATS_TABLES = {
 	batting: {

@@ -3,6 +3,7 @@ import {
 	PLAYER,
 	PLAYER_STATS_TABLES,
 	RATINGS,
+	getPlayerStatsTableStats,
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
@@ -70,7 +71,9 @@ const getPlayerStats = async (
 		);
 	}
 
-	const statKeys = statsTable?.stats ?? ["gp"];
+	const statKeys = statsTable
+		? getPlayerStatsTableStats(statsTable.stats)
+		: (["gp"] as const);
 
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [

@@ -2,6 +2,7 @@ import {
 	PLAYER,
 	PLAYER_STATS_TABLES,
 	RATINGS,
+	getPlayerStatsTableStats,
 	PLAYER_SUMMARY,
 	DEFAULT_JERSEY,
 } from "../../common/constants.ts";
@@ -14,6 +15,7 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerAwardBuiltIn,
+	PlayerStatAttr,
 	PlayerAwardSimple,
 	UpdateEvents,
 	ViewInput,
@@ -29,12 +31,14 @@ import { getGroupPrefix } from "../core/awards/prefixes.ts";
 import type { LeagueUrlParts } from "../../ui/router/types.ts";
 
 export const getPlayerProfileStats = () => {
-	const stats = [];
+	const stats = new Set<PlayerStatAttr>();
 	for (const info of Object.values(PLAYER_STATS_TABLES)) {
-		stats.push(...info.stats);
+		for (const stat of getPlayerStatsTableStats(info.stats)) {
+			stats.add(stat);
+		}
 	}
 
-	return Array.from(new Set(stats));
+	return Array.from(stats);
 };
 
 export type PlayerAwardBuiltInWithPrefix = PlayerAwardBuiltIn & {

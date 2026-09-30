@@ -1,4 +1,8 @@
-import { PLAYER_STATS_TABLES, RATINGS } from "./constants.ts";
+import {
+	getPlayerStatsTableStats,
+	PLAYER_STATS_TABLES,
+	RATINGS,
+} from "./constants.ts";
 import type { Col } from "../ui/components/DataTable/index.tsx";
 
 type AdvancedPlayerSearchField = {
@@ -254,12 +258,7 @@ export const getStats = (statTypePlus: string) => {
 			throw new Error(`Invalid statType: "${statTypePlus}"`);
 		}
 
-		// Remove pos for fielding stats
-		if (__SPORT === "baseball") {
-			return statsTable.stats.filter((stat) => stat !== "pos");
-		}
-
-		return [...statsTable.stats];
+		return getPlayerStatsTableStats(statsTable.stats);
 	}
 };
 

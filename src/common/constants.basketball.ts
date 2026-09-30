@@ -1,4 +1,10 @@
-import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
+import type {
+	CompositeWeights,
+	Conf,
+	Div,
+	NonEmptyArray,
+	PlayerStatsTables,
+} from "./types.ts";
 import type { RatingKey } from "./types.basketball.ts";
 
 export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -318,7 +324,7 @@ export const PLAYER_STATS_TABLES = {
 			"gmscMax",
 		],
 	},
-};
+} satisfies PlayerStatsTables;
 
 export const TEAM_STATS_TABLES = {
 	team: {

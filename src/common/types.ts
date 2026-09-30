@@ -1401,6 +1401,19 @@ type PlayerStatsPlus = Omit<
 	PlayerStatsPlusCommon;
 export type PlayerStatAttr = keyof PlayerStatsPlus;
 
+export type PlayerStatsTables = Record<
+	string,
+	{
+		name: string;
+		onlyShowIf?: string[];
+
+		// "pos" is not a real stat, it's a column in baseball fielding tables filled in by expandFieldingStats
+		stats: (PlayerStatAttr | "pos")[];
+
+		superCols?: SuperCol[];
+	}
+>;
+
 export type PlayerSeasonType = "regularSeason" | "playoffs" | "combined";
 
 export type PlayersPlusOptions = {
@@ -2025,6 +2038,7 @@ import type {
 } from "./types.hockey.ts";
 import type { TIEBREAKERS } from "./constants.ts";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
+import type { SuperCol } from "../ui/components/DataTable/index.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
 import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";
 import type {

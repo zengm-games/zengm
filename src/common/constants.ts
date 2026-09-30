@@ -10,6 +10,8 @@ import type {
 	DraftType,
 	MoodTrait,
 	Award,
+	PlayerStatAttr,
+	PlayerStatsTables,
 } from "./types.ts";
 
 export const ACCOUNT_API_URL =
@@ -144,19 +146,19 @@ export const PLAYER_SUMMARY = bySport<{
 	hockey: constantsHockey.PLAYER_SUMMARY,
 });
 
-export const PLAYER_STATS_TABLES = bySport<{
-	[key: string]: {
-		name: string;
-		onlyShowIf?: string[];
-		stats: string[];
-		superCols?: SuperCol[];
-	};
-}>({
+export const PLAYER_STATS_TABLES = bySport<PlayerStatsTables>({
 	baseball: constantsBaseball.PLAYER_STATS_TABLES,
 	basketball: constantsBasketball.PLAYER_STATS_TABLES,
 	football: constantsFootball.PLAYER_STATS_TABLES,
 	hockey: constantsHockey.PLAYER_STATS_TABLES,
 });
+
+// Stats from PLAYER_STATS_TABLES, without "pos" which is only a column in the table and not an actual stat
+export const getPlayerStatsTableStats = (
+	stats: PlayerStatsTables[string]["stats"],
+) => {
+	return stats.filter((stat): stat is PlayerStatAttr => stat !== "pos");
+};
 
 export const RATINGS = bySport<any[]>({
 	baseball: constantsBaseball.RATINGS,

@@ -3129,14 +3129,27 @@ const ratingsStatsPopoverInfo = async ({
 		],
 		football: ["keyStats"],
 		hockey: ["keyStatsWithGoalieGP"],
-	});
+	} as const);
 
-	const attrs = ["name", "jerseyNumber", "tid", "age", "note"];
-	const ratings = ["pos", "ovr", "pot", "season", "tid", ...RATINGS];
-	if (!local.exhibitionGamePlayers && !eightyTwoZeroDraftPlayer) {
-		attrs.push("abbrev");
-		ratings.push("abbrev");
-	}
+	const includeAbbrev =
+		!local.exhibitionGamePlayers && !eightyTwoZeroDraftPlayer;
+	const attrs = [
+		"name",
+		"jerseyNumber",
+		"tid",
+		"age",
+		"note",
+		...(includeAbbrev ? (["abbrev"] as const) : []),
+	] as const;
+	const ratings = [
+		"pos",
+		"ovr",
+		"pot",
+		"season",
+		"tid",
+		...RATINGS,
+		...(includeAbbrev ? (["abbrev"] as const) : []),
+	] as const;
 
 	const p2 = await idb.getCopy.playersPlus(p, {
 		attrs,

@@ -7,6 +7,7 @@ import {
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
+	PlayerRatingAttr,
 	PlayInTournament,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
@@ -24,7 +25,7 @@ export const extraRatings = bySport({
 	basketball: [],
 	football: ["ovrs", "pots"],
 	hockey: ["ovrs", "pots"],
-});
+} as const);
 
 export const getActivePlayoffTids = async () => {
 	const tids = new Set<number>();
@@ -127,7 +128,7 @@ export const getPlayers = async (
 	season: number,
 	abbrev: string,
 	attrs: string[],
-	ratings: string[],
+	ratings: Readonly<PlayerRatingAttr[]>,
 	stats: string[],
 	tid: number | undefined,
 ) => {
@@ -278,7 +279,7 @@ const updatePlayers = async (
 				"diq",
 				"glk",
 			],
-		});
+		} as const);
 
 		const players = addFirstNameShort(
 			await getPlayers(

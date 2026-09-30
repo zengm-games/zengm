@@ -10,6 +10,7 @@ import type {
 	DraftType,
 	MoodTrait,
 	Award,
+	PlayerRatingKey,
 	PlayerStatAttr,
 	PlayerStatsTables,
 } from "./types.ts";
@@ -160,7 +161,7 @@ export const getPlayerStatsTableStats = (
 	return stats.filter((stat): stat is PlayerStatAttr => stat !== "pos");
 };
 
-export const RATINGS = bySport<any[]>({
+export const RATINGS = bySport<PlayerRatingKey[]>({
 	baseball: constantsBaseball.RATINGS,
 	basketball: constantsBasketball.RATINGS,
 	football: constantsFootball.RATINGS,

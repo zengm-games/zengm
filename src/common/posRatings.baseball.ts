@@ -1,4 +1,6 @@
-const posRatings = (pos: string) => {
+import type { RatingKey } from "./types.baseball.ts";
+
+const posRatings = (pos: string): RatingKey[] => {
 	if (pos === "SP" || pos === "RP" || pos === "P") {
 		return ["ppw", "ctl", "mov", "endu"];
 	}

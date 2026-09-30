@@ -41,7 +41,8 @@ const getPlayerStats = async (
 
 	const statsTable = getStatsTableByType(statTypePlus);
 
-	const ratings = statTypePlus === "ratings" ? ["ovr", "pot", ...RATINGS] : [];
+	const ratings =
+		statTypePlus === "ratings" ? (["ovr", "pot", ...RATINGS] as const) : [];
 	let statType: PlayerStatType;
 	if (__SPORT === "basketball") {
 		if (statTypePlus === "totals") {

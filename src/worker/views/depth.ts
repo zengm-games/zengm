@@ -2,7 +2,11 @@ import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { posRatings } from "../../common/posRatings.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type {
+	PlayerRatingKey,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import {
 	NUM_LINES,
@@ -200,12 +204,12 @@ const updateDepth = async (
 		}
 
 		const editable = tid === g.get("userTid") && !g.get("spectator");
-		const ratings = [
+		const ratings: PlayerRatingKey[] = [
 			...(__SPORT === "baseball"
 				? pos2 === "P"
 					? []
-					: ["hgt", "spd"]
-				: ["hgt", "stre", "spd", "endu"]),
+					: (["hgt", "spd"] as const)
+				: (["hgt", "stre", "spd", "endu"] as const)),
 			...posRatings(pos2),
 		];
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);

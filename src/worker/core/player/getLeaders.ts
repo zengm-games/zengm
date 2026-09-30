@@ -19,7 +19,7 @@ const getLeaders = async (pRaw: Player) => {
 	const currentPhase = g.get("phase");
 
 	const stats = getPlayerProfileStats();
-	const ratings = ["ovr", "pot", ...RATINGS];
+	const ratings = ["ovr", "pot", ...RATINGS] as const;
 
 	const leaders: Record<
 		string,

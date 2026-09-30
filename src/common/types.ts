@@ -1317,9 +1317,17 @@ type PlayerAllKeys = {
 	[K in PlayerKey]: Player[K];
 };
 
+// ratings and stats are excluded because they are handled separately by playersPlus, not as attrs
 type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
 	PlayerAllKeys,
-	"contract" | "diedYear" | "draft" | "hof" | "jerseyNumber" | "watch"
+	| "contract"
+	| "diedYear"
+	| "draft"
+	| "hof"
+	| "jerseyNumber"
+	| "ratings"
+	| "stats"
+	| "watch"
 > & {
 	abbrev: string;
 	age: number;
@@ -1356,10 +1364,14 @@ type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
 };
 export type PlayerAttr = keyof PlayerAttrsPlus;
 
-type PlayerRatingsPlus = Record<
-	RatingKeyBaseball | RatingKeyBasketball | RatingKeyFootball | RatingKeyHockey,
-	number
-> & {
+// Rating keys from all sports, like RATINGS
+export type PlayerRatingKey =
+	| RatingKeyBaseball
+	| RatingKeyBasketball
+	| RatingKeyFootball
+	| RatingKeyHockey;
+
+type PlayerRatingsPlus = Record<PlayerRatingKey, number> & {
 	abbrev: string;
 	age: number;
 	dovr: number;

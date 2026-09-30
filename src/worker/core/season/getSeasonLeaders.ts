@@ -91,7 +91,7 @@ const calculateSeasonLeaders = async (
 	const stats = Array.from(
 		new Set([...getPlayerProfileStats(), ...requirementsStats]),
 	);
-	const ratings = ["ovr", "pot", ...RATINGS];
+	const ratings = ["ovr", "pot", ...RATINGS] as const;
 
 	// Can skip playoffs if it hasn't happened yet, and combined would be redundant with regularSeason too
 	const regularSeasonOnly = seasonInProgress && currentPhase < PHASE.PLAYOFFS;

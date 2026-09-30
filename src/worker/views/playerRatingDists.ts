@@ -37,7 +37,7 @@ const updatePlayers = async (
 			basketball: [],
 			football: ["ovrs", "pots"],
 			hockey: ["ovrs", "pots"],
-		});
+		} as const);
 
 		players = await idb.getCopies.playersPlus(players, {
 			ratings: ["ovr", "pot", ...extraRatings, ...RATINGS],

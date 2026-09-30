@@ -72,10 +72,12 @@ export const addPowerRankingsStuffToTeams = async <
 				);
 			}
 
-			const ratings = ["ovr", "pos", "ovrs"];
-			if (__SPORT === "basketball") {
-				ratings.push(...RATINGS);
-			}
+			const ratings = [
+				"ovr",
+				"pos",
+				"ovrs",
+				...(__SPORT === "basketball" ? RATINGS : []),
+			] as const;
 
 			teamPlayers = await idb.getCopies.playersPlus(teamPlayers, {
 				attrs: ["tid", "injury", "value", "age", "pid"],

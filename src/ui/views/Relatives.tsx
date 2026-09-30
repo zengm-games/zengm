@@ -7,6 +7,7 @@ import { frivolitiesMenu } from "./Frivolities.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { useLocal } from "../util/local.ts";
+import { last } from "../../common/utils.ts";
 
 const Relatives = ({ pid, players, stats }: View<"relatives">) => {
 	const target =
@@ -95,7 +96,7 @@ const Relatives = ({ pid, players, stats }: View<"relatives">) => {
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
 				}),
-				p.ratings.at(-1)?.pos,
+				last(p.ratings).pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
 				<a

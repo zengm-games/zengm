@@ -1537,9 +1537,10 @@ type PlayerRatingsPart<
 	Ratings extends Readonly<PlayerRatingAttr[]>,
 	Season extends number | undefined,
 > = {
+	// Never empty, because playersPlus filters out players with no ratings rows
 	ratings: Season extends number
 		? Pick<PlayerRatingsPlus, Ratings[number]>
-		: Pick<PlayerRatingsPlus, Ratings[number]>[];
+		: NonEmptyArray<Pick<PlayerRatingsPlus, Ratings[number]>>;
 };
 
 // For a single season, stats can be undefined if showRookies kept a player with no stats rows. showNoStats prevents that by adding an empty row
@@ -1606,11 +1607,14 @@ type PlayerFilteredInner<
 	: [Attrs] extends [Readonly<PlayerAttr[]>]
 		? PlayerAttrsPart<Attrs, Season, SeasonRange>
 		: Partial<PlayerAttrsPart<NonNullable<Attrs>, Season, SeasonRange>>) &
+	// Empty ratings array is the same as not requesting ratings
 	([Ratings] extends [undefined]
 		? unknown
-		: [Ratings] extends [Readonly<PlayerRatingAttr[]>]
-			? PlayerRatingsPart<Ratings, Season>
-			: Partial<PlayerRatingsPart<NonNullable<Ratings>, Season>>) &
+		: [NonNullable<Ratings>[number]] extends [never]
+			? unknown
+			: [Ratings] extends [Readonly<PlayerRatingAttr[]>]
+				? PlayerRatingsPart<Ratings, Season>
+				: Partial<PlayerRatingsPart<NonNullable<Ratings>, Season>>) &
 	([Stats] extends [undefined]
 		? unknown
 		: [Stats] extends [Readonly<PlayerStatAttr[]>]

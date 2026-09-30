@@ -6,8 +6,10 @@ import { player } from "../../core/index.ts";
 import { idb } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import { last } from "../../../common/utils.ts";
 import type {
 	Player,
+	NonEmptyArray,
 	PlayerFiltered,
 	PlayerSeasonType,
 	PlayerStatMax,
@@ -701,10 +703,10 @@ describe("TypeScript", () => {
 				Exclude<typeof pf, undefined>,
 				{
 					tid: number;
-					ratings: {
+					ratings: NonEmptyArray<{
 						season: number;
 						ovr: number;
-					}[];
+					}>;
 					stats: StatsRow[];
 					careerStats: CareerStatsRow;
 				}
@@ -812,7 +814,7 @@ describe("TypeScript", () => {
 		typeAssert<
 			IsExact<
 				Exclude<typeof pf, undefined>["ratings"],
-				{ ovr: number } | { ovr: number }[]
+				{ ovr: number } | NonEmptyArray<{ ovr: number }>
 			>
 		>(true);
 		typeAssert<
@@ -1054,5 +1056,33 @@ describe("TypeScript", () => {
 				}>
 			>
 		>(true);
+	});
+
+	test("Ratings array is never empty, so the last row is always defined", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			ratings: ["season", "ovr"],
+		});
+
+		if (!pf) {
+			throw new Error("Missing player");
+		}
+
+		const lastRatings = last(pf.ratings);
+		typeAssert<IsExact<typeof lastRatings, { season: number; ovr: number }>>(
+			true,
+		);
+	});
+
+	test("Empty ratings array is the same as not requesting ratings", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			attrs: ["pid"],
+			ratings: [],
+			season: 2012,
+		});
+
+		assert(pf);
+		assert(!Object.hasOwn(pf, "ratings"));
+
+		typeAssert<IsExact<Exclude<typeof pf, undefined>, { pid: number }>>(true);
 	});
 });

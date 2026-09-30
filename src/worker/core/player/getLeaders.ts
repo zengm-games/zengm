@@ -52,7 +52,7 @@ const getLeaders = async (pRaw: Player) => {
 			// Could be a season where player is a draft prospect or free agent
 			continue;
 		}
-		splitRegularSeasonPlayoffsCombined(p);
+		const statsByType = splitRegularSeasonPlayoffsCombined(p.stats);
 
 		const leadersCache = await getSeasonLeaders(season);
 		if (!leadersCache) {
@@ -68,7 +68,10 @@ const getLeaders = async (pRaw: Player) => {
 		};
 
 		// Oldest player must have been on a team this season
-		if ((p.regularSeason || p.playoffs) && p.age === leadersCache.age) {
+		if (
+			(statsByType.regularSeason || statsByType.playoffs) &&
+			p.age === leadersCache.age
+		) {
 			leader.attrs.add("age");
 		}
 
@@ -84,13 +87,12 @@ const getLeaders = async (pRaw: Player) => {
 
 		for (const type of ["regularSeason", "playoffs", "combined"] as const) {
 			const leadersCacheType = leadersCache[type];
-			if (leadersCacheType && p[type]) {
+			const playerStats = statsByType[type];
+			if (leadersCacheType && playerStats) {
 				for (const stat of stats) {
-					let value;
-					if (player.stats.max.includes(stat) && p[type][stat]) {
-						value = p[type][stat][0];
-					} else {
-						value = p[type][stat];
+					let value = playerStats[stat];
+					if (player.stats.max.includes(stat) && Array.isArray(value)) {
+						value = value[0];
 					}
 
 					if (value === leadersCacheType[stat]) {

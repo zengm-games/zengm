@@ -70,7 +70,7 @@ const Relatives = ({ pid, players, stats }: View<"relatives">) => {
 	]);
 
 	const rows: DataTableRow[] = players.map((p) => {
-		const relationArray: string[] = [];
+		const relationArray: (string | undefined)[] = [];
 		if (target) {
 			relationArray.push(p.relationText);
 		}
@@ -95,7 +95,7 @@ const Relatives = ({ pid, players, stats }: View<"relatives">) => {
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
 				}),
-				p.ratings.at(-1).pos,
+				p.ratings.at(-1)?.pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
 				<a

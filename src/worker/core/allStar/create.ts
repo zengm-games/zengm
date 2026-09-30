@@ -20,7 +20,31 @@ const POS_FACTOR: Record<string, number> = {
 };
 // Football players from playersPlus, with currentStats added in create. pos is never set, it's only here because these functions came from the old awards system where it was set
 type PlayerWithCurrentStats = {
-	currentStats: Record<string, number>;
+	currentStats: Record<
+		| "defSk"
+		| "defTckLoss"
+		| "defTckAst"
+		| "defTckSolo"
+		| "defFmbFrc"
+		| "defFmbRec"
+		| "defInt"
+		| "defPssDef"
+		| "rusYds"
+		| "rusTD"
+		| "fmbLost"
+		| "recYds"
+		| "recTD"
+		| "pssYds"
+		| "pssTD"
+		| "pssInt"
+		| "pba"
+		| "rba"
+		| "pbw"
+		| "rbw"
+		| "prTD"
+		| "krTD",
+		number
+	>;
 	pos?: string;
 };
 
@@ -162,17 +186,10 @@ const create = async (conditions: Conditions) => {
 	const score = (p: (typeof players)[number]) =>
 		bySport({
 			baseball: p.stats.war,
-			football: mvpScore(p),
+			football: mvpScore({ currentStats: p.stats }),
 			basketball: 2.5 * p.stats.ewa + p.stats.ws,
 			hockey: p.stats.ps,
 		});
-
-	if (__SPORT === "football") {
-		// For mvpScore
-		for (const p of players) {
-			p.currentStats = p.stats;
-		}
-	}
 
 	const sortedPlayers = orderBy(
 		players,

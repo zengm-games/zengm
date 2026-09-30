@@ -52,18 +52,25 @@ const getPlayerInfo = async (
 		mergeStats: "totOnly",
 	});
 
-	// Use values at time of draft
-	p2.tid = tid;
-	p2.name = name;
-	p2.abbrev =
-		(await getTeamInfoBySeason(tid, season))?.abbrev ??
-		helpers.getAbbrev(p.tid);
-	p2.bestPos =
-		(__SPORT === "baseball" && p2.stats.gpF
-			? getPosByGpF(p2.stats.gpF)
-			: undefined) ?? p2.ratings.pos;
+	if (!p2) {
+		return;
+	}
 
-	return p2;
+	return {
+		...p2,
+
+		// Use values at time of draft
+		tid,
+		name,
+		abbrev:
+			(await getTeamInfoBySeason(tid, season))?.abbrev ??
+			helpers.getAbbrev(p.tid),
+
+		bestPos:
+			(__SPORT === "baseball" && p2.stats.gpF
+				? getPosByGpF(p2.stats.gpF)
+				: undefined) ?? p2.ratings.pos,
+	};
 };
 
 const augment = async (allStars: AllStars) => {

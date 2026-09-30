@@ -1940,9 +1940,9 @@ const getNegotiationProps = async (pid: number) => {
 	}
 
 	const p2 = await idb.cache.players.get(negotiation.pid);
-	let p;
+	let pFiltered;
 	if (p2) {
-		p = await idb.getCopy.playersPlus(p2, {
+		pFiltered = await idb.getCopy.playersPlus(p2, {
 			attrs: ["pid", "name", "age", "contract", "face", "imgURL", "watch"],
 			ratings: ["ovr", "pot"],
 			season: g.get("season"),
@@ -1953,12 +1953,15 @@ const getNegotiationProps = async (pid: number) => {
 	}
 
 	// This can happen if a negotiation is somehow started with a retired player, or a player was deleted
-	if (!p || !p2) {
+	if (!pFiltered || !p2) {
 		await contractNegotiation.cancel(negotiation.pid);
 		return "Invalid negotiation. Please try again.";
 	}
 
-	p.mood = await player.moodInfos(p2);
+	const p = {
+		...pFiltered,
+		mood: await player.moodInfos(p2),
+	};
 
 	const contractOptions = await generateContractOptions(
 		negotiation,

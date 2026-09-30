@@ -172,9 +172,9 @@ export const getHistory = async (
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
-	let players = await idb.getCopies.playersPlus(playersAll, {
+	const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"firstName",
@@ -185,16 +185,10 @@ export const getHistory = async (
 			"watch",
 			"jerseyNumber",
 			"awards",
-			"retirableJerseyNumbers",
 		],
 		ratings: ["pos", "season"],
 		stats: ["season", "abbrev", ...stats],
 	});
-
-	// Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
-	players = players.filter((p) => p.careerStats.gp > 0);
-
-	players = addFirstNameShort(players);
 
 	const champSeasons = new Set(
 		teamHistory.history
@@ -202,27 +196,33 @@ export const getHistory = async (
 			.map((row) => row.season),
 	);
 
-	for (const p of players) {
-		p.lastYr = "";
-		if (p.stats.length > 0) {
-			p.lastYr = p.stats.at(-1).season.toString();
+	const players = addFirstNameShort(
+		// Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
+		playersFiltered.filter((p) => p.careerStats.gp > 0),
+	).map(({ awards, ratings, stats: playerStats, ...p }) => {
+		let lastYr = "";
+		const lastStats = playerStats.at(-1);
+		if (lastStats) {
+			lastYr = lastStats.season.toString();
 			if (gmHistory) {
-				p.lastYr += ` ${p.stats.at(-1).abbrev}`;
+				lastYr += ` ${lastStats.abbrev}`;
 			}
 		}
 
-		p.numRings = p.awards.filter(
-			(award: Player["awards"][number]) =>
+		const numRings = awards.filter(
+			(award) =>
 				award.type === "Won Championship" && champSeasons.has(award.season),
 		).length;
-		delete p.awards;
 
-		// undefined as 2nd argument because we have already filtered stats before getting here
-		p.pos = getBestPos(p, undefined);
+		return {
+			...p,
+			lastYr,
+			numRings,
 
-		delete p.ratings;
-		delete p.stats;
-	}
+			// undefined as 2nd argument because we have already filtered stats before getting here
+			pos: getBestPos({ ratings, stats: playerStats }, undefined),
+		};
+	});
 
 	return {
 		...teamHistory,
@@ -303,6 +303,10 @@ const updateTeamHistory = async (
 			}
 		}
 
+		const retirableJerseyNumbersByPid = new Map<
+			number,
+			Record<string, string[]>
+		>();
 		const players = (
 			await idb.getCopies.players({
 				statsTid: inputs.tid,
@@ -322,19 +326,27 @@ const updateTeamHistory = async (
 				}
 			}
 
+			retirableJerseyNumbersByPid.set(p.pid, retirableJerseyNumbers);
+
 			return {
 				...p,
 				stats,
-				retirableJerseyNumbers,
 			};
 		});
 
 		const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
-		const history = await getHistory(
+		const historyTemp = await getHistory(
 			teamSeasons,
 			players,
 			playoffsByConfBySeason,
 		);
+		const history = {
+			...historyTemp,
+			players: historyTemp.players.map((p) => ({
+				...p,
+				retirableJerseyNumbers: retirableJerseyNumbersByPid.get(p.pid) ?? {},
+			})),
+		};
 
 		const playersByPid = groupByUnique(history.players, "pid");
 		const retiredJerseyNumbers2 = retiredJerseyNumbers.map((row) => {

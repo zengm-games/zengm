@@ -70,9 +70,9 @@ const getMostXPlayers = async ({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"firstName",
@@ -83,7 +83,6 @@ const getMostXPlayers = async ({
 			"hof",
 			"born",
 			"diedYear",
-			"most",
 			"jerseyNumber",
 			"awards",
 		],
@@ -93,18 +92,26 @@ const getMostXPlayers = async ({
 		mergeStats: "totOnly",
 	});
 
-	const ordered = sortParams ? orderBy(players, ...sortParams) : players;
-	for (let i = 0; i < LIMIT; i++) {
-		if (ordered[i]) {
-			ordered[i].rank = i + 1;
+	// Match up most by index rather than pid, since a player can appear multiple times with different most values. This is safe because with no season or seasonRange, playersPlus returns every player
+	if (playersFiltered.length !== playersAll.length) {
+		throw new Error("playersPlus filtered out some players");
+	}
+	const players = playersFiltered.map((p, i) => ({
+		...p,
+		most: playersAll[i]!.most,
+	}));
 
-			if (after) {
-				ordered[i].most = await after(ordered[i].most);
-			}
-		}
+	const ordered = sortParams ? orderBy(players, ...sortParams) : players;
+	const ranked = [];
+	for (const [i, p] of ordered.entries()) {
+		ranked.push({
+			...p,
+			rank: i + 1,
+			most: after ? await after(p.most) : p.most,
+		});
 	}
 
-	const processedPlayers = addFirstNameShort(processPlayersHallOfFame(ordered));
+	const processedPlayers = addFirstNameShort(processPlayersHallOfFame(ranked));
 
 	for (const p of processedPlayers) {
 		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;

@@ -116,7 +116,7 @@ const updatePlayers = async (
 		} as const);
 
 		let playersAll: Player[] = [];
-		const generations: number[] = [];
+		const generationsByPid = new Map<number, number>();
 
 		// Anyone who is directly a father or son of the initial player, and their fathers/sons
 		const fatherLinePids = new Set<number>();
@@ -163,7 +163,7 @@ const updatePlayers = async (
 					}
 
 					playersAll.push(p);
-					generations.push(info.generation);
+					generationsByPid.set(p.pid, info.generation);
 					pidsSeen.add(p.pid);
 
 					let sonOfInitialPlayer = false;
@@ -238,7 +238,7 @@ const updatePlayers = async (
 			);
 		}
 
-		const players = await idb.getCopies.playersPlus(playersAll, {
+		const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"firstName",
@@ -258,21 +258,23 @@ const updatePlayers = async (
 			stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 			fuzz: true,
 		});
-		if (generations.length > 0) {
-			for (const [i, p] of players.entries()) {
-				const generation = generations[i];
-				if (generation === undefined) {
-					break;
-				}
-				p.relationText = getRelationText(
-					g.get("gender"),
-					generation,
-					fatherLinePids.has(p.pid) || sonLinePids.has(p.pid),
-					brotherPids.has(p.pid),
-					spousePids.has(p.pid),
-				);
-			}
-		}
+
+		const players = playersFiltered.map((p) => {
+			const generation = generationsByPid.get(p.pid);
+			return {
+				...p,
+				relationText:
+					generation === undefined
+						? undefined
+						: getRelationText(
+								g.get("gender"),
+								generation,
+								fatherLinePids.has(p.pid) || sonLinePids.has(p.pid),
+								brotherPids.has(p.pid),
+								spousePids.has(p.pid),
+							),
+			};
+		});
 
 		return {
 			pid,

@@ -198,7 +198,6 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					const pos =
 						p.ratings.findLast((row) => row.season === season)?.pos ??
 						last(p.ratings).pos;
-					p2.ratings = { pos };
 
 					const tid = statOverrides?.tid ?? p2.stats.tid;
 
@@ -223,10 +222,10 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						name: p2.name,
 						pid,
 						pos: bySport({
-							baseball: p2.ratings.pos,
+							baseball: pos,
 							basketball: undefined,
-							football: p2.ratings.pos,
-							hockey: p2.ratings.pos,
+							football: pos,
+							hockey: pos,
 						}),
 						tid,
 					});

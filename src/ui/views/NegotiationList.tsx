@@ -138,10 +138,16 @@ const NegotiationList = ({
 					maxWidth: true,
 					p,
 				}),
-				{
-					...wrappedCurrency(p.lastSalary, "M"),
-					classNames: "text-body-secondary",
-				},
+				// Players who have never been paid have no previous salary
+				p.lastSalary === undefined
+					? {
+							value: null,
+							classNames: "text-body-secondary",
+						}
+					: {
+							...wrappedCurrency(p.lastSalary, "M"),
+							classNames: "text-body-secondary",
+						},
 				wrappedCurrency(p.mood.user.contractAmount / 1000, "M"),
 				p.contract.exp,
 				{

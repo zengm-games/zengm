@@ -1945,7 +1945,16 @@ const getNegotiationProps = async (pid: number) => {
 	let pFiltered;
 	if (p2) {
 		pFiltered = await idb.getCopy.playersPlus(p2, {
-			attrs: ["pid", "name", "age", "contract", "face", "imgURL", "watch"],
+			attrs: [
+				"pid",
+				"tid",
+				"name",
+				"age",
+				"contract",
+				"face",
+				"imgURL",
+				"watch",
+			],
 			ratings: ["ovr", "pot"],
 			season: g.get("season"),
 			showNoStats: true,

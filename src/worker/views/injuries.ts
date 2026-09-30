@@ -49,7 +49,7 @@ const updateInjuries = async (
 						games: p.injury.gamesRemaining,
 						ovrDrop: injury?.ovrDrop,
 						potDrop: injury?.potDrop,
-						playingThrough: undefined as boolean | undefined,
+						playingThrough: false,
 					});
 				}
 			} else {
@@ -61,7 +61,7 @@ const updateInjuries = async (
 							games: injury.games,
 							ovrDrop: injury.ovrDrop,
 							potDrop: injury.potDrop,
-							playingThrough: undefined as boolean | undefined,
+							playingThrough: false,
 						});
 					}
 				}

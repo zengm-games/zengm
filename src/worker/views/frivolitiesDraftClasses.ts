@@ -3,7 +3,7 @@ import { g } from "../util/index.ts";
 import type { UpdateEvents, Player } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { orderBy } from "../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
@@ -146,11 +146,21 @@ const updateFrivolitiesDraftClasses = async (
 			),
 		);
 
+		const bestPlayersByPid = groupByUnique(bestPlayers, "pid");
+
 		const draftClasses2 = orderBy(
-			draftClasses.map((draftClass, i) => ({
-				...draftClass,
-				bestPlayer: bestPlayers[i],
-			})),
+			draftClasses.flatMap((draftClass) => {
+				const bestPlayer = bestPlayersByPid[draftClass.bestPlayer.p.pid];
+				if (!bestPlayer) {
+					return [];
+				}
+				return [
+					{
+						...draftClass,
+						bestPlayer,
+					},
+				];
+			}),
 			"value",
 			"desc",
 		);

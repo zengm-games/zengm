@@ -134,40 +134,37 @@ export const genView = (
 				reducer(type, infosTemp, p);
 			}
 
-			const infos = await Promise.all(
-				Object.entries(infosTemp).map(async ([name, info]) => {
-					const p = await idb.getCopy.playersPlus(info.best.p, {
-						attrs: [
-							"pid",
-							"firstName",
-							"lastName",
-							"draft",
-							"retiredYear",
-							"statsTids",
-							"hof",
-							"jerseyNumber",
-						],
-						ratings: ["season", "ovr", "pos"],
-						stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
-						fuzz: true,
-					});
+			const infosWithPlayer = (
+				await Promise.all(
+					Object.entries(infosTemp).map(async ([name, info]) => {
+						const p = await idb.getCopy.playersPlus(info.best.p, {
+							attrs: [
+								"pid",
+								"firstName",
+								"lastName",
+								"draft",
+								"retiredYear",
+								"statsTids",
+								"hof",
+								"jerseyNumber",
+							],
+							ratings: ["season", "ovr", "pos"],
+							stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
+							fuzz: true,
+						});
 
-					return {
-						name,
-						numPlayers: info.numPlayers,
-						numActivePlayers: info.numActivePlayers,
-						numHof: info.numHof,
-						numRetired: info.numRetired,
-						gp: info.gp,
-						displayStat: info.displayStat,
-						valueStat: info.valueStat,
-						p: processPlayersHallOfFame([p])[0],
-					};
-				}),
-			);
+						// Should never happen, since there's no season or seasonRange and every player has ratings
+						if (!p) {
+							return;
+						}
 
+						return { name, info, p };
+					}),
+				)
+			).filter((row) => row !== undefined);
+
+			const retiredCounts: Record<string, number> = {};
 			if (type === "jerseyNumbers") {
-				const retiredCounts: Record<string, number> = {};
 				const teams = await idb.cache.teams.getAll();
 				for (const t of teams) {
 					if (t.retiredJerseyNumbers) {
@@ -177,18 +174,29 @@ export const genView = (
 						}
 					}
 				}
-
-				for (const info of infos) {
-					info.numRetired = retiredCounts[info.name] ?? 0;
-				}
 			}
 
-			// Hacky crap because p is nested
-			const players = infos.map((info) => info.p);
-			const playersWithFirstNameShort = addFirstNameShort(players);
-			for (const [i, info] of infos.entries()) {
-				info.p = playersWithFirstNameShort[i];
-			}
+			const players = addFirstNameShort(
+				processPlayersHallOfFame(infosWithPlayer.map((row) => row.p)),
+			);
+
+			const infos = Array.from(
+				Iterator.zip([infosWithPlayer, players], { mode: "strict" }),
+				([{ name, info }, p]) => ({
+					name,
+					numPlayers: info.numPlayers,
+					numActivePlayers: info.numActivePlayers,
+					numHof: info.numHof,
+					numRetired:
+						type === "jerseyNumbers"
+							? (retiredCounts[name] ?? 0)
+							: info.numRetired,
+					gp: info.gp,
+					displayStat: info.displayStat,
+					valueStat: info.valueStat,
+					p,
+				}),
+			);
 
 			return {
 				infos,

@@ -64,14 +64,14 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			"playersByTid",
 			tids[i],
 		);
-		let players = orderBy(
+		const playersOrdered = orderBy(
 			playersBefore.filter(
 				(p) => pids[i].includes(p.pid) && !isUntradable(p).untradable,
 			),
 			"valueFuzz",
 			"desc",
 		);
-		players = await idb.getCopies.playersPlus(players, {
+		const players = await idb.getCopies.playersPlus(playersOrdered, {
 			attrs: ["pid", "name", "contract", "draft"],
 			season: g.get("season"),
 			tid: tids[i],

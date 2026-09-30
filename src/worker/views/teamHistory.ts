@@ -305,7 +305,7 @@ const updateTeamHistory = async (
 
 		const retirableJerseyNumbersByPid = new Map<
 			number,
-			Record<string, string[]>
+			Record<string, number[]>
 		>();
 		const players = (
 			await idb.getCopies.players({
@@ -313,7 +313,7 @@ const updateTeamHistory = async (
 			})
 		).map((p) => {
 			const stats = p.stats.filter((row) => row.tid === inputs.tid);
-			const retirableJerseyNumbers: Record<string, string[]> = {};
+			const retirableJerseyNumbers: Record<string, number[]> = {};
 			for (const { gp, jerseyNumber, playoffs, season } of stats) {
 				if (
 					!playoffs &&

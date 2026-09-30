@@ -4,7 +4,9 @@ import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
-import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog.tsx";
+import playerRetireJerseyNumberDialog, {
+	type RetireJerseyNumberPlayer,
+} from "./playerRetireJerseyNumberDialog.tsx";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import { styleGrid11 } from "../../components/ActionButton.tsx";
@@ -17,8 +19,15 @@ const Players = ({
 	stats,
 	tid,
 	userTid,
-}: Pick<View<"teamHistory">, "players" | "stats" | "tid"> &
-	(
+}: Pick<View<"teamHistory">, "stats" | "tid"> & {
+	// GM History has no jersey retirement, so no retirableJerseyNumbers
+	players: (Omit<
+		View<"teamHistory">["players"][number],
+		"retirableJerseyNumbers"
+	> & {
+		retirableJerseyNumbers?: Record<string, number[]>;
+	})[];
+} & (
 		| {
 				gmHistory?: undefined;
 				godMode: boolean;
@@ -34,7 +43,12 @@ const Players = ({
 	)) => {
 	const includeRetireJerseyButton = (tid === userTid || godMode) && !gmHistory;
 
-	const retireJerseyNumber = async (p: any) => {
+	const retireJerseyNumber = async (p: RetireJerseyNumberPlayer) => {
+		// Season can only can be undefined if gmHistory is true, but then there are no jersey retirements
+		if (season === undefined) {
+			return;
+		}
+
 		let number: string | undefined;
 		const numbers = Object.keys(p.retirableJerseyNumbers);
 		if (numbers.length === 1) {
@@ -52,8 +66,7 @@ const Players = ({
 			tid,
 			info: {
 				number,
-				// Season can only can be undefined if gmHistory is true, but then there are no jersey retirements
-				seasonRetired: season!,
+				seasonRetired: season,
 				seasonTeamInfo,
 				pid: p.pid,
 				text: "",
@@ -81,14 +94,16 @@ const Players = ({
 	}
 
 	const rows: DataTableRow[] = players.map((p) => {
+		const { retirableJerseyNumbers } = p;
+
 		const canRetireJerseyNumber =
-			!!p.retirableJerseyNumbers &&
-			Object.keys(p.retirableJerseyNumbers).length > 0 &&
+			!!retirableJerseyNumbers &&
+			Object.keys(retirableJerseyNumbers).length > 0 &&
 			p.tid !== tid;
 
 		const hasMultipleNumbers =
-			!!p.retirableJerseyNumbers &&
-			Object.keys(p.retirableJerseyNumbers).length > 1;
+			!!retirableJerseyNumbers &&
+			Object.keys(retirableJerseyNumbers).length > 1;
 
 		return {
 			key: p.pid,
@@ -118,7 +133,11 @@ const Players = ({
 							<button
 								className="btn btn-light-bordered btn-xs d-inline-grid text-start"
 								disabled={!canRetireJerseyNumber}
-								onClick={() => retireJerseyNumber(p)}
+								onClick={() => {
+									if (retirableJerseyNumbers) {
+										retireJerseyNumber({ ...p, retirableJerseyNumbers });
+									}
+								}}
 							>
 								<span
 									style={styleGrid11}

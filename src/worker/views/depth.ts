@@ -15,7 +15,7 @@ import {
 } from "../../common/constants.hockey.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 
-const defenseStats = [
+const defenseStats: PlayerStatAttr[] = [
 	"defTckSolo",
 	"defTckAst",
 	"defTck",
@@ -243,7 +243,7 @@ const updateDepth = async (
 		let multiplePositionsWarning: string | undefined;
 		if (__SPORT === "hockey" && players.length >= g.get("minRosterSize")) {
 			const playerInfoByPid = new Map<
-				any,
+				number,
 				{
 					name: string;
 					positions: string[];
@@ -252,7 +252,8 @@ const updateDepth = async (
 
 			for (const [pos, posPlayers] of Object.entries(depthPlayers)) {
 				const numStarters =
-					(NUM_LINES as any)[pos] * (NUM_PLAYERS_PER_LINE as any)[pos];
+					NUM_LINES[pos as keyof typeof NUM_LINES] *
+					NUM_PLAYERS_PER_LINE[pos as keyof typeof NUM_PLAYERS_PER_LINE];
 
 				for (let i = 0; i < numStarters; i++) {
 					const p = posPlayers[i];

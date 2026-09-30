@@ -22,6 +22,22 @@ const getObjectKey = (property: ObjectProperty) => {
 	throw new Error(`Unknown node type "${property.key.type}"`);
 };
 
+// Handles TypeScript wrappers around the object, like bySport({...} as const)
+const unwrapExpression = (node: BabelCoreNamespace.types.Node | undefined) => {
+	while (
+		node &&
+		(node.type === "TSAsExpression" ||
+			node.type === "TSSatisfiesExpression" ||
+			node.type === "TSTypeAssertion" ||
+			node.type === "TSNonNullExpression" ||
+			node.type === "ParenthesizedExpression")
+	) {
+		node = node.expression;
+	}
+
+	return node;
+};
+
 export const babelPluginSportFunctionsFactory =
 	(sport: Sport) =>
 	(babel: PluginAPI): PluginObject => {
@@ -57,7 +73,7 @@ export const babelPluginSportFunctionsFactory =
 							//
 							// const whatever = "default thing";
 
-							const argument = path.node.arguments[0];
+							const argument = unwrapExpression(path.node.arguments[0]);
 							if (argument?.type !== "ObjectExpression") {
 								throw new Error(
 									`Unexpected bySport argument type "${argument?.type}"`,

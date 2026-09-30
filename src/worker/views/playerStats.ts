@@ -1,4 +1,9 @@
-import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common/constants.ts";
+import {
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+	getPlayerStatsTableStats,
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
@@ -50,7 +55,7 @@ const updatePlayers = async (
 		let actualStats;
 		if (inputs.season === "career") {
 			actualStats = [
-				...stats,
+				...getPlayerStatsTableStats(stats),
 
 				// Used in processPlayersHallOfFame
 				bySport({
@@ -58,10 +63,10 @@ const updatePlayers = async (
 					basketball: "ewa",
 					football: "av",
 					hockey: "ps",
-				}),
+				} as const),
 			];
 		} else {
-			actualStats = stats;
+			actualStats = getPlayerStatsTableStats(stats);
 		}
 
 		let playersAll;

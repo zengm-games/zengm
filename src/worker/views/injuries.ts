@@ -27,7 +27,7 @@ const updateInjuries = async (
 			basketball: ["gp", "pts", "trb", "ast"],
 			football: ["gp", "keyStats"],
 			hockey: ["gp", "keyStats"],
-		});
+		} as const);
 
 		const players = await getPlayers(
 			inputs.season === "current" ? g.get("season") : inputs.season,

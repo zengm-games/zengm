@@ -120,7 +120,7 @@ const updateFrivolitiesDraftClasses = async (
 			],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 
 		const bestPlayersAll = draftClasses.map(
 			(draftClass) => draftClass.bestPlayer.p,

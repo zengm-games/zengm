@@ -26,7 +26,7 @@ const updatePlayers = async (
 			basketball: ["pts", "trb", "ast"],
 			football: ["keyStats"],
 			hockey: ["keyStats"],
-		});
+		} as const);
 
 		const players = addFirstNameShort(
 			await getPlayers(

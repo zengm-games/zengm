@@ -240,7 +240,7 @@ const updateHistory = async (
 			basketball: "ws",
 			football: "av",
 			hockey: "ps",
-		});
+		} as const);
 		const retiredPlayers = processPlayersHallOfFame(
 			await idb.getCopies.playersPlus(retiredPlayersAll, {
 				attrs: ["pid", "name", "born", "hof"],

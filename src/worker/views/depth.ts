@@ -6,6 +6,7 @@ import type {
 	PlayerRatingKey,
 	UpdateEvents,
 	ViewInput,
+	PlayerStatAttr,
 } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import {
@@ -32,7 +33,7 @@ const defenseStats = [
 	"defFmbTD",
 ];
 
-const baseballLineupStats = [
+const baseballLineupStats: PlayerStatAttr[] = [
 	"war",
 	"ab",
 	"h",
@@ -64,7 +65,7 @@ export const buffOvrDH = (p: {
 	}
 };
 
-const stats = bySport<Record<string, string[]>>({
+const stats = bySport<Record<string, PlayerStatAttr[]>>({
 	baseball: {
 		L: baseballLineupStats,
 		LP: baseballLineupStats,

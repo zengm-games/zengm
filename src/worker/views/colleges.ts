@@ -126,7 +126,7 @@ export const genView = (
 				],
 				football: ["keyStats", "av"],
 				hockey: ["keyStats", "ops", "dps", "ps"],
-			});
+			} as const);
 
 			const infosTemp: { [key: string]: InfoTemp } = {};
 			for await (const { value: p } of idb.league.transaction("players")

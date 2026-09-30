@@ -4,6 +4,7 @@ import type {
 	NonEmptyArray,
 	Player,
 	PlayerAward,
+	PlayerStatAttr,
 } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -15,6 +16,7 @@ import {
 	PHASE,
 	PLAYER,
 	PLAYER_STATS_TABLES,
+	getPlayerStatsTableStats,
 } from "../../../common/constants.ts";
 import { last } from "../../../common/utils.ts";
 import { getPosByGpF } from "../player/getPosByGpF.ts";
@@ -46,11 +48,13 @@ const BOTH_AWARD_STATS_SKIP = new Set(
 	}),
 );
 
-const AWARD_STATS = [
-	...(__SPORT === "basketball" ? [] : ["keyStats"]),
+const AWARD_STATS: PlayerStatAttr[] = [
+	...(__SPORT === "basketball" ? [] : (["keyStats"] as const)),
 
 	// Anything that appears in a player stats table
-	...Object.values(PLAYER_STATS_TABLES).flatMap((x) => x.stats),
+	...Object.values(PLAYER_STATS_TABLES).flatMap((x) =>
+		getPlayerStatsTableStats(x.stats),
+	),
 
 	// A few extra that don't
 	...bySport({
@@ -58,7 +62,7 @@ const AWARD_STATS = [
 		basketball: [],
 		football: ["totTD"],
 		hockey: ["gs"],
-	}),
+	} as const),
 ];
 const AWARD_STATS_SPECIAL = [
 	"seasonFraction",

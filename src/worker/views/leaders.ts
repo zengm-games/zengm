@@ -4,6 +4,7 @@ import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
 	PlayerInjury,
+	PlayerStatAttr,
 	PlayerStatType,
 	UpdateEvents,
 	ViewInput,
@@ -21,8 +22,8 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
 		{
 			titleOverride?: string;
-			stat: string;
-			minStats?: Record<string, number>;
+			stat: PlayerStatAttr;
+			minStats?: Partial<Record<PlayerStatAttr, number>>;
 			sortAscending?: true;
 			filter?: (p: unknown) => boolean;
 		}[]

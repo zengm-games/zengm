@@ -121,13 +121,11 @@ const updateLeadersProgressive = async (
 				],
 				ratings: ["skills", "pos"],
 				stats: ["abbrev", "tid", ...stats],
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs === "regularSeason",
-				combined: inputs.playoffs === "combined",
-				mergeStats: "totOnly" as const,
+				seasonType: inputs.playoffs,
+				mergeStats: "totOnly",
 				statType: inputs.statType,
 				disableAbbrevsCacheDatabaseAccess: true,
-			};
+			} as const;
 
 			{
 				// Single season stats

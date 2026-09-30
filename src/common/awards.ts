@@ -5,6 +5,7 @@ import type {
 	AwardInfoIndividual,
 	AwardInfoTeam,
 	PlayerAwardBuiltIn,
+	PlayerStatAttr,
 } from "./types.ts";
 
 export const formatTeamNumber = (rank: number) =>
@@ -66,31 +67,32 @@ export const formatPlayerAwardName = (
 	return award.type;
 };
 
-export const showStatsByType: Partial<Record<Award["showStats"], string[]>> =
-	bySport({
-		baseball: {
-			// keyStats formats W-L and slash line nicely
-			overall: ["keyStats"],
-			sp: ["keyStats"],
-			rp: ["sv", "era", "ip"],
-			offense: ["keyStats"],
-			defense: ["keyStats"], // Showing actualy defensive stats would be annoying because arrays
-		},
-		basketball: {
-			offense: ["pts", "trb", "ast"],
-			defense: ["trb", "blk", "stl"],
-		},
-		football: {
-			overall: ["keyStats"],
-			defense: ["keyStats"],
-			blocking: ["keyStats"],
-		},
-		hockey: {
-			overall: ["keyStats", "ps"],
-			defense: ["tk", "hit", "dps"],
-			goalkeeping: ["gpGoalie", "gaa", "svPct", "gps"],
-		},
-	});
+export const showStatsByType: Partial<
+	Record<Award["showStats"], PlayerStatAttr[]>
+> = bySport({
+	baseball: {
+		// keyStats formats W-L and slash line nicely
+		overall: ["keyStats"],
+		sp: ["keyStats"],
+		rp: ["sv", "era", "ip"],
+		offense: ["keyStats"],
+		defense: ["keyStats"], // Showing actualy defensive stats would be annoying because arrays
+	},
+	basketball: {
+		offense: ["pts", "trb", "ast"],
+		defense: ["trb", "blk", "stl"],
+	},
+	football: {
+		overall: ["keyStats"],
+		defense: ["keyStats"],
+		blocking: ["keyStats"],
+	},
+	hockey: {
+		overall: ["keyStats", "ps"],
+		defense: ["tk", "hit", "dps"],
+		goalkeeping: ["gpGoalie", "gaa", "svPct", "gps"],
+	},
+});
 
 export const leaderAwardCategories = bySport({
 	baseball: [
@@ -209,7 +211,7 @@ export const leaderAwardCategories = bySport({
 			stat: "a",
 		},
 	],
-});
+} as const);
 
 export const pruneEmptyWinners = (
 	awards: (AwardInfoIndividual | AwardInfoTeam)[],

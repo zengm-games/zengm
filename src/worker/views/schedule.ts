@@ -224,12 +224,12 @@ export const getTopPlayers = async <T extends any[]>(
 				basketball: ["pts", "trb", "ast"],
 				football: undefined, // football keyStats is too long
 				hockey: ["keyStats"],
-			}),
+			} as const),
 			showNoStats: true,
 			showRookies: true,
 			tid,
 			fuzz: true,
-		};
+		} as const;
 	};
 
 	if (

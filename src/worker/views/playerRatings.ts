@@ -7,7 +7,9 @@ import {
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
+	PlayerAttr,
 	PlayerRatingAttr,
+	PlayerStatAttr,
 	PlayInTournament,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
@@ -127,9 +129,9 @@ export const getActivePlayoffTids = async () => {
 export const getPlayers = async (
 	season: number,
 	abbrev: string,
-	attrs: string[],
+	attrs: Readonly<PlayerAttr[]>,
 	ratings: Readonly<PlayerRatingAttr[]>,
-	stats: string[],
+	stats: Readonly<PlayerStatAttr[]>,
 	tid: number | undefined,
 ) => {
 	let playersAll;

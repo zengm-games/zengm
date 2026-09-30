@@ -1,4 +1,5 @@
 import { csvFormat, csvFormatRows } from "d3-dsv";
+import type { PlayerStatAttr } from "../../common/types.ts";
 import {
 	GAME_ACRONYM,
 	PHASE,
@@ -11,6 +12,7 @@ import {
 	GRACE_PERIOD,
 	LEAGUE_DATABASE_VERSION,
 	REAL_PLAYERS_INFO,
+	getPlayerStatsTableStats,
 } from "../../common/constants.ts";
 import actions from "./actions.ts";
 import * as awardSettings from "./awardSettings.ts";
@@ -1416,12 +1418,12 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	const ratings = [...RATINGS, ...extraRatings];
 
-	let stats: string[] = [];
+	let stats: PlayerStatAttr[] = [];
 
 	for (const table of Object.values(PLAYER_STATS_TABLES)) {
 		if (table) {
 			stats.push(
-				...table.stats.filter((stat) => {
+				...getPlayerStatsTableStats(table.stats).filter((stat) => {
 					if (stat.endsWith("Max")) {
 						return false;
 					}

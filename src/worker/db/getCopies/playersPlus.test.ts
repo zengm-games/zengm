@@ -244,6 +244,9 @@ test("return regular season and playoff stats if options.seasonType includes bot
 		throw new Error("Missing player");
 	}
 
+	assert.strictEqual(pf.stats.length, 2);
+	assert(pf.stats[0]);
+	assert(pf.stats[1]);
 	assert.strictEqual(pf.stats[0].playoffs, false);
 	assert.strictEqual(pf.stats[0].gp, 5);
 	assert.strictEqual(pf.stats[0].fg, 4);
@@ -415,6 +418,11 @@ test("return stats and ratings from all seasons and teams if no season or team i
 		throw new Error("Missing player");
 	}
 
+	assert(pf.ratings[0]);
+	assert(pf.ratings[1]);
+	assert(pf.ratings[2]);
+	assert(pf.stats[0]);
+	assert(pf.stats[1]);
 	assert.strictEqual(pf.tid, 4);
 	assert.strictEqual(pf.awards.length, 0);
 	assert.strictEqual(pf.ratings[0].season, 2011);
@@ -446,6 +454,8 @@ test("return stats and ratings from all seasons with a specific team if no seaso
 		throw new Error("Missing player");
 	}
 
+	assert(pf.ratings[0]);
+	assert(pf.stats[0]);
 	assert.strictEqual(pf.tid, 4);
 	assert.strictEqual(pf.awards.length, 0);
 	assert.strictEqual(pf.ratings[0].season, 2012);
@@ -495,6 +505,8 @@ test("mergeStats combines stats from multiple teams in the same season, for mult
 	}
 
 	assert.strictEqual(pf.stats.length, 2);
+	assert(pf.stats[0]);
+	assert(pf.stats[1]);
 	assert.strictEqual(pf.stats[0].tid, 20);
 	assert.strictEqual(pf.stats[0].fg, (30 + 20) / 8);
 	assert.strictEqual(pf.stats[1].fg, 56 / 8);
@@ -517,6 +529,10 @@ test("mergeStats totAndTeams results ", async () => {
 	}
 
 	assert.strictEqual(pf.stats.length, 4);
+	assert(pf.stats[0]);
+	assert(pf.stats[1]);
+	assert(pf.stats[2]);
+	assert(pf.stats[3]);
 
 	assert.strictEqual(pf.stats[0].tid, 4);
 	assert.strictEqual(pf.stats[1].tid, 20);

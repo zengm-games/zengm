@@ -227,7 +227,7 @@ export const getLeagueLeaderAwards = async (
 			...requirements[stat],
 		};
 
-		let leaders = [];
+		let leaders: typeof players = [];
 		let leaderValue = statInfo.sortAscending ? Infinity : -Infinity;
 		for (const p of players) {
 			const playerValue = p.currentStats.regularSeason?.[stat];

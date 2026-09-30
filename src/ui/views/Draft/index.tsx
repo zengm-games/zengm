@@ -25,6 +25,15 @@ import { PHASE } from "../../../common/constants.ts";
 
 const DRAFT_BAR_HEIGHT = 82;
 
+type DraftedRow = View<"draft">["drafted"][number];
+
+// Placeholder rows for remaining draft picks have pid -1
+type RemainingPick = Extract<DraftedRow, { pid: -1 }>;
+type DraftedPlayer = Exclude<DraftedRow, RemainingPick>;
+
+const isDraftedPlayer = (p: DraftedRow): p is DraftedPlayer => p.pid >= 0;
+const isRemainingPick = (p: DraftedRow): p is RemainingPick => p.pid < 0;
+
 const Draft = ({
 	challengeNoDraftPicks,
 	drafted,
@@ -73,30 +82,38 @@ const Draft = ({
 	}
 
 	// Use the result of drag and drop to sort drafted players and picks, before the "official" order comes back as props
-	let draftedSorted: typeof drafted;
+	let draftedSorted: DraftedRow[];
 	if (sortedDpids !== undefined) {
-		const draftedByDpid = groupByUnique(drafted, (p) => p.draft.dpid);
-		const draftedPlayers = drafted.filter((p) => p.pid >= 0);
-		const dpids = drafted.map((row) => row.draft.dpid);
+		const draftedPlayers = drafted.filter(isDraftedPlayer);
+		const remainingPicksUnsorted = drafted.filter(isRemainingPick);
+		const remainingPicksByDpid = groupByUnique(
+			remainingPicksUnsorted,
+			(p) => p.draft.dpid,
+		);
 		draftedSorted = [
 			// Drafted players always at top
 			...draftedPlayers,
 
 			// Then draft picks follow
-			...sortedDpids.map((dpid, i) => {
-				const unsortedDpid = dpids[i + draftedPlayers.length];
-				const dpToTakeOrderFrom = draftedByDpid[unsortedDpid].draft;
+			...sortedDpids.flatMap((dpid, i) => {
+				const row = remainingPicksByDpid[dpid];
+				const dpToTakeOrderFrom = remainingPicksUnsorted[i]?.draft;
+				if (!row || !dpToTakeOrderFrom) {
+					return [];
+				}
 
-				return {
-					...draftedByDpid[dpid],
-					draft: {
-						...draftedByDpid[dpid].draft,
+				return [
+					{
+						...row,
+						draft: {
+							...row.draft,
 
-						// Need to manually update round/pick for instant feedback rather than waiting for the server to update, because otherwise all this sortedDpids stuff is useless because the sort of the DataTable overrides it
-						round: dpToTakeOrderFrom.round,
-						pick: dpToTakeOrderFrom.pick,
+							// Need to manually update round/pick for instant feedback rather than waiting for the server to update, because otherwise all this sortedDpids stuff is useless because the sort of the DataTable overrides it
+							round: dpToTakeOrderFrom.round,
+							pick: dpToTakeOrderFrom.pick,
+						},
 					},
-				};
+				];
 			}),
 		];
 	} else {
@@ -120,7 +137,7 @@ const Draft = ({
 				? "Expansion Draft"
 				: "Draft",
 	});
-	const remainingPicks = draftedSorted.filter((p) => p.pid < 0);
+	const remainingPicks = draftedSorted.filter(isRemainingPick);
 	const nextPick = remainingPicks[0];
 	const usersTurn = !!(nextPick && userTids.includes(nextPick.draft.tid));
 
@@ -150,7 +167,7 @@ const Draft = ({
 	}
 
 	const rowsUndrafted: DataTableRow[] = undrafted.map((p) => {
-		const data = [
+		const data: DataTableRow["data"] = [
 			p.rank,
 			wrappedPlayerNameLabels({
 				pid: p.pid,
@@ -198,11 +215,7 @@ const Draft = ({
 				0,
 				wrappedContractAmount(p),
 				wrappedContractExp(p),
-				...stats.map((stat) =>
-					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"
-						? helpers.roundStat(p.stats[stat], stat)
-						: p.stats[stat],
-				),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 			);
 		}
 
@@ -238,7 +251,11 @@ const Draft = ({
 	}
 
 	const rowsDrafted: DataTableRow[] = draftedSorted.map((p) => {
-		const data = [
+		// Team before the draft, for fantasy/expansion drafts
+		const prevAbbrev = isDraftedPlayer(p) ? p.prevAbbrev : undefined;
+		const prevTid = isDraftedPlayer(p) ? p.prevTid : undefined;
+
+		const data: DataTableRow["data"] = [
 			`${p.draft.round}-${p.draft.pick}`,
 			wrappedDraftAbbrev(
 				{
@@ -249,7 +266,7 @@ const Draft = ({
 				},
 				teamInfoCache,
 			),
-			p.pid >= 0 ? (
+			isDraftedPlayer(p) ? (
 				wrappedPlayerNameLabels({
 					pid: p.pid,
 					injury: p.injury,
@@ -341,24 +358,26 @@ const Draft = ({
 					) : null}
 				</>
 			),
-			p.pid >= 0 ? p.ratings.pos : null,
-			p.pid >= 0 ? p.age : null,
-			p.pid >= 0 && !challengeNoRatings ? p.ratings.ovr : null,
-			p.pid >= 0 && !challengeNoRatings ? p.ratings.pot : null,
+			isDraftedPlayer(p) ? p.ratings.pos : null,
+			isDraftedPlayer(p) ? p.age : null,
+			isDraftedPlayer(p) && !challengeNoRatings ? p.ratings.ovr : null,
+			isDraftedPlayer(p) && !challengeNoRatings ? p.ratings.pot : null,
 		];
 
 		if (fantasyDraft || expansionDraft) {
 			data.splice(
 				7,
 				0,
-				...(p.pid >= 0
+				...(isDraftedPlayer(p)
 					? [wrappedContractAmount(p), p.contract.exp]
 					: [null, null]),
-				...stats.map((stat) =>
-					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"
-						? helpers.roundStat(p.stats[stat], stat)
-						: null,
-				),
+				...stats.map((stat) => {
+					// stats can be undefined for drafted players with no stats this season
+					const value = isDraftedPlayer(p) ? p.stats?.[stat] : undefined;
+					return typeof value === "number"
+						? helpers.roundStat(value, stat)
+						: null;
+				}),
 			);
 		}
 
@@ -366,27 +385,28 @@ const Draft = ({
 			data.splice(
 				2,
 				0,
-				<a href={helpers.leagueUrl(["roster", `${p.prevAbbrev}_${p.prevTid}`])}>
-					{p.prevAbbrev}
+				<a href={helpers.leagueUrl(["roster", `${prevAbbrev}_${prevTid}`])}>
+					{prevAbbrev}
 				</a>,
 			);
 		}
 
 		return {
-			key: p.draft.dpid,
-			metadata:
-				p.pid >= 0
-					? {
-							type: "player",
-							pid: p.pid,
-							season,
-							playoffs: "regularSeason",
-						}
-					: undefined,
+			// Drafted players may not have a dpid
+			key: p.draft.dpid ?? `pid-${p.pid}`,
+			metadata: isDraftedPlayer(p)
+				? {
+						type: "player",
+						pid: p.pid,
+						season,
+						playoffs: "regularSeason",
+					}
+				: undefined,
 			data,
 			classNames: {
 				"table-info":
-					userTids.includes(p.draft.tid) || userTids.includes(p.prevTid),
+					userTids.includes(p.draft.tid) ||
+					(prevTid !== undefined && userTids.includes(prevTid)),
 			},
 		};
 	});
@@ -440,7 +460,7 @@ const Draft = ({
 							setEditDraftOrder((value) => !value);
 						}}
 					>
-						Edit draft order
+						{editDraftOrder ? "Done editing order" : "Edit draft order"}
 					</button>
 				</div>,
 			);
@@ -578,7 +598,10 @@ const Draft = ({
 						sortableRows={
 							sortableRows
 								? {
-										disableRow: (index) => draftedSorted[index].pid >= 0,
+										disableRow: (index) => {
+											const row = draftedSorted[index];
+											return row !== undefined && isDraftedPlayer(row);
+										},
 										onChange: async ({ oldIndex, newIndex }) => {
 											if (oldIndex === newIndex) {
 												return;
@@ -603,11 +626,16 @@ const Draft = ({
 												draftedSorted.length - remainingPicks.length;
 											const i1 = index1 - numDraftedPlayers;
 											const i2 = index2 - numDraftedPlayers;
+											const pick1 = remainingPicks[i1];
+											const pick2 = remainingPicks[i2];
+											if (!pick1 || !pick2) {
+												return;
+											}
 											const newSortedDpids = remainingPicks.map(
 												(row) => row.draft.dpid,
 											);
-											newSortedDpids[i1] = remainingPicks[i2].draft.dpid;
-											newSortedDpids[i2] = remainingPicks[i1].draft.dpid;
+											newSortedDpids[i1] = pick2.draft.dpid;
+											newSortedDpids[i2] = pick1.draft.dpid;
 											setSortedDpids(newSortedDpids);
 											await toWorker(
 												"main",

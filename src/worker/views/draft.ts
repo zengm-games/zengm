@@ -1,5 +1,9 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
-import type { PlayerStatAttr, UpdateEvents } from "../../common/types.ts";
+import type {
+	Player,
+	PlayerStatAttr,
+	UpdateEvents,
+} from "../../common/types.ts";
 import { draft } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local } from "../util/index.ts";
@@ -65,21 +69,42 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			draftPicks = await draft.getOrder();
 		}
 
-		let drafted: any[];
-
-		if (
+		const isFantasyOrExpansionDraft =
 			fantasyDraft ||
 			(g.get("phase") === PHASE.EXPANSION_DRAFT &&
-				expansionDraft.phase === "draft")
-		) {
-			drafted = local.fantasyDraftResults;
+				expansionDraft.phase === "draft");
+
+		// Stats are only shown for fantasy/expansion drafts
+		const stats: PlayerStatAttr[] = isFantasyOrExpansionDraft
+			? bySport({
+					baseball: ["gp", "keyStats", "war"],
+					basketball: ["per", "ewa"],
+					football: ["gp", "keyStats", "av"],
+					hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+				})
+			: [];
+
+		let draftedRaw: Player[];
+
+		// For fantasy/expansion drafts, the team each player was on before the draft
+		const prevByPid = new Map<
+			number,
+			{ prevAbbrev: string | undefined; prevTid: number }
+		>();
+
+		if (isFantasyOrExpansionDraft) {
+			draftedRaw = local.fantasyDraftResults;
+			for (const p of local.fantasyDraftResults) {
+				prevByPid.set(p.pid, {
+					prevAbbrev: p.prevAbbrev,
+					prevTid: p.prevTid,
+				});
+			}
 		} else {
-			drafted = await idb.cache.players.indexGetAll("playersByTid", [
-				0,
-				Infinity,
-			]);
-			drafted = drafted.filter((p) => p.draft.year === g.get("season"));
-			drafted.sort(
+			draftedRaw = (
+				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
+			).filter((p) => p.draft.year === g.get("season"));
+			draftedRaw.sort(
 				(a, b) =>
 					100 * a.draft.round +
 					a.draft.pick -
@@ -87,8 +112,8 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			);
 		}
 
-		drafted = addFirstNameShort(
-			await idb.getCopies.playersPlus(drafted, {
+		const draftedPlayers = addFirstNameShort(
+			await idb.getCopies.playersPlus(draftedRaw, {
 				attrs: [
 					"pid",
 					"tid",
@@ -99,33 +124,30 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"injury",
 					"contract",
 					"watch",
-					"prevTid",
-					"prevAbbrev",
 				],
 				ratings: ["ovr", "pot", "skills", "pos"],
-				stats: ["per", "ewa"],
+				stats,
 				season: g.get("season"),
 				showRookies: true,
 				fuzz: true,
 			}),
-		);
+		).map((p) => {
+			const prev = prevByPid.get(p.pid);
+			return {
+				...p,
+				prevAbbrev: prev?.prevAbbrev,
+				prevTid: prev?.prevTid,
+			};
+		});
 
-		let stats: PlayerStatAttr[];
-		let undrafted: any[];
+		let undraftedRaw: Player[];
 
 		if (fantasyDraft) {
-			stats = bySport({
-				baseball: ["gp", "keyStats", "war"],
-				basketball: ["per", "ewa"],
-				football: ["gp", "keyStats", "av"],
-				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-			});
-
 			// After fantasy draft, tids are reset, so actually the remaining undrafted players are free agents
 			const undraftedTID =
 				draftPicks.length > 0 ? PLAYER.UNDRAFTED : PLAYER.FREE_AGENT;
 
-			undrafted = await idb.cache.players.indexGetAll(
+			undraftedRaw = await idb.cache.players.indexGetAll(
 				"playersByTid",
 				undraftedTID,
 			);
@@ -133,13 +155,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("phase") === PHASE.EXPANSION_DRAFT &&
 			expansionDraft.phase === "draft"
 		) {
-			stats = bySport({
-				baseball: ["gp", "keyStats", "war"],
-				basketball: ["per", "ewa"],
-				football: ["gp", "keyStats", "av"],
-				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-			});
-			undrafted = (
+			undraftedRaw = (
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
 			).filter((p) => expansionDraft.availablePids.includes(p.pid));
 
@@ -156,9 +172,11 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 
 				if (tidsOverLimit.length > 0) {
-					const numPlayersBefore = undrafted.length;
-					undrafted = undrafted.filter((p) => !tidsOverLimit.includes(p.tid));
-					if (undrafted.length !== numPlayersBefore) {
+					const numPlayersBefore = undraftedRaw.length;
+					undraftedRaw = undraftedRaw.filter(
+						(p) => !tidsOverLimit.includes(p.tid),
+					);
+					if (undraftedRaw.length !== numPlayersBefore) {
 						const abbrevs = tidsOverLimit
 							.map((tid) => helpers.getAbbrev(tid))
 							.sort();
@@ -171,8 +189,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 			}
 		} else {
-			stats = [];
-			undrafted = (
+			undraftedRaw = (
 				await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
 					[g.get("season")],
 					[g.get("season"), Infinity],
@@ -181,7 +198,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 			// DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
 			// This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
-			for (const p of undrafted) {
+			for (const p of undraftedRaw) {
 				const season = p.ratings[0].season;
 
 				if (season !== g.get("season") && g.get("phase") === PHASE.DRAFT) {
@@ -193,9 +210,9 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
-		undrafted = addFirstNameShort(
-			await idb.getCopies.playersPlus(undrafted, {
+		undraftedRaw.sort((a, b) => b.valueFuzz - a.valueFuzz);
+		const undraftedPlayers = addFirstNameShort(
+			await idb.getCopies.playersPlus(undraftedRaw, {
 				attrs: [
 					"pid",
 					"firstName",
@@ -217,18 +234,20 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				fuzz: true,
 			}),
 		);
-		undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
-		undrafted = undrafted.map((p, i) => ({
+		undraftedPlayers.sort((a, b) => b.valueFuzz - a.valueFuzz);
+		const undrafted = undraftedPlayers.map((p, i) => ({
 			...p,
 			rank: i + 1,
 		}));
 
-		for (const dp of draftPicks) {
-			drafted.push({
+		// Placeholders for remaining picks
+		const drafted = [
+			...draftedPlayers,
+			...draftPicks.map((dp) => ({
 				draft: dp,
-				pid: -1,
-			});
-		}
+				pid: -1 as const,
+			})),
+		];
 
 		const userPlayersAll = await idb.cache.players.indexGetAll(
 			"playersByTid",

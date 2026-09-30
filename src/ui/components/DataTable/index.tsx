@@ -90,8 +90,10 @@ export type DataTableRow = {
 				classNames?: ClassValue;
 				value: ReactNode;
 				exportValue?: string | number;
-				searchValue?: string | number;
-				sortValue?: string | number;
+
+				// null means no value - sorted below everything else for number sortType (see getSortVal), and "" for searching
+				searchValue?: string | number | null;
+				sortValue?: string | number | null;
 				header?: boolean;
 				title?: string;
 				colSpanToEnd?: boolean; // Maybe dangerous unless disableSort

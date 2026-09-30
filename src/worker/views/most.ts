@@ -14,7 +14,13 @@ import { formatPlayerAwardName } from "../../common/awards.ts";
 
 type Most = {
 	value: number;
-	extra?: Record<string, unknown>;
+	extra?: {
+		// If this is set, it will specify the season to use for the "Best Season" section
+		bestSeasonOverride?: number;
+
+		season?: number;
+		tid?: number;
+	} & Record<string, unknown>;
 };
 
 type PlayersAll = (Player & {

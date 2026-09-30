@@ -5,7 +5,7 @@ import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 // Would be better as part of idb.getCopies.playersPlus
 export const processPlayersHallOfFame = <
 	T extends {
-		careerStats: any;
+		careerStats?: any;
 		ratings: any;
 		stats: any[];
 

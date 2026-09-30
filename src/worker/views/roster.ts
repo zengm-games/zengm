@@ -188,6 +188,7 @@ const updateRoster = async (
 		// tid and draft are used for checking if a player can be released without paying his salary
 		const attrs = [
 			"pid",
+			"name",
 			"tid",
 			"draft",
 			"firstName",
@@ -203,7 +204,6 @@ const updateRoster = async (
 			"untradable",
 			"hof",
 			"latestTransaction",
-			"mood",
 			"value",
 			"awards",
 		] as const;
@@ -234,8 +234,9 @@ const updateRoster = async (
 			const schedule = await season.getSchedule();
 
 			// Show players currently on the roster
-			const playersAll = await addMood(
-				await idb.cache.players.indexGetAll("playersByTid", inputs.tid),
+			const playersAll = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				inputs.tid,
 			);
 			payroll = await team.getPayroll(inputs.tid);
 			luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll);
@@ -264,6 +265,7 @@ const updateRoster = async (
 				fuzz: true,
 				numGamesRemaining,
 			});
+			players = await addMood(players, playersAll);
 
 			if (__SPORT === "basketball") {
 				players.sort((a, b) => a.rosterOrder - b.rosterOrder);

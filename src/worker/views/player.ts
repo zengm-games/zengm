@@ -122,7 +122,6 @@ export const getPlayer = async (
 			"contract",
 			"draft",
 			"face",
-			"mood",
 			"injury",
 			"injuries",
 			"salaries",

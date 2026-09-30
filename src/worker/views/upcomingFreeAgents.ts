@@ -5,6 +5,8 @@ import { g } from "../util/index.ts";
 import type { ViewInput } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { groupByUnique } from "../../common/utils.ts";
+import { addMood } from "./freeAgents.ts";
 
 const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,
@@ -20,7 +22,7 @@ const updateUpcomingFreeAgents = async (
 		g.get("phase") === PHASE.RESIGN_PLAYERS &&
 		g.get("season") === inputs.season;
 
-	let players: any[] = showActualFreeAgents
+	const playersRaw = showActualFreeAgents
 		? await idb.getCopies.players({
 				tid: PLAYER.FREE_AGENT,
 			})
@@ -28,40 +30,52 @@ const updateUpcomingFreeAgents = async (
 				tid: [0, Infinity],
 				filter: (p) => p.contract.exp === inputs.season,
 			});
+	const playersRawByPid = groupByUnique(playersRaw, "pid");
 
-	// Done before filter so full player object can be passed to player.genContract.
-	for (const p of players) {
-		p.contractDesired = player.genContract(p, false); // No randomization
-		p.contractDesired.exp += inputs.season - g.get("season");
+	const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
+		attrs: [
+			"pid",
+			"name",
+			"firstName",
+			"lastName",
+			"abbrev",
+			"tid",
+			"age",
+			"contract",
+			"injury",
+			"watch",
+			"jerseyNumber",
+		],
+		ratings: ["ovr", "pot", "skills", "pos"],
+		stats,
+		season: g.get("season"),
+		showNoStats: true,
+		showRookies: true,
+		fuzz: true,
+	});
 
-		p.mood = await player.moodInfos(p, {
-			contractAmount: p.contractDesired.amount,
-		});
-	}
+	const playersWithContractDesired = playersFiltered.map((p) => {
+		const pRaw = playersRawByPid[p.pid];
+		if (!pRaw) {
+			throw new Error(`Raw player not found for pid ${p.pid}`);
+		}
 
-	players = addFirstNameShort(
-		await idb.getCopies.playersPlus(players, {
-			attrs: [
-				"pid",
-				"firstName",
-				"lastName",
-				"abbrev",
-				"tid",
-				"age",
-				"contract",
-				"injury",
-				"contractDesired",
-				"watch",
-				"jerseyNumber",
-				"mood",
-			],
-			ratings: ["ovr", "pot", "skills", "pos"],
-			stats,
-			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		}),
+		// Uses the raw player object, since player.genContract needs the full player
+		const contractDesired = player.genContract(pRaw, false); // No randomization
+		contractDesired.exp += inputs.season - g.get("season");
+
+		return {
+			...p,
+			contractDesired,
+		};
+	});
+
+	const players = addFirstNameShort(
+		await addMood(
+			playersWithContractDesired,
+			playersRaw,
+			(p) => p.contractDesired.amount,
+		),
 	);
 
 	// Apply mood

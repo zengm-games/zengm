@@ -494,21 +494,24 @@ const formatNumber = (value: number, type: RoundType): string => {
 };
 
 const roundStat = (
-	value: number | string,
+	valueInput: unknown,
 	stat: string,
 	totals: boolean = false,
 ): string => {
 	try {
-		if (typeof value === "string") {
-			return value;
+		if (typeof valueInput === "string") {
+			return valueInput;
+		}
+
+		// Missing values (like historical data) or anything else that is not a number
+		if (typeof valueInput !== "number") {
+			return "";
 		}
 
 		// Number of decimals for many stats
 		const decimalPlaces = totals ? 0 : 1;
 
-		if (Number.isNaN(value)) {
-			value = 0;
-		}
+		const value = Number.isNaN(valueInput) ? 0 : valueInput;
 
 		if (value === Infinity) {
 			return "inf";

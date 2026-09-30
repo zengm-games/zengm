@@ -1417,7 +1417,7 @@ export type PlayerStatsTables = Record<
 	string,
 	{
 		name: string;
-		onlyShowIf?: string[];
+		onlyShowIf?: PlayerStatAttr[];
 
 		// "pos" is not a real stat, it's a column in baseball fielding tables filled in by expandFieldingStats
 		stats: (PlayerStatAttr | "pos")[];

@@ -826,10 +826,7 @@ const updateLeaders = async (
 				return {
 					p,
 					playerStats,
-
-					// Skills are for a specific season, so they don't make sense for career stats
 					skills: undefined,
-
 					// Shitty handling of career totals, only computed if needed because it's slow
 					getTeamAndPos: () => {
 						const { bestPos, legacyTid } = processPlayersHallOfFame([p])[0]!;

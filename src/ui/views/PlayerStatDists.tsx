@@ -107,9 +107,9 @@ const PlayerStatDists = ({
 
 			<table>
 				<tbody>
-					{Object.keys(statsAll)
-						.filter((stat) => typeof statsAll[stat][0] === "number")
-						.map((stat) => {
+					{Object.entries(statsAll)
+						.filter(([, values]) => values.length > 0)
+						.map(([stat, values]) => {
 							const col = getCol(`stat:${stat}`);
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
@@ -119,7 +119,7 @@ const PlayerStatDists = ({
 									<td style={width100}>
 										<BoxPlot
 											color="var(--bs-blue)"
-											data={statsAll[stat]}
+											data={values}
 											scale={(scale as any)[stat]}
 										/>
 									</td>

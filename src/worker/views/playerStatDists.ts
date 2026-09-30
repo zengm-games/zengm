@@ -97,20 +97,17 @@ const updatePlayers = async (
 			}
 		}
 
-		const statsAll = players.reduce((memo, p) => {
-			for (const stat of Object.keys(p.stats)) {
-				if (stat === "playoffs") {
+		// Only numeric values can be plotted, so skip others like playoffs, keyStats strings, byPos arrays, and missing values in historical stats
+		const statsAll: Record<string, number[]> = {};
+		for (const p of players) {
+			for (const [stat, value] of Object.entries(p.stats)) {
+				if (typeof value !== "number") {
 					continue;
 				}
-				if (memo[stat]) {
-					memo[stat].push(p.stats[stat]);
-				} else {
-					memo[stat] = [p.stats[stat]];
-				}
+				statsAll[stat] ??= [];
+				statsAll[stat].push(value);
 			}
-
-			return memo;
-		}, {});
+		}
 
 		return {
 			season: inputs.season,

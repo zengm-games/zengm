@@ -1424,7 +1424,7 @@ const justDrafted = (
 		draft: {
 			year: number;
 		};
-		contract: PlayerContract;
+		contract: Pick<PlayerContract, "rookie">;
 	},
 	phase: Phase,
 	season: number,

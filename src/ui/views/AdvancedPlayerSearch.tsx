@@ -32,6 +32,7 @@ import { PlusMinus } from "../components/PlusMinus.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { useLocal } from "../util/local.ts";
+import type { advancedPlayerSearch } from "../../worker/api/advancedPlayerSearch.ts";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -520,7 +521,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [showStatTypes, setShowStatTypes] = useState(props.showStatTypes);
 
 	const [rendered, setRendered] = useState({
-		players: undefined as any[] | undefined,
+		players: undefined as
+			| Awaited<ReturnType<typeof advancedPlayerSearch>>
+			| undefined,
 		seasonStart,
 		seasonEnd,
 		singleSeason,
@@ -662,6 +665,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		return rendered.players?.map((p, i) => {
 			const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
+			// exp is only undefined for a range of seasons, which is never currentSeasonOnly
+			const { exp } = p.contract;
+
 			return {
 				key: i,
 				metadata: {
@@ -696,8 +702,11 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						? wrappedAgeAtDeath(p.age, p.ageAtDeath)
 						: p.age,
 					p.contract.amount > 0 ? wrappedContractAmount(p) : null,
-					p.contract.amount > 0 && currentSeasonOnly
-						? wrappedContractExp(p)
+					p.contract.amount > 0 && currentSeasonOnly && exp !== undefined
+						? wrappedContractExp({
+								draft: p.draft,
+								contract: { ...p.contract, exp },
+							})
 						: null,
 					p.stats.seasonStart !== undefined && p.stats.seasonEnd !== undefined
 						? formatSeasonRange(p.stats.seasonStart, p.stats.seasonEnd)

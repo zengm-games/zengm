@@ -126,27 +126,32 @@ const getPlayers = async (
 		season,
 	});
 
-	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
-	// For the current season, use the current abbrev (including FA), not the last stats abbrev
-	// For other seasons, use the stats abbrev for filtering
-	if (g.get("season") === season) {
-		return players
-			.filter((p) => tid === undefined || p.tid === tid)
-			.map((p) => ({
+	const isCurrentSeason = g.get("season") === season;
+
+	return players.flatMap((p) => {
+		// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
+		// For the current season, use the current team (including FA), not the last stats team
+		// For other seasons, use the stats team for filtering
+		if (tid !== undefined) {
+			const pTid = isCurrentSeason ? p.tid : p.stats?.tid;
+			if (pTid !== tid) {
+				return [];
+			}
+		}
+
+		return [
+			{
 				...p,
+				// stats can be undefined for a rookie with showRookies and without showNoStats
 				stats: {
 					...p.stats,
-					abbrev: p.abbrev,
-					tid: p.tid,
+					...(isCurrentSeason ? { abbrev: p.abbrev, tid: p.tid } : undefined),
+					seasonStart: undefined,
+					seasonEnd: undefined,
 				},
-			}));
-	}
-
-	if (tid !== undefined) {
-		return players.filter((p) => p.stats?.tid === tid);
-	}
-
-	return players;
+			},
+		];
+	});
 };
 
 const unique = <T>(array: T[]) => Array.from(new Set(array));
@@ -194,7 +199,7 @@ export const advancedPlayerSearch = async ({
 		seasonRange = [seasonStart, seasonEnd];
 	}
 
-	const matchedPlayers: Awaited<ReturnType<typeof getPlayers>>[number][] = [];
+	const matchedPlayers: AdvancedPlayerSearchPlayer[] = [];
 
 	// Special case for tid
 	const abbrevFilter = filters.find(
@@ -275,13 +280,13 @@ export const advancedPlayerSearch = async ({
 
 					const pValue = filterInfo.getValue(p, singleSeason);
 					if (filter.operator === ">") {
-						return pValue > filter.value;
+						return pValue !== undefined && pValue > filter.value;
 					} else if (filter.operator === "<") {
-						return pValue < filter.value;
+						return pValue !== undefined && pValue < filter.value;
 					} else if (filter.operator === ">=") {
-						return pValue >= filter.value;
+						return pValue !== undefined && pValue >= filter.value;
 					} else if (filter.operator === "<=") {
-						return pValue <= filter.value;
+						return pValue !== undefined && pValue <= filter.value;
 					} else if (filter.operator === "=") {
 						return pValue === filter.value;
 					} else if (filter.operator === "!=") {
@@ -312,3 +317,7 @@ export const advancedPlayerSearch = async ({
 
 	return addFirstNameShort(matchedPlayers);
 };
+
+export type AdvancedPlayerSearchPlayer = Awaited<
+	ReturnType<typeof getPlayers>
+>[number];

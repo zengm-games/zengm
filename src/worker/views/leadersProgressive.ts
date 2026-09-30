@@ -120,7 +120,8 @@ const updateLeadersProgressive = async (
 					"retiredYear",
 				],
 				ratings: ["skills", "pos"],
-				stats: ["abbrev", "tid", ...stats],
+				// season is for finding the team in the career stats rows
+				stats: ["abbrev", "season", "tid", ...stats],
 				seasonType: inputs.playoffs,
 				mergeStats: "totOnly",
 				statType: inputs.statType,
@@ -135,8 +136,8 @@ const updateLeadersProgressive = async (
 				});
 				if (p) {
 					const value = p.stats[cat.stat];
-					if (value === undefined) {
-						// value should only be undefined in historical data before certain stats were tracked
+					if (typeof value !== "number") {
+						// value should only be undefined in historical data before certain stats were tracked. Leader categories are all numeric stats
 						return;
 					}
 
@@ -166,7 +167,7 @@ const updateLeadersProgressive = async (
 								lastName: p.lastName,
 								pid: p.pid,
 								skills: p.ratings.skills,
-								stat: p.stats[cat.stat],
+								stat: value,
 								userTeam: g.get("userTid", season) === p.stats.tid,
 								watch: p.watch,
 								count: 0,
@@ -187,14 +188,8 @@ const updateLeadersProgressive = async (
 					},
 					playersPlusArgs,
 				);
+				let playerStats;
 				if (p) {
-					// Shitty handling of career totals
-					p.ratings = {
-						pos: p.ratings.at(-1).pos,
-						skills: [],
-					};
-
-					let playerStats;
 					if (inputs.playoffs === "playoffs") {
 						playerStats = p.careerStatsPlayoffs;
 					} else if (inputs.playoffs === "combined") {
@@ -202,7 +197,11 @@ const updateLeadersProgressive = async (
 					} else {
 						playerStats = p.careerStats;
 					}
+				}
+				const value = playerStats?.[cat.stat];
 
+				// value should only be undefined in historical data before certain stats were tracked. Leader categories are all numeric stats
+				if (p && playerStats && typeof value === "number") {
 					const pass = playerMeetsCategoryRequirements({
 						career: true,
 						cat,
@@ -215,7 +214,9 @@ const updateLeadersProgressive = async (
 					});
 
 					if (pass) {
-						const value = playerStats[cat.stat];
+						// Team for this season, since p.stats has all seasons up to this one
+						const tid = p.stats.findLast((row) => row.season === season)?.tid;
+
 						const leader = {
 							hof: p.hof,
 							jerseyNumber: p.jerseyNumber,
@@ -223,9 +224,9 @@ const updateLeadersProgressive = async (
 							firstName: p.firstName,
 							lastName: p.lastName,
 							pid: p.pid,
-							skills: p.ratings.skills,
-							stat: playerStats[cat.stat],
-							userTeam: g.get("userTid", season) === p.stats.tid,
+							skills: undefined,
+							stat: value,
+							userTeam: g.get("userTid", season) === tid,
 							watch: p.watch,
 						};
 

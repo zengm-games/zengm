@@ -109,8 +109,8 @@ const updateLeadersYears = async (
 			}
 
 			const value = p.stats[cat.stat];
-			if (value === undefined) {
-				// value should only be undefined in historical data before certain stats were tracked
+			if (typeof value !== "number") {
+				// value should only be undefined in historical data before certain stats were tracked. Leader categories are all numeric stats
 				return;
 			}
 
@@ -143,7 +143,7 @@ const updateLeadersYears = async (
 					firstName: p.firstName,
 					lastName: p.lastName,
 					pid: p.pid,
-					stat: p.stats[cat.stat],
+					stat: value,
 					userTeam: g.get("userTid", season) === p.stats.tid,
 					watch: p.watch,
 				};

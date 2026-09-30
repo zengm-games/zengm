@@ -106,7 +106,7 @@ const TradeProposals = ({ offers, seed }: View<"tradeProposals">) => {
 	) => {
 		return {
 			searchValue: `${players
-				.map((p) => `${p.name} ${p.ratings.pos}`)
+				.map((p) => `${p.firstName} ${p.lastName} ${p.ratings.pos}`)
 				.join(" ")} ${picks.map((pick) => pick.desc).join(" ")}`,
 			sortValue: playerScore(players) + pickScore(picks),
 		};

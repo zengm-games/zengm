@@ -208,6 +208,10 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
+// Some stats are arrays in some sports but not for the leaderStats in the sports that use them, like "a" is byPos in baseball but not hockey
+const getLeaderValue = (value: number | (number | undefined)[]) =>
+	typeof value === "number" ? value : 0;
+
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
@@ -254,7 +258,10 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		for (const stat of leaderStats) {
 			if (leaderPlayers[0]) {
-				leaderPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
+				leaderPlayers.sort(
+					(a, b) =>
+						getLeaderValue(b.stats[stat]) - getLeaderValue(a.stats[stat]),
+				);
 				leagueLeaders.push({
 					abbrev: leaderPlayers[0].abbrev,
 					firstName: leaderPlayers[0].firstName,
@@ -262,7 +269,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					pid: leaderPlayers[0].pid,
 					stat,
 					tid: leaderPlayers[0].tid,
-					value: leaderPlayers[0].stats[stat],
+					value: getLeaderValue(leaderPlayers[0].stats[stat]),
 				});
 			} else {
 				leagueLeaders.push({
@@ -324,14 +331,17 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		for (const stat of leaderStats) {
 			if (userPlayers[0]) {
-				userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
+				userPlayers.sort(
+					(a, b) =>
+						getLeaderValue(b.stats[stat]) - getLeaderValue(a.stats[stat]),
+				);
 				teamLeaders.push({
 					firstName: userPlayers[0].firstName,
 					firstNameShort: userPlayers[0].firstNameShort,
 					lastName: userPlayers[0].lastName,
 					pid: userPlayers[0].pid,
 					stat,
-					value: userPlayers[0].stats[stat],
+					value: getLeaderValue(userPlayers[0].stats[stat]),
 				});
 			} else {
 				teamLeaders.push({

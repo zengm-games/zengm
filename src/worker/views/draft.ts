@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
-import type { UpdateEvents } from "../../common/types.ts";
+import type { PlayerStatAttr, UpdateEvents } from "../../common/types.ts";
 import { draft } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local } from "../util/index.ts";
@@ -110,7 +110,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}),
 		);
 
-		let stats: string[];
+		let stats: PlayerStatAttr[];
 		let undrafted: any[];
 
 		if (fantasyDraft) {

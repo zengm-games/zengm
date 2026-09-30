@@ -97,7 +97,7 @@ const genDepth = async (
 	}
 	const depth = helpers.deepCopy(initialDepth);
 
-	let players: any[];
+	let players: PlayerForDepth[];
 
 	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
@@ -190,19 +190,20 @@ const genDepth = async (
 					let added = false;
 
 					for (let line = 0; line < 4; line++) {
-						if (scoreC > scoresStartingC[line]) {
+						// Starting lines are fixed length, so these scores always exist
+						if (scoreC > scoresStartingC[line]!) {
 							startingC.splice(line, 0, p.pid);
 							added = true;
 							break;
 						}
 
-						if (scoreW > scoresStartingW[line * 2]) {
+						if (scoreW > scoresStartingW[line * 2]!) {
 							startingW.splice(line * 2, 0, p.pid);
 							added = true;
 							break;
 						}
 
-						if (scoreW > scoresStartingW[line * 2 + 1]) {
+						if (scoreW > scoresStartingW[line * 2 + 1]!) {
 							startingW.splice(line * 2 + 1, 0, p.pid);
 							added = true;
 							break;

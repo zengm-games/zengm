@@ -877,7 +877,7 @@ const TradingBlock = ({
 									</>
 								),
 								searchValue: offer.players
-									.map((p) => `${p.name} ${p.ratings.pos}`)
+									.map((p) => `${p.firstName} ${p.lastName} ${p.ratings.pos}`)
 									.join(" "),
 								sortValue: playerScore(offer.players),
 							},

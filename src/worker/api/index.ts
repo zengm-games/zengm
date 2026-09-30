@@ -1429,10 +1429,6 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 					}
 
 					if (__SPORT === "baseball") {
-						if (stat === "pos") {
-							return false;
-						}
-
 						if (
 							statsBaseball.byPos &&
 							statsBaseball.byPos.includes(stat as any)
@@ -1528,8 +1524,11 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				p.ratings.pot,
 				...RATINGS.map((rating) => p.ratings[rating]),
 				...(extraRatings.length
-					? ["ovrs", "pots"].flatMap((type) =>
-							POSITIONS.map((pos) => p.ratings[type][pos]),
+					? (["ovrs", "pots"] as const).flatMap((type) =>
+							// In sports with extraRatings, POSITIONS are the keys of ovrs/pots
+							(POSITIONS as (keyof typeof p.ratings.ovrs)[]).map(
+								(pos) => p.ratings[type][pos],
+							),
 						)
 					: []),
 			]);

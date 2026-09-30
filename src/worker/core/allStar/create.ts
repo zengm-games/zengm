@@ -14,11 +14,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 
 // This is from the old football awards sytem. Eventually should make All-Star teams use the same formulas as the default All-League awards...
-const POS_FACTOR: Record<string, number> = {
-	CB: 1.05,
-	S: 0.95,
-};
-// Football players from playersPlus, with currentStats added in create. pos is never set, it's only here because these functions came from the old awards system where it was set
+// Football players from playersPlus, with currentStats added in create
 type PlayerWithCurrentStats = {
 	currentStats: Record<
 		| "defSk"
@@ -45,24 +41,20 @@ type PlayerWithCurrentStats = {
 		| "krTD",
 		number
 	>;
-	pos?: string;
 };
 
 const dpoyScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 
-	const posFactor = POS_FACTOR[p.pos] ?? 1;
-
 	return (
-		posFactor *
-		(s.defSk * 4 +
-			s.defTckLoss * 0.4 +
-			s.defTckAst * 0.2 +
-			s.defTckSolo * 0.4 +
-			s.defFmbFrc * 3 +
-			s.defFmbRec * 3 +
-			s.defInt * 6 +
-			s.defPssDef * 2)
+		s.defSk * 4 +
+		s.defTckLoss * 0.4 +
+		s.defTckAst * 0.2 +
+		s.defTckSolo * 0.4 +
+		s.defFmbFrc * 3 +
+		s.defFmbRec * 3 +
+		s.defInt * 6 +
+		s.defPssDef * 2
 	);
 };
 const opoyScore = (p: PlayerWithCurrentStats) => {
@@ -427,7 +419,7 @@ const create = async (conditions: Conditions) => {
 	}
 
 	// Do awards first, before picking captains, so remaining has all players
-	const awardsByPlayer = allStars.remaining.map((p: any) => {
+	const awardsByPlayer = allStars.remaining.map((p) => {
 		return {
 			pid: p.pid,
 			tid: p.tid,
@@ -456,12 +448,18 @@ const create = async (conditions: Conditions) => {
 			assignTopPlayerToTeam(team);
 		}
 
-		// @ts-expect-error
-		allStars.teamNames = allStars.teams.map((teamPlayers) => {
-			const captainPID = teamPlayers[0]!.pid;
+		const getTeamName = (teamPlayers: (typeof allStars)["teams"][number]) => {
+			const captainPID = teamPlayers[0]?.pid;
 			const p = players.find((p2) => p2.pid === captainPID);
+			if (!p) {
+				throw new Error("Should never happen");
+			}
 			return `Team ${p.firstName}`;
-		});
+		};
+		allStars.teamNames = [
+			getTeamName(allStars.teams[0]),
+			getTeamName(allStars.teams[1]),
+		];
 
 		if (allStars.teamNames[0] === allStars.teamNames[1]) {
 			allStars.teamNames[1] += " 2";

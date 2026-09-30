@@ -3045,9 +3045,15 @@ const ratingsStatsPopoverInfo = async ({
 	season?: number;
 }) => {
 	const blankObj = {
+		abbrev: undefined,
+		age: undefined,
+		jerseyNumber: undefined,
 		name: undefined,
+		note: undefined,
 		ratings: undefined,
 		stats: undefined,
+		tid: undefined,
+		type: undefined,
 	};
 
 	if (Number.isNaN(pid) || typeof pid !== "number") {
@@ -3153,40 +3159,83 @@ const ratingsStatsPopoverInfo = async ({
 		...(includeAbbrev ? (["abbrev"] as const) : []),
 	] as const;
 
-	const p2 = await idb.getCopy.playersPlus(p, {
+	const playersPlusOptions = {
 		attrs,
 		ratings,
 		stats: ["tid", "season", "playoffs", ...stats],
-		season: actualSeason,
 		showNoStats: true,
 		showRetired: true,
 		oldStats: true,
 		fuzz: true,
-	});
-	if (actualSeason === undefined) {
-		if (draftProspect) {
-			p2.ratings = p2.ratings[0];
-		} else {
-			// Peak ratings
-			p2.ratings = maxBy(p.ratings, "ovr");
-		}
-		p2.age = p2.ratings.season - p.born.year;
+	} as const;
 
-		p2.stats = p2.careerStats;
-		delete p2.careerStats;
+	let info;
+	if (actualSeason === undefined) {
+		// Career stats
+		const p2 = await idb.getCopy.playersPlus(p, playersPlusOptions);
+		if (!p2) {
+			return blankObj;
+		}
+
+		const { careerStats, ratings: allRatings, stats: allStats, ...rest } = p2;
+
+		// Draft prospect ratings, or peak ratings
+		const ratingsRow = draftProspect
+			? allRatings[0]
+			: (maxBy(allRatings, (row) => row.ovr) ?? last(allRatings));
+
+		info = {
+			...rest,
+			age: ratingsRow.season - p.born.year,
+			ratingsRow,
+			statsRow: careerStats,
+		};
+	} else {
+		const p2 = await idb.getCopy.playersPlus(p, {
+			...playersPlusOptions,
+			season: actualSeason,
+		});
+		if (!p2) {
+			return blankObj;
+		}
+
+		const { ratings: ratingsRow, stats: statsRow, ...rest } = p2;
+		info = {
+			...rest,
+			ratingsRow,
+			statsRow,
+		};
 	}
+
+	// abbrev and tid in ratings/stats are only used to determine the team for past seasons, so remove them from the output
+	const {
+		abbrev: ratingsAbbrev,
+		tid: ratingsTid,
+		...ratingsOutput
+	} = info.ratingsRow;
+	const {
+		playoffs: statsPlayoffs,
+		season: statsSeason,
+		tid: statsTid,
+		...statsOutput
+	} = info.statsRow;
+	const {
+		ratingsRow,
+		statsRow,
+		abbrev: currentAbbrev,
+		tid: currentTid,
+		...rest
+	} = info;
+
+	let abbrev: string | undefined = currentAbbrev;
+	let tid: number | undefined = currentTid;
 	if (
 		!eightyTwoZeroDraftPlayer &&
 		(actualSeason === undefined || actualSeason < currentSeason)
 	) {
-		p2.abbrev = p2.ratings.abbrev;
-		p2.tid = p2.ratings.tid;
+		abbrev = ratingsAbbrev;
+		tid = ratingsTid;
 	}
-	delete p2.ratings.abbrev;
-	delete p2.ratings.tid;
-	delete p2.stats.playoffs;
-	delete p2.stats.season;
-	delete p2.stats.tid;
 
 	let type: "career" | "current" | "draft" | number;
 	if (draftProspect) {
@@ -3199,7 +3248,11 @@ const ratingsStatsPopoverInfo = async ({
 		type = actualSeason;
 	}
 	return {
-		...p2,
+		...rest,
+		abbrev,
+		tid,
+		ratings: ratingsOutput,
+		stats: statsOutput,
 		type,
 	};
 };

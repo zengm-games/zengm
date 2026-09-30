@@ -85,9 +85,7 @@ export const RatingsStatsPopover = ({
 			endu: number;
 			season: number;
 		};
-		stats?: {
-			[key: string]: number;
-		};
+		stats?: Record<string, unknown>;
 		pid: number;
 		type?: "career" | "current" | "draft" | number;
 		note?: string;

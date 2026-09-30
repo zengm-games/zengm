@@ -131,10 +131,8 @@ const updateHistory = async (
 
 			// Manually add pos, since ratings could have been deleted or something
 			const ratingsPos =
-				pos ??
 				p.ratings.findLast((row) => row.season === season)?.pos ??
 				last(p.ratings).pos;
-			p2.ratings = { pos: ratingsPos };
 
 			// Could have asked for "abbrev" in playersPlus, but we already have the teams in memory...
 			const t = teamsByTid[tid];
@@ -142,7 +140,7 @@ const updateHistory = async (
 			return {
 				pid,
 				name: p2.name as string,
-				pos: pos ?? getPosByGpF(p2.stats.gpF, p2.ratings.pos),
+				pos: pos ?? getPosByGpF(p2.stats.gpF, ratingsPos),
 				statOverrides,
 				stats: {
 					...p2.stats,

@@ -16,15 +16,15 @@ const updatePlayers = async (
 				updateEvents.includes("playerMovement"))) ||
 		inputs.season !== state.season
 	) {
-		let players;
+		let playersRaw;
 
 		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
-			players = await idb.cache.players.indexGetAll("playersByTid", [
+			playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
 				PLAYER.FREE_AGENT,
 				Infinity,
 			]);
 		} else {
-			players = await idb.getCopies.players(
+			playersRaw = await idb.getCopies.players(
 				{
 					activeSeason: inputs.season,
 				},
@@ -39,36 +39,40 @@ const updatePlayers = async (
 			hockey: ["ovrs", "pots"],
 		} as const);
 
-		players = await idb.getCopies.playersPlus(players, {
+		const players = await idb.getCopies.playersPlus(playersRaw, {
 			ratings: ["ovr", "pot", ...extraRatings, ...RATINGS],
 			season: inputs.season,
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
 		});
-		const ratingsAll = players.reduce((memo, p) => {
-			for (const rating of Object.keys(p.ratings)) {
+
+		// Only numeric values can be plotted. Insertion order determines the display order in the UI
+		const ratingsAll: Record<string, number[]> = {};
+		const addValue = (rating: string, value: unknown) => {
+			if (typeof value !== "number") {
+				return;
+			}
+			ratingsAll[rating] ??= [];
+			ratingsAll[rating].push(value);
+		};
+
+		for (const p of players) {
+			for (const [rating, value] of Object.entries(p.ratings)) {
 				if (rating === "ovrs" || rating === "pots") {
-					for (const pos of Object.keys(p.ratings[rating])) {
-						const posRating = `${rating.slice(0, rating.length - 1)}${pos}`;
-						if (memo[posRating]) {
-							memo[posRating].push(p.ratings[rating][pos]);
-						} else {
-							memo[posRating] = [p.ratings[rating][pos]];
+					// Split into one rating per position, like ovrQB
+					if (typeof value === "object") {
+						for (const [pos, posValue] of Object.entries(value)) {
+							addValue(`${rating.slice(0, -1)}${pos}`, posValue);
 						}
 					}
 					continue;
 				}
 
-				if (memo[rating]) {
-					memo[rating].push(p.ratings[rating]);
-				} else {
-					memo[rating] = [p.ratings[rating]];
-				}
+				addValue(rating, value);
 			}
+		}
 
-			return memo;
-		}, {});
 		return {
 			season: inputs.season,
 			ratingsAll,

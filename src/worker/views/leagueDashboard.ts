@@ -253,7 +253,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		for (const stat of leaderStats) {
-			if (leaderPlayers.length > 0) {
+			if (leaderPlayers[0]) {
 				leaderPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
 				leagueLeaders.push({
 					abbrev: leaderPlayers[0].abbrev,
@@ -323,7 +323,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		for (const stat of leaderStats) {
-			if (userPlayers.length > 0) {
+			if (userPlayers[0]) {
 				userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
 				teamLeaders.push({
 					firstName: userPlayers[0].firstName,

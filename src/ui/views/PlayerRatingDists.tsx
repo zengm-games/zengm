@@ -37,14 +37,14 @@ const PlayerRatingDists = ({
 
 			<table>
 				<tbody>
-					{Object.keys(ratingsAll).map((rating) => {
+					{Object.entries(ratingsAll).map(([rating, values]) => {
 						return (
 							<tr key={rating}>
 								<td className="pe-3 text-end">{rating}</td>
 								<td style={width100}>
 									<BoxPlot
 										color="var(--bs-blue)"
-										data={ratingsAll[rating]}
+										data={values}
 										scale={[0, 100]}
 									/>
 								</td>

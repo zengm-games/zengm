@@ -85,6 +85,10 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"playersRefuseToNegotiate",
 		),
+		freeAgencySigningsPerDay: unwrapGameAttribute(
+			defaultGameAttributes,
+			"freeAgencySigningsPerDay",
+		),
 		allStarGame: unwrapGameAttribute(defaultGameAttributes, "allStarGame"),
 		allStarNum: unwrapGameAttribute(defaultGameAttributes, "allStarNum"),
 		allStarType: unwrapGameAttribute(defaultGameAttributes, "allStarType"),

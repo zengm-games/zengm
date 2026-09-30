@@ -112,23 +112,43 @@ const getOffers = async (seed: number) => {
 	return augmentOffers(offers);
 };
 
-// offers[number].summary.trade includes players with no stats, and offers[number].players includes players with stats. Make them the same. Plus ratings and age!
-export const fixPlayers = (
-	offer: Awaited<ReturnType<typeof getOffers>>[number],
-	summaryTeamsIndex: number,
-	playersWithStats: any[],
-) => {
-	const t = offer.summary.teams[summaryTeamsIndex];
-	if (!t) {
-		throw new Error("Should never happen");
-	}
+type AugmentedOffer = Awaited<ReturnType<typeof augmentOffers>>[number];
 
-	for (const p of t.trade) {
-		const p2 = playersWithStats.find((p2) => p2.pid === p.pid);
-		p.stats = p2.stats;
-		p.ratings = p2.ratings;
-		p.age = p2.age;
-	}
+// offer.summary.teams[number].trade only has basic player info, but offer.players and offer.playersUser also have age, ratings, and stats, so add those to the summary for display
+export const addInlinePlayerInfo = <T extends AugmentedOffer>(offer: T) => {
+	const addToTeam = (
+		t: T["summary"]["teams"][number],
+		playersWithInfo: T["players"],
+	) => {
+		return {
+			...t,
+			trade: t.trade.map((p) => {
+				const p2 = playersWithInfo.find((p2) => p2.pid === p.pid);
+				if (!p2) {
+					// Should never happen, since summary and augmentOffers get players the same way
+					throw new Error(`Player ${p.pid} not found for trade summary`);
+				}
+
+				return {
+					...p,
+					age: p2.age,
+					ratings: p2.ratings,
+					stats: p2.stats,
+				};
+			}),
+		};
+	};
+
+	return {
+		...offer,
+		summary: {
+			...offer.summary,
+			teams: [
+				addToTeam(offer.summary.teams[0], offer.playersUser),
+				addToTeam(offer.summary.teams[1], offer.players),
+			] as const,
+		},
+	};
 };
 
 const updateTradeProposals = async (
@@ -156,12 +176,9 @@ const updateTradeProposals = async (
 			g.get("phase") +
 			g.get("tradeProposalsSeed");
 
-		const offers = await getOffers(seed);
-
-		for (const offer of offers) {
-			fixPlayers(offer, 1, offer.players);
-			fixPlayers(offer, 0, offer.playersUser);
-		}
+		const offers = (await getOffers(seed)).map((offer) =>
+			addInlinePlayerInfo(offer),
+		);
 
 		return {
 			offers,

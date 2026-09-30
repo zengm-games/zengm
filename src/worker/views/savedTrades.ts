@@ -3,7 +3,7 @@ import { g, helpers } from "../util/index.ts";
 import type { TradeTeams, UpdateEvents } from "../../common/types.ts";
 import isUntradable from "../core/trade/isUntradable.ts";
 import { augmentOffers } from "../api/index.ts";
-import { fixPlayers } from "./tradeProposals.ts";
+import { addInlinePlayerInfo } from "./tradeProposals.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { last, orderBy } from "../../common/utils.ts";
 
@@ -87,15 +87,11 @@ type AugmentedOffer = Awaited<ReturnType<typeof augmentOffers>>[number];
 export const addMissingAssets = async <T extends AugmentedOffer>(
 	offers: T[],
 ) => {
-	for (const offer of offers) {
-		fixPlayers(offer, 1, offer.players);
-		fixPlayers(offer, 0, offer.playersUser);
-	}
-
 	// Add some info about players/picks no longer available
 	const offers2 = [];
 
-	for (const offer of offers) {
+	for (const offerRaw of offers) {
+		const offer = addInlinePlayerInfo(offerRaw);
 		const offer2 = {
 			...offer,
 			missing: [] as MissingAsset[],

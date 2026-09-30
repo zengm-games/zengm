@@ -5,6 +5,7 @@ import { processPlayerStats as processPlayerStats2 } from "../../util/processPla
 import type {
 	Player,
 	PlayerFiltered,
+	PlayerSeasonType,
 	PlayerStatAttr,
 	PlayerStatType,
 	PlayersPlusOptions,
@@ -18,12 +19,22 @@ import { last } from "../../../common/utils.ts";
 type PlayersPlusOptionsRequired = Required<
 	Omit<
 		PlayersPlusOptions,
-		"disableAbbrevsCacheDatabaseAccess" | "season" | "seasonRange" | "tid"
+		| "disableAbbrevsCacheDatabaseAccess"
+		| "season"
+		| "seasonRange"
+		| "seasonType"
+		| "tid"
 	>
 > & {
 	season?: number;
 	seasonRange?: [number, number];
 	tid?: number;
+
+	// Derived from seasonType
+	playoffs: boolean;
+	regularSeason: boolean;
+	combined: boolean;
+	singleSeasonType: boolean;
 };
 
 const getLatestTransaction = (
@@ -1034,6 +1045,7 @@ const processStats = (
 		playoffs,
 		regularSeason,
 		combined,
+		singleSeasonType,
 		season,
 		tid,
 		showNoStats,
@@ -1121,12 +1133,7 @@ const processStats = (
 		);
 	});
 
-	if (
-		season !== undefined &&
-		((playoffs && !regularSeason && !combined) ||
-			(!playoffs && regularSeason && !combined) ||
-			(!playoffs && !regularSeason && combined))
-	) {
+	if (season !== undefined && singleSeasonType) {
 		// Take last value, because unless mergeStats is enabled there could be multiple
 		output.stats = output.stats.at(-1);
 	} else if (season === undefined) {
@@ -1378,9 +1385,7 @@ const getCopies = async <Options extends PlayersPlusOptions>(
 		attrs = [],
 		ratings = [],
 		stats = [],
-		playoffs = false,
-		regularSeason = true,
-		combined = false,
+		seasonType = "regularSeason",
 		showNoStats = false,
 		showRookies = false,
 		showRetired = false,
@@ -1399,6 +1404,9 @@ const getCopies = async <Options extends PlayersPlusOptions>(
 		);
 	}
 
+	const seasonTypes: Readonly<PlayerSeasonType[]> =
+		typeof seasonType === "string" ? [seasonType] : seasonType;
+
 	const options: PlayersPlusOptionsRequired = {
 		season,
 		seasonRange,
@@ -1406,9 +1414,10 @@ const getCopies = async <Options extends PlayersPlusOptions>(
 		attrs,
 		ratings,
 		stats,
-		playoffs,
-		regularSeason,
-		combined,
+		playoffs: seasonTypes.includes("playoffs"),
+		regularSeason: seasonTypes.includes("regularSeason"),
+		combined: seasonTypes.includes("combined"),
+		singleSeasonType: typeof seasonType === "string",
 		showNoStats,
 		showRookies,
 		showDraftProspectRookieRatings,

@@ -104,8 +104,9 @@ const calculateSeasonLeaders = async (
 		stats: ["tid", ...stats],
 		season,
 		mergeStats: "totOnly",
-		playoffs: true, // Always true, or it tries to return an object for stats rather than array
-		combined: !regularSeasonOnly,
+		seasonType: regularSeasonOnly
+			? ["regularSeason"]
+			: ["regularSeason", "playoffs", "combined"],
 	});
 	for (const p of players) {
 		splitRegularSeasonPlayoffsCombined(p);

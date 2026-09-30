@@ -254,9 +254,7 @@ const updateRoster = async (
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs === "regularSeason",
-				combined: inputs.playoffs === "combined",
+				seasonType: inputs.playoffs,
 				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,
@@ -305,9 +303,7 @@ const updateRoster = async (
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs === "regularSeason",
-				combined: inputs.playoffs === "combined",
+				seasonType: inputs.playoffs,
 				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,

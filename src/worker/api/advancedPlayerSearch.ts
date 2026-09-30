@@ -60,9 +60,7 @@ const getPlayers = async (
 		showRookies: true,
 		fuzz: true,
 		statType,
-		playoffs: playoffs === "playoffs",
-		regularSeason: playoffs === "regularSeason",
-		combined: playoffs === "combined",
+		seasonType: playoffs,
 		seasonRange,
 	});
 

@@ -255,8 +255,7 @@ export const processTeam = async (
 			attrs: ["pid"],
 			stats: SEASON_STATS_KEYS,
 			season: g.get("season"),
-			regularSeason,
-			playoffs: !regularSeason,
+			seasonType: regularSeason ? "regularSeason" : "playoffs",
 			mergeStats: "totOnly",
 		});
 		seasonStatsByPid = new Map(rows.map((p) => [p.pid, p.stats]));

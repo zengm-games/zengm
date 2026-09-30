@@ -804,9 +804,7 @@ const updateLeaders = async (
 
 				stats: ["abbrev", "tid", ...stats, ...extraStats],
 				season: season === "career" ? undefined : season,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs === "regularSeason",
-				combined: inputs.playoffs === "combined",
+				seasonType: inputs.playoffs,
 				mergeStats: "totOnly",
 				statType: inputs.statType,
 				disableAbbrevsCacheDatabaseAccess: true,

@@ -44,8 +44,9 @@ const getLeaders = async (pRaw: Player) => {
 			season,
 			mergeStats: "totOnly",
 			fuzz: true,
-			playoffs: true, // Always true, or it tries to return an object for stats rather than array
-			combined: !regularSeasonOnly,
+			seasonType: regularSeasonOnly
+				? ["regularSeason"]
+				: ["regularSeason", "playoffs", "combined"],
 		});
 		if (!p) {
 			// Could be a season where player is a draft prospect or free agent

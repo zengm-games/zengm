@@ -9,6 +9,7 @@ import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import type {
 	Player,
 	PlayerFiltered,
+	PlayerSeasonType,
 	PlayerStatMax,
 } from "../../../common/types.ts";
 
@@ -231,12 +232,12 @@ test('return season totals is options.statType is "totals", and per-game average
 	assert.strictEqual(pf.stats.fg, 4);
 });
 
-test("return playoff stats if options.playoffs is true", async () => {
+test("return regular season and playoff stats if options.seasonType includes both", async () => {
 	const pf = await idb.getCopy.playersPlus(p, {
 		stats: ["gp", "fg"],
 		tid: 4,
 		season: 2012,
-		playoffs: true,
+		seasonType: ["regularSeason", "playoffs"],
 	});
 
 	if (!pf) {
@@ -700,7 +701,7 @@ describe("TypeScript", () => {
 			stats: ["gp", "fg"],
 			tid: 4,
 			season: 2012,
-			playoffs: true,
+			seasonType: ["regularSeason", "playoffs"],
 		});
 
 		typeAssert<
@@ -722,8 +723,7 @@ describe("TypeScript", () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp"],
 			season: 2012,
-			playoffs: true,
-			regularSeason: false,
+			seasonType: "playoffs",
 		});
 
 		typeAssert<
@@ -740,10 +740,10 @@ describe("TypeScript", () => {
 		>(true);
 	});
 
-	test("Returns careerStats and careerStatsPlayoffs when no season is supplied and playoffs is true", async () => {
+	test("Returns careerStats and careerStatsPlayoffs when no season is supplied and seasonType includes regular season and playoffs", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp"],
-			playoffs: true,
+			seasonType: ["regularSeason", "playoffs"],
 		});
 
 		type StatsRow = {
@@ -770,26 +770,26 @@ describe("TypeScript", () => {
 		>(true);
 	});
 
-	test("Returns object or array, and optional careerStats, when season and flags are not known statically", async () => {
+	test("Returns object or array, and optional careerStats, when season and seasonType are not known statically", async () => {
 		// Functions rather than constants, otherwise TypeScript narrows the types
 		const getSeason = (): number | undefined => 2012;
-		const getRegularSeason = (): boolean => true;
+		const getSeasonType = (): PlayerSeasonType => "regularSeason";
 		const pf = await idb.getCopy.playersPlus(p, {
 			ratings: ["ovr"],
 			stats: ["gp"],
 			season: getSeason(),
-			regularSeason: getRegularSeason(),
+			seasonType: getSeasonType(),
 		});
 
 		type StatsRow = {
 			gp: number;
-			playoffs: boolean;
+			playoffs: boolean | "combined";
 			hasTot?: true;
 		};
 
-		type CareerStatsRow = {
+		type CareerStatsRow<PlayoffsValue> = {
 			gp: number;
-			playoffs: number | undefined;
+			playoffs: PlayoffsValue | undefined;
 			hasTot?: true;
 		};
 
@@ -805,7 +805,61 @@ describe("TypeScript", () => {
 		typeAssert<
 			IsExact<
 				Exclude<typeof pf, undefined>["careerStats"],
-				CareerStatsRow | undefined
+				CareerStatsRow<number> | undefined
+			>
+		>(true);
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["careerStatsPlayoffs"],
+				CareerStatsRow<number> | undefined
+			>
+		>(true);
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["careerStatsCombined"],
+				CareerStatsRow<string> | undefined
+			>
+		>(true);
+	});
+
+	test("Returns stats object for a single season when seasonType is a single value not known statically", async () => {
+		const getSeasonType = (): PlayerSeasonType => "regularSeason";
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			season: 2012,
+			seasonType: getSeasonType(),
+		});
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["stats"],
+				{
+					gp: number;
+					playoffs: boolean | "combined";
+					hasTot?: true;
+				}
+			>
+		>(true);
+	});
+
+	test("Returns stats array for a single season when seasonType is an array, even with one value", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			tid: 4,
+			season: 2012,
+			seasonType: ["regularSeason"],
+		});
+
+		assert(Array.isArray(pf?.stats));
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["stats"],
+				{
+					gp: number;
+					playoffs: boolean;
+					hasTot?: true;
+				}[]
 			>
 		>(true);
 	});
@@ -938,7 +992,7 @@ describe("TypeScript", () => {
 	test("combined stats", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp"],
-			combined: true,
+			seasonType: ["regularSeason", "combined"],
 		});
 
 		typeAssert<

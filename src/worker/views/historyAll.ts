@@ -183,9 +183,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					const p2 = await idb.getCopy.playersPlus(p, {
 						attrs: ["name"],
 						stats: ["tid"],
-						playoffs: statRange === "playoffs" || typeof statRange === "number",
-						regularSeason: statRange === undefined,
-						combined: statRange === "combined",
+						seasonType:
+							statRange === undefined
+								? "regularSeason"
+								: statRange === "combined"
+									? "combined"
+									: "playoffs",
 						mergeStats: "totOnly",
 						season,
 						showNoStats: true,

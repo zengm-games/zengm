@@ -87,9 +87,7 @@ const getPlayerStats = async (
 		season: typeof season === "number" ? season : undefined,
 		tid: undefined,
 		statType,
-		playoffs: playoffs === "playoffs",
-		regularSeason: playoffs === "regularSeason",
-		combined: playoffs === "combined",
+		seasonType: playoffs,
 		mergeStats: "totOnly",
 		fuzz: true,
 	});

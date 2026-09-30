@@ -130,9 +130,7 @@ const updatePlayers = async (
 			season: typeof inputs.season === "number" ? inputs.season : undefined,
 			tid,
 			statType,
-			playoffs: inputs.playoffs === "playoffs",
-			regularSeason: inputs.playoffs === "regularSeason",
-			combined: inputs.playoffs === "combined",
+			seasonType: inputs.playoffs,
 			mergeStats: "totOnly",
 		});
 

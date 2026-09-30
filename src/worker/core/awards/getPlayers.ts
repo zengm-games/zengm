@@ -160,9 +160,9 @@ const getProcessedPlayers = async (
 		]),
 	);
 
-	const regularSeason = statRanges.has("regularSeason");
-	const playoffs = statRanges.has("playoffs");
-	const combined = statRanges.has("combined");
+	const seasonType = (
+		["regularSeason", "playoffs", "combined"] as const
+	).filter((seasonType) => statRanges.has(seasonType));
 
 	const players = (await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
@@ -180,9 +180,7 @@ const getProcessedPlayers = async (
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
 		stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
-		playoffs,
-		regularSeason,
-		combined,
+		seasonType,
 		fuzz: true,
 		mergeStats: "totOnly",
 	})) as unknown as (Pick<

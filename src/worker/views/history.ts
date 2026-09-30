@@ -115,9 +115,12 @@ const updateHistory = async (
 				attrs: ["name"],
 				stats: allStats,
 				season,
-				playoffs: statRange === "playoffs" || typeof statRange === "number",
-				regularSeason: statRange === undefined,
-				combined: statRange === "combined",
+				seasonType:
+					statRange === undefined
+						? "regularSeason"
+						: statRange === "combined"
+							? "combined"
+							: "playoffs",
 				mergeStats: "totOnly",
 				showNoStats: true,
 				fuzz: true,

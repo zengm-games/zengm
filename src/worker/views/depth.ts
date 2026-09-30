@@ -213,9 +213,7 @@ const updateDepth = async (
 			await idb.getCopies.playersPlus(playersAll, {
 				attrs: ["pid", "firstName", "lastName", "age", "injury", "watch"],
 				ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
-				playoffs: playoffs === "playoffs",
-				regularSeason: playoffs === "regularSeason",
-				combined: playoffs === "combined",
+				seasonType: playoffs,
 				stats: [...stats[pos2]!, "jerseyNumber"],
 				season: g.get("season"),
 				showNoStats: true,

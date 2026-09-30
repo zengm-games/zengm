@@ -1401,6 +1401,8 @@ type PlayerStatsPlus = Omit<
 	PlayerStatsPlusCommon;
 export type PlayerStatAttr = keyof PlayerStatsPlus;
 
+export type PlayerSeasonType = "regularSeason" | "playoffs" | "combined";
+
 export type PlayersPlusOptions = {
 	season?: number;
 	seasonRange?: [number, number];
@@ -1408,9 +1410,10 @@ export type PlayersPlusOptions = {
 	attrs?: Readonly<PlayerAttr[]>;
 	ratings?: Readonly<PlayerRatingAttr[]>;
 	stats?: Readonly<PlayerStatAttr[]>;
-	playoffs?: boolean;
-	regularSeason?: boolean;
-	combined?: boolean;
+
+	// A single value means exactly one season type, so if season is also specified then stats will be a single object. An array means stats will always be an array. Default is "regularSeason"
+	seasonType?: PlayerSeasonType | Readonly<PlayerSeasonType[]>;
+
 	showNoStats?: boolean;
 	showRookies?: boolean;
 	showDraftProspectRookieRatings?: boolean;
@@ -1423,22 +1426,23 @@ export type PlayersPlusOptions = {
 	disableAbbrevsCacheDatabaseAccess?: boolean;
 };
 
-// Is exactly one of playoffs/regularSeason/combined true? If any are boolean, result is boolean
-type IsOneSeasonType<
-	Playoffs extends boolean,
-	RegularSeason extends boolean,
-	Combined extends boolean,
-> = Playoffs extends true
-	? RegularSeason extends true
-		? false
-		: Combined extends true
-			? false
-			: true
-	: RegularSeason extends true
-		? Combined extends true
-			? false
-			: true
-		: Combined;
+// Is SeasonType one of the values in the seasonType option? Distributes over unions, so if seasonType is a union of single values (like "playoffs" | "regularSeason"), the result is boolean because it's not known which one it is
+type SeasonTypeIncluded<
+	SeasonTypeOption extends PlayersPlusOptions["seasonType"],
+	SeasonType extends PlayerSeasonType,
+> =
+	SeasonTypeOption extends Readonly<(infer Values)[]>
+		? SeasonType extends Values
+			? true
+			: false
+		: SeasonType extends SeasonTypeOption
+			? true
+			: false;
+
+// Single seasonType value means a single stats row, array means an array of stats rows
+type SeasonTypeSingle<
+	SeasonTypeOption extends PlayersPlusOptions["seasonType"],
+> = SeasonTypeOption extends Readonly<unknown[]> ? false : true;
 
 type RowOrRows<
 	Single extends boolean,
@@ -1526,6 +1530,7 @@ type PlayerStatsSingleUndefined<
 type PlayerStatsPart<
 	Stats extends Readonly<PlayerStatAttr[]>,
 	Season extends number | undefined,
+	Single extends boolean,
 	Playoffs extends boolean,
 	RegularSeason extends boolean,
 	Combined extends boolean,
@@ -1534,7 +1539,7 @@ type PlayerStatsPart<
 > = {
 	stats: Season extends number
 		? RowOrRows<
-				IsOneSeasonType<Playoffs, RegularSeason, Combined>,
+				Single,
 				PlayerStatsRow<Stats, Combined, ShowNoStats>,
 				PlayerStatsSingleUndefined<ShowNoStats, ShowRookies>
 			>
@@ -1565,6 +1570,7 @@ type PlayerFilteredInner<
 	Stats extends Readonly<PlayerStatAttr[]> | undefined,
 	Season extends number | undefined,
 	SeasonRange extends [number, number] | undefined,
+	Single extends boolean,
 	Playoffs extends boolean,
 	RegularSeason extends boolean,
 	Combined extends boolean,
@@ -1586,6 +1592,7 @@ type PlayerFilteredInner<
 			? PlayerStatsPart<
 					Stats,
 					Season,
+					Single,
 					Playoffs,
 					RegularSeason,
 					Combined,
@@ -1596,6 +1603,7 @@ type PlayerFilteredInner<
 					PlayerStatsPart<
 						NonNullable<Stats>,
 						Season,
+						Single,
 						Playoffs,
 						RegularSeason,
 						Combined,
@@ -1615,19 +1623,28 @@ type PlayersPlusOptionValue<
 			| (undefined extends Options[Key] ? Default : never)
 	: Default;
 
+type PlayerFilteredWithSeasonType<
+	Options extends PlayersPlusOptions,
+	SeasonTypeOption extends PlayersPlusOptions["seasonType"],
+> = PlayerFilteredInner<
+	PlayersPlusOptionValue<Options, "attrs", undefined>,
+	PlayersPlusOptionValue<Options, "ratings", undefined>,
+	PlayersPlusOptionValue<Options, "stats", undefined>,
+	PlayersPlusOptionValue<Options, "season", undefined>,
+	PlayersPlusOptionValue<Options, "seasonRange", undefined>,
+	SeasonTypeSingle<SeasonTypeOption>,
+	SeasonTypeIncluded<SeasonTypeOption, "playoffs">,
+	SeasonTypeIncluded<SeasonTypeOption, "regularSeason">,
+	SeasonTypeIncluded<SeasonTypeOption, "combined">,
+	PlayersPlusOptionValue<Options, "showNoStats", false>,
+	PlayersPlusOptionValue<Options, "showRookies", false>
+>;
+
 // Output of playersPlus for a given set of options
 export type PlayerFiltered<Options extends PlayersPlusOptions> =
-	PlayerFilteredInner<
-		PlayersPlusOptionValue<Options, "attrs", undefined>,
-		PlayersPlusOptionValue<Options, "ratings", undefined>,
-		PlayersPlusOptionValue<Options, "stats", undefined>,
-		PlayersPlusOptionValue<Options, "season", undefined>,
-		PlayersPlusOptionValue<Options, "seasonRange", undefined>,
-		PlayersPlusOptionValue<Options, "playoffs", false>,
-		PlayersPlusOptionValue<Options, "regularSeason", true>,
-		PlayersPlusOptionValue<Options, "combined", false>,
-		PlayersPlusOptionValue<Options, "showNoStats", false>,
-		PlayersPlusOptionValue<Options, "showRookies", false>
+	PlayerFilteredWithSeasonType<
+		Options,
+		PlayersPlusOptionValue<Options, "seasonType", "regularSeason">
 	>;
 
 export type Race = "asian" | "black" | "brown" | "white";

@@ -86,7 +86,7 @@ const updateSeasons = async (
 				for (const ps of p.stats) {
 					if (ps.season === season && !ps.playoffs && minutesAll[ps.tid]) {
 						const min = minutesAll[ps.tid]!.get(p.pid) ?? 0;
-						minutesAll[ps.tid]!.set(p.pid, min + ps.min);
+						minutesAll[ps.tid]!.set(p.pid, min + (ps.min ?? 0));
 					}
 				}
 			}

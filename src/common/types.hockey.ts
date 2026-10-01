@@ -28,7 +28,7 @@ type PlayerStatAttrString = "keyStats" | "keyStatsWithGoalieGP" | "gRec";
 // Stats row as stored in the database, in p.stats
 export type PlayerStats = Record<
 	(typeof playerStats)["raw"][number] | (typeof playerStats)["derived"][number],
-	number
+	number | undefined
 > &
 	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
 

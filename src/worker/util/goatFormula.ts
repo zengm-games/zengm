@@ -204,10 +204,13 @@ const evaluate = (
 				continue;
 			}
 
+			// Missing in real player data before minutes were tracked
+			const min = row.min ?? 0;
+
 			if (row.playoffs) {
 				if (weightStatByMinutes) {
-					object[playoffs] += value * row.min;
-					minSumPlayoffs += row.min;
+					object[playoffs] += value * min;
+					minSumPlayoffs += min;
 				} else if (__SPORT === "football" && stat.endsWith("Lng")) {
 					if (value > object[playoffs]) {
 						object[playoffs] = value;
@@ -221,15 +224,15 @@ const evaluate = (
 						object[peak] = value;
 					}
 
-					const perGame = helpers.ratio(value, row.gp);
+					const perGame = helpers.ratio(value, row.gp ?? 0);
 					if (perGame > object[peakPerGame]) {
 						object[peakPerGame] = perGame;
 					}
 				}
 
 				if (weightStatByMinutes) {
-					object[tot] += value * row.min;
-					minSum += row.min;
+					object[tot] += value * min;
+					minSum += min;
 				} else if (__SPORT === "football" && stat.endsWith("Lng")) {
 					if (value > object[tot]) {
 						object[tot] = value;
@@ -270,7 +273,7 @@ const evaluate = (
 		const seasons = new Set();
 		for (const row of p.stats) {
 			// gp is for real player data before minutes were tracked
-			if (row.min > 0 || row.gp > 0) {
+			if ((row.min ?? 0) > 0 || (row.gp ?? 0) > 0) {
 				seasons.add(row.season);
 			}
 		}

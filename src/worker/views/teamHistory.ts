@@ -317,7 +317,7 @@ const updateTeamHistory = async (
 			for (const { gp, jerseyNumber, playoffs, season } of stats) {
 				if (
 					!playoffs &&
-					gp > 0 &&
+					(gp ?? 0) > 0 &&
 					jerseyNumber !== undefined &&
 					!retiredByPid[p.pid]?.has(jerseyNumber)
 				) {

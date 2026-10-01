@@ -90,30 +90,32 @@ const value = (
 	// No stats at all? Just look at ratings more, then.
 	const ps1 = ps.at(-1); // Most recent stats
 	if (__SPORT === "basketball" && ps1) {
-		// PER may be undefined for exhibition game players from old historical seasons. See ps2 check below too.
-		if (Object.hasOwn(ps1, "per")) {
-			if (ps.length === 1 || ps1.min >= 2000) {
+		// PER may be undefined for exhibition game players from old historical seasons. See ps2 check below too. Missing min is treated as no minutes played
+		const per1 = ps1.per;
+		const min1 = ps1.min ?? 0;
+		if (per1 !== undefined) {
+			if (ps.length === 1 || min1 >= 2000) {
 				// Only one year of stats
-				current = intercept + slope * ps1.per;
+				current = intercept + slope * per1;
 
-				if (ps1.min < 2000) {
-					current = (current * ps1.min) / 2000 + ovr * (1 - ps1.min / 2000);
+				if (min1 < 2000) {
+					current = (current * min1) / 2000 + ovr * (1 - min1 / 2000);
 				}
 			} else {
 				// Two most recent seasons
 				const ps2 = ps.at(-2)!;
+				const per2 = ps2.per;
+				const min2 = ps2.min ?? 0;
 
-				if (Object.hasOwn(ps2, "per")) {
-					if (ps1.min + ps2.min > 0) {
+				if (per2 !== undefined) {
+					if (min1 + min2 > 0) {
 						current =
-							intercept +
-							(slope * (ps1.per * ps1.min + ps2.per * ps2.min)) /
-								(ps1.min + ps2.min);
+							intercept + (slope * (per1 * min1 + per2 * min2)) / (min1 + min2);
 
-						if (ps1.min + ps2.min < 2000) {
+						if (min1 + min2 < 2000) {
 							current =
-								(current * (ps1.min + ps2.min)) / 2000 +
-								ovr * (1 - (ps1.min + ps2.min) / 2000);
+								(current * (min1 + min2)) / 2000 +
+								ovr * (1 - (min1 + min2) / 2000);
 						}
 					}
 				}

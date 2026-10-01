@@ -1153,7 +1153,7 @@ type PlayerStatsCommon = {
 // Input to processPlayerStats. Not just PlayerStats, it can also be a box score row, player feat, or sums of multiple rows (with extra properties like hasTot), and old rows can be missing stats or have ones that are no longer stored. So it is too varied to type precisely
 export type PlayerStatsToProcess = any;
 
-// Stats row as stored in the database, in p.stats. Like PlayerStatsPlus, this has the stats from all sports, because there is no good way to make it depend on the current sport
+// Stats row as stored in the database, in p.stats. Like PlayerStatsPlus, this has the stats from all sports, because there is no good way to make it depend on the current sport. Numeric stats can be undefined in historical data from before a stat was tracked (even gp and min)
 export type PlayerStats = Omit<
 	MergeBySport<
 		PlayerStatsBaseball,

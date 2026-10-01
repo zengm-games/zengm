@@ -37,7 +37,7 @@ const getMinFractionDiff = async (pid: number, tid: number) => {
 						value: p.valueNoPot,
 
 						// Fraction of available minutes that this player played
-						fraction: stats.min / stats.minAvailable,
+						fraction: (stats.min ?? 0) / stats.minAvailable,
 					});
 				}
 			}

@@ -392,7 +392,9 @@ const processAttrs = (
 		} else if (attr === "experience") {
 			const seasons = new Set();
 			for (const row of p.stats) {
-				if (row.min > 0 && (season === undefined || row.season <= season)) {
+				// gp is for real player data before minutes were tracked
+				const played = (row.min ?? 0) > 0 || (row.gp ?? 0) > 0;
+				if (played && (season === undefined || row.season <= season)) {
 					seasons.add(row.season);
 				}
 			}

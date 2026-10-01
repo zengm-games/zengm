@@ -118,7 +118,7 @@ type PlayerStatAttrString = "keyStats" | "qbRec";
 // Stats row as stored in the database, in p.stats
 export type PlayerStats = Record<
 	(typeof playerStats)["raw"][number] | (typeof playerStats)["derived"][number],
-	number
+	number | undefined
 >;
 
 // Numeric stats can be undefined in historical data from before a stat was tracked (even gp and min)

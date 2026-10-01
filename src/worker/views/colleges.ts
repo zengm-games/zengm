@@ -78,7 +78,7 @@ const reducer = (
 	let valueStat = 0;
 	let gp = 0;
 	for (const stats of p.stats) {
-		gp += stats.gp;
+		gp += stats.gp ?? 0;
 		valueStat += getValueStatsRow(stats);
 		for (const displayStatName of displayStatNames) {
 			displayStat += stats[displayStatName] ?? 0;

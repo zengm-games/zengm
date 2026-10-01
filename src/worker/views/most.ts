@@ -303,7 +303,7 @@ const updatePlayers = async (
 				for (const ps of p.stats) {
 					const numRounds = g.get("numGamesPlayoffSeries", ps.season).length;
 					if (numRounds > 0) {
-						sum += ps.gp;
+						sum += ps.gp ?? 0;
 					}
 				}
 				return { value: sum };
@@ -391,7 +391,7 @@ const updatePlayers = async (
 			});
 
 			getValue = (p) => {
-				const tids = p.stats.filter((s) => s.gp > 0).map((s) => s.tid);
+				const tids = p.stats.filter((s) => (s.gp ?? 0) > 0).map((s) => s.tid);
 				return { value: new Set(tids).size };
 			};
 		} else if (type === "oldest_former_players") {
@@ -628,8 +628,10 @@ const updatePlayers = async (
 				let min = 0;
 				let valueTimesMin = 0;
 				for (const ps of p.stats) {
-					min += ps.min;
-					valueTimesMin += ps.min * ps.per;
+					// Missing in real player data before these were tracked
+					const psMin = ps.min ?? 0;
+					min += psMin;
+					valueTimesMin += psMin * (ps.per ?? 0);
 				}
 
 				if (
@@ -697,7 +699,7 @@ const updatePlayers = async (
 
 						maxGP = 0;
 						for (const ps of stats) {
-							maxGP += ps.gp;
+							maxGP += ps.gp ?? 0;
 							maxSeason = ps.season;
 						}
 					}
@@ -740,7 +742,7 @@ const updatePlayers = async (
 				let season: number | undefined;
 				let tid: number | undefined;
 				for (const ps of p.stats) {
-					if (ps.gp > 0) {
+					if ((ps.gp ?? 0) > 0) {
 						const age = ps.season - p.born.year;
 						if (age > maxAge) {
 							maxAge = age;

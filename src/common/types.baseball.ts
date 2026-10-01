@@ -77,7 +77,7 @@ export type PlayerStats = Record<
 		| (typeof playerStats)["derived"][number],
 		"rfld"
 	>,
-	number
+	number | undefined
 > &
 	Record<
 		(typeof playerStats)["byPos"][number] | "rfld",

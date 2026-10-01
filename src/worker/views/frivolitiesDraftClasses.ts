@@ -11,12 +11,13 @@ import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 const playerValue = (p: Player) => {
 	let sum = 0;
 	for (const ps of p.stats) {
-		sum += bySport({
-			baseball: ps.war,
-			basketball: ps.ows + ps.dws,
-			football: ps.av,
-			hockey: ps.dps + ps.ops + ps.gps,
-		});
+		sum +=
+			bySport({
+				baseball: ps.war,
+				basketball: (ps.ows ?? 0) + (ps.dws ?? 0),
+				football: ps.av,
+				hockey: (ps.dps ?? 0) + (ps.ops ?? 0) + (ps.gps ?? 0),
+			}) ?? 0;
 	}
 
 	return sum;

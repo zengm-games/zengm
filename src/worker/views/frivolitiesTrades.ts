@@ -1,8 +1,5 @@
 import { idb } from "../db/index.ts";
-import {
-	CacheTeamInfoSeason,
-	getTeamInfoBySeason,
-} from "../util/getTeamInfoBySeason.ts";
+import { CacheTeamInfoSeason } from "../util/getTeamInfoBySeason.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -96,7 +93,7 @@ const getMostXRows = async ({
 	for await (const cursor of store) {
 		const event = cursor.value;
 		if (isTradeEvent(event)) {
-			if (event.phase === undefined || !event.teams) {
+			if (event.phase !== undefined && event.teams) {
 				continue;
 			}
 
@@ -104,7 +101,7 @@ const getMostXRows = async ({
 				continue;
 			}
 
-			events.push(event);
+			events.push(event as any);
 		}
 	}
 

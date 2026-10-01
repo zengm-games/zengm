@@ -25,7 +25,7 @@ const CONFIG = {
 
 	// Rotation axis in screen space (x right, y down, z toward viewer).
 	// [0, 1, 0] = spin around the vertical axis.
-	axis: [1, 0, 0] as Vec3,
+	axis: [0, 1, 0] as Vec3,
 
 	// 1 = front of the ball moves right, -1 = left
 	direction: 1,

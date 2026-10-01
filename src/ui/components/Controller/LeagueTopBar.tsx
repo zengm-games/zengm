@@ -1,8 +1,7 @@
 import clsx from "clsx";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useLocal, localActions } from "../../util/local.ts";
 import { ScoreBox } from "../ScoreBox/index.tsx";
-import { emitter } from "../Modal.tsx";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 	// container-fluid is needed to make this account for scrollbar width when modal is open
@@ -26,8 +25,6 @@ const hiddenStyle = {
 	height: 0,
 };
 
-const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
 export const LeagueTopBar = memo(() => {
 	const { games, lid, liveGameInProgress, showLeagueTopBar } = useLocal([
 		"games",
@@ -35,8 +32,6 @@ export const LeagueTopBar = memo(() => {
 		"liveGameInProgress",
 		"showLeagueTopBar",
 	]);
-
-	const keepScrollToRightRef = useRef(true);
 
 	const [wrapperElement, setWrapperElement] = useState<HTMLDivElement | null>(
 		null,
@@ -46,22 +41,27 @@ export const LeagueTopBar = memo(() => {
 
 	const games2: typeof games = [];
 
-	const keepScrolledToRightIfNecessary = useCallback(() => {
-		if (
-			keepScrollToRightRef.current &&
-			wrapperElement &&
-			wrapperElement.scrollLeft + wrapperElement.offsetWidth <
-				wrapperElement.scrollWidth
-		) {
-			wrapperElement.scrollTo({
-				left: wrapperElement.scrollWidth,
-			});
-		}
-	}, [wrapperElement]);
+	const contentRef = useRef<HTMLDivElement>(null);
+	const prevContentWidth = useRef(0);
 
-	useEffect(() => {
-		return emitter.on("keepScrollToRight", keepScrolledToRightIfNecessary);
-	}, [keepScrolledToRightIfNecessary]);
+	// The wrapper is flex-row-reverse, so scrollLeft is 0 when scrolled all the way to the right and negative when scrolled to the left. That means the browser keeps it scrolled to the right automatically when games are added or the wrapper is resized. But if the user has scrolled to the left, we need to adjust for new games, otherwise the visible games would shift to the left.
+	useLayoutEffect(() => {
+		const contentWidth = contentRef.current?.offsetWidth ?? 0;
+		const diff = contentWidth - prevContentWidth.current;
+		prevContentWidth.current = contentWidth;
+
+		if (!wrapperElement || diff === 0) {
+			return;
+		}
+
+		const FUDGE_FACTOR = 50; // Off by a few pixels? That's fine!
+		wrapperElement.scrollTo({
+			left:
+				wrapperElement.scrollLeft >= -FUDGE_FACTOR
+					? 0
+					: wrapperElement.scrollLeft - diff,
+		});
+	});
 
 	useEffect(() => {
 		if (!wrapperElement || !showLeagueTopBar) {
@@ -91,35 +91,12 @@ export const LeagueTopBar = memo(() => {
 			});
 		};
 
-		// This triggers for wheel scrolling and click scrolling
-		const handleScroll = () => {
-			if (
-				!wrapperElement ||
-				wrapperElement.scrollWidth <= wrapperElement.clientWidth
-			) {
-				return;
-			}
-
-			// Keep track of if we're scrolled to the right or not
-			const FUDGE_FACTOR = 50; // Off by a few pixels? That's fine!
-			keepScrollToRightRef.current =
-				wrapperElement.scrollLeft + wrapperElement.offsetWidth >=
-				wrapperElement.scrollWidth - FUDGE_FACTOR;
-		};
-
 		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });
-		wrapperElement.addEventListener("scroll", handleScroll, { passive: true });
-
-		// This works better than the global "resize" event because it also handles when the div size changes due to other reasons, like the window's scrollbar appearing or disappearing
-		const resizeObserver = new ResizeObserver(keepScrolledToRightIfNecessary);
-		resizeObserver.observe(wrapperElement);
 
 		return () => {
 			wrapperElement.removeEventListener("wheel", handleWheel);
-			wrapperElement.removeEventListener("scroll", handleScroll);
-			resizeObserver.disconnect();
 		};
-	}, [keepScrolledToRightIfNecessary, showLeagueTopBar, wrapperElement]);
+	}, [showLeagueTopBar, wrapperElement]);
 
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
@@ -146,45 +123,25 @@ export const LeagueTopBar = memo(() => {
 		}
 	}
 
-	// In a new season, start scrolled to right
-	if (games2.length <= 1) {
-		keepScrollToRightRef.current = true;
-	}
-
-	// Keep scrolled to the right, if something besides a scroll event has moved us away (i.e. a game was simmed and added to the list)
-	keepScrolledToRightIfNecessary();
-
 	return (
 		<div
-			className={`league-top-bar${
-				IS_SAFARI ? " league-top-bar-safari" : ""
-			} flex-shrink-0 d-flex overflow-auto small-scrollbar flex-row ps-1 mt-2`}
+			className="league-top-bar flex-shrink-0 d-flex overflow-auto small-scrollbar flex-row-reverse mt-2"
 			style={showLeagueTopBar ? undefined : hiddenStyle}
-			ref={(element) => {
-				// Shit is wild, if I just do ref={setWrapperElement} it somehow breaks scrolling to the right, idk why
-				setWrapperElement(element);
-			}}
+			ref={setWrapperElement}
 		>
 			<Toggle
 				show={showLeagueTopBar}
 				toggle={() => {
-					if (showLeagueTopBar === false) {
-						// When showing, always scroll to right
-						keepScrollToRightRef.current = true;
-					}
 					localActions.setShowLeagueTopBar(!showLeagueTopBar);
 				}}
 			/>
-			{showLeagueTopBar
-				? games2.map((game, i) => (
-						<ScoreBox
-							key={game.gid}
-							className={`me-2${i === 0 ? " ms-auto" : ""}`}
-							game={game}
-							small
-						/>
-					))
-				: null}
+			<div className="d-flex flex-shrink-0 ps-1" ref={contentRef}>
+				{showLeagueTopBar
+					? games2.map((game) => (
+							<ScoreBox key={game.gid} className="me-2" game={game} small />
+						))
+					: null}
+			</div>
 		</div>
 	);
 });

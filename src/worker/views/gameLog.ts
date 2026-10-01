@@ -32,7 +32,7 @@ export const setTeamInfo = async (
 			t.region = "";
 			t.name = allStars.teamNames[ind];
 		} else {
-			// Covers type==="draft" and undefind type, from when draft was the only option
+			// Covers type==="draft" and undefined type, from when draft was the only option
 			t.region = "Team";
 			t.name = allStars.teamNames[ind].replace("Team ", "");
 		}

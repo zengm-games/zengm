@@ -1297,7 +1297,7 @@ const getJerseyNumber = (
 			return lastStats.jerseyNumber;
 		}
 
-		// None found? Return undefind. This happens for players who have never been on a team during the season
+		// None found? Return undefined. This happens for players who have never been on a team during the season
 		return;
 	}
 

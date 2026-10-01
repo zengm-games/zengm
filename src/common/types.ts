@@ -120,7 +120,7 @@ type DunkResult = {
 	// Last attempt is the first successful one
 	attempts: DunkAttempt[];
 
-	// Undefind until a successful dunk or LOWEST_POSSIBLE_SCORE
+	// undefined until a successful dunk or LOWEST_POSSIBLE_SCORE
 	score?: number;
 	made: boolean;
 };
@@ -347,7 +347,7 @@ export type EventBBGMWithoutKey =
 			tids: [number, number];
 			season: number;
 
-			// These three will only be undefind in legacy events
+			// These three will only be undefined in legacy events
 			phase?: Phase;
 			score?: number;
 			teams?: TradeEventTeams;
@@ -359,7 +359,7 @@ export type EventBBGMWithoutKey =
 			tids: [number];
 			season: number;
 
-			// These three will only be undefind in legacy events
+			// These three will only be undefined in legacy events
 			phase?: Phase;
 			score?: number;
 			contract?: PlayerContract;

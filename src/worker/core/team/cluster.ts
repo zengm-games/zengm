@@ -189,7 +189,7 @@ export const kmeansFixedSize = (
 	}
 
 	if (!bestClusters) {
-		throw new Error("undefind bestClusters");
+		throw new Error("undefined bestClusters");
 	}
 	// console.log(minScore, bestClusters);
 
@@ -257,7 +257,7 @@ export const sortByDivs = (
 			}
 
 			if (!bestCluster) {
-				throw new Error("undefind bestCluster");
+				throw new Error("undefined bestCluster");
 			}
 
 			newClusters[divIndex] = bestCluster;
@@ -274,7 +274,7 @@ export const sortByDivs = (
 	}
 
 	if (!bestClusters) {
-		throw new Error("undefind bestClusters");
+		throw new Error("undefined bestClusters");
 	}
 	return {
 		geoSorted: true,

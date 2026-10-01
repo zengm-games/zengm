@@ -1553,7 +1553,7 @@ class GameSim extends GameSimBase {
 							putOutBaseIndexWeights,
 						);
 
-						// Undefind means put out is done by the same person who fielded the ball
+						// undefined means put out is done by the same person who fielded the ball
 						let posPutOut: PosNumbersDefense | undefined;
 						if (fieldersChoiceOrDoublePlayIndex === 2) {
 							// Out at home
@@ -1584,7 +1584,7 @@ class GameSim extends GameSimBase {
 				}
 
 				if (result === "throwOut") {
-					// Undefind means put out is done by the same person who fielded the ball
+					// undefined means put out is done by the same person who fielded the ball
 					let posPutOut: PosNumbersDefense | undefined;
 					if (hitTo === 3) {
 						if (Math.random() < 0.2) {

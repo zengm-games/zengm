@@ -46,7 +46,7 @@ const HideableSection = ({
 	className?: string;
 	description?: ReactNode;
 
-	// Undefind pagename is for backwards compatibility with original usage on player page
+	// undefined pagename is for backwards compatibility with original usage on player page
 	pageName?: string | undefined;
 	title: string;
 	titleKeyOverride?: string;

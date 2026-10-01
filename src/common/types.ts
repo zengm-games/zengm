@@ -1521,12 +1521,12 @@ type PlayerStatsRow<
 	hasTot?: true;
 };
 
-// playoffs is not in ignoredKeys when summing career stats, so it's the sum of the playoffs values of all rows (number for regular season and playoffs, string for combined since those rows have "combined"), or undefined if there are no stats rows
+// playoffs has the same value as in the rows being summed - false for careerStats, true for careerStatsPlayoffs, "combined" for careerStatsCombined
 type PlayerCareerStatsRow<
 	Stats extends Readonly<PlayerStatAttr[]>,
-	PlayoffsValue,
+	PlayoffsValue extends boolean | "combined",
 > = Omit<Pick<PlayerStatsPlus, Stats[number]>, "playoffs"> & {
-	playoffs: PlayoffsValue | undefined;
+	playoffs: PlayoffsValue;
 	hasTot?: true;
 };
 
@@ -1605,19 +1605,19 @@ type PlayerStatsPart<
 		: PlayerStatsRow<Stats, Combined, ShowNoStats>[];
 } & CareerStatsKey<
 	"careerStats",
-	PlayerCareerStatsRow<Stats, number>,
+	PlayerCareerStatsRow<Stats, false>,
 	Season,
 	RegularSeason
 > &
 	CareerStatsKey<
 		"careerStatsPlayoffs",
-		PlayerCareerStatsRow<Stats, number>,
+		PlayerCareerStatsRow<Stats, true>,
 		Season,
 		Playoffs
 	> &
 	CareerStatsKey<
 		"careerStatsCombined",
-		PlayerCareerStatsRow<Stats, string>,
+		PlayerCareerStatsRow<Stats, "combined">,
 		Season,
 		Combined
 	>;

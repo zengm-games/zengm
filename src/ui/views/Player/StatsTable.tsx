@@ -22,7 +22,10 @@ import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
 import { hasNonZeroStat } from "../../../common/statValue.ts";
 
 const hasStats = (
-	careerStats: View<"player">["player"]["careerStats"],
+	careerStats: View<"player">["player"][
+		| "careerStats"
+		| "careerStatsPlayoffs"
+		| "careerStatsCombined"],
 	onlyShowIf: PlayerStatAttr[] | undefined,
 ) => {
 	// For careerStatPlayoffs gp is undefined if there are no stats rows, ugh

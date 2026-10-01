@@ -607,10 +607,9 @@ test("careerStats works when player has no stats rows", async () => {
 		stats: ["gp", "playoffs", "bpm"],
 	});
 
-	// Why is playoffs undefined? Ultimately comes from `row.playoffs = ps.playoffs;` - we don't know what to set the default value (true/false/"combined") if it does not exist. Might be better to just not have playoffs in career stats since it is implied from the property name (like careerStatsPlayoffs)
 	assert.deepStrictEqual(pf, {
 		stats: [],
-		careerStats: { gp: 0, playoffs: undefined, bpm: 0 },
+		careerStats: { gp: 0, playoffs: false, bpm: 0 },
 	});
 });
 
@@ -694,7 +693,7 @@ describe("TypeScript", () => {
 		type CareerStatsRow = {
 			season: number;
 			fg: number | undefined;
-			playoffs: number | undefined;
+			playoffs: false;
 			hasTot?: true;
 		};
 
@@ -770,9 +769,9 @@ describe("TypeScript", () => {
 			hasTot?: true;
 		};
 
-		type CareerStatsRow = {
+		type CareerStatsRow<PlayoffsValue> = {
 			gp: number | undefined;
-			playoffs: number | undefined;
+			playoffs: PlayoffsValue;
 			hasTot?: true;
 		};
 
@@ -781,8 +780,8 @@ describe("TypeScript", () => {
 				Exclude<typeof pf, undefined>,
 				{
 					stats: StatsRow[];
-					careerStats: CareerStatsRow;
-					careerStatsPlayoffs: CareerStatsRow;
+					careerStats: CareerStatsRow<false>;
+					careerStatsPlayoffs: CareerStatsRow<true>;
 				}
 			>
 		>(true);
@@ -807,7 +806,7 @@ describe("TypeScript", () => {
 
 		type CareerStatsRow<PlayoffsValue> = {
 			gp: number | undefined;
-			playoffs: PlayoffsValue | undefined;
+			playoffs: PlayoffsValue;
 			hasTot?: true;
 		};
 
@@ -823,19 +822,19 @@ describe("TypeScript", () => {
 		typeAssert<
 			IsExact<
 				Exclude<typeof pf, undefined>["careerStats"],
-				CareerStatsRow<number> | undefined
+				CareerStatsRow<false> | undefined
 			>
 		>(true);
 		typeAssert<
 			IsExact<
 				Exclude<typeof pf, undefined>["careerStatsPlayoffs"],
-				CareerStatsRow<number> | undefined
+				CareerStatsRow<true> | undefined
 			>
 		>(true);
 		typeAssert<
 			IsExact<
 				Exclude<typeof pf, undefined>["careerStatsCombined"],
-				CareerStatsRow<string> | undefined
+				CareerStatsRow<"combined"> | undefined
 			>
 		>(true);
 	});
@@ -1026,6 +1025,10 @@ describe("TypeScript", () => {
 			seasonType: ["regularSeason", "combined"],
 		});
 
+		// playoffs in career stats matches the rows being summed, rather than being a sum itself
+		assert.strictEqual(pf?.careerStats.playoffs, false);
+		assert.strictEqual(pf?.careerStatsCombined.playoffs, "combined");
+
 		typeAssert<
 			IsExact<
 				Exclude<typeof pf, undefined>,
@@ -1037,12 +1040,12 @@ describe("TypeScript", () => {
 					}[];
 					careerStats: {
 						gp: number | undefined;
-						playoffs: number | undefined;
+						playoffs: false;
 						hasTot?: true;
 					};
 					careerStatsCombined: {
 						gp: number | undefined;
-						playoffs: string | undefined;
+						playoffs: "combined";
 						hasTot?: true;
 					};
 				}

@@ -1145,12 +1145,14 @@ const processStats = (
 			"tid",
 			"yearsWithTeam",
 			"jerseyNumber",
+			"playoffs",
 		]);
 
+		// playoffs has the same value as in the rows being summed
 		const statSums = {
-			regularSeason: {} as any,
-			playoffs: {} as any,
-			combined: {} as any,
+			regularSeason: { playoffs: false } as any,
+			playoffs: { playoffs: true } as any,
+			combined: { playoffs: "combined" } as any,
 		};
 
 		const statSumsExtra = {

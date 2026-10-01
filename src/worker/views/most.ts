@@ -693,7 +693,7 @@ const updatePlayers = async (
 						maxNumSeasons = numSeasons;
 
 						// Somehow propagate these through
-						maxTid = Number.parseInt(tid);
+						maxTid = tid;
 
 						maxGP = 0;
 						for (const ps of stats) {
@@ -1035,9 +1035,10 @@ const updatePlayers = async (
 			);
 
 			filter = (p) =>
-				p.stats.length > 1 && p.stats[0].season === p.draft.year + 1;
+				p.stats.length > 1 && p.stats[0]?.season === p.draft.year + 1;
 			getValue = (p) => {
-				const row = p.stats[0];
+				// Always exists, because of the filter
+				const row = p.stats[0]!;
 				const value = getValueStatsRow(row);
 
 				const rookieRatings = p.ratings.find(

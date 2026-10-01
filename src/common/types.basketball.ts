@@ -47,6 +47,16 @@ export type TeamStatAttr =
 	| "drbp"
 	| "oppFtpFga";
 
+// Stats row as stored in the database, in p.stats
+export type PlayerStats = Record<
+	(typeof playerStats)["raw"][number] | (typeof playerStats)["derived"][number],
+	number
+> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax> & {
+		// Only in historical real stats, from before orb/drb were tracked separately
+		trb?: number;
+	};
+
 export type PlayerStatsPlus = Record<
 	| (typeof playerStats)["raw"][number]
 	| (typeof playerStats)["derived"][number]

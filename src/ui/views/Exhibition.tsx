@@ -100,7 +100,11 @@ export type ExhibitionLeagueWithSeasons =
 			seasonEnd: number;
 	  };
 
-const PlayerStatsSummary = ({ stats }: { stats: Player["stats"][number] }) => {
+const PlayerStatsSummary = ({
+	stats,
+}: {
+	stats: Player["stats"][number] | undefined;
+}) => {
 	if (!stats || stats.gp === undefined || stats.gp === 0) {
 		return <br />;
 	}

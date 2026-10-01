@@ -16,11 +16,14 @@ import {
 	statFunctions as statFunctionsHockey,
 } from "../../common/processPlayerStats.hockey.ts";
 import type { StatSumsExtra } from "../../common/processPlayerStats.basketball.ts";
-import type { PlayerStats, PlayerStatType } from "../../common/types.ts";
+import type {
+	PlayerStatsToProcess,
+	PlayerStatType,
+} from "../../common/types.ts";
 import g from "./g.ts";
 
 export const processPlayerStats = (
-	ps: PlayerStats,
+	ps: PlayerStatsToProcess,
 	stats: Iterable<string>,
 	statType?: PlayerStatType,
 	bornYear?: number,

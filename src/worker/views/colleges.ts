@@ -27,7 +27,7 @@ const displayStatNames = bySport({
 	basketball: ["ows", "dws"],
 	football: ["av"],
 	hockey: ["ops", "dps", "gps"],
-});
+} as const);
 
 const reducer = (
 	type: "college" | "country" | "draftPosition" | "jerseyNumbers",

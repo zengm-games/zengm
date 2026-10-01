@@ -21,7 +21,7 @@ export const setLiveSimRatingsStatsPopoverPlayers = async (
 
 	const players = (await idb.getCopies.players({ pids }, "noCopyCache")).map(
 		(p) => {
-			let stats: unknown[] = [];
+			let stats: typeof p.stats = [];
 			const currentStats = p.stats.at(-1);
 			if (currentStats) {
 				// Rather than cloning the entire object, just clone the part that we care about remaining constant (current stats row, and also ratings in case of injury)

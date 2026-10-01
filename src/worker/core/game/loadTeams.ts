@@ -266,7 +266,7 @@ export const processTeam = async (
 
 		// p.jerseyNumber fallback is for exhibition game players for the current season with no stats
 		const jerseyNumber =
-			p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : p.jerseyNumber;
+			p.stats.length > 0 ? p.stats.at(-1)!.jerseyNumber : p.jerseyNumber;
 
 		const rating = last(p.ratings);
 		const playerCompositeRatings: any = {};

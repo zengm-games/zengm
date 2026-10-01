@@ -1142,9 +1142,28 @@ type PlayerSalary = {
 	season: number;
 };
 
-// jerseyNumber: string | undefined;
-// *Max: [number, number] | null | undefined; - null is for new value, not yet initialized. undefined is for upgraded rows from before this existed
-export type PlayerStats = any;
+type PlayerStatsCommon = {
+	jerseyNumber?: string;
+	playoffs: boolean;
+	season: number;
+	tid: number;
+	yearsWithTeam: number;
+};
+
+// Input to processPlayerStats. Not just PlayerStats, it can also be a box score row, player feat, or sums of multiple rows (with extra properties like hasTot), and old rows can be missing stats or have ones that are no longer stored. So it is too varied to type precisely
+export type PlayerStatsToProcess = any;
+
+// Stats row as stored in the database, in p.stats. Like PlayerStatsPlus, this has the stats from all sports, because there is no good way to make it depend on the current sport
+export type PlayerStats = Omit<
+	MergeBySport<
+		PlayerStatsBaseball,
+		PlayerStatsBasketball,
+		PlayerStatsFootball,
+		PlayerStatsHockey
+	>,
+	keyof PlayerStatsCommon
+> &
+	PlayerStatsCommon;
 
 export type RelativeType = "brother" | "father" | "son";
 
@@ -2043,6 +2062,7 @@ type TeamSeasonPlus = Omit<TeamSeason, "lastTen"> & {
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
 import type {
+	PlayerStats as PlayerStatsBaseball,
 	PlayerStatsPlus as PlayerStatsPlusBaseball,
 	Position as PositionBaseball,
 	RatingKey as RatingKeyBaseball,
@@ -2050,17 +2070,20 @@ import type {
 	TeamStatAttrByPos as TeamStatAttrByPosBaseball,
 } from "./types.baseball.ts";
 import type {
+	PlayerStats as PlayerStatsBasketball,
 	PlayerStatsPlus as PlayerStatsPlusBasketball,
 	RatingKey as RatingKeyBasketball,
 	TeamStatAttr as TeamStatAttrBasketball,
 } from "./types.basketball.ts";
 import type {
+	PlayerStats as PlayerStatsFootball,
 	PlayerStatsPlus as PlayerStatsPlusFootball,
 	Position as PositionFootball,
 	RatingKey as RatingKeyFootball,
 	TeamStatAttr as TeamStatAttrFootball,
 } from "./types.football.ts";
 import type {
+	PlayerStats as PlayerStatsHockey,
 	PlayerStatsPlus as PlayerStatsPlusHockey,
 	Position as PositionHockey,
 	RatingKey as RatingKeyHockey,

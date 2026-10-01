@@ -88,9 +88,8 @@ const value = (
 	let current = ovr;
 
 	// No stats at all? Just look at ratings more, then.
-	if (__SPORT === "basketball" && ps.length > 0) {
-		const ps1 = ps.at(-1); // Most recent stats
-
+	const ps1 = ps.at(-1); // Most recent stats
+	if (__SPORT === "basketball" && ps1) {
 		// PER may be undefined for exhibition game players from old historical seasons. See ps2 check below too.
 		if (Object.hasOwn(ps1, "per")) {
 			if (ps.length === 1 || ps1.min >= 2000) {

@@ -23,8 +23,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 			skills,
 			pos,
 			injury: p.injury,
-			jerseyNumber:
-				p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : undefined,
+			jerseyNumber: p.stats.at(-1)?.jerseyNumber,
 			watch: p.watch ?? 0,
 			amount: p.contract.amount,
 			exp: p.contract.exp,

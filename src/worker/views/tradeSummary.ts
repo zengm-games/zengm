@@ -100,9 +100,7 @@ const findStatSum = (
 	let statSum = 0;
 	let statSumTeam = 0;
 	let seenOtherTeam = false;
-	for (let i = 0; i < allStats.length; i++) {
-		const row = allStats[i];
-
+	for (const [i, row] of allStats.entries()) {
 		const stat = bySport({
 			baseball: row.war,
 			basketball: row.ows + row.dws,

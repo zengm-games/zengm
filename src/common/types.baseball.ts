@@ -70,6 +70,21 @@ type PlayerStatAttrByPosDerived =
 	| "rfg"
 	| "inn";
 
+// Stats row as stored in the database, in p.stats. rfld is an array like byPos
+export type PlayerStats = Record<
+	Exclude<
+		| (typeof playerStats)["raw"][number]
+		| (typeof playerStats)["derived"][number],
+		"rfld"
+	>,
+	number
+> &
+	Record<
+		(typeof playerStats)["byPos"][number] | "rfld",
+		(number | undefined)[]
+	> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
+
 export type PlayerStatsPlus = Record<
 	Exclude<
 		| (typeof playerStats)["raw"][number]

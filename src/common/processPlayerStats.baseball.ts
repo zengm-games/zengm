@@ -1,5 +1,5 @@
 import { helpers } from "./helpers.ts";
-import type { PlayerStats, PlayerStatType } from "./types.ts";
+import type { PlayerStatsToProcess, PlayerStatType } from "./types.ts";
 
 export const NUM_OUTS_PER_GAME = 27;
 
@@ -30,7 +30,7 @@ export const outsToInnings = (outs: number) => {
 };
 
 type StatFunction = (
-	ps: PlayerStats,
+	ps: PlayerStatsToProcess,
 	extra: {
 		ab: number;
 		ba: number;
@@ -162,7 +162,7 @@ export const statFunctions = {
 } satisfies Record<string, StatFunction>;
 
 export const processStats = (
-	ps: PlayerStats,
+	ps: PlayerStatsToProcess,
 	stats: Iterable<string>,
 	statType?: PlayerStatType,
 	bornYear?: number,

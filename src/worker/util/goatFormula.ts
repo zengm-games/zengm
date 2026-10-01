@@ -5,6 +5,7 @@ import { FormulaEvaluator } from "./FormulaEvaluator.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { getNumericStat } from "../../common/statValue.ts";
 
 const DEFAULT_FORMULA = bySport({
 	baseball: "20 * mvp + war",
@@ -197,43 +198,44 @@ const evaluate = (
 		let minSumPlayoffs = 0;
 
 		for (const row of statsRows) {
-			if (row[stat] === undefined) {
-				// For missing values in historical real players data
+			// stat is not known statically, and only numeric stats make sense here. undefined is for missing values in historical real players data
+			const value = getNumericStat((row as Record<string, unknown>)[stat]);
+			if (value === undefined) {
 				continue;
 			}
 
 			if (row.playoffs) {
 				if (weightStatByMinutes) {
-					object[playoffs] += row[stat] * row.min;
+					object[playoffs] += value * row.min;
 					minSumPlayoffs += row.min;
 				} else if (__SPORT === "football" && stat.endsWith("Lng")) {
-					if (row[stat] > object[playoffs]) {
-						object[playoffs] = row[stat] as number;
+					if (value > object[playoffs]) {
+						object[playoffs] = value;
 					}
 				} else {
-					object[playoffs] += row[stat];
+					object[playoffs] += value;
 				}
 			} else {
 				if (info.type === "career") {
-					if (row[stat] > object[peak]!) {
-						object[peak] = row[stat];
+					if (value > object[peak]!) {
+						object[peak] = value;
 					}
 
-					const perGame = helpers.ratio(row[stat], row.gp);
+					const perGame = helpers.ratio(value, row.gp);
 					if (perGame > object[peakPerGame]) {
 						object[peakPerGame] = perGame;
 					}
 				}
 
 				if (weightStatByMinutes) {
-					object[tot] += row[stat] * row.min;
+					object[tot] += value * row.min;
 					minSum += row.min;
 				} else if (__SPORT === "football" && stat.endsWith("Lng")) {
-					if (row[stat] > object[tot]) {
-						object[tot] = row[stat] as number;
+					if (value > object[tot]) {
+						object[tot] = value;
 					}
 				} else {
-					object[tot] += row[stat];
+					object[tot] += value;
 				}
 			}
 		}

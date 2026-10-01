@@ -21,9 +21,10 @@ const getMinFractionDiff = async (pid: number, tid: number) => {
 		for (const p of playersAll) {
 			let stats;
 			for (let i = p.stats.length - 1; i >= 0; i--) {
-				if (p.stats[i].season === season && !p.stats[i].playoffs) {
-					stats = p.stats[i];
-				} else if (p.stats[i] < season) {
+				const row = p.stats[i]!;
+				if (row.season === season && !row.playoffs) {
+					stats = row;
+				} else if (row.season < season) {
 					break;
 				}
 			}

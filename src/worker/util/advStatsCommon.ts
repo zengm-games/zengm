@@ -21,9 +21,11 @@ export const advStatsSave = async (
 			const ps = p.stats.at(-1);
 
 			if (ps) {
+				// Advanced stats are written by dynamic keys, so treat the row as a generic record
+				const psRecord: Record<string, unknown> = ps;
 				for (const key of keys) {
 					if (!Number.isNaN(updatedStats[key]![i])) {
-						ps[key] = updatedStats[key]![i];
+						psRecord[key] = updatedStats[key]![i];
 					}
 				}
 

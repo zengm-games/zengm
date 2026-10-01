@@ -398,8 +398,10 @@ const getExportInfo = (
 	if (checked.players && !checked.gameHighs) {
 		forEach.players = (p) => {
 			for (const row of p.stats) {
+				// stats.max is not known statically
+				const rowRecord: Record<string, unknown> = row;
 				for (const stat of stats.max) {
-					delete row[stat];
+					delete rowRecord[stat];
 				}
 			}
 		};

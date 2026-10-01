@@ -115,6 +115,12 @@ export type TeamStatAttr =
 
 type PlayerStatAttrString = "keyStats" | "qbRec";
 
+// Stats row as stored in the database, in p.stats
+export type PlayerStats = Record<
+	(typeof playerStats)["raw"][number] | (typeof playerStats)["derived"][number],
+	number
+>;
+
 export type PlayerStatsPlus = Record<
 	Exclude<
 		| (typeof playerStats)["raw"][number]

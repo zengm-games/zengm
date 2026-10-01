@@ -1,5 +1,5 @@
 import { bySport } from "../../../common/sportFunctions.ts";
-import type { Player, PlayerStats, Team } from "../../../common/types.ts";
+import type { Player, Team } from "../../../common/types.ts";
 import { maxBy, orderBy } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import { g, local, logEvent, helpers } from "../../util/index.ts";
@@ -52,7 +52,18 @@ export const getBestPos = (
 			pos: string;
 			season: number;
 		}[];
-		stats: PlayerStats[];
+		// tid is only needed if the tid parameter is defined. The rest are value stats for each sport
+		stats: {
+			season: number;
+			tid?: number;
+			war?: number;
+			ewa?: number;
+			av?: number;
+			ps?: number;
+			ops?: number;
+			dps?: number;
+			gps?: number;
+		}[];
 	},
 	tid: number | undefined,
 ): string => {
@@ -67,12 +78,15 @@ export const getBestPos = (
 	const posByEWA: Record<string, number> = {};
 	for (const ps of p.stats) {
 		if (ps.tid === tid || tid === undefined) {
-			const ewa = bySport({
-				baseball: ps.war,
-				basketball: ps.ewa,
-				football: ps.av,
-				hockey: ps.ps,
-			});
+			const ewa =
+				bySport({
+					baseball: ps.war,
+					basketball: ps.ewa,
+					football: ps.av,
+
+					// ps is only in processed stats rows, not in Player objects
+					hockey: ps.ps ?? (ps.ops ?? 0) + (ps.dps ?? 0) + (ps.gps ?? 0),
+				}) ?? 0;
 			const pos = posBySeason[ps.season];
 			if (pos !== undefined) {
 				//console.log(ps.pos, ps)

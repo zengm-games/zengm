@@ -27,7 +27,7 @@ const percentageDraftPicksSigned = async () => {
 		) {
 			const key = `${p.draft.round}-${p.draft.pick}`;
 			counts[key]!.total += 1;
-			if (p.stats.length > 0 && p.draft.tid === p.stats[0].tid) {
+			if (p.draft.tid === p.stats[0]?.tid) {
 				counts[key]!.signed += 1;
 			}
 		}

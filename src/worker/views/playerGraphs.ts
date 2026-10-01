@@ -19,6 +19,7 @@ import {
 	getStatsTableByType,
 } from "../../common/advancedPlayerSearch.ts";
 import { choice } from "../../common/random.ts";
+import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
 
 export const statTypes = [
 	"bio",
@@ -181,10 +182,7 @@ const getPlayerStats = async (
 			}
 
 			// Fix Fld%
-			const getNumber = (stat: string) => {
-				const value = p.stats[stat];
-				return typeof value === "number" ? value : 0;
-			};
+			const getNumber = (stat: string) => getNumericStat(p.stats[stat]) ?? 0;
 			const po = getNumber("po");
 			const a = getNumber("a");
 			const e = getNumber("e");
@@ -198,13 +196,7 @@ const getPlayerStats = async (
 
 		players = players.filter((p) => {
 			for (const stat of onlyShowIf) {
-				const value = p.stats[stat];
-
-				// Array check is for byPos stats
-				if (
-					(typeof value === "number" && value > 0) ||
-					(Array.isArray(value) && value.length > 0)
-				) {
+				if (hasNonZeroStat(p.stats[stat])) {
 					return true;
 				}
 			}

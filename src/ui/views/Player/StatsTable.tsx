@@ -19,6 +19,7 @@ import type { FooterRow } from "../../components/DataTable/Footer.tsx";
 import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
 import type { SuperCol } from "../../components/DataTable/index.tsx";
 import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
+import { hasNonZeroStat } from "../../../common/statValue.ts";
 
 const hasStats = (
 	careerStats: View<"player">["player"]["careerStats"],
@@ -31,13 +32,7 @@ const hasStats = (
 
 	if (onlyShowIf !== undefined) {
 		for (const stat of onlyShowIf) {
-			const value = careerStats[stat];
-
-			// Array check is for byPos stats
-			if (
-				(typeof value === "number" && value > 0) ||
-				(Array.isArray(value) && value.length > 0)
-			) {
+			if (hasNonZeroStat(careerStats[stat])) {
 				return true;
 			}
 		}

@@ -10,6 +10,7 @@ import {
 	playerMeetsCategoryRequirements,
 } from "./leaders.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { getNumericStat } from "../../common/statValue.ts";
 
 type MyLeader = Omit<
 	Leader,
@@ -198,10 +199,9 @@ const updateLeadersProgressive = async (
 						playerStats = p.careerStats;
 					}
 				}
-				const value = playerStats?.[cat.stat];
-
 				// value should only be undefined in historical data before certain stats were tracked. Leader categories are all numeric stats
-				if (p && playerStats && typeof value === "number") {
+				const value = getNumericStat(playerStats?.[cat.stat]);
+				if (p && playerStats && value !== undefined) {
 					const pass = playerMeetsCategoryRequirements({
 						career: true,
 						cat,

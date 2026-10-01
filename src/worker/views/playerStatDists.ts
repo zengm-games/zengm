@@ -12,6 +12,7 @@ import type {
 	PlayerStatType,
 } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStatDists">,
@@ -87,7 +88,7 @@ const updatePlayers = async (
 			if (onlyShowIf) {
 				players = players.filter((p) => {
 					for (const stat of onlyShowIf) {
-						if (typeof p["stats"][stat] === "number" && p["stats"][stat] > 0) {
+						if (hasNonZeroStat(p.stats[stat])) {
 							return true;
 						}
 					}
@@ -101,11 +102,12 @@ const updatePlayers = async (
 		const statsAll: Record<string, number[]> = {};
 		for (const p of players) {
 			for (const [stat, value] of Object.entries(p.stats)) {
-				if (typeof value !== "number") {
+				const numericValue = getNumericStat(value);
+				if (numericValue === undefined) {
 					continue;
 				}
 				statsAll[stat] ??= [];
-				statsAll[stat].push(value);
+				statsAll[stat].push(numericValue);
 			}
 		}
 

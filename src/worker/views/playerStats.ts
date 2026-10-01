@@ -16,6 +16,7 @@ import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getActivePlayoffTids } from "./playerRatings.ts";
 import { last } from "../../common/utils.ts";
+import { hasNonZeroStat } from "../../common/statValue.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,
@@ -223,13 +224,7 @@ const updatePlayers = async (
 
 			rows = rows.filter((p) => {
 				for (const stat of onlyShowIf) {
-					const value = p.stats[stat];
-
-					// Array check is for byPos stats
-					if (
-						(typeof value === "number" && value > 0) ||
-						(Array.isArray(value) && value.length > 0)
-					) {
+					if (hasNonZeroStat(p.stats[stat])) {
 						return true;
 					}
 				}

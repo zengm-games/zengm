@@ -22,6 +22,7 @@ import { RosterComposition } from "../../components/RosterComposition.tsx";
 import { confirm } from "../../util/confirm.tsx";
 import { getCol } from "../../../common/getCol.ts";
 import { PHASE } from "../../../common/constants.ts";
+import { getNumericStat } from "../../../common/statValue.ts";
 
 const DRAFT_BAR_HEIGHT = 82;
 
@@ -373,10 +374,10 @@ const Draft = ({
 					: [null, null]),
 				...stats.map((stat) => {
 					// stats can be undefined for drafted players with no stats this season
-					const value = isDraftedPlayer(p) ? p.stats?.[stat] : undefined;
-					return typeof value === "number"
-						? helpers.roundStat(value, stat)
-						: null;
+					const value = isDraftedPlayer(p)
+						? getNumericStat(p.stats?.[stat])
+						: undefined;
+					return value !== undefined ? helpers.roundStat(value, stat) : null;
 				}),
 			);
 		}

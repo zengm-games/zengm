@@ -8,6 +8,7 @@ import { getMaxPlayoffSeed } from "./standings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { orderTeams } from "../util/orderTeams.ts";
+import { getNumericStat } from "../../common/statValue.ts";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -208,10 +209,6 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-// Some stats are arrays in some sports but not for the leaderStats in the sports that use them, like "a" is byPos in baseball but not hockey
-const getLeaderValue = (value: number | (number | undefined)[]) =>
-	typeof value === "number" ? value : 0;
-
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
@@ -260,7 +257,8 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			if (leaderPlayers[0]) {
 				leaderPlayers.sort(
 					(a, b) =>
-						getLeaderValue(b.stats[stat]) - getLeaderValue(a.stats[stat]),
+						(getNumericStat(b.stats[stat]) ?? 0) -
+						(getNumericStat(a.stats[stat]) ?? 0),
 				);
 				leagueLeaders.push({
 					abbrev: leaderPlayers[0].abbrev,
@@ -269,7 +267,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					pid: leaderPlayers[0].pid,
 					stat,
 					tid: leaderPlayers[0].tid,
-					value: getLeaderValue(leaderPlayers[0].stats[stat]),
+					value: getNumericStat(leaderPlayers[0].stats[stat]) ?? 0,
 				});
 			} else {
 				leagueLeaders.push({
@@ -333,7 +331,8 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			if (userPlayers[0]) {
 				userPlayers.sort(
 					(a, b) =>
-						getLeaderValue(b.stats[stat]) - getLeaderValue(a.stats[stat]),
+						(getNumericStat(b.stats[stat]) ?? 0) -
+						(getNumericStat(a.stats[stat]) ?? 0),
 				);
 				teamLeaders.push({
 					firstName: userPlayers[0].firstName,
@@ -341,7 +340,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					lastName: userPlayers[0].lastName,
 					pid: userPlayers[0].pid,
 					stat,
-					value: getLeaderValue(userPlayers[0].stats[stat]),
+					value: getNumericStat(userPlayers[0].stats[stat]) ?? 0,
 				});
 			} else {
 				teamLeaders.push({

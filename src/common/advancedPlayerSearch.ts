@@ -5,6 +5,7 @@ import {
 } from "./constants.ts";
 import type { Col } from "../ui/components/DataTable/index.tsx";
 import type { AdvancedPlayerSearchPlayer } from "../worker/api/advancedPlayerSearch.ts";
+import { getNumericStat } from "./statValue.ts";
 
 type AdvancedPlayerSearchField = {
 	category: string;
@@ -209,7 +210,7 @@ for (const [category, table] of Object.entries(PLAYER_STATS_TABLES)) {
 					category === "gameHighs" && Array.isArray(stat) ? stat[0] : stat;
 
 				// Only numbers can be filtered or displayed, not things like byPos arrays
-				return typeof value === "number" ? value : undefined;
+				return getNumericStat(value);
 			},
 		};
 	}

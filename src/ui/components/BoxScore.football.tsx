@@ -364,6 +364,7 @@ const ScoringSummary = memo(
 						const currentQuarter =
 							event.scoreType === "SH" ? "SH" : event.quarter;
 						if (currentQuarter !== prevQuarter) {
+							// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 							prevQuarter = currentQuarter;
 
 							let quarterText = "???";

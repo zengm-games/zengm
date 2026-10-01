@@ -50,6 +50,7 @@ const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 		let newName;
 		if (h.name && prevName !== h.name) {
 			newName = h.name;
+			// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 			prevName = h.name;
 		}
 

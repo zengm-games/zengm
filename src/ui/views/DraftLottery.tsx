@@ -242,6 +242,7 @@ const Row = ({
 
 		if (pick !== undefined) {
 			highlighted = pick === j + 1;
+			// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 			revealedPickNumber = pick;
 		} else if (NUM_PICKS - 1 - j <= indRevealed) {
 			// Has this round been revealed?
@@ -675,6 +676,7 @@ const DraftLotteryTable = (props: Props) => {
 				{otherDraftPicksToShow.map((dp, i) => {
 					const showRoundHeader = seenRound !== dp.round;
 					if (showRoundHeader) {
+						// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 						seenRound = dp.round;
 					}
 

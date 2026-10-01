@@ -71,20 +71,24 @@ const RelativesForm = ({
 		field: "pid" | "type" | "add" | "delete",
 		value?: string,
 	) => {
+		const newRelatives = [...relatives];
 		if (field === "delete") {
-			relatives.splice(index, 1);
+			newRelatives.splice(index, 1);
 		} else if (field === "add") {
-			relatives.push({
+			newRelatives.push({
 				name: "",
 				pid: 0,
 				type: "brother",
 			});
 		} else {
-			relatives[index]![field] = value!;
+			newRelatives[index] = {
+				...newRelatives[index]!,
+				[field]: value!,
+			};
 		}
 		handleChange("root", "relatives", {
 			target: {
-				value: relatives,
+				value: newRelatives,
 			},
 		});
 	};

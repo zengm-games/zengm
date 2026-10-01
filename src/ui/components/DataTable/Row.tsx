@@ -141,6 +141,7 @@ const Row = ({
 
 				if (value?.colSpanToEnd) {
 					props.colSpan = row.data.length - i;
+					// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 					seenColSpanToEnd = true;
 				}
 				if (value?.style) {

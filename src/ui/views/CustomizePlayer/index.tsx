@@ -396,7 +396,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		}));
 
 		try {
-			const p = props.p;
+			const p = helpers.deepCopy(props.p);
 
 			// Copy over values from state, if they're valid
 			const recomputePosOvrPot = copyValidValues(

@@ -168,19 +168,18 @@ const TeamStats = ({
 		return data;
 	};
 
-	if (
+	const expandedTeams =
 		__SPORT === "baseball" &&
 		(teamOpponent === "fielding" || teamOpponent === "oppFielding")
-	) {
-		teams = expandFieldingStats({
-			rows: teams,
-			stats,
-			allPositions: true,
-			statsProperty: "stats",
-		});
-	}
+			? expandFieldingStats({
+					rows: teams,
+					stats,
+					allPositions: true,
+					statsProperty: "stats",
+				})
+			: teams;
 
-	const rows = teams.map((t) => {
+	const rows = expandedTeams.map((t) => {
 		const data = makeRowObject(t.stats, t.seasonAttrs);
 
 		// This is our team.
@@ -198,7 +197,8 @@ const TeamStats = ({
 				const statTypeValue = Object.hasOwn(t.stats, statType)
 					? (t.stats as any)[statType]
 					: (t.seasonAttrs as any)[statType];
-				const rank = teams.length - allStats[statType].indexOf(statTypeValue);
+				const rank =
+					expandedTeams.length - allStats[statType].indexOf(statTypeValue);
 
 				data[statType] = {
 					style: gradientStyle(rank),

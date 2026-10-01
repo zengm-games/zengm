@@ -237,6 +237,7 @@ const ScoringSummary = ({
 					const currentPeriod =
 						event.type === "shootoutShot" ? "Shootout" : event.quarter;
 					if (currentPeriod !== prevQuarter) {
+						// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 						prevQuarter = currentPeriod;
 
 						let quarterText;

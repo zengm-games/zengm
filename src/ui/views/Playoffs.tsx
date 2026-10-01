@@ -198,6 +198,7 @@ const Playoffs = ({
 							<tr key={i}>
 								{row.map((m, j) => {
 									if (j + 1 > maxNumCols) {
+										// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 										maxNumCols = j + 1;
 									}
 									const finals =

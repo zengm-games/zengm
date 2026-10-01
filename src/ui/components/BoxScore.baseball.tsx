@@ -317,6 +317,7 @@ const ScoringSummary = ({
 						event.inning !== prevInning ||
 						(event.t !== prevT && currentPeriod !== "Shootout")
 					) {
+						// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 						prevInning = event.inning;
 						prevT = event.t;
 						quarterHeader = (

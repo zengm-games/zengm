@@ -813,12 +813,11 @@ const NewLeague = (props: View<"newLeague">) => {
 			type: "submit",
 		});
 
-		const settings = settingsOverride ?? state.settings;
-
 		// If no settingsOverride, then use difficulty from state, since user may have selected a new value
-		if (!settingsOverride) {
-			settings.difficulty = state.difficulty;
-		}
+		const settings = settingsOverride ?? {
+			...state.settings,
+			difficulty: state.difficulty,
+		};
 
 		const actualShuffleRosters = state.keptKeys.includes("players")
 			? settings.randomization === "shuffle"

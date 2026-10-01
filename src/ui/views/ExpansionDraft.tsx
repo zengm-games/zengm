@@ -246,6 +246,7 @@ const ExpansionDraft = ({
 							? []
 							: getGodModeWarnings({ t, godModeLimits });
 						if (godModeWarnings.length > 0) {
+							// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 							godModeWarning = true;
 						}
 

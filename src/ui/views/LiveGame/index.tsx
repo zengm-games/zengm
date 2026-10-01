@@ -320,7 +320,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
-		(force?: boolean): number => {
+		function processToNextPauseInner(force?: boolean): number {
 			if (
 				!componentIsMounted.current ||
 				(pausedRef.current && !force) ||
@@ -441,7 +441,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			if (events.current && events.current.length > 0) {
 				if (!pausedRef.current) {
 					setTimeout(() => {
-						processToNextPause();
+						processToNextPauseInner();
 						setPlayIndex((prev) => prev + 1);
 					}, speedToMs(speedRef.current));
 				}

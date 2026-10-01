@@ -693,6 +693,7 @@ const SearchResults = memo(
 								{results.map((result, j) => {
 									const active = activeIndex === index;
 									const highlightedResult = highlightedResults[index];
+									// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 									index += 1;
 
 									return (

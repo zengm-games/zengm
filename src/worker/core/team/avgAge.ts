@@ -5,8 +5,8 @@ const avgAge = (
 		// undefined can happen with showRookies and no showNoStats in playersPlus, treated the same as no minutes played
 		stats:
 			| {
-					min: number;
-					gp: number;
+					min: number | undefined;
+					gp: number | undefined;
 			  }
 			| undefined;
 	}[],
@@ -22,9 +22,11 @@ const avgAge = (
 		if (!p.stats) {
 			continue;
 		}
-		numerator +=
-			p.age * p.stats.min * (__SPORT === "basketball" ? p.stats.gp : 1);
-		denominator += p.stats.min * (__SPORT === "basketball" ? p.stats.gp : 1);
+		// min and gp can be missing in historical data, treated the same as no minutes played
+		const weight =
+			(p.stats.min ?? 0) * (__SPORT === "basketball" ? (p.stats.gp ?? 0) : 1);
+		numerator += p.age * weight;
+		denominator += weight;
 	}
 
 	// Just do raw average if no mins

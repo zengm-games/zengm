@@ -110,7 +110,7 @@ export const getPlayer = async <
 		...p,
 
 		// Filter out rows with no games played
-		stats: p.stats.filter((row) => row.gp > 0),
+		stats: p.stats.filter((row) => (row.gp ?? 0) > 0),
 
 		// Handle prefixing awards
 		awards: p.awards.map(

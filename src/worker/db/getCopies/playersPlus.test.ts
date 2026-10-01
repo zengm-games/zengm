@@ -649,9 +649,9 @@ describe("TypeScript", () => {
 					stats: {
 						season: number;
 						tid: number;
-						fg: number;
-						fgp: number;
-						per: number;
+						fg: number | undefined;
+						fgp: number | undefined;
+						per: number | undefined;
 						playoffs: boolean;
 						hasTot?: true;
 					};
@@ -686,14 +686,14 @@ describe("TypeScript", () => {
 
 		type StatsRow = {
 			season: number;
-			fg: number;
+			fg: number | undefined;
 			playoffs: boolean;
 			hasTot?: true;
 		};
 
 		type CareerStatsRow = {
 			season: number;
-			fg: number;
+			fg: number | undefined;
 			playoffs: number | undefined;
 			hasTot?: true;
 		};
@@ -727,8 +727,8 @@ describe("TypeScript", () => {
 				Exclude<typeof pf, undefined>,
 				{
 					stats: {
-						gp: number;
-						fg: number;
+						gp: number | undefined;
+						fg: number | undefined;
 						playoffs: boolean;
 						hasTot?: true;
 					}[];
@@ -749,7 +749,7 @@ describe("TypeScript", () => {
 				Exclude<typeof pf, undefined>,
 				{
 					stats: {
-						gp: number;
+						gp: number | undefined;
 						playoffs: boolean;
 						hasTot?: true;
 					};
@@ -765,13 +765,13 @@ describe("TypeScript", () => {
 		});
 
 		type StatsRow = {
-			gp: number;
+			gp: number | undefined;
 			playoffs: boolean;
 			hasTot?: true;
 		};
 
 		type CareerStatsRow = {
-			gp: number;
+			gp: number | undefined;
 			playoffs: number | undefined;
 			hasTot?: true;
 		};
@@ -800,13 +800,13 @@ describe("TypeScript", () => {
 		});
 
 		type StatsRow = {
-			gp: number;
+			gp: number | undefined;
 			playoffs: boolean | "combined";
 			hasTot?: true;
 		};
 
 		type CareerStatsRow<PlayoffsValue> = {
-			gp: number;
+			gp: number | undefined;
 			playoffs: PlayoffsValue | undefined;
 			hasTot?: true;
 		};
@@ -852,7 +852,7 @@ describe("TypeScript", () => {
 			IsExact<
 				Exclude<typeof pf, undefined>["stats"],
 				{
-					gp: number;
+					gp: number | undefined;
 					playoffs: boolean | "combined";
 					hasTot?: true;
 				}
@@ -874,7 +874,7 @@ describe("TypeScript", () => {
 			IsExact<
 				Exclude<typeof pf, undefined>["stats"],
 				{
-					gp: number;
+					gp: number | undefined;
 					playoffs: boolean;
 					hasTot?: true;
 				}[]
@@ -931,8 +931,8 @@ describe("TypeScript", () => {
 					// String in baseball/football/hockey
 					keyStats: string;
 
-					// Array in baseball (byPos), number in hockey
-					a: number | (number | undefined)[];
+					// Array in baseball (byPos), number in hockey (or undefined if missing)
+					a: number | undefined | (number | undefined)[];
 
 					ptsMax: PlayerStatMax;
 					abbrev: string;
@@ -987,7 +987,7 @@ describe("TypeScript", () => {
 
 	test("Single season stats may be undefined with showRookies unless showNoStats is also set", async () => {
 		type StatsRow = {
-			gp: number;
+			gp: number | undefined;
 			playoffs: boolean;
 			hasTot?: true;
 		};
@@ -1012,7 +1012,7 @@ describe("TypeScript", () => {
 			IsExact<
 				Exclude<typeof pf2, undefined>["stats"],
 				{
-					gp: number;
+					gp: number | undefined;
 					playoffs: boolean | undefined;
 					hasTot?: true;
 				}
@@ -1031,17 +1031,17 @@ describe("TypeScript", () => {
 				Exclude<typeof pf, undefined>,
 				{
 					stats: {
-						gp: number;
+						gp: number | undefined;
 						playoffs: boolean | "combined";
 						hasTot?: true;
 					}[];
 					careerStats: {
-						gp: number;
+						gp: number | undefined;
 						playoffs: number | undefined;
 						hasTot?: true;
 					};
 					careerStatsCombined: {
-						gp: number;
+						gp: number | undefined;
 						playoffs: string | undefined;
 						hasTot?: true;
 					};

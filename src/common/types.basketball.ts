@@ -57,11 +57,12 @@ export type PlayerStats = Record<
 		trb?: number;
 	};
 
+// Numeric stats can be undefined in historical data from before a stat was tracked (even gp and min)
 export type PlayerStatsPlus = Record<
 	| (typeof playerStats)["raw"][number]
 	| (typeof playerStats)["derived"][number]
 	| keyof typeof playerStatFunctions,
-	number
+	number | undefined
 > &
 	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
 

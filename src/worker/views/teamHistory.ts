@@ -198,7 +198,7 @@ export const getHistory = async (
 
 	const players = addFirstNameShort(
 		// Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
-		playersFiltered.filter((p) => p.careerStats.gp > 0),
+		playersFiltered.filter((p) => (p.careerStats.gp ?? 0) > 0),
 	).map(({ awards, ratings, stats: playerStats, ...p }) => {
 		let lastYr = "";
 		const lastStats = playerStats.at(-1);

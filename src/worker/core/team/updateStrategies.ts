@@ -50,8 +50,9 @@ const updateStrategies = async () => {
 		let denominator = 0; // Sum of mp
 
 		for (const p of players) {
-			numerator += p.age * p.stats.min;
-			denominator += p.stats.min;
+			const min = p.stats.min ?? 0;
+			numerator += p.age * min;
+			denominator += min;
 
 			// Is a young star about to get a pay raise and eat up all the cap after this season?
 			if (

@@ -213,7 +213,7 @@ const updatePlayers = async (
 
 		// Only keep players who actually played
 		if (inputs.abbrev !== "watch" && __SPORT === "basketball") {
-			rows = rows.filter((p) => p.stats.gp > 0);
+			rows = rows.filter((p) => (p.stats.gp ?? 0) > 0);
 		} else if (
 			inputs.abbrev !== "watch" &&
 			statsTable.onlyShowIf &&

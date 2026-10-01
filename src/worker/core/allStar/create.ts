@@ -15,32 +15,44 @@ import { shuffle } from "../../../common/random.ts";
 
 // This is from the old football awards sytem. Eventually should make All-Star teams use the same formulas as the default All-League awards...
 // Football players from playersPlus, with currentStats added in create
+const mvpScoreStats = [
+	"defSk",
+	"defTckLoss",
+	"defTckAst",
+	"defTckSolo",
+	"defFmbFrc",
+	"defFmbRec",
+	"defInt",
+	"defPssDef",
+	"rusYds",
+	"rusTD",
+	"fmbLost",
+	"recYds",
+	"recTD",
+	"pssYds",
+	"pssTD",
+	"pssInt",
+	"pba",
+	"rba",
+	"pbw",
+	"rbw",
+	"prTD",
+	"krTD",
+] as const;
+
 type PlayerWithCurrentStats = {
-	currentStats: Record<
-		| "defSk"
-		| "defTckLoss"
-		| "defTckAst"
-		| "defTckSolo"
-		| "defFmbFrc"
-		| "defFmbRec"
-		| "defInt"
-		| "defPssDef"
-		| "rusYds"
-		| "rusTD"
-		| "fmbLost"
-		| "recYds"
-		| "recTD"
-		| "pssYds"
-		| "pssTD"
-		| "pssInt"
-		| "pba"
-		| "rba"
-		| "pbw"
-		| "rbw"
-		| "prTD"
-		| "krTD",
-		number
-	>;
+	currentStats: Record<(typeof mvpScoreStats)[number], number>;
+};
+
+// Stats can be missing in historical data, treat that the same as 0
+const getCurrentStats = (
+	stats: Record<(typeof mvpScoreStats)[number], number | undefined>,
+) => {
+	const currentStats = {} as PlayerWithCurrentStats["currentStats"];
+	for (const stat of mvpScoreStats) {
+		currentStats[stat] = stats[stat] ?? 0;
+	}
+	return currentStats;
 };
 
 const dpoyScore = (p: PlayerWithCurrentStats) => {
@@ -177,10 +189,10 @@ const create = async (conditions: Conditions) => {
 
 	const score = (p: (typeof players)[number]) =>
 		bySport({
-			baseball: p.stats.war,
-			football: mvpScore({ currentStats: p.stats }),
-			basketball: 2.5 * p.stats.ewa + p.stats.ws,
-			hockey: p.stats.ps,
+			baseball: p.stats.war ?? 0,
+			football: mvpScore({ currentStats: getCurrentStats(p.stats) }),
+			basketball: 2.5 * (p.stats.ewa ?? 0) + (p.stats.ws ?? 0),
+			hockey: p.stats.ps ?? 0,
 		});
 
 	const sortedPlayers = orderBy(

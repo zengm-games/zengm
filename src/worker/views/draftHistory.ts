@@ -98,7 +98,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	});
 	const players = playersAll
 		.filter((p) => {
-			return p.draft.round >= 1 || p.careerStats.gp > 0;
+			return p.draft.round >= 1 || (p.careerStats.gp ?? 0) > 0;
 		})
 		.map((p) => {
 			const currentPr = last(p.ratings);

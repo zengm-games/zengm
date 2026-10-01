@@ -265,7 +265,7 @@ const updateHistory = async (
 				stat: p.careerStats[retiredStat],
 			};
 		});
-		retiredPlayers.sort((a, b) => b.stat - a.stat);
+		retiredPlayers.sort((a, b) => (b.stat ?? 0) - (a.stat ?? 0));
 
 		// Get champs
 		const champ = teams.find(

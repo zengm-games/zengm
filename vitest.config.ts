@@ -67,8 +67,7 @@ const benchmark = {
 
 export default defineConfig({
 	test: {
-		// Would like to fsModuleCache this, but it seems to not work properly even with defineCacheKeyGenerator in my plugin https://github.com/vitest-dev/vitest/issues/11281
-		fsModuleCache: false,
+		fsModuleCache: true,
 		isolate: false,
 		maxWorkers: 3,
 		projects: [

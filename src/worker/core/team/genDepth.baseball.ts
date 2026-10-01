@@ -207,8 +207,8 @@ export const getDepthDefense = (
 	players: {
 		pid: number;
 		ratings: {
-			ovrs: Record<string, number>;
-			pos: string;
+			ovrs: Record<Position, number>;
+			pos: Position;
 		};
 	}[],
 	dh: boolean,
@@ -226,7 +226,7 @@ export const getDepthDefense = (
 			let maxScore = -Infinity;
 			for (let i = 0; i < playersRemaining.length; i++) {
 				const ratings = playersRemaining[i]!.ratings;
-				let currentScore = ratings.ovrs[scorePos]!;
+				let currentScore = ratings.ovrs[scorePos];
 				if (ratings.pos === scorePos) {
 					currentScore += positionBonus;
 				}
@@ -247,12 +247,12 @@ export const getDepthDefense = (
 	playersRemaining.sort((a, b) => {
 		const bOvr =
 			b.ratings.pos === "RP" || b.ratings.pos === "SP"
-				? b.ratings.ovrs.LF!
-				: b.ratings.ovrs[b.ratings.pos]!;
+				? b.ratings.ovrs.LF
+				: b.ratings.ovrs[b.ratings.pos];
 		const aOvr =
 			a.ratings.pos === "RP" || a.ratings.pos === "SP"
-				? a.ratings.ovrs.LF!
-				: a.ratings.ovrs[a.ratings.pos]!;
+				? a.ratings.ovrs.LF
+				: a.ratings.ovrs[a.ratings.pos];
 		const diff = bOvr - aOvr;
 		if (diff === 0) {
 			// Deterministic order
@@ -279,7 +279,7 @@ export const getDepthDefense = (
 
 			const pos = defPositions[i]!;
 			let currentOvrs = p.ratings.ovrs;
-			let currentPosOvr = currentOvrs[pos]!;
+			let currentPosOvr = currentOvrs[pos];
 			for (let j = 0; j < numPlayersToTest; j++) {
 				if (i === j) {
 					continue;
@@ -293,14 +293,14 @@ export const getDepthDefense = (
 				const pos2 = defPositions[j]!;
 				const otherOvrs = p2.ratings.ovrs;
 				if (
-					currentOvrs[pos2]! + otherOvrs[pos]! >
-					currentPosOvr + otherOvrs[pos2]!
+					currentOvrs[pos2] + otherOvrs[pos] >
+					currentPosOvr + otherOvrs[pos2]
 				) {
 					defensivePlayersSorted[i] = p2;
 					defensivePlayersSorted[j] = p;
 					p = p2;
 					currentOvrs = otherOvrs;
-					currentPosOvr = currentOvrs[pos]!;
+					currentPosOvr = currentOvrs[pos];
 					swapped = true;
 				}
 			}

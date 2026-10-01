@@ -4,15 +4,18 @@ import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
 } from "../../../common/constants.hockey.ts";
-import type { Position } from "../../../common/types.hockey.ts";
-import type { Player, PlayerFiltered } from "../../../common/types.ts";
+import type { PlayerRatings, Position } from "../../../common/types.hockey.ts";
+import type { Player } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
 
-type PlayerForDepth = PlayerFiltered<{
-	attrs: ["pid"];
-	ratings: ["pos", "ovrs"];
-	season: number;
-}>;
+// Either from playersPlus, or from the ratings of a Player
+type PlayerForDepth = {
+	pid: number;
+	ratings: {
+		pos: string;
+		ovrs: Record<Position, number>;
+	};
+};
 
 const score = (p: PlayerForDepth, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
@@ -102,7 +105,7 @@ const genDepth = async (
 	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
 		players = playersRaw.map((p) => {
-			const ratings = last(p.ratings);
+			const ratings = last(p.ratings) as PlayerRatings;
 			return {
 				pid: p.pid,
 				ratings: {

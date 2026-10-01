@@ -1180,8 +1180,9 @@ export type MinimalPlayerRatings = {
 	pos: string;
 	skills: string[];
 	season: number;
-	ovrs?: any;
-	pots?: any;
+	// Only in sports with position-specific ratings (not basketball), where they have a value for every position
+	ovrs?: Record<string, number>;
+	pots?: Record<string, number>;
 	injuryIndex?: number;
 	hgt: number;
 	spd: number;

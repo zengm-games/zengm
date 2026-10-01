@@ -216,10 +216,11 @@ const doInjury = async (
 		if (newRatings.pot > prevRatings.pot) {
 			newRatings.pot = prevRatings.pot;
 		}
-		if (newRatings.pots) {
-			for (const pos of Object.keys(newRatings.pots)) {
-				if (newRatings.pots[pos] > prevRatings.pots[pos]) {
-					newRatings.pots[pos] = prevRatings.pots[pos];
+		if (newRatings.pots && prevRatings.pots) {
+			for (const [pos, pot] of Object.entries(newRatings.pots)) {
+				const prevPot = prevRatings.pots[pos];
+				if (prevPot !== undefined && pot > prevPot) {
+					newRatings.pots[pos] = prevPot;
 				}
 			}
 		}

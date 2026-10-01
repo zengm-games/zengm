@@ -23,6 +23,12 @@ import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 
+// ovrs and pots only exist in sports with position-specific ratings, and there they have a value for every position
+const getRatingByPos = (
+	ratingsByPos: Record<string, number> | undefined,
+	pos: string,
+) => ratingsByPos![pos]!;
+
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
 // Repeatedly simulate aging up to 29, and pick the 75th percentile max
@@ -40,7 +46,7 @@ export const monteCarloPot = async ({
 	usePotEstimator?: boolean;
 }): Promise<number> => {
 	if (age >= 29) {
-		return pos ? ratings.ovrs[pos] : ratings.ovr;
+		return pos ? getRatingByPos(ratings.ovrs, pos) : ratings.ovr;
 	}
 
 	if (
@@ -60,7 +66,7 @@ export const monteCarloPot = async ({
 				throw new Error("pos is required for potEstimator");
 			}
 
-			ovr = ratings.ovrs[pos];
+			ovr = getRatingByPos(ratings.ovrs, pos);
 			pot = potEstimator(ovr, age, pos);
 		} else {
 			ovr = ratings.ovr;
@@ -85,7 +91,7 @@ export const monteCarloPot = async ({
 	for (let i = 0; i < NUM_SIMULATIONS; i++) {
 		// Shallow copy is sufficient because developSeason (only basketball gets here) only modifies top level numeric ratings
 		const copiedRatings = { ...ratings };
-		let maxOvr = pos ? ratings.ovrs[pos] : ratings.ovr;
+		let maxOvr = pos ? getRatingByPos(ratings.ovrs, pos) : ratings.ovr;
 
 		for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
 			developSeasonSync(
@@ -105,7 +111,7 @@ export const monteCarloPot = async ({
 		maxOvrs.push(maxOvr);
 	}
 
-	return maxOvrs.sort((a, b) => a - b)[Math.floor(0.75 * NUM_SIMULATIONS)];
+	return maxOvrs.sort((a, b) => a - b)[Math.floor(0.75 * NUM_SIMULATIONS)]!;
 };
 
 /**
@@ -207,8 +213,8 @@ const develop = async (
 				pos = p.pos;
 			}
 
-			ratings.ovr = ratings.ovrs[pos];
-			ratings.pot = ratings.pots[pos];
+			ratings.ovr = getRatingByPos(ratings.ovrs, pos);
+			ratings.pot = getRatingByPos(ratings.pots, pos);
 			ratings.pos = pos;
 		}
 	}

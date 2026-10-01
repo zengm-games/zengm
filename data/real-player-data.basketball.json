@@ -217430,24 +217430,24 @@
       "tp": 39
     },
     {
-      "diq": 40,
-      "dnk": 56,
-      "drb": 33,
-      "endu": 64,
-      "fg": 53,
-      "ft": 43,
+      "diq": 44,
+      "dnk": 60,
+      "drb": 37,
+      "endu": 68,
+      "fg": 57,
+      "ft": 47,
       "fuzz": 0,
       "hgt": 60,
-      "ins": 29,
-      "jmp": 49,
-      "oiq": 49,
-      "pss": 33,
-      "reb": 58,
+      "ins": 33,
+      "jmp": 53,
+      "oiq": 53,
+      "pss": 37,
+      "reb": 62,
       "season": 2027,
       "slug": "barlodo01",
-      "spd": 44,
-      "stre": 39,
-      "tp": 35
+      "spd": 48,
+      "stre": 43,
+      "tp": 39
     },
     {
       "diq": 45,
@@ -872651,6 +872651,11 @@
         "abbrev": "PHI",
         "jerseyNumber": "25",
         "season": 2026
+      },
+      {
+        "abbrev": "PHI",
+        "jerseyNumber": "25",
+        "season": 2027
       }
     ],
     "barnedi01": [

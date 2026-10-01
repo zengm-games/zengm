@@ -492,7 +492,8 @@ const useLeagues = () => {
 
 const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	// Default state comes from cache of last exhibition game, if possible
-	const defaultState = useMemo(() => {
+	// https://tkdodo.eu/blog/use-state-for-one-time-initializations
+	const [defaultState] = useState(() => {
 		let settings: CachedSettings | undefined;
 		try {
 			const json = safeLocalStorage.getItem(CACHE_KEY);
@@ -521,8 +522,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			swapHomeAway: false,
 			teams: undefined,
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	});
 
 	const leagues = useLeagues();
 	const [teams, setTeams] = useState<

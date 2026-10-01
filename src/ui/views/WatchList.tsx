@@ -27,7 +27,7 @@ const ClearButton = ({
 	processing,
 }: {
 	onClick: (type: "all" | number) => void;
-	players: any[];
+	players: View<"watchList">["players"];
 	processing: boolean;
 }) => {
 	const { numWatchColors } = useLocal(["numWatchColors"]);

@@ -17,7 +17,12 @@ const PlayerList = ({
 	userTid,
 }: {
 	challengeNoRatings: boolean;
-	players: any[];
+	players:
+		| View<"seasonPreview">["playersTop"]
+		| View<"seasonPreview">["playersImproving"]
+		| View<"seasonPreview">["playersDeclining"]
+		| View<"seasonPreview">["playersTopRookies"]
+		| View<"seasonPreview">["playersNewTeam"];
 	season: number;
 	showDraftPick?: boolean;
 	userTid: number;
@@ -54,7 +59,7 @@ const PlayerList = ({
 							lastName={p.lastName}
 						/>
 						<span className="ms-2">
-							{p.prevTid !== undefined ? (
+							{"prevTid" in p ? (
 								<>
 									<a
 										href={helpers.leagueUrl([

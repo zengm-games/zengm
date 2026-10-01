@@ -12,22 +12,36 @@ import { groupByUnique } from "../../../common/utils.ts";
 import type { Col } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { addPrefixForStat } from "../../../common/advancedPlayerSearch.ts";
+import { getNumericStat } from "../../../common/statValue.ts";
 
 const getStatsWithLabels = (stats: string[], statType: string) => {
 	return getCols(stats.map((stat) => addPrefixForStat(statType, stat)));
 };
 
-const getStatFromPlayer = (p: any, stat: string, statType: string) => {
+type GraphPlayer = View<"playerGraphs">["playersX"][number];
+
+// undefined for non-numeric or missing values, like stats from before they were tracked
+const getStatFromPlayer = (
+	p: GraphPlayer,
+	stat: string,
+	statType: string,
+): number | undefined => {
 	if (statType === "ratings") {
-		return p.ratings[stat];
+		return getNumericStat(p.ratings?.[stat]);
 	} else if (statType === "bio") {
-		return p[stat] ?? 0;
+		// Keep in sync with getStats("bio")
+		if (stat === "age" || stat === "salary" || stat === "draftPosition") {
+			return p[stat];
+		}
+		return 0;
 	}
-	if (statType === "gameHighs") {
-		stat = p.stats[stat];
-		return Array.isArray(stat) ? stat[0] : stat;
+
+	const value = p.stats[stat];
+	if (statType === "gameHighs" && Array.isArray(value)) {
+		// Game highs are [value, gid] tuples
+		return getNumericStat(value[0]);
 	}
-	return p.stats[stat];
+	return getNumericStat(value);
 };
 
 const getFormattedStat = (value: number, stat: string, statType: string) => {
@@ -51,27 +65,37 @@ const GraphCreation = ({
 	stat,
 	statType,
 }: {
-	players: [any, any];
+	players: [GraphPlayer[], GraphPlayer[]];
 	stat: [string, string];
 	statType: [string, string];
 	minGames: number;
 }) => {
-	const playersYByPid = groupByUnique<any>(players[1], "pid");
+	const playersYByPid = groupByUnique(players[1], "pid");
 
-	const data: TooltipData[] = [];
+	const data: TooltipData<GraphPlayer>[] = [];
 	for (const p of players[0]) {
-		if (!p.stats || p.stats.gp <= minGames) {
+		const gp = getNumericStat(p.stats.gp);
+		if (gp !== undefined && gp < minGames) {
 			continue;
 		}
 
 		const p2 = playersYByPid[p.pid];
-		if (!p2 || !p2.stats || p2.stats.gp < minGames) {
+		const gp2 = getNumericStat(p2?.stats.gp);
+		if (!p2 || (gp2 !== undefined && gp2 < minGames)) {
+			continue;
+		}
+
+		const x = getStatFromPlayer(p, stat[0], statType[0]);
+		const y = getStatFromPlayer(p2, stat[1], statType[1]);
+
+		// Can't plot missing values, and they would break the axis ranges
+		if (x === undefined || y === undefined) {
 			continue;
 		}
 
 		data.push({
-			x: getStatFromPlayer(p, stat[0], statType[0]),
-			y: getStatFromPlayer(p2, stat[1], statType[1]),
+			x,
+			y,
 			row: p,
 		});
 	}
@@ -85,7 +109,7 @@ const GraphCreation = ({
 	const descShort: [string, string] = [titleX.title, titleY.title];
 
 	return (
-		<StatGraph<any>
+		<StatGraph<GraphPlayer>
 			data={data}
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}

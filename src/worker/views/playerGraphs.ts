@@ -264,6 +264,10 @@ const updatePlayers = async (
 	}
 };
 
+export type PlayerGraphsPlayer = Awaited<
+	ReturnType<typeof getPlayerStats>
+>["players"][number];
+
 const updateClientSide = (
 	inputs: ViewInput<"playerGraphs">,
 	state: any,
@@ -288,8 +292,8 @@ const updateClientSide = (
 			statTypeY: string;
 			playoffsX: "playoffs" | "regularSeason" | "combined";
 			playoffsY: "playoffs" | "regularSeason" | "combined";
-			playersX: any[];
-			playersY: any[];
+			playersX: PlayerGraphsPlayer[];
+			playersY: PlayerGraphsPlayer[];
 			statsX: string[];
 			statsY: string[];
 			statX: string;

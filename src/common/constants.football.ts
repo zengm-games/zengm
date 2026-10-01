@@ -1,4 +1,11 @@
-import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
+import type {
+	CompositeWeights,
+	Conf,
+	Div,
+	NonEmptyArray,
+	PlayerStatsTables,
+	PlayerSummary,
+} from "./types.ts";
 import type { Position, PrimaryPosition, RatingKey } from "./types.football.ts";
 
 export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -290,7 +297,7 @@ export const PLAYER_SUMMARY = {
 		onlyShowIf: ["DL", "LB", "CB", "S"],
 		stats: ["gp", "av", "defTck", "defSk", "defFmbRec", "defInt"],
 	},
-};
+} satisfies PlayerSummary;
 export const PLAYER_STATS_TABLES = {
 	passing: {
 		name: "Passing",
@@ -472,7 +479,7 @@ export const PLAYER_STATS_TABLES = {
 			"av",
 		],
 	},
-};
+} satisfies PlayerStatsTables;
 export const TEAM_STATS_TABLES = {
 	summary: {
 		name: "Summary",

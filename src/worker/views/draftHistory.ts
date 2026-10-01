@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { PlayerAward, ViewInput } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { groupByUnique, maxBy } from "../../common/utils.ts";
+import { groupByUnique, last, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
 export const getDraftTeamsByTid = async (season: number) => {
@@ -46,14 +46,14 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	const summaryStat = bySport({
 		baseball: "war",
 		basketball: "ws",
 		football: "av",
 		hockey: "ps",
-	});
+	} as const);
 
 	let playersAll;
 
@@ -98,11 +98,11 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	});
 	const players = playersAll
 		.filter((p) => {
-			return p.draft.round >= 1 || p.careerStats.gp > 0;
+			return p.draft.round >= 1 || (p.careerStats.gp ?? 0) > 0;
 		})
 		.map((p) => {
-			const currentPr = p.ratings.at(-1);
-			const peakPr: any = maxBy(p.ratings, "ovr");
+			const currentPr = last(p.ratings);
+			const peakPr = maxBy(p.ratings, "ovr")!;
 			return {
 				// Attributes
 				pid: p.pid,

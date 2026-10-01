@@ -113,14 +113,14 @@ const updateTrade = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		"watch",
 		"untradable",
 		"jerseyNumber",
-	];
-	const ratings = ["ovr", "pot", "skills", "pos"];
+	] as const;
+	const ratings = ["ovr", "pot", "skills", "pos"] as const;
 	const stats = bySport({
 		baseball: ["gp", "keyStats", "war"],
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 	const userRoster = addFirstNameShort(
 		await idb.getCopies.playersPlus(userRosterAll, {
 			attrs,
@@ -134,10 +134,11 @@ const updateTrade = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}),
 	);
 
-	for (const p of userRoster) {
-		p.included = teams[0].pids.includes(p.pid);
-		p.excluded = teams[0].pidsExcluded.includes(p.pid);
-	}
+	const userRosterWithIncluded = userRoster.map((p) => ({
+		...p,
+		included: teams[0].pids.includes(p.pid),
+		excluded: teams[0].pidsExcluded.includes(p.pid),
+	}));
 
 	const userPicks2 = await Promise.all(
 		userPicks.map(async (dp) => {
@@ -193,10 +194,11 @@ const updateTrade = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}),
 	);
 
-	for (const p of otherRoster) {
-		p.included = teams[1].pids.includes(p.pid);
-		p.excluded = teams[1].pidsExcluded.includes(p.pid);
-	}
+	const otherRosterWithIncluded = otherRoster.map((p) => ({
+		...p,
+		included: teams[1].pids.includes(p.pid),
+		excluded: teams[1].pidsExcluded.includes(p.pid),
+	}));
 
 	const otherPicks2 = await Promise.all(
 		otherPicks.map(async (dp) => {
@@ -235,13 +237,13 @@ const updateTrade = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		userPicks: userPicks2,
 		userPids: teams[0].pids,
 		userPidsExcluded: teams[0].pidsExcluded,
-		userRoster,
+		userRoster: userRosterWithIncluded,
 		otherDpids: teams[1].dpids,
 		otherDpidsExcluded: teams[1].dpidsExcluded,
 		otherPicks: otherPicks2,
 		otherPids: teams[1].pids,
 		otherPidsExcluded: teams[1].pidsExcluded,
-		otherRoster,
+		otherRoster: otherRosterWithIncluded,
 		otherTid,
 		stats,
 		strategy: t.strategy,

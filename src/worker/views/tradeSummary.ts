@@ -100,14 +100,12 @@ const findStatSum = (
 	let statSum = 0;
 	let statSumTeam = 0;
 	let seenOtherTeam = false;
-	for (let i = 0; i < allStats.length; i++) {
-		const row = allStats[i];
-
+	for (const [i, row] of allStats.entries()) {
 		const stat = bySport({
-			baseball: row.war,
-			basketball: row.ows + row.dws,
-			football: row.av,
-			hockey: row.ops + row.dps + row.gps,
+			baseball: row.war ?? 0,
+			basketball: (row.ows ?? 0) + (row.dws ?? 0),
+			football: row.av ?? 0,
+			hockey: (row.ops ?? 0) + (row.dps ?? 0) + (row.gps ?? 0),
 		});
 
 		// Only after trade - undefined means traded draft pick, -1 means traded while stats array was empty (so all is after trade)

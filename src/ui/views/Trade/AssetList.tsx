@@ -23,7 +23,7 @@ type UserOrOther = "user" | "other";
 
 type TradeProps = View<"trade">;
 type Stats = TradeProps["stats"];
-type Picks = TradeProps["userRoster"];
+type Picks = TradeProps["userPicks"];
 type Roster = TradeProps["otherRoster"];
 
 const genPlayerRows = (

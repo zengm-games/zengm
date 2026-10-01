@@ -133,7 +133,7 @@ const updateRoster = async (
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 
 		const editable =
 			inputs.season === g.get("season") &&
@@ -185,8 +185,10 @@ const updateRoster = async (
 			return returnValue;
 		}
 
+		// tid and draft are used for checking if a player can be released without paying his salary
 		const attrs = [
 			"pid",
+			"name",
 			"tid",
 			"draft",
 			"firstName",
@@ -202,13 +204,26 @@ const updateRoster = async (
 			"untradable",
 			"hof",
 			"latestTransaction",
-			"mood",
 			"value",
 			"awards",
-		]; // tid and draft are used for checking if a player can be released without paying his salary
+		] as const;
 
-		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "ovrs"];
-		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber", "min", "gp"];
+		const ratings = [
+			"ovr",
+			"pot",
+			"dovr",
+			"dpot",
+			"skills",
+			"pos",
+			"ovrs",
+		] as const;
+		const stats2 = [
+			...stats,
+			"yearsWithTeam",
+			"jerseyNumber",
+			"min",
+			"gp",
+		] as const;
 
 		let players: any[];
 		let payroll: number | undefined;
@@ -219,8 +234,9 @@ const updateRoster = async (
 			const schedule = await season.getSchedule();
 
 			// Show players currently on the roster
-			const playersAll = await addMood(
-				await idb.cache.players.indexGetAll("playersByTid", inputs.tid),
+			const playersAll = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				inputs.tid,
 			);
 			payroll = await team.getPayroll(inputs.tid);
 			luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll);
@@ -238,9 +254,7 @@ const updateRoster = async (
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs === "regularSeason",
-				combined: inputs.playoffs === "combined",
+				seasonType: inputs.playoffs,
 				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,
@@ -249,6 +263,7 @@ const updateRoster = async (
 				fuzz: true,
 				numGamesRemaining,
 			});
+			players = await addMood(players, playersAll);
 
 			if (__SPORT === "basketball") {
 				players.sort((a, b) => a.rosterOrder - b.rosterOrder);
@@ -288,9 +303,7 @@ const updateRoster = async (
 			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs === "regularSeason",
-				combined: inputs.playoffs === "combined",
+				seasonType: inputs.playoffs,
 				stats: stats2,
 				season: inputs.season,
 				tid: inputs.tid,

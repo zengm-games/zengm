@@ -1,4 +1,11 @@
-import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
+import type {
+	CompositeWeights,
+	Conf,
+	Div,
+	NonEmptyArray,
+	PlayerStatsTables,
+	PlayerSummary,
+} from "./types.ts";
 import type { Position, RatingKey } from "./types.hockey.ts";
 
 export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -109,7 +116,7 @@ export const PLAYER_SUMMARY = {
 		onlyShowIf: ["G"],
 		stats: ["gpGoalie", "gRec", "so", "gaa", "svPct", "gps"],
 	},
-};
+} satisfies PlayerSummary;
 
 export const PLAYER_STATS_TABLES = {
 	goalie: {
@@ -220,7 +227,7 @@ export const PLAYER_STATS_TABLES = {
 			"svMax",
 		],
 	},
-};
+} satisfies PlayerStatsTables;
 
 export const TEAM_STATS_TABLES = {
 	team: {

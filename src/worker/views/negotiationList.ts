@@ -17,7 +17,7 @@ export const getNegotiationPids = async (tid: number) => {
 };
 
 const updateNegotiationList = async () => {
-	const stats = ["yearsWithTeam", ...freeAgentStats];
+	const stats = ["yearsWithTeam", ...freeAgentStats] as const;
 
 	const userTid = g.get("userTid");
 
@@ -27,37 +27,36 @@ const updateNegotiationList = async () => {
 		"playersByTid",
 		userTid,
 	);
-	const playersAll = await addMood(
-		(
-			await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
-		).filter((p) => negotiationPids.has(p.pid)),
-	);
+	const playersAll = (
+		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
+	).filter((p) => negotiationPids.has(p.pid));
 
-	const players = addFirstNameShort(
-		await idb.getCopies.playersPlus(playersAll, {
-			attrs: [
-				"pid",
-				"firstName",
-				"lastName",
-				"age",
-				"injury",
-				"jerseyNumber",
-				"watch",
-				"contract",
-				"draft",
-				"latestTransaction",
-				"latestTransactionSeason",
-				"mood",
-				"lastSalary",
-			],
-			ratings: ["ovr", "pot", "skills", "pos"],
-			stats,
-			season: g.get("season"),
-			tid: userTid,
-			showNoStats: true,
-			fuzz: true,
-		}),
-	);
+	const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
+		attrs: [
+			"pid",
+			"name",
+			"tid",
+			"firstName",
+			"lastName",
+			"age",
+			"injury",
+			"jerseyNumber",
+			"watch",
+			"contract",
+			"draft",
+			"latestTransaction",
+			"latestTransactionSeason",
+			"lastSalary",
+		],
+		ratings: ["ovr", "pot", "skills", "pos"],
+		stats,
+		season: g.get("season"),
+		tid: userTid,
+		showNoStats: true,
+		fuzz: true,
+	});
+
+	const players = addFirstNameShort(await addMood(playersFiltered, playersAll));
 
 	let sumContracts = 0;
 	for (const p of players) {

@@ -1520,9 +1520,10 @@ const migrate = async ({
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
 				for (const row of p.stats) {
-					if (row.gp > 0) {
+					const gp = row.gp ?? 0;
+					if (gp > 0) {
 						// Glitchy because a goalie generally plays the whole game but a skater doesn't. Maybe `60 * row.gpGoalie` would have been better. https://discord.com/channels/290013534023057409/290015591216054273/1252453706679582741
-						row.gMin = (row.min * row.gpGoalie) / row.gp;
+						row.gMin = ((row.min ?? 0) * (row.gpGoalie ?? 0)) / gp;
 					} else {
 						row.gMin = 0;
 					}

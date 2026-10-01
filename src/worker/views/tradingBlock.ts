@@ -22,7 +22,7 @@ const updateUserRoster = async (
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 		const userRosterAll = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			g.get("userTid"),

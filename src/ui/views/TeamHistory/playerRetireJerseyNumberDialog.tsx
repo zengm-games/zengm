@@ -3,9 +3,16 @@ import { confirmable, createConfirmation } from "react-confirm";
 import { helpers } from "../../util/helpers.ts";
 import { Modal } from "../../components/Modal.tsx";
 
+export type RetireJerseyNumberPlayer = {
+	pid: number;
+	firstName: string;
+	lastName: string;
+	retirableJerseyNumbers: Record<string, number[]>;
+};
+
 const Confirm = confirmable<
 	{
-		p: any;
+		p: RetireJerseyNumberPlayer;
 	},
 	string | undefined
 >(({ show, proceed, p }) => {
@@ -15,7 +22,7 @@ const Confirm = confirmable<
 		let selectedNumber;
 		for (const number of numbers) {
 			const seasons = p.retirableJerseyNumbers[number];
-			if (seasons.length >= maxSeasons) {
+			if (seasons && seasons.length >= maxSeasons) {
 				maxSeasons = seasons.length;
 				selectedNumber = number;
 			}
@@ -60,7 +67,7 @@ const Confirm = confirmable<
 									<option key={number} value={number}>
 										#{number} (
 										{helpers
-											.yearRanges(p.retirableJerseyNumbers[number])
+											.yearRanges(p.retirableJerseyNumbers[number] ?? [])
 											.join(", ")}
 										)
 									</option>
@@ -79,7 +86,7 @@ const Confirm = confirmable<
 
 const confirmFunction = createConfirmation(Confirm);
 
-const playerRetireJerseyNumberDialog = (p: any) => {
+const playerRetireJerseyNumberDialog = (p: RetireJerseyNumberPlayer) => {
 	return confirmFunction({
 		p,
 	});

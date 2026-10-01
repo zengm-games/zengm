@@ -1,5 +1,5 @@
 import { helpers } from "./helpers.ts";
-import type { GameAttributesLeague, PlayerStats } from "./types.ts";
+import type { GameAttributesLeague, PlayerStatsToProcess } from "./types.ts";
 
 export const qbRat = (ps: {
 	pss: number;
@@ -16,7 +16,7 @@ export const qbRat = (ps: {
 };
 
 type StatFunction = (
-	ps: PlayerStats,
+	ps: PlayerStatsToProcess,
 	extra: {
 		bornYear: number | undefined;
 		getFantasyPoints: () => GameAttributesLeague["fantasyPoints"];
@@ -186,7 +186,7 @@ export const statFunctions = {
 } satisfies Record<string, StatFunction>;
 
 export const processStats = (
-	ps: PlayerStats,
+	ps: PlayerStatsToProcess,
 	stats: Iterable<string>,
 	bornYear: number | undefined,
 	getFantasyPoints: () => GameAttributesLeague["fantasyPoints"],

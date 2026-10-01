@@ -7,6 +7,9 @@ import {
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
+	PlayerAttr,
+	PlayerRatingAttr,
+	PlayerStatAttr,
 	PlayInTournament,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
@@ -24,7 +27,7 @@ export const extraRatings = bySport({
 	basketball: [],
 	football: ["ovrs", "pots"],
 	hockey: ["ovrs", "pots"],
-});
+} as const);
 
 export const getActivePlayoffTids = async () => {
 	const tids = new Set<number>();
@@ -126,9 +129,9 @@ export const getActivePlayoffTids = async () => {
 export const getPlayers = async (
 	season: number,
 	abbrev: string,
-	attrs: string[],
-	ratings: string[],
-	stats: string[],
+	attrs: Readonly<PlayerAttr[]>,
+	ratings: Readonly<PlayerRatingAttr[]>,
+	stats: Readonly<PlayerStatAttr[]>,
 	tid: number | undefined,
 ) => {
 	let playersAll;
@@ -157,7 +160,7 @@ export const getPlayers = async (
 	// showNoStats for current season (so draft picks etc show up on their correct team) or for no team (so free agents show up)
 	const showNoStats = season === g.get("season") || tid === undefined;
 
-	let players = await idb.getCopies.playersPlus(playersAll, {
+	const playersMaybeWithoutStats = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"firstName",
@@ -180,6 +183,12 @@ export const getPlayers = async (
 		showRookies: true,
 		fuzz: true,
 	});
+
+	// stats can only be undefined with showRookies and no showNoStats. But showRookies only has an effect for the current season, when showNoStats is always true, so this doesn't actually remove anything. It's just to make the types work
+	let players = playersMaybeWithoutStats.filter(
+		(p): p is typeof p & { stats: NonNullable<(typeof p)["stats"]> } =>
+			p.stats !== undefined,
+	);
 
 	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
 	// For the current season, use the current abbrev (including FA), not the last stats abbrev
@@ -278,7 +287,7 @@ const updatePlayers = async (
 				"diq",
 				"glk",
 			],
-		});
+		} as const);
 
 		const players = addFirstNameShort(
 			await getPlayers(

@@ -5,7 +5,7 @@ import type { ViewInput, Player } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 import { getNumToPick } from "../core/draft/genOrder.ts";
-import { maxBy } from "../../common/utils.ts";
+import { last, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
 
@@ -24,7 +24,7 @@ const updateDraftTeamHistory = async (
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 	const playersAll2 = await idb.getCopies.players(
 		{
 			filter,
@@ -55,8 +55,8 @@ const updateDraftTeamHistory = async (
 	});
 	const players = [];
 	for (const p of playersAll) {
-		const currentPr = p.ratings.at(-1);
-		const peakPr: any = maxBy(p.ratings, "ovr");
+		const currentPr = last(p.ratings);
+		const peakPr = maxBy(p.ratings, "ovr")!;
 
 		let preLotteryRank: number | undefined;
 		let lotteryChange: number | undefined;

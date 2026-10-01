@@ -114,4 +114,37 @@ foo(whatever);`,
 foo(whatever);`,
 		);
 	});
+
+	test("should replace bySport, with as const", () => {
+		return compare(
+			`const whatever = bySport({
+  basketball: ["a", "b"],
+  football: ["c"],
+} as const);
+foo(whatever);`,
+			`foo(["a", "b"]);`,
+		);
+	});
+
+	test("should replace bySport, with satisfies", () => {
+		return compare(
+			`const whatever = bySport({
+  basketball: ["a", "b"],
+  football: ["c"],
+} satisfies Record<string, string[]>);
+foo(whatever);`,
+			`foo(["a", "b"]);`,
+		);
+	});
+
+	test("should replace bySport, with type argument", () => {
+		return compare(
+			`const whatever = bySport<string[]>({
+  basketball: ["a", "b"],
+  football: ["c"],
+});
+foo(whatever);`,
+			`foo(["a", "b"]);`,
+		);
+	});
 });

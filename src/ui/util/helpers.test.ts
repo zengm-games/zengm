@@ -28,6 +28,16 @@ describe("roundStat", () => {
 		assert.strictEqual(helpers.roundStat(15.7, "trb"), "15.7");
 		assert.strictEqual(helpers.roundStat(15.7, "trb", true), "16");
 	});
+
+	test("return blank for missing or non-number values", () => {
+		assert.strictEqual(helpers.roundStat(undefined, "trb"), "");
+		assert.strictEqual(helpers.roundStat(null, "trb"), "");
+		assert.strictEqual(helpers.roundStat([1, 2], "trb"), "");
+	});
+
+	test("pass through strings", () => {
+		assert.strictEqual(helpers.roundStat("5-3", "qbRec"), "5-3");
+	});
 });
 
 describe("yearRanges", () => {

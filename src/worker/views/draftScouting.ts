@@ -3,6 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents, Player } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { last } from "../../common/utils.ts";
 
 const getSeason = async (playersAll: Player[], season: number) => {
 	const playersAllFiltered = playersAll.filter((p) => p.draft.year === season);
@@ -16,20 +17,25 @@ const getSeason = async (playersAll: Player[], season: number) => {
 	players.sort((a, b) => b.valueFuzz - a.valueFuzz);
 
 	const players2 = addFirstNameShort(
-		players.map((pa, i) => ({
-			pid: pa.pid,
-			firstName: pa.firstName,
-			lastName: pa.lastName,
-			age: pa.age,
-			watch: pa.watch,
-			valueFuzz: pa.valueFuzz,
-			// Ratings - just take the only entry
-			ovr: pa.ratings.at(-1).ovr,
-			pot: pa.ratings.at(-1).pot,
-			skills: pa.ratings.at(-1).skills,
-			pos: pa.ratings.at(-1).pos,
-			rank: i + 1,
-		})),
+		players.map((pa, i) => {
+			const ratings = last(pa.ratings);
+
+			return {
+				pid: pa.pid,
+				firstName: pa.firstName,
+				lastName: pa.lastName,
+				age: pa.age,
+				watch: pa.watch,
+				valueFuzz: pa.valueFuzz,
+
+				// Ratings - just take the only entry
+				ovr: ratings.ovr,
+				pot: ratings.pot,
+				skills: ratings.skills,
+				pos: ratings.pos,
+				rank: i + 1,
+			};
+		}),
 	);
 
 	return {

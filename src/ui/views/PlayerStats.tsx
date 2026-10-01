@@ -119,27 +119,11 @@ const PlayerStats = ({
 		}
 	}
 
-	let statsProperty:
-		| "careerStats"
-		| "careerStatsPlayoffs"
-		| "careerStatsCombined"
-		| "stats";
-	if (season === "career") {
-		statsProperty =
-			playoffs === "playoffs"
-				? "careerStatsPlayoffs"
-				: playoffs === "combined"
-					? "careerStatsCombined"
-					: "careerStats";
-	} else {
-		statsProperty = "stats";
-	}
-
 	if (__SPORT === "baseball" && statType === "fielding") {
 		players = expandFieldingStats({
 			rows: players,
 			stats,
-			statsProperty,
+			statsProperty: "stats",
 		});
 	}
 
@@ -154,17 +138,15 @@ const PlayerStats = ({
 			actualAbbrev = p.stats.abbrev;
 			actualTid = p.stats.tid;
 		}
-		if (statsProperty !== "stats") {
-			p.stats = p[statsProperty];
-		}
-
 		const statsRow = stats.map((stat) =>
 			formatStatGameHigh(p.stats, stat, statType),
 		);
 
 		let key;
 		if (__SPORT === "baseball" && statType === "fielding") {
-			key = `${p.pid}-${p.stats.season}-${p.stats.pos}`;
+			// pos is added by expandFieldingStats
+			const pos = "pos" in p.stats ? p.stats.pos : undefined;
+			key = `${p.pid}-${p.stats.season}-${pos}`;
 		} else if (season === "all") {
 			key = `${p.pid}-${p.stats.season}`;
 		} else {
@@ -187,7 +169,7 @@ const PlayerStats = ({
 					pid: p.pid,
 					injury: p.injury,
 					season: numericSeason,
-					skills: p.ratings.skills,
+					skills: p.skills,
 					jerseyNumber: p.stats.jerseyNumber,
 					defaultWatch: p.watch,
 					firstName: p.firstName,

@@ -100,7 +100,11 @@ export type ExhibitionLeagueWithSeasons =
 			seasonEnd: number;
 	  };
 
-const PlayerStatsSummary = ({ stats }: { stats: Player["stats"][number] }) => {
+const PlayerStatsSummary = ({
+	stats,
+}: {
+	stats: Player["stats"][number] | undefined;
+}) => {
 	if (!stats || stats.gp === undefined || stats.gp === 0) {
 		return <br />;
 	}
@@ -108,12 +112,12 @@ const PlayerStatsSummary = ({ stats }: { stats: Player["stats"][number] }) => {
 	if (__SPORT === "basketball") {
 		return (
 			<>
-				{helpers.roundStat(stats.pts / stats.gp, "pts")} pts /{" "}
+				{helpers.roundStat((stats.pts ?? 0) / stats.gp, "pts")} pts /{" "}
 				{helpers.roundStat(
 					((stats.trb ?? 0) + (stats.drb ?? 0) + (stats.orb ?? 0)) / stats.gp,
 					"trb",
 				)}{" "}
-				trb / {helpers.roundStat(stats.ast / stats.gp, "ast")} ast
+				trb / {helpers.roundStat((stats.ast ?? 0) / stats.gp, "ast")} ast
 			</>
 		);
 	}

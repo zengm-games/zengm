@@ -101,6 +101,13 @@ export const EditContestants = ({
 	);
 };
 
+type DunkContestPlayer = View<"allStarDunk">["players"][number];
+type ThreeContestPlayer = View<"allStarThree">["players"][number];
+type ContestPlayer = DunkContestPlayer | ThreeContestPlayer;
+
+const isThreeContestPlayer = (p: ContestPlayer): p is ThreeContestPlayer =>
+	"tp" in p.ratings;
+
 const alertStyle = {
 	maxWidth: 600,
 };
@@ -493,7 +500,7 @@ export const ContestantProfiles = ({
 	challengeNoRatings: boolean;
 	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"];
 	godMode: boolean;
-	players: View<"allStarDunk">["players"];
+	players: ContestPlayer[];
 	season: number;
 	userTid: number;
 }) => {
@@ -583,27 +590,27 @@ export const ContestantProfiles = ({
 							{!challengeNoRatings ? (
 								<>
 									{p.ratings.ovr} ovr, {p.ratings.pot} pot,{" "}
-									{contestIsDunk ? (
+									{isThreeContestPlayer(p) ? (
+										<>{p.ratings.tp} tp</>
+									) : (
 										<>
 											{p.ratings.jmp} jmp, {p.ratings.dnk} dnk
 										</>
-									) : (
-										<>{p.ratings.tp} tp</>
 									)}
 									<br />
 								</>
 							) : null}
-							{contestIsDunk ? (
-								<>
-									{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
-									{helpers.roundStat(p.stats.trb, "trb")} trb,{" "}
-									{helpers.roundStat(p.stats.ast, "ast")} ast
-								</>
-							) : (
+							{isThreeContestPlayer(p) ? (
 								<>
 									{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
 									{helpers.roundStat(p.stats.tpa, "tpa")} 3pa,{" "}
 									{helpers.roundStat(p.stats.tpp, "tpp")}%
+								</>
+							) : (
+								<>
+									{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
+									{helpers.roundStat(p.stats.trb, "trb")} trb,{" "}
+									{helpers.roundStat(p.stats.ast, "ast")} ast
 								</>
 							)}
 						</div>
@@ -665,7 +672,7 @@ export const ScoreTable = ({
 }: {
 	centerResults?: boolean;
 	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"];
-	players: View<"allStarDunk">["players"];
+	players: ContestPlayer[];
 	resultsByRound:
 		| View<"allStarDunk">["resultsByRound"]
 		| View<"allStarThree">["resultsByRound"];

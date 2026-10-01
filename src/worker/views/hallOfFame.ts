@@ -12,7 +12,7 @@ export const extraStats = bySport({
 	basketball: [],
 	football: [],
 	hockey: [],
-});
+} as const);
 
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
@@ -35,7 +35,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			],
 			football: ["keyStats", "av"],
 			hockey: ["keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 		const playersAll = await idb.getCopies.players(
 			{
 				hof: true,
@@ -57,22 +57,26 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 				fuzz: true,
 			})
-		).map((p) => {
-			p.countMvp = 0;
-			p.countTitles = 0;
-			for (const award of p.awards) {
+		).map(({ awards, ...p }) => {
+			let countMvp = 0;
+			let countTitles = 0;
+			for (const award of awards) {
 				if (
 					award.type === undefined &&
+					award.numTeams === undefined &&
 					award.actAs === "mvp" &&
 					award.rank === 1
 				) {
-					p.countMvp += 1;
+					countMvp += 1;
 				} else if (award.type === "Won Championship") {
-					p.countTitles += 1;
+					countTitles += 1;
 				}
 			}
-			delete p.awards;
-			return p;
+			return {
+				...p,
+				countMvp,
+				countTitles,
+			};
 		});
 
 		return {

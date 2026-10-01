@@ -127,7 +127,7 @@ const SEASON_STATS_KEYS = bySport({
 		"defFmbFrc",
 	],
 	hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
-});
+} as const);
 
 export const processTeam = async (
 	teamInput: {
@@ -247,7 +247,7 @@ export const processTeam = async (
 	let game6EliminationGameOrGame7: boolean | undefined;
 	const compositeWeights = Object.entries(COMPOSITE_WEIGHTS);
 
-	let seasonStatsByPid: Map<number, Record<string, number>> | undefined;
+	let seasonStatsByPid;
 	if (SEASON_STATS_KEYS !== undefined) {
 		// Only look at regular season stats for All-Star Game, in case All-Star Game is in playoffs
 		const regularSeason = allStarGame || g.get("phase") < PHASE.PLAYOFFS;
@@ -255,8 +255,7 @@ export const processTeam = async (
 			attrs: ["pid"],
 			stats: SEASON_STATS_KEYS,
 			season: g.get("season"),
-			regularSeason,
-			playoffs: !regularSeason,
+			seasonType: regularSeason ? "regularSeason" : "playoffs",
 			mergeStats: "totOnly",
 		});
 		seasonStatsByPid = new Map(rows.map((p) => [p.pid, p.stats]));
@@ -267,7 +266,7 @@ export const processTeam = async (
 
 		// p.jerseyNumber fallback is for exhibition game players for the current season with no stats
 		const jerseyNumber =
-			p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : p.jerseyNumber;
+			p.stats.length > 0 ? p.stats.at(-1)!.jerseyNumber : p.jerseyNumber;
 
 		const rating = last(p.ratings);
 		const playerCompositeRatings: any = {};

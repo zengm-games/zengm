@@ -125,6 +125,10 @@ const NewAssetIcon = () => {
 	);
 };
 
+type SummaryPlayer = View<"trade">["summary"]["teams"][number]["trade"][number];
+type SummaryPlayerWithInfo =
+	View<"tradeProposals">["offers"][number]["summary"]["teams"][number]["trade"][number];
+
 export const SummaryTeam = ({
 	handleRemove,
 	hideFinanceInfo,
@@ -134,7 +138,11 @@ export const SummaryTeam = ({
 	showInlinePlayerInfo,
 	summary,
 	t,
-}: Pick<View<"trade">, "summary"> & {
+}: {
+	// Trade proposals and saved trades include age/ratings/stats for each player, for showInlinePlayerInfo
+	summary:
+		| View<"trade">["summary"]
+		| View<"tradeProposals">["offers"][number]["summary"];
 	handleRemove?: (type: "player" | "pick", id: number) => void;
 	hideFinanceInfo?: boolean;
 	hideTeamOvr?: boolean;
@@ -162,11 +170,14 @@ export const SummaryTeam = ({
 	const payrollColorCutoff =
 		salaryCapType === "none" ? luxuryPayroll : salaryCap;
 
+	const trade: readonly (SummaryPlayer | SummaryPlayerWithInfo)[] =
+		summary.teams[t.other].trade;
+
 	return (
 		<>
 			<h4 className="fw-bold mb-1">{t.name} receive:</h4>
 			<ul className="list-unstyled mb-0">
-				{summary.teams[t.other].trade.map((p) => {
+				{trade.map((p) => {
 					return (
 						<li key={p.pid}>
 							<div className="d-flex">
@@ -174,7 +185,7 @@ export const SummaryTeam = ({
 									<NewAssetIcon />
 								) : null}
 								<PlayerNameLabels
-									pos={p.ratings?.pos}
+									pos={"ratings" in p ? p.ratings.pos : undefined}
 									pid={p.pid}
 									legacyName={p.name}
 								/>
@@ -192,7 +203,7 @@ export const SummaryTeam = ({
 									/>
 								) : undefined}
 							</div>
-							{showInlinePlayerInfo ? (
+							{showInlinePlayerInfo && "age" in p ? (
 								<div className="ms-2">
 									{p.age} <span title="Years Old">yo</span>
 									{!challengeNoRatings ? (

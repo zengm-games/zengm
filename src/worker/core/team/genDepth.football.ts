@@ -1,11 +1,23 @@
 import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import { POSITIONS } from "../../../common/constants.football.ts";
-import type { Position } from "../../../common/types.football.ts";
-import type { Player, PlayerFiltered } from "../../../common/types.ts";
+import type {
+	PlayerRatings,
+	Position,
+} from "../../../common/types.football.ts";
+import type { Player } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
 
-const score = (p: PlayerFiltered, pos: Position) => {
+// Either from playersPlus, or from the ratings of a Player
+type PlayerForDepth = {
+	pid: number;
+	ratings: {
+		pos: string;
+		ovrs: Record<Position, number>;
+	};
+};
+
+const score = (p: PlayerForDepth, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
@@ -40,12 +52,12 @@ const genDepth = async (
 	}
 	const depth = helpers.deepCopy(initialDepth);
 
-	let players;
+	let players: PlayerForDepth[];
 
 	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
 		players = playersRaw.map((p) => {
-			const ratings = last(p.ratings);
+			const ratings = last(p.ratings) as PlayerRatings;
 			return {
 				pid: p.pid,
 				ratings: {

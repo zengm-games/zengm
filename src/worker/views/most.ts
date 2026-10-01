@@ -14,7 +14,13 @@ import { formatPlayerAwardName } from "../../common/awards.ts";
 
 type Most = {
 	value: number;
-	extra?: Record<string, unknown>;
+	extra?: {
+		// If this is set, it will specify the season to use for the "Best Season" section
+		bestSeasonOverride?: number;
+
+		season?: number;
+		tid?: number;
+	} & Record<string, unknown>;
 };
 
 type PlayersAll = (Player & {
@@ -70,9 +76,9 @@ const getMostXPlayers = async ({
 		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"firstName",
@@ -83,7 +89,6 @@ const getMostXPlayers = async ({
 			"hof",
 			"born",
 			"diedYear",
-			"most",
 			"jerseyNumber",
 			"awards",
 		],
@@ -93,18 +98,26 @@ const getMostXPlayers = async ({
 		mergeStats: "totOnly",
 	});
 
-	const ordered = sortParams ? orderBy(players, ...sortParams) : players;
-	for (let i = 0; i < LIMIT; i++) {
-		if (ordered[i]) {
-			ordered[i].rank = i + 1;
+	// Match up most by index rather than pid, since a player can appear multiple times with different most values. This is safe because with no season or seasonRange, playersPlus returns every player
+	if (playersFiltered.length !== playersAll.length) {
+		throw new Error("playersPlus filtered out some players");
+	}
+	const players = playersFiltered.map((p, i) => ({
+		...p,
+		most: playersAll[i]!.most,
+	}));
 
-			if (after) {
-				ordered[i].most = await after(ordered[i].most);
-			}
-		}
+	const ordered = sortParams ? orderBy(players, ...sortParams) : players;
+	const ranked = [];
+	for (const [i, p] of ordered.entries()) {
+		ranked.push({
+			...p,
+			rank: i + 1,
+			most: after ? await after(p.most) : p.most,
+		});
 	}
 
-	const processedPlayers = addFirstNameShort(processPlayersHallOfFame(ordered));
+	const processedPlayers = addFirstNameShort(processPlayersHallOfFame(ranked));
 
 	for (const p of processedPlayers) {
 		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;
@@ -290,7 +303,7 @@ const updatePlayers = async (
 				for (const ps of p.stats) {
 					const numRounds = g.get("numGamesPlayoffSeries", ps.season).length;
 					if (numRounds > 0) {
-						sum += ps.gp;
+						sum += ps.gp ?? 0;
 					}
 				}
 				return { value: sum };
@@ -378,7 +391,7 @@ const updatePlayers = async (
 			});
 
 			getValue = (p) => {
-				const tids = p.stats.filter((s) => s.gp > 0).map((s) => s.tid);
+				const tids = p.stats.filter((s) => (s.gp ?? 0) > 0).map((s) => s.tid);
 				return { value: new Set(tids).size };
 			};
 		} else if (type === "oldest_former_players") {
@@ -615,8 +628,10 @@ const updatePlayers = async (
 				let min = 0;
 				let valueTimesMin = 0;
 				for (const ps of p.stats) {
-					min += ps.min;
-					valueTimesMin += ps.min * ps.per;
+					// Missing in real player data before these were tracked
+					const psMin = ps.min ?? 0;
+					min += psMin;
+					valueTimesMin += psMin * (ps.per ?? 0);
 				}
 
 				if (
@@ -680,11 +695,11 @@ const updatePlayers = async (
 						maxNumSeasons = numSeasons;
 
 						// Somehow propagate these through
-						maxTid = Number.parseInt(tid);
+						maxTid = tid;
 
 						maxGP = 0;
 						for (const ps of stats) {
-							maxGP += ps.gp;
+							maxGP += ps.gp ?? 0;
 							maxSeason = ps.season;
 						}
 					}
@@ -727,7 +742,7 @@ const updatePlayers = async (
 				let season: number | undefined;
 				let tid: number | undefined;
 				for (const ps of p.stats) {
-					if (ps.gp > 0) {
+					if ((ps.gp ?? 0) > 0) {
 						const age = ps.season - p.born.year;
 						if (age > maxAge) {
 							maxAge = age;
@@ -1022,9 +1037,10 @@ const updatePlayers = async (
 			);
 
 			filter = (p) =>
-				p.stats.length > 1 && p.stats[0].season === p.draft.year + 1;
+				p.stats.length > 1 && p.stats[0]?.season === p.draft.year + 1;
 			getValue = (p) => {
-				const row = p.stats[0];
+				// Always exists, because of the filter
+				const row = p.stats[0]!;
 				const value = getValueStatsRow(row);
 
 				const rookieRatings = p.ratings.find(

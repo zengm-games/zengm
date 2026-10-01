@@ -19,7 +19,7 @@ test("player with no stats", async () => {
 
 test("player with stats containing no jersey number", async () => {
 	const p = player.generate(0, 25, 2020, true, DEFAULT_LEVEL);
-	p.stats = [{}];
+	p.stats = [{}] as typeof p.stats;
 	const jerseyNumber = await genJerseyNumber(p);
 	assert.strictEqual(typeof jerseyNumber, "string");
 });

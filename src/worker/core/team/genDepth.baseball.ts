@@ -1,9 +1,20 @@
 import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
-import type { Position } from "../../../common/types.baseball.ts";
-import type { Player, PlayerFiltered } from "../../../common/types.ts";
+import type {
+	PlayerRatings,
+	Position,
+} from "../../../common/types.baseball.ts";
+import type { Player } from "../../../common/types.ts";
 import { groupByUnique, last, maxBy } from "../../../common/utils.ts";
 import { shuffle } from "../../../common/random.ts";
+
+// Everything used here, either from playersPlus or from the ratings of a Player
+type PlayerForDepth = {
+	pid: number;
+	ratings: Pick<PlayerRatings, "spd" | "con" | "hpw" | "eye" | "ovrs"> & {
+		pos: Position;
+	};
+};
 
 const getScorePosBonus = (pos: Position) => {
 	if (pos === "C") {
@@ -17,11 +28,16 @@ const getScorePosBonus = (pos: Position) => {
 	return 0;
 };
 
-const score = (p: PlayerFiltered, pos?: Position) => {
-	if (pos === undefined) {
-		return p.ratings.ovr;
-	}
-
+// Score for playing a specific position. Players come from playersPlus or are constructed manually, so the type is just what this needs
+const score = (
+	p: {
+		ratings: {
+			pos?: string;
+			ovrs: Record<Position, number>;
+		};
+	},
+	pos: Position,
+) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
@@ -30,6 +46,15 @@ const score = (p: PlayerFiltered, pos?: Position) => {
 
 	return tempScore;
 };
+
+// Score for ordering position players on the bench. Pitchers are ranked by their ovr at a position they are bad at, so they wind up at the end
+const benchScore = (ratings: {
+	pos: Position;
+	ovrs: Record<Position, number>;
+}) =>
+	ratings.pos === "RP" || ratings.pos === "SP"
+		? ratings.ovrs.LF
+		: ratings.ovrs[ratings.pos];
 
 const DEF_POSITIONS = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"] as const;
 const DEF_POSITIONS_DH = [
@@ -183,8 +208,8 @@ export const getDepthDefense = (
 	players: {
 		pid: number;
 		ratings: {
-			ovrs: Record<string, number>;
-			pos: string;
+			ovrs: Record<Position, number>;
+			pos: Position;
 		};
 	}[],
 	dh: boolean,
@@ -202,7 +227,7 @@ export const getDepthDefense = (
 			let maxScore = -Infinity;
 			for (let i = 0; i < playersRemaining.length; i++) {
 				const ratings = playersRemaining[i]!.ratings;
-				let currentScore = ratings.ovrs[scorePos]!;
+				let currentScore = ratings.ovrs[scorePos];
 				if (ratings.pos === scorePos) {
 					currentScore += positionBonus;
 				}
@@ -221,15 +246,7 @@ export const getDepthDefense = (
 	}
 
 	playersRemaining.sort((a, b) => {
-		const bOvr =
-			b.ratings.pos === "RP" || b.ratings.pos === "SP"
-				? b.ratings.ovrs.LF!
-				: b.ratings.ovrs[b.ratings.pos]!;
-		const aOvr =
-			a.ratings.pos === "RP" || a.ratings.pos === "SP"
-				? a.ratings.ovrs.LF!
-				: a.ratings.ovrs[a.ratings.pos]!;
-		const diff = bOvr - aOvr;
+		const diff = benchScore(b.ratings) - benchScore(a.ratings);
 		if (diff === 0) {
 			// Deterministic order
 			return b.pid - a.pid;
@@ -255,7 +272,7 @@ export const getDepthDefense = (
 
 			const pos = defPositions[i]!;
 			let currentOvrs = p.ratings.ovrs;
-			let currentPosOvr = currentOvrs[pos]!;
+			let currentPosOvr = currentOvrs[pos];
 			for (let j = 0; j < numPlayersToTest; j++) {
 				if (i === j) {
 					continue;
@@ -269,14 +286,14 @@ export const getDepthDefense = (
 				const pos2 = defPositions[j]!;
 				const otherOvrs = p2.ratings.ovrs;
 				if (
-					currentOvrs[pos2]! + otherOvrs[pos]! >
-					currentPosOvr + otherOvrs[pos2]!
+					currentOvrs[pos2] + otherOvrs[pos] >
+					currentPosOvr + otherOvrs[pos2]
 				) {
 					defensivePlayersSorted[i] = p2;
 					defensivePlayersSorted[j] = p;
 					p = p2;
 					currentOvrs = otherOvrs;
-					currentPosOvr = currentOvrs[pos]!;
+					currentPosOvr = currentOvrs[pos];
 					swapped = true;
 				}
 			}
@@ -294,7 +311,7 @@ export const getDepthPitchers = (
 	players: {
 		pid: number;
 		ratings: {
-			ovrs: Record<string, number>;
+			ovrs: Record<Position, number>;
 		};
 	}[],
 ) => {
@@ -332,7 +349,7 @@ export const getDepthPitchers = (
 	}
 	playersRemaining.sort((a, b) => {
 		// Inlining this improves performance significantly, for some reason
-		const diff = b.ratings.ovrs.RP! - a.ratings.ovrs.RP!;
+		const diff = b.ratings.ovrs.RP - a.ratings.ovrs.RP;
 		if (diff === 0) {
 			// Deterministic order
 			return b.pid - a.pid;
@@ -361,23 +378,26 @@ const genDepth = async (
 	}
 	const depth = helpers.deepCopy(initialDepth);
 
-	let players: any[];
+	let players: PlayerForDepth[];
 
 	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
 		players = playersRaw.map((p) => {
-			const ratings = last(p.ratings);
+			const ratings = last(p.ratings) as PlayerRatings;
 			return {
 				pid: p.pid,
 				ratings: {
 					spd: ratings.spd,
-					pos: ratings.pos,
+					con: ratings.con,
+					hpw: ratings.hpw,
+					eye: ratings.eye,
 					ovrs: ratings.ovrs,
+					pos: ratings.pos as Position,
 				},
 			};
 		});
 	} else {
-		players = await idb.getCopies.playersPlus(playersRaw, {
+		const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: ["pid"],
 			ratings: ["spd", "con", "hpw", "eye", "pos", "ovrs"],
 			season: g.get("season"),
@@ -385,6 +405,13 @@ const genDepth = async (
 			showRookies: true,
 			fuzz: true,
 		});
+		players = playersFiltered.map((p) => ({
+			pid: p.pid,
+			ratings: {
+				...p.ratings,
+				pos: p.ratings.pos as Position,
+			},
+		}));
 	}
 
 	// Lineup last, since that depends on defensive starters
@@ -436,12 +463,12 @@ const genDepth = async (
 
 				// Add any players not put in starting lineup or removed from starting lineup to bench
 				for (const p of addToBench) {
-					const pScore = score(p);
+					const pScore = benchScore(p.ratings);
 					let added = false;
 					for (let i = defPositions.length; i < depth[pos2].length; i++) {
 						const p2 = players.find((p2) => p2.pid === depth[pos2][i]);
 
-						if (!p2 || pScore > score(p2)) {
+						if (!p2 || pScore > benchScore(p2.ratings)) {
 							depth[pos2].splice(i, 0, p.pid);
 							added = true;
 							break;
@@ -510,12 +537,13 @@ const genDepth = async (
 				const depthDefense = depth[pos2 === "L" ? "D" : "DP"];
 				const playersByPid = groupByUnique(players, "pid");
 
+				// If a player is somehow missing, the lineup will be the wrong length and getDepthPlayers will use the default lineup
 				const starters = depthDefense
 					.slice(0, pos2 === "L" ? 9 : 8)
-					.map((pid, i) => ({
-						i,
-						p: playersByPid[pid],
-					}));
+					.flatMap((pid, i) => {
+						const p = playersByPid[pid];
+						return p ? [{ i, p }] : [];
+					});
 
 				const sortedStarters = sortBattingOrder(starters);
 

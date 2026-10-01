@@ -1,6 +1,12 @@
 import { PLAYER, RATINGS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type {
+	Player,
+	PlayerRatingKey,
+	PlayerStatAttr,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types.ts";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
@@ -54,10 +60,12 @@ const hasPlayerInfoChanged = (
 	return false;
 };
 
-const getRatingsByPositions = (positions: string[]) => {
+const getRatingsByPositions = (
+	positions: string[],
+): (PlayerRatingKey | "ovr" | "pot")[] => {
 	const sportSpecific = bySport({
 		baseball: () => {
-			const ratings = ["hgt", "spd"];
+			const ratings: PlayerRatingKey[] = ["hgt", "spd"];
 			for (const pos of positions) {
 				if (pos === "SP" || pos === "RP") {
 					ratings.push("ppw", "ctl", "mov", "endu");
@@ -71,7 +79,7 @@ const getRatingsByPositions = (positions: string[]) => {
 			return new Set(RATINGS);
 		},
 		football: () => {
-			const ratings = ["hgt", "stre", "spd", "endu"];
+			const ratings: PlayerRatingKey[] = ["hgt", "stre", "spd", "endu"];
 			for (const pos of positions) {
 				if (pos === "QB") {
 					ratings.push("thv", "thp", "tha", "bsc");
@@ -94,7 +102,7 @@ const getRatingsByPositions = (positions: string[]) => {
 			return new Set(ratings);
 		},
 		hockey: () => {
-			const ratings = [];
+			const ratings: PlayerRatingKey[] = [];
 			for (const pos of positions) {
 				if (pos === "G") {
 					ratings.push("glk");
@@ -128,9 +136,9 @@ const getRatingsByPositions = (positions: string[]) => {
 };
 
 const getStatsByPositions = (positions: string[]) => {
-	const sportSpecific = bySport<() => Set<string> | string[]>({
+	const sportSpecific = bySport<() => Iterable<PlayerStatAttr>>({
 		baseball: () => {
-			const stats = [];
+			const stats: PlayerStatAttr[] = [];
 			for (const pos of positions) {
 				if (pos === "SP" || pos === "RP") {
 					stats.push(
@@ -160,7 +168,7 @@ const getStatsByPositions = (positions: string[]) => {
 					);
 				}
 			}
-			return new Set([...stats, "war"]);
+			return new Set<PlayerStatAttr>([...stats, "war"]);
 		},
 		basketball: () => {
 			return [
@@ -184,7 +192,7 @@ const getStatsByPositions = (positions: string[]) => {
 			];
 		},
 		football: () => {
-			const stats = ["gp"];
+			const stats: PlayerStatAttr[] = ["gp"];
 			for (const pos of positions) {
 				if (pos === "QB") {
 					stats.push(
@@ -267,10 +275,10 @@ const getStatsByPositions = (positions: string[]) => {
 					);
 				}
 			}
-			return new Set([...stats, "fp", "av"]);
+			return new Set<PlayerStatAttr>([...stats, "fp", "av"]);
 		},
 		hockey: () => {
-			const stats = [];
+			const stats: PlayerStatAttr[] = [];
 			for (const pos of positions) {
 				if (pos === "G") {
 					stats.push(
@@ -300,11 +308,101 @@ const getStatsByPositions = (positions: string[]) => {
 					);
 				}
 			}
-			return new Set([...stats, "ps"]);
+			return new Set<PlayerStatAttr>([...stats, "ps"]);
 		},
 	})();
 
 	return Array.from(sportSpecific);
+};
+
+// Returns a single ratings row and a single stats row, for either one season or career totals (with peak ratings)
+const getPlayer = async (
+	pRaw: Player,
+	season: number | "career",
+	playoffs: SeasonType,
+	allStats: PlayerStatAttr[],
+) => {
+	const playersPlusOptions = {
+		attrs: [
+			"pid",
+			"firstName",
+			"lastName",
+			"born",
+			"watch",
+			"face",
+			"imgURL",
+			"awards",
+			"draft",
+			"tid",
+			"experience",
+			"contract",
+			"salaries",
+			"salariesTotal",
+		],
+		ratings: ["season", "pos", "ovr", "pot", ...RATINGS],
+		stats: allStats,
+		seasonType: playoffs,
+		showNoStats: true,
+		showRookies: true,
+		fuzz: true,
+		mergeStats: "totOnly",
+	} as const;
+
+	if (season === "career") {
+		const p = await idb.getCopy.playersPlus(pRaw, playersPlusOptions);
+		if (!p) {
+			return;
+		}
+
+		const {
+			careerStats,
+			careerStatsPlayoffs,
+			careerStatsCombined,
+			ratings: allRatings,
+			stats: allSeasonStats,
+			...rest
+		} = p;
+
+		const stats =
+			playoffs === "playoffs"
+				? careerStatsPlayoffs
+				: playoffs === "combined"
+					? careerStatsCombined
+					: careerStats;
+		if (!stats) {
+			return;
+		}
+
+		// Peak ratings
+		const ratings = maxBy(allRatings, "ovr") ?? last(allRatings);
+
+		const teamInfo = await getTeamInfoBySeason(p.tid, ratings.season);
+
+		return {
+			...rest,
+			ratings,
+			stats,
+			colors: teamInfo?.colors,
+			jersey: teamInfo?.jersey,
+		};
+	}
+
+	const p = await idb.getCopy.playersPlus(pRaw, {
+		...playersPlusOptions,
+		season,
+	});
+	if (!p) {
+		return;
+	}
+
+	const teamInfo = await getTeamInfoBySeason(p.tid, season);
+
+	return {
+		...p,
+		awards: p.awards.filter((award) => award.season === season),
+		colors: teamInfo?.colors,
+		jersey: teamInfo?.jersey,
+	};
 };
 
 const updateComparePlayers = async (
@@ -366,74 +464,22 @@ const updateComparePlayers = async (
 		const players = [];
 		for (const { pid, season, playoffs } of playersToShow) {
 			const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
-			if (pRaw) {
-				const p = await idb.getCopy.playersPlus(pRaw, {
-					attrs: [
-						"pid",
-						"firstName",
-						"lastName",
-						"born",
-						"watch",
-						"face",
-						"imgURL",
-						"awards",
-						"draft",
-						"tid",
-						"experience",
-						"awards",
-						"contract",
-						"salaries",
-						"salariesTotal",
-					],
-					ratings: ["season", "pos", "ovr", "pot", ...RATINGS],
-					stats: allStats,
-					playoffs: playoffs === "playoffs",
-					regularSeason: playoffs === "regularSeason",
-					combined: playoffs === "combined",
-					season: season === "career" ? undefined : season,
-					showNoStats: true,
-					showRookies: true,
-					fuzz: true,
-					mergeStats: "totOnly",
-				});
-
-				if (p) {
-					let teamInfo;
-					if (season === "career") {
-						const statsKey =
-							playoffs === "playoffs"
-								? "careerStatsPlayoffs"
-								: playoffs === "combined"
-									? "careerStatsCombined"
-									: "careerStats";
-						p.stats = p[statsKey];
-						delete p[statsKey];
-
-						// Peak ratings
-						p.ratings = maxBy(p.ratings, "ovr");
-
-						teamInfo = await getTeamInfoBySeason(p.tid, p.ratings.season);
-					} else {
-						p.awards = (p.awards as any[]).filter(
-							(award) => award.season === season,
-						);
-						teamInfo = await getTeamInfoBySeason(p.tid, season);
-					}
-
-					if (teamInfo) {
-						p.colors = teamInfo.colors;
-						p.jersey = teamInfo.jersey;
-					}
-
-					players.push({
-						p,
-						season,
-						firstSeason: pRaw.ratings[0].season,
-						lastSeason: last(pRaw.ratings).season,
-						playoffs,
-					});
-				}
+			if (!pRaw) {
+				continue;
 			}
+
+			const p = await getPlayer(pRaw, season, playoffs, allStats);
+			if (!p) {
+				continue;
+			}
+
+			players.push({
+				p,
+				season,
+				firstSeason: pRaw.ratings[0].season,
+				lastSeason: last(pRaw.ratings).season,
+				playoffs,
+			});
 		}
 
 		// In summary table show ratings/stats relevant to these players' positions

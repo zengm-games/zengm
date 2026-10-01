@@ -216,10 +216,11 @@ const doInjury = async (
 		if (newRatings.pot > prevRatings.pot) {
 			newRatings.pot = prevRatings.pot;
 		}
-		if (newRatings.pots) {
-			for (const pos of Object.keys(newRatings.pots)) {
-				if (newRatings.pots[pos] > prevRatings.pots[pos]) {
-					newRatings.pots[pos] = prevRatings.pots[pos];
+		if (newRatings.pots && prevRatings.pots) {
+			for (const [pos, pot] of Object.entries(newRatings.pots)) {
+				const prevPot = prevRatings.pots[pos];
+				if (prevPot !== undefined && pot > prevPot) {
+					newRatings.pots[pos] = prevPot;
 				}
 			}
 		}
@@ -340,14 +341,14 @@ const writePlayerStats = async (
 					throw new Error("Invalid pid");
 				}
 
-				let ps = p2.stats.at(-1);
+				let psLatest = p2.stats.at(-1);
 
 				// Previously we called addStatsRow when joining a team, but now we do it dynamically
 				const addNewStatsRow =
-					!statsRowIsCurrent(ps, t.id, playoffs) && !allStarGame;
+					!statsRowIsCurrent(psLatest, t.id, playoffs) && !allStarGame;
 				if (addNewStatsRow) {
 					player.addStatsRow(p2, g.get("season"), playoffs);
-					ps = p2.stats.at(-1);
+					psLatest = p2.stats.at(-1);
 				}
 
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
@@ -410,6 +411,14 @@ const writePlayerStats = async (
 				}
 
 				if (!allStarGame) {
+					// Row always exists here, because of addStatsRow above
+					if (!psLatest) {
+						throw new Error("Should never happen");
+					}
+
+					// Stats are accumulated by dynamic keys from the box score, so treat the row as a generic record
+					const ps: Record<string, any> = psLatest;
+
 					if (__SPORT === "hockey") {
 						if (p2.pid === goaliePID) {
 							if (p2.numConsecutiveGamesG === undefined) {

@@ -1,5 +1,11 @@
-import { PLAYER_STATS_TABLES, RATINGS } from "./constants.ts";
+import {
+	getPlayerStatsTableStats,
+	PLAYER_STATS_TABLES,
+	RATINGS,
+} from "./constants.ts";
 import type { Col } from "../ui/components/DataTable/index.tsx";
+import type { AdvancedPlayerSearchPlayer } from "../worker/api/advancedPlayerSearch.ts";
+import { getNumericStat } from "./statValue.ts";
 
 type AdvancedPlayerSearchField = {
 	category: string;
@@ -13,11 +19,17 @@ type AdvancedPlayerSearchField = {
 } & (
 	| {
 			valueType: "numeric";
-			getValue: (p: any, singleSeason: "totals" | "singleSeason") => number;
+			getValue: (
+				p: AdvancedPlayerSearchPlayer,
+				singleSeason: "totals" | "singleSeason",
+			) => number | undefined;
 	  }
 	| {
 			valueType: "string";
-			getValue: (p: any, singleSeason: "totals" | "singleSeason") => string;
+			getValue: (
+				p: AdvancedPlayerSearchPlayer,
+				singleSeason: "totals" | "singleSeason",
+			) => string;
 	  }
 );
 
@@ -50,7 +62,7 @@ export const addPrefixForStat = (statType: string, stat: string) => {
 };
 
 const ratingOptions: Record<string, MinimalAdvancedPlayerSearchField> = {};
-for (const key of ["ovr", "pot", ...RATINGS]) {
+for (const key of ["ovr", "pot", ...RATINGS] as const) {
 	ratingOptions[key] = {
 		colKey: addPrefixForStat("ratings", key),
 		valueType: "numeric",
@@ -186,17 +198,20 @@ const processStatsTable = (
 for (const [category, table] of Object.entries(PLAYER_STATS_TABLES)) {
 	const options: Record<string, MinimalAdvancedPlayerSearchField> = {};
 	const processedTable = processStatsTable(table);
-	for (const key of processedTable.stats) {
+
+	for (const key of getPlayerStatsTableStats(processedTable.stats)) {
 		options[key] = {
 			colKey: addPrefixForStat(category, key),
 			valueType: "numeric",
-			getValue:
-				category === "gameHighs"
-					? (p) => {
-							const stat = p.stats[key];
-							return Array.isArray(stat) ? stat[0] : stat;
-						}
-					: (p) => p.stats[key],
+			getValue: (p) => {
+				const stat = p.stats[key];
+
+				const value =
+					category === "gameHighs" && Array.isArray(stat) ? stat[0] : stat;
+
+				// Only numbers can be filtered or displayed, not things like byPos arrays
+				return getNumericStat(value);
+			},
 		};
 	}
 
@@ -254,12 +269,7 @@ export const getStats = (statTypePlus: string) => {
 			throw new Error(`Invalid statType: "${statTypePlus}"`);
 		}
 
-		// Remove pos for fielding stats
-		if (__SPORT === "baseball") {
-			return statsTable.stats.filter((stat) => stat !== "pos");
-		}
-
-		return [...statsTable.stats];
+		return getPlayerStatsTableStats(statsTable.stats);
 	}
 };
 

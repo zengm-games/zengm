@@ -2,14 +2,15 @@ import { PLAYER } from "../../common/constants.ts";
 import { helpers } from "../util/helpers.ts";
 
 type Props = {
-	tid: number;
+	// undefined for ratings rows from seasons with no stats, which also have no abbrev
+	tid: number | undefined;
 	abbrev: string;
 	className?: string;
 	season?: number;
 };
 
 const TeamAbbrevLink = ({ tid, abbrev, className, season }: Props) => {
-	if (!abbrev) {
+	if (!abbrev || tid === undefined) {
 		return null;
 	}
 
@@ -59,7 +60,7 @@ export const wrappedTeamAbbrevLink = ({
 	season,
 }: Props) => {
 	let text;
-	if (!abbrev) {
+	if (!abbrev || tid === undefined) {
 		text = undefined;
 	} else if (tid === PLAYER.DOES_NOT_EXIST) {
 		text = "DNE";

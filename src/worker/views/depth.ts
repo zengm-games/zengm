@@ -2,7 +2,12 @@ import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { posRatings } from "../../common/posRatings.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type {
+	PlayerRatingKey,
+	UpdateEvents,
+	ViewInput,
+	PlayerStatAttr,
+} from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import {
 	NUM_LINES,
@@ -10,7 +15,7 @@ import {
 } from "../../common/constants.hockey.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 
-const defenseStats = [
+const defenseStats: PlayerStatAttr[] = [
 	"defTckSolo",
 	"defTckAst",
 	"defTck",
@@ -28,7 +33,7 @@ const defenseStats = [
 	"defFmbTD",
 ];
 
-const baseballLineupStats = [
+const baseballLineupStats: PlayerStatAttr[] = [
 	"war",
 	"ab",
 	"h",
@@ -60,7 +65,7 @@ export const buffOvrDH = (p: {
 	}
 };
 
-const stats = bySport<Record<string, string[]>>({
+const stats = bySport<Record<string, PlayerStatAttr[]>>({
 	baseball: {
 		L: baseballLineupStats,
 		LP: baseballLineupStats,
@@ -200,12 +205,12 @@ const updateDepth = async (
 		}
 
 		const editable = tid === g.get("userTid") && !g.get("spectator");
-		const ratings = [
+		const ratings: PlayerRatingKey[] = [
 			...(__SPORT === "baseball"
 				? pos2 === "P"
 					? []
-					: ["hgt", "spd"]
-				: ["hgt", "stre", "spd", "endu"]),
+					: (["hgt", "spd"] as const)
+				: (["hgt", "stre", "spd", "endu"] as const)),
 			...posRatings(pos2),
 		];
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -213,9 +218,7 @@ const updateDepth = async (
 			await idb.getCopies.playersPlus(playersAll, {
 				attrs: ["pid", "firstName", "lastName", "age", "injury", "watch"],
 				ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
-				playoffs: playoffs === "playoffs",
-				regularSeason: playoffs === "regularSeason",
-				combined: playoffs === "combined",
+				seasonType: playoffs,
 				stats: [...stats[pos2]!, "jerseyNumber"],
 				season: g.get("season"),
 				showNoStats: true,
@@ -240,7 +243,7 @@ const updateDepth = async (
 		let multiplePositionsWarning: string | undefined;
 		if (__SPORT === "hockey" && players.length >= g.get("minRosterSize")) {
 			const playerInfoByPid = new Map<
-				any,
+				number,
 				{
 					name: string;
 					positions: string[];
@@ -249,7 +252,8 @@ const updateDepth = async (
 
 			for (const [pos, posPlayers] of Object.entries(depthPlayers)) {
 				const numStarters =
-					(NUM_LINES as any)[pos] * (NUM_PLAYERS_PER_LINE as any)[pos];
+					NUM_LINES[pos as keyof typeof NUM_LINES] *
+					NUM_PLAYERS_PER_LINE[pos as keyof typeof NUM_PLAYERS_PER_LINE];
 
 				for (let i = 0; i < numStarters; i++) {
 					const p = posPlayers[i];

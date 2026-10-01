@@ -33,7 +33,7 @@ const updateProtectPlayers = async () => {
 		basketball: ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"],
 		football: ["yearsWithTeam", "gp", "keyStats", "av"],
 		hockey: ["yearsWithTeam", "gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	let players: any[] = [];
 	const expansionTeam = expansionDraft.expansionTids.includes(g.get("userTid"));

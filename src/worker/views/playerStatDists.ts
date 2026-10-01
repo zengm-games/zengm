@@ -1,4 +1,9 @@
-import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common/constants.ts";
+import {
+	getPlayerStatsTableStats,
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
@@ -7,6 +12,7 @@ import type {
 	PlayerStatType,
 } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStatDists">,
@@ -65,7 +71,7 @@ const updatePlayers = async (
 
 		players = await idb.getCopies.playersPlus(players, {
 			ratings: ["skills"],
-			stats,
+			stats: getPlayerStatsTableStats(stats),
 			season: inputs.season,
 			statType,
 		});
@@ -82,7 +88,7 @@ const updatePlayers = async (
 			if (onlyShowIf) {
 				players = players.filter((p) => {
 					for (const stat of onlyShowIf) {
-						if (typeof p["stats"][stat] === "number" && p["stats"][stat] > 0) {
+						if (hasNonZeroStat(p.stats[stat])) {
 							return true;
 						}
 					}
@@ -92,20 +98,18 @@ const updatePlayers = async (
 			}
 		}
 
-		const statsAll = players.reduce((memo, p) => {
-			for (const stat of Object.keys(p.stats)) {
-				if (stat === "playoffs") {
+		// Only numeric values can be plotted, so skip others like playoffs, keyStats strings, byPos arrays, and missing values in historical stats
+		const statsAll: Record<string, number[]> = {};
+		for (const p of players) {
+			for (const [stat, value] of Object.entries(p.stats)) {
+				const numericValue = getNumericStat(value);
+				if (numericValue === undefined) {
 					continue;
 				}
-				if (memo[stat]) {
-					memo[stat].push(p.stats[stat]);
-				} else {
-					memo[stat] = [p.stats[stat]];
-				}
+				statsAll[stat] ??= [];
+				statsAll[stat].push(numericValue);
 			}
-
-			return memo;
-		}, {});
+		}
 
 		return {
 			season: inputs.season,

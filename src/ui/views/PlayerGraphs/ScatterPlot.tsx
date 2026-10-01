@@ -6,14 +6,14 @@ import { useParentSize } from "@visx/responsive";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { useRef, type ReactNode } from "react";
 
-export type TooltipData = {
+export type TooltipData<Row> = {
 	x: number;
 	y: number;
-	row: any;
+	row: Row;
 };
 
 type ScatterPlotProps<Row> = {
-	data: TooltipData[];
+	data: TooltipData<Row>[];
 	descShort: [string, string];
 	descLong: [string | undefined, string | undefined];
 	getImageUrl?: (row: Row) => string | undefined;
@@ -119,7 +119,7 @@ const ScatterPlot = <Row extends unknown>({
 		tooltipOpen,
 		tooltipTop,
 		tooltipLeft,
-	} = useTooltip<TooltipData>();
+	} = useTooltip<TooltipData<Row>>();
 
 	const svgRef = useRef(null);
 
@@ -140,7 +140,7 @@ const ScatterPlot = <Row extends unknown>({
 		return m * x + b;
 	};
 
-	const handleMouseOver = (x: number, y: number, data: TooltipData) => {
+	const handleMouseOver = (x: number, y: number, data: TooltipData<Row>) => {
 		showTooltip({
 			tooltipLeft: x + margin.left,
 			tooltipTop: y + margin.top,

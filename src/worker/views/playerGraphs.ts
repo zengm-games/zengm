@@ -3,6 +3,7 @@ import {
 	PLAYER,
 	PLAYER_STATS_TABLES,
 	RATINGS,
+	getPlayerStatsTableStats,
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
@@ -12,12 +13,13 @@ import type {
 	PlayerStatType,
 } from "../../common/types.ts";
 import { POS_NUMBERS } from "../../common/constants.baseball.ts";
-import { maxBy } from "../../common/utils.ts";
+import { last, maxBy } from "../../common/utils.ts";
 import {
 	getStats,
 	getStatsTableByType,
 } from "../../common/advancedPlayerSearch.ts";
 import { choice } from "../../common/random.ts";
+import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
 
 export const statTypes = [
 	"bio",
@@ -40,7 +42,8 @@ const getPlayerStats = async (
 
 	const statsTable = getStatsTableByType(statTypePlus);
 
-	const ratings = statTypePlus === "ratings" ? ["ovr", "pot", ...RATINGS] : [];
+	const ratings =
+		statTypePlus === "ratings" ? (["ovr", "pot", ...RATINGS] as const) : [];
 	let statType: PlayerStatType;
 	if (__SPORT === "basketball") {
 		if (statTypePlus === "totals") {
@@ -70,9 +73,11 @@ const getPlayerStats = async (
 		);
 	}
 
-	const statKeys = statsTable?.stats ?? ["gp"];
+	const statKeys = statsTable
+		? getPlayerStatsTableStats(statsTable.stats)
+		: (["gp"] as const);
 
-	let players = await idb.getCopies.playersPlus(playersAll, {
+	const playersPlusOptions = {
 		attrs: [
 			"pid",
 			"name",
@@ -80,38 +85,70 @@ const getPlayerStats = async (
 
 			// draft is needed to know who is undrafted, for the tooltip
 			"draft",
-			...(statTypePlus === "bio" ? ["age", "salary", "draftPosition"] : []),
+			...(statTypePlus === "bio"
+				? (["age", "salary", "draftPosition"] as const)
+				: []),
 		],
 		ratings,
 		stats: statKeys,
-		season: typeof season === "number" ? season : undefined,
-		tid: undefined,
 		statType,
-		playoffs: playoffs === "playoffs",
-		regularSeason: playoffs === "regularSeason",
-		combined: playoffs === "combined",
+		seasonType: playoffs,
 		mergeStats: "totOnly",
 		fuzz: true,
-	});
+	} as const;
 
+	// Normalize to a single ratings row and a single stats row per player. These are copies, because they get modified below. The UI accesses them dynamically based on the selected stat, so they're just records here
+	const toRow = <P extends object>(
+		p: P,
+		ratingsRow: object | undefined,
+		statsRow: object | undefined,
+	) => {
+		const ratingsRecord: Record<string, unknown> | undefined =
+			ratings.length > 0 && ratingsRow ? { ...ratingsRow } : undefined;
+		const statsRecord: Record<string, unknown> = { ...statsRow };
+		return {
+			...p,
+			ratings: ratingsRecord,
+			stats: statsRecord,
+		};
+	};
+
+	let players;
 	if (season === "career") {
-		let obj;
-		if (playoffs === "playoffs") {
-			obj = "careerStatsPlayoffs";
-		} else if (playoffs === "combined") {
-			obj = "careerStatsCombined";
-		} else {
-			obj = "careerStats";
-		}
-		for (const p of players) {
-			p.stats = p[obj];
-			delete p[obj];
-
-			// Show row from max ovr season
-			if (p.ratings) {
-				p.ratings = maxBy(p.ratings, (row) => row.ovr);
-			}
-		}
+		const playersRaw = await idb.getCopies.playersPlus(
+			playersAll,
+			playersPlusOptions,
+		);
+		players = playersRaw.map(
+			({
+				careerStats,
+				careerStatsPlayoffs,
+				careerStatsCombined,
+				ratings: allRatings,
+				stats: allStats,
+				...p
+			}) =>
+				toRow(
+					p,
+					// Show row from max ovr season. allRatings is only actually there if ratings were requested
+					ratings.length > 0
+						? (maxBy(allRatings, (row) => row.ovr) ?? last(allRatings))
+						: undefined,
+					playoffs === "playoffs"
+						? careerStatsPlayoffs
+						: playoffs === "combined"
+							? careerStatsCombined
+							: careerStats,
+				),
+		);
+	} else {
+		const playersRaw = await idb.getCopies.playersPlus(playersAll, {
+			...playersPlusOptions,
+			season,
+		});
+		players = playersRaw.map(({ ratings: ratingsRow, stats: statsRow, ...p }) =>
+			toRow(p, ratingsRow, statsRow),
+		);
 	}
 
 	// HACKY! Sum up fielding stats, rather than by position
@@ -119,20 +156,25 @@ const getPlayerStats = async (
 		for (const p of players) {
 			// Ignore DH games played, so that filtering on GP in the Player Graphs UI does something reasonable. Otherwise DHs with 0 fielding stats appear in all the fielding graphs.
 			const dhIndex = POS_NUMBERS.DH - 1;
-			p.stats.gp = 0;
-			for (let i = 0; i < p.stats.gpF.length; i++) {
-				if (i !== dhIndex && p.stats.gpF[i] !== undefined) {
-					p.stats.gp += p.stats.gpF[i];
+			let gp = 0;
+			const gpF = p.stats.gpF;
+			if (Array.isArray(gpF)) {
+				for (const [i, value] of gpF.entries()) {
+					if (i !== dhIndex && typeof value === "number") {
+						gp += value;
+					}
 				}
 			}
+			p.stats.gp = gp;
 
 			// Sum up stats
 			for (const stat of statKeys) {
-				if (Array.isArray(p.stats[stat])) {
+				const value = p.stats[stat];
+				if (Array.isArray(value)) {
 					let sum = 0;
-					for (const value of p.stats[stat]) {
-						if (value !== undefined) {
-							sum += value;
+					for (const valueByPos of value) {
+						if (typeof valueByPos === "number") {
+							sum += valueByPos;
 						}
 					}
 					p.stats[stat] = sum;
@@ -140,10 +182,11 @@ const getPlayerStats = async (
 			}
 
 			// Fix Fld%
-			p.stats.fldp = helpers.ratio(
-				(p.stats.po ?? 0) + (p.stats.a ?? 0),
-				(p.stats.po ?? 0) + (p.stats.a ?? 0) + (p.stats.e ?? 0),
-			);
+			const getNumber = (stat: string) => getNumericStat(p.stats[stat]) ?? 0;
+			const po = getNumber("po");
+			const a = getNumber("a");
+			const e = getNumber("e");
+			p.stats.fldp = helpers.ratio(po + a, po + a + e);
 		}
 	}
 
@@ -153,11 +196,7 @@ const getPlayerStats = async (
 
 		players = players.filter((p) => {
 			for (const stat of onlyShowIf) {
-				// Array check is for byPos stats
-				if (
-					(typeof p.stats[stat] === "number" && p.stats[stat] > 0) ||
-					(Array.isArray(p.stats[stat]) && p.stats[stat].length > 0)
-				) {
+				if (hasNonZeroStat(p.stats[stat])) {
 					return true;
 				}
 			}
@@ -168,7 +207,7 @@ const getPlayerStats = async (
 
 	if (g.get("challengeNoRatings") && ratings.length > 0) {
 		for (const p of players) {
-			if (p.tid !== PLAYER.RETIRED) {
+			if (p.tid !== PLAYER.RETIRED && p.ratings) {
 				for (const key of ratings) {
 					p.ratings[key] = 50;
 				}
@@ -225,6 +264,10 @@ const updatePlayers = async (
 	}
 };
 
+export type PlayerGraphsPlayer = Awaited<
+	ReturnType<typeof getPlayerStats>
+>["players"][number];
+
 const updateClientSide = (
 	inputs: ViewInput<"playerGraphs">,
 	state: any,
@@ -249,8 +292,8 @@ const updateClientSide = (
 			statTypeY: string;
 			playoffsX: "playoffs" | "regularSeason" | "combined";
 			playoffsY: "playoffs" | "regularSeason" | "combined";
-			playersX: any[];
-			playersY: any[];
+			playersX: PlayerGraphsPlayer[];
+			playersY: PlayerGraphsPlayer[];
 			statsX: string[];
 			statsY: string[];
 			statX: string;

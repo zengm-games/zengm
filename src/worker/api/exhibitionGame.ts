@@ -134,7 +134,8 @@ const getSeasonInfoLeague = async ({
 
 		return true;
 	});
-	const playersByTid = Map.groupBy(players, (p) => p.stats[0].tid);
+	// stats always has one row, from the filter above
+	const playersByTid = Map.groupBy(players, (p) => p.stats[0]!.tid);
 
 	const playoffSeries = await league
 		.transaction("playoffSeries")

@@ -3,12 +3,12 @@ import { processStats as processPlayerStatsBaseball } from "./processPlayerStats
 import { processStats as processPlayerStatsBasketball } from "./processPlayerStats.basketball.ts";
 import { processStats as processPlayerStatsFootball } from "./processPlayerStats.football.ts";
 import { processStats as processPlayerStatsHockey } from "./processPlayerStats.hockey.ts";
-import type { PlayerStats, PlayerStatType } from "./types.ts";
+import type { PlayerStatsToProcess, PlayerStatType } from "./types.ts";
 import { defaultGameAttributes } from "./defaultGameAttributes.ts";
 
 // ONLY USE THIS IF THE fantasySports SETTING DOES NOT MATTER!!! Otherwise, use it from ui/worker
 export const processPlayerStats = (
-	ps: PlayerStats,
+	ps: PlayerStatsToProcess,
 	stats: string[],
 	statType?: PlayerStatType,
 	bornYear?: number,

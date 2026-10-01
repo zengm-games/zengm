@@ -122,7 +122,9 @@ type Props = {
 	p: {
 		pid: number;
 		name: string;
-		mood: {
+
+		// undefined for players who have no mood, like retired players, in which case nothing is rendered
+		mood?: {
 			user: PlayerMood;
 			current?: PlayerMood;
 		};
@@ -148,11 +150,15 @@ export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 	]);
 
 	const playerIsOnUsersTeam = userTid === p.tid;
-	const canShowCurrent = p.mood.current && !playerIsOnUsersTeam;
+	const canShowCurrent = p.mood?.current && !playerIsOnUsersTeam;
 	const initialType =
 		defaultType === "current" && canShowCurrent ? "current" : "user";
 
 	const [type, setType] = useState<"user" | "current">(initialType);
+
+	if (!p.mood) {
+		return null;
+	}
 
 	const mood = p.mood[type];
 	const initialMood = p.mood[initialType];

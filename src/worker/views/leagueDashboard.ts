@@ -8,6 +8,7 @@ import { getMaxPlayoffSeed } from "./standings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { orderTeams } from "../util/orderTeams.ts";
+import { getNumericStat } from "../../common/statValue.ts";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -220,13 +221,13 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 		const leaderStats = bySport({
 			baseball: ["hr", "h", "w"],
 			basketball: ["pts", "trb", "ast"],
 			football: ["pssYds", "rusYds", "recYds"],
 			hockey: ["g", "a", "pts"],
-		});
+		} as const);
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
 			Infinity,
@@ -253,8 +254,12 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		for (const stat of leaderStats) {
-			if (leaderPlayers.length > 0) {
-				leaderPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
+			if (leaderPlayers[0]) {
+				leaderPlayers.sort(
+					(a, b) =>
+						(getNumericStat(b.stats[stat]) ?? 0) -
+						(getNumericStat(a.stats[stat]) ?? 0),
+				);
 				leagueLeaders.push({
 					abbrev: leaderPlayers[0].abbrev,
 					firstName: leaderPlayers[0].firstName,
@@ -262,7 +267,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					pid: leaderPlayers[0].pid,
 					stat,
 					tid: leaderPlayers[0].tid,
-					value: leaderPlayers[0].stats[stat],
+					value: getNumericStat(leaderPlayers[0].stats[stat]) ?? 0,
 				});
 			} else {
 				leagueLeaders.push({
@@ -323,15 +328,19 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		for (const stat of leaderStats) {
-			if (userPlayers.length > 0) {
-				userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
+			if (userPlayers[0]) {
+				userPlayers.sort(
+					(a, b) =>
+						(getNumericStat(b.stats[stat]) ?? 0) -
+						(getNumericStat(a.stats[stat]) ?? 0),
+				);
 				teamLeaders.push({
 					firstName: userPlayers[0].firstName,
 					firstNameShort: userPlayers[0].firstNameShort,
 					lastName: userPlayers[0].lastName,
 					pid: userPlayers[0].pid,
 					stat,
-					value: userPlayers[0].stats[stat],
+					value: getNumericStat(userPlayers[0].stats[stat]) ?? 0,
 				});
 			} else {
 				teamLeaders.push({

@@ -44,7 +44,7 @@ const updateAllStarThree = async (
 			"noCopyCache",
 		);
 
-		const players = await idb.getCopies.playersPlus(playersRaw, {
+		const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: [
 				"pid",
 				"firstName",
@@ -65,20 +65,21 @@ const updateAllStarThree = async (
 			showNoStats: true,
 		});
 
-		for (const p of three.players) {
-			const p2 = players.find((p2) => p2.pid === p.pid);
-
-			// p2 could be undefined if player was deleted before contest
-			if (p2) {
-				const ts = await getTeamInfoBySeason(p.tid, season);
-
-				if (ts) {
-					p2.colors = ts.colors;
-					p2.jersey = ts.jersey;
-					p2.abbrev = ts.abbrev;
-				}
-			}
-		}
+		// Team info from the team the player was on during the contest
+		const players = await Promise.all(
+			playersFiltered.map(async (p) => {
+				const info = three.players.find((info) => info.pid === p.pid);
+				const ts = info
+					? await getTeamInfoBySeason(info.tid, season)
+					: undefined;
+				return {
+					...p,
+					colors: ts?.colors,
+					jersey: ts?.jersey,
+					abbrev: ts?.abbrev,
+				};
+			}),
+		);
 
 		const resultsByRound = three.rounds.map((round) =>
 			orderBy(allStar.threeContest.getRoundResults(round), "index", "asc"),

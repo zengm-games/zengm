@@ -1449,8 +1449,9 @@ const afterDBStream = async ({
 			if (p.tid > PLAYER.FREE_AGENT) {
 				p.tid = playerTids.pop()!;
 
-				if (p.stats && p.stats.length > 0) {
-					p.stats.at(-1).tid = p.tid;
+				const lastStats = p.stats?.at(-1);
+				if (lastStats) {
+					lastStats.tid = p.tid;
 
 					if (p.statsTids) {
 						p.statsTids.push(p.tid);

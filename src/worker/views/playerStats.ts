@@ -1,4 +1,9 @@
-import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common/constants.ts";
+import {
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+	getPlayerStatsTableStats,
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
@@ -10,6 +15,8 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getActivePlayoffTids } from "./playerRatings.ts";
+import { last } from "../../common/utils.ts";
+import { hasNonZeroStat } from "../../common/statValue.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,
@@ -50,7 +57,7 @@ const updatePlayers = async (
 		let actualStats;
 		if (inputs.season === "career") {
 			actualStats = [
-				...stats,
+				...getPlayerStatsTableStats(stats),
 
 				// Used in processPlayersHallOfFame
 				bySport({
@@ -58,10 +65,10 @@ const updatePlayers = async (
 					basketball: "ewa",
 					football: "av",
 					hockey: "ps",
-				}),
+				} as const),
 			];
 		} else {
-			actualStats = stats;
+			actualStats = getPlayerStatsTableStats(stats);
 		}
 
 		let playersAll;
@@ -110,7 +117,7 @@ const updatePlayers = async (
 			}
 		}
 
-		let players = await idb.getCopies.playersPlus(playersAll, {
+		const playersPlusOptions = {
 			attrs: [
 				"pid",
 				"firstName",
@@ -127,44 +134,86 @@ const updatePlayers = async (
 			],
 			ratings: ["skills", "pos", "season"],
 			stats: ["abbrev", "tid", "jerseyNumber", "season", ...actualStats],
-			season: typeof inputs.season === "number" ? inputs.season : undefined,
 			tid,
 			statType,
-			playoffs: inputs.playoffs === "playoffs",
-			regularSeason: inputs.playoffs === "regularSeason",
-			combined: inputs.playoffs === "combined",
+			seasonType: inputs.playoffs,
 			mergeStats: "totOnly",
-		});
+		} as const;
 
-		if (inputs.season === "all") {
-			players = players.flatMap((p) =>
-				p.stats.map((ps: any) => {
-					const ratings =
-						p.ratings.find((pr: any) => pr.season === ps.season) ??
-						p.ratings.at(-1);
-
-					return {
-						...p,
-						ratings,
-						stats: ps,
-					};
-				}),
+		// Normalize to one row per player (or per player season, for "all") with a single stats row, regardless of inputs.season
+		let rows;
+		if (typeof inputs.season === "number") {
+			const players = await idb.getCopies.playersPlus(playersAll, {
+				...playersPlusOptions,
+				season: inputs.season,
+			});
+			rows = players.map(({ ratings, ...p }) => ({
+				...p,
+				pos: ratings.pos,
+				skills: ratings.skills as string[] | undefined,
+			}));
+		} else {
+			const players = await idb.getCopies.playersPlus(
+				playersAll,
+				playersPlusOptions,
 			);
+
+			if (inputs.season === "all") {
+				rows = players.flatMap(
+					({
+						careerStats,
+						careerStatsPlayoffs,
+						careerStatsCombined,
+						ratings: allRatings,
+						stats: allStats,
+						...p
+					}) =>
+						allStats.map((stats) => {
+							const ratings =
+								allRatings.find((pr) => pr.season === stats.season) ??
+								last(allRatings);
+
+							return {
+								...p,
+								pos: ratings.pos,
+								skills: ratings.skills as string[] | undefined,
+								stats,
+							};
+						}),
+				);
+			} else {
+				rows = [];
+				for (const {
+					careerStats,
+					careerStatsPlayoffs,
+					careerStatsCombined,
+					...p
+				} of players) {
+					const stats =
+						inputs.playoffs === "playoffs"
+							? careerStatsPlayoffs
+							: inputs.playoffs === "combined"
+								? careerStatsCombined
+								: careerStats;
+					if (!stats) {
+						continue;
+					}
+
+					const { ratings, stats: allStats, ...pRest } = p;
+
+					rows.push({
+						...pRest,
+						pos: getBestPos({ ratings, stats: allStats }, tid),
+						skills: undefined,
+						stats,
+					});
+				}
+			}
 		}
 
 		// Only keep players who actually played
 		if (inputs.abbrev !== "watch" && __SPORT === "basketball") {
-			players = players.filter((p) => {
-				if (inputs.season !== "career") {
-					return p.stats.gp > 0;
-				} else if (inputs.playoffs === "playoffs") {
-					return p.careerStatsPlayoffs.gp > 0;
-				} else if (inputs.playoffs === "combined") {
-					return p.careerStatsCombined.gp > 0;
-				} else {
-					return p.careerStats.gp > 0;
-				}
-			});
+			rows = rows.filter((p) => (p.stats.gp ?? 0) > 0);
 		} else if (
 			inputs.abbrev !== "watch" &&
 			statsTable.onlyShowIf &&
@@ -173,30 +222,9 @@ const updatePlayers = async (
 			// Ensure some non-zero stat for this position
 			const onlyShowIf = statsTable.onlyShowIf;
 
-			let obj:
-				| "careerStatsPlayoffs"
-				| "careerStatsCombined"
-				| "careerStats"
-				| "stats";
-			if (inputs.season === "career") {
-				if (inputs.playoffs === "playoffs") {
-					obj = "careerStatsPlayoffs";
-				} else if (inputs.playoffs === "combined") {
-					obj = "careerStatsCombined";
-				} else {
-					obj = "careerStats";
-				}
-			} else {
-				obj = "stats";
-			}
-
-			players = players.filter((p) => {
+			rows = rows.filter((p) => {
 				for (const stat of onlyShowIf) {
-					// Array check is for byPos stats
-					if (
-						(typeof p[obj][stat] === "number" && p[obj][stat] > 0) ||
-						(Array.isArray(p[obj][stat]) && p[obj][stat].length > 0)
-					) {
+					if (hasNonZeroStat(p.stats[stat])) {
 						return true;
 					}
 				}
@@ -205,19 +233,7 @@ const updatePlayers = async (
 			});
 		}
 
-		players = addFirstNameShort(players);
-
-		for (const p of players) {
-			if (inputs.season === "career") {
-				p.pos = getBestPos(p, tid);
-			} else if (Array.isArray(p.ratings) && p.ratings.length > 0) {
-				p.pos = p.ratings.at(-1).pos;
-			} else if (p.ratings.pos !== undefined) {
-				p.pos = p.ratings.pos;
-			} else {
-				p.pos = "?";
-			}
-		}
+		const players = addFirstNameShort(rows);
 
 		const superCols = helpers.deepCopy(statsTable.superCols);
 		if (superCols && superCols[0]) {

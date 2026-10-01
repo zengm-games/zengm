@@ -1,4 +1,7 @@
 import type teamStats from "../worker/core/team/stats.baseball.ts";
+import type playerStats from "../worker/core/player/stats.baseball.ts";
+import type { statFunctions as playerStatFunctions } from "./processPlayerStats.baseball.ts";
+import type { PlayerStatMax } from "./types.ts";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
@@ -55,6 +58,49 @@ export type TeamStatAttrByPos =
 	| "oppRf9"
 	| "oppRfg"
 	| "oppInn";
+
+type PlayerStatAttrString = "keyStats" | "keyStatsShort";
+
+// Arrays indexed by position, like byPos
+type PlayerStatAttrByPosDerived =
+	| "rfld"
+	| "ch"
+	| "fldp"
+	| "rf9"
+	| "rfg"
+	| "inn";
+
+// Stats row as stored in the database, in p.stats. rfld is an array like byPos
+export type PlayerStats = Record<
+	Exclude<
+		| (typeof playerStats)["raw"][number]
+		| (typeof playerStats)["derived"][number],
+		"rfld"
+	>,
+	number | undefined
+> &
+	Record<
+		(typeof playerStats)["byPos"][number] | "rfld",
+		(number | undefined)[]
+	> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
+
+// Numeric stats can be undefined in historical data from before a stat was tracked (even gp and min)
+export type PlayerStatsPlus = Record<
+	Exclude<
+		| (typeof playerStats)["raw"][number]
+		| (typeof playerStats)["derived"][number]
+		| keyof typeof playerStatFunctions,
+		PlayerStatAttrString | PlayerStatAttrByPosDerived
+	>,
+	number | undefined
+> &
+	Record<PlayerStatAttrString, string> &
+	Record<
+		(typeof playerStats)["byPos"][number] | PlayerStatAttrByPosDerived,
+		(number | undefined)[]
+	> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
 
 export type Position =
 	| "SP"

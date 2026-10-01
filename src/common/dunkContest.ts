@@ -140,5 +140,5 @@ export const isDunkContest = (
 };
 
 // This assumes half the round advances, rounding down to a power of 2 in the first round if it's not already one
-export const getNumRounds = (contest: { players: any[] }) =>
+export const getNumRounds = (contest: { players: unknown[] }) =>
 	Math.floor(Math.log2(contest.players.length));

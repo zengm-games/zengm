@@ -3,7 +3,7 @@ import { g } from "../util/index.ts";
 import type { UpdateEvents, Player } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { orderBy } from "../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
@@ -11,12 +11,13 @@ import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 const playerValue = (p: Player) => {
 	let sum = 0;
 	for (const ps of p.stats) {
-		sum += bySport({
-			baseball: ps.war,
-			basketball: ps.ows + ps.dws,
-			football: ps.av,
-			hockey: ps.dps + ps.ops + ps.gps,
-		});
+		sum +=
+			bySport({
+				baseball: ps.war,
+				basketball: (ps.ows ?? 0) + (ps.dws ?? 0),
+				football: ps.av,
+				hockey: (ps.dps ?? 0) + (ps.ops ?? 0) + (ps.gps ?? 0),
+			}) ?? 0;
 	}
 
 	return sum;
@@ -120,7 +121,7 @@ const updateFrivolitiesDraftClasses = async (
 			],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 
 		const bestPlayersAll = draftClasses.map(
 			(draftClass) => draftClass.bestPlayer.p,
@@ -146,11 +147,21 @@ const updateFrivolitiesDraftClasses = async (
 			),
 		);
 
+		const bestPlayersByPid = groupByUnique(bestPlayers, "pid");
+
 		const draftClasses2 = orderBy(
-			draftClasses.map((draftClass, i) => ({
-				...draftClass,
-				bestPlayer: bestPlayers[i],
-			})),
+			draftClasses.flatMap((draftClass) => {
+				const bestPlayer = bestPlayersByPid[draftClass.bestPlayer.p.pid];
+				if (!bestPlayer) {
+					return [];
+				}
+				return [
+					{
+						...draftClass,
+						bestPlayer,
+					},
+				];
+			}),
 			"value",
 			"desc",
 		);

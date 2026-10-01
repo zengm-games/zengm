@@ -1,4 +1,5 @@
 import { csvFormat, csvFormatRows } from "d3-dsv";
+import type { PlayerStatAttr } from "../../common/types.ts";
 import {
 	GAME_ACRONYM,
 	PHASE,
@@ -11,6 +12,7 @@ import {
 	GRACE_PERIOD,
 	LEAGUE_DATABASE_VERSION,
 	REAL_PLAYERS_INFO,
+	getPlayerStatsTableStats,
 } from "../../common/constants.ts";
 import actions from "./actions.ts";
 import * as awardSettings from "./awardSettings.ts";
@@ -1416,21 +1418,17 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	const ratings = [...RATINGS, ...extraRatings];
 
-	let stats: string[] = [];
+	let stats: PlayerStatAttr[] = [];
 
 	for (const table of Object.values(PLAYER_STATS_TABLES)) {
 		if (table) {
 			stats.push(
-				...table.stats.filter((stat) => {
+				...getPlayerStatsTableStats(table.stats).filter((stat) => {
 					if (stat.endsWith("Max")) {
 						return false;
 					}
 
 					if (__SPORT === "baseball") {
-						if (stat === "pos") {
-							return false;
-						}
-
 						if (
 							statsBaseball.byPos &&
 							statsBaseball.byPos.includes(stat as any)
@@ -1526,8 +1524,11 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				p.ratings.pot,
 				...RATINGS.map((rating) => p.ratings[rating]),
 				...(extraRatings.length
-					? ["ovrs", "pots"].flatMap((type) =>
-							POSITIONS.map((pos) => p.ratings[type][pos]),
+					? (["ovrs", "pots"] as const).flatMap((type) =>
+							// In sports with extraRatings, POSITIONS are the keys of ovrs/pots
+							(POSITIONS as (keyof typeof p.ratings.ovrs)[]).map(
+								(pos) => p.ratings[type][pos],
+							),
 						)
 					: []),
 			]);
@@ -1940,10 +1941,19 @@ const getNegotiationProps = async (pid: number) => {
 	}
 
 	const p2 = await idb.cache.players.get(negotiation.pid);
-	let p;
+	let pFiltered;
 	if (p2) {
-		p = await idb.getCopy.playersPlus(p2, {
-			attrs: ["pid", "name", "age", "contract", "face", "imgURL", "watch"],
+		pFiltered = await idb.getCopy.playersPlus(p2, {
+			attrs: [
+				"pid",
+				"tid",
+				"name",
+				"age",
+				"contract",
+				"face",
+				"imgURL",
+				"watch",
+			],
 			ratings: ["ovr", "pot"],
 			season: g.get("season"),
 			showNoStats: true,
@@ -1953,12 +1963,15 @@ const getNegotiationProps = async (pid: number) => {
 	}
 
 	// This can happen if a negotiation is somehow started with a retired player, or a player was deleted
-	if (!p || !p2) {
+	if (!pFiltered || !p2) {
 		await contractNegotiation.cancel(negotiation.pid);
 		return "Invalid negotiation. Please try again.";
 	}
 
-	p.mood = await player.moodInfos(p2);
+	const p = {
+		...pFiltered,
+		mood: await player.moodInfos(p2),
+	};
 
 	const contractOptions = await generateContractOptions(
 		negotiation,
@@ -2375,7 +2388,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	// Take the pids and dpids in each offer and get the info needed to display the offer
 	return Promise.all(
@@ -3040,9 +3053,15 @@ const ratingsStatsPopoverInfo = async ({
 	season?: number;
 }) => {
 	const blankObj = {
+		abbrev: undefined,
+		age: undefined,
+		jerseyNumber: undefined,
 		name: undefined,
+		note: undefined,
 		ratings: undefined,
 		stats: undefined,
+		tid: undefined,
+		type: undefined,
 	};
 
 	if (Number.isNaN(pid) || typeof pid !== "number") {
@@ -3126,49 +3145,105 @@ const ratingsStatsPopoverInfo = async ({
 		],
 		football: ["keyStats"],
 		hockey: ["keyStatsWithGoalieGP"],
-	});
+	} as const);
 
-	const attrs = ["name", "jerseyNumber", "tid", "age", "note"];
-	const ratings = ["pos", "ovr", "pot", "season", "tid", ...RATINGS];
-	if (!local.exhibitionGamePlayers && !eightyTwoZeroDraftPlayer) {
-		attrs.push("abbrev");
-		ratings.push("abbrev");
-	}
+	const includeAbbrev =
+		!local.exhibitionGamePlayers && !eightyTwoZeroDraftPlayer;
+	const attrs = [
+		"name",
+		"jerseyNumber",
+		"tid",
+		"age",
+		"note",
+		...(includeAbbrev ? (["abbrev"] as const) : []),
+	] as const;
+	const ratings = [
+		"pos",
+		"ovr",
+		"pot",
+		"season",
+		"tid",
+		...RATINGS,
+		...(includeAbbrev ? (["abbrev"] as const) : []),
+	] as const;
 
-	const p2 = await idb.getCopy.playersPlus(p, {
+	const playersPlusOptions = {
 		attrs,
 		ratings,
 		stats: ["tid", "season", "playoffs", ...stats],
-		season: actualSeason,
 		showNoStats: true,
 		showRetired: true,
 		oldStats: true,
 		fuzz: true,
-	});
-	if (actualSeason === undefined) {
-		if (draftProspect) {
-			p2.ratings = p2.ratings[0];
-		} else {
-			// Peak ratings
-			p2.ratings = maxBy(p.ratings, "ovr");
-		}
-		p2.age = p2.ratings.season - p.born.year;
+	} as const;
 
-		p2.stats = p2.careerStats;
-		delete p2.careerStats;
+	let info;
+	if (actualSeason === undefined) {
+		// Career stats
+		const p2 = await idb.getCopy.playersPlus(p, playersPlusOptions);
+		if (!p2) {
+			return blankObj;
+		}
+
+		const { careerStats, ratings: allRatings, stats: allStats, ...rest } = p2;
+
+		// Draft prospect ratings, or peak ratings
+		const ratingsRow = draftProspect
+			? allRatings[0]
+			: (maxBy(allRatings, (row) => row.ovr) ?? last(allRatings));
+
+		info = {
+			...rest,
+			age: ratingsRow.season - p.born.year,
+			ratingsRow,
+			statsRow: careerStats,
+		};
+	} else {
+		const p2 = await idb.getCopy.playersPlus(p, {
+			...playersPlusOptions,
+			season: actualSeason,
+		});
+		if (!p2) {
+			return blankObj;
+		}
+
+		const { ratings: ratingsRow, stats: statsRow, ...rest } = p2;
+		info = {
+			...rest,
+			ratingsRow,
+			statsRow,
+		};
 	}
+
+	// abbrev and tid in ratings/stats are only used to determine the team for past seasons, so remove them from the output
+	const {
+		abbrev: ratingsAbbrev,
+		tid: ratingsTid,
+		...ratingsOutput
+	} = info.ratingsRow;
+	const {
+		playoffs: statsPlayoffs,
+		season: statsSeason,
+		tid: statsTid,
+		...statsOutput
+	} = info.statsRow;
+	const {
+		ratingsRow,
+		statsRow,
+		abbrev: currentAbbrev,
+		tid: currentTid,
+		...rest
+	} = info;
+
+	let abbrev: string | undefined = currentAbbrev;
+	let tid: number | undefined = currentTid;
 	if (
 		!eightyTwoZeroDraftPlayer &&
 		(actualSeason === undefined || actualSeason < currentSeason)
 	) {
-		p2.abbrev = p2.ratings.abbrev;
-		p2.tid = p2.ratings.tid;
+		abbrev = ratingsAbbrev;
+		tid = ratingsTid;
 	}
-	delete p2.ratings.abbrev;
-	delete p2.ratings.tid;
-	delete p2.stats.playoffs;
-	delete p2.stats.season;
-	delete p2.stats.tid;
 
 	let type: "career" | "current" | "draft" | number;
 	if (draftProspect) {
@@ -3181,7 +3256,11 @@ const ratingsStatsPopoverInfo = async ({
 		type = actualSeason;
 	}
 	return {
-		...p2,
+		...rest,
+		abbrev,
+		tid,
+		ratings: ratingsOutput,
+		stats: statsOutput,
 		type,
 	};
 };

@@ -27,7 +27,7 @@ const updateInjuries = async (
 			basketball: ["gp", "pts", "trb", "ast"],
 			football: ["gp", "keyStats"],
 			hockey: ["gp", "keyStats"],
-		});
+		} as const);
 
 		const players = await getPlayers(
 			inputs.season === "current" ? g.get("season") : inputs.season,
@@ -49,6 +49,7 @@ const updateInjuries = async (
 						games: p.injury.gamesRemaining,
 						ovrDrop: injury?.ovrDrop,
 						potDrop: injury?.potDrop,
+						playingThrough: false,
 					});
 				}
 			} else {
@@ -60,6 +61,7 @@ const updateInjuries = async (
 							games: injury.games,
 							ovrDrop: injury.ovrDrop,
 							potDrop: injury.potDrop,
+							playingThrough: false,
 						});
 					}
 				}

@@ -3,7 +3,6 @@ import { g } from "../../util/index.ts";
 import type {
 	AllStars,
 	Conditions,
-	PlayerFiltered,
 	AllStarPlayer,
 } from "../../../common/types.ts";
 import { PLAYER } from "../../../common/constants.ts";
@@ -15,28 +14,62 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 
 // This is from the old football awards sytem. Eventually should make All-Star teams use the same formulas as the default All-League awards...
-const POS_FACTOR: Record<string, number> = {
-	CB: 1.05,
-	S: 0.95,
+// Football players from playersPlus, with currentStats added in create
+const mvpScoreStats = [
+	"defSk",
+	"defTckLoss",
+	"defTckAst",
+	"defTckSolo",
+	"defFmbFrc",
+	"defFmbRec",
+	"defInt",
+	"defPssDef",
+	"rusYds",
+	"rusTD",
+	"fmbLost",
+	"recYds",
+	"recTD",
+	"pssYds",
+	"pssTD",
+	"pssInt",
+	"pba",
+	"rba",
+	"pbw",
+	"rbw",
+	"prTD",
+	"krTD",
+] as const;
+
+type PlayerWithCurrentStats = {
+	currentStats: Record<(typeof mvpScoreStats)[number], number>;
 };
-const dpoyScore = (p: PlayerFiltered) => {
+
+// Stats can be missing in historical data, treat that the same as 0
+const getCurrentStats = (
+	stats: Record<(typeof mvpScoreStats)[number], number | undefined>,
+) => {
+	const currentStats = {} as PlayerWithCurrentStats["currentStats"];
+	for (const stat of mvpScoreStats) {
+		currentStats[stat] = stats[stat] ?? 0;
+	}
+	return currentStats;
+};
+
+const dpoyScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 
-	const posFactor = POS_FACTOR[p.pos] ?? 1;
-
 	return (
-		posFactor *
-		(s.defSk * 4 +
-			s.defTckLoss * 0.4 +
-			s.defTckAst * 0.2 +
-			s.defTckSolo * 0.4 +
-			s.defFmbFrc * 3 +
-			s.defFmbRec * 3 +
-			s.defInt * 6 +
-			s.defPssDef * 2)
+		s.defSk * 4 +
+		s.defTckLoss * 0.4 +
+		s.defTckAst * 0.2 +
+		s.defTckSolo * 0.4 +
+		s.defFmbFrc * 3 +
+		s.defFmbRec * 3 +
+		s.defInt * 6 +
+		s.defPssDef * 2
 	);
 };
-const opoyScore = (p: PlayerFiltered) => {
+const opoyScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 	let rushing = s.rusYds * 0.125 + s.rusTD * 6 - s.fmbLost * 2;
 	const receiving = s.recYds * 0.0975 + s.recTD * 6;
@@ -48,14 +81,14 @@ const opoyScore = (p: PlayerFiltered) => {
 
 	return rushing + receiving;
 };
-const offScore = (p: PlayerFiltered) => {
+const offScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 	const passing = s.pssYds * 0.04 + s.pssTD * 4 - s.pssInt * 2.5;
 	const rushingReceiving = opoyScore(p);
 
 	return 1.1 * passing + rushingReceiving;
 };
-const poyScore = (p: PlayerFiltered) => {
+const poyScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 	const attempts = s.pba + s.rba;
 	if (attempts === 0) {
@@ -65,7 +98,7 @@ const poyScore = (p: PlayerFiltered) => {
 	// Account for rate and volume
 	return ((s.pbw + s.rbw) / attempts) * Math.sqrt(attempts);
 };
-const mvpScore = (p: PlayerFiltered) => {
+const mvpScore = (p: PlayerWithCurrentStats) => {
 	const s = p.currentStats;
 	const offense = offScore(p);
 	const defense = 2.25 * dpoyScore(p);
@@ -154,20 +187,13 @@ const create = async (conditions: Conditions) => {
 
 	const allStarNum = g.get("allStarNum");
 
-	const score = (p: PlayerFiltered) =>
+	const score = (p: (typeof players)[number]) =>
 		bySport({
-			baseball: p.stats.war,
-			football: mvpScore(p),
-			basketball: 2.5 * p.stats.ewa + p.stats.ws,
-			hockey: p.stats.ps,
+			baseball: p.stats.war ?? 0,
+			football: mvpScore({ currentStats: getCurrentStats(p.stats) }),
+			basketball: 2.5 * (p.stats.ewa ?? 0) + (p.stats.ws ?? 0),
+			hockey: p.stats.ps ?? 0,
 		});
-
-	if (__SPORT === "football") {
-		// For mvpScore
-		for (const p of players) {
-			p.currentStats = p.stats;
-		}
-	}
 
 	const sortedPlayers = orderBy(
 		players,
@@ -405,7 +431,7 @@ const create = async (conditions: Conditions) => {
 	}
 
 	// Do awards first, before picking captains, so remaining has all players
-	const awardsByPlayer = allStars.remaining.map((p: any) => {
+	const awardsByPlayer = allStars.remaining.map((p) => {
 		return {
 			pid: p.pid,
 			tid: p.tid,
@@ -434,12 +460,18 @@ const create = async (conditions: Conditions) => {
 			assignTopPlayerToTeam(team);
 		}
 
-		// @ts-expect-error
-		allStars.teamNames = allStars.teams.map((teamPlayers) => {
-			const captainPID = teamPlayers[0]!.pid;
+		const getTeamName = (teamPlayers: (typeof allStars)["teams"][number]) => {
+			const captainPID = teamPlayers[0]?.pid;
 			const p = players.find((p2) => p2.pid === captainPID);
+			if (!p) {
+				throw new Error("Should never happen");
+			}
 			return `Team ${p.firstName}`;
-		});
+		};
+		allStars.teamNames = [
+			getTeamName(allStars.teams[0]),
+			getTeamName(allStars.teams[1]),
+		];
 
 		if (allStars.teamNames[0] === allStars.teamNames[1]) {
 			allStars.teamNames[1] += " 2";

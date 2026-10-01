@@ -2,20 +2,21 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { NUM_OUTS_PER_INNING } from "../../../common/constants.baseball.ts";
 import { g, helpers } from "../../util/index.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
+import type { PlayerStatAttr } from "../../../common/types.ts";
 
 export const getLeaderRequirementsStats = (
 	requirements: ReturnType<typeof getLeaderRequirements>,
 	stats: Iterable<string>,
 ) => {
 	// Always include GP, since it's used to scale minStats based on season length
-	const neededStats = new Set<string>(["gp"]);
+	const neededStats = new Set<PlayerStatAttr>(["gp"]);
 	for (const stat of stats) {
 		const requirement = requirements[stat];
 
 		// It's not an error if requirement is undefined, because it is totally valid that some of the stats passed here are not the ones we are checking leaders of
 
 		if (requirement?.minStats) {
-			for (const neededStat of Object.keys(requirement.minStats)) {
+			for (const neededStat of helpers.keys(requirement.minStats)) {
 				neededStats.add(neededStat);
 			}
 		}
@@ -75,7 +76,7 @@ const getLeaderRequirements = () => {
 		Record<
 			string,
 			{
-				minStats?: Record<string, number>;
+				minStats?: Partial<Record<PlayerStatAttr, number>>;
 				sortAscending?: true;
 				filter?: (p: any) => boolean;
 

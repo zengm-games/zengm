@@ -8,6 +8,7 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { useLocal } from "../util/local.ts";
+import { last } from "../../common/utils.ts";
 
 const FrivolitiesDraftClasses = ({
 	draftClasses,
@@ -96,7 +97,7 @@ const FrivolitiesDraftClasses = ({
 						"table-info": p.statsTids.includes(userTid),
 					},
 				},
-				p.ratings.at(-1).pos,
+				last(p.ratings).pos,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				showRatings ? p.peakOvr : null,
 				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),

@@ -219,7 +219,7 @@ const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 }) => {
 	const teamsYByTid = groupByUnique<any>(teams[1], "tid");
 
-	const data: TooltipData[] = [];
+	const data: TooltipData<Team>[] = [];
 	for (const t of teams[0]) {
 		const t2 = teamsYByTid[t.tid];
 		if (!t2) {

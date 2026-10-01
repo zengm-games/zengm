@@ -171,26 +171,10 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					if (winner?.pid === undefined) {
 						continue;
 					}
-					const { pid, statOverrides } = winner;
+					const { pid, tid } = winner;
 
 					const p = await playersCache.get(pid);
 					if (!p) {
-						continue;
-					}
-
-					const statRange = award.statRange;
-
-					const p2 = await idb.getCopy.playersPlus(p, {
-						attrs: ["name"],
-						stats: ["tid"],
-						playoffs: statRange === "playoffs" || typeof statRange === "number",
-						regularSeason: statRange === undefined,
-						combined: statRange === "combined",
-						mergeStats: "totOnly",
-						season,
-						showNoStats: true,
-					});
-					if (!p2) {
 						continue;
 					}
 
@@ -198,9 +182,6 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					const pos =
 						p.ratings.findLast((row) => row.season === season)?.pos ??
 						last(p.ratings).pos;
-					p2.ratings = { pos };
-
-					const tid = statOverrides?.tid ?? p2.stats.tid;
 
 					const abbrev = getAbbrev(tid, teamsByTid, season);
 
@@ -220,13 +201,13 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						awardName,
 						awardShortName,
 						count: 0,
-						name: p2.name,
+						name: `${p.firstName} ${p.lastName}`,
 						pid,
 						pos: bySport({
-							baseball: p2.ratings.pos,
+							baseball: pos,
 							basketball: undefined,
-							football: p2.ratings.pos,
-							hockey: p2.ratings.pos,
+							football: pos,
+							hockey: pos,
 						}),
 						tid,
 					});

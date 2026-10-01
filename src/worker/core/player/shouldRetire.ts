@@ -22,7 +22,7 @@ const checkForceRetireSeasons = (p: Player) => {
 
 	// If a season has games played, it can't be a redshirt season
 	for (const row of p.stats) {
-		if (row.gp > 0) {
+		if ((row.gp ?? 0) > 0) {
 			redshirtSeasons.delete(row.season);
 		}
 	}
@@ -135,7 +135,7 @@ const shouldRetire = async (p: Player): Promise<boolean> => {
 			let ws = 0;
 			for (const stats of p.stats) {
 				if (stats.season === g.get("season") && !stats.playoffs) {
-					ws += stats.dws + stats.ows;
+					ws += (stats.dws ?? 0) + (stats.ows ?? 0);
 				}
 			}
 

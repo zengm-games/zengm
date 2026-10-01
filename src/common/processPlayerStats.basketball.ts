@@ -1,5 +1,5 @@
 import { helpers } from "./helpers.ts";
-import type { PlayerStats, PlayerStatType } from "./types.ts";
+import type { PlayerStatsToProcess, PlayerStatType } from "./types.ts";
 
 export type StatSumsExtra = Record<
 	string,
@@ -38,7 +38,7 @@ const straightThrough = new Set([
 
 type StatFunction = {
 	process: (
-		ps: PlayerStats,
+		ps: PlayerStatsToProcess,
 		bornYear: number | undefined,
 	) => number | undefined;
 	scale: boolean;
@@ -144,7 +144,7 @@ export const statFunctions = {
 } satisfies Record<string, StatFunction>;
 
 export const processStats = (
-	ps: PlayerStats,
+	ps: PlayerStatsToProcess,
 	stats: Iterable<string>,
 	statType: PlayerStatType = "totals",
 	bornYear?: number,

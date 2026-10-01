@@ -3,8 +3,8 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
-	PlayerFiltered,
 	PlayerInjury,
+	PlayerStatAttr,
 	PlayerStatType,
 	UpdateEvents,
 	ViewInput,
@@ -22,10 +22,10 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
 		{
 			titleOverride?: string;
-			stat: string;
-			minStats?: Record<string, number>;
+			stat: PlayerStatAttr;
+			minStats?: Partial<Record<PlayerStatAttr, number>>;
 			sortAscending?: true;
-			filter?: (p: any) => boolean;
+			filter?: (p: unknown) => boolean;
 		}[]
 	>({
 		baseball: [
@@ -616,7 +616,7 @@ export const playerMeetsCategoryRequirements = ({
 	career: boolean;
 	cat: Category;
 	gamesPlayedCache: GamesPlayedCache;
-	p: PlayerFiltered;
+	p: unknown;
 	playerStats: Record<string, any>;
 	seasonType: "regularSeason" | "playoffs" | "combined";
 	season: number;
@@ -708,7 +708,7 @@ export type Leader = {
 	abbrev: string;
 	hof: boolean;
 	injury: PlayerInjury | undefined;
-	jerseyNumber: string;
+	jerseyNumber: string | undefined;
 	key: number | string;
 	firstName: string;
 	firstNameShort?: string;
@@ -718,7 +718,7 @@ export type Leader = {
 	retiredYear: number;
 	season: number | undefined;
 	stat: number;
-	skills: string[];
+	skills: string[] | undefined;
 	tid: number;
 	userTeam: boolean;
 	watch: number;
@@ -784,30 +784,74 @@ const updateLeaders = async (
 			);
 		}
 
-		await iterateAllPlayersWithStats(inputs.season, async (pRaw, season) => {
+		const attrs = [
+			"pid",
+			"firstName",
+			"lastName",
+			"injury",
+			"watch",
+			"jerseyNumber",
+			"hof",
+			"retiredYear",
+		] as const;
+		const allStats = ["abbrev", "tid", ...stats, ...extraStats] as const;
+
+		// Returns the player, the stats row to use, and some values that differ between career and single season
+		const getPlayerInfo = async (pRaw: Player, season: number | "career") => {
+			if (season === "career") {
+				const p = await idb.getCopy.playersPlus(pRaw, {
+					attrs,
+					// season and ovr only needed for bestPos
+					ratings: ["season", "ovr", "skills", "pos"],
+					stats: allStats,
+					seasonType: inputs.playoffs,
+					mergeStats: "totOnly",
+					statType: inputs.statType,
+					disableAbbrevsCacheDatabaseAccess: true,
+				});
+				if (!p) {
+					return;
+				}
+
+				const playerStats =
+					inputs.playoffs === "playoffs"
+						? p.careerStatsPlayoffs
+						: inputs.playoffs === "combined"
+							? p.careerStatsCombined
+							: p.careerStats;
+				if (!playerStats) {
+					return;
+				}
+
+				return {
+					p,
+					playerStats,
+					skills: undefined,
+					// Shitty handling of career totals, only computed if needed because it's slow
+					getTeamAndPos: () => {
+						const { bestPos, legacyTid } = processPlayersHallOfFame([p])[0]!;
+						if (legacyTid >= 0) {
+							return {
+								abbrev: helpers.getAbbrev(legacyTid),
+								pos: bestPos,
+								tid: legacyTid,
+							};
+						}
+						return {
+							abbrev: playerStats.abbrev,
+							pos: bestPos,
+							tid: playerStats.tid,
+						};
+					},
+				};
+			}
+
 			const p = await idb.getCopy.playersPlus(pRaw, {
-				attrs: [
-					"pid",
-					"firstName",
-					"lastName",
-					"injury",
-					"watch",
-					"jerseyNumber",
-					"hof",
-					"retiredYear",
-				],
-
-				// season and ovr only needed for bestPos
-				ratings:
-					inputs.season === "career"
-						? ["season", "ovr", "skills", "pos"]
-						: ["skills", "pos"],
-
-				stats: ["abbrev", "tid", ...stats, ...extraStats],
-				season: season === "career" ? undefined : season,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs === "regularSeason",
-				combined: inputs.playoffs === "combined",
+				attrs,
+				ratings: ["skills", "pos"],
+				stats: allStats,
+				season,
+				seasonType: inputs.playoffs,
 				mergeStats: "totOnly",
 				statType: inputs.statType,
 				disableAbbrevsCacheDatabaseAccess: true,
@@ -816,26 +860,32 @@ const updateLeaders = async (
 				return;
 			}
 
-			let playerStats;
-			if (season === "career") {
-				if (inputs.playoffs === "playoffs") {
-					playerStats = p.careerStatsPlayoffs;
-				} else if (inputs.playoffs === "combined") {
-					playerStats = p.careerStatsCombined;
-				} else {
-					playerStats = p.careerStats;
-				}
-			} else {
-				playerStats = p.stats;
+			return {
+				p,
+				playerStats: p.stats,
+				skills: p.ratings.skills,
+				getTeamAndPos: () => ({
+					abbrev: p.stats.abbrev,
+					pos: p.ratings.pos,
+					tid: p.stats.tid,
+				}),
+			};
+		};
+
+		await iterateAllPlayersWithStats(inputs.season, async (pRaw, season) => {
+			const info = await getPlayerInfo(pRaw, season);
+			if (!info) {
+				return;
 			}
+			const { p, playerStats, skills, getTeamAndPos } = info;
 
 			for (const [cat, outputCat] of Iterator.zip(
 				[categories, outputCategories],
 				{ mode: "strict" },
 			)) {
 				const value = playerStats[cat.stat];
-				if (value === undefined) {
-					// value should only be undefined in historical data before certain stats were tracked
+				if (typeof value !== "number") {
+					// value should only be undefined in historical data before certain stats were tracked. Leader categories are all numeric stats
 					continue;
 				}
 				const lastValue = outputCat.leaders.at(-1)?.stat;
@@ -864,21 +914,7 @@ const updateLeaders = async (
 					// Players can appear multiple times if looking at all seasons
 					const key = inputs.season === "all" ? `${p.pid}|${season}` : p.pid;
 
-					let tid = playerStats.tid;
-					let abbrev = playerStats.abbrev;
-					let pos;
-					if (season === "career") {
-						const { bestPos, legacyTid } = processPlayersHallOfFame([p])[0];
-						if (legacyTid >= 0) {
-							tid = legacyTid;
-							abbrev = g.get("teamInfoCache")[tid]?.abbrev;
-						}
-
-						// Shitty handling of career totals
-						pos = bestPos;
-					} else {
-						pos = p.ratings.pos;
-					}
+					const { abbrev, pos, tid } = getTeamAndPos();
 
 					const userTid =
 						season !== "career" ? g.get("userTid", season) : g.get("userTid");
@@ -898,8 +934,8 @@ const updateLeaders = async (
 							inputs.season === "all" && season !== "career"
 								? season
 								: undefined,
-						stat: playerStats[cat.stat],
-						skills: p.ratings.skills,
+						stat: value,
+						skills,
 						tid,
 						userTeam: userTid === tid,
 						watch: p.watch,

@@ -29,7 +29,7 @@ export const formatPlayersWatchList = async (
 		],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	const players = addFirstNameShort(
 		await idb.getCopies.playersPlus(playersAll, {
@@ -52,9 +52,7 @@ export const formatPlayersWatchList = async (
 			stats,
 			season: g.get("season"),
 			statType,
-			playoffs: playoffs === "playoffs",
-			regularSeason: playoffs === "regularSeason",
-			combined: playoffs === "combined",
+			seasonType: playoffs,
 			fuzz: true,
 			showNoStats: true,
 			showRookies: true,

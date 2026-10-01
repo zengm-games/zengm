@@ -69,7 +69,7 @@ const RetiredJerseyNumbers = ({
 
 	const sortedPlayers = orderBy(
 		players.filter((p) => p.tid === PLAYER.RETIRED),
-		"name",
+		["lastName", "firstName"],
 	);
 
 	if (editing) {
@@ -299,7 +299,7 @@ const RetiredJerseyNumbers = ({
 			seasonRetired: String(season),
 			seasonTeamInfo: String(season),
 			linkToPlayer: "yes",
-			pid: sortedPlayers.length > 0 ? sortedPlayers[0].pid : "",
+			pid: sortedPlayers[0] ? String(sortedPlayers[0].pid) : "",
 			text: "",
 		});
 	};

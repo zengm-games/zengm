@@ -1,11 +1,19 @@
-import { assert, beforeAll, test } from "vitest";
+import { assert, beforeAll, describe, test } from "vitest";
+import { assert as typeAssert, type IsExact } from "conditional-type-checks";
 import { PLAYER } from "../../../common/constants.ts";
 import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player } from "../../core/index.ts";
 import { idb } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
-import type { Player } from "../../../common/types.ts";
+import { last } from "../../../common/utils.ts";
+import type {
+	Player,
+	NonEmptyArray,
+	PlayerFiltered,
+	PlayerSeasonType,
+	PlayerStatMax,
+} from "../../../common/types.ts";
 
 let p: Player;
 beforeAll(async () => {
@@ -25,14 +33,14 @@ beforeAll(async () => {
 	player.addStatsRow(p, g.get("season"), true);
 	player.addStatsRow(p, g.get("season"), false);
 	const stats = p.stats;
-	stats[0].gp = 5;
-	stats[0].fg = 20;
-	stats[1].gp = 3;
-	stats[1].fg = 30;
-	stats[2].season = 2013;
-	stats[2].tid = 0;
-	stats[2].gp = 8;
-	stats[2].fg = 56;
+	stats[0]!.gp = 5;
+	stats[0]!.fg = 20;
+	stats[1]!.gp = 3;
+	stats[1]!.fg = 30;
+	stats[2]!.season = 2013;
+	stats[2]!.tid = 0;
+	stats[2]!.gp = 8;
+	stats[2]!.fg = 56;
 	await player.develop(p, 0);
 
 	player.addRatingsRow(p);
@@ -78,7 +86,7 @@ test("return requested info if tid/season match", async () => {
 });
 
 test("return requested info if tid/season match for an array of player objects", async () => {
-	const pf = await idb.getCopies.playersPlus([p, p], {
+	const pfs = await idb.getCopies.playersPlus([p, p], {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
 		stats: ["season", "tid", "fg", "fgp", "per"],
@@ -86,20 +94,22 @@ test("return requested info if tid/season match for an array of player objects",
 		season: 2012,
 	});
 
-	for (const i of [0, 1] as const) {
-		assert.strictEqual(pf[i].tid, 4);
-		assert.strictEqual(pf[i].awards.length, 0);
-		assert.strictEqual(pf[i].ratings.season, 2012);
-		assert.strictEqual(typeof pf[i].ratings.ovr, "number");
-		assert.strictEqual(Object.keys(pf[i].ratings).length, 2);
-		assert.strictEqual(pf[i].stats.season, 2012);
-		assert.strictEqual(pf[i].stats.tid, 4);
-		assert.strictEqual(typeof pf[i].stats.fg, "number");
-		assert.strictEqual(typeof pf[i].stats.fgp, "number");
-		assert.strictEqual(typeof pf[i].stats.per, "number");
-		assert.strictEqual(Object.keys(pf[i].stats).length, 6);
-		assert(!Object.hasOwn(pf[i], "careerStats"));
-		assert(!Object.hasOwn(pf[i], "careerStatsPlayoffs"));
+	assert.strictEqual(pfs.length, 2);
+
+	for (const pf of pfs) {
+		assert.strictEqual(pf.tid, 4);
+		assert.strictEqual(pf.awards.length, 0);
+		assert.strictEqual(pf.ratings.season, 2012);
+		assert.strictEqual(typeof pf.ratings.ovr, "number");
+		assert.strictEqual(Object.keys(pf.ratings).length, 2);
+		assert.strictEqual(pf.stats.season, 2012);
+		assert.strictEqual(pf.stats.tid, 4);
+		assert.strictEqual(typeof pf.stats.fg, "number");
+		assert.strictEqual(typeof pf.stats.fgp, "number");
+		assert.strictEqual(typeof pf.stats.per, "number");
+		assert.strictEqual(Object.keys(pf.stats).length, 6);
+		assert(!Object.hasOwn(pf, "careerStats"));
+		assert(!Object.hasOwn(pf, "careerStatsPlayoffs"));
 	}
 });
 
@@ -224,18 +234,21 @@ test('return season totals is options.statType is "totals", and per-game average
 	assert.strictEqual(pf.stats.fg, 4);
 });
 
-test("return playoff stats if options.playoffs is true", async () => {
+test("return regular season and playoff stats if options.seasonType includes both", async () => {
 	const pf = await idb.getCopy.playersPlus(p, {
 		stats: ["gp", "fg"],
 		tid: 4,
 		season: 2012,
-		playoffs: true,
+		seasonType: ["regularSeason", "playoffs"],
 	});
 
 	if (!pf) {
 		throw new Error("Missing player");
 	}
 
+	assert.strictEqual(pf.stats.length, 2);
+	assert(pf.stats[0]);
+	assert(pf.stats[1]);
 	assert.strictEqual(pf.stats[0].playoffs, false);
 	assert.strictEqual(pf.stats[0].gp, 5);
 	assert.strictEqual(pf.stats[0].fg, 4);
@@ -407,6 +420,11 @@ test("return stats and ratings from all seasons and teams if no season or team i
 		throw new Error("Missing player");
 	}
 
+	assert(pf.ratings[0]);
+	assert(pf.ratings[1]);
+	assert(pf.ratings[2]);
+	assert(pf.stats[0]);
+	assert(pf.stats[1]);
 	assert.strictEqual(pf.tid, 4);
 	assert.strictEqual(pf.awards.length, 0);
 	assert.strictEqual(pf.ratings[0].season, 2011);
@@ -438,6 +456,8 @@ test("return stats and ratings from all seasons with a specific team if no seaso
 		throw new Error("Missing player");
 	}
 
+	assert(pf.ratings[0]);
+	assert(pf.stats[0]);
 	assert.strictEqual(pf.tid, 4);
 	assert.strictEqual(pf.awards.length, 0);
 	assert.strictEqual(pf.ratings[0].season, 2012);
@@ -453,8 +473,8 @@ test("return stats and ratings from all seasons with a specific team if no seaso
 
 test("mergeStats combines stats from multiple teams in the same season", async () => {
 	const p2 = helpers.deepCopy(p);
-	p2.stats[1].playoffs = false;
-	p2.stats[1].tid = 20;
+	p2.stats[1]!.playoffs = false;
+	p2.stats[1]!.tid = 20;
 
 	const pf = await idb.getCopy.playersPlus(p2, {
 		attrs: ["tid"],
@@ -473,8 +493,8 @@ test("mergeStats combines stats from multiple teams in the same season", async (
 
 test("mergeStats combines stats from multiple teams in the same season, for multiple seasons", async () => {
 	const p2 = helpers.deepCopy(p);
-	p2.stats[1].playoffs = false;
-	p2.stats[1].tid = 20;
+	p2.stats[1]!.playoffs = false;
+	p2.stats[1]!.tid = 20;
 
 	const pf = await idb.getCopy.playersPlus(p2, {
 		attrs: ["tid"],
@@ -487,6 +507,8 @@ test("mergeStats combines stats from multiple teams in the same season, for mult
 	}
 
 	assert.strictEqual(pf.stats.length, 2);
+	assert(pf.stats[0]);
+	assert(pf.stats[1]);
 	assert.strictEqual(pf.stats[0].tid, 20);
 	assert.strictEqual(pf.stats[0].fg, (30 + 20) / 8);
 	assert.strictEqual(pf.stats[1].fg, 56 / 8);
@@ -494,8 +516,8 @@ test("mergeStats combines stats from multiple teams in the same season, for mult
 
 test("mergeStats totAndTeams results ", async () => {
 	const p2 = helpers.deepCopy(p);
-	p2.stats[1].playoffs = false;
-	p2.stats[1].tid = 20;
+	p2.stats[1]!.playoffs = false;
+	p2.stats[1]!.tid = 20;
 
 	const pf = await idb.getCopy.playersPlus(p2, {
 		attrs: ["tid"],
@@ -509,6 +531,10 @@ test("mergeStats totAndTeams results ", async () => {
 	}
 
 	assert.strictEqual(pf.stats.length, 4);
+	assert(pf.stats[0]);
+	assert(pf.stats[1]);
+	assert(pf.stats[2]);
+	assert(pf.stats[3]);
 
 	assert.strictEqual(pf.stats[0].tid, 4);
 	assert.strictEqual(pf.stats[1].tid, 20);
@@ -552,14 +578,14 @@ test("mergeStats totAndTeams results ", async () => {
 
 test("mergeStats totOnly when first row has >0 GP and second has 0 GP", async () => {
 	const p2 = helpers.deepCopy(p);
-	p2.stats[1].playoffs = false;
-	p2.stats[1].tid = 20;
-	p2.stats[1].gp = 0;
-	p2.stats[1].fg = 0;
+	p2.stats[1]!.playoffs = false;
+	p2.stats[1]!.tid = 20;
+	p2.stats[1]!.gp = 0;
+	p2.stats[1]!.fg = 0;
 
 	const pf = await idb.getCopy.playersPlus(p2, {
 		stats: ["gp", "tid"],
-		season: p2.stats[1].season,
+		season: 2012,
 		mergeStats: "totOnly",
 	});
 
@@ -581,9 +607,498 @@ test("careerStats works when player has no stats rows", async () => {
 		stats: ["gp", "playoffs", "bpm"],
 	});
 
-	// Why is playoffs undefined? Ultimately comes from `row.playoffs = ps.playoffs;` - we don't know what to set the default value (true/false/"combined") if it does not exist. Might be better to just not have playoffs in career stats since it is implied from the property name (like careerStatsPlayoffs)
 	assert.deepStrictEqual(pf, {
 		stats: [],
-		careerStats: { gp: 0, playoffs: undefined, bpm: 0 },
+		careerStats: { gp: 0, playoffs: false, bpm: 0 },
+	});
+});
+
+describe("TypeScript", () => {
+	test("Returns attrs, ratings, and stats as objects for a single season", async () => {
+		const players = await idb.getCopies.playersPlus([p], {
+			attrs: ["tid", "awards"],
+			ratings: ["season", "ovr"],
+			stats: ["season", "tid", "fg", "fgp", "per"],
+			tid: 4,
+			season: 2012,
+		});
+
+		const pf = await idb.getCopy.playersPlus(p, {
+			attrs: ["tid", "awards"],
+			ratings: ["season", "ovr"],
+			stats: ["season", "tid", "fg", "fgp", "per"],
+			tid: 4,
+			season: 2012,
+		});
+
+		typeAssert<
+			IsExact<(typeof players)[number], Exclude<typeof pf, undefined>>
+		>(true);
+
+		typeAssert<
+			IsExact<
+				(typeof players)[number],
+				{
+					tid: number;
+					awards: Player["awards"];
+					ratings: {
+						season: number;
+						ovr: number;
+					};
+					stats: {
+						season: number;
+						tid: number;
+						fg: number | undefined;
+						fgp: number | undefined;
+						per: number | undefined;
+						playoffs: boolean;
+						hasTot?: true;
+					};
+				}
+			>
+		>(true);
+	});
+
+	test("Returns just attrs", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			attrs: ["tid", "awards"],
+			season: 2012,
+		});
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>,
+				{
+					tid: number;
+					awards: Player["awards"];
+				}
+			>
+		>(true);
+	});
+
+	test("Returns arrays and careerStats when no season is supplied", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			attrs: ["tid"],
+			ratings: ["season", "ovr"],
+			stats: ["season", "fg"],
+		});
+
+		type StatsRow = {
+			season: number;
+			fg: number | undefined;
+			playoffs: boolean;
+			hasTot?: true;
+		};
+
+		type CareerStatsRow = {
+			season: number;
+			fg: number | undefined;
+			playoffs: false;
+			hasTot?: true;
+		};
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>,
+				{
+					tid: number;
+					ratings: NonEmptyArray<{
+						season: number;
+						ovr: number;
+					}>;
+					stats: StatsRow[];
+					careerStats: CareerStatsRow;
+				}
+			>
+		>(true);
+	});
+
+	test("Returns stats array and no careerStats for a single season with both playoffs and regular season", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp", "fg"],
+			tid: 4,
+			season: 2012,
+			seasonType: ["regularSeason", "playoffs"],
+		});
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>,
+				{
+					stats: {
+						gp: number | undefined;
+						fg: number | undefined;
+						playoffs: boolean;
+						hasTot?: true;
+					}[];
+				}
+			>
+		>(true);
+	});
+
+	test("Returns stats object for a single season with only playoffs", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			season: 2012,
+			seasonType: "playoffs",
+		});
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>,
+				{
+					stats: {
+						gp: number | undefined;
+						playoffs: boolean;
+						hasTot?: true;
+					};
+				}
+			>
+		>(true);
+	});
+
+	test("Returns careerStats and careerStatsPlayoffs when no season is supplied and seasonType includes regular season and playoffs", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			seasonType: ["regularSeason", "playoffs"],
+		});
+
+		type StatsRow = {
+			gp: number | undefined;
+			playoffs: boolean;
+			hasTot?: true;
+		};
+
+		type CareerStatsRow<PlayoffsValue> = {
+			gp: number | undefined;
+			playoffs: PlayoffsValue;
+			hasTot?: true;
+		};
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>,
+				{
+					stats: StatsRow[];
+					careerStats: CareerStatsRow<false>;
+					careerStatsPlayoffs: CareerStatsRow<true>;
+				}
+			>
+		>(true);
+	});
+
+	test("Returns object or array, and optional careerStats, when season and seasonType are not known statically", async () => {
+		// Functions rather than constants, otherwise TypeScript narrows the types
+		const getSeason = (): number | undefined => 2012;
+		const getSeasonType = (): PlayerSeasonType => "regularSeason";
+		const pf = await idb.getCopy.playersPlus(p, {
+			ratings: ["ovr"],
+			stats: ["gp"],
+			season: getSeason(),
+			seasonType: getSeasonType(),
+		});
+
+		type StatsRow = {
+			gp: number | undefined;
+			playoffs: boolean | "combined";
+			hasTot?: true;
+		};
+
+		type CareerStatsRow<PlayoffsValue> = {
+			gp: number | undefined;
+			playoffs: PlayoffsValue;
+			hasTot?: true;
+		};
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["ratings"],
+				{ ovr: number } | NonEmptyArray<{ ovr: number }>
+			>
+		>(true);
+		typeAssert<
+			IsExact<Exclude<typeof pf, undefined>["stats"], StatsRow | StatsRow[]>
+		>(true);
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["careerStats"],
+				CareerStatsRow<false> | undefined
+			>
+		>(true);
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["careerStatsPlayoffs"],
+				CareerStatsRow<true> | undefined
+			>
+		>(true);
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["careerStatsCombined"],
+				CareerStatsRow<"combined"> | undefined
+			>
+		>(true);
+	});
+
+	test("Returns stats object for a single season when seasonType is a single value not known statically", async () => {
+		const getSeasonType = (): PlayerSeasonType => "regularSeason";
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			season: 2012,
+			seasonType: getSeasonType(),
+		});
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["stats"],
+				{
+					gp: number | undefined;
+					playoffs: boolean | "combined";
+					hasTot?: true;
+				}
+			>
+		>(true);
+	});
+
+	test("Returns stats array for a single season when seasonType is an array, even with one value", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			tid: 4,
+			season: 2012,
+			seasonType: ["regularSeason"],
+		});
+
+		assert(Array.isArray(pf?.stats));
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["stats"],
+				{
+					gp: number | undefined;
+					playoffs: boolean;
+					hasTot?: true;
+				}[]
+			>
+		>(true);
+	});
+
+	test("Derived and overridden attrs have the correct types", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			attrs: [
+				"name",
+				"age",
+				"hof",
+				"diedYear",
+				"note",
+				"untradable",
+				"salaries",
+			],
+			season: 2012,
+		});
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>,
+				{
+					name: string;
+					age: number;
+					hof: boolean;
+					diedYear: number | null;
+					note: string | undefined;
+					untradable: boolean;
+					untradableMsg?: string;
+					salaries: {
+						amount: number;
+						season: number;
+						type: "past" | "current" | "future";
+					}[];
+				}
+			>
+		>(true);
+	});
+
+	test("Stats from different sports have the correct types", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["keyStats", "a", "ptsMax", "abbrev", "jerseyNumber"],
+			tid: 4,
+			season: 2012,
+		});
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["stats"],
+				{
+					// String in baseball/football/hockey
+					keyStats: string;
+
+					// Array in baseball (byPos), number in hockey (or undefined if missing)
+					a: number | undefined | (number | undefined)[];
+
+					ptsMax: PlayerStatMax;
+					abbrev: string;
+					jerseyNumber: string | undefined;
+					playoffs: boolean;
+					hasTot?: true;
+				}
+			>
+		>(true);
+	});
+
+	test("Invalid attrs, ratings, and stats are errors", () => {
+		// Not called, just type checked
+		const f = async () => {
+			await idb.getCopy.playersPlus(p, {
+				// @ts-expect-error
+				attrs: ["notAnAttr"],
+			});
+			await idb.getCopy.playersPlus(p, {
+				// @ts-expect-error
+				ratings: ["notARating"],
+			});
+			await idb.getCopy.playersPlus(p, {
+				// @ts-expect-error
+				stats: ["notAStat"],
+			});
+		};
+		assert.strictEqual(typeof f, "function");
+	});
+
+	test("contract.exp may be undefined with seasonRange and no season", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			attrs: ["contract"],
+			seasonRange: [2011, 2012],
+		});
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>["contract"]["exp"],
+				number | undefined
+			>
+		>(true);
+
+		const pf2 = await idb.getCopy.playersPlus(p, {
+			attrs: ["contract"],
+			season: 2012,
+			seasonRange: [2011, 2012],
+		});
+		typeAssert<
+			IsExact<Exclude<typeof pf2, undefined>["contract"]["exp"], number>
+		>(true);
+	});
+
+	test("Single season stats may be undefined with showRookies unless showNoStats is also set", async () => {
+		type StatsRow = {
+			gp: number | undefined;
+			playoffs: boolean;
+			hasTot?: true;
+		};
+
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			season: 2012,
+			showRookies: true,
+		});
+		typeAssert<
+			IsExact<Exclude<typeof pf, undefined>["stats"], StatsRow | undefined>
+		>(true);
+
+		// showNoStats adds an empty row, which has no playoffs value
+		const pf2 = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			season: 2012,
+			showRookies: true,
+			showNoStats: true,
+		});
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf2, undefined>["stats"],
+				{
+					gp: number | undefined;
+					playoffs: boolean | undefined;
+					hasTot?: true;
+				}
+			>
+		>(true);
+	});
+
+	test("combined stats", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			stats: ["gp"],
+			seasonType: ["regularSeason", "combined"],
+		});
+
+		// playoffs in career stats matches the rows being summed, rather than being a sum itself
+		assert.strictEqual(pf?.careerStats.playoffs, false);
+		assert.strictEqual(pf?.careerStatsCombined.playoffs, "combined");
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>,
+				{
+					stats: {
+						gp: number | undefined;
+						playoffs: boolean | "combined";
+						hasTot?: true;
+					}[];
+					careerStats: {
+						gp: number | undefined;
+						playoffs: false;
+						hasTot?: true;
+					};
+					careerStatsCombined: {
+						gp: number | undefined;
+						playoffs: "combined";
+						hasTot?: true;
+					};
+				}
+			>
+		>(true);
+	});
+
+	test("PlayerFiltered matches playersPlus output", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			attrs: ["pid", "name"],
+			ratings: ["ovr"],
+			stats: ["gp"],
+			season: 2012,
+		});
+
+		typeAssert<
+			IsExact<
+				Exclude<typeof pf, undefined>,
+				PlayerFiltered<{
+					attrs: ["pid", "name"];
+					ratings: ["ovr"];
+					stats: ["gp"];
+					season: number;
+				}>
+			>
+		>(true);
+	});
+
+	test("Ratings array is never empty, so the last row is always defined", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			ratings: ["season", "ovr"],
+		});
+
+		if (!pf) {
+			throw new Error("Missing player");
+		}
+
+		const lastRatings = last(pf.ratings);
+		typeAssert<IsExact<typeof lastRatings, { season: number; ovr: number }>>(
+			true,
+		);
+	});
+
+	test("Empty ratings array is the same as not requesting ratings", async () => {
+		const pf = await idb.getCopy.playersPlus(p, {
+			attrs: ["pid"],
+			ratings: [],
+			season: 2012,
+		});
+
+		assert(pf);
+		assert(!Object.hasOwn(pf, "ratings"));
+
+		typeAssert<IsExact<Exclude<typeof pf, undefined>, { pid: number }>>(true);
 	});
 });

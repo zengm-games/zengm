@@ -1,5 +1,10 @@
 import { useState } from "react";
-import type { PlayerAward, View } from "../../../common/types.ts";
+import type {
+	PlayerAward,
+	PlayerStatAttr,
+	PlayerStatsTables,
+	View,
+} from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
@@ -17,7 +22,7 @@ import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
 
 const hasStats = (
 	careerStats: View<"player">["player"]["careerStats"],
-	onlyShowIf: string[] | undefined,
+	onlyShowIf: PlayerStatAttr[] | undefined,
 ) => {
 	// For careerStatPlayoffs gp is undefined if there are no stats rows, ugh
 	if (careerStats.gp === 0 || careerStats.gp === undefined) {
@@ -26,10 +31,12 @@ const hasStats = (
 
 	if (onlyShowIf !== undefined) {
 		for (const stat of onlyShowIf) {
+			const value = careerStats[stat];
+
+			// Array check is for byPos stats
 			if (
-				careerStats[stat]! > 0 ||
-				(Array.isArray(careerStats[stat]) &&
-					(careerStats[stat] as any).length > 0)
+				(typeof value === "number" && value > 0) ||
+				(Array.isArray(value) && value.length > 0)
 			) {
 				return true;
 			}
@@ -52,9 +59,9 @@ export const StatsTable = ({
 }: {
 	awardsBySeason: Map<number, PlayerAward[]>;
 	name: string;
-	onlyShowIf?: string[];
+	onlyShowIf?: PlayerStatAttr[];
 	p: View<"player">["player"];
-	stats: string[];
+	stats: PlayerStatsTables[string]["stats"];
 	superCols?: SuperCol[];
 	leaders: View<"player">["leaders"];
 }) => {

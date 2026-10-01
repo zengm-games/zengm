@@ -4,6 +4,7 @@ import type {
 	Div,
 	NonEmptyArray,
 	PlayerStatsTables,
+	PlayerSummary,
 } from "./types.ts";
 import type { RatingKey } from "./types.basketball.ts";
 
@@ -177,7 +178,7 @@ export const PLAYER_SUMMARY = {
 			"ws",
 		],
 	},
-};
+} satisfies PlayerSummary;
 
 export const PLAYER_STATS_TABLES = {
 	regular: {

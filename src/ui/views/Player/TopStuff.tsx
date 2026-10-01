@@ -7,6 +7,7 @@ import type {
 	GameAttributesLeague,
 	Phase,
 	Player,
+	PlayerStatAttr,
 	View,
 } from "../../../common/types.ts";
 import { PHASE, PLAYER } from "../../../common/constants.ts";
@@ -100,7 +101,7 @@ const StatsSummary = ({
 	position: string;
 	currentSeason: number;
 	season?: number;
-	stats: string[];
+	stats: PlayerStatAttr[];
 }) => {
 	if (onlyShowIf !== undefined) {
 		if (!onlyShowIf.includes(position)) {

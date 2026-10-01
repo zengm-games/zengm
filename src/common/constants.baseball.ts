@@ -4,6 +4,7 @@ import type {
 	Div,
 	NonEmptyArray,
 	PlayerStatsTables,
+	PlayerSummary,
 } from "./types.ts";
 import type { Position, RatingKey } from "./types.baseball.ts";
 
@@ -189,7 +190,7 @@ export const PLAYER_SUMMARY = {
 			"whip",
 		],
 	},
-};
+} satisfies PlayerSummary;
 
 export const PLAYER_STATS_TABLES = {
 	batting: {

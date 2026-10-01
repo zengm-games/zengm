@@ -12,7 +12,6 @@ import { g, helpers } from "../util/index.ts";
 import type {
 	MenuItemHeader,
 	MenuItemLink,
-	MinimalPlayerRatings,
 	Player,
 	PlayerAwardBuiltIn,
 	PlayerStatAttr,
@@ -45,73 +44,15 @@ export type PlayerAwardBuiltInWithPrefix = PlayerAwardBuiltIn & {
 	groupPrefix?: string;
 };
 
-export const getPlayer = async (
+export const getPlayer = async <
+	SeasonRange extends [number, number] | undefined = undefined,
+>(
 	pRaw: Player,
-	seasonRange?: [number, number],
+	seasonRange?: SeasonRange,
 ) => {
-	type Stats = {
-		season: number;
-		tid: number;
-		abbrev: string;
-		age: number;
-		playoffs: boolean;
-		jerseyNumber: string;
-	} & Record<string, number>;
-
 	const stats = getPlayerProfileStats();
 
-	const p:
-		| (Pick<
-				Player,
-				| "pid"
-				| "tid"
-				| "hgt"
-				| "weight"
-				| "born"
-				| "contract"
-				| "diedYear"
-				| "face"
-				| "imgURL"
-				| "injury"
-				| "injuries"
-				| "college"
-				| "relatives"
-				| "srID"
-		  > & {
-				age: number;
-				ageAtDeath: number | null;
-				draft: Player["draft"] & {
-					age: number;
-					abbrev: string;
-					originalAbbrev: string;
-				};
-				name: string;
-				abbrev: string;
-				mood: any;
-				salaries: {
-					amount: number;
-					season: number;
-					type: "past" | "current" | "future";
-				}[];
-				salariesTotal: any;
-				untradable: any;
-				untradableMsg?: string;
-				ratings: (MinimalPlayerRatings & {
-					abbrev: string;
-					age: number;
-					tid: number;
-				})[];
-				stats: Stats[];
-				careerStats: Stats;
-				careerStatsCombined: Stats;
-				careerStatsPlayoffs: Stats;
-				jerseyNumber?: string;
-				experience: number;
-				note?: string;
-				watch: number;
-				awards: (PlayerAwardSimple | PlayerAwardBuiltInWithPrefix)[];
-		  })
-		| undefined = await idb.getCopy.playersPlus(pRaw, {
+	const p = await idb.getCopy.playersPlus(pRaw, {
 		attrs: [
 			"pid",
 			"name",
@@ -165,18 +106,27 @@ export const getPlayer = async (
 		return;
 	}
 
-	// Filter out rows with no games played
-	p.stats = p.stats.filter((row) => row.gp! > 0);
+	return {
+		...p,
 
-	// Handle prefixing awards
-	for (const award of p.awards) {
-		if (award.type === undefined && award.group) {
-			award.groupPrefix = getGroupPrefix(award, award.season);
-			delete award.group;
-		}
-	}
+		// Filter out rows with no games played
+		stats: p.stats.filter((row) => row.gp > 0),
 
-	return p;
+		// Handle prefixing awards
+		awards: p.awards.map(
+			(award): PlayerAwardSimple | PlayerAwardBuiltInWithPrefix => {
+				if (award.type === undefined && award.group) {
+					const { group, ...awardWithoutGroup } = award;
+					return {
+						...awardWithoutGroup,
+						groupPrefix: getGroupPrefix(award, award.season),
+					};
+				}
+
+				return award;
+			},
+		),
+	};
 };
 
 export const getCommon = async (
@@ -211,9 +161,9 @@ export const getCommon = async (
 
 	await upgradeFace(pRaw);
 
-	const p = await getPlayer(pRaw);
+	const pWithoutMood = await getPlayer(pRaw);
 
-	if (!p) {
+	if (!pWithoutMood) {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			type: "error" as const,
@@ -222,13 +172,17 @@ export const getCommon = async (
 		return returnValue;
 	}
 
-	if (p.tid !== PLAYER.RETIRED) {
-		p.mood = await player.moodInfos(pRaw);
+	const p = {
+		...pWithoutMood,
+		mood:
+			pWithoutMood.tid !== PLAYER.RETIRED
+				? await player.moodInfos(pRaw)
+				: undefined,
+	};
 
-		// Account for extra free agent demands
-		if (p.tid === PLAYER.FREE_AGENT) {
-			p.contract.amount = p.mood.user.contractAmount / 1000;
-		}
+	// Account for extra free agent demands
+	if (p.mood && p.tid === PLAYER.FREE_AGENT) {
+		p.contract.amount = p.mood.user.contractAmount / 1000;
 	}
 
 	const willingToSign = !!(p.mood && p.mood.user && p.mood.user.willing);

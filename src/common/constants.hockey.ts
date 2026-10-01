@@ -4,6 +4,7 @@ import type {
 	Div,
 	NonEmptyArray,
 	PlayerStatsTables,
+	PlayerSummary,
 } from "./types.ts";
 import type { Position, RatingKey } from "./types.hockey.ts";
 
@@ -115,7 +116,7 @@ export const PLAYER_SUMMARY = {
 		onlyShowIf: ["G"],
 		stats: ["gpGoalie", "gRec", "so", "gaa", "svPct", "gps"],
 	},
-};
+} satisfies PlayerSummary;
 
 export const PLAYER_STATS_TABLES = {
 	goalie: {

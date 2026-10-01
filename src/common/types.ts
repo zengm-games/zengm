@@ -1326,6 +1326,7 @@ type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
 	| "hof"
 	| "jerseyNumber"
 	| "ratings"
+	| "salaries"
 	| "stats"
 	| "watch"
 > & {
@@ -1422,6 +1423,19 @@ export type PlayerStatsTables = Record<
 		// "pos" is not a real stat, it's a column in baseball fielding tables filled in by expandFieldingStats
 		stats: (PlayerStatAttr | "pos")[];
 
+		superCols?: SuperCol[];
+	}
+>;
+
+export type PlayerSummary = Record<
+	string,
+	{
+		name: string;
+
+		// Positions, not stats
+		onlyShowIf?: string[];
+
+		stats: PlayerStatAttr[];
 		superCols?: SuperCol[];
 	}
 >;

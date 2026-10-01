@@ -13,6 +13,7 @@ import type {
 	PlayerRatingKey,
 	PlayerStatAttr,
 	PlayerStatsTables,
+	PlayerSummary,
 } from "./types.ts";
 
 export const ACCOUNT_API_URL =
@@ -129,18 +130,7 @@ export const PLAYER_GAME_STATS = bySport<{
 	hockey: constantsHockey.PLAYER_GAME_STATS,
 });
 
-export const PLAYER_SUMMARY = bySport<{
-	[key: string]: {
-		name: string;
-		onlyShowIf?: string[];
-		stats: string[];
-		superCols?: {
-			colspan: number;
-			desc: string;
-			title: string;
-		}[];
-	};
-}>({
+export const PLAYER_SUMMARY = bySport<PlayerSummary>({
 	baseball: constantsBaseball.PLAYER_SUMMARY,
 	basketball: constantsBasketball.PLAYER_SUMMARY,
 	football: constantsFootball.PLAYER_SUMMARY,

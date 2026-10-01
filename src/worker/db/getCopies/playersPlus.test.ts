@@ -884,7 +884,15 @@ describe("TypeScript", () => {
 
 	test("Derived and overridden attrs have the correct types", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
-			attrs: ["name", "age", "hof", "diedYear", "note", "untradable"],
+			attrs: [
+				"name",
+				"age",
+				"hof",
+				"diedYear",
+				"note",
+				"untradable",
+				"salaries",
+			],
 			season: 2012,
 		});
 
@@ -899,6 +907,11 @@ describe("TypeScript", () => {
 					note: string | undefined;
 					untradable: boolean;
 					untradableMsg?: string;
+					salaries: {
+						amount: number;
+						season: number;
+						type: "past" | "current" | "future";
+					}[];
 				}
 			>
 		>(true);

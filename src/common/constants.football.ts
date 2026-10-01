@@ -4,6 +4,7 @@ import type {
 	Div,
 	NonEmptyArray,
 	PlayerStatsTables,
+	PlayerSummary,
 } from "./types.ts";
 import type { Position, PrimaryPosition, RatingKey } from "./types.football.ts";
 
@@ -296,7 +297,7 @@ export const PLAYER_SUMMARY = {
 		onlyShowIf: ["DL", "LB", "CB", "S"],
 		stats: ["gp", "av", "defTck", "defSk", "defFmbRec", "defInt"],
 	},
-};
+} satisfies PlayerSummary;
 export const PLAYER_STATS_TABLES = {
 	passing: {
 		name: "Passing",

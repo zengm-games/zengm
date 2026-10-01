@@ -1,4 +1,10 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+	useEffectEvent,
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { Modal } from "../components/Modal.tsx";
 import {
 	COURT,
@@ -240,8 +246,8 @@ const SelectTeam = ({
 	};
 
 	const awaitingInitialLoad = useRef(true);
-	useLayoutEffect(() => {
-		const run = async () => {
+	const loadInitialTeam = useEffectEvent(
+		async (leagues: ExhibitionLeague[]) => {
 			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
 			if (
 				!awaitingInitialLoad.current ||
@@ -269,10 +275,11 @@ const SelectTeam = ({
 			const randomSeason = randInt(league.seasonStart, league.seasonEnd);
 			setSeason(randomSeason);
 			await loadTeams(league, randomSeason, "random");
-		};
+		},
+	);
 
-		run();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	useLayoutEffect(() => {
+		loadInitialTeam(leagues);
 	}, [leagues]);
 
 	const t = teams.find((t) => t.tid === tid);

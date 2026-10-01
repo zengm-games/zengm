@@ -959,6 +959,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		boxScore.current.shootout,
 		quarters.current.length,
 		processToNextPause,
+		props.quarterLength,
 	]);
 
 	const scrollTop = useRef<HTMLDivElement>(null);

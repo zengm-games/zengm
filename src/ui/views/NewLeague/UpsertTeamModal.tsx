@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useState } from "react";
 import { applyRealTeamInfos } from "./index.tsx";
 import {
 	DEFAULT_JERSEY,
@@ -240,52 +240,51 @@ const SelectTeam = ({
 		return newLeague;
 	};
 
-	useEffect(() => {
-		const run = async () => {
-			if (addEditTeamInfo.addType === "random") {
-				const availableAbbrevs = getUnusedAbbrevs([]);
-				const param = availableAbbrevs.map((abbrev) => ({
-					tid: -1,
-					cid: -1,
-					did: -1,
-					abbrev,
-				}));
-				setAllTeams(
-					orderBy(
-						getTeamInfos(param).map((t) => ({
-							...t,
-							popRank: -1,
-						})),
-						["region", "name"],
-					),
+	const loadInitialTeams = useEffectEvent(async () => {
+		if (addEditTeamInfo.addType === "random") {
+			const availableAbbrevs = getUnusedAbbrevs([]);
+			const param = availableAbbrevs.map((abbrev) => ({
+				tid: -1,
+				cid: -1,
+				did: -1,
+				abbrev,
+			}));
+			setAllTeams(
+				orderBy(
+					getTeamInfos(param).map((t) => ({
+						...t,
+						popRank: -1,
+					})),
+					["region", "name"],
+				),
+			);
+		} else if (addEditTeamInfo.addType === "real") {
+			const league = await loadLeague("real");
+			await loadTeams(league, addEditTeamInfo.seasonReal);
+		} else if (addEditTeamInfo.addType === "league") {
+			const allLeagues = await toWorker(
+				"exhibitionGame",
+				"getLeagues",
+				undefined,
+			);
+			setLeagues(allLeagues);
+			if (allLeagues[0]) {
+				const lid = addEditTeamInfo.lid ?? allLeagues[0].lid;
+				const league = await loadLeague(lid);
+				await loadTeams(
+					league,
+					addEditTeamInfo.seasonLeague ?? league.seasonEnd,
 				);
-			} else if (addEditTeamInfo.addType === "real") {
-				const league = await loadLeague("real");
-				await loadTeams(league, addEditTeamInfo.seasonReal);
-			} else if (addEditTeamInfo.addType === "league") {
-				const allLeagues = await toWorker(
-					"exhibitionGame",
-					"getLeagues",
-					undefined,
-				);
-				setLeagues(allLeagues);
-				if (allLeagues[0]) {
-					const lid = addEditTeamInfo.lid ?? allLeagues[0].lid;
-					const league = await loadLeague(lid);
-					await loadTeams(
-						league,
-						addEditTeamInfo.seasonLeague ?? league.seasonEnd,
-					);
-				} else {
-					// If no leagues found, at least show something
-					onChange({ ...CUSTOM_TEAM });
-				}
+			} else {
+				// If no leagues found, at least show something
+				onChange({ ...CUSTOM_TEAM });
 			}
-		};
+		}
+	});
 
-		run();
-		// We only want this to run when changing the type
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	// We only want this to run when changing the type
+	useEffect(() => {
+		loadInitialTeams();
 	}, [addEditTeamInfo.type, addEditTeamInfo.addType]);
 
 	if (addEditTeamInfo.type !== "add") {

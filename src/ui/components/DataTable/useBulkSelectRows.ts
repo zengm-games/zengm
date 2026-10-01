@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import type { DataTableRow, DataTableRowMetadata } from "./index.tsx";
 
 export const useSelectedRows = () => {
@@ -81,7 +81,7 @@ export const useBulkSelectRows = ({
 	}
 
 	// undefined means we haven't checked contents of rows, either because there are no rows yet or because this is the first render
-	const info = useRef<
+	const [info, setInfo] = useState<
 		| undefined
 		| {
 				metadataType: NonNullable<DataTableRow["metadata"]>["type"];
@@ -90,11 +90,12 @@ export const useBulkSelectRows = ({
 				metadataType: undefined;
 		  }
 	>(undefined);
-	if (info.current === undefined && rows.length > 0) {
-		info.current = {
+	if (info === undefined && rows.length > 0) {
+		// Setting state during render makes React immediately re-render with the new value
+		setInfo({
 			// This assumes metadata type the same in every row, no table mixing two types! Some rows having no metadata is fine though (such as drafted players during draft)
 			metadataType: rows.find((row) => row.metadata)?.metadata?.type,
-		};
+		});
 	}
 
 	const toggleBulkSelectRows = useCallback(() => {
@@ -105,7 +106,7 @@ export const useBulkSelectRows = ({
 
 	return {
 		bulkSelectRows,
-		metadataType: info.current?.metadataType,
+		metadataType: info?.metadataType,
 		selectedRows,
 		showBulkSelectCheckboxes,
 		toggleBulkSelectRows,

@@ -2,7 +2,6 @@ import {
 	useEffectEvent,
 	useLayoutEffect,
 	useMemo,
-	useRef,
 	useState,
 	type Dispatch,
 	type SetStateAction,
@@ -502,6 +501,18 @@ const formatSeasonRange = (seasonStart: number, seasonEnd: number) => {
 	return `${seasonStart}-${seasonEnd}`;
 };
 
+const DEFAULT_COLS = [
+	"Name",
+	"Pos",
+	"Team",
+	"Age",
+	"Contract",
+	"Exp",
+	"Season",
+	"Ovr",
+	"Pot",
+];
+
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const { challengeNoRatings, season: currentSeason } = useLocal([
 		"challengeNoRatings",
@@ -582,18 +593,6 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const playoffsOptions = useDropdownOptions("playoffsCombined");
 	const statTypes = useDropdownOptions("statTypesStrict");
 
-	const defaultCols = useRef([
-		"Name",
-		"Pos",
-		"Team",
-		"Age",
-		"Contract",
-		"Exp",
-		"Season",
-		"Ovr",
-		"Pot",
-	]);
-
 	const { uniqueColFiltersWithInfo, uniqueStatTypeInfos } = useMemo(() => {
 		const renderedFiltersWithInfos = rendered.filters
 			.map((filter) => {
@@ -605,7 +604,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			})
 			.filter((row) => !!row.info);
 
-		const seenCols = new Set(defaultCols.current);
+		const seenCols = new Set(DEFAULT_COLS);
 		const uniqueColFiltersWithInfo = renderedFiltersWithInfos.filter(
 			(filter) => {
 				if (seenCols.has(filter.info.colKey)) {
@@ -655,7 +654,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	}, [rendered.filters, rendered.showStatTypes]);
 
 	const cols = getCols([
-		...defaultCols.current,
+		...DEFAULT_COLS,
 		...uniqueColFiltersWithInfo.map((filter) => filter.info.colKey),
 		...uniqueStatTypeInfos.map((row) => row.colKey),
 	]);
@@ -895,7 +894,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			) : (
 				<DataTable
 					cols={cols}
-					defaultSort={[defaultCols.current.length, "desc"]}
+					defaultSort={[DEFAULT_COLS.length, "desc"]}
 					defaultStickyCols={window.mobile ? 0 : 1}
 					name="AdvancedPlayerSearch"
 					pagination

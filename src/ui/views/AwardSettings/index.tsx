@@ -1,7 +1,7 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import { awardSettingsSchema, type View } from "../../../common/types.ts";
-import { Fragment, useEffect, useId, useState } from "react";
+import { Fragment, useEffect, useEffectEvent, useId, useState } from "react";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
 	awardsToEditingState,
@@ -141,12 +141,15 @@ const AwardSettings = ({
 		}
 	}, [scrollToAwardId]);
 
-	useEffect(() => {
+	const showInitialErrorMessages = useEffectEvent(() => {
 		if (errorMessages) {
 			showErrorMessages(errorMessages);
 		}
+	});
+
+	useEffect(() => {
 		// In theory new errorMessages could come later, but they'd probably be caught by getAwardCandidates below
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		showInitialErrorMessages();
 	}, []);
 
 	const DEFAULT_CLASSES = "col-12 col-lg-6";

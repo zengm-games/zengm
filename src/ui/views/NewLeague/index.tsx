@@ -1,5 +1,12 @@
 import { m, AnimatePresence } from "framer-motion";
-import { useState, useReducer, useCallback, useEffect, useId } from "react";
+import {
+	useState,
+	useReducer,
+	useCallback,
+	useEffect,
+	useEffectEvent,
+	useId,
+} from "react";
 import {
 	DIFFICULTY,
 	PHASE,
@@ -1070,12 +1077,15 @@ const NewLeague = (props: View<"newLeague">) => {
 		}
 	};
 
-	// This handles initial load
-	useEffect(() => {
+	const generateInitialCrossEraTeams = useEffectEvent(() => {
 		if (state.customize === "crossEra") {
 			generateCrossEraTeams();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	});
+
+	// This handles initial load
+	useEffect(() => {
+		generateInitialCrossEraTeams();
 	}, []);
 
 	// Start loading historical stats before the league is actually created, since it's a large file

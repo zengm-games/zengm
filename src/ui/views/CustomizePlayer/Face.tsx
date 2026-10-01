@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { PlayerPicture } from "../../components/PlayerPicture.tsx";
 import clsx from "clsx";
 
@@ -20,11 +20,13 @@ export const Face = ({
 
 	const faceHash = parsedFace ? btoa(JSON.stringify(parsedFace)) : "";
 
+	const onFaceChange = useEffectEvent(onChange);
+
 	useEffect(() => {
 		const listener = (event: MessageEvent) => {
 			// key check is to handle the case where the user opens an editor, switches to another player, and opens another editor. So there are two editors open for two different players - we need to tell which one this is. Can't use pid alone because new players don't have a pid yet!
 			if (event.data.type === "facesjs" && event.data.key === faceCount) {
-				onChange(JSON.stringify(event.data.value));
+				onFaceChange(JSON.stringify(event.data.value));
 				event.source?.postMessage(
 					{
 						type: "facesjs",
@@ -40,7 +42,6 @@ export const Face = ({
 		return () => {
 			window.removeEventListener("message", listener);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [faceCount]);
 
 	const [editJson, setEditJson] = useState(false);

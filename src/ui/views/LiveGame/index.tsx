@@ -249,8 +249,7 @@ const PlayByPlay = ({
 		return () => {
 			window.removeEventListener("optimizedResize", setPlayByPlayDivHeight);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [playByPlayDivRef]);
 
 	return (
 		<div

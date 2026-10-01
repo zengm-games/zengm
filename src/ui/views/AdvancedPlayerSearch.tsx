@@ -1,4 +1,5 @@
 import {
+	useEffectEvent,
 	useLayoutEffect,
 	useMemo,
 	useRef,
@@ -566,12 +567,15 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		title: "Advanced Player Search",
 	});
 
-	useLayoutEffect(() => {
+	const loadInitialPlayers = useEffectEvent(() => {
 		// If URL has some paramters in it, load initial players
 		if (!location.pathname.endsWith("/advanced_player_search")) {
 			updatePlayers();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	});
+
+	useLayoutEffect(() => {
+		loadInitialPlayers();
 	}, []);
 
 	const seasons = useDropdownOptions("seasons");

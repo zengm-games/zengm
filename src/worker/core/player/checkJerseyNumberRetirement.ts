@@ -9,31 +9,36 @@ import { getThreshold } from "./madeHof.football.ts";
 const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM =
 	__SPORT === "basketball" ? 30 : 12;
 
-export const getValueStatsRow = (ps: any) => {
+// Just the stats used here, so this works with a row from p.stats or a processed stats row. Missing stats (like in historical data, or a custom league file) are treated as 0
+export const getValueStatsRow = (
+	ps: Partial<
+		Record<
+			| "war"
+			| "dws"
+			| "ows"
+			| "ewa"
+			| "av"
+			| "evG"
+			| "ppG"
+			| "shG"
+			| "evA"
+			| "ppA"
+			| "shA"
+			| "ops"
+			| "dps"
+			| "gps",
+			number
+		>
+	>,
+) => {
 	const value = bySport({
-		baseball: ps.war,
-		basketball: (() => {
-			let value = 0;
-			if (typeof ps.dws === "number") {
-				value += ps.dws;
-			}
-
-			if (typeof ps.ows === "number") {
-				value += ps.ows;
-			}
-
-			if (typeof ps.ewa === "number") {
-				value += ps.ewa;
-			}
-
-			value /= 2;
-			return value;
-		})(),
-		football: ps.av,
+		baseball: ps.war ?? 0,
+		basketball: ((ps.dws ?? 0) + (ps.ows ?? 0) + (ps.ewa ?? 0)) / 2,
+		football: ps.av ?? 0,
 		hockey: (() => {
-			const g = ps.evG + ps.ppG + ps.shG;
-			const a = ps.evA + ps.ppA + ps.shA;
-			return (g + a) / 25 + ps.ops + ps.dps + 0.6 * ps.gps;
+			const g = (ps.evG ?? 0) + (ps.ppG ?? 0) + (ps.shG ?? 0);
+			const a = (ps.evA ?? 0) + (ps.ppA ?? 0) + (ps.shA ?? 0);
+			return (g + a) / 25 + (ps.ops ?? 0) + (ps.dps ?? 0) + 0.6 * (ps.gps ?? 0);
 		})(),
 	});
 

@@ -1,5 +1,5 @@
 import { g } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents, ViewInput, ViewPrev } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
@@ -7,14 +7,14 @@ import { groupByUnique } from "../../common/utils.ts";
 const updateAwardRaces = async (
 	inputs: ViewInput<"awardRaces">,
 	updateEvents: UpdateEvents,
-	state: any,
+	prev: ViewPrev<"awardRaces">,
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
-		inputs.season !== state.season
+		inputs.season !== prev.inputs?.season
 	) {
 		const awardCandidates = (
 			await getAwardCandidates(inputs.season)

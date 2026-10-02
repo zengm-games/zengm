@@ -4,6 +4,8 @@ import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
+	ViewPrev,
+	WorkerView,
 	Game,
 	PlayerInjury,
 } from "../../common/types.ts";
@@ -480,14 +482,14 @@ export const getTopPlayers = async <T extends any[]>(
 const updateUpcoming = async (
 	inputs: ViewInput<"schedule">,
 	updateEvents: UpdateEvents,
-	state: any,
+	prev: ViewPrev<"schedule">,
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase") ||
-		inputs.abbrev !== state.abbrev
+		inputs.abbrev !== prev.inputs?.abbrev
 	) {
 		const upcoming = await getUpcoming({
 			tid: inputs.tid,
@@ -517,16 +519,21 @@ const updateUpcoming = async (
 	}
 };
 
+// The part of the previously returned data that this view reads back
+type PrevData = {
+	completed: Game[];
+};
+
 // Based on views.gameLog.updateGamesList
 const updateCompleted = async (
 	inputs: ViewInput<"schedule">,
 	updateEvents: UpdateEvents,
-	state: {
-		abbrev: string;
-		completed: Game[];
-	},
+	prev: ViewPrev<"schedule", PrevData>,
 ) => {
-	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
+	if (
+		updateEvents.includes("firstRun") ||
+		inputs.abbrev !== prev.inputs?.abbrev
+	) {
 		// Load all games in list
 		const completed = await getProcessedGames({
 			tid: inputs.tid,
@@ -540,13 +547,14 @@ const updateCompleted = async (
 	}
 
 	if (updateEvents.includes("gameSim")) {
+		console.log("RENDER SECOND");
 		// Partial update of only new games
-		const completed = Array.isArray(state.completed) ? state.completed : [];
+		const completed = prev.data.completed ?? [];
 
 		const games = await getProcessedGames({
 			tid: inputs.tid,
 			season: g.get("season"),
-			loadedGames: state.completed,
+			loadedGames: prev.data.completed,
 			includeAllStarGame: true,
 		});
 
@@ -560,14 +568,10 @@ const updateCompleted = async (
 	}
 };
 
-export default async (
-	inputs: ViewInput<"schedule">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
+export default (async (inputs, updateEvents, prev) => {
 	return Object.assign(
 		{},
-		await updateUpcoming(inputs, updateEvents, state),
-		await updateCompleted(inputs, updateEvents, state),
+		await updateUpcoming(inputs, updateEvents, prev),
+		await updateCompleted(inputs, updateEvents, prev),
 	);
-};
+}) satisfies WorkerView<"schedule", PrevData>;

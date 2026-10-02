@@ -3705,6 +3705,8 @@ const retiredJerseyNumberUpsert = async ({
 	await toUI("realtimeUpdate", [["retiredJerseys", "playerMovement"]]);
 };
 
+const VIEWS_USING_PREV = new Set(["awardRaces", "playerGraphs", "schedule"]);
+
 const runBefore = async (
 	{
 		viewId,
@@ -3712,20 +3714,27 @@ const runBefore = async (
 		ctxBBGM,
 		updateEvents,
 		prevData,
+		prevInputs,
 	}: {
 		viewId: string;
 		params: any;
 		ctxBBGM: any;
 		updateEvents: UpdateEvents;
 		prevData: any;
+		prevInputs: any;
 	},
 	conditions: Conditions,
 ): Promise<void | {
-	[key: string]: any;
+	data: {
+		[key: string]: any;
+	};
+
+	// Sent back as prevInputs next time, if this page is still loaded
+	inputs?: any;
 }> => {
 	// Special case for errors, so that the condition right below (when league is loading) does not cause no update
 	if (viewId === "error") {
-		return {};
+		return { data: {} };
 	}
 
 	if (typeof g.get("lid") === "number" && !local.leagueLoaded) {
@@ -3746,7 +3755,9 @@ const runBefore = async (
 	if (typeof inputs.redirectUrl === "string") {
 		// Short circuit from processInputs alone
 		return {
-			redirectUrl: inputs.redirectUrl,
+			data: {
+				redirectUrl: inputs.redirectUrl,
+			},
 		};
 	}
 
@@ -3755,13 +3766,18 @@ const runBefore = async (
 	const view = views[viewId];
 
 	if (view) {
+		// PROTOTYPE: views in VIEWS_USING_PREV take { inputs, data } rather than just the previous data. Goes away when all views are converted.
+		const prev = VIEWS_USING_PREV.has(viewId)
+			? { inputs: prevInputs, data: prevData }
+			: prevData;
+
 		const data = await lock.runView(() =>
-			view(inputs, updateEvents, prevData, conditions),
+			view(inputs, updateEvents, prev, conditions),
 		);
-		return data ?? {};
+		return { data: data ?? {}, inputs };
 	}
 
-	return {};
+	return { data: {}, inputs };
 };
 
 const setForceWin = async ({

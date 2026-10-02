@@ -84,6 +84,25 @@ export type ViewInput<T extends keyof typeof processInputs> = Exclude<
 	{ redirectUrl: string }
 >;
 
+// What a worker view knows about its previous run, while the same page stays loaded. `inputs` is undefined on the first run. `data` is everything the view has returned so far, which can't be inferred (the return type would depend on itself), so a view that reads it declares the part it uses in `Data` and `WorkerView` checks that against what the view actually returns.
+export type ViewPrev<
+	T extends keyof typeof processInputs,
+	Data = Record<never, never>,
+> = {
+	inputs: ViewInput<T> | undefined;
+	data: Partial<Data>;
+};
+
+export type WorkerView<
+	T extends keyof typeof processInputs,
+	Data = Record<never, never>,
+> = (
+	inputs: ViewInput<T>,
+	updateEvents: UpdateEvents,
+	prev: ViewPrev<T, Data>,
+	conditions: Conditions,
+) => Promise<void | (Partial<Data> & Record<string, unknown>)>;
+
 export type AchievementWhen =
 	| "afterAwards"
 	| "afterFired"

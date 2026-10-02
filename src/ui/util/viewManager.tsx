@@ -84,6 +84,7 @@ const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
 class ViewManager {
 	queue: ActionWithResolve[];
 	viewData: Record<string, unknown>;
+	viewInputs: unknown;
 	idLoaded: string | undefined;
 	processingAction: boolean;
 	routes: {
@@ -235,6 +236,7 @@ class ViewManager {
 		}
 
 		let prevData;
+		let prevInputs;
 		if (this.idLoaded !== id) {
 			// This is the initial load of a page, so reset viewData and add firstRun update event
 			if (!updateEvents.includes("firstRun")) {
@@ -245,6 +247,7 @@ class ViewManager {
 			prevData = {
 				...this.viewData,
 			};
+			prevInputs = this.viewInputs;
 		}
 
 		const lidCurrent = local.getState().lid;
@@ -273,12 +276,13 @@ class ViewManager {
 		delete ctxBBGM.navigationSymbol; // Can't send Symbol to worker
 
 		// Resolve all the promises before updating the UI to minimize flicker
-		const results = await toWorker("main", "runBefore", {
+		const resultsAndInputs = await toWorker("main", "runBefore", {
 			viewId: id,
 			params: context.params,
 			ctxBBGM,
 			updateEvents,
 			prevData,
+			prevInputs,
 		});
 
 		if (navigationSymbol !== this.lastNavigationSymbol) {
@@ -287,11 +291,13 @@ class ViewManager {
 		}
 
 		// If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
-		if (results === undefined) {
+		if (resultsAndInputs?.data === undefined) {
 			actions.doneLoading(id);
 			this.initNextAction();
 			return;
 		}
+
+		const results = resultsAndInputs?.data;
 
 		// If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack. THIS MAY NO LONGER BE TRUE AFTER CONSOLIDATING RUNBEFORE INTO A SINGLE FUNCTION, ideally the worker/views function could then handle conflicts itself. But currently the only ones returning errorMessage have just one function so it's either all or nothing.
 		if (results && Object.keys(results).length > 0) {
@@ -341,6 +347,7 @@ class ViewManager {
 		actions.reset(vars);
 		this.idLoaded = id;
 		this.viewData = vars.data;
+		this.viewInputs = resultsAndInputs.inputs;
 
 		this.initNextAction();
 	}

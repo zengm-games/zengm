@@ -10,6 +10,7 @@ import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
+	ViewPrev,
 	PlayerStatType,
 } from "../../common/types.ts";
 import { POS_NUMBERS } from "../../common/constants.baseball.ts";
@@ -223,7 +224,7 @@ const updatePlayers = async (
 	axis: "X" | "Y",
 	inputs: ViewInput<"playerGraphs">,
 	updateEvents: UpdateEvents,
-	state: any,
+	prev: ViewPrev<"playerGraphs">,
 ) => {
 	const season = `season${axis}` as const;
 	const statType = `statType${axis}` as const;
@@ -234,9 +235,9 @@ const updatePlayers = async (
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		// Purposely skip checking statX, statY, minGames - those are only used client side, they in the URL for usability
-		inputs[season] !== state[season] ||
-		inputs[statType] !== state[statType] ||
-		inputs[playoffs] !== state[playoffs]
+		inputs[season] !== prev.inputs?.[season] ||
+		inputs[statType] !== prev.inputs?.[statType] ||
+		inputs[playoffs] !== prev.inputs?.[playoffs]
 	) {
 		const statForAxis = await getPlayerStats(
 			inputs[statType],
@@ -270,14 +271,14 @@ export type PlayerGraphsPlayer = Awaited<
 
 const updateClientSide = (
 	inputs: ViewInput<"playerGraphs">,
-	state: any,
+	prev: ViewPrev<"playerGraphs">,
 	x: Awaited<ReturnType<typeof updatePlayers>>,
 	y: Awaited<ReturnType<typeof updatePlayers>>,
 ) => {
 	if (
-		inputs.minGames !== state.minGames ||
-		inputs.statX !== state.statX ||
-		inputs.statY !== state.statY
+		inputs.minGames !== prev.inputs?.minGames ||
+		inputs.statX !== prev.inputs?.statX ||
+		inputs.statY !== prev.inputs?.statY
 	) {
 		// Check x and y for statX and statY in case they were already specified there, such as randomly selecting from statForAxis
 		return {
@@ -306,10 +307,10 @@ const updateClientSide = (
 export default async (
 	inputs: ViewInput<"playerGraphs">,
 	updateEvents: UpdateEvents,
-	state: any,
+	prev: ViewPrev<"playerGraphs">,
 ) => {
-	const x = await updatePlayers("X", inputs, updateEvents, state);
-	const y = await updatePlayers("Y", inputs, updateEvents, state);
+	const x = await updatePlayers("X", inputs, updateEvents, prev);
+	const y = await updatePlayers("Y", inputs, updateEvents, prev);
 
-	return Object.assign({}, x, y, updateClientSide(inputs, state, x, y));
+	return Object.assign({}, x, y, updateClientSide(inputs, prev, x, y));
 };

@@ -127,13 +127,13 @@ const getRows = ({
 					return false;
 				}
 
-				if (award.statRange === undefined && ps.playoffs !== false) {
+				if (award.statRange === undefined && row.playoffs !== false) {
 					return false;
 				}
-				if (award.statRange === "playoffs" && ps.playoffs !== true) {
+				if (award.statRange === "playoffs" && row.playoffs !== true) {
 					return false;
 				}
-				if (award.statRange === "combined" && ps.playoffs !== "combined") {
+				if (award.statRange === "combined" && row.playoffs !== "combined") {
 					return false;
 				}
 

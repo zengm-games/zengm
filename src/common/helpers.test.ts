@@ -228,24 +228,24 @@ describe("leagueUrlBase", () => {
 				url: "/l/123",
 			},
 			{
-				components: ["event_log"],
-				url: "/l/123/event_log",
+				components: ["player_feats"],
+				url: "/l/123/player_feats",
 			},
 			{
-				components: ["event_log", "ATL"],
-				url: "/l/123/event_log/ATL",
+				components: ["player_feats", "ATL"],
+				url: "/l/123/player_feats/ATL",
 			},
 			{
-				components: ["event_log", "ATL", 2015],
-				url: "/l/123/event_log/ATL/2015",
+				components: ["player_feats", "ATL", 2015],
+				url: "/l/123/player_feats/ATL/2015",
 			},
 			{
-				components: ["event_log", "ATL", undefined],
-				url: "/l/123/event_log/ATL",
+				components: ["player_feats", "ATL", undefined],
+				url: "/l/123/player_feats/ATL",
 			},
 			{
-				components: ["event_log", undefined],
-				url: "/l/123/event_log",
+				components: ["player_feats", undefined],
+				url: "/l/123/player_feats",
 			},
 		];
 		for (const { components, url } of scenarios) {
@@ -255,6 +255,6 @@ describe("leagueUrlBase", () => {
 
 	test("no undefined in the middle", () => {
 		// @ts-expect-error
-		const parts: LeagueUrlParts = ["event_log", undefined, 2015];
+		const parts: LeagueUrlParts = ["player_feats", undefined, 2015];
 	});
 });

@@ -93,7 +93,7 @@ const getMostXRows = async ({
 	for await (const cursor of store) {
 		const event = cursor.value;
 		if (isTradeEvent(event)) {
-			if (event.phase !== undefined && event.teams) {
+			if (event.phase === undefined || !event.teams) {
 				continue;
 			}
 
@@ -108,6 +108,7 @@ const getMostXRows = async ({
 	const eventsBySeason = Map.groupBy(events, (event) => event.season);
 
 	for (const [season, eventsSeason] of eventsBySeason) {
+		console.log(season, eventsSeason);
 		const cache = new CacheTeamInfoSeason(season);
 
 		for (const event of eventsSeason) {

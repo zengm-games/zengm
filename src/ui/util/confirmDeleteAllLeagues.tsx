@@ -6,11 +6,11 @@ const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 	({ show, proceed }) => {
 		const [unstarredOnly, setUnstarredOnly] = useState(true);
 
-		const inputRef = useRef<HTMLInputElement>(null);
+		const cancelRef = useRef<HTMLButtonElement>(null);
 
 		useEffect(() => {
-			if (inputRef.current) {
-				inputRef.current.select();
+			if (cancelRef.current) {
+				cancelRef.current.focus();
 			}
 		}, []);
 
@@ -49,7 +49,11 @@ const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 				</Modal.Body>
 
 				<Modal.Footer>
-					<button className="btn btn-secondary" onClick={cancel}>
+					<button
+						className="btn btn-secondary"
+						onClick={cancel}
+						ref={cancelRef}
+					>
 						Cancel
 					</button>
 					<button className="btn btn-danger" onClick={ok}>

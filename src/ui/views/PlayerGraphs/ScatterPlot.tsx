@@ -4,7 +4,7 @@ import { Circle, LinePath } from "@visx/shape";
 import { Group } from "@visx/group";
 import { useParentSize } from "@visx/responsive";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
-import { useRef, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export type TooltipData<Row> = {
 	x: number;
@@ -121,8 +121,6 @@ const ScatterPlot = <Row extends unknown>({
 		tooltipLeft,
 	} = useTooltip<TooltipData<Row>>();
 
-	const svgRef = useRef(null);
-
 	const margin = { top: 10, left: 60, right: 10, bottom: 60 };
 	const width = totalWidth - margin.left - margin.right;
 	const xScale = scaleLinear({
@@ -161,12 +159,7 @@ const ScatterPlot = <Row extends unknown>({
 
 	return (
 		<div>
-			hi
-			<svg
-				width={totalWidth}
-				height={HEIGHT + margin.top + margin.bottom}
-				ref={svgRef}
-			>
+			<svg width={totalWidth} height={HEIGHT + margin.top + margin.bottom}>
 				<Group transform={`translate(${margin.left},${margin.top})`}>
 					<AxisLeft
 						axisClassName="chart-axis"

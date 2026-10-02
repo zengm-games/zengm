@@ -5,7 +5,6 @@ import type {
 	UpdateEvents,
 	ViewInput,
 	ViewPrev,
-	WorkerView,
 	Game,
 	PlayerInjury,
 } from "../../common/types.ts";
@@ -23,6 +22,7 @@ import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
 import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
+import { defineView, prevType } from "../util/defineView.ts";
 
 export const getUpcoming = async ({
 	cid,
@@ -520,15 +520,15 @@ const updateUpcoming = async (
 };
 
 // The part of the previously returned data that this view reads back
-type PrevData = {
-	completed: Game[];
+const prevData = {
+	completed: prevType<Game[]>(),
 };
 
 // Based on views.gameLog.updateGamesList
 const updateCompleted = async (
 	inputs: ViewInput<"schedule">,
 	updateEvents: UpdateEvents,
-	prev: ViewPrev<"schedule", PrevData>,
+	prev: ViewPrev<"schedule", typeof prevData>,
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
@@ -568,10 +568,14 @@ const updateCompleted = async (
 	}
 };
 
-export default (async (inputs, updateEvents, prev) => {
-	return Object.assign(
-		{},
-		await updateUpcoming(inputs, updateEvents, prev),
-		await updateCompleted(inputs, updateEvents, prev),
-	);
-}) satisfies WorkerView<"schedule", PrevData>;
+export default defineView(
+	"schedule",
+	{ prevData },
+	async (inputs, updateEvents, prev) => {
+		return Object.assign(
+			{},
+			await updateUpcoming(inputs, updateEvents, prev),
+			await updateCompleted(inputs, updateEvents, prev),
+		);
+	},
+);

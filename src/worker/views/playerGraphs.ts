@@ -21,6 +21,7 @@ import {
 } from "../../common/advancedPlayerSearch.ts";
 import { choice } from "../../common/random.ts";
 import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
+import { defineView } from "../util/defineView.ts";
 
 export const statTypes = [
 	"bio",
@@ -304,13 +305,12 @@ const updateClientSide = (
 	}
 };
 
-export default async (
-	inputs: ViewInput<"playerGraphs">,
-	updateEvents: UpdateEvents,
-	prev: ViewPrev<"playerGraphs">,
-) => {
-	const x = await updatePlayers("X", inputs, updateEvents, prev);
-	const y = await updatePlayers("Y", inputs, updateEvents, prev);
+export default defineView(
+	"playerGraphs",
+	async (inputs, updateEvents, prev) => {
+		const x = await updatePlayers("X", inputs, updateEvents, prev);
+		const y = await updatePlayers("Y", inputs, updateEvents, prev);
 
-	return Object.assign({}, x, y, updateClientSide(inputs, prev, x, y));
-};
+		return Object.assign({}, x, y, updateClientSide(inputs, prev, x, y));
+	},
+);

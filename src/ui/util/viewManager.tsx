@@ -85,6 +85,7 @@ class ViewManager {
 	queue: ActionWithResolve[];
 	viewData: Record<string, unknown>;
 	viewInputs: unknown;
+	viewPrevDataKeys: string[] | undefined;
 	idLoaded: string | undefined;
 	processingAction: boolean;
 	routes: {
@@ -235,8 +236,11 @@ class ViewManager {
 			}
 		}
 
-		let prevData;
+		let prevData: Record<string, unknown>;
 		let prevInputs;
+
+		// Worker views say which properties of their previous data they need, to avoid sending everything back every time
+		let prevDataKeys: string[] | undefined;
 		if (this.idLoaded !== id) {
 			// This is the initial load of a page, so reset viewData and add firstRun update event
 			if (!updateEvents.includes("firstRun")) {
@@ -248,6 +252,7 @@ class ViewManager {
 				...this.viewData,
 			};
 			prevInputs = this.viewInputs;
+			prevDataKeys = this.viewPrevDataKeys;
 		}
 
 		const lidCurrent = local.getState().lid;
@@ -281,7 +286,13 @@ class ViewManager {
 			params: context.params,
 			ctxBBGM,
 			updateEvents,
-			prevData,
+			prevData: prevDataKeys
+				? Object.fromEntries(
+						prevDataKeys
+							.filter((key) => Object.hasOwn(prevData, key))
+							.map((key) => [key, prevData[key]]),
+					)
+				: prevData,
 			prevInputs,
 		});
 
@@ -348,6 +359,7 @@ class ViewManager {
 		this.idLoaded = id;
 		this.viewData = vars.data;
 		this.viewInputs = resultsAndInputs.inputs;
+		this.viewPrevDataKeys = resultsAndInputs.prevDataKeys;
 
 		this.initNextAction();
 	}

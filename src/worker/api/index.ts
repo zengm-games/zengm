@@ -3705,8 +3705,6 @@ const retiredJerseyNumberUpsert = async ({
 	await toUI("realtimeUpdate", [["retiredJerseys", "playerMovement"]]);
 };
 
-const VIEWS_USING_PREV = new Set(["awardRaces", "playerGraphs", "schedule"]);
-
 const runBefore = async (
 	{
 		viewId,
@@ -3731,6 +3729,9 @@ const runBefore = async (
 
 	// Sent back as prevInputs next time, if this page is still loaded
 	inputs?: any;
+
+	// If defined, then next time prevData only needs to contain these properties
+	prevDataKeys?: string[];
 }> => {
 	// Special case for errors, so that the condition right below (when league is loading) does not cause no update
 	if (viewId === "error") {
@@ -3766,15 +3767,16 @@ const runBefore = async (
 	const view = views[viewId];
 
 	if (view) {
-		// PROTOTYPE: views in VIEWS_USING_PREV take { inputs, data } rather than just the previous data. Goes away when all views are converted.
-		const prev = VIEWS_USING_PREV.has(viewId)
+		// PROTOTYPE: views created with defineView take { inputs, data } rather than just the previous data, and say which properties of the previous data they need. Goes away when all views are converted.
+		const prevDataKeys: string[] | undefined = view.prevDataKeys;
+		const prev = prevDataKeys
 			? { inputs: prevInputs, data: prevData }
 			: prevData;
 
 		const data = await lock.runView(() =>
 			view(inputs, updateEvents, prev, conditions),
 		);
-		return { data: data ?? {}, inputs };
+		return { data: data ?? {}, inputs, prevDataKeys };
 	}
 
 	return { data: {}, inputs };

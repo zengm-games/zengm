@@ -578,7 +578,7 @@ const VerticalLine = ({
 };
 
 const blue = "#80bdff";
-const yellow = "#ffc107";
+const yellow = "#ffcd00"; // https://www.reddit.com/r/Football_GM/comments/1wnjflv/version_202609220930_when_penalties_add_yards_to/pdbksew/?context=3
 const lightGreen = "lightgreen";
 const darkGreen = "#1e7e34";
 const lightGray = "#adb5bd";

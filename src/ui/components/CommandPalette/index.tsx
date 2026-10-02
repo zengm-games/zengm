@@ -19,6 +19,7 @@ import type {
 import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
+import { focusOnMount } from "../../util/refCallbacks.ts";
 import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { Modal } from "../Modal.tsx";
@@ -745,8 +746,6 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 };
 
 const CommandPaletteInner = ({ onHide }: { onHide: () => void }) => {
-	const searchInputRef = useRef<HTMLInputElement | null>(null);
-
 	const {
 		challengeNoRatings,
 		godMode,
@@ -814,10 +813,6 @@ const CommandPaletteInner = ({ onHide }: { onHide: () => void }) => {
 	]);
 
 	useEffect(() => {
-		if (searchInputRef.current) {
-			searchInputRef.current.focus();
-		}
-
 		saveLastUsed();
 	}, []);
 
@@ -908,7 +903,7 @@ const CommandPaletteInner = ({ onHide }: { onHide: () => void }) => {
 							</span>
 						) : null}
 						<input
-							ref={searchInputRef}
+							ref={focusOnMount}
 							className="form-control shadow-none border-0 ps-1 pe-0"
 							type="text"
 							placeholder={`Search ${mode?.description ?? "pages"}...`}

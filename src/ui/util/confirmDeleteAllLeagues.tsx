@@ -1,18 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
 import { Modal } from "../components/Modal.tsx";
+import { focusOnMount } from "./refCallbacks.ts";
 
 const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 	({ show, proceed }) => {
 		const [unstarredOnly, setUnstarredOnly] = useState(true);
-
-		const cancelRef = useRef<HTMLButtonElement>(null);
-
-		useEffect(() => {
-			if (cancelRef.current) {
-				cancelRef.current.focus();
-			}
-		}, []);
 
 		const cancel = () => proceed(null);
 		const ok = () => proceed(unstarredOnly ? "unstarred" : "all");
@@ -52,12 +45,12 @@ const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 					<button
 						className="btn btn-secondary"
 						onClick={cancel}
-						ref={cancelRef}
+						ref={focusOnMount}
 					>
 						Cancel
 					</button>
 					<button className="btn btn-danger" onClick={ok}>
-						Delete All Leagues
+						Delete all leagues
 					</button>
 				</Modal.Footer>
 			</Modal>

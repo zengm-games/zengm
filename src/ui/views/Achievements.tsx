@@ -334,7 +334,6 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 		if (hash !== "") {
 			const achievementId = makeAchievementId(hash);
 			const achievementElement = document.getElementById(achievementId);
-			console.log("achievementElement", achievementElement);
 
 			// setTimeout is because achievementElement is
 			requestAnimationFrame(() => {

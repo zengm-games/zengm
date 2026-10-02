@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Modal } from "../../components/Modal.tsx";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { showNotification } from "../../util/showNotification.ts";
 import type { View } from "../../../common/types.ts";
 import { toWorker } from "../../util/toWorker.ts";
+import { focusOnMount } from "../../util/refCallbacks.ts";
 
 export const RegenerateScheduleModal = ({
 	onCancel,
@@ -15,15 +16,6 @@ export const RegenerateScheduleModal = ({
 	show: boolean;
 }) => {
 	const [regeneratingSchedule, setRegeneratingSchedule] = useState(false);
-
-	const [submitButtonElement, setSubmitButtonElement] =
-		useState<HTMLButtonElement | null>(null);
-
-	useEffect(() => {
-		if (submitButtonElement) {
-			submitButtonElement.focus();
-		}
-	}, [submitButtonElement]);
 
 	const onSubmit = async () => {
 		setRegeneratingSchedule(true);
@@ -56,7 +48,7 @@ export const RegenerateScheduleModal = ({
 					onClick={onSubmit}
 					processing={regeneratingSchedule}
 					processingText="Generating"
-					ref={setSubmitButtonElement}
+					ref={focusOnMount}
 					variant="primary"
 				>
 					Regenerate schedule

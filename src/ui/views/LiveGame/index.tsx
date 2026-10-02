@@ -9,8 +9,8 @@ import {
 	useState,
 	type ReactNode,
 	memo,
-	type MutableRefObject,
 	Fragment,
+	type RefObject,
 } from "react";
 import { TeamLogoInline } from "../../components/TeamLogoInline.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
@@ -226,7 +226,7 @@ const PlayByPlay = ({
 }: {
 	boxScore: any;
 	entries: PlayByPlayEntryInfo[];
-	playByPlayDivRef: MutableRefObject<HTMLDivElement | null>;
+	playByPlayDivRef: RefObject<HTMLDivElement | null>;
 }) => {
 	useEffect(() => {
 		const setPlayByPlayDivHeight = () => {

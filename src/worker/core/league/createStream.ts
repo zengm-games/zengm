@@ -1609,7 +1609,10 @@ const afterDBStream = async ({
 				scoutingLevel,
 				version: LEAGUE_DATABASE_VERSION,
 			});
-			last(p2.ratings).season = gameAttributes.season;
+			if (p2.tid !== PLAYER.UNDRAFTED) {
+				// Draft prospects already have ratings season set to their draft year, and need to keep it or their age will be wrong when recomputing pot
+				last(p2.ratings).season = gameAttributes.season;
+			}
 			activePlayers.push(p2);
 		}
 	}

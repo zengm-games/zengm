@@ -372,14 +372,7 @@ class ViewManager {
 				}, 0);
 			});
 
-			realtimeUpdate(
-				[],
-				vars.data.redirectUrl,
-				{
-					backendRedirect: true,
-				},
-				true,
-			);
+			realtimeUpdate([], vars.data.redirectUrl, undefined, true);
 
 			return;
 		}

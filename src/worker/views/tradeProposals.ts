@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { TradeTeams, UpdateEvents } from "../../common/types.ts";
+import type { TradeTeams } from "../../common/types.ts";
 import isUntradable from "../core/trade/isUntradable.ts";
 import makeItWork from "../core/trade/makeItWork.ts";
 import summary from "../core/trade/summary.ts";
@@ -8,6 +8,7 @@ import { augmentOffers } from "../api/index.ts";
 import { shuffle, uniformSeed, choice } from "../../common/random.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import { orderBy } from "../../common/utils.ts";
+import { defineView } from "../util/defineView.ts";
 
 const getOffers = async (seed: number) => {
 	const NUM_OFFERS = 5;
@@ -151,40 +152,38 @@ export const addInlinePlayerInfo = <T extends AugmentedOffer>(offer: T) => {
 	};
 };
 
-const updateTradeProposals = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
-		updateEvents.includes("g.tradeProposalsSeed")
-	) {
-		const teamSeason = await idb.cache.teamSeasons.indexGet(
-			"teamSeasonsByTidSeason",
-			[g.get("userTid"), g.get("season")],
-		);
-		const gp = teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
+export default defineView({
+	id: "tradeProposals",
+	load: async ({ updateEvents }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase") ||
+			updateEvents.has("g.tradeProposalsSeed")
+		) {
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[g.get("userTid"), g.get("season")],
+			);
+			const gp = teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
 
-		const NUM_GAMES_BEFORE_NEW_OFFERS = 10;
+			const NUM_GAMES_BEFORE_NEW_OFFERS = 10;
 
-		const seed =
-			Math.floor(gp / NUM_GAMES_BEFORE_NEW_OFFERS) +
-			g.get("season") +
-			g.get("phase") +
-			g.get("tradeProposalsSeed");
+			const seed =
+				Math.floor(gp / NUM_GAMES_BEFORE_NEW_OFFERS) +
+				g.get("season") +
+				g.get("phase") +
+				g.get("tradeProposalsSeed");
 
-		const offers = (await getOffers(seed)).map((offer) =>
-			addInlinePlayerInfo(offer),
-		);
+			const offers = (await getOffers(seed)).map((offer) =>
+				addInlinePlayerInfo(offer),
+			);
 
-		return {
-			offers,
-			seed,
-		};
-	}
-};
-
-export default updateTradeProposals;
+			return {
+				offers,
+				seed,
+			};
+		}
+	},
+});

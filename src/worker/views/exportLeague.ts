@@ -1,12 +1,13 @@
-import type { UpdateEvents } from "../../common/types.ts";
 import stats from "../../worker/core/player/stats.ts";
+import { defineView } from "../util/defineView.ts";
 
-const exportLeague = (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (updateEvents.includes("firstRun")) {
-		return {
-			stats,
-		};
-	}
-};
-
-export default exportLeague;
+export default defineView({
+	id: "exportLeague",
+	load: ({ updateEvents }) => {
+		if (updateEvents.has("firstRun")) {
+			return {
+				stats,
+			};
+		}
+	},
+});

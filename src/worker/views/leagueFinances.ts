@@ -1,61 +1,60 @@
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
-const updateLeagueFinances = async (
-	inputs: ViewInput<"leagueFinances">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("newPhase"))) ||
-		state.season !== inputs.season
-	) {
-		const players = await idb.cache.players.indexGetAll("playersByTid", [
-			0,
-			Infinity,
-		]);
+export default defineView({
+	id: "leagueFinances",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			(inputs.season === g.get("season") &&
+				(updateEvents.has("gameSim") || updateEvents.has("newPhase"))) ||
+			prevInputs?.season !== inputs.season
+		) {
+			const players = await idb.cache.players.indexGetAll("playersByTid", [
+				0,
+				Infinity,
+			]);
 
-		const teams = (
-			await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid", "budget", "strategy"],
-					seasonAttrs: [
-						"att",
-						"revenue",
-						"profit",
-						"cash",
-						"payrollOrSalaryPaid",
-						"pop",
-						"abbrev",
-						"tid",
-						"region",
-						"name",
-						"imgURL",
-						"imgURLSmall",
-						"expenseLevels",
-					],
-					season: inputs.season,
-				},
-				"noCopyCache",
-			)
-		).map((t) => {
-			const rosterSpots =
-				g.get("maxRosterSize") - players.filter((p) => p.tid === t.tid).length;
+			const teams = (
+				await idb.getCopies.teamsPlus(
+					{
+						attrs: ["tid", "budget", "strategy"],
+						seasonAttrs: [
+							"att",
+							"revenue",
+							"profit",
+							"cash",
+							"payrollOrSalaryPaid",
+							"pop",
+							"abbrev",
+							"tid",
+							"region",
+							"name",
+							"imgURL",
+							"imgURLSmall",
+							"expenseLevels",
+						],
+						season: inputs.season,
+					},
+					"noCopyCache",
+				)
+			).map((t) => {
+				const rosterSpots =
+					g.get("maxRosterSize") -
+					players.filter((p) => p.tid === t.tid).length;
 
+				return {
+					...t,
+					rosterSpots,
+				};
+			});
 			return {
-				...t,
-				rosterSpots,
+				season: inputs.season,
+				teams,
 			};
-		});
-		return {
-			season: inputs.season,
-			teams,
-		};
-	}
-};
-
-export default updateLeagueFinances;
+		}
+	},
+});

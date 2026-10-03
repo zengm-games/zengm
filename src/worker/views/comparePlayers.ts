@@ -4,9 +4,8 @@ import type {
 	Player,
 	PlayerRatingKey,
 	PlayerStatAttr,
-	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import { defineView, type ViewInput } from "../util/defineView.ts";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
@@ -15,24 +14,48 @@ import { shuffle } from "../../common/random.ts";
 import { g } from "../util/index.ts";
 import { last, maxBy } from "../../common/utils.ts";
 import { getPlayerProfileStats } from "./player.ts";
-import type { SeasonType } from "../api/processInputs.ts";
+import type { SeasonType } from "../util/processInputs.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"comparePlayers">) => {
+	const players: {
+		pid: number;
+		season: number | "career";
+		playoffs: SeasonType;
+	}[] = [];
+
+	const info = params.info;
+	if (info !== undefined) {
+		players.push(
+			...info.split(",").map((pidSeasonPlayoffs) => {
+				const parts = pidSeasonPlayoffs.split("-");
+				return {
+					pid: Number.parseInt(parts[0]!),
+					season: parts[1] === "career" ? "career" : Number.parseInt(parts[1]!),
+					playoffs:
+						parts[2] === "c"
+							? "combined"
+							: parts[2] === "p"
+								? "playoffs"
+								: "regularSeason",
+				} as const;
+			}),
+		);
+	}
+
+	return {
+		players,
+	};
+};
 
 const hasPlayerInfoChanged = (
-	inputPlayers: ViewInput<"comparePlayers">["players"],
-	statePlayers:
-		| {
-				season: number;
-				p: {
-					pid: number;
-				};
-				playoffs: SeasonType;
-		  }[]
-		| undefined,
+	inputPlayers: ViewInput<typeof processInputs>["players"],
+	prevInputPlayers: ViewInput<typeof processInputs>["players"] | undefined,
 ) => {
 	// This just happens on initial render, which should never trigger because it checks firstRun before this, but let's just be careful
-	if (statePlayers === undefined) {
+	if (prevInputPlayers === undefined) {
 		return true;
 	}
 
@@ -41,17 +64,20 @@ const hasPlayerInfoChanged = (
 		return false;
 	}
 
-	if (inputPlayers.length !== statePlayers.length) {
+	if (inputPlayers.length !== prevInputPlayers.length) {
 		return true;
 	}
 
-	for (const [inputP, stateP] of Iterator.zip([inputPlayers, statePlayers], {
-		mode: "strict",
-	})) {
+	for (const [inputP, prevInputP] of Iterator.zip(
+		[inputPlayers, prevInputPlayers],
+		{
+			mode: "strict",
+		},
+	)) {
 		if (
-			inputP.pid !== stateP.p.pid ||
-			inputP.season !== stateP.season ||
-			inputP.playoffs !== stateP.playoffs
+			inputP.pid !== prevInputP.pid ||
+			inputP.season !== prevInputP.season ||
+			inputP.playoffs !== prevInputP.playoffs
 		) {
 			return true;
 		}
@@ -405,99 +431,97 @@ const getPlayer = async (
 	};
 };
 
-const updateComparePlayers = async (
-	inputs: ViewInput<"comparePlayers">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		hasPlayerInfoChanged(inputs.players, state.players)
-	) {
-		const currentPlayers = (await idb.cache.players.getAll()).filter((p) => {
-			// Don't include far future players
-			if (p.tid === PLAYER.UNDRAFTED && p.draft.year > g.get("season") + 2) {
-				return false;
-			}
-
-			return true;
-		});
-
-		const playersToShow = [...inputs.players];
-
-		// If fewer than 2 players, pick some random ones
-		while (playersToShow.length < 2) {
-			let found = false;
-
-			const pidsToShow = new Set(playersToShow.map((p) => p.pid));
-
-			shuffle(currentPlayers);
-			for (const p of currentPlayers) {
-				if (pidsToShow.has(p.pid)) {
-					continue;
-				}
-				if (p.tid === PLAYER.UNDRAFTED) {
-					continue;
+export default defineView({
+	id: "comparePlayers",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			hasPlayerInfoChanged(inputs.players, prevInputs?.players)
+		) {
+			const currentPlayers = (await idb.cache.players.getAll()).filter((p) => {
+				// Don't include far future players
+				if (p.tid === PLAYER.UNDRAFTED && p.draft.year > g.get("season") + 2) {
+					return false;
 				}
 
-				// Current season, if possible
-				const season =
-					p.ratings.findLast((row) => row.season === g.get("season"))?.season ??
-					last(p.ratings).season;
-
-				playersToShow.push({
-					pid: p.pid,
-					season,
-					playoffs: "regularSeason",
-				});
-				found = true;
-				break;
-			}
-
-			if (!found) {
-				break;
-			}
-		}
-
-		const allStats = getPlayerProfileStats();
-
-		const players = [];
-		for (const { pid, season, playoffs } of playersToShow) {
-			const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
-			if (!pRaw) {
-				continue;
-			}
-
-			const p = await getPlayer(pRaw, season, playoffs, allStats);
-			if (!p) {
-				continue;
-			}
-
-			players.push({
-				p,
-				season,
-				firstSeason: pRaw.ratings[0].season,
-				lastSeason: last(pRaw.ratings).season,
-				playoffs,
+				return true;
 			});
+
+			const playersToShow = [...inputs.players];
+
+			// If fewer than 2 players, pick some random ones
+			while (playersToShow.length < 2) {
+				let found = false;
+
+				const pidsToShow = new Set(playersToShow.map((p) => p.pid));
+
+				shuffle(currentPlayers);
+				for (const p of currentPlayers) {
+					if (pidsToShow.has(p.pid)) {
+						continue;
+					}
+					if (p.tid === PLAYER.UNDRAFTED) {
+						continue;
+					}
+
+					// Current season, if possible
+					const season =
+						p.ratings.findLast((row) => row.season === g.get("season"))
+							?.season ?? last(p.ratings).season;
+
+					playersToShow.push({
+						pid: p.pid,
+						season,
+						playoffs: "regularSeason",
+					});
+					found = true;
+					break;
+				}
+
+				if (!found) {
+					break;
+				}
+			}
+
+			const allStats = getPlayerProfileStats();
+
+			const players = [];
+			for (const { pid, season, playoffs } of playersToShow) {
+				const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
+				if (!pRaw) {
+					continue;
+				}
+
+				const p = await getPlayer(pRaw, season, playoffs, allStats);
+				if (!p) {
+					continue;
+				}
+
+				players.push({
+					p,
+					season,
+					firstSeason: pRaw.ratings[0].season,
+					lastSeason: last(pRaw.ratings).season,
+					playoffs,
+				});
+			}
+
+			// In summary table show ratings/stats relevant to these players' positions
+			const positions = players.map((p) => p.p.ratings.pos);
+			const ratings = getRatingsByPositions(positions);
+			const stats = getStatsByPositions(positions);
+
+			const initialAvailablePlayers = finalizePlayersRelativesList(
+				currentPlayers.map(formatPlayerRelativesList),
+			);
+
+			return {
+				initialAvailablePlayers,
+				players,
+				ratings,
+				stats,
+			};
 		}
-
-		// In summary table show ratings/stats relevant to these players' positions
-		const positions = players.map((p) => p.p.ratings.pos);
-		const ratings = getRatingsByPositions(positions);
-		const stats = getStatsByPositions(positions);
-
-		const initialAvailablePlayers = finalizePlayersRelativesList(
-			currentPlayers.map(formatPlayerRelativesList),
-		);
-
-		return {
-			initialAvailablePlayers,
-			players,
-			ratings,
-			stats,
-		};
-	}
-};
-
-export default updateComparePlayers;
+	},
+});

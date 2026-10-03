@@ -1,3 +1,3 @@
 import { genView } from "./colleges.ts";
 
-export default genView("draftPosition");
+export default genView("frivolitiesDraftPosition", "draftPosition");

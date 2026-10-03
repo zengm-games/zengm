@@ -6,16 +6,30 @@ import {
 	setTeamInfo,
 	type TeamSeasonOverride,
 } from "./gameLog.ts";
-import type {
-	AllStars,
-	Game,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { AllStars, Game } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/constants.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"liveGame">, ctxBBGM: any) => {
+	const obj: {
+		fromAction: boolean;
+		gid?: number;
+		playByPlay?: any[];
+	} = {
+		fromAction: !!ctxBBGM.fromAction,
+	};
+
+	if (ctxBBGM.playByPlay !== undefined) {
+		obj.gid = ctxBBGM.gidOneGame;
+		obj.playByPlay = ctxBBGM.playByPlay;
+	}
+
+	return obj;
+};
 
 export const boxScoreToLiveSim = async ({
 	allStars,
@@ -175,77 +189,78 @@ export const boxScoreToLiveSim = async ({
 	};
 };
 
-const updatePlayByPlay = async (
-	inputs: ViewInput<"liveGame">,
-	updateEvents: UpdateEvents,
-) => {
-	const redirectToMenu = {
-		redirectUrl: helpers.leagueUrl(["daily_schedule"]),
-	};
+export default defineView({
+	id: "liveGame",
+	processInputs,
+	load: async ({ inputs, updateEvents }) => {
+		const redirectToMenu = {
+			redirectUrl: helpers.leagueUrl(["daily_schedule"]),
+		};
 
-	if (updateEvents.includes("firstRun") && !inputs.fromAction) {
-		return redirectToMenu;
-	}
-
-	if (
-		inputs.gid !== undefined &&
-		inputs.playByPlay !== undefined &&
-		inputs.playByPlay.length > 0
-	) {
-		const boxScore = await idb.getCopy.games({ gid: inputs.gid });
-
-		if (!boxScore) {
-			throw new Error("Invalid gid");
+		if (updateEvents.has("firstRun") && !inputs.fromAction) {
+			return redirectToMenu;
 		}
 
-		const allStarGame =
-			boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;
-		let allStars;
-
-		if (allStarGame) {
-			allStars = await idb.cache.allStars.get(g.get("season"));
-
-			if (!allStars) {
-				return redirectToMenu;
-			}
-		}
-
-		let confetti = false;
 		if (
-			boxScore.playoffs &&
-			boxScore.numGamesToWinSeries !== undefined &&
-			g.get("phase") >= PHASE.PLAYOFFS
+			inputs.gid !== undefined &&
+			inputs.playByPlay !== undefined &&
+			inputs.playByPlay.length > 0
 		) {
-			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
-			if (playoffSeries) {
-				const finalRound = playoffSeries.series.at(-1);
-				if (finalRound?.length === 1) {
-					const finalMatchup = finalRound[0]!;
-					if (
-						(finalMatchup.home.tid === boxScore.teams[0].tid &&
-							finalMatchup.away?.tid === boxScore.teams[1].tid) ||
-						(finalMatchup.home.tid === boxScore.teams[1].tid &&
-							finalMatchup.away?.tid === boxScore.teams[0].tid)
-					) {
-						const maxWon = Math.max(
-							finalMatchup.home.won,
-							finalMatchup.away?.won ?? 0,
-						);
-						if (maxWon >= boxScore.numGamesToWinSeries) {
-							confetti = true;
+			const boxScore = await idb.getCopy.games({ gid: inputs.gid });
+
+			if (!boxScore) {
+				throw new Error("Invalid gid");
+			}
+
+			const allStarGame =
+				boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;
+			let allStars;
+
+			if (allStarGame) {
+				allStars = await idb.cache.allStars.get(g.get("season"));
+
+				if (!allStars) {
+					return redirectToMenu;
+				}
+			}
+
+			let confetti = false;
+			if (
+				boxScore.playoffs &&
+				boxScore.numGamesToWinSeries !== undefined &&
+				g.get("phase") >= PHASE.PLAYOFFS
+			) {
+				const playoffSeries = await idb.cache.playoffSeries.get(
+					g.get("season"),
+				);
+				if (playoffSeries) {
+					const finalRound = playoffSeries.series.at(-1);
+					if (finalRound?.length === 1) {
+						const finalMatchup = finalRound[0]!;
+						if (
+							(finalMatchup.home.tid === boxScore.teams[0].tid &&
+								finalMatchup.away?.tid === boxScore.teams[1].tid) ||
+							(finalMatchup.home.tid === boxScore.teams[1].tid &&
+								finalMatchup.away?.tid === boxScore.teams[0].tid)
+						) {
+							const maxWon = Math.max(
+								finalMatchup.home.won,
+								finalMatchup.away?.won ?? 0,
+							);
+							if (maxWon >= boxScore.numGamesToWinSeries) {
+								confetti = true;
+							}
 						}
 					}
 				}
 			}
+
+			return boxScoreToLiveSim({
+				allStars,
+				boxScore,
+				confetti,
+				playByPlay: inputs.playByPlay,
+			});
 		}
-
-		return boxScoreToLiveSim({
-			allStars,
-			boxScore,
-			confetti,
-			playByPlay: inputs.playByPlay,
-		});
-	}
-};
-
-export default updatePlayByPlay;
+	},
+});

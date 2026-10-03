@@ -2,7 +2,8 @@ import { PHASE, PLAYER } from "../../common/constants.ts";
 import { season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { Player, UpdateEvents } from "../../common/types.ts";
+import type { Player } from "../../common/types.ts";
+import { defineView, type ViewArgs } from "../util/defineView.ts";
 import { processEvents } from "./news.ts";
 import { getMaxPlayoffSeed } from "./standings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
@@ -10,8 +11,8 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { orderTeams } from "../util/orderTeams.ts";
 import { getNumericStat } from "../../common/statValue.ts";
 
-const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
+const updateInbox = async ({ updateEvents }: ViewArgs) => {
+	if (updateEvents.has("firstRun") || updateEvents.has("newPhase")) {
 		const messages = await idb.getCopies.messages(
 			{
 				limit: 2,
@@ -30,12 +31,12 @@ const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateTeam = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
 		const t = await idb.cache.teams.get(g.get("userTid"));
 		const latestSeason = await idb.cache.teamSeasons.indexGet(
@@ -68,11 +69,8 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updatePayroll = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement")
-	) {
+const updatePayroll = async ({ updateEvents }: ViewArgs) => {
+	if (updateEvents.has("firstRun") || updateEvents.has("playerMovement")) {
 		const payroll = await team.getPayroll(g.get("userTid"));
 		return {
 			payroll, // [millions of dollars]
@@ -80,12 +78,12 @@ const updatePayroll = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateTeams = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
 		const stats = bySport({
 			baseball: ["pts", "oppPts", "ops", "era"] as const,
@@ -209,12 +207,12 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updatePlayers = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
 		const startersStats = bySport({
 			baseball: ["war", "hr", "ba", "ops", "era", "ip"],
@@ -395,11 +393,11 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
-		(updateEvents.includes("newPhase") &&
+		updateEvents.has("firstRun") ||
+		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.has("gameSim")) ||
+		(updateEvents.has("newPhase") &&
 			(g.get("phase") === PHASE.PLAYOFFS || g.get("phase") === PHASE.PRESEASON))
 	) {
 		const playoffSeries = await idb.getCopy.playoffSeries({
@@ -490,8 +488,8 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
+const updateStandings = async ({ updateEvents }: ViewArgs) => {
+	if (updateEvents.has("firstRun") || updateEvents.has("gameSim")) {
 		const teams = await idb.getCopies.teamsPlus(
 			{
 				attrs: ["tid"],
@@ -592,12 +590,12 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateNewsFeed = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("newPhase")
 	) {
 		const NUM_EVENTS = 8;
 
@@ -646,25 +644,28 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-export default async (inputs: unknown, updateEvents: UpdateEvents) => {
-	// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
-	const part1 = Object.assign(
-		{},
-		await updateInbox(inputs, updateEvents),
-		await updateTeam(inputs, updateEvents),
-		await updatePayroll(inputs, updateEvents),
-	);
-	const part2 = Object.assign(
-		{},
-		await updateTeams(inputs, updateEvents),
-		await updateNewsFeed(inputs, updateEvents),
-	);
-	const part3 = Object.assign(
-		{},
-		await updatePlayers(inputs, updateEvents),
-		await updatePlayoffs(inputs, updateEvents),
-		await updateStandings(inputs, updateEvents),
-	);
+export default defineView({
+	id: "leagueDashboard",
+	load: async (args) => {
+		// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
+		const part1 = Object.assign(
+			{},
+			await updateInbox(args),
+			await updateTeam(args),
+			await updatePayroll(args),
+		);
+		const part2 = Object.assign(
+			{},
+			await updateTeams(args),
+			await updateNewsFeed(args),
+		);
+		const part3 = Object.assign(
+			{},
+			await updatePlayers(args),
+			await updatePlayoffs(args),
+			await updateStandings(args),
+		);
 
-	return Object.assign({}, part1, part2, part3);
-};
+		return Object.assign({}, part1, part2, part3);
+	},
+});

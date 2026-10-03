@@ -21,7 +21,6 @@ import leagueFileUpload, {
 	emitProgressStream,
 	parseJSON,
 } from "./leagueFileUpload.ts";
-import processInputs from "./processInputs.ts";
 import {
 	allStar,
 	contractNegotiation,
@@ -59,6 +58,7 @@ import {
 	type LockName,
 	type Player,
 	type PlayerWithoutKey,
+	type UpdateEvent,
 	type UpdateEvents,
 	type TradeTeams,
 	type MinimalPlayerRatings,
@@ -3711,57 +3711,71 @@ const runBefore = async (
 		params,
 		ctxBBGM,
 		updateEvents,
-		prevData,
+		prevOutput,
+		prevInputs,
 	}: {
 		viewId: string;
 		params: any;
 		ctxBBGM: any;
-		updateEvents: UpdateEvents;
-		prevData: any;
+		updateEvents: ReadonlySet<UpdateEvent>;
+		prevOutput: any;
+		prevInputs: any;
 	},
 	conditions: Conditions,
 ): Promise<void | {
-	[key: string]: any;
+	data: {
+		[key: string]: any;
+	};
+
+	// Sent back as prevInputs next time, if this page is still loaded
+	inputs?: any;
+
+	// Next time, prevOutput only needs to contain these properties
+	keepPrevOutputKeys?: string[];
 }> => {
 	// Special case for errors, so that the condition right below (when league is loading) does not cause no update
 	if (viewId === "error") {
-		return {};
+		return { data: {} };
 	}
 
 	if (typeof g.get("lid") === "number" && !local.leagueLoaded) {
 		return;
 	}
 
-	let inputs: any;
-	if (Object.hasOwn(processInputs, viewId)) {
-		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-expect-error
-		inputs = processInputs[viewId](params, ctxBBGM);
-	}
-	if (inputs === undefined) {
-		// Return empty object rather than undefined
-		inputs = {};
-	}
-
-	if (typeof inputs.redirectUrl === "string") {
-		// Short circuit from processInputs alone
-		return {
-			redirectUrl: inputs.redirectUrl,
-		};
-	}
-
 	// https://github.com/microsoft/TypeScript/issues/21732
 	// @ts-expect-error
 	const view = views[viewId];
 
-	if (view) {
-		const data = await lock.runView(() =>
-			view(inputs, updateEvents, prevData, conditions),
-		);
-		return data ?? {};
+	// Return empty object rather than undefined
+	const inputs = view?.processInputs?.(params, ctxBBGM) ?? {};
+
+	if (typeof inputs.redirectUrl === "string") {
+		// Short circuit from processInputs alone
+		return {
+			data: {
+				redirectUrl: inputs.redirectUrl,
+			},
+		};
 	}
 
-	return {};
+	if (view) {
+		const data = await lock.runView(() =>
+			view.load({
+				inputs,
+				updateEvents,
+				prevInputs,
+				prevOutput,
+				conditions,
+			}),
+		);
+		return {
+			data: data ?? {},
+			inputs,
+			keepPrevOutputKeys: view.keepPrevOutputKeys,
+		};
+	}
+
+	return { data: {}, inputs };
 };
 
 const setForceWin = async ({

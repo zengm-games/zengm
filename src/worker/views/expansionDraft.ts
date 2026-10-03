@@ -7,106 +7,109 @@ import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { newLeagueGodModeLimits } from "../util/newLeagueGodModeLimits.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateExpansionDraft = async () => {
-	const expansionDraft = g.get("expansionDraft");
-	if (expansionDraft.phase === "protection") {
-		// https://stackoverflow.com/a/59923262/786644
-		const returnValue = {
-			redirectUrl: helpers.leagueUrl(["protect_players"]),
-		};
-		return returnValue;
-	} else if (expansionDraft.phase === "draft") {
-		// https://stackoverflow.com/a/59923262/786644
-		const returnValue = {
-			redirectUrl: helpers.leagueUrl(["draft"]),
-		};
-		return returnValue;
-	}
+export default defineView({
+	id: "expansionDraft",
+	load: async () => {
+		const expansionDraft = g.get("expansionDraft");
+		if (expansionDraft.phase === "protection") {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
+				redirectUrl: helpers.leagueUrl(["protect_players"]),
+			};
+			return returnValue;
+		} else if (expansionDraft.phase === "draft") {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
+				redirectUrl: helpers.leagueUrl(["draft"]),
+			};
+			return returnValue;
+		}
 
-	const currentTeams = g.get("teamInfoCache");
-	const allAbbrevs = getUnusedAbbrevs(currentTeams);
+		const currentTeams = g.get("teamInfoCache");
+		const allAbbrevs = getUnusedAbbrevs(currentTeams);
 
-	const divs = g.get("divs", "current");
-	const div = last(divs);
-	const param = allAbbrevs.map((abbrev) => ({
-		tid: -1,
-		cid: div.cid,
-		did: div.did,
-		abbrev,
-	}));
+		const divs = g.get("divs", "current");
+		const div = last(divs);
+		const param = allAbbrevs.map((abbrev) => ({
+			tid: -1,
+			cid: div.cid,
+			did: div.did,
+			abbrev,
+		}));
 
-	const builtInTeams: ExpansionDraftSetupTeam[] = getTeamInfos(param).map(
-		(t) => ({
-			abbrev: t.abbrev,
-			region: t.region,
-			name: t.name,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			colors: t.colors,
-			jersey: t.jersey,
-			pop: String(t.pop),
-			stadiumCapacity: String(g.get("defaultStadiumCapacity")),
-			did: String(t.did),
-			takeControl: false,
-		}),
-	);
-
-	const disabledTeams = (await idb.cache.teams.getAll()).filter(
-		(t) => t.disabled,
-	);
-	for (const t of disabledTeams) {
-		builtInTeams.push({
-			abbrev: t.abbrev,
-			region: t.region,
-			name: t.name,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			colors: t.colors,
-			jersey: t.jersey ?? DEFAULT_JERSEY,
-			pop: String(t.pop ?? 1),
-			stadiumCapacity: String(
-				t.stadiumCapacity !== undefined
-					? t.stadiumCapacity
-					: g.get("defaultStadiumCapacity"),
-			),
-			did: String(t.did),
-			takeControl: false,
-			tid: t.tid,
-		});
-	}
-
-	const initialTeams = expansionDraft.teams ?? [];
-	const initialNumPerTeam =
-		expansionDraft.numPerTeam ??
-		String(
-			helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
-				initialTeams.length,
-				g.get("minRosterSize"),
-				g.get("numActiveTeams"),
-			),
+		const builtInTeams: ExpansionDraftSetupTeam[] = getTeamInfos(param).map(
+			(t) => ({
+				abbrev: t.abbrev,
+				region: t.region,
+				name: t.name,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+				colors: t.colors,
+				jersey: t.jersey,
+				pop: String(t.pop),
+				stadiumCapacity: String(g.get("defaultStadiumCapacity")),
+				did: String(t.did),
+				takeControl: false,
+			}),
 		);
 
-	const godModeLimits = newLeagueGodModeLimits();
+		const disabledTeams = (await idb.cache.teams.getAll()).filter(
+			(t) => t.disabled,
+		);
+		for (const t of disabledTeams) {
+			builtInTeams.push({
+				abbrev: t.abbrev,
+				region: t.region,
+				name: t.name,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+				colors: t.colors,
+				jersey: t.jersey ?? DEFAULT_JERSEY,
+				pop: String(t.pop ?? 1),
+				stadiumCapacity: String(
+					t.stadiumCapacity !== undefined
+						? t.stadiumCapacity
+						: g.get("defaultStadiumCapacity"),
+				),
+				did: String(t.did),
+				takeControl: false,
+				tid: t.tid,
+			});
+		}
 
-	const defaultNumProtectedPlayers = bySport({
-		hockey: Math.max(g.get("minRosterSize") - 4, 0),
-		default: g.get("minRosterSize"),
-	});
+		const initialTeams = expansionDraft.teams ?? [];
+		const initialNumPerTeam =
+			expansionDraft.numPerTeam ??
+			String(
+				helpers.getExpansionDraftMinimumPlayersPerActiveTeam(
+					initialTeams.length,
+					g.get("minRosterSize"),
+					g.get("numActiveTeams"),
+				),
+			);
 
-	return {
-		builtInTeams: orderBy(builtInTeams, ["region", "name", "tid"]),
-		confs: g.get("confs"),
-		defaultNumProtectedPlayers,
-		divs: g.get("divs"),
-		godModeLimits,
-		initialTeams,
-		initialNumPerTeam,
-		initialNumProtectedPlayers:
-			expansionDraft.numProtectedPlayers ?? String(defaultNumProtectedPlayers),
-		minRosterSize: g.get("minRosterSize"),
-		numActiveTeams: g.get("numActiveTeams"),
-	};
-};
+		const godModeLimits = newLeagueGodModeLimits();
 
-export default updateExpansionDraft;
+		const defaultNumProtectedPlayers = bySport({
+			hockey: Math.max(g.get("minRosterSize") - 4, 0),
+			default: g.get("minRosterSize"),
+		});
+
+		return {
+			builtInTeams: orderBy(builtInTeams, ["region", "name", "tid"]),
+			confs: g.get("confs"),
+			defaultNumProtectedPlayers,
+			divs: g.get("divs"),
+			godModeLimits,
+			initialTeams,
+			initialNumPerTeam,
+			initialNumProtectedPlayers:
+				expansionDraft.numProtectedPlayers ??
+				String(defaultNumProtectedPlayers),
+			minRosterSize: g.get("minRosterSize"),
+			numActiveTeams: g.get("numActiveTeams"),
+		};
+	},
+});

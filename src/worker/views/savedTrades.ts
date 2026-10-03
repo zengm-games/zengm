@@ -1,11 +1,12 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { TradeTeams, UpdateEvents } from "../../common/types.ts";
+import type { TradeTeams } from "../../common/types.ts";
 import isUntradable from "../core/trade/isUntradable.ts";
 import { augmentOffers } from "../api/index.ts";
 import { addInlinePlayerInfo } from "./tradeProposals.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { last, orderBy } from "../../common/utils.ts";
+import { defineView } from "../util/defineView.ts";
 
 const savedTradeHashToTradeTeams = (hash: string): TradeTeams => {
 	const values = JSON.parse(hash);
@@ -184,25 +185,23 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 	return offers2;
 };
 
-const updateSavedTrades = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("savedTrades") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
-	) {
-		const offers = await getOffers();
+export default defineView({
+	id: "savedTrades",
+	load: async ({ updateEvents }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("savedTrades") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase")
+		) {
+			const offers = await getOffers();
 
-		const offers2 = await addMissingAssets(offers);
+			const offers2 = await addMissingAssets(offers);
 
-		return {
-			offers: offers2,
-		};
-	}
-};
-
-export default updateSavedTrades;
+			return {
+				offers: offers2,
+			};
+		}
+	},
+});

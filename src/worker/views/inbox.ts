@@ -1,22 +1,24 @@
 import { idb } from "../db/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateInbox = async () => {
-	const messages = await idb.getCopies.messages();
-	messages.reverse();
-	let anyUnread = false;
+export default defineView({
+	id: "inbox",
+	load: async () => {
+		const messages = await idb.getCopies.messages();
+		messages.reverse();
+		let anyUnread = false;
 
-	for (const message of messages) {
-		message.text = message.text.replaceAll("<p>", "").replaceAll("</p>", " ");
+		for (const message of messages) {
+			message.text = message.text.replaceAll("<p>", "").replaceAll("</p>", " ");
 
-		if (!message.read) {
-			anyUnread = true;
+			if (!message.read) {
+				anyUnread = true;
+			}
 		}
-	}
 
-	return {
-		anyUnread,
-		messages,
-	};
-};
-
-export default updateInbox;
+		return {
+			anyUnread,
+			messages,
+		};
+	},
+});

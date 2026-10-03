@@ -13,14 +13,45 @@ import type {
 	PlayInTournament,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
-	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "./depth.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { season } from "../core/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+export const processInputs = (
+	params: RouteParams<"playerBios"> | RouteParams<"playerRatings">,
+) => {
+	let abbrev;
+	let tid: number | undefined;
+
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
+		abbrev = "playoffs";
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		season: validateSeason(params.season),
+		tid,
+	};
+};
 
 export const extraRatings = bySport({
 	baseball: ["ovrs", "pots"],
@@ -215,98 +246,96 @@ export const getPlayers = async (
 	return players;
 };
 
-const updatePlayers = async (
-	inputs: ViewInput<"playerRatings">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") &&
-			updateEvents.includes("playerMovement")) ||
-		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
-		(inputs.abbrev === "playoffs" && updateEvents.includes("gameSim")) ||
-		inputs.season !== state.season ||
-		inputs.abbrev !== state.abbrev
-	) {
-		const ratings = bySport({
-			baseball: RATINGS,
-			basketball: [
-				"hgt",
-				"stre",
-				"spd",
-				"jmp",
-				"endu",
-				"ins",
-				"dnk",
-				"ft",
-				"fg",
-				"tp",
-				"oiq",
-				"diq",
-				"drb",
-				"pss",
-				"reb",
-			],
-			football: [
-				"hgt",
-				"stre",
-				"spd",
-				"endu",
-				"thv",
-				"thp",
-				"tha",
-				"bsc",
-				"elu",
-				"rtr",
-				"hnd",
-				"pbk",
-				"rbk",
-				"pcv",
-				"tck",
-				"prs",
-				"rns",
-				"kpw",
-				"kac",
-				"ppw",
-				"pac",
-			],
-			hockey: [
-				"hgt",
-				"stre",
-				"spd",
-				"endu",
-				"pss",
-				"wst",
-				"sst",
-				"stk",
-				"oiq",
-				"chk",
-				"blk",
-				"fcf",
-				"diq",
-				"glk",
-			],
-		} as const);
+export default defineView({
+	id: "playerRatings",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			(inputs.season === g.get("season") &&
+				updateEvents.has("playerMovement")) ||
+			(updateEvents.has("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
+			(inputs.abbrev === "playoffs" && updateEvents.has("gameSim")) ||
+			inputs.season !== prevInputs?.season ||
+			inputs.abbrev !== prevInputs?.abbrev
+		) {
+			const ratings = bySport({
+				baseball: RATINGS,
+				basketball: [
+					"hgt",
+					"stre",
+					"spd",
+					"jmp",
+					"endu",
+					"ins",
+					"dnk",
+					"ft",
+					"fg",
+					"tp",
+					"oiq",
+					"diq",
+					"drb",
+					"pss",
+					"reb",
+				],
+				football: [
+					"hgt",
+					"stre",
+					"spd",
+					"endu",
+					"thv",
+					"thp",
+					"tha",
+					"bsc",
+					"elu",
+					"rtr",
+					"hnd",
+					"pbk",
+					"rbk",
+					"pcv",
+					"tck",
+					"prs",
+					"rns",
+					"kpw",
+					"kac",
+					"ppw",
+					"pac",
+				],
+				hockey: [
+					"hgt",
+					"stre",
+					"spd",
+					"endu",
+					"pss",
+					"wst",
+					"sst",
+					"stk",
+					"oiq",
+					"chk",
+					"blk",
+					"fcf",
+					"diq",
+					"glk",
+				],
+			} as const);
 
-		const players = addFirstNameShort(
-			await getPlayers(
-				inputs.season,
-				inputs.abbrev,
-				[],
-				[...ratings, ...extraRatings],
-				[],
-				inputs.tid,
-			),
-		);
+			const players = addFirstNameShort(
+				await getPlayers(
+					inputs.season,
+					inputs.abbrev,
+					[],
+					[...ratings, ...extraRatings],
+					[],
+					inputs.tid,
+				),
+			);
 
-		return {
-			abbrev: inputs.abbrev,
-			season: inputs.season,
-			players,
-			ratings,
-		};
-	}
-};
-
-export default updatePlayers;
+			return {
+				abbrev: inputs.abbrev,
+				season: inputs.season,
+				players,
+				ratings,
+			};
+		}
+	},
+});

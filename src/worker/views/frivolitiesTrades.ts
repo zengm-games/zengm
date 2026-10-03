@@ -1,15 +1,36 @@
 import { idb } from "../db/index.ts";
 import { CacheTeamInfoSeason } from "../util/getTeamInfoBySeason.ts";
 import type {
-	UpdateEvents,
-	ViewInput,
 	DiscriminateUnion,
 	EventBBGM,
 	Phase,
 } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { processAssets } from "./tradeSummary.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { getWatchPids } from "./news.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"frivolitiesTrades">) => {
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		tid,
+		type: params.type,
+	};
+};
 
 type Most = {
 	value: number;
@@ -144,80 +165,78 @@ const getMostXRows = async ({
 	return ordered;
 };
 
-const frivolitiesTrades = async (
-	{ abbrev, tid, type }: ViewInput<"frivolitiesTrades">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-	if (
-		updateEvents.includes("firstRun") ||
-		type !== state.type ||
-		abbrev !== state.abbrev
-	) {
-		let filter: Parameters<typeof getMostXRows>[0]["filter"];
-		let getValue: Parameters<typeof getMostXRows>[0]["getValue"];
-		let sortParams: any;
-		let title: string;
-		let description: string | undefined;
+export default defineView({
+	id: "frivolitiesTrades",
+	processInputs,
+	load: async ({ inputs: { abbrev, tid, type }, updateEvents, prevInputs }) => {
+		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
+		if (
+			updateEvents.has("firstRun") ||
+			type !== prevInputs?.type ||
+			abbrev !== prevInputs?.abbrev
+		) {
+			let filter: Parameters<typeof getMostXRows>[0]["filter"];
+			let getValue: Parameters<typeof getMostXRows>[0]["getValue"];
+			let sortParams: any;
+			let title: string;
+			let description: string | undefined;
 
-		if (type === "biggest") {
-			title = "Biggest Trades";
-			description = "Trades involving the best players and prospects.";
+			if (type === "biggest") {
+				title = "Biggest Trades";
+				description = "Trades involving the best players and prospects.";
 
-			getValue = (teams) => {
-				let scoreMax = 0;
-				for (const t of teams) {
-					for (const asset of t.assets) {
-						// https://github.com/microsoft/TypeScript/issues/21732
-						const { ovr, pot } = asset as any;
-						if (typeof ovr === "number" && typeof pot === "number") {
-							const score = ovr + 0.25 * pot;
-							if (score > scoreMax) {
-								scoreMax = score;
+				getValue = (teams) => {
+					let scoreMax = 0;
+					for (const t of teams) {
+						for (const asset of t.assets) {
+							// https://github.com/microsoft/TypeScript/issues/21732
+							const { ovr, pot } = asset as any;
+							if (typeof ovr === "number" && typeof pot === "number") {
+								const score = ovr + 0.25 * pot;
+								if (score > scoreMax) {
+									scoreMax = score;
+								}
 							}
 						}
 					}
-				}
-				return { value: scoreMax };
+					return { value: scoreMax };
+				};
+				sortParams = [[(x: any) => x.most.value], ["desc"]];
+			} else if (type === "lopsided") {
+				title = "Most Lopsided Trades";
+				description =
+					"Trades where one team's assets produced a lot more value than the other.";
+
+				getValue = (teams) => {
+					const value = Math.abs(teams[0].statSum - teams[1].statSum);
+
+					return { value };
+				};
+				sortParams = [[(x: any) => x.most.value], ["desc"]];
+			} else {
+				throw new Error(`Unknown type "${type}"`);
+			}
+
+			if (tid !== undefined) {
+				filter = (event) => event.tids.includes(tid);
+			} else if (abbrev === "watch") {
+				const watchPids = await getWatchPids();
+				filter = (event) => event.pids.some((pid) => watchPids.has(pid));
+			}
+
+			const trades = await getMostXRows({
+				filter,
+				getValue,
+				sortParams,
+			});
+
+			return {
+				abbrev,
+				description,
+				title,
+				trades,
+				type,
 			};
-			sortParams = [[(x: any) => x.most.value], ["desc"]];
-		} else if (type === "lopsided") {
-			title = "Most Lopsided Trades";
-			description =
-				"Trades where one team's assets produced a lot more value than the other.";
-
-			getValue = (teams) => {
-				const value = Math.abs(teams[0].statSum - teams[1].statSum);
-
-				return { value };
-			};
-			sortParams = [[(x: any) => x.most.value], ["desc"]];
-		} else {
-			throw new Error(`Unknown type "${type}"`);
 		}
-
-		if (tid !== undefined) {
-			filter = (event) => event.tids.includes(tid);
-		} else if (abbrev === "watch") {
-			const watchPids = await getWatchPids();
-			filter = (event) => event.pids.some((pid) => watchPids.has(pid));
-		}
-
-		const trades = await getMostXRows({
-			filter,
-			getValue,
-			sortParams,
-		});
-
-		return {
-			abbrev,
-			description,
-			title,
-			trades,
-			type,
-		};
-	}
-};
-
-export default frivolitiesTrades;
+	},
+});

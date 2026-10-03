@@ -1,9 +1,11 @@
 import { local } from "../util/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateDangerZone = () => {
-	return {
-		autoSave: local.autoSave,
-	};
-};
-
-export default updateDangerZone;
+export default defineView({
+	id: "dangerZone",
+	load: () => {
+		return {
+			autoSave: local.autoSave,
+		};
+	},
+});

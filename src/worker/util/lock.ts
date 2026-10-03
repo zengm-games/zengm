@@ -23,7 +23,7 @@ const resolveAll = (callbacks: (() => void)[]) => {
 	}
 };
 
-const runView = async <T>(cb: () => Promise<T>) => {
+const runView = async <T>(cb: () => T | Promise<T>) => {
 	// Loop in case another phase change starts before this gets a chance to run, like during auto play
 	while (locks.newPhase) {
 		const { promise, resolve } = Promise.withResolvers<void>();

@@ -2,14 +2,11 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { trade } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	TradeSummary,
-	TradeTeams,
-	UpdateEvents,
-} from "../../common/types.ts";
+import type { TradeSummary, TradeTeams } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
+import { defineView } from "../util/defineView.ts";
 
 const getSummaryTeam = (summary: TradeSummary, i: 0 | 1) => {
 	return {
@@ -90,176 +87,177 @@ const validateTeams = async () => {
 	return trade.updatePlayers(teams);
 };
 
-const updateTrade = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	const teams = await validateTeams();
-	const userRosterAll = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		g.get("userTid"),
-	);
-	const userPicks = await idb.getCopies.draftPicks(
-		{
-			tid: g.get("userTid"),
-		},
-		"noCopyCache",
-	);
-	const attrs = [
-		"pid",
-		"firstName",
-		"lastName",
-		"age",
-		"contract",
-		"draft",
-		"injury",
-		"watch",
-		"untradable",
-		"jerseyNumber",
-	] as const;
-	const ratings = ["ovr", "pot", "skills", "pos"] as const;
-	const stats = bySport({
-		baseball: ["gp", "keyStats", "war"],
-		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	} as const);
-	const userRoster = addFirstNameShort(
-		await idb.getCopies.playersPlus(userRosterAll, {
-			attrs,
-			ratings,
-			stats,
-			season: g.get("season"),
-			tid: g.get("userTid"),
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		}),
-	);
+export default defineView({
+	id: "trade",
+	load: async ({ updateEvents }) => {
+		const teams = await validateTeams();
+		const userRosterAll = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			g.get("userTid"),
+		);
+		const userPicks = await idb.getCopies.draftPicks(
+			{
+				tid: g.get("userTid"),
+			},
+			"noCopyCache",
+		);
+		const attrs = [
+			"pid",
+			"firstName",
+			"lastName",
+			"age",
+			"contract",
+			"draft",
+			"injury",
+			"watch",
+			"untradable",
+			"jerseyNumber",
+		] as const;
+		const ratings = ["ovr", "pot", "skills", "pos"] as const;
+		const stats = bySport({
+			baseball: ["gp", "keyStats", "war"],
+			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+		} as const);
+		const userRoster = addFirstNameShort(
+			await idb.getCopies.playersPlus(userRosterAll, {
+				attrs,
+				ratings,
+				stats,
+				season: g.get("season"),
+				tid: g.get("userTid"),
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			}),
+		);
 
-	const userRosterWithIncluded = userRoster.map((p) => ({
-		...p,
-		included: teams[0].pids.includes(p.pid),
-		excluded: teams[0].pidsExcluded.includes(p.pid),
-	}));
-
-	const userPicks2 = await Promise.all(
-		userPicks.map(async (dp) => {
-			return {
-				...dp,
-				desc: await helpers.pickDesc(dp, "short"),
-				included: teams[0].dpids.includes(dp.dpid),
-				excluded: teams[0].dpidsExcluded.includes(dp.dpid),
-			};
-		}),
-	);
-
-	const otherTid = teams[1].tid;
-	const otherRosterAll = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		otherTid,
-	);
-	const otherPicks = await idb.getCopies.draftPicks(
-		{
-			tid: otherTid,
-		},
-		"noCopyCache",
-	);
-	const t = await idb.getCopy.teamsPlus(
-		{
-			tid: otherTid,
-			season: g.get("season"),
-			attrs: ["strategy"],
-			seasonAttrs: ["won", "lost", "tied", "otl"],
-			addDummySeason: true,
-		},
-		"noCopyCache",
-	);
-
-	if (t === undefined) {
-		// https://stackoverflow.com/a/59923262/786644
-		const returnValue = {
-			errorMessage: `Invalid team ID "${otherTid}".`,
-		};
-		return returnValue;
-	}
-
-	const otherRoster = addFirstNameShort(
-		await idb.getCopies.playersPlus(otherRosterAll, {
-			attrs,
-			ratings,
-			stats,
-			season: g.get("season"),
-			tid: otherTid,
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		}),
-	);
-
-	const otherRosterWithIncluded = otherRoster.map((p) => ({
-		...p,
-		included: teams[1].pids.includes(p.pid),
-		excluded: teams[1].pidsExcluded.includes(p.pid),
-	}));
-
-	const otherPicks2 = await Promise.all(
-		otherPicks.map(async (dp) => {
-			return {
-				...dp,
-				desc: await helpers.pickDesc(dp, "short"),
-				included: teams[1].dpids.includes(dp.dpid),
-				excluded: teams[1].dpidsExcluded.includes(dp.dpid),
-			};
-		}),
-	);
-
-	const summary = await getSummary(teams); // Always run this, for multi team mode
-
-	let teams2: {
-		name: string;
-		region: string;
-		tid: number;
-	}[] = (await idb.cache.teams.getAll())
-		.filter((t) => !t.disabled && t.tid !== g.get("userTid"))
-		.map((t) => ({
-			name: t.name,
-			region: t.region,
-			tid: t.tid,
+		const userRosterWithIncluded = userRoster.map((p) => ({
+			...p,
+			included: teams[0].pids.includes(p.pid),
+			excluded: teams[0].pidsExcluded.includes(p.pid),
 		}));
 
-	teams2 = orderBy(teams2, ["region", "name", "tid"]);
+		const userPicks2 = await Promise.all(
+			userPicks.map(async (dp) => {
+				return {
+					...dp,
+					desc: await helpers.pickDesc(dp, "short"),
+					included: teams[0].dpids.includes(dp.dpid),
+					excluded: teams[0].dpidsExcluded.includes(dp.dpid),
+				};
+			}),
+		);
 
-	const userTeamName = `${
-		g.get("teamInfoCache")[g.get("userTid")]?.region
-	} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
+		const otherTid = teams[1].tid;
+		const otherRosterAll = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			otherTid,
+		);
+		const otherPicks = await idb.getCopies.draftPicks(
+			{
+				tid: otherTid,
+			},
+			"noCopyCache",
+		);
+		const t = await idb.getCopy.teamsPlus(
+			{
+				tid: otherTid,
+				season: g.get("season"),
+				attrs: ["strategy"],
+				seasonAttrs: ["won", "lost", "tied", "otl"],
+				addDummySeason: true,
+			},
+			"noCopyCache",
+		);
 
-	return {
-		userDpids: teams[0].dpids,
-		userDpidsExcluded: teams[0].dpidsExcluded,
-		userPicks: userPicks2,
-		userPids: teams[0].pids,
-		userPidsExcluded: teams[0].pidsExcluded,
-		userRoster: userRosterWithIncluded,
-		otherDpids: teams[1].dpids,
-		otherDpidsExcluded: teams[1].dpidsExcluded,
-		otherPicks: otherPicks2,
-		otherPids: teams[1].pids,
-		otherPidsExcluded: teams[1].pidsExcluded,
-		otherRoster: otherRosterWithIncluded,
-		otherTid,
-		stats,
-		strategy: t.strategy,
-		summary,
-		won: t.seasonAttrs.won,
-		lost: t.seasonAttrs.lost,
-		teams: teams2,
-		tied: t.seasonAttrs.tied,
-		otl: t.seasonAttrs.otl,
-		userTeamName,
-		otherTeamsWantToHire: g.get("otherTeamsWantToHire"),
-		forceTrade: false,
-		numDraftRounds: g.get("numDraftRounds"),
-		multiTeamMode: g.get("userTids").length > 1,
-		resetMessage: updateEvents.includes("undoTrade"),
-	};
-};
+		if (t === undefined) {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
+				errorMessage: `Invalid team ID "${otherTid}".`,
+			};
+			return returnValue;
+		}
 
-export default updateTrade;
+		const otherRoster = addFirstNameShort(
+			await idb.getCopies.playersPlus(otherRosterAll, {
+				attrs,
+				ratings,
+				stats,
+				season: g.get("season"),
+				tid: otherTid,
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			}),
+		);
+
+		const otherRosterWithIncluded = otherRoster.map((p) => ({
+			...p,
+			included: teams[1].pids.includes(p.pid),
+			excluded: teams[1].pidsExcluded.includes(p.pid),
+		}));
+
+		const otherPicks2 = await Promise.all(
+			otherPicks.map(async (dp) => {
+				return {
+					...dp,
+					desc: await helpers.pickDesc(dp, "short"),
+					included: teams[1].dpids.includes(dp.dpid),
+					excluded: teams[1].dpidsExcluded.includes(dp.dpid),
+				};
+			}),
+		);
+
+		const summary = await getSummary(teams); // Always run this, for multi team mode
+
+		let teams2: {
+			name: string;
+			region: string;
+			tid: number;
+		}[] = (await idb.cache.teams.getAll())
+			.filter((t) => !t.disabled && t.tid !== g.get("userTid"))
+			.map((t) => ({
+				name: t.name,
+				region: t.region,
+				tid: t.tid,
+			}));
+
+		teams2 = orderBy(teams2, ["region", "name", "tid"]);
+
+		const userTeamName = `${
+			g.get("teamInfoCache")[g.get("userTid")]?.region
+		} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
+
+		return {
+			userDpids: teams[0].dpids,
+			userDpidsExcluded: teams[0].dpidsExcluded,
+			userPicks: userPicks2,
+			userPids: teams[0].pids,
+			userPidsExcluded: teams[0].pidsExcluded,
+			userRoster: userRosterWithIncluded,
+			otherDpids: teams[1].dpids,
+			otherDpidsExcluded: teams[1].dpidsExcluded,
+			otherPicks: otherPicks2,
+			otherPids: teams[1].pids,
+			otherPidsExcluded: teams[1].pidsExcluded,
+			otherRoster: otherRosterWithIncluded,
+			otherTid,
+			stats,
+			strategy: t.strategy,
+			summary,
+			won: t.seasonAttrs.won,
+			lost: t.seasonAttrs.lost,
+			teams: teams2,
+			tied: t.seasonAttrs.tied,
+			otl: t.seasonAttrs.otl,
+			userTeamName,
+			otherTeamsWantToHire: g.get("otherTeamsWantToHire"),
+			forceTrade: false,
+			numDraftRounds: g.get("numDraftRounds"),
+			multiTeamMode: g.get("userTids").length > 1,
+			resetMessage: updateEvents.has("undoTrade"),
+		};
+	},
+});

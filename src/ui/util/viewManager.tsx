@@ -1,11 +1,10 @@
-import type { UpdateEvents } from "../../common/types.ts";
+import type { UpdateEvent, UpdateEvents } from "../../common/types.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { type Context, makeRegex, router } from "../router/index.ts";
+import { type Context, router } from "../router/index.ts";
 import { local, localActions } from "./local.ts";
 import { realtimeUpdate } from "./realtimeUpdate.ts";
 import { toWorker } from "./toWorker.ts";
 import { create } from "zustand";
-import { routeInfos } from "./routeInfos.ts";
 
 /**
  * Things that might be nice, to improve this:
@@ -13,7 +12,6 @@ import { routeInfos } from "./routeInfos.ts";
  * - remove tight coupling with router
  * - automatically push updateEvents to other tabs, if there are any updateEvents
  * - good way to handle navigation+updateEvents, where navigation is only one tab but updateEvents go to other tabs
- * - if this is a refresh, check if an exact same refresh is in queue already. if so, discard
  * - tests
  */
 
@@ -23,10 +21,6 @@ type Action = {
 	replace?: boolean;
 	updateEvents: UpdateEvents;
 	raw?: Record<string, unknown>;
-};
-
-type ActionWithResolve = Action & {
-	resolve: () => void;
 };
 
 type State = {
@@ -81,146 +75,182 @@ const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
 	return <p>{errorMessage}</p>;
 };
 
+// There are two ways a page gets loaded:
+//
+// - Navigation: going to a URL, either from the router (like clicking a link) or from realtimeUpdate with a url. The latest navigation wins, and any load that started before it is discarded when it finishes.
+// - Refresh: realtimeUpdate without a url, to update the current page. If a load is already running, this just marks that another load is needed when it finishes. So any number of refreshes that happen during a load result in one more load, which handles all of their updateEvents.
 class ViewManager {
-	queue: ActionWithResolve[];
 	viewData: Record<string, unknown>;
+	viewInputs: unknown;
+	viewKeepPrevOutputKeys: string[] | undefined;
 	idLoaded: string | undefined;
-	processingAction: boolean;
-	routes: {
-		id: string;
-		regex: RegExp;
-	}[];
 
-	// When navigation to a new URL happens (can be from clicking a link in which case it goes directly to fromRouter, or from realtimeUpdate in which case it goes to fromRealtimeUpdate first and then eventually fromRouter) we want to be able to discard any in-progress load. Do that by keeping track of a symbol associated with a navigation.
-	lastNavigationSymbol: symbol;
+	// updateEvents for a page that have not been handled by a load whose result was shown yet. Every update adds its events here when it is requested, every load sends all of them, and a load whose result is shown removes the ones it sent. So if a load is discarded (because a newer navigation started), its events are still here for the next load of the same page. Otherwise the page could show stale data.
+	unhandledUpdateEvents:
+		| {
+				id: string;
+				updateEvents: Set<UpdateEvent>;
+		  }
+		| undefined;
+
+	// Incremented on every navigation. A load that finishes after a newer navigation started is discarded.
+	navigationId: number;
+
+	// navigationId of a navigation whose load is running or about to start. Refreshes wait for it to finish.
+	loadingNavigationId: number | undefined;
+
+	// True while refresh is running
+	refreshing: boolean;
+
+	// Callers of refreshes that are waiting for a load that handles their updateEvents
+	refreshResolves: (() => void)[];
 
 	constructor() {
-		this.queue = [];
 		this.viewData = {};
-		this.processingAction = false;
-		this.lastNavigationSymbol = Symbol();
+		this.navigationId = 0;
+		this.refreshing = false;
+		this.refreshResolves = [];
+	}
 
-		this.routes = [];
-		for (const [path, id] of Object.entries(routeInfos)) {
-			const { regex } = makeRegex(path);
-			this.routes.push({
+	private addUnhandledUpdateEvents(id: string, updateEvents: UpdateEvents) {
+		// Events for a different page don't matter, because going back to that page will be a firstRun
+		if (this.unhandledUpdateEvents?.id !== id) {
+			this.unhandledUpdateEvents = {
 				id,
-				regex,
-			});
+				updateEvents: new Set(updateEvents),
+			};
+		} else {
+			for (const updateEvent of updateEvents) {
+				this.unhandledUpdateEvents.updateEvents.add(updateEvent);
+			}
 		}
 	}
 
-	private clearQueue() {
-		for (const action of this.queue) {
-			action.resolve();
+	private startNavigation() {
+		this.navigationId += 1;
+		this.loadingNavigationId = this.navigationId;
+
+		// Any refreshes waiting are superseded by this navigation. Their updateEvents are still in unhandledUpdateEvents, so if this navigation is to the same page, it will handle them.
+		const refreshResolves = this.refreshResolves;
+		this.refreshResolves = [];
+		for (const resolve of refreshResolves) {
+			resolve();
 		}
-		this.queue = [];
+	}
+
+	// Called when a navigation's load is done, or when it turns out there will be no load (like if the router blocked the navigation)
+	private navigationFinished(navigationId: number) {
+		if (this.loadingNavigationId === navigationId) {
+			this.loadingNavigationId = undefined;
+		}
+
+		if (
+			this.loadingNavigationId === undefined &&
+			!this.refreshing &&
+			this.refreshResolves.length > 0
+		) {
+			void this.refresh();
+		}
 	}
 
 	async fromRouter(viewInfo: ViewInfo) {
-		// If coming from initAction, state will contain navigationSymbol, and it will have already been set to this.lastNavigationSymbol
-		if (viewInfo.context.state.navigationSymbol) {
-			if (
-				this.lastNavigationSymbol !== viewInfo.context.state.navigationSymbol
+		// If coming from fromRealtimeUpdate or refresh, state will contain navigationId
+		if (viewInfo.context.state.navigationId === undefined) {
+			// Coming only from router (like user clicked a link)
+			this.startNavigation();
+		} else if (viewInfo.context.state.navigationId !== this.navigationId) {
+			// Must have been another navigation before this one processed
+			return;
+		}
+
+		const navigationId = this.navigationId;
+		try {
+			await this.processUpdate(viewInfo, navigationId);
+		} finally {
+			this.navigationFinished(navigationId);
+		}
+	}
+
+	async fromRealtimeUpdate(action: Action) {
+		// Track these now, so they are handled by the next load of this page even if this update's own load gets discarded or never starts
+		if (this.idLoaded !== undefined) {
+			this.addUnhandledUpdateEvents(this.idLoaded, action.updateEvents);
+		}
+
+		const currentURL = window.location.pathname + window.location.search;
+		const sameURL =
+			action.url === undefined ||
+			action.url === currentURL ||
+			action.url === window.location.pathname;
+
+		// raw is passed to the page through the navigation, so that needs a navigation even for the same URL
+		if (sameURL && !action.raw) {
+			// Return a promise because sometimes we want to wait for an update to process before continuing. For example, when simming multiple games, we want to update the UI between each day.
+			const { promise, resolve } = Promise.withResolvers<void>();
+			this.refreshResolves.push(resolve);
+			if (this.loadingNavigationId === undefined && !this.refreshing) {
+				void this.refresh();
+			}
+			await promise;
+			return;
+		}
+
+		this.startNavigation();
+		const navigationId = this.navigationId;
+
+		try {
+			await router.navigate(action.url ?? currentURL, {
+				state: {
+					noTrack: action.refresh || action.replace,
+					updateEvents: action.updateEvents,
+					navigationId,
+					...action.raw,
+				},
+				refresh: action.refresh,
+
+				// Would like to make this `replace: replace || url === undefined,` so it doesn't add a history entry on refreshes, but then Safari errors "Attempt to use history.replaceState() more than 100 times per 30 seconds"
+				replace: action.replace,
+			});
+		} finally {
+			this.navigationFinished(navigationId);
+		}
+	}
+
+	// Load the current page again, handling all unhandledUpdateEvents. Any refreshes requested while that load is running are handled by one more load after it.
+	private async refresh() {
+		this.refreshing = true;
+		try {
+			while (
+				this.refreshResolves.length > 0 &&
+				this.loadingNavigationId === undefined
 			) {
-				// Must have been another navigation before this one processed
-				return;
-			}
-		} else {
-			// If coming only from router (like user clicked a link) then we set lastNavigationSymbol here and clear the queue
-			this.lastNavigationSymbol = Symbol();
-			this.clearQueue();
-		}
+				const refreshResolves = this.refreshResolves;
+				this.refreshResolves = [];
 
-		await this.processUpdate(viewInfo, this.lastNavigationSymbol);
-	}
+				await router.navigate(
+					window.location.pathname + window.location.search,
+					{
+						state: {
+							noTrack: true,
+							updateEvents: [],
+							navigationId: this.navigationId,
+						},
+						refresh: true,
+					},
+				);
 
-	fromRealtimeUpdate(action: Action) {
-		// Return a promise because sometimes we want to wait for an update to process before continuing. For example, when simming multiple games, we want to update the UI between each day.
-		return new Promise<void>((resolve) => {
-			let navigationEvent = false;
-			if (action.url) {
-				// It's a "navigation event" if it is moving to a new page, rather than just changing some parameter of a page (like abbrev or season). So we need to get the id of this url and compare it to idLoaded.
-				let id;
-				const urlToMatch = action.url.split("?")[0]!.split("#")[0]!;
-				for (const route of this.routes) {
-					const m = route.regex.exec(urlToMatch);
-
-					if (m) {
-						id = route.id;
-						break;
-					}
-				}
-
-				if (id && id !== this.idLoaded) {
-					navigationEvent = true;
+				for (const resolve of refreshResolves) {
+					resolve();
 				}
 			}
-
-			const actionWithResolve: ActionWithResolve = {
-				...action,
-				resolve,
-			};
-
-			if (navigationEvent) {
-				this.lastNavigationSymbol = Symbol();
-				this.clearQueue();
-				this.initAction(actionWithResolve);
-			} else if (this.queue.length === 0 && !this.processingAction) {
-				this.initAction(actionWithResolve);
-			} else {
-				this.queue.push(actionWithResolve);
-			}
-		});
-	}
-
-	async initAction({
-		url,
-		refresh,
-		replace,
-		resolve,
-		updateEvents,
-		raw,
-	}: ActionWithResolve) {
-		this.processingAction = true;
-
-		const state: any = {
-			noTrack: refresh || replace,
-			updateEvents,
-			navigationSymbol: this.lastNavigationSymbol,
-			...raw,
-		};
-
-		const actualURL = url ?? window.location.pathname + window.location.search;
-
-		const success = await router.navigate(actualURL, {
-			state,
-			refresh,
-
-			// Would like to make this `replace: replace || url === undefined,` so it doesn't add a history entry on refreshes, but then Safari errors "Attempt to use history.replaceState() more than 100 times per 30 seconds"
-			replace,
-		});
-
-		if (!success) {
-			this.processingAction = false;
-		}
-
-		// router.navigate runs fromRouter, which waits until the content is displayed, so we can resolve the action here
-		resolve();
-	}
-
-	initNextAction() {
-		this.processingAction = false;
-
-		const nextAction = this.queue.shift();
-		if (nextAction) {
-			this.initAction(nextAction);
+		} finally {
+			this.refreshing = false;
 		}
 	}
 
 	async processUpdate(
 		{ Component, context, id, inLeague }: ViewInfo,
-		navigationSymbol: symbol,
+		navigationId: number,
 	) {
 		actions.startLoading(id);
 
@@ -234,7 +264,11 @@ class ViewManager {
 			}
 		}
 
-		let prevData;
+		let prevData: Record<string, unknown>;
+		let prevInputs;
+
+		// Worker views say which properties of their previous data they need, to avoid sending everything back every time
+		let keepPrevOutputKeys: string[] | undefined;
 		if (this.idLoaded !== id) {
 			// This is the initial load of a page, so reset viewData and add firstRun update event
 			if (!updateEvents.includes("firstRun")) {
@@ -245,7 +279,17 @@ class ViewManager {
 			prevData = {
 				...this.viewData,
 			};
+			prevInputs = this.viewInputs;
+			keepPrevOutputKeys = this.viewKeepPrevOutputKeys;
 		}
+
+		// Also include any events from previous loads of this page that were never shown
+		this.addUnhandledUpdateEvents(id, updateEvents);
+
+		// Copy, because unhandledUpdateEvents can change before this load finishes
+		const updateEventsToSend = new Set(
+			this.unhandledUpdateEvents!.updateEvents,
+		);
 
 		const lidCurrent = local.getState().lid;
 
@@ -262,36 +306,39 @@ class ViewManager {
 			});
 		}
 
-		if (navigationSymbol !== this.lastNavigationSymbol) {
-			this.initNextAction();
+		if (navigationId !== this.navigationId) {
 			return;
 		}
 
 		// ctxBBGM is hacky!
 		const ctxBBGM = { ...context.state };
 		delete ctxBBGM.err; // Can't send Error to worker
-		delete ctxBBGM.navigationSymbol; // Can't send Symbol to worker
 
 		// Resolve all the promises before updating the UI to minimize flicker
-		const results = await toWorker("main", "runBefore", {
+		const resultsAndInputs = await toWorker("main", "runBefore", {
 			viewId: id,
 			params: context.params,
 			ctxBBGM,
-			updateEvents,
-			prevData,
+			updateEvents: updateEventsToSend,
+			prevOutput: Object.fromEntries(
+				(keepPrevOutputKeys ?? [])
+					.filter((key) => Object.hasOwn(prevData, key))
+					.map((key) => [key, prevData[key]]),
+			),
+			prevInputs,
 		});
 
-		if (navigationSymbol !== this.lastNavigationSymbol) {
-			this.initNextAction();
+		if (navigationId !== this.navigationId) {
 			return;
 		}
 
 		// If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
-		if (results === undefined) {
+		if (resultsAndInputs?.data === undefined) {
 			actions.doneLoading(id);
-			this.initNextAction();
 			return;
 		}
+
+		const results = resultsAndInputs?.data;
 
 		// If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack. THIS MAY NO LONGER BE TRUE AFTER CONSOLIDATING RUNBEFORE INTO A SINGLE FUNCTION, ideally the worker/views function could then handle conflicts itself. But currently the only ones returning errorMessage have just one function so it's either all or nothing.
 		if (results && Object.keys(results).length > 0) {
@@ -325,24 +372,21 @@ class ViewManager {
 				}, 0);
 			});
 
-			realtimeUpdate(
-				[],
-				vars.data.redirectUrl,
-				{
-					backendRedirect: true,
-				},
-				true,
-			);
+			realtimeUpdate([], vars.data.redirectUrl, undefined, true);
 
-			this.initNextAction();
 			return;
 		}
 
 		actions.reset(vars);
 		this.idLoaded = id;
 		this.viewData = vars.data;
-
-		this.initNextAction();
+		this.viewInputs = resultsAndInputs.inputs;
+		this.viewKeepPrevOutputKeys = resultsAndInputs.keepPrevOutputKeys;
+		if (this.unhandledUpdateEvents?.id === id) {
+			for (const updateEvent of updateEventsToSend) {
+				this.unhandledUpdateEvents.updateEvents.delete(updateEvent);
+			}
+		}
 	}
 }
 

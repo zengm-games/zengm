@@ -1,9 +1,18 @@
-import type { ViewInput } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
 
-const updateToken = (inputs: ViewInput<"resetPassword">) => {
+const processInputs = (params: RouteParams<"resetPassword">) => {
 	return {
-		token: inputs.token,
+		token: params.token,
 	};
 };
 
-export default updateToken;
+export default defineView({
+	id: "resetPassword",
+	processInputs,
+	load: ({ inputs }) => {
+		return {
+			token: inputs.token,
+		};
+	},
+});

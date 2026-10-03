@@ -35,10 +35,9 @@ type ParamsForView<R extends Record<string, string>, V extends R[keyof R]> =
 
 type RouteInfos = typeof routeInfos;
 
-export type RouteParams<V extends RouteInfos[keyof RouteInfos]> = ParamsForView<
-	RouteInfos,
-	V
->;
+export type ViewId = RouteInfos[keyof RouteInfos];
+
+export type RouteParams<V extends ViewId> = ParamsForView<RouteInfos, V>;
 
 type PathWildcard = string | number;
 

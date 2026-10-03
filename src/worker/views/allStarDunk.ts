@@ -1,14 +1,12 @@
 import { allStar } from "../core/index.ts";
-import type {
-	DunkAttempt,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { DunkAttempt } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { PHASE } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
 const getShortTall = (pids: [number, number]) => {
 	if (!pids) {
@@ -29,197 +27,195 @@ const getShortTall = (pids: [number, number]) => {
 	);
 };
 
-const updateAllStarDunk = async (
-	{ season }: ViewInput<"allStarDunk">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (__SPORT !== "basketball") {
-		throw new Error("Not implemented");
-	}
+export default defineView({
+	id: "allStarDunk",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
+		if (__SPORT !== "basketball") {
+			throw new Error("Not implemented");
+		}
 
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameAttributes") ||
-		updateEvents.includes("allStarDunk") ||
-		season !== state.season
-	) {
-		const allStars = await allStar.getOrCreate(season);
-		const dunk = allStars?.dunk;
-		if (dunk === undefined) {
-			if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
-				return {
-					redirectUrl: helpers.leagueUrl(["all_star", "dunk", season - 1]),
+		if (
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameAttributes") ||
+			updateEvents.has("allStarDunk") ||
+			season !== prevInputs?.season
+		) {
+			const allStars = await allStar.getOrCreate(season);
+			const dunk = allStars?.dunk;
+			if (dunk === undefined) {
+				if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
+					return {
+						redirectUrl: helpers.leagueUrl(["all_star", "dunk", season - 1]),
+					};
+				}
+
+				// https://stackoverflow.com/a/59923262/786644
+				const returnValue = {
+					errorMessage: "Dunk contest not found",
 				};
+				return returnValue;
 			}
 
-			// https://stackoverflow.com/a/59923262/786644
-			const returnValue = {
-				errorMessage: "Dunk contest not found",
+			const playersRaw = await idb.getCopies.players(
+				{
+					pids: dunk.players.map((p) => p.pid),
+				},
+				"noCopyCache",
+			);
+
+			const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"age",
+					"watch",
+					"face",
+					"imgURL",
+					"hgt",
+					"weight",
+					"awards",
+				],
+				ratings: ["ovr", "pot", "dnk", "jmp", "pos"],
+				stats: ["gp", "pts", "trb", "ast", "jerseyNumber"],
+				season,
+				fuzz: true,
+				mergeStats: "totOnly",
+				showNoStats: true,
+			});
+
+			// Team info from the team the player was on during the contest
+			const players = await Promise.all(
+				playersFiltered.map(async (p) => {
+					const info = dunk.players.find((info) => info.pid === p.pid);
+					const ts = info
+						? await getTeamInfoBySeason(info.tid, season)
+						: undefined;
+					return {
+						...p,
+						colors: ts?.colors,
+						jersey: ts?.jersey,
+						abbrev: ts?.abbrev,
+					};
+				}),
+			);
+
+			const resultsByRound = dunk.rounds.map((round) =>
+				orderBy(allStar.dunkContest.getRoundResults(round), "index", "asc"),
+			);
+
+			const log: (
+				| {
+						type: "round";
+						num: number;
+				  }
+				| {
+						type: "tiebreaker";
+				  }
+				| {
+						type: "attempt";
+						player: number;
+						num?: number; // Not needed in tiebreaker
+						try: number;
+						dunk: DunkAttempt;
+						made: boolean;
+				  }
+				| {
+						type: "score";
+						player: number;
+						made: boolean;
+						score: number;
+				  }
+			)[] = [];
+			for (const round of dunk.rounds) {
+				if (round === dunk.rounds[0]) {
+					log.push({
+						type: "round",
+						num: 1,
+					});
+				} else if (round.tiebreaker) {
+					log.push({
+						type: "tiebreaker",
+					});
+				} else {
+					log.push({
+						type: "round",
+						num: 2,
+					});
+				}
+
+				const seenDunkers = new Set<number>();
+				for (const { attempts, index, made, score } of round.dunks) {
+					let num: number | undefined;
+					if (!round.tiebreaker) {
+						num = seenDunkers.has(index) ? 2 : 1;
+						seenDunkers.add(index);
+					}
+
+					for (const [i, attempt] of attempts.entries()) {
+						log.push({
+							type: "attempt",
+							player: index,
+							num,
+							try: i + 1,
+							dunk: attempt,
+							made: attempt === attempts.at(-1) && made,
+						});
+					}
+
+					if (score !== undefined) {
+						log.push({
+							type: "score",
+							player: index,
+							made,
+							score,
+						});
+					}
+				}
+			}
+
+			const godMode = g.get("godMode");
+
+			const started = log.length > 1;
+
+			let allPossibleContestants: {
+				pid: number;
+				tid: number;
+				name: string;
+				abbrev: string;
+			}[] = [];
+			if (godMode && !started) {
+				allPossibleContestants = orderBy(
+					await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
+					["lastName", "firstName"],
+				).map((p) => ({
+					pid: p.pid,
+					tid: p.tid,
+					name: `${p.firstName} ${p.lastName}`,
+					abbrev: helpers.getAbbrev(p.tid),
+				}));
+			}
+
+			const awaitingUserDunkIndex =
+				allStar.dunkContest.getAwaitingUserDunkIndex(dunk);
+
+			const dunkAugmented = {
+				...dunk,
+				playersShort: await getShortTall(dunk.pidsShort),
+				playersTall: await getShortTall(dunk.pidsTall),
 			};
-			return returnValue;
+
+			return {
+				allPossibleContestants,
+				awaitingUserDunkIndex,
+				dunk: dunkAugmented,
+				log,
+				players,
+				resultsByRound,
+				season,
+				started,
+			};
 		}
-
-		const playersRaw = await idb.getCopies.players(
-			{
-				pids: dunk.players.map((p) => p.pid),
-			},
-			"noCopyCache",
-		);
-
-		const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: [
-				"pid",
-				"firstName",
-				"lastName",
-				"age",
-				"watch",
-				"face",
-				"imgURL",
-				"hgt",
-				"weight",
-				"awards",
-			],
-			ratings: ["ovr", "pot", "dnk", "jmp", "pos"],
-			stats: ["gp", "pts", "trb", "ast", "jerseyNumber"],
-			season,
-			fuzz: true,
-			mergeStats: "totOnly",
-			showNoStats: true,
-		});
-
-		// Team info from the team the player was on during the contest
-		const players = await Promise.all(
-			playersFiltered.map(async (p) => {
-				const info = dunk.players.find((info) => info.pid === p.pid);
-				const ts = info
-					? await getTeamInfoBySeason(info.tid, season)
-					: undefined;
-				return {
-					...p,
-					colors: ts?.colors,
-					jersey: ts?.jersey,
-					abbrev: ts?.abbrev,
-				};
-			}),
-		);
-
-		const resultsByRound = dunk.rounds.map((round) =>
-			orderBy(allStar.dunkContest.getRoundResults(round), "index", "asc"),
-		);
-
-		const log: (
-			| {
-					type: "round";
-					num: number;
-			  }
-			| {
-					type: "tiebreaker";
-			  }
-			| {
-					type: "attempt";
-					player: number;
-					num?: number; // Not needed in tiebreaker
-					try: number;
-					dunk: DunkAttempt;
-					made: boolean;
-			  }
-			| {
-					type: "score";
-					player: number;
-					made: boolean;
-					score: number;
-			  }
-		)[] = [];
-		for (const round of dunk.rounds) {
-			if (round === dunk.rounds[0]) {
-				log.push({
-					type: "round",
-					num: 1,
-				});
-			} else if (round.tiebreaker) {
-				log.push({
-					type: "tiebreaker",
-				});
-			} else {
-				log.push({
-					type: "round",
-					num: 2,
-				});
-			}
-
-			const seenDunkers = new Set<number>();
-			for (const { attempts, index, made, score } of round.dunks) {
-				let num: number | undefined;
-				if (!round.tiebreaker) {
-					num = seenDunkers.has(index) ? 2 : 1;
-					seenDunkers.add(index);
-				}
-
-				for (const [i, attempt] of attempts.entries()) {
-					log.push({
-						type: "attempt",
-						player: index,
-						num,
-						try: i + 1,
-						dunk: attempt,
-						made: attempt === attempts.at(-1) && made,
-					});
-				}
-
-				if (score !== undefined) {
-					log.push({
-						type: "score",
-						player: index,
-						made,
-						score,
-					});
-				}
-			}
-		}
-
-		const godMode = g.get("godMode");
-
-		const started = log.length > 1;
-
-		let allPossibleContestants: {
-			pid: number;
-			tid: number;
-			name: string;
-			abbrev: string;
-		}[] = [];
-		if (godMode && !started) {
-			allPossibleContestants = orderBy(
-				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
-				["lastName", "firstName"],
-			).map((p) => ({
-				pid: p.pid,
-				tid: p.tid,
-				name: `${p.firstName} ${p.lastName}`,
-				abbrev: helpers.getAbbrev(p.tid),
-			}));
-		}
-
-		const awaitingUserDunkIndex =
-			allStar.dunkContest.getAwaitingUserDunkIndex(dunk);
-
-		const dunkAugmented = {
-			...dunk,
-			playersShort: await getShortTall(dunk.pidsShort),
-			playersTall: await getShortTall(dunk.pidsTall),
-		};
-
-		return {
-			allPossibleContestants,
-			awaitingUserDunkIndex,
-			dunk: dunkAugmented,
-			log,
-			players,
-			resultsByRound,
-			season,
-			started,
-		};
-	}
-};
-
-export default updateAllStarDunk;
+	},
+});

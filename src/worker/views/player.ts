@@ -16,9 +16,8 @@ import type {
 	PlayerAwardBuiltIn,
 	PlayerStatAttr,
 	PlayerAwardSimple,
-	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import { defineView, keepType } from "../util/defineView.ts";
 import { orderBy } from "../../common/utils.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import { upgradeFace } from "../util/face.ts";
@@ -28,6 +27,15 @@ import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { getGroupPrefix } from "../core/awards/prefixes.ts";
 import type { LeagueUrlParts } from "../../ui/router/types.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+export const processInputs = (
+	params: RouteParams<"player"> | RouteParams<"relatives">,
+) => {
+	return {
+		pid: params.pid !== undefined ? Number.parseInt(params.pid) : undefined,
+	};
+};
 
 export const getPlayerProfileStats = () => {
 	const stats = new Set<PlayerStatAttr>();
@@ -460,7 +468,7 @@ export const getCommon = async (
 		customMenu,
 		jerseyNumberInfos,
 		pRaw,
-		pid, // Needed for state.pid check
+		pid,
 		player: p,
 		randomDebutsForeverPids,
 		retired,
@@ -474,90 +482,94 @@ export const getCommon = async (
 	};
 };
 
-const updatePlayer = async (
-	inputs: ViewInput<"player">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		!state.retired ||
-		state.pid !== inputs.pid
-	) {
-		const topStuff = await getCommon(inputs.pid, undefined, "player");
-
-		if (topStuff.type === "error") {
-			// https://stackoverflow.com/a/59923262/786644
-			const returnValue = {
-				errorMessage: topStuff.errorMessage,
-			};
-			return returnValue;
-		}
-
-		const p = topStuff.player;
-
-		const eventsAll = orderBy(
-			[
-				...(await idb.getCopies.events(
-					{
-						pid: topStuff.pid,
-					},
-					"noCopyCache",
-				)),
-				...(p.draft.dpid !== undefined
-					? await idb.getCopies.events(
-							{
-								dpid: p.draft.dpid,
-							},
-							"noCopyCache",
-						)
-					: []),
-			],
-			"eid",
-			"asc",
-		);
-		const feats = eventsAll
-			.filter((event) => event.type === "playerFeat")
-			.map((event) => {
-				return {
-					eid: event.eid,
-					season: event.season,
-					text: helpers.correctLinkLid(g.get("lid"), event.text as any),
-				};
-			});
-		const eventsFiltered = eventsAll.filter((event) => {
-			// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
-			return !(
-				event.type === "award" ||
-				event.type === "injured" ||
-				event.type === "healed" ||
-				event.type === "hallOfFame" ||
-				event.type === "playerFeat" ||
-				event.type === "tragedy" ||
-				event.type === undefined
-			);
-		});
-
-		const events = [];
-		for (const event of eventsFiltered) {
-			events.push({
-				eid: event.eid,
-				text: await formatEventText(event),
-				season: event.season,
-			});
-		}
-
-		const leaders = await player.getLeaders(topStuff.pRaw);
-
-		return {
-			...topStuff,
-			events,
-			feats,
-			leaders,
-			ratings: RATINGS,
-		};
-	}
+// Retired players don't change, so no need to update them except on playerMovement
+const keepPrevOutput = {
+	retired: keepType<boolean>(),
 };
 
-export default updatePlayer;
+export default defineView({
+	id: "player",
+	processInputs,
+	keepPrevOutput,
+	load: async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			!prevOutput.retired ||
+			prevInputs?.pid !== inputs.pid
+		) {
+			const topStuff = await getCommon(inputs.pid, undefined, "player");
+
+			if (topStuff.type === "error") {
+				// https://stackoverflow.com/a/59923262/786644
+				const returnValue = {
+					errorMessage: topStuff.errorMessage,
+				};
+				return returnValue;
+			}
+
+			const p = topStuff.player;
+
+			const eventsAll = orderBy(
+				[
+					...(await idb.getCopies.events(
+						{
+							pid: topStuff.pid,
+						},
+						"noCopyCache",
+					)),
+					...(p.draft.dpid !== undefined
+						? await idb.getCopies.events(
+								{
+									dpid: p.draft.dpid,
+								},
+								"noCopyCache",
+							)
+						: []),
+				],
+				"eid",
+				"asc",
+			);
+			const feats = eventsAll
+				.filter((event) => event.type === "playerFeat")
+				.map((event) => {
+					return {
+						eid: event.eid,
+						season: event.season,
+						text: helpers.correctLinkLid(g.get("lid"), event.text as any),
+					};
+				});
+			const eventsFiltered = eventsAll.filter((event) => {
+				// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
+				return !(
+					event.type === "award" ||
+					event.type === "injured" ||
+					event.type === "healed" ||
+					event.type === "hallOfFame" ||
+					event.type === "playerFeat" ||
+					event.type === "tragedy" ||
+					event.type === undefined
+				);
+			});
+
+			const events = [];
+			for (const event of eventsFiltered) {
+				events.push({
+					eid: event.eid,
+					text: await formatEventText(event),
+					season: event.season,
+				});
+			}
+
+			const leaders = await player.getLeaders(topStuff.pRaw);
+
+			return {
+				...topStuff,
+				events,
+				feats,
+				leaders,
+				ratings: RATINGS,
+			};
+		}
+	},
+});

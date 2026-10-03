@@ -1,5 +1,5 @@
 import { assert, beforeAll, describe, test } from "vitest";
-import { g, helpers } from "../util/index.ts";
+import { g, helpers } from "./index.ts";
 import { validateAbbrev, validateSeason } from "./processInputs.ts";
 
 beforeAll(() => {

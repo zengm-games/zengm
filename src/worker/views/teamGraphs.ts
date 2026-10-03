@@ -6,16 +6,37 @@ import {
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	TeamFiltered,
-	TeamSeasonAttr,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { TeamFiltered, TeamSeasonAttr } from "../../common/types.ts";
+import { defineView, type ViewArgs } from "../util/defineView.ts";
 import type { TeamStatAttr } from "../../common/types.baseball.ts";
 import { season } from "../core/index.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 import { choice } from "../../common/random.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"teamGraphs">) => {
+	const playoffsX =
+		params.playoffsX === "playoffs" ? "playoffs" : "regularSeason";
+	const playoffsY =
+		params.playoffsY === "playoffs" ? "playoffs" : "regularSeason";
+
+	const seasonX = validateSeason(params.seasonX);
+	const seasonY = validateSeason(params.seasonY);
+
+	return {
+		seasonX,
+		seasonY,
+		playoffsX: playoffsX as "playoffs" | "regularSeason",
+		playoffsY: playoffsY as "playoffs" | "regularSeason",
+
+		// Defaults to random stat if undefined
+		statTypeX: params.statTypeX,
+		statTypeY: params.statTypeY,
+		statX: params.statX,
+		statY: params.statY,
+	};
+};
 
 export const statTypes = [
 	"standings",
@@ -242,22 +263,19 @@ const getTeamStats = async (
 
 const updateTeams = async (
 	axis: "X" | "Y",
-	inputs: ViewInput<"teamGraphs">,
-	updateEvents: UpdateEvents,
-	state: any,
+	{ inputs, updateEvents, prevInputs }: ViewArgs<typeof processInputs>,
 ) => {
 	const season = `season${axis}` as const;
 	const statType = `statType${axis}` as const;
 	const playoffs = `playoffs${axis}` as const;
 	if (
-		updateEvents.includes("firstRun") ||
+		updateEvents.has("firstRun") ||
 		(inputs[season] === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("playerMovement"))) ||
+			(updateEvents.has("gameSim") || updateEvents.has("playerMovement"))) ||
 		// Purposely skip checking statX, statY - those are only used client side, they in the URL for usability
-		inputs[season] !== state[season] ||
-		inputs[statType] !== state[statType] ||
-		inputs[playoffs] !== state[playoffs]
+		inputs[season] !== prevInputs?.[season] ||
+		inputs[statType] !== prevInputs?.[statType] ||
+		inputs[playoffs] !== prevInputs?.[playoffs]
 	) {
 		const statForAxis = await getTeamStats(
 			inputs[statType],
@@ -293,12 +311,14 @@ type Team = TeamFiltered<
 >;
 
 const updateClientSide = (
-	inputs: ViewInput<"teamGraphs">,
-	state: any,
+	{ inputs, prevInputs }: ViewArgs<typeof processInputs>,
 	x: Awaited<ReturnType<typeof updateTeams>>,
 	y: Awaited<ReturnType<typeof updateTeams>>,
 ) => {
-	if (inputs.statX !== state.statX || inputs.statY !== state.statY) {
+	if (
+		inputs.statX !== prevInputs?.statX ||
+		inputs.statY !== prevInputs?.statY
+	) {
 		// Check x and y for statX and statY in case they were already specified there, such as randomly selecting from statForAxis
 		return {
 			statX: x?.statX ?? inputs.statX,
@@ -321,13 +341,13 @@ const updateClientSide = (
 	}
 };
 
-export default async (
-	inputs: ViewInput<"teamGraphs">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	const x = await updateTeams("X", inputs, updateEvents, state);
-	const y = await updateTeams("Y", inputs, updateEvents, state);
+export default defineView({
+	id: "teamGraphs",
+	processInputs,
+	load: async (args) => {
+		const x = await updateTeams("X", args);
+		const y = await updateTeams("Y", args);
 
-	return Object.assign({}, x, y, updateClientSide(inputs, state, x, y));
-};
+		return Object.assign({}, x, y, updateClientSide(args, x, y));
+	},
+});

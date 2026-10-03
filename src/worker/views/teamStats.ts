@@ -1,14 +1,31 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	TeamStatAttr,
-	TeamSeasonAttr,
-} from "../../common/types.ts";
+import type { TeamStatAttr, TeamSeasonAttr } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { TEAM_STATS_TABLES } from "../../common/constants.ts";
 import { season, team } from "../core/index.ts";
 import { lowerIsBetter } from "../../common/lowerIsBetter.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { bySport } from "../../common/sportFunctions.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"teamStats">) => {
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	const defaultStatType = bySport({
+		baseball: "batting",
+		basketball: "team",
+		football: "summary",
+		hockey: "team",
+	});
+
+	return {
+		season: validateSeason(params.season),
+		teamOpponent: params.teamOpponent ?? defaultStatType,
+		playoffs,
+	};
+};
 
 export const getStats = async ({
 	season,
@@ -246,129 +263,126 @@ export const averageTeamStats = (
 	};
 };
 
-const updateTeams = async (
-	inputs: ViewInput<"teamStats">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("playerMovement"))) ||
-		inputs.playoffs !== state.playoffs ||
-		inputs.season !== state.season ||
-		inputs.teamOpponent !== state.teamOpponent
-	) {
-		const statsTable = TEAM_STATS_TABLES[inputs.teamOpponent];
+export default defineView({
+	id: "teamStats",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			(inputs.season === g.get("season") &&
+				(updateEvents.has("gameSim") || updateEvents.has("playerMovement"))) ||
+			inputs.playoffs !== prevInputs?.playoffs ||
+			inputs.season !== prevInputs?.season ||
+			inputs.teamOpponent !== prevInputs?.teamOpponent
+		) {
+			const statsTable = TEAM_STATS_TABLES[inputs.teamOpponent];
 
-		if (!statsTable) {
-			throw new Error(`Invalid statType: "${inputs.teamOpponent}"`);
-		}
-
-		const pointsFormula = g.get("pointsFormula", inputs.season);
-		const usePts = pointsFormula !== "";
-
-		const { seasonAttrs, stats, teams } = await getStats({
-			season: inputs.season,
-			playoffs: inputs.playoffs === "playoffs",
-			statsTable,
-			usePts,
-		});
-
-		let ties = season.hasTies(inputs.season);
-		let otl = g.get("otl", inputs.season);
-		for (const t of teams) {
-			if (t.seasonAttrs.tied > 0) {
-				ties = true;
+			if (!statsTable) {
+				throw new Error(`Invalid statType: "${inputs.teamOpponent}"`);
 			}
-			if (t.seasonAttrs.otl > 0) {
-				otl = true;
-			}
-			if (ties && otl) {
-				break;
-			}
-		}
 
-		// Sort stats so we can determine what percentile our team is in.
-		const allStats: Record<string, number[]> = {};
-		let statTypes: string[] = seasonAttrs.slice();
+			const pointsFormula = g.get("pointsFormula", inputs.season);
+			const usePts = pointsFormula !== "";
 
-		for (const table of Object.values(TEAM_STATS_TABLES)) {
-			statTypes = statTypes.concat(table.stats);
-		}
-		statTypes = Array.from(new Set(statTypes));
+			const { seasonAttrs, stats, teams } = await getStats({
+				season: inputs.season,
+				playoffs: inputs.playoffs === "playoffs",
+				statsTable,
+				usePts,
+			});
 
-		for (const t of teams) {
-			for (const statType of statTypes) {
-				const value = Object.hasOwn(t.stats, statType)
-					? (t.stats as any)[statType]
-					: (t.seasonAttrs as any)[statType];
-
-				if (value === undefined) {
-					continue;
+			let ties = season.hasTies(inputs.season);
+			let otl = g.get("otl", inputs.season);
+			for (const t of teams) {
+				if (t.seasonAttrs.tied > 0) {
+					ties = true;
 				}
-
-				// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-				if (!allStats[statType]) {
-					allStats[statType] = [value];
-				} else {
-					allStats[statType].push(value);
+				if (t.seasonAttrs.otl > 0) {
+					otl = true;
+				}
+				if (ties && otl) {
+					break;
 				}
 			}
-		}
 
-		// Sort stat types. "Better" values are at the start of the arrays.
-		for (const [statType, allStatsOfType] of Object.entries(allStats)) {
-			allStatsOfType.sort((a, b) => {
-				// Sort lowest first.
-				if (lowerIsBetter.has(statType)) {
-					if (a < b) {
-						return -1;
+			// Sort stats so we can determine what percentile our team is in.
+			const allStats: Record<string, number[]> = {};
+			let statTypes: string[] = seasonAttrs.slice();
+
+			for (const table of Object.values(TEAM_STATS_TABLES)) {
+				statTypes = statTypes.concat(table.stats);
+			}
+			statTypes = Array.from(new Set(statTypes));
+
+			for (const t of teams) {
+				for (const statType of statTypes) {
+					const value = Object.hasOwn(t.stats, statType)
+						? (t.stats as any)[statType]
+						: (t.seasonAttrs as any)[statType];
+
+					if (value === undefined) {
+						continue;
 					}
 
-					if (a > b) {
+					// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+					if (!allStats[statType]) {
+						allStats[statType] = [value];
+					} else {
+						allStats[statType].push(value);
+					}
+				}
+			}
+
+			// Sort stat types. "Better" values are at the start of the arrays.
+			for (const [statType, allStatsOfType] of Object.entries(allStats)) {
+				allStatsOfType.sort((a, b) => {
+					// Sort lowest first.
+					if (lowerIsBetter.has(statType)) {
+						if (a < b) {
+							return -1;
+						}
+
+						if (a > b) {
+							return 1;
+						}
+
+						return 0;
+					}
+
+					// Sort highest first.
+					if (a < b) {
 						return 1;
 					}
 
+					if (a > b) {
+						return -1;
+					}
+
 					return 0;
-				}
+				});
+			}
 
-				// Sort highest first.
-				if (a < b) {
-					return 1;
-				}
+			const { row: averages } = averageTeamStats(
+				{ seasonAttrs, stats, teams },
+				{
+					otl,
+					ties,
+				},
+			);
 
-				if (a > b) {
-					return -1;
-				}
-
-				return 0;
-			});
-		}
-
-		const { row: averages } = averageTeamStats(
-			{ seasonAttrs, stats, teams },
-			{
-				otl,
+			return {
+				allStats,
+				averages,
+				playoffs: inputs.playoffs,
+				season: inputs.season,
+				stats,
+				superCols: statsTable.superCols,
+				teamOpponent: inputs.teamOpponent,
+				teams,
 				ties,
-			},
-		);
-
-		return {
-			allStats,
-			averages,
-			playoffs: inputs.playoffs,
-			season: inputs.season,
-			stats,
-			superCols: statsTable.superCols,
-			teamOpponent: inputs.teamOpponent,
-			teams,
-			ties,
-			otl,
-			usePts,
-		};
-	}
-};
-
-export default updateTeams;
+				otl,
+				usePts,
+			};
+		}
+	},
+});

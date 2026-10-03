@@ -1,29 +1,27 @@
-import type { UpdateEvents } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateMultiTeamMode = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameAttributes") ||
-		updateEvents.includes("newPhase")
-	) {
-		const teamsAll = await idb.cache.teams.getAll();
+export default defineView({
+	id: "multiTeamMode",
+	load: async ({ updateEvents }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameAttributes") ||
+			updateEvents.has("newPhase")
+		) {
+			const teamsAll = await idb.cache.teams.getAll();
 
-		const teams = teamsAll
-			.filter((t) => !t.disabled)
-			.map((t) => ({
-				tid: t.tid,
-				region: t.region,
-				name: t.name,
-			}));
+			const teams = teamsAll
+				.filter((t) => !t.disabled)
+				.map((t) => ({
+					tid: t.tid,
+					region: t.region,
+					name: t.name,
+				}));
 
-		return {
-			teams,
-		};
-	}
-};
-
-export default updateMultiTeamMode;
+			return {
+				teams,
+			};
+		}
+	},
+});

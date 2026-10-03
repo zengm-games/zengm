@@ -1,7 +1,6 @@
 import * as z from "zod";
 import type { FaceConfig } from "facesjs";
 import type { ReactNode } from "react";
-import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
 
 import {
@@ -73,15 +72,10 @@ type ViewsKeys = keyof typeof views;
 export type View<Name extends ViewsKeys> = Exclude<
 	Awaited<
 		Name extends ViewsKeys
-			? ReturnType<(typeof views)[Name]>
+			? ReturnType<(typeof views)[Name]["load"]>
 			: Record<string, unknown>
 	>,
 	void | { redirectUrl: string } | { errorMessage: string }
->;
-
-export type ViewInput<T extends keyof typeof processInputs> = Exclude<
-	ReturnType<(typeof processInputs)[T]>,
-	{ redirectUrl: string }
 >;
 
 export type AchievementWhen =
@@ -2305,7 +2299,7 @@ export type Trade = {
 	teams: TradeTeams;
 };
 
-export type UpdateEvents = (
+export type UpdateEvent =
 	| "account"
 	| "allStarDunk"
 	| "allStarThree"
@@ -2330,8 +2324,9 @@ export type UpdateEvents = (
 	| "undoTrade"
 
 	// This should be used for things that do stuff like "select all players on watch list", not updating the watch property for individual players. crossTabEmit handles that automatically.
-	| "watchList"
-)[];
+	| "watchList";
+
+export type UpdateEvents = UpdateEvent[];
 
 export const realPlayerPhotosSchema = z.record(z.string(), z.string());
 export type RealPlayerPhotos = z.infer<typeof realPlayerPhotosSchema>;

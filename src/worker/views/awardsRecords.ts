@@ -1,9 +1,6 @@
 import { idb } from "../db/index.ts";
-import type {
-	PlayerAward,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts"; // Keep in sync with Dropdown.js
+import type { PlayerAward } from "../../common/types.ts"; // Keep in sync with Dropdown.js
+import { defineView, keepType } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { countBy, maxBy, range } from "../../common/utils.ts";
@@ -12,6 +9,13 @@ import {
 	formatPlayerAwardName,
 	leaderAwardCategories,
 } from "../../common/awards.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"awardsRecords">) => {
+	return {
+		awardType: params.awardType ?? "champion",
+	};
+};
 
 // Sync with useDropdownOptions
 const nonCustomAwardsList = [
@@ -160,116 +164,124 @@ type AwardType = {
 	shortName: string;
 };
 
-const updateAwardsRecords = async (
-	inputs: ViewInput<"awardsRecords">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	let awardTypes: AwardType[];
-	if (!state.awardTypes) {
-		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
-		awards.reverse();
-		awardTypes = [];
-
-		// Number contains the number of teams
-		const seenAwardTypes = new Map<string, AwardType>();
-
-		for (const row of awards) {
-			for (const award of row.awards) {
-				const info = seenAwardTypes.get(award.shortName);
-				if (!info) {
-					const newInfo: AwardType = {
-						name: award.name,
-						shortName: award.shortName,
-					};
-					if (award.numTeams !== undefined) {
-						newInfo.maxNumTeams = award.numTeams;
-					}
-					seenAwardTypes.set(award.shortName, newInfo);
-					awardTypes.push(newInfo);
-				} else if (
-					award.numTeams !== undefined &&
-					(info.maxNumTeams === undefined || award.numTeams > info.maxNumTeams)
-				) {
-					info.maxNumTeams = award.numTeams;
-				}
-			}
-		}
-	} else {
-		awardTypes = state.awardTypes;
-	}
-
-	if (
-		updateEvents.includes("firstRun") ||
-		inputs.awardType !== state.awardType
-	) {
-		const playersAll = await idb.getCopies.players(
-			{
-				activeAndRetired: true,
-				filter: (p) => p.awards.length > 0,
-			},
-			"noCopyCache",
-		);
-		const players: LocalPlayer[] = await idb.getCopies.playersPlus(playersAll, {
-			attrs: [
-				"awards",
-				"firstName",
-				"lastName",
-				"pid",
-				"retiredYear",
-				"hof",
-				"draft",
-			],
-			ratings: ["pos", "season"],
-			stats: ["abbrev", "season"],
-		});
-		const awardType = inputs.awardType;
-
-		const awardsRecords = addFirstNameShort(
-			players
-				.map((p) => getPlayerAwards(p, awardType))
-				.filter((p) => p !== undefined),
-		);
-
-		const awardTypeOptions: DropdownOption[] = [
-			...awardTypes.flatMap((row) => {
-				if (row.maxNumTeams !== undefined && row.maxNumTeams > 1) {
-					return [
-						...range(1, row.maxNumTeams + 1).map((rank) => {
-							return {
-								key: `${row.shortName}${DELIMITER}${rank}`,
-								value: formatPlayerAwardName({
-									name: row.name,
-									numTeams: row.maxNumTeams,
-									rank,
-								}),
-							};
-						}),
-						{
-							key: row.shortName,
-							value: row.name,
-						},
-					];
-				}
-
-				return {
-					key: row.shortName,
-					value: row.name,
-				};
-			}),
-			...nonCustomAwardsList,
-		];
-
-		return {
-			awardsRecords,
-			awardType,
-			awardTypeOptions,
-			playerCount: awardsRecords.length,
-
-			// This is just for state.awardTypes so it doesn't need to be recomputed every time
-			awardTypes,
-		};
-	}
+// awardTypes is expensive to compute, so it's computed once when the page loads and then reused
+const keepPrevOutput = {
+	awardTypes: keepType<AwardType[]>(),
 };
 
-export default updateAwardsRecords;
+export default defineView({
+	id: "awardsRecords",
+	processInputs,
+	keepPrevOutput,
+	load: async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
+		let awardTypes: AwardType[];
+		if (!prevOutput.awardTypes) {
+			const awards = await idb.getCopies.awards(undefined, "noCopyCache");
+			awards.reverse();
+			awardTypes = [];
+
+			// Number contains the number of teams
+			const seenAwardTypes = new Map<string, AwardType>();
+
+			for (const row of awards) {
+				for (const award of row.awards) {
+					const info = seenAwardTypes.get(award.shortName);
+					if (!info) {
+						const newInfo: AwardType = {
+							name: award.name,
+							shortName: award.shortName,
+						};
+						if (award.numTeams !== undefined) {
+							newInfo.maxNumTeams = award.numTeams;
+						}
+						seenAwardTypes.set(award.shortName, newInfo);
+						awardTypes.push(newInfo);
+					} else if (
+						award.numTeams !== undefined &&
+						(info.maxNumTeams === undefined ||
+							award.numTeams > info.maxNumTeams)
+					) {
+						info.maxNumTeams = award.numTeams;
+					}
+				}
+			}
+		} else {
+			awardTypes = prevOutput.awardTypes;
+		}
+
+		if (
+			updateEvents.has("firstRun") ||
+			inputs.awardType !== prevInputs?.awardType
+		) {
+			const playersAll = await idb.getCopies.players(
+				{
+					activeAndRetired: true,
+					filter: (p) => p.awards.length > 0,
+				},
+				"noCopyCache",
+			);
+			const players: LocalPlayer[] = await idb.getCopies.playersPlus(
+				playersAll,
+				{
+					attrs: [
+						"awards",
+						"firstName",
+						"lastName",
+						"pid",
+						"retiredYear",
+						"hof",
+						"draft",
+					],
+					ratings: ["pos", "season"],
+					stats: ["abbrev", "season"],
+				},
+			);
+			const awardType = inputs.awardType;
+
+			const awardsRecords = addFirstNameShort(
+				players
+					.map((p) => getPlayerAwards(p, awardType))
+					.filter((p) => p !== undefined),
+			);
+
+			const awardTypeOptions: DropdownOption[] = [
+				...awardTypes.flatMap((row) => {
+					if (row.maxNumTeams !== undefined && row.maxNumTeams > 1) {
+						return [
+							...range(1, row.maxNumTeams + 1).map((rank) => {
+								return {
+									key: `${row.shortName}${DELIMITER}${rank}`,
+									value: formatPlayerAwardName({
+										name: row.name,
+										numTeams: row.maxNumTeams,
+										rank,
+									}),
+								};
+							}),
+							{
+								key: row.shortName,
+								value: row.name,
+							},
+						];
+					}
+
+					return {
+						key: row.shortName,
+						value: row.name,
+					};
+				}),
+				...nonCustomAwardsList,
+			];
+
+			return {
+				awardsRecords,
+				awardType,
+				awardTypeOptions,
+				playerCount: awardsRecords.length,
+
+				// This is just for prevOutput.awardTypes so it doesn't need to be recomputed every time
+				awardTypes,
+			};
+		}
+	},
+});

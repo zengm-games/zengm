@@ -1,31 +1,34 @@
 import { idb } from "../db/index.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { g } from "../util/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateConfs = async () => {
-	const initialConfs = g.get("confs");
-	const initialDivs = g.get("divs");
+export default defineView({
+	id: "manageConfs",
+	load: async () => {
+		const initialConfs = g.get("confs");
+		const initialDivs = g.get("divs");
 
-	const initialTeams = await idb.getCopies.teamsPlus({
-		attrs: [
-			"abbrev",
-			"region",
-			"name",
-			"pop",
-			"tid",
-			"cid",
-			"did",
-			"imgURL",
-			"imgURLSmall",
-			"stadiumCapacity",
-			"jersey",
-			"colors",
-		],
-		active: true,
-	});
+		const initialTeams = await idb.getCopies.teamsPlus({
+			attrs: [
+				"abbrev",
+				"region",
+				"name",
+				"pop",
+				"tid",
+				"cid",
+				"did",
+				"imgURL",
+				"imgURLSmall",
+				"stadiumCapacity",
+				"jersey",
+				"colors",
+			],
+			active: true,
+		});
 
-	// Account for invalid divs, if they somehow exist - is this necessary??
-	/*const divsByDid = groupByUnique(initialDivs, "did");
+		// Account for invalid divs, if they somehow exist - is this necessary??
+		/*const divsByDid = groupByUnique(initialDivs, "did");
 	for (const t of initialTeams) {
 		const div = divsByDid[t.did];
 		if (!div) {
@@ -37,13 +40,12 @@ const updateConfs = async () => {
 		}
 	}*/
 
-	return {
-		actualPhase: actualPhase(),
-		autoRelocate: !!g.get("autoRelocate"),
-		initialConfs,
-		initialDivs,
-		initialTeams,
-	};
-};
-
-export default updateConfs;
+		return {
+			actualPhase: actualPhase(),
+			autoRelocate: !!g.get("autoRelocate"),
+			initialConfs,
+			initialDivs,
+			initialTeams,
+		};
+	},
+});

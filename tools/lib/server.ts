@@ -1,4 +1,4 @@
-import { createReadStream, existsSync } from "node:fs";
+import { createReadStream } from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import os from "node:os";
@@ -40,25 +40,45 @@ const sendFile = (res: http.ServerResponse, filename: string) => {
 		return;
 	}
 
-	if (existsSync(filePath)) {
+	// Rather than checking if the file exists first, just try to read it and show a 404 if that fails. Wait until there is something to read before sending headers, because for a directory the error happens on read rather than on open.
+	const stream = createReadStream(filePath);
+
+	stream.once("readable", () => {
 		const ext = path.extname(filename);
-		const mimeType = mimeTypes[ext];
+		let mimeType = mimeTypes[ext];
 		if (mimeType === undefined) {
-			throw new Error(`Unknown mime type for extension ${ext}`);
+			console.log(`Unknown mime type for extension "${ext}" in ${filename}`);
+			mimeType = "application/octet-stream";
 		}
 
 		res.writeHead(200, {
 			"Content-Type": mimeType,
 		});
 
-		createReadStream(filePath).pipe(res);
-	} else {
-		console.log(`404 ${filename}`);
-		res.writeHead(404, {
-			"Content-Type": "text/plain",
-		});
-		res.end("404 Not Found");
-	}
+		stream.pipe(res);
+	});
+
+	stream.on("error", (error: NodeJS.ErrnoException) => {
+		if (res.headersSent) {
+			// Already started sending the file, so all we can do is give up
+			res.destroy(error);
+			return;
+		}
+
+		if (error.code === "ENOENT" || error.code === "EISDIR") {
+			console.log(`404 ${filename}`);
+			res.writeHead(404, {
+				"Content-Type": "text/plain",
+			});
+			res.end("404 Not Found");
+		} else {
+			console.log(`500 ${filename} ${error.message}`);
+			res.writeHead(500, {
+				"Content-Type": "text/plain",
+			});
+			res.end("500 Internal Server Error");
+		}
+	});
 };
 
 const showStatic = (url: string, res: http.ServerResponse) => {

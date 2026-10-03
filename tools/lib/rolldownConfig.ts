@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { BuildOptions } from "rolldown";
+import { getRolldownTarget } from "./browserslist.ts";
 import { type Sport } from "./getSport.ts";
 import { jsonUrlsDefine, type JsonHashes } from "./jsonUrls.ts";
 // @ts-expect-error
@@ -90,6 +91,7 @@ export const rolldownConfig = (
 				),
 			},
 			jsx: "react-jsx",
+			target: getRolldownTarget(),
 		},
 		platform: "browser",
 		plugins,

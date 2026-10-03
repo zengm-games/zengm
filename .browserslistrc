@@ -1,4 +1,4 @@
-# Currently this is just used by lightningcss in buildCss.ts, I think
+# This is used by lightningcss in buildCss.ts and rolldown in rolldownConfig.ts
 
 # Chrome 87 is the last on Mac 10.10 https://en.wikipedia.org/wiki/Template:Google_Chrome_release_compatibility
 Chrome >= 85

@@ -7,6 +7,13 @@ import { team } from "../core/index.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"frivolitiesTeamSeasons">) => {
+	return {
+		type: params.type,
+	};
+};
 
 type Most = {
 	value: number;
@@ -198,9 +205,10 @@ const getRoundsFromChamipionship = (ts: TeamSeason) => {
 	return numPlayoffRounds - ts.playoffRoundsWon;
 };
 
-export default defineView(
-	"frivolitiesTeamSeasons",
-	async ({ inputs: { type }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "frivolitiesTeamSeasons",
+	processInputs,
+	load: async ({ inputs: { type }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun") || type !== prevInputs?.type) {
 			let filter: Parameters<typeof getMostXTeamSeasons>[0]["filter"];
@@ -424,4 +432,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

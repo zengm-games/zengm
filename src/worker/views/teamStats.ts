@@ -5,6 +5,27 @@ import { defineView } from "../util/defineView.ts";
 import { TEAM_STATS_TABLES } from "../../common/constants.ts";
 import { season, team } from "../core/index.ts";
 import { lowerIsBetter } from "../../common/lowerIsBetter.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { bySport } from "../../common/sportFunctions.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"teamStats">) => {
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	const defaultStatType = bySport({
+		baseball: "batting",
+		basketball: "team",
+		football: "summary",
+		hockey: "team",
+	});
+
+	return {
+		season: validateSeason(params.season),
+		teamOpponent: params.teamOpponent ?? defaultStatType,
+		playoffs,
+	};
+};
 
 export const getStats = async ({
 	season,
@@ -242,9 +263,10 @@ export const averageTeamStats = (
 	};
 };
 
-export default defineView(
-	"teamStats",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "teamStats",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") &&
@@ -364,4 +386,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

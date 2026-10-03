@@ -4,10 +4,42 @@ import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { getWatchPids } from "./news.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
 
-export default defineView(
-	"playerFeats",
-	async ({ inputs, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"playerFeats">) => {
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	let season: number | "all";
+
+	if (params.season && params.season !== "all") {
+		season = validateSeason(params.season);
+	} else {
+		season = "all";
+	}
+
+	return {
+		abbrev,
+		season,
+		tid,
+	};
+};
+
+export default defineView({
+	id: "playerFeats",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("gameSim") ||
@@ -193,4 +225,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

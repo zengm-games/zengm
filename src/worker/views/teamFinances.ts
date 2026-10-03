@@ -6,10 +6,19 @@ import type { TeamSeason } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { getAutoTicketPriceByTid } from "../core/game/attendance.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
 
-export default defineView(
-	"teamFinances",
-	async ({ inputs, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"teamFinances">) => {
+	const show = params.show ?? "10";
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, show, tid };
+};
+
+export default defineView({
+	id: "teamFinances",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("gameSim") ||
@@ -240,4 +249,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

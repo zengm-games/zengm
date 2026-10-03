@@ -1,12 +1,21 @@
 import { checkAccount } from "../util/checkAccount.ts";
 import { defineView } from "../util/defineView.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"account">, ctxBBGM: any) => {
+	return {
+		goldMessage: ctxBBGM.goldResult ? ctxBBGM.goldResult.message : undefined,
+		goldSuccess: ctxBBGM.goldResult ? !!ctxBBGM.goldResult.success : undefined,
+	};
+};
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
-export default defineView(
-	"account",
-	async ({ inputs, updateEvents, conditions }) => {
+export default defineView({
+	id: "account",
+	processInputs,
+	load: async ({ inputs, updateEvents, conditions }) => {
 		if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
 			const partialTopMenu = await checkAccount(conditions);
 			const loggedIn =
@@ -39,4 +48,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

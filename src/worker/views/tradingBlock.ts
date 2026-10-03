@@ -6,138 +6,150 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { augmentOffers } from "../api/index.ts";
 import { addMissingAssets } from "./savedTrades.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
 
-export default defineView("tradingBlock", async ({ inputs, updateEvents }) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
-	) {
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		} as const);
-		const userRosterAll = await idb.cache.players.indexGetAll(
-			"playersByTid",
-			g.get("userTid"),
-		);
-		const userRoster = addFirstNameShort(
-			await idb.getCopies.playersPlus(userRosterAll, {
-				attrs: [
-					"pid",
-					"firstName",
-					"lastName",
-					"age",
-					"contract",
-					"injury",
-					"watch",
-					"untradable",
-					"jerseyNumber",
-					"draft",
-				],
-				ratings: ["ovr", "pot", "skills", "pos"],
-				stats,
-				season: g.get("season"),
-				tid: g.get("userTid"),
-				showNoStats: true,
-				showRookies: true,
-				fuzz: true,
-			}),
-		);
+const processInputs = (params: RouteParams<"tradingBlock">, ctxBBGM: any) => {
+	return {
+		pids: ctxBBGM.pids as number[],
+		dpids: ctxBBGM.dpids as number[],
+	};
+};
 
-		const userPicks = await idb.getCopies.draftPicks(
-			{
-				tid: g.get("userTid"),
-			},
-			"noCopyCache",
-		);
+export default defineView({
+	id: "tradingBlock",
+	processInputs,
+	load: async ({ inputs, updateEvents }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("newPhase")
+		) {
+			const stats = bySport({
+				baseball: ["gp", "keyStats", "war"],
+				basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+				football: ["gp", "keyStats", "av"],
+				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+			} as const);
+			const userRosterAll = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				g.get("userTid"),
+			);
+			const userRoster = addFirstNameShort(
+				await idb.getCopies.playersPlus(userRosterAll, {
+					attrs: [
+						"pid",
+						"firstName",
+						"lastName",
+						"age",
+						"contract",
+						"injury",
+						"watch",
+						"untradable",
+						"jerseyNumber",
+						"draft",
+					],
+					ratings: ["ovr", "pot", "skills", "pos"],
+					stats,
+					season: g.get("season"),
+					tid: g.get("userTid"),
+					showNoStats: true,
+					showRookies: true,
+					fuzz: true,
+				}),
+			);
 
-		const userPicks2 = await Promise.all(
-			userPicks.map(async (dp) => {
-				return {
-					...dp,
-					desc: await helpers.pickDesc(dp),
-				};
-			}),
-		);
+			const userPicks = await idb.getCopies.draftPicks(
+				{
+					tid: g.get("userTid"),
+				},
+				"noCopyCache",
+			);
 
-		let savedTradingBlock;
-		if (inputs.pids === undefined && inputs.dpids === undefined) {
-			const savedTradingBlockRaw = await idb.cache.savedTradingBlock.get(0);
-			if (savedTradingBlockRaw?.tid === g.get("userTid")) {
-				// If a pid/dpid is no longer valid on the user's team, ignore
-				const userValidPids = new Set(savedTradingBlockRaw.pids).isSubsetOf(
-					new Set(userRoster.filter((p) => !p.untradable).map((p) => p.pid)),
-				);
-				const userValidDpids = new Set(savedTradingBlockRaw.dpids).isSubsetOf(
-					new Set(userPicks2.map((dp) => dp.dpid)),
-				);
-				if (userValidPids && userValidDpids) {
-					const valueChangeCalculator = new ValueChangeCalculator();
-					const offers = await Promise.all(
-						(
-							await addMissingAssets(
-								await augmentOffers(
-									savedTradingBlockRaw.offers.map((offer) => {
-										return [
-											{
-												dpids: savedTradingBlockRaw.dpids,
-												dpidsExcluded: [],
-												pids: savedTradingBlockRaw.pids,
-												pidsExcluded: [],
-												tid: g.get("userTid"),
-											},
-											{
-												dpids: offer.dpids,
-												dpidsExcluded: [],
-												pids: offer.pids,
-												pidsExcluded: [],
-												tid: offer.tid,
-											},
-										];
-									}),
-								),
-							)
-						).map(async (offer) => {
-							const dv = await valueChangeCalculator.evaluate({
-								tid: offer.tid,
-								pidsAdd: offer.pidsUser,
-								pidsRemove: offer.pids,
-								dpidsAdd: offer.dpidsUser,
-								dpidsRemove: offer.dpids,
-								tradingPartnerTid: g.get("userTid"),
-							});
-							const willing = dv > 0;
-
-							return {
-								...offer,
-								willing,
-							};
-						}),
-					);
-
-					savedTradingBlock = {
-						dpids: savedTradingBlockRaw.dpids,
-						pids: savedTradingBlockRaw.pids,
-						offers,
-						lookingFor: savedTradingBlockRaw.lookingFor,
+			const userPicks2 = await Promise.all(
+				userPicks.map(async (dp) => {
+					return {
+						...dp,
+						desc: await helpers.pickDesc(dp),
 					};
-				} else {
-					await idb.cache.savedTradingBlock.clear();
+				}),
+			);
+
+			let savedTradingBlock;
+			if (inputs.pids === undefined && inputs.dpids === undefined) {
+				const savedTradingBlockRaw = await idb.cache.savedTradingBlock.get(0);
+				if (savedTradingBlockRaw?.tid === g.get("userTid")) {
+					// If a pid/dpid is no longer valid on the user's team, ignore
+					const userValidPids = new Set(savedTradingBlockRaw.pids).isSubsetOf(
+						new Set(userRoster.filter((p) => !p.untradable).map((p) => p.pid)),
+					);
+					const userValidDpids = new Set(savedTradingBlockRaw.dpids).isSubsetOf(
+						new Set(userPicks2.map((dp) => dp.dpid)),
+					);
+					if (userValidPids && userValidDpids) {
+						const valueChangeCalculator = new ValueChangeCalculator();
+						const offers = await Promise.all(
+							(
+								await addMissingAssets(
+									await augmentOffers(
+										savedTradingBlockRaw.offers.map((offer) => {
+											return [
+												{
+													dpids: savedTradingBlockRaw.dpids,
+													dpidsExcluded: [],
+													pids: savedTradingBlockRaw.pids,
+													pidsExcluded: [],
+													tid: g.get("userTid"),
+												},
+												{
+													dpids: offer.dpids,
+													dpidsExcluded: [],
+													pids: offer.pids,
+													pidsExcluded: [],
+													tid: offer.tid,
+												},
+											];
+										}),
+									),
+								)
+							).map(async (offer) => {
+								const dv = await valueChangeCalculator.evaluate({
+									tid: offer.tid,
+									pidsAdd: offer.pidsUser,
+									pidsRemove: offer.pids,
+									dpidsAdd: offer.dpidsUser,
+									dpidsRemove: offer.dpids,
+									tradingPartnerTid: g.get("userTid"),
+								});
+								const willing = dv > 0;
+
+								return {
+									...offer,
+									willing,
+								};
+							}),
+						);
+
+						savedTradingBlock = {
+							dpids: savedTradingBlockRaw.dpids,
+							pids: savedTradingBlockRaw.pids,
+							offers,
+							lookingFor: savedTradingBlockRaw.lookingFor,
+						};
+					} else {
+						await idb.cache.savedTradingBlock.clear();
+					}
 				}
 			}
-		}
 
-		return {
-			initialPids: inputs.pids,
-			initialDpids: inputs.dpids,
-			savedTradingBlock,
-			stats,
-			userPicks: userPicks2,
-			userRoster,
-		};
-	}
+			return {
+				initialPids: inputs.pids,
+				initialDpids: inputs.dpids,
+				savedTradingBlock,
+				stats,
+				userPicks: userPicks2,
+				userRoster,
+			};
+		}
+	},
 });

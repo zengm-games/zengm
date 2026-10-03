@@ -14,10 +14,64 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { getActivePlayoffTids } from "./playerRatings.ts";
 import { last } from "../../common/utils.ts";
 import { hasNonZeroStat } from "../../common/statValue.ts";
+import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { actualPhase } from "../util/actualPhase.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
+import { validateSeasonType } from "../util/processInputs.ts";
 
-export default defineView(
-	"playerStats",
-	async ({ inputs, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"playerStats">) => {
+	let abbrev;
+
+	const [, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
+		abbrev = "playoffs";
+	} else {
+		abbrev = "all";
+	}
+
+	const defaultStatType = bySport({
+		baseball: "batting",
+		basketball: "perGame",
+		football: "passing",
+		hockey: "skater",
+	});
+
+	let season: "career" | "all" | number;
+	if (params.season === "career" || params.season === "all") {
+		season = params.season;
+	} else {
+		season = validateSeason(params.season);
+	}
+
+	let statType = params.statType ?? defaultStatType;
+
+	// Handle upgrade without breaking URLs
+	if (__SPORT === "football" && statType === "rushing") {
+		statType = "rushingReceiving";
+	}
+
+	return {
+		abbrev,
+		season,
+		statType,
+		playoffs: validateSeasonType(params.playoffs),
+	};
+};
+
+export default defineView({
+	id: "playerStats",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
@@ -257,4 +311,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

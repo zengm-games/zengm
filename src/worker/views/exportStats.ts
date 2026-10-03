@@ -1,28 +1,34 @@
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 
-export default defineView("exportStats", ({ updateEvents }) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
-		const options = [
-			{
-				key: "all",
-				val: "All Seasons",
-			},
-		];
-
-		for (
-			let season = g.get("startingSeason");
-			season <= g.get("season");
-			season++
+export default defineView({
+	id: "exportStats",
+	load: ({ updateEvents }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("newPhase")
 		) {
-			options.push({
-				key: String(season),
-				val: `${season} season`,
-			});
-		}
+			const options = [
+				{
+					key: "all",
+					val: "All Seasons",
+				},
+			];
 
-		return {
-			seasons: options,
-		};
-	}
+			for (
+				let season = g.get("startingSeason");
+				season <= g.get("season");
+				season++
+			) {
+				options.push({
+					key: String(season),
+					val: `${season} season`,
+				});
+			}
+
+			return {
+				seasons: options,
+			};
+		}
+	},
 });

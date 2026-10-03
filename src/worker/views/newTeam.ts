@@ -114,111 +114,116 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 	return teamsAugmented;
 };
 
-export default defineView("newTeam", async ({ updateEvents }) => {
-	// When switching teams, the "leagues" update event is sent out, so we want to ignore that because otherwise the UI flickers before redirecting
-	if (!updateEvents.includes("leagues")) {
-		const rawTeams = await idb.getCopies.teamsPlus(
-			{
-				attrs: [
-					"tid",
-					"region",
-					"name",
-					"pop",
-					"imgURL",
-					"imgURLSmall",
-					"cid",
-					"abbrev",
-				],
-				seasonAttrs: [
-					"winp",
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"season",
-					"playoffRoundsWon",
-					"revenue",
-				],
-				season: g.get("season"),
-				active: true,
-				addDummySeason: true,
-			},
-			"noCopyCache",
-		);
-
-		const teamsAll = helpers.addPopRank(rawTeams);
-
-		const numActiveTeams = teamsAll.length;
-
-		const expansionDraft = g.get("expansionDraft");
-		const expansion =
-			g.get("phase") === PHASE.EXPANSION_DRAFT &&
-			expansionDraft.phase === "protection" &&
-			expansionDraft.allowSwitchTeam;
-		const expansionTids =
-			expansionDraft.phase === "protection" ? expansionDraft.expansionTids : []; // TypeScript bullshit
-		const otherTeamsWantToHire = g.get("otherTeamsWantToHire");
-
-		const t = await idb.cache.teams.get(g.get("userTid"));
-		const disabled = t ? t.disabled : false;
-
-		// Remove user's team (no re-hiring immediately after firing)
-		let teams = teamsAll.filter((t) => t.tid !== g.get("userTid"));
-
-		if (expansion) {
-			// User team will always be first, cause expansion teams are at the end of the teams list
-			teams = teams.filter((t) => expansionTids.includes(t.tid));
-		} else if (otherTeamsWantToHire) {
-			// Deterministic random selection of teams
-			teams = orderBy(teams, (t) => t.seasonAttrs.revenue % 10, "asc").slice(
-				0,
-				5,
+export default defineView({
+	id: "newTeam",
+	load: async ({ updateEvents }) => {
+		// When switching teams, the "leagues" update event is sent out, so we want to ignore that because otherwise the UI flickers before redirecting
+		if (!updateEvents.includes("leagues")) {
+			const rawTeams = await idb.getCopies.teamsPlus(
+				{
+					attrs: [
+						"tid",
+						"region",
+						"name",
+						"pop",
+						"imgURL",
+						"imgURLSmall",
+						"cid",
+						"abbrev",
+					],
+					seasonAttrs: [
+						"winp",
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"season",
+						"playoffRoundsWon",
+						"revenue",
+					],
+					season: g.get("season"),
+					active: true,
+					addDummySeason: true,
+				},
+				"noCopyCache",
 			);
-		} else if (!g.get("godMode")) {
-			// If not in god mode, user must have been fired or team folded
 
-			// Only get option of 5 worst
-			teams = orderBy(teams, (t) => t.seasonAttrs.winp, "asc").slice(0, 5);
-		}
+			const teamsAll = helpers.addPopRank(rawTeams);
 
-		let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
-		if ((expansion && !g.get("gameOver")) || otherTeamsWantToHire) {
-			// User team first!
-			const userTeam = teamsAll.find((t) => t.tid === g.get("userTid"));
-			if (userTeam) {
-				orderedTeams = [
-					userTeam,
-					...orderedTeams.filter((t) => t !== userTeam),
-				];
+			const numActiveTeams = teamsAll.length;
+
+			const expansionDraft = g.get("expansionDraft");
+			const expansion =
+				g.get("phase") === PHASE.EXPANSION_DRAFT &&
+				expansionDraft.phase === "protection" &&
+				expansionDraft.allowSwitchTeam;
+			const expansionTids =
+				expansionDraft.phase === "protection"
+					? expansionDraft.expansionTids
+					: []; // TypeScript bullshit
+			const otherTeamsWantToHire = g.get("otherTeamsWantToHire");
+
+			const t = await idb.cache.teams.get(g.get("userTid"));
+			const disabled = t ? t.disabled : false;
+
+			// Remove user's team (no re-hiring immediately after firing)
+			let teams = teamsAll.filter((t) => t.tid !== g.get("userTid"));
+
+			if (expansion) {
+				// User team will always be first, cause expansion teams are at the end of the teams list
+				teams = teams.filter((t) => expansionTids.includes(t.tid));
+			} else if (otherTeamsWantToHire) {
+				// Deterministic random selection of teams
+				teams = orderBy(teams, (t) => t.seasonAttrs.revenue % 10, "asc").slice(
+					0,
+					5,
+				);
+			} else if (!g.get("godMode")) {
+				// If not in god mode, user must have been fired or team folded
+
+				// Only get option of 5 worst
+				teams = orderBy(teams, (t) => t.seasonAttrs.winp, "asc").slice(0, 5);
 			}
+
+			let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
+			if ((expansion && !g.get("gameOver")) || otherTeamsWantToHire) {
+				// User team first!
+				const userTeam = teamsAll.find((t) => t.tid === g.get("userTid"));
+				if (userTeam) {
+					orderedTeams = [
+						userTeam,
+						...orderedTeams.filter((t) => t !== userTeam),
+					];
+				}
+			}
+
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+
+			const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+
+			const teamsWithOvr = orderedTeams.map((t) => ({
+				...t,
+				ovr: 0,
+				roundsWonText: helpers.roundsWonText({
+					playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
+					numPlayoffRounds,
+					playoffsByConf,
+				}),
+			}));
+			for (const t of teamsWithOvr) {
+				t.ovr = await getTeamOvr(t.tid);
+			}
+
+			const finalTeams = await addHistoryAndPicksAndPlayers(teamsWithOvr);
+
+			return {
+				confs: g.get("confs", "current"),
+				disabled,
+				expansion,
+				numActiveTeams,
+				otherTeamsWantToHire,
+				teams: finalTeams,
+			};
 		}
-
-		const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
-
-		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
-
-		const teamsWithOvr = orderedTeams.map((t) => ({
-			...t,
-			ovr: 0,
-			roundsWonText: helpers.roundsWonText({
-				playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
-				numPlayoffRounds,
-				playoffsByConf,
-			}),
-		}));
-		for (const t of teamsWithOvr) {
-			t.ovr = await getTeamOvr(t.tid);
-		}
-
-		const finalTeams = await addHistoryAndPicksAndPlayers(teamsWithOvr);
-
-		return {
-			confs: g.get("confs", "current"),
-			disabled,
-			expansion,
-			numActiveTeams,
-			otherTeamsWantToHire,
-			teams: finalTeams,
-		};
-	}
+	},
 });

@@ -11,7 +11,7 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { orderTeams } from "../util/orderTeams.ts";
 import { getNumericStat } from "../../common/statValue.ts";
 
-const updateInbox = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
+const updateInbox = async ({ updateEvents }: ViewArgs) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
 		const messages = await idb.getCopies.messages(
 			{
@@ -31,7 +31,7 @@ const updateInbox = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
 	}
 };
 
-const updateTeam = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
+const updateTeam = async ({ updateEvents }: ViewArgs) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -69,7 +69,7 @@ const updateTeam = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
 	}
 };
 
-const updatePayroll = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
+const updatePayroll = async ({ updateEvents }: ViewArgs) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
@@ -81,7 +81,7 @@ const updatePayroll = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
 	}
 };
 
-const updateTeams = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
+const updateTeams = async ({ updateEvents }: ViewArgs) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -210,7 +210,7 @@ const updateTeams = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
 	}
 };
 
-const updatePlayers = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
+const updatePlayers = async ({ updateEvents }: ViewArgs) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -396,9 +396,7 @@ const updatePlayers = async ({ updateEvents }: ViewArgs<"leagueDashboard">) => {
 	}
 };
 
-const updatePlayoffs = async ({
-	updateEvents,
-}: ViewArgs<"leagueDashboard">) => {
+const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
@@ -493,9 +491,7 @@ const updatePlayoffs = async ({
 	}
 };
 
-const updateStandings = async ({
-	updateEvents,
-}: ViewArgs<"leagueDashboard">) => {
+const updateStandings = async ({ updateEvents }: ViewArgs) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
 		const teams = await idb.getCopies.teamsPlus(
 			{
@@ -597,9 +593,7 @@ const updateStandings = async ({
 	}
 };
 
-const updateNewsFeed = async ({
-	updateEvents,
-}: ViewArgs<"leagueDashboard">) => {
+const updateNewsFeed = async ({ updateEvents }: ViewArgs) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
@@ -653,25 +647,28 @@ const updateNewsFeed = async ({
 	}
 };
 
-export default defineView("leagueDashboard", async (args) => {
-	// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
-	const part1 = Object.assign(
-		{},
-		await updateInbox(args),
-		await updateTeam(args),
-		await updatePayroll(args),
-	);
-	const part2 = Object.assign(
-		{},
-		await updateTeams(args),
-		await updateNewsFeed(args),
-	);
-	const part3 = Object.assign(
-		{},
-		await updatePlayers(args),
-		await updatePlayoffs(args),
-		await updateStandings(args),
-	);
+export default defineView({
+	id: "leagueDashboard",
+	load: async (args) => {
+		// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
+		const part1 = Object.assign(
+			{},
+			await updateInbox(args),
+			await updateTeam(args),
+			await updatePayroll(args),
+		);
+		const part2 = Object.assign(
+			{},
+			await updateTeams(args),
+			await updateNewsFeed(args),
+		);
+		const part3 = Object.assign(
+			{},
+			await updatePlayers(args),
+			await updatePlayoffs(args),
+			await updateStandings(args),
+		);
 
-	return Object.assign({}, part1, part2, part3);
+		return Object.assign({}, part1, part2, part3);
+	},
 });

@@ -12,6 +12,14 @@ import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { formatPlayerAwardName } from "../../common/awards.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"most">) => {
+	return {
+		arg: params.arg,
+		type: params.type,
+	};
+};
 
 type Most = {
 	value: number;
@@ -214,9 +222,10 @@ const getOldAndCustomAwards = () => {
 	return { customAwards, oldAwards };
 };
 
-export default defineView(
-	"most",
-	async ({ inputs: { arg, type }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "most",
+	processInputs,
+	load: async ({ inputs: { arg, type }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (
 			updateEvents.includes("firstRun") ||
@@ -1121,4 +1130,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

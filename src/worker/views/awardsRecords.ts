@@ -9,6 +9,13 @@ import {
 	formatPlayerAwardName,
 	leaderAwardCategories,
 } from "../../common/awards.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"awardsRecords">) => {
+	return {
+		awardType: params.awardType ?? "champion",
+	};
+};
 
 // Sync with useDropdownOptions
 const nonCustomAwardsList = [
@@ -162,10 +169,11 @@ const keepPrevOutput = {
 	awardTypes: keepType<AwardType[]>(),
 };
 
-export default defineView(
-	"awardsRecords",
-	{ keepPrevOutput },
-	async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
+export default defineView({
+	id: "awardsRecords",
+	processInputs,
+	keepPrevOutput,
+	load: async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
 		let awardTypes: AwardType[];
 		if (!prevOutput.awardTypes) {
 			const awards = await idb.getCopies.awards(undefined, "noCopyCache");
@@ -276,4 +284,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

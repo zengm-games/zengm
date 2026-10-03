@@ -6,10 +6,29 @@ import type { Player } from "../../common/types.ts";
 import { defineView, type ViewInput } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import type { PlayerStatType } from "../../common/types.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeasonType } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"watchList">) => {
+	let statType: PlayerStatType;
+	if (params.statType === "per36") {
+		statType = params.statType;
+	} else if (params.statType === "totals") {
+		statType = params.statType;
+	} else {
+		statType = "perGame";
+	}
+
+	return { playoffs: validateSeasonType(params.playoffs), statType };
+};
 
 export const formatPlayersWatchList = async (
 	playersAll: Player[],
-	{ playoffs, statType }: Pick<ViewInput<"watchList">, "playoffs" | "statType">,
+	{
+		playoffs,
+		statType,
+	}: Pick<ViewInput<typeof processInputs>, "playoffs" | "statType">,
 ) => {
 	const stats = bySport({
 		baseball: ["gp", "keyStats", "war"],
@@ -77,9 +96,10 @@ export const formatPlayersWatchList = async (
 	return { players, stats };
 };
 
-export default defineView(
-	"watchList",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "watchList",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("watchList") ||
@@ -109,4 +129,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

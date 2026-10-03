@@ -3,10 +3,24 @@ import { defineView } from "../util/defineView.ts";
 import { headToHead } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import hasTies from "../core/season/hasTies.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { processInputs as processInputsHeadToHeadAll } from "./headToHeadAll.ts";
 
-export default defineView(
-	"headToHead",
-	async ({
+const processInputs = (params: RouteParams<"headToHead">) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	return {
+		abbrev,
+		tid,
+		...processInputsHeadToHeadAll(params),
+	};
+};
+
+export default defineView({
+	id: "headToHead",
+	processInputs,
+	load: async ({
 		inputs: { abbrev, season, tid, type },
 		updateEvents,
 		prevInputs,
@@ -122,4 +136,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

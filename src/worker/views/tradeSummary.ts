@@ -20,6 +20,13 @@ import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { last } from "../../common/utils.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"tradeSummary">) => {
+	return {
+		eid: params.eid ? Number.parseInt(params.eid) : Number.NaN,
+	};
+};
 
 const findRatingsRow = (
 	allRatings: NonEmptyArray<MinimalPlayerRatings>,
@@ -545,9 +552,10 @@ export const processAssets = async (
 	return assets;
 };
 
-export default defineView(
-	"tradeSummary",
-	async ({ inputs: { eid }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "tradeSummary",
+	processInputs,
+	load: async ({ inputs: { eid }, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("gameSim") ||
@@ -628,4 +636,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -6,6 +6,7 @@ import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import { processInputs } from "./player.ts";
 
 const getRelationText = (
 	gender: GameAttributesLeague["gender"],
@@ -87,9 +88,10 @@ const getRelationText = (
 	return "???";
 };
 
-export default defineView(
-	"relatives",
-	async ({ inputs: { pid }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "relatives",
+	processInputs,
+	load: async ({ inputs: { pid }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun") || pid !== prevInputs?.pid) {
 			const stats = bySport({
@@ -277,4 +279,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

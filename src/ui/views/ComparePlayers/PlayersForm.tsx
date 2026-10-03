@@ -8,7 +8,7 @@ import {
 	formatName,
 	type PlayerInfoForName,
 } from "../CustomizePlayer/RelativesForm.tsx";
-import type { SeasonType } from "../../../worker/api/processInputs.ts";
+import type { SeasonType } from "../../../worker/util/processInputs.ts";
 import useDropdownOptions, {
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions.tsx";

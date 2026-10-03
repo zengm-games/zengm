@@ -10,6 +10,27 @@ import {
 	leadersAddFirstNameShort,
 	playerMeetsCategoryRequirements,
 } from "./leaders.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { bySport } from "../../common/sportFunctions.ts";
+import { validateSeasonType } from "../util/processInputs.ts";
+import { validateStatType } from "../util/processInputs.ts";
+
+export const processInputs = (
+	params: RouteParams<"leadersProgressive"> | RouteParams<"leadersYears">,
+) => {
+	const defaultStat = bySport({
+		baseball: "ba",
+		basketball: "pts",
+		football: "pssYds",
+		hockey: "g",
+	});
+
+	return {
+		stat: params.stat ?? defaultStat,
+		playoffs: validateSeasonType(params.playoffs),
+		statType: validateStatType(params.statType),
+	};
+};
 
 const NUM_LEADERS = 10;
 
@@ -25,9 +46,10 @@ type MyLeader = Omit<
 	| "season"
 >;
 
-export default defineView(
-	"leadersYears",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "leadersYears",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			inputs.stat !== prevInputs?.stat ||
@@ -167,4 +189,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

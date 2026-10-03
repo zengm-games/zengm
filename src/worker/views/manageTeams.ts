@@ -4,59 +4,62 @@ import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { defineView } from "../util/defineView.ts";
 
-export default defineView("manageTeams", async () => {
-	const teams = (
-		await idb.getCopies.teamsPlus(
-			{
-				attrs: [
-					"tid",
-					"abbrev",
-					"region",
-					"name",
-					"imgURL",
-					"imgURLSmall",
-					"colors",
-					"jersey",
-					"did",
-					"pop",
-					"stadiumCapacity",
-					"disabled",
-				],
-				seasonAttrs: ["pop", "stadiumCapacity"],
-				season: g.get("season"),
-				addDummySeason: true,
-			},
-			"noCopyCache",
-		)
-	).map((t) => {
-		const pop = t.pop ?? t.seasonAttrs.pop;
+export default defineView({
+	id: "manageTeams",
+	load: async () => {
+		const teams = (
+			await idb.getCopies.teamsPlus(
+				{
+					attrs: [
+						"tid",
+						"abbrev",
+						"region",
+						"name",
+						"imgURL",
+						"imgURLSmall",
+						"colors",
+						"jersey",
+						"did",
+						"pop",
+						"stadiumCapacity",
+						"disabled",
+					],
+					seasonAttrs: ["pop", "stadiumCapacity"],
+					season: g.get("season"),
+					addDummySeason: true,
+				},
+				"noCopyCache",
+			)
+		).map((t) => {
+			const pop = t.pop ?? t.seasonAttrs.pop;
+
+			return {
+				tid: t.tid,
+				abbrev: t.abbrev,
+				region: t.region,
+				name: t.name,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall ?? "",
+				colors: t.colors,
+				pop: helpers.localeParseFloat(pop.toFixed(6)),
+				stadiumCapacity: t.stadiumCapacity ?? t.seasonAttrs.stadiumCapacity,
+				jersey: t.jersey ?? DEFAULT_JERSEY,
+				did: t.did,
+				disabled: t.disabled,
+			};
+		});
 
 		return {
-			tid: t.tid,
-			abbrev: t.abbrev,
-			region: t.region,
-			name: t.name,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall ?? "",
-			colors: t.colors,
-			pop: helpers.localeParseFloat(pop.toFixed(6)),
-			stadiumCapacity: t.stadiumCapacity ?? t.seasonAttrs.stadiumCapacity,
-			jersey: t.jersey ?? DEFAULT_JERSEY,
-			did: t.did,
-			disabled: t.disabled,
+			autoRelocate: !!g.get("autoRelocate"),
+			defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
+			confs: g.get("confs"),
+			divs: g.get("divs"),
+			teams: orderBy(teams, [
+				(t) => (t.disabled ? 1 : 0),
+				"region",
+				"name",
+				"tid",
+			]),
 		};
-	});
-
-	return {
-		autoRelocate: !!g.get("autoRelocate"),
-		defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
-		confs: g.get("confs"),
-		divs: g.get("divs"),
-		teams: orderBy(teams, [
-			(t) => (t.disabled ? 1 : 0),
-			"region",
-			"name",
-			"tid",
-		]),
-	};
+	},
 });

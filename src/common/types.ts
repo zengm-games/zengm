@@ -72,7 +72,7 @@ type ViewsKeys = keyof typeof views;
 export type View<Name extends ViewsKeys> = Exclude<
 	Awaited<
 		Name extends ViewsKeys
-			? ReturnType<(typeof views)[Name]>
+			? ReturnType<(typeof views)[Name]["load"]>
 			: Record<string, unknown>
 	>,
 	void | { redirectUrl: string } | { errorMessage: string }

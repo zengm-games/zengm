@@ -7,10 +7,50 @@ import { idb } from "../db/index.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
 
-export default defineView(
-	"injuries",
-	async ({ inputs, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"injuries">) => {
+	let season: number | "current";
+
+	if (params.season && params.season !== "current") {
+		season = validateSeason(params.season);
+	} else {
+		season = "current";
+	}
+
+	let abbrev;
+	let tid: number | undefined;
+
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
+		abbrev = "playoffs";
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		season,
+		tid,
+	};
+};
+
+export default defineView({
+	id: "injuries",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			((inputs.season === g.get("season") || inputs.season === "current") &&
@@ -95,4 +135,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -52,9 +52,9 @@ export async function* iterateActivePlayersSeasonRange(
 	}
 }
 
-export default defineView(
-	"rosterContinuity",
-	async ({
+export default defineView({
+	id: "rosterContinuity",
+	load: async ({
 		updateEvents,
 	}): Promise<
 		| {
@@ -186,4 +186,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

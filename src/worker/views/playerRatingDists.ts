@@ -3,10 +3,12 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
-export default defineView(
-	"playerRatingDists",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "playerRatingDists",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") &&
@@ -80,4 +82,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

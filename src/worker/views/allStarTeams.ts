@@ -13,6 +13,7 @@ import { extraStats } from "./hallOfFame.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
 const sortByPos = (p: {
 	bestPos: string;
@@ -100,9 +101,10 @@ const augment = async (allStars: AllStars) => {
 	};
 };
 
-export default defineView(
-	"allStarTeams",
-	async ({ inputs: { season }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "allStarTeams",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("gameSim") ||
@@ -169,4 +171,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -18,6 +18,15 @@ import {
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"draftLottery">) => {
+	const season = validateSeason(params.season);
+	return {
+		season,
+	};
+};
 
 const filterDraftPicks = (
 	draftPicks: DraftPickWithoutKey[],
@@ -36,9 +45,10 @@ const filterDraftPicks = (
 	);
 };
 
-export default defineView(
-	"draftLottery",
-	async ({
+export default defineView({
+	id: "draftLottery",
+	processInputs,
+	load: async ({
 		inputs: { season },
 		updateEvents,
 		prevInputs,
@@ -363,4 +373,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

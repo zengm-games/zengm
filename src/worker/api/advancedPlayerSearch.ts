@@ -18,7 +18,8 @@ import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "../views/depth.ts";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
-import type { SeasonType } from "./processInputs.ts";
+import type { SeasonType } from "../util/processInputs.ts";
+import type { processInputs } from "../views/advancedPlayerSearch.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 
 const getPlayers = async (
@@ -164,7 +165,7 @@ export const advancedPlayerSearch = async ({
 	statType,
 	filters,
 	showStatTypes,
-}: ViewInput<"advancedPlayerSearch">) => {
+}: ViewInput<typeof processInputs>) => {
 	// Keys come from the filter definitions in allFilters, which are all valid attrs/ratings/stats
 	let extraAttrs: PlayerAttr[] = [];
 	let extraRatings: PlayerRatingAttr[] = ["season", "pos", "ovr", "pot"];

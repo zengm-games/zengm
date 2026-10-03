@@ -27,6 +27,15 @@ import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { getGroupPrefix } from "../core/awards/prefixes.ts";
 import type { LeagueUrlParts } from "../../ui/router/types.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+export const processInputs = (
+	params: RouteParams<"player"> | RouteParams<"relatives">,
+) => {
+	return {
+		pid: params.pid !== undefined ? Number.parseInt(params.pid) : undefined,
+	};
+};
 
 export const getPlayerProfileStats = () => {
 	const stats = new Set<PlayerStatAttr>();
@@ -478,10 +487,11 @@ const keepPrevOutput = {
 	retired: keepType<boolean>(),
 };
 
-export default defineView(
-	"player",
-	{ keepPrevOutput },
-	async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
+export default defineView({
+	id: "player",
+	processInputs,
+	keepPrevOutput,
+	load: async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("playerMovement") ||
@@ -562,4 +572,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

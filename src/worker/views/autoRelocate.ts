@@ -69,102 +69,105 @@ const getRealignInfo = (
 	return current;
 };
 
-export default defineView("autoRelocate", async ({ updateEvents }) => {
-	// Ignore team updateEvent from relocateVote
-	if (!updateEvents.includes("team")) {
-		const autoRelocate = g.get("autoRelocate");
-		if (!autoRelocate) {
-			// https://stackoverflow.com/a/59923262/786644
-			const returnValue = {
-				redirectUrl: helpers.leagueUrl([]),
-			};
-			return returnValue;
-		}
-
-		const t = await idb.cache.teams.get(autoRelocate.tid);
-		if (!t) {
-			throw new Error("Invalid tid");
-		}
-
-		const currentTeam = {
-			tid: t.tid,
-			abbrev: t.abbrev,
-			region: t.region,
-			name: t.name,
-			imgURL: t.imgURL,
-			pop: t.pop,
-			colors: t.colors,
-			jersey: t.jersey,
-		};
-
-		const newTeam: typeof currentTeam = getTeamInfos([
-			{
-				tid: t.tid,
-				cid: -1,
-				did: -1,
-				abbrev: autoRelocate.abbrev,
-			},
-		])[0]!;
-
-		const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
-
-		let realignInfo:
-			| undefined
-			| {
-					current: ReturnType<typeof getRealignInfo>;
-					realigned: ReturnType<typeof getRealignInfo>;
-			  };
-		if (autoRelocate.realigned) {
-			// Old version would try to realign disabled teams and then crash, so check for that
-			const invalidRealign = autoRelocate.realigned
-				.flat()
-				.some((tid) => !teams.some((t) => t.tid === tid));
-			if (!invalidRealign) {
-				const current = getRealignInfo(teams, newTeam);
-				const realigned: typeof current = [];
-
-				const confs = g.get("confs");
-				const divs = g.get("divs");
-
-				for (const [i, div] of divs.entries()) {
-					const tids = autoRelocate.realigned[i];
-					if (tids) {
-						const confIndex = confs.findIndex((conf) => conf.cid === div.cid);
-						if (!realigned[confIndex]) {
-							realigned[confIndex] = [];
-						}
-						realigned[confIndex].push(
-							orderBy(
-								tids.map((tid) => {
-									const t =
-										tid === newTeam.tid
-											? newTeam
-											: teams.find((t) => t.tid === tid)!;
-									return {
-										tid,
-										region: t.region,
-										name: t.name,
-									};
-								}),
-								["region", "name"],
-							),
-						);
-					}
-				}
-
-				realignInfo = {
-					current,
-					realigned,
+export default defineView({
+	id: "autoRelocate",
+	load: async ({ updateEvents }) => {
+		// Ignore team updateEvent from relocateVote
+		if (!updateEvents.includes("team")) {
+			const autoRelocate = g.get("autoRelocate");
+			if (!autoRelocate) {
+				// https://stackoverflow.com/a/59923262/786644
+				const returnValue = {
+					redirectUrl: helpers.leagueUrl([]),
 				};
+				return returnValue;
 			}
-		}
 
-		return {
-			autoRelocateRealign: g.get("autoRelocateRealign"),
-			autoRelocateRebrand: g.get("autoRelocateRebrand"),
-			currentTeam,
-			newTeam,
-			realignInfo,
-		};
-	}
+			const t = await idb.cache.teams.get(autoRelocate.tid);
+			if (!t) {
+				throw new Error("Invalid tid");
+			}
+
+			const currentTeam = {
+				tid: t.tid,
+				abbrev: t.abbrev,
+				region: t.region,
+				name: t.name,
+				imgURL: t.imgURL,
+				pop: t.pop,
+				colors: t.colors,
+				jersey: t.jersey,
+			};
+
+			const newTeam: typeof currentTeam = getTeamInfos([
+				{
+					tid: t.tid,
+					cid: -1,
+					did: -1,
+					abbrev: autoRelocate.abbrev,
+				},
+			])[0]!;
+
+			const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
+
+			let realignInfo:
+				| undefined
+				| {
+						current: ReturnType<typeof getRealignInfo>;
+						realigned: ReturnType<typeof getRealignInfo>;
+				  };
+			if (autoRelocate.realigned) {
+				// Old version would try to realign disabled teams and then crash, so check for that
+				const invalidRealign = autoRelocate.realigned
+					.flat()
+					.some((tid) => !teams.some((t) => t.tid === tid));
+				if (!invalidRealign) {
+					const current = getRealignInfo(teams, newTeam);
+					const realigned: typeof current = [];
+
+					const confs = g.get("confs");
+					const divs = g.get("divs");
+
+					for (const [i, div] of divs.entries()) {
+						const tids = autoRelocate.realigned[i];
+						if (tids) {
+							const confIndex = confs.findIndex((conf) => conf.cid === div.cid);
+							if (!realigned[confIndex]) {
+								realigned[confIndex] = [];
+							}
+							realigned[confIndex].push(
+								orderBy(
+									tids.map((tid) => {
+										const t =
+											tid === newTeam.tid
+												? newTeam
+												: teams.find((t) => t.tid === tid)!;
+										return {
+											tid,
+											region: t.region,
+											name: t.name,
+										};
+									}),
+									["region", "name"],
+								),
+							);
+						}
+					}
+
+					realignInfo = {
+						current,
+						realigned,
+					};
+				}
+			}
+
+			return {
+				autoRelocateRealign: g.get("autoRelocateRealign"),
+				autoRelocateRebrand: g.get("autoRelocateRebrand"),
+				currentTeam,
+				newTeam,
+				realignInfo,
+			};
+		}
+	},
 });

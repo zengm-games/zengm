@@ -6,6 +6,41 @@ import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique, last, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { PHASE } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { helpers } from "../util/index.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"draftHistory">) => {
+	let season: number;
+
+	const draftAlreadyHappened = g.get("phase") >= PHASE.DRAFT;
+	const currentSeason = g.get("season");
+
+	if (
+		(params.season === undefined || params.season === String(currentSeason)) &&
+		!draftAlreadyHappened
+	) {
+		// View last season by default
+		season = currentSeason - 1;
+	} else {
+		season = validateSeason(params.season);
+	}
+
+	if (
+		season > currentSeason ||
+		(season === currentSeason && !draftAlreadyHappened)
+	) {
+		// Future draft class
+		return {
+			redirectUrl: helpers.leagueUrl(["draft_scouting"]),
+		};
+	}
+
+	return {
+		season,
+	};
+};
 
 export const getDraftTeamsByTid = async (season: number) => {
 	const teamsByTid = groupByUnique(
@@ -39,134 +74,138 @@ export const getDraftTeamsByTid = async (season: number) => {
 	return teamsByTid;
 };
 
-export default defineView("draftHistory", async ({ inputs }) => {
-	// Update every time because anything could change this (unless all players from class are retired)
+export default defineView({
+	id: "draftHistory",
+	processInputs,
+	load: async ({ inputs }) => {
+		// Update every time because anything could change this (unless all players from class are retired)
 
-	const stats = bySport({
-		baseball: ["gp", "keyStats", "war"],
-		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	} as const);
+		const stats = bySport({
+			baseball: ["gp", "keyStats", "war"],
+			basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
+			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+		} as const);
 
-	const summaryStat = bySport({
-		baseball: "war",
-		basketball: "ws",
-		football: "av",
-		hockey: "ps",
-	} as const);
+		const summaryStat = bySport({
+			baseball: "war",
+			basketball: "ws",
+			football: "av",
+			hockey: "ps",
+		} as const);
 
-	let playersAll;
+		let playersAll;
 
-	if (g.get("season") === inputs.season) {
-		// This is guaranteed to work (ignoring God Mode) because no player this season has had a chance to die or retire
-		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				draftYear: inputs.season,
-			},
-			"noCopyCache",
-		);
-	}
-
-	playersAll = playersAll.filter((p) => {
-		return p.draft.year === inputs.season;
-	});
-	playersAll = await idb.getCopies.playersPlus(playersAll, {
-		attrs: [
-			"tid",
-			"abbrev",
-			"draft",
-			"pid",
-			"firstName",
-			"lastName",
-			"age",
-			"ageAtDeath",
-			"hof",
-			"watch",
-			"awards",
-			"born",
-		],
-		ratings: ["ovr", "pot", "skills", "pos", "season"],
-		stats,
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-	});
-	const players = playersAll
-		.filter((p) => {
-			return p.draft.round >= 1 || (p.careerStats.gp ?? 0) > 0;
-		})
-		.map((p) => {
-			const currentPr = last(p.ratings);
-			const peakPr = maxBy(p.ratings, "ovr")!;
-			return {
-				// Attributes
-				pid: p.pid,
-				firstName: p.firstName,
-				lastName: p.lastName,
-				draft: p.draft,
-				currentAge: p.age,
-				ageAtDeath: p.ageAtDeath,
-				currentAbbrev: p.abbrev,
-				currentTid: p.tid,
-				hof: p.hof,
-				watch: p.watch,
-				awards: p.awards,
-				awardCounts: {
-					allStar: p.awards.filter(
-						(award: PlayerAward) => award.type === "All-Star",
-					).length,
-					mvp: p.awards.filter(
-						(award: PlayerAward) =>
-							award.type === undefined &&
-							award.numTeams === undefined &&
-							award.actAs === "mvp" &&
-							award.rank === 1,
-					).length,
-					roy: p.awards.filter(
-						(award: PlayerAward) =>
-							award.type === undefined &&
-							award.numTeams === undefined &&
-							award.actAs === "roy" &&
-							award.rank === 1,
-					).length,
-					champ: p.awards.filter(
-						(award: PlayerAward) => award.type === "Won Championship",
-					).length,
-					hof: p.awards.filter(
-						(award: PlayerAward) =>
-							award.type === "Inducted into the Hall of Fame",
-					).length,
+		if (g.get("season") === inputs.season) {
+			// This is guaranteed to work (ignoring God Mode) because no player this season has had a chance to die or retire
+			playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+				PLAYER.FREE_AGENT,
+				Infinity,
+			]);
+		} else {
+			playersAll = await idb.getCopies.players(
+				{
+					draftYear: inputs.season,
 				},
+				"noCopyCache",
+			);
+		}
 
-				// Ratings
-				currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
-				currentPot: p.tid !== PLAYER.RETIRED ? currentPr.pot : null,
-				currentSkills: p.tid !== PLAYER.RETIRED ? currentPr.skills : [],
-				pos: currentPr.pos,
-
-				peakAge: peakPr.season - p.born.year,
-				peakOvr: peakPr.ovr,
-				peakPot: peakPr.pot,
-				peakSkills: peakPr.skills,
-
-				// Stats
-				careerStats: p.careerStats,
-			};
+		playersAll = playersAll.filter((p) => {
+			return p.draft.year === inputs.season;
 		});
+		playersAll = await idb.getCopies.playersPlus(playersAll, {
+			attrs: [
+				"tid",
+				"abbrev",
+				"draft",
+				"pid",
+				"firstName",
+				"lastName",
+				"age",
+				"ageAtDeath",
+				"hof",
+				"watch",
+				"awards",
+				"born",
+			],
+			ratings: ["ovr", "pot", "skills", "pos", "season"],
+			stats,
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		});
+		const players = playersAll
+			.filter((p) => {
+				return p.draft.round >= 1 || (p.careerStats.gp ?? 0) > 0;
+			})
+			.map((p) => {
+				const currentPr = last(p.ratings);
+				const peakPr = maxBy(p.ratings, "ovr")!;
+				return {
+					// Attributes
+					pid: p.pid,
+					firstName: p.firstName,
+					lastName: p.lastName,
+					draft: p.draft,
+					currentAge: p.age,
+					ageAtDeath: p.ageAtDeath,
+					currentAbbrev: p.abbrev,
+					currentTid: p.tid,
+					hof: p.hof,
+					watch: p.watch,
+					awards: p.awards,
+					awardCounts: {
+						allStar: p.awards.filter(
+							(award: PlayerAward) => award.type === "All-Star",
+						).length,
+						mvp: p.awards.filter(
+							(award: PlayerAward) =>
+								award.type === undefined &&
+								award.numTeams === undefined &&
+								award.actAs === "mvp" &&
+								award.rank === 1,
+						).length,
+						roy: p.awards.filter(
+							(award: PlayerAward) =>
+								award.type === undefined &&
+								award.numTeams === undefined &&
+								award.actAs === "roy" &&
+								award.rank === 1,
+						).length,
+						champ: p.awards.filter(
+							(award: PlayerAward) => award.type === "Won Championship",
+						).length,
+						hof: p.awards.filter(
+							(award: PlayerAward) =>
+								award.type === "Inducted into the Hall of Fame",
+						).length,
+					},
 
-	const teamsByTid = await getDraftTeamsByTid(inputs.season);
+					// Ratings
+					currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
+					currentPot: p.tid !== PLAYER.RETIRED ? currentPr.pot : null,
+					currentSkills: p.tid !== PLAYER.RETIRED ? currentPr.skills : [],
+					pos: currentPr.pos,
 
-	return {
-		players: addFirstNameShort(players),
-		season: inputs.season,
-		stats,
-		summaryStat,
-		teamsByTid,
-	};
+					peakAge: peakPr.season - p.born.year,
+					peakOvr: peakPr.ovr,
+					peakPot: peakPr.pot,
+					peakSkills: peakPr.skills,
+
+					// Stats
+					careerStats: p.careerStats,
+				};
+			});
+
+		const teamsByTid = await getDraftTeamsByTid(inputs.season);
+
+		return {
+			players: addFirstNameShort(players),
+			season: inputs.season,
+			stats,
+			summaryStat,
+			teamsByTid,
+		};
+	},
 });

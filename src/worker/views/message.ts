@@ -3,16 +3,24 @@ import { g, helpers, updatePlayMenu, updateStatus } from "../util/index.ts";
 import { defineView, keepType } from "../util/defineView.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"message">) => {
+	return {
+		mid: params.mid ? Number.parseInt(params.mid) : undefined,
+	};
+};
 
 // Compare to the mid of the message actually shown, not prevInputs.mid, because inputs.mid is undefined when showing the latest message
 const keepPrevOutput = {
 	message: keepType<{ mid: number }>(),
 };
 
-export default defineView(
-	"message",
-	{ keepPrevOutput },
-	async ({ inputs, updateEvents, prevOutput }) => {
+export default defineView({
+	id: "message",
+	processInputs,
+	keepPrevOutput,
+	load: async ({ inputs, updateEvents, prevOutput }) => {
 		// Complexity of updating is to handle auto-read message, so inputs.mid is blank
 		if (
 			updateEvents.includes("firstRun") ||
@@ -136,4 +144,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

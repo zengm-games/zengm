@@ -1,10 +1,12 @@
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
-export default defineView(
-	"leagueFinances",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "leagueFinances",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") &&
@@ -56,4 +58,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

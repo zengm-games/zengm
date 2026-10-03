@@ -4,6 +4,33 @@ import type { ByConf } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { getTiebreakers, orderTeams } from "../util/orderTeams.ts";
 import { season } from "../core/index.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { bySport } from "../../common/sportFunctions.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"standings">) => {
+	let type: "conf" | "div" | "league" =
+		g.get("numGamesPlayoffSeries").length === 0
+			? "league"
+			: bySport({
+					baseball: "div",
+					basketball: "conf",
+					football: "div",
+					hockey: "div",
+				});
+	if (
+		params.type === "conf" ||
+		params.type === "div" ||
+		params.type === "league"
+	) {
+		type = params.type;
+	}
+
+	return {
+		season: validateSeason(params.season),
+		type,
+	};
+};
 
 export const getMaxPlayoffSeed = async (
 	playoffSeason: number,
@@ -30,9 +57,10 @@ export const getMaxPlayoffSeed = async (
 	};
 };
 
-export default defineView(
-	"standings",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "standings",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
@@ -215,4 +243,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -6,10 +6,12 @@ import { orderBy } from "../../common/utils.ts";
 import { PHASE } from "../../common/constants.ts";
 import { loadAbbrevs } from "./gameLog.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
-export default defineView(
-	"seasonPreview",
-	async ({ inputs: { season }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "seasonPreview",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
 		if (updateEvents.includes("firstRun") || prevInputs?.season !== season) {
 			const NUM_PLAYERS_TO_SHOW = 10;
 			const NUM_TEAMS_TO_SHOW = 5;
@@ -202,4 +204,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

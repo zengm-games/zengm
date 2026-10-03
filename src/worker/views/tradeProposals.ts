@@ -152,35 +152,38 @@ export const addInlinePlayerInfo = <T extends AugmentedOffer>(offer: T) => {
 	};
 };
 
-export default defineView("tradeProposals", async ({ updateEvents }) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
-		updateEvents.includes("g.tradeProposalsSeed")
-	) {
-		const teamSeason = await idb.cache.teamSeasons.indexGet(
-			"teamSeasonsByTidSeason",
-			[g.get("userTid"), g.get("season")],
-		);
-		const gp = teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
+export default defineView({
+	id: "tradeProposals",
+	load: async ({ updateEvents }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("newPhase") ||
+			updateEvents.includes("g.tradeProposalsSeed")
+		) {
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[g.get("userTid"), g.get("season")],
+			);
+			const gp = teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
 
-		const NUM_GAMES_BEFORE_NEW_OFFERS = 10;
+			const NUM_GAMES_BEFORE_NEW_OFFERS = 10;
 
-		const seed =
-			Math.floor(gp / NUM_GAMES_BEFORE_NEW_OFFERS) +
-			g.get("season") +
-			g.get("phase") +
-			g.get("tradeProposalsSeed");
+			const seed =
+				Math.floor(gp / NUM_GAMES_BEFORE_NEW_OFFERS) +
+				g.get("season") +
+				g.get("phase") +
+				g.get("tradeProposalsSeed");
 
-		const offers = (await getOffers(seed)).map((offer) =>
-			addInlinePlayerInfo(offer),
-		);
+			const offers = (await getOffers(seed)).map((offer) =>
+				addInlinePlayerInfo(offer),
+			);
 
-		return {
-			offers,
-			seed,
-		};
-	}
+			return {
+				offers,
+				seed,
+			};
+		}
+	},
 });

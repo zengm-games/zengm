@@ -12,6 +12,31 @@ import type { TeamStatAttr } from "../../common/types.baseball.ts";
 import { season } from "../core/index.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 import { choice } from "../../common/random.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"teamGraphs">) => {
+	const playoffsX =
+		params.playoffsX === "playoffs" ? "playoffs" : "regularSeason";
+	const playoffsY =
+		params.playoffsY === "playoffs" ? "playoffs" : "regularSeason";
+
+	const seasonX = validateSeason(params.seasonX);
+	const seasonY = validateSeason(params.seasonY);
+
+	return {
+		seasonX,
+		seasonY,
+		playoffsX: playoffsX as "playoffs" | "regularSeason",
+		playoffsY: playoffsY as "playoffs" | "regularSeason",
+
+		// Defaults to random stat if undefined
+		statTypeX: params.statTypeX,
+		statTypeY: params.statTypeY,
+		statX: params.statX,
+		statY: params.statY,
+	};
+};
 
 export const statTypes = [
 	"standings",
@@ -238,7 +263,7 @@ const getTeamStats = async (
 
 const updateTeams = async (
 	axis: "X" | "Y",
-	{ inputs, updateEvents, prevInputs }: ViewArgs<"teamGraphs">,
+	{ inputs, updateEvents, prevInputs }: ViewArgs<typeof processInputs>,
 ) => {
 	const season = `season${axis}` as const;
 	const statType = `statType${axis}` as const;
@@ -287,7 +312,7 @@ type Team = TeamFiltered<
 >;
 
 const updateClientSide = (
-	{ inputs, prevInputs }: ViewArgs<"teamGraphs">,
+	{ inputs, prevInputs }: ViewArgs<typeof processInputs>,
 	x: Awaited<ReturnType<typeof updateTeams>>,
 	y: Awaited<ReturnType<typeof updateTeams>>,
 ) => {
@@ -317,9 +342,13 @@ const updateClientSide = (
 	}
 };
 
-export default defineView("teamGraphs", async (args) => {
-	const x = await updateTeams("X", args);
-	const y = await updateTeams("Y", args);
+export default defineView({
+	id: "teamGraphs",
+	processInputs,
+	load: async (args) => {
+		const x = await updateTeams("X", args);
+		const y = await updateTeams("Y", args);
 
-	return Object.assign({}, x, y, updateClientSide(args, x, y));
+		return Object.assign({}, x, y, updateClientSide(args, x, y));
+	},
 });

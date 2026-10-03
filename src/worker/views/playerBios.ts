@@ -6,10 +6,12 @@ import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { processInputs } from "./playerRatings.ts";
 
-export default defineView(
-	"playerBios",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "playerBios",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") &&
@@ -61,4 +63,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

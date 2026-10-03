@@ -106,110 +106,113 @@ export const genView = (
 		| "frivolitiesJerseyNumbers",
 	type: "college" | "country" | "draftPosition" | "jerseyNumbers",
 ) => {
-	return defineView(id, async ({ updateEvents }) => {
-		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-		if (updateEvents.includes("firstRun")) {
-			const displayStat = bySport({
-				baseball: "war",
-				basketball: "ws",
-				football: "av",
-				hockey: "ps",
-			});
-			const stats = bySport({
-				baseball: ["keyStats", "war"],
-				basketball: [
-					"gp",
-					"min",
-					"pts",
-					"trb",
-					"ast",
-					"per",
-					"ewa",
-					"ows",
-					"dws",
-					"ws",
-					"ws48",
-				],
-				football: ["keyStats", "av"],
-				hockey: ["keyStats", "ops", "dps", "ps"],
-			} as const);
+	return defineView({
+		id,
+		load: async ({ updateEvents }) => {
+			// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
+			if (updateEvents.includes("firstRun")) {
+				const displayStat = bySport({
+					baseball: "war",
+					basketball: "ws",
+					football: "av",
+					hockey: "ps",
+				});
+				const stats = bySport({
+					baseball: ["keyStats", "war"],
+					basketball: [
+						"gp",
+						"min",
+						"pts",
+						"trb",
+						"ast",
+						"per",
+						"ewa",
+						"ows",
+						"dws",
+						"ws",
+						"ws48",
+					],
+					football: ["keyStats", "av"],
+					hockey: ["keyStats", "ops", "dps", "ps"],
+				} as const);
 
-			const infosTemp: { [key: string]: InfoTemp } = {};
-			for await (const { value: p } of idb.league.transaction("players")
-				.store) {
-				reducer(type, infosTemp, p);
-			}
+				const infosTemp: { [key: string]: InfoTemp } = {};
+				for await (const { value: p } of idb.league.transaction("players")
+					.store) {
+					reducer(type, infosTemp, p);
+				}
 
-			const infosWithPlayer = (
-				await Promise.all(
-					Object.entries(infosTemp).map(async ([name, info]) => {
-						const p = await idb.getCopy.playersPlus(info.best.p, {
-							attrs: [
-								"pid",
-								"firstName",
-								"lastName",
-								"draft",
-								"retiredYear",
-								"statsTids",
-								"hof",
-								"jerseyNumber",
-							],
-							ratings: ["season", "ovr", "pos"],
-							stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
-							fuzz: true,
-						});
+				const infosWithPlayer = (
+					await Promise.all(
+						Object.entries(infosTemp).map(async ([name, info]) => {
+							const p = await idb.getCopy.playersPlus(info.best.p, {
+								attrs: [
+									"pid",
+									"firstName",
+									"lastName",
+									"draft",
+									"retiredYear",
+									"statsTids",
+									"hof",
+									"jerseyNumber",
+								],
+								ratings: ["season", "ovr", "pos"],
+								stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
+								fuzz: true,
+							});
 
-						// Should never happen, since there's no season or seasonRange and every player has ratings
-						if (!p) {
-							return;
-						}
+							// Should never happen, since there's no season or seasonRange and every player has ratings
+							if (!p) {
+								return;
+							}
 
-						return { name, info, p };
-					}),
-				)
-			).filter((row) => row !== undefined);
+							return { name, info, p };
+						}),
+					)
+				).filter((row) => row !== undefined);
 
-			const retiredCounts: Record<string, number> = {};
-			if (type === "jerseyNumbers") {
-				const teams = await idb.cache.teams.getAll();
-				for (const t of teams) {
-					if (t.retiredJerseyNumbers) {
-						for (const row of t.retiredJerseyNumbers) {
-							retiredCounts[row.number] ??= 0;
-							retiredCounts[row.number]! += 1;
+				const retiredCounts: Record<string, number> = {};
+				if (type === "jerseyNumbers") {
+					const teams = await idb.cache.teams.getAll();
+					for (const t of teams) {
+						if (t.retiredJerseyNumbers) {
+							for (const row of t.retiredJerseyNumbers) {
+								retiredCounts[row.number] ??= 0;
+								retiredCounts[row.number]! += 1;
+							}
 						}
 					}
 				}
+
+				const players = addFirstNameShort(
+					processPlayersHallOfFame(infosWithPlayer.map((row) => row.p)),
+				);
+
+				const infos = Array.from(
+					Iterator.zip([infosWithPlayer, players], { mode: "strict" }),
+					([{ name, info }, p]) => ({
+						name,
+						numPlayers: info.numPlayers,
+						numActivePlayers: info.numActivePlayers,
+						numHof: info.numHof,
+						numRetired:
+							type === "jerseyNumbers"
+								? (retiredCounts[name] ?? 0)
+								: info.numRetired,
+						gp: info.gp,
+						displayStat: info.displayStat,
+						valueStat: info.valueStat,
+						p,
+					}),
+				);
+
+				return {
+					infos,
+					stats,
+					displayStat,
+				};
 			}
-
-			const players = addFirstNameShort(
-				processPlayersHallOfFame(infosWithPlayer.map((row) => row.p)),
-			);
-
-			const infos = Array.from(
-				Iterator.zip([infosWithPlayer, players], { mode: "strict" }),
-				([{ name, info }, p]) => ({
-					name,
-					numPlayers: info.numPlayers,
-					numActivePlayers: info.numActivePlayers,
-					numHof: info.numHof,
-					numRetired:
-						type === "jerseyNumbers"
-							? (retiredCounts[name] ?? 0)
-							: info.numRetired,
-					gp: info.gp,
-					displayStat: info.displayStat,
-					valueStat: info.valueStat,
-					p,
-				}),
-			);
-
-			return {
-				infos,
-				stats,
-				displayStat,
-			};
-		}
+		},
 	});
 };
 

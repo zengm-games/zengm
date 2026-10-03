@@ -4,6 +4,7 @@ import { g, helpers } from "../util/index.ts";
 import type { PlayoffSeries } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { orderTeams } from "../util/orderTeams.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
 type SeriesTeam = {
 	abbrev: string;
@@ -50,9 +51,10 @@ type TeamToEdit = {
 	record: string;
 };
 
-export default defineView(
-	"playoffs",
-	async ({
+export default defineView({
+	id: "playoffs",
+	processInputs: validateSeasonOnly,
+	load: async ({
 		inputs,
 		updateEvents,
 		prevInputs,
@@ -268,4 +270,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

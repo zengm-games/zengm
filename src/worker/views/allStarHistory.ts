@@ -80,11 +80,14 @@ const augment = (allAllStars: AllStars[]) => {
 	return augmented;
 };
 
-export default defineView("allStarHistory", async ({ updateEvents }) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
-		const allAllStars = await idb.getCopies.allStars();
-		return {
-			allAllStars: augment(allAllStars),
-		};
-	}
+export default defineView({
+	id: "allStarHistory",
+	load: async ({ updateEvents }) => {
+		if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
+			const allAllStars = await idb.getCopies.allStars();
+			return {
+				allAllStars: augment(allAllStars),
+			};
+		}
+	},
 });

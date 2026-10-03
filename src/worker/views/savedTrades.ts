@@ -185,20 +185,23 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 	return offers2;
 };
 
-export default defineView("savedTrades", async ({ updateEvents }) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("savedTrades") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
-	) {
-		const offers = await getOffers();
+export default defineView({
+	id: "savedTrades",
+	load: async ({ updateEvents }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("savedTrades") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("newPhase")
+		) {
+			const offers = await getOffers();
 
-		const offers2 = await addMissingAssets(offers);
+			const offers2 = await addMissingAssets(offers);
 
-		return {
-			offers: offers2,
-		};
-	}
+			return {
+				offers: offers2,
+			};
+		}
+	},
 });

@@ -17,6 +17,38 @@ import {
 import { choice } from "../../common/random.ts";
 import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
 import { defineView, type ViewArgs } from "../util/defineView.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+import { validateSeasonType } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"playerGraphs">) => {
+	const playoffsX = validateSeasonType(params.playoffsX);
+	const playoffsY = validateSeasonType(params.playoffsY);
+
+	const seasonX: number | "career" =
+		params.seasonX === "career" ? "career" : validateSeason(params.seasonX);
+	const seasonY: number | "career" =
+		params.seasonY === "career" ? "career" : validateSeason(params.seasonY);
+
+	// String because we're storing the state of the form input field here
+	const minGames =
+		params.minGames?.replace(/g$/, "") ??
+		String(Math.round(g.get("numGames") * 0.2));
+
+	return {
+		seasonX,
+		seasonY,
+		playoffsX,
+		playoffsY,
+		minGames,
+
+		// Defaults to random stat if undefined
+		statTypeX: params.statTypeX,
+		statTypeY: params.statTypeY,
+		statX: params.statX,
+		statY: params.statY,
+	};
+};
 
 export const statTypes = [
 	"bio",
@@ -218,7 +250,7 @@ const getPlayerStats = async (
 
 const updatePlayers = async (
 	axis: "X" | "Y",
-	{ inputs, updateEvents, prevInputs }: ViewArgs<"playerGraphs">,
+	{ inputs, updateEvents, prevInputs }: ViewArgs<typeof processInputs>,
 ) => {
 	const season = `season${axis}` as const;
 	const statType = `statType${axis}` as const;
@@ -263,7 +295,7 @@ export type PlayerGraphsPlayer = Awaited<
 >["players"][number];
 
 const updateClientSide = (
-	{ inputs, prevInputs }: ViewArgs<"playerGraphs">,
+	{ inputs, prevInputs }: ViewArgs<typeof processInputs>,
 	x: Awaited<ReturnType<typeof updatePlayers>>,
 	y: Awaited<ReturnType<typeof updatePlayers>>,
 ) => {
@@ -296,9 +328,13 @@ const updateClientSide = (
 	}
 };
 
-export default defineView("playerGraphs", async (args) => {
-	const x = await updatePlayers("X", args);
-	const y = await updatePlayers("Y", args);
+export default defineView({
+	id: "playerGraphs",
+	processInputs,
+	load: async (args) => {
+		const x = await updatePlayers("X", args);
+		const y = await updatePlayers("Y", args);
 
-	return Object.assign({}, x, y, updateClientSide(args, x, y));
+		return Object.assign({}, x, y, updateClientSide(args, x, y));
+	},
 });

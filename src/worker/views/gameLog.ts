@@ -9,6 +9,23 @@ import {
 } from "../util/defineView.ts";
 import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/constants.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"gameLog">) => {
+	const [tid, abbrev] =
+		params.abbrev === "special"
+			? [-1, "special"]
+			: validateAbbrev(params.abbrev);
+
+	return {
+		gid: params.gid !== undefined ? Number.parseInt(params.gid) : -1,
+		season: validateSeason(params.season),
+		tid,
+		abbrev,
+	};
+};
 
 export type TeamSeasonOverride = {
 	region?: string;
@@ -215,7 +232,7 @@ const boxScore = async (gid: number) => {
 	return game2;
 };
 
-const updateTeamSeason = (inputs: ViewInput<"gameLog">) => {
+const updateTeamSeason = (inputs: ViewInput<typeof processInputs>) => {
 	return {
 		// Needed for dropdown
 		abbrev: inputs.abbrev,
@@ -236,7 +253,7 @@ const updateBoxScore = async ({
 	inputs: { gid },
 	updateEvents,
 	prevInputs,
-}: ViewArgs<"gameLog">) => {
+}: ViewArgs<typeof processInputs>) => {
 	if (updateEvents.includes("firstRun") || gid !== prevInputs?.gid) {
 		const game = await boxScore(gid);
 		return { boxScore: game };
@@ -298,7 +315,7 @@ const updateGamesList = async ({
 	inputs: { season, tid },
 	updateEvents,
 	prevOutput: { gamesList },
-}: ViewArgs<"gameLog", typeof keepPrevOutput>) => {
+}: ViewArgs<typeof processInputs, typeof keepPrevOutput>) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		!gamesList ||
@@ -348,11 +365,16 @@ const updateGamesList = async ({
 	}
 };
 
-export default defineView("gameLog", { keepPrevOutput }, async (args) => {
-	return Object.assign(
-		{},
-		await updateBoxScore(args),
-		await updateGamesList(args),
-		await updateTeamSeason(args.inputs),
-	);
+export default defineView({
+	id: "gameLog",
+	processInputs,
+	keepPrevOutput,
+	load: async (args) => {
+		return Object.assign(
+			{},
+			await updateBoxScore(args),
+			await updateGamesList(args),
+			await updateTeamSeason(args.inputs),
+		);
+	},
 });

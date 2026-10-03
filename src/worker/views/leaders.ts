@@ -16,6 +16,25 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { getLeaderRequirementsStats } from "../core/season/getLeaderRequirements.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+import { validateSeasonType } from "../util/processInputs.ts";
+import { validateStatType } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"leaders">) => {
+	let season: "career" | "all" | number;
+	if (params.season === "career" || params.season === "all") {
+		season = params.season;
+	} else {
+		season = validateSeason(params.season);
+	}
+
+	return {
+		season,
+		playoffs: validateSeasonType(params.playoffs),
+		statType: validateStatType(params.statType),
+	};
+};
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
@@ -741,9 +760,10 @@ export const leadersAddFirstNameShort = <
 
 const NUM_LEADERS = 10;
 
-export default defineView(
-	"leaders",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "leaders",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
@@ -963,4 +983,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

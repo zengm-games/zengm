@@ -6,16 +6,52 @@ import { getTopPlayers, getUpcoming } from "./schedule.ts";
 import { PHASE } from "../../common/constants.ts";
 import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
 import { env } from "../util/env.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"dailySchedule">) => {
+	let cid;
+	if (params.cid !== undefined && params.cid !== "all") {
+		cid = Number.parseInt(params.cid);
+		if (Number.isNaN(cid)) {
+			cid = undefined;
+		}
+	}
+
+	if (params.season === "today") {
+		return {
+			cid,
+			day: undefined,
+			season: g.get("season"),
+			today: true,
+		};
+	}
+
+	const season = validateSeason(params.season);
+
+	let day =
+		params.day === undefined ? undefined : Number.parseInt(params.day as any);
+	if (Number.isNaN(day)) {
+		day = 1;
+	}
+
+	return {
+		cid,
+		day,
+		season,
+	};
+};
 
 // The day actually shown, which can be different than inputs.day, such as when there is no day in the URL
 const keepPrevOutput = {
 	day: keepType<number>(),
 };
 
-export default defineView(
-	"dailySchedule",
-	{ keepPrevOutput },
-	async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
+export default defineView({
+	id: "dailySchedule",
+	processInputs,
+	keepPrevOutput,
+	load: async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
 		const currentSeason = g.get("season");
 
 		if (
@@ -230,4 +266,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

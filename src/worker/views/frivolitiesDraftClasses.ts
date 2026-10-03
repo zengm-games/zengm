@@ -24,9 +24,9 @@ const playerValue = (p: Player) => {
 	return sum;
 };
 
-export default defineView(
-	"frivolitiesDraftClasses",
-	async ({ updateEvents }) => {
+export default defineView({
+	id: "frivolitiesDraftClasses",
+	load: async ({ updateEvents }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON)
@@ -172,4 +172,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -4,6 +4,44 @@ import { defineView } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
 import type { FaceConfig } from "facesjs";
 import { formatEventText } from "../util/formatEventText.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"news">) => {
+	const season = validateSeason(params.season);
+	let level: "all" | "normal" | "big";
+	if (params.level === "all") {
+		level = "all";
+	} else if (params.level === "normal") {
+		level = "normal";
+	} else {
+		level = "big";
+	}
+
+	const order: "oldest" | "newest" =
+		params.order === "oldest" ? "oldest" : "newest";
+
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		level,
+		order,
+		season,
+		tid,
+	};
+};
 
 const IGNORE_EVENT_TYPES = ["retiredList", "newTeam"];
 
@@ -149,9 +187,10 @@ export const processEvents = async (
 	return eventsWithPlayers;
 };
 
-export default defineView(
-	"news",
-	async ({
+export default defineView({
+	id: "news",
+	processInputs,
+	load: async ({
 		inputs: { abbrev, level, order, season, tid },
 		updateEvents,
 		prevInputs,
@@ -208,4 +247,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

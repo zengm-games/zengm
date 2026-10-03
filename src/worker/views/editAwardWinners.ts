@@ -4,10 +4,12 @@ import { omit, orderBy } from "../../common/utils.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { getPlayers } from "../core/awards/getPlayers.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
-export default defineView(
-	"editAwardWinners",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "editAwardWinners",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			prevInputs?.season !== inputs.season
@@ -105,4 +107,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

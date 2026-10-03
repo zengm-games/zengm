@@ -3,10 +3,12 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
-export default defineView(
-	"exportPlayers",
-	async ({ inputs: { season }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "exportPlayers",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(updateEvents.includes("newPhase") &&
@@ -53,4 +55,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

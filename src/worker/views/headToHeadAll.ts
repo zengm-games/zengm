@@ -3,10 +3,29 @@ import { defineView } from "../util/defineView.ts";
 import { headToHead } from "../core/index.ts";
 import { PHASE } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+import { validateSeasonType } from "../util/processInputs.ts";
 
-export default defineView(
-	"headToHeadAll",
-	async ({ inputs: { season, type }, updateEvents, prevInputs }) => {
+export const processInputs = (params: RouteParams<"headToHeadAll">) => {
+	let season: number | "all";
+
+	if (params.season && params.season !== "all") {
+		season = validateSeason(params.season);
+	} else {
+		season = "all";
+	}
+
+	return {
+		season,
+		type: validateSeasonType(params.type, "combined"),
+	};
+};
+
+export default defineView({
+	id: "headToHeadAll",
+	processInputs,
+	load: async ({ inputs: { season, type }, updateEvents, prevInputs }) => {
 		if (
 			((season === g.get("season") || season === "all") &&
 				updateEvents.includes("gameSim")) ||
@@ -92,4 +111,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -5,9 +5,9 @@ import { getDefaultSettings } from "./newLeague.ts";
 import type { Settings } from "./settings.ts";
 import { defineView } from "../util/defineView.ts";
 
-export default defineView(
-	"defaultNewLeagueSettings",
-	async ({ updateEvents }) => {
+export default defineView({
+	id: "defaultNewLeagueSettings",
+	load: async ({ updateEvents }) => {
 		if (updateEvents.includes("firstRun")) {
 			const overrides = (await idb.meta.get(
 				"attributes",
@@ -28,4 +28,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -10,6 +10,42 @@ import {
 	NUM_PLAYERS_PER_LINE,
 } from "../../common/constants.hockey.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { helpers } from "../util/index.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeasonType } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"depth">) => {
+	// Fix broken links
+	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			redirectUrl: helpers.leagueUrl(["free_agents"]),
+		};
+		return returnValue;
+	}
+
+	if (params.abbrev === "DP" || params.abbrev === "DP_-2") {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			redirectUrl: helpers.leagueUrl(["draft_scouting"]),
+		};
+		return returnValue;
+	}
+
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	const DEFAULT_POS = bySport({
+		baseball: "L",
+		basketball: "G",
+		football: "QB",
+		hockey: "F",
+	});
+
+	const pos = params.pos ?? DEFAULT_POS;
+
+	return { abbrev, playoffs: validateSeasonType(params.playoffs), pos, tid };
+};
 
 const defenseStats: PlayerStatAttr[] = [
 	"defTckSolo",
@@ -142,9 +178,10 @@ const stats = bySport<Record<string, PlayerStatAttr[]>>({
 	},
 });
 
-export default defineView(
-	"depth",
-	async ({
+export default defineView({
+	id: "depth",
+	processInputs,
+	load: async ({
 		inputs: { abbrev, playoffs, pos, tid },
 		updateEvents,
 		prevInputs,
@@ -310,4 +347,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

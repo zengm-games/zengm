@@ -10,10 +10,26 @@ import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import { formatPlayersWatchList } from "./watchList.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
+import type { RouteParams } from "../../ui/router/types.ts";
 
-export default defineView(
-	"notes",
-	async ({ inputs: { type }, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"notes">) => {
+	const type: NoteInfo["type"] =
+		params.type === "draftPick" ||
+		params.type === "game" ||
+		params.type === "player" ||
+		params.type === "teamSeason"
+			? params.type
+			: "player";
+	return {
+		type,
+	};
+};
+
+export default defineView({
+	id: "notes",
+	processInputs,
+	load: async ({ inputs: { type }, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("notes") ||
@@ -169,4 +185,4 @@ export default defineView(
 			}
 		}
 	},
-);
+});

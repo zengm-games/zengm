@@ -14,15 +14,35 @@ import { showStatsByType } from "../../common/awards.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 import { formatAwardNamePrefix } from "../core/awards/prefixes.ts";
 import { PlayersCache } from "../db/PlayersCache.ts";
+import { PHASE } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"history">) => {
+	let season = validateSeason(params.season);
+
+	// If playoffs aren't over, season awards haven't been set
+	if (g.get("phase") >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
+		// View last season by default
+		if (season === g.get("season")) {
+			season -= 1;
+		}
+	}
+
+	return {
+		season,
+	};
+};
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;
 	await updatePlayMenu();
 };
 
-export default defineView(
-	"history",
-	async ({ inputs: { season }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "history",
+	processInputs,
+	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
 		if (local.unviewedSeasonSummary) {
 			viewedSeasonSummary();
 		}
@@ -282,4 +302,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

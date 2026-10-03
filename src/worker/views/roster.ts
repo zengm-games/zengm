@@ -9,6 +9,45 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { orderTeams } from "../util/orderTeams.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
+import { validateSeasonType } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"roster">) => {
+	// Fix broken links
+	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			redirectUrl: helpers.leagueUrl(["free_agents"]),
+		};
+		return returnValue;
+	}
+
+	const season = validateSeason(params.season);
+
+	if (params.abbrev === "DP" || params.abbrev === "DP_-2") {
+		let redirectUrl;
+		const draftAlreadyHappened =
+			season < g.get("season") ||
+			(season === g.get("season") && g.get("phase") > PHASE.DRAFT);
+		if (draftAlreadyHappened) {
+			redirectUrl = helpers.leagueUrl(["draft_history", season]);
+		} else {
+			redirectUrl = helpers.leagueUrl(["draft_scouting"]);
+		}
+
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			redirectUrl,
+		};
+		return returnValue;
+	}
+
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	return { abbrev, playoffs: validateSeasonType(params.playoffs), season, tid };
+};
 
 const sortByPos = (p: {
 	ratings: {
@@ -106,9 +145,10 @@ const getStandingsInfo = async (info: { season: number; tid: number }) => {
 	};
 };
 
-export default defineView(
-	"roster",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "roster",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("gameAttributes") ||
@@ -402,4 +442,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

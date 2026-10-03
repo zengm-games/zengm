@@ -6,6 +6,27 @@ import type { PlayerWithoutKey, Player } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { upgradeFace } from "../util/face.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"customizePlayer">) => {
+	let pid: number | null = null;
+	if (params.pid !== undefined) {
+		pid = Number.parseInt(params.pid);
+		if (Number.isNaN(pid) || pid < 0) {
+			pid = null;
+		}
+	}
+
+	let type: "clone" | undefined;
+	if (params.type === "clone" && pid !== null) {
+		type = "clone";
+	}
+
+	return {
+		pid,
+		type,
+	};
+};
 
 export const formatPlayerRelativesList = (p: Player) => {
 	const firstSeason = p.ratings[0].season;
@@ -33,9 +54,10 @@ export const finalizePlayersRelativesList = (
 
 let faceCount = 0;
 
-export default defineView(
-	"customizePlayer",
-	async ({ inputs, updateEvents }) => {
+export default defineView({
+	id: "customizePlayer",
+	processInputs,
+	load: async ({ inputs, updateEvents }) => {
 		if (!g.get("godMode") && inputs.pid === null) {
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {
@@ -159,4 +181,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

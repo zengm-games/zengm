@@ -21,65 +21,68 @@ const getTeams = async (season: number) => {
 	return teams;
 };
 
-export default defineView("awardSettings", async ({ updateEvents }) => {
-	if (
-		// In theory could update on gameSim and playerMovement, but it's actually tricky to keep editing state in sync so save it for later
-		updateEvents.includes("firstRun")
-	) {
-		let season;
-		let teams;
-		const phase = actualPhase();
-		if (phase === PHASE.PRESEASON) {
-			season = g.get("season") - 1;
-		} else if (phase === PHASE.REGULAR_SEASON) {
-			// See if we have 0 GP in the regular season so far
-			const teamsTemp = await getTeams(g.get("season"));
-			if (
-				teamsTemp.every(
-					(t) =>
-						t.seasonAttrs.won === 0 &&
-						t.seasonAttrs.lost === 0 &&
-						t.seasonAttrs.tied === 0 &&
-						t.seasonAttrs.otl === 0,
-				)
-			) {
+export default defineView({
+	id: "awardSettings",
+	load: async ({ updateEvents }) => {
+		if (
+			// In theory could update on gameSim and playerMovement, but it's actually tricky to keep editing state in sync so save it for later
+			updateEvents.includes("firstRun")
+		) {
+			let season;
+			let teams;
+			const phase = actualPhase();
+			if (phase === PHASE.PRESEASON) {
 				season = g.get("season") - 1;
+			} else if (phase === PHASE.REGULAR_SEASON) {
+				// See if we have 0 GP in the regular season so far
+				const teamsTemp = await getTeams(g.get("season"));
+				if (
+					teamsTemp.every(
+						(t) =>
+							t.seasonAttrs.won === 0 &&
+							t.seasonAttrs.lost === 0 &&
+							t.seasonAttrs.tied === 0 &&
+							t.seasonAttrs.otl === 0,
+					)
+				) {
+					season = g.get("season") - 1;
+				} else {
+					season = g.get("season");
+					teams = teamsTemp;
+				}
 			} else {
 				season = g.get("season");
-				teams = teamsTemp;
 			}
-		} else {
-			season = g.get("season");
+			const { awardCandidates, errorMessages } = await getAwardCandidates(
+				season,
+				g.get("awards"),
+			);
+
+			teams ??= await getTeams(season);
+
+			const mvp = defaultAwards.mvp;
+			const baseNewAward: (typeof awardCandidates)[number][number] = {
+				shortName: "NEW",
+				name: "New Award",
+				formula: mvp.formula,
+				showStats: mvp.showStats,
+				numTeams: undefined,
+				players: [],
+				stats: [],
+				winner: [],
+			};
+
+			return {
+				awardCandidates,
+				baseNewAward,
+				confs: g.get("confs", season),
+				divs: g.get("divs", season),
+				errorMessages,
+				numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", season),
+				playoffsByConf: await getPlayoffsByConf(season),
+				season,
+				teams: groupByUnique(teams, "tid"),
+			};
 		}
-		const { awardCandidates, errorMessages } = await getAwardCandidates(
-			season,
-			g.get("awards"),
-		);
-
-		teams ??= await getTeams(season);
-
-		const mvp = defaultAwards.mvp;
-		const baseNewAward: (typeof awardCandidates)[number][number] = {
-			shortName: "NEW",
-			name: "New Award",
-			formula: mvp.formula,
-			showStats: mvp.showStats,
-			numTeams: undefined,
-			players: [],
-			stats: [],
-			winner: [],
-		};
-
-		return {
-			awardCandidates,
-			baseNewAward,
-			confs: g.get("confs", season),
-			divs: g.get("divs", season),
-			errorMessages,
-			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", season),
-			playoffsByConf: await getPlayoffsByConf(season),
-			season,
-			teams: groupByUnique(teams, "tid"),
-		};
-	}
+	},
 });

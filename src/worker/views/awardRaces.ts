@@ -3,10 +3,12 @@ import { idb } from "../db/index.ts";
 import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { defineView } from "../util/defineView.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
-export default defineView(
-	"awardRaces",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "awardRaces",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") &&
@@ -36,4 +38,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

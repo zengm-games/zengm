@@ -4,10 +4,44 @@ import { averageTeamStats, getStats, ignoreStats } from "./teamStats.ts";
 import { PHASE, TEAM_STATS_TABLES } from "../../common/constants.ts";
 import { season } from "../core/index.ts";
 import { range } from "../../common/utils.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { bySport } from "../../common/sportFunctions.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
 
-export default defineView(
-	"leagueStats",
-	async ({ inputs, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"leagueStats">) => {
+	let abbrev: string = "all";
+	let tid: number = -1;
+	if (params.abbrev && params.abbrev !== "all") {
+		[tid, abbrev] = validateAbbrev(params.abbrev);
+	}
+
+	if (tid < 0) {
+		tid = -1;
+		abbrev = "all";
+	}
+
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	const defaultStatType = bySport({
+		baseball: "batting",
+		basketball: "team",
+		football: "summary",
+		hockey: "team",
+	});
+
+	return {
+		tid,
+		abbrev,
+		teamOpponent: params.teamOpponent ?? defaultStatType,
+		playoffs,
+	};
+};
+
+export default defineView({
+	id: "leagueStats",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("gameSim") ||
@@ -101,4 +135,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -8,6 +8,41 @@ import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { loadAbbrevs } from "./gameLog.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { helpers } from "../util/index.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"freeAgents">) => {
+	if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
+		return {
+			redirectUrl: helpers.leagueUrl(["negotiation"]),
+		};
+	}
+
+	let season: number | "current";
+	if (params.season && params.season !== "current") {
+		season = validateSeason(params.season);
+	} else {
+		season = "current";
+	}
+
+	let type: "available" | "signed" | "both";
+	if (season !== "current") {
+		// If this is a previous season, force type to be "both" because "available" will be none and "both" looks better when switching to current season than "signed"
+		type = "both";
+	} else if (params.type === "signed") {
+		type = "signed";
+	} else if (params.type === "both") {
+		type = "both";
+	} else {
+		type = "available";
+	}
+
+	return {
+		season,
+		type,
+	};
+};
 
 // Call this after playersPlus, with the raw player objects that were passed to playersPlus. getContractAmount can override the contract amount used for each player's mood
 export const addMood = async <T extends { pid: number }>(
@@ -123,9 +158,10 @@ const getPlayers = async (
 	};
 };
 
-export default defineView(
-	"freeAgents",
-	async ({ inputs: { season, type }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "freeAgents",
+	processInputs,
+	load: async ({ inputs: { season, type }, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			season === "current" ||
@@ -271,4 +307,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

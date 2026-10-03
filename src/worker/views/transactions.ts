@@ -2,10 +2,46 @@ import { idb } from "../db/index.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import { defineView } from "../util/defineView.ts";
 import { getWatchPids } from "./news.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { g } from "../util/index.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
 
-export default defineView(
-	"transactions",
-	async ({ inputs, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"transactions">) => {
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	let season: number | "all";
+
+	if (params.season && params.season !== "all") {
+		season = validateSeason(params.season);
+	} else if (params.season && params.season === "all") {
+		season = "all";
+	} else {
+		season = g.get("season");
+	}
+
+	return {
+		tid,
+		abbrev,
+		season,
+		eventType: params.eventType ?? "all",
+	};
+};
+
+export default defineView({
+	id: "transactions",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.length >= 0 ||
 			inputs.season !== prevInputs?.season ||
@@ -72,4 +108,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

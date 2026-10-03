@@ -75,66 +75,69 @@ export const formatScheduleForEditor = (
 	return schedule2;
 };
 
-export default defineView("scheduleEditor", async ({ updateEvents }) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
-	) {
-		const scheduleRaw = await season.getSchedule();
+export default defineView({
+	id: "scheduleEditor",
+	load: async ({ updateEvents }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("newPhase")
+		) {
+			const scheduleRaw = await season.getSchedule();
 
-		const teams = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs: ["abbrev", "region", "name", "tid", "cid", "did"],
-				season: g.get("season"),
-				active: true,
-			},
-			"noCopyCache",
-		);
-
-		let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;
-		if (canRegenerateSchedule) {
 			const teams = await idb.getCopies.teamsPlus(
 				{
 					attrs: ["tid"],
-					stats: ["gp"],
+					seasonAttrs: ["abbrev", "region", "name", "tid", "cid", "did"],
 					season: g.get("season"),
+					active: true,
 				},
 				"noCopyCache",
 			);
 
-			for (const t of teams) {
-				if (t.stats.gp !== 0) {
-					canRegenerateSchedule = false;
-					break;
+			let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;
+			if (canRegenerateSchedule) {
+				const teams = await idb.getCopies.teamsPlus(
+					{
+						attrs: ["tid"],
+						stats: ["gp"],
+						season: g.get("season"),
+					},
+					"noCopyCache",
+				);
+
+				for (const t of teams) {
+					if (t.stats.gp !== 0) {
+						canRegenerateSchedule = false;
+						break;
+					}
 				}
 			}
+
+			const games = await idb.cache.games.getAll();
+			const allStars = await idb.cache.allStars.get(g.get("season"));
+			const allStarGameAlreadyHappened = !!allStars;
+
+			const maxDayAlreadyPlayed = maxBy(games, "day")?.day ?? 0;
+
+			const schedule = formatScheduleForEditor(scheduleRaw, teams, games);
+
+			if (schedule.length === 0) {
+				schedule.push({
+					type: "placeholder",
+					day: maxDayAlreadyPlayed + 1,
+				});
+			}
+
+			return {
+				allStarGame: g.get("allStarGame"),
+				allStarGameAlreadyHappened,
+				canRegenerateSchedule,
+				maxDayAlreadyPlayed,
+				schedule,
+				teams: orderBy(teams, [(t) => t.seasonAttrs.abbrev]),
+				tradeDeadline: g.get("tradeDeadline"),
+			};
 		}
-
-		const games = await idb.cache.games.getAll();
-		const allStars = await idb.cache.allStars.get(g.get("season"));
-		const allStarGameAlreadyHappened = !!allStars;
-
-		const maxDayAlreadyPlayed = maxBy(games, "day")?.day ?? 0;
-
-		const schedule = formatScheduleForEditor(scheduleRaw, teams, games);
-
-		if (schedule.length === 0) {
-			schedule.push({
-				type: "placeholder",
-				day: maxDayAlreadyPlayed + 1,
-			});
-		}
-
-		return {
-			allStarGame: g.get("allStarGame"),
-			allStarGameAlreadyHappened,
-			canRegenerateSchedule,
-			maxDayAlreadyPlayed,
-			schedule,
-			teams: orderBy(teams, [(t) => t.seasonAttrs.abbrev]),
-			tradeDeadline: g.get("tradeDeadline"),
-		};
-	}
+	},
 });

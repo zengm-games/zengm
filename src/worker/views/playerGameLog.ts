@@ -8,10 +8,20 @@ import { getCommon } from "./player.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
 
-export default defineView(
-	"playerGameLog",
-	async ({ inputs: { pid, season }, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"playerGameLog">) => {
+	return {
+		pid: params.pid !== undefined ? Number.parseInt(params.pid) : undefined,
+		season: validateSeason(params.season),
+	};
+};
+
+export default defineView({
+	id: "playerGameLog",
+	processInputs,
+	load: async ({ inputs: { pid, season }, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			prevInputs?.pid !== pid ||
@@ -224,4 +234,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

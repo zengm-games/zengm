@@ -17,6 +17,13 @@ import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingA
 import { bySport } from "../../common/sportFunctions.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
 import { defineView, keepType, type ViewArgs } from "../util/defineView.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"schedule">) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, tid };
+};
 
 export const getUpcoming = async ({
 	cid,
@@ -477,7 +484,7 @@ const updateUpcoming = async ({
 	inputs,
 	updateEvents,
 	prevInputs,
-}: ViewArgs<"schedule">) => {
+}: ViewArgs<typeof processInputs>) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
@@ -523,7 +530,7 @@ const updateCompleted = async ({
 	updateEvents,
 	prevInputs,
 	prevOutput,
-}: ViewArgs<"schedule", typeof keepPrevOutput>) => {
+}: ViewArgs<typeof processInputs, typeof keepPrevOutput>) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.abbrev !== prevInputs?.abbrev
@@ -561,10 +568,15 @@ const updateCompleted = async ({
 	}
 };
 
-export default defineView("schedule", { keepPrevOutput }, async (args) => {
-	return Object.assign(
-		{},
-		await updateUpcoming(args),
-		await updateCompleted(args),
-	);
+export default defineView({
+	id: "schedule",
+	processInputs,
+	keepPrevOutput,
+	load: async (args) => {
+		return Object.assign(
+			{},
+			await updateUpcoming(args),
+			await updateCompleted(args),
+		);
+	},
 });

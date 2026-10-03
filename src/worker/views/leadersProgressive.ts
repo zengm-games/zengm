@@ -11,6 +11,7 @@ import {
 } from "./leaders.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getNumericStat } from "../../common/statValue.ts";
+import { processInputs } from "./leadersYears.ts";
 
 type MyLeader = Omit<
 	Leader,
@@ -48,9 +49,10 @@ const leadersProgressiveAddFirstNameShort = (
 	}
 };
 
-export default defineView(
-	"leadersProgressive",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "leadersProgressive",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			inputs.stat !== prevInputs?.stat ||
@@ -315,4 +317,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

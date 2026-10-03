@@ -6,6 +6,7 @@ import { g, helpers } from "../util/index.ts";
 import { PHASE } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
 
 const getShortTall = (pids: [number, number]) => {
 	if (!pids) {
@@ -26,9 +27,10 @@ const getShortTall = (pids: [number, number]) => {
 	);
 };
 
-export default defineView(
-	"allStarDunk",
-	async ({ inputs: { season }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "allStarDunk",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
 		if (__SPORT !== "basketball") {
 			throw new Error("Not implemented");
 		}
@@ -216,4 +218,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

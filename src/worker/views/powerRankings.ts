@@ -10,6 +10,24 @@ import {
 } from "../../common/constants.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
+import { PHASE } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"powerRankings">) => {
+	let playoffs: "playoffs" | "regularSeason" =
+		g.get("phase") === PHASE.PLAYOFFS ? "playoffs" : "regularSeason";
+	if (params.playoffs === "playoffs") {
+		playoffs = "playoffs";
+	} else if (params.playoffs === "regularSeason") {
+		playoffs = "regularSeason";
+	}
+
+	return {
+		playoffs,
+		season: validateSeason(params.season),
+	};
+};
 
 const otherToRanks = (
 	teams: {
@@ -184,9 +202,10 @@ export const addPowerRankingsStuffToTeams = async <
 	return teamsWithRankings;
 };
 
-export default defineView(
-	"powerRankings",
-	async ({ inputs: { playoffs, season }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "powerRankings",
+	processInputs,
+	load: async ({ inputs: { playoffs, season }, updateEvents, prevInputs }) => {
 		if (
 			(season === g.get("season") && updateEvents.includes("gameSim")) ||
 			season !== prevInputs?.season ||
@@ -247,4 +266,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

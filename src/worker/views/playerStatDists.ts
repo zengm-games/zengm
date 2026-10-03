@@ -10,10 +10,26 @@ import type { PlayerStatType } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateSeason } from "../util/processInputs.ts";
 
-export default defineView(
-	"playerStatDists",
-	async ({ inputs, updateEvents, prevInputs }) => {
+const processInputs = (params: RouteParams<"playerStatDists">) => {
+	const defaultStatType = bySport({
+		baseball: "batting",
+		basketball: "perGame",
+		football: "passing",
+		hockey: "skater",
+	});
+	return {
+		season: validateSeason(params.season),
+		statType: params.statType !== undefined ? params.statType : defaultStatType,
+	};
+};
+
+export default defineView({
+	id: "playerStatDists",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			(inputs.season === g.get("season") &&
@@ -116,4 +132,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -14,13 +14,45 @@ import { shuffle } from "../../common/random.ts";
 import { g } from "../util/index.ts";
 import { last, maxBy } from "../../common/utils.ts";
 import { getPlayerProfileStats } from "./player.ts";
-import type { SeasonType } from "../api/processInputs.ts";
+import type { SeasonType } from "../util/processInputs.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"comparePlayers">) => {
+	const players: {
+		pid: number;
+		season: number | "career";
+		playoffs: SeasonType;
+	}[] = [];
+
+	const info = params.info;
+	if (info !== undefined) {
+		players.push(
+			...info.split(",").map((pidSeasonPlayoffs) => {
+				const parts = pidSeasonPlayoffs.split("-");
+				return {
+					pid: Number.parseInt(parts[0]!),
+					season: parts[1] === "career" ? "career" : Number.parseInt(parts[1]!),
+					playoffs:
+						parts[2] === "c"
+							? "combined"
+							: parts[2] === "p"
+								? "playoffs"
+								: "regularSeason",
+				} as const;
+			}),
+		);
+	}
+
+	return {
+		players,
+	};
+};
 
 const hasPlayerInfoChanged = (
-	inputPlayers: ViewInput<"comparePlayers">["players"],
-	prevInputPlayers: ViewInput<"comparePlayers">["players"] | undefined,
+	inputPlayers: ViewInput<typeof processInputs>["players"],
+	prevInputPlayers: ViewInput<typeof processInputs>["players"] | undefined,
 ) => {
 	// This just happens on initial render, which should never trigger because it checks firstRun before this, but let's just be careful
 	if (prevInputPlayers === undefined) {
@@ -399,9 +431,10 @@ const getPlayer = async (
 	};
 };
 
-export default defineView(
-	"comparePlayers",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "comparePlayers",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			hasPlayerInfoChanged(inputs.players, prevInputs?.players)
@@ -491,4 +524,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -9,6 +9,28 @@ import { defineView } from "../util/defineView.ts";
 import { processAssets } from "./tradeSummary.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { getWatchPids } from "./news.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"frivolitiesTrades">) => {
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		tid,
+		type: params.type,
+	};
+};
 
 type Most = {
 	value: number;
@@ -143,9 +165,10 @@ const getMostXRows = async ({
 	return ordered;
 };
 
-export default defineView(
-	"frivolitiesTrades",
-	async ({ inputs: { abbrev, tid, type }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "frivolitiesTrades",
+	processInputs,
+	load: async ({ inputs: { abbrev, tid, type }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (
 			updateEvents.includes("firstRun") ||
@@ -216,4 +239,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

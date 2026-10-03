@@ -21,7 +21,6 @@ import leagueFileUpload, {
 	emitProgressStream,
 	parseJSON,
 } from "./leagueFileUpload.ts";
-import processInputs from "./processInputs.ts";
 import {
 	allStar,
 	contractNegotiation,
@@ -3742,16 +3741,12 @@ const runBefore = async (
 		return;
 	}
 
-	let inputs: any;
-	if (Object.hasOwn(processInputs, viewId)) {
-		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-expect-error
-		inputs = processInputs[viewId](params, ctxBBGM);
-	}
-	if (inputs === undefined) {
-		// Return empty object rather than undefined
-		inputs = {};
-	}
+	// https://github.com/microsoft/TypeScript/issues/21732
+	// @ts-expect-error
+	const view = views[viewId];
+
+	// Return empty object rather than undefined
+	const inputs = view?.processInputs?.(params, ctxBBGM) ?? {};
 
 	if (typeof inputs.redirectUrl === "string") {
 		// Short circuit from processInputs alone
@@ -3762,13 +3757,9 @@ const runBefore = async (
 		};
 	}
 
-	// https://github.com/microsoft/TypeScript/issues/21732
-	// @ts-expect-error
-	const view = views[viewId];
-
 	if (view) {
 		const data = await lock.runView(() =>
-			view({
+			view.load({
 				inputs,
 				updateEvents,
 				prevInputs,

@@ -4,6 +4,16 @@ import type { AllStars, Awards } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { season } from "../core/index.ts";
 import { omit, orderBy } from "../../common/utils.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"teamRecords">) => {
+	const filter: "all" | "your_teams" =
+		params.filter === "your_teams" ? "your_teams" : "all";
+	return {
+		byType: params.byType ?? "by_team",
+		filter,
+	};
+};
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],
@@ -290,9 +300,10 @@ const sumRecordsFor = (
 	return output;
 };
 
-export default defineView(
-	"teamRecords",
-	async ({ inputs: { byType, filter }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "teamRecords",
+	processInputs,
+	load: async ({ inputs: { byType, filter }, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			byType !== prevInputs?.byType ||
@@ -505,4 +516,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

@@ -6,6 +6,17 @@ import { groupByUnique } from "../../common/utils.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 import { getEstPicks } from "../core/team/ValueChangeCalculator.ts";
 import { PLAYER } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"draftPicks">) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	return {
+		tid,
+		abbrev,
+	};
+};
 
 const adjustProjectedPick = ({
 	projectedPick,
@@ -141,9 +152,10 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 	return draftPicks;
 };
 
-export default defineView(
-	"draftPicks",
-	async ({ inputs: { abbrev, tid }, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "draftPicks",
+	processInputs,
+	load: async ({ inputs: { abbrev, tid }, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("gameSim") ||
@@ -176,4 +188,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

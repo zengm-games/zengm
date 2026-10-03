@@ -8,6 +8,13 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
 import { DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"teamHistory">) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, tid };
+};
 
 type PlayoffsByConfBySeason = Awaited<
 	ReturnType<typeof getPlayoffsByConfBySeason>
@@ -227,9 +234,10 @@ export const getHistory = async (
 	};
 };
 
-export default defineView(
-	"teamHistory",
-	async ({ inputs, updateEvents, prevInputs }) => {
+export default defineView({
+	id: "teamHistory",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
 			updateEvents.includes("firstRun") ||
 			updateEvents.includes("gameSim") ||
@@ -376,4 +384,4 @@ export default defineView(
 			};
 		}
 	},
-);
+});

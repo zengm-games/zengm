@@ -614,7 +614,6 @@ export default defineView(
 			const usePts = pointsFormula !== "";
 
 			return {
-				eid,
 				teams,
 				season: event.season,
 				phase: event.phase,

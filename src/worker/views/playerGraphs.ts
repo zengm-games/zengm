@@ -254,7 +254,6 @@ const updatePlayers = async (
 			[`players${axis}`]: statForAxis.players,
 			[`stats${axis}`]: statForAxis.stats,
 			[statKey]: stat,
-			minGames: inputs.minGames,
 		};
 	}
 };

@@ -49,8 +49,8 @@ export const keepType = <T>() => undefined as unknown as T;
  * - load: function that loads the data for the view. It receives an object containing:
  *     - inputs: output of processInputs, or an empty object if there is none
  *     - updateEvents
- *     - prevInputs: inputs from the last time this view ran, or undefined if the page was not already loaded
- *     - prevOutput: properties of the previously returned data that are listed in the keepPrevOutput option. Could be missing, like on the first run. This is everything the view has returned since the page was loaded, merged together, so a property can come from an earlier run than the last one.
+ *     - prevInputs: inputs of the data currently shown in the UI, or undefined if the page was not already loaded
+ *     - prevOutput: properties of the data currently shown in the UI that are listed in the keepPrevOutput option. Could be missing, like on the first run. This is everything the view has returned since the page was loaded, merged together, so a property can come from an earlier run than the last one.
  *     - conditions
  *
  * The keepPrevOutput option is needed because the type of prevOutput can't be inferred from what load returns, since what it returns can depend on prevOutput. So declare the type here and then it's checked against what load actually returns:
@@ -61,6 +61,13 @@ export const keepType = <T>() => undefined as unknown as T;
  *         keepPrevOutput: { completed: keepType<Game[]>() },
  *         load: async ({ inputs, updateEvents, prevOutput }) => { ... },
  *     })
+ *
+ * prevInputs and prevOutput are sent from the UI every time, rather than being stored in the worker. It would seem simpler to store them in the worker (keyed by conditions.hostID, since each tab shows one page at a time), but the UI sometimes discards a result after the worker computed it, when a newer navigation starts while load is running. Then the worker's copy would describe data that was never shown:
+ *
+ * - prevInputs: if the next request has the same inputs as the discarded one (like a double click), load would think that data is already shown and return nothing, leaving the UI showing data for the old inputs
+ * - prevOutput: for views that add to their previous output (like the list of completed games in schedule), the additions from the discarded run would never be shown, and later runs would only add things newer than them. Coming from the UI, the next run starts from what is actually shown, so it fills the gap.
+ *
+ * Avoiding that in the worker would require the UI to tell the worker which result it actually used. Since the UI only sends back the keepPrevOutput properties, the data sent is small anyway.
  */
 export const defineView = <
 	Id extends ViewId,

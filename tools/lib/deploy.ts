@@ -70,17 +70,7 @@ export const deploy = async (sport: Sport, versionNumber: string) => {
 		),
 	);
 
-	await build(sport, versionNumber);
-
 	const subdomain = getSubdomain();
-	const domain = bySport(sport, {
-		baseball: `${subdomain === "play" ? "" : "beta."}baseball.zengm.com`,
-		basketball: `${subdomain}.basketball-gm.com`,
-		football: `${subdomain}.football-gm.com`,
-		hockey: `${subdomain === "play" ? "" : "beta."}hockey.zengm.com`,
-	});
-
-	console.log("");
 
 	if (subdomain === "play") {
 		// Confirm we're on the master branch if we're deploying to prod
@@ -92,6 +82,17 @@ export const deploy = async (sport: Sport, versionNumber: string) => {
 			process.exit(1);
 		}
 	}
+
+	await build(sport, versionNumber);
+
+	const domain = bySport(sport, {
+		baseball: `${subdomain === "play" ? "" : "beta."}baseball.zengm.com`,
+		basketball: `${subdomain}.basketball-gm.com`,
+		football: `${subdomain}.football-gm.com`,
+		hockey: `${subdomain === "play" ? "" : "beta."}hockey.zengm.com`,
+	});
+
+	console.log("");
 
 	console.log(`Deploying to ${domain}...`);
 

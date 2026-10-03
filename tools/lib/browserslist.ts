@@ -1,14 +1,15 @@
 import path from "node:path";
 import browserslist from "browserslist";
 
-// Every supported version of every browser, like ["chrome 85", "chrome 86", ...]
+// Every supported version of every browser, like ["chrome 93", "chrome 94", ...]
 export const getBrowserslist = () => {
 	return browserslist(undefined, {
 		config: path.join(import.meta.dirname, "../../.browserslistrc"),
 	});
 };
 
-// Convert browserslist to the format used by rolldown's transform.target, like ["chrome85", "firefox115", "safari15.4"]
+// Convert browserslist to the format used by rolldown's transform.target, like ["chrome93", "firefox115", "safari15.4"]
+// This is needed until https://github.com/rolldown/rolldown/issues/9152 is fixed
 export const getRolldownTarget = () => {
 	const minVersions = new Map<string, { number: number; string: string }>();
 	for (const entry of getBrowserslist()) {

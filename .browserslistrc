@@ -1,7 +1,7 @@
 # This is used by lightningcss in buildCss.ts and rolldown in rolldownConfig.ts
 
-# Chrome 87 is the last on Mac 10.10 https://en.wikipedia.org/wiki/Template:Google_Chrome_release_compatibility
-Chrome >= 85
+# https://en.wikipedia.org/wiki/Template:Google_Chrome_release_compatibility can be useful for picking this
+Chrome >= 93
 
 # Firefox 115 is ESR and last supported release on some old Mac/Windows versions
 Firefox >= 115

@@ -1,8 +1,8 @@
 import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, PlayoffSeries } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { PlayoffSeries } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { orderTeams } from "../util/orderTeams.ts";
 
 type SeriesTeam = {
@@ -50,218 +50,222 @@ type TeamToEdit = {
 	record: string;
 };
 
-const updatePlayoffs = async (
-	inputs: ViewInput<"playoffs">,
-	updateEvents: UpdateEvents,
-	state: any,
-): Promise<
-	| {
-			canEdit: boolean;
-			confNames: string[];
-			finalMatchups: boolean;
-			matchups: {
-				matchup: [number, number];
-				rowspan: number;
-			}[][];
-			numGamesPlayoffSeries: number[];
-			numGamesToWinSeries: number[];
-			playIns: PlayIns;
-			playoffsByConf: number | false;
-			season: number;
-			series: {
+export default defineView(
+	"playoffs",
+	async ({
+		inputs,
+		updateEvents,
+		prevInputs,
+	}): Promise<
+		| {
+				canEdit: boolean;
+				confNames: string[];
+				finalMatchups: boolean;
+				matchups: {
+					matchup: [number, number];
+					rowspan: number;
+				}[][];
+				numGamesPlayoffSeries: number[];
+				numGamesToWinSeries: number[];
+				playIns: PlayIns;
+				playoffsByConf: number | false;
+				season: number;
+				series: {
+					home: SeriesTeam;
+					away?: SeriesTeam;
+				}[][];
+				teamsToEdit: TeamToEdit[];
+		  }
+		| undefined
+	> => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("playoffs") ||
+			inputs.season !== prevInputs?.season ||
+			(inputs.season === g.get("season") && updateEvents.includes("gameSim"))
+		) {
+			let finalMatchups = false;
+			let series: PlayoffSeries["series"];
+			let playIns: PlayoffSeries["playIns"];
+
+			const playoffSeries = await idb.getCopy.playoffSeries({
+				season: inputs.season,
+			});
+
+			if (playoffSeries) {
+				series = playoffSeries.series;
+				playIns = playoffSeries.playIns;
+				finalMatchups = true;
+			} else {
+				const result = await season.genPlayoffSeries();
+				series = result.series;
+				playIns = result.playIns;
+			}
+
+			await helpers.augmentSeries(series, inputs.season);
+
+			if (playIns) {
+				await helpers.augmentSeries(playIns, inputs.season);
+			}
+
+			// Because augmentSeries mutates series, this is for TypeScript
+			const series2 = series as {
 				home: SeriesTeam;
 				away?: SeriesTeam;
 			}[][];
-			teamsToEdit: TeamToEdit[];
-	  }
-	| undefined
-> => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playoffs") ||
-		inputs.season !== state.season ||
-		(inputs.season === g.get("season") && updateEvents.includes("gameSim"))
-	) {
-		let finalMatchups = false;
-		let series: PlayoffSeries["series"];
-		let playIns: PlayoffSeries["playIns"];
+			const playIns2 = playIns as PlayIns;
 
-		const playoffSeries = await idb.getCopy.playoffSeries({
-			season: inputs.season,
-		});
+			// Formatting for the table in playoffs.html
+			const matchups: {
+				rowspan: number;
+				matchup: [number, number];
+			}[][] = [];
 
-		if (playoffSeries) {
-			series = playoffSeries.series;
-			playIns = playoffSeries.playIns;
-			finalMatchups = true;
-		} else {
-			const result = await season.genPlayoffSeries();
-			series = result.series;
-			playIns = result.playIns;
-		}
-
-		await helpers.augmentSeries(series, inputs.season);
-
-		if (playIns) {
-			await helpers.augmentSeries(playIns, inputs.season);
-		}
-
-		// Because augmentSeries mutates series, this is for TypeScript
-		const series2 = series as {
-			home: SeriesTeam;
-			away?: SeriesTeam;
-		}[][];
-		const playIns2 = playIns as PlayIns;
-
-		// Formatting for the table in playoffs.html
-		const matchups: {
-			rowspan: number;
-			matchup: [number, number];
-		}[][] = [];
-
-		for (let i = 0; i < 2 ** (series.length - 2); i++) {
-			matchups[i] = [];
-		}
-
-		// Fill in with each round. Good lord, this is confusing, due to having to assemble it for an HTML table with rowspans.
-		for (let i = 0; i < series.length; i++) {
-			let numGamesInSide = 2 ** (series.length - i - 2);
-
-			if (numGamesInSide < 1) {
-				numGamesInSide = 1;
+			for (let i = 0; i < 2 ** (series.length - 2); i++) {
+				matchups[i] = [];
 			}
 
-			const rowspan = 2 ** i;
+			// Fill in with each round. Good lord, this is confusing, due to having to assemble it for an HTML table with rowspans.
+			for (let i = 0; i < series.length; i++) {
+				let numGamesInSide = 2 ** (series.length - i - 2);
 
-			for (let j = 0; j < numGamesInSide; j++) {
-				matchups[j * rowspan]!.splice(i, 0, {
-					rowspan,
-					matchup: [i, j],
-				});
+				if (numGamesInSide < 1) {
+					numGamesInSide = 1;
+				}
 
-				if (series.length !== i + 1) {
+				const rowspan = 2 ** i;
+
+				for (let j = 0; j < numGamesInSide; j++) {
 					matchups[j * rowspan]!.splice(i, 0, {
 						rowspan,
-						matchup: [i, numGamesInSide + j],
+						matchup: [i, j],
 					});
+
+					if (series.length !== i + 1) {
+						matchups[j * rowspan]!.splice(i, 0, {
+							rowspan,
+							matchup: [i, numGamesInSide + j],
+						});
+					}
 				}
 			}
-		}
 
-		const confNames = g.get("confs", inputs.season).map((conf) => conf.name); // Display the current or archived playoffs
+			const confNames = g.get("confs", inputs.season).map((conf) => conf.name); // Display the current or archived playoffs
 
-		const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", inputs.season);
-
-		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
-
-		let canEdit =
-			finalMatchups && g.get("godMode") && inputs.season === g.get("season");
-		if (playIns) {
-			for (const playIn of playIns) {
-				if (playIn.length > 2) {
-					// Play-in tournament started
-					canEdit = false;
-				}
-			}
-		}
-		if (series.length === 0) {
-			canEdit = false;
-		} else {
-			for (const matchup of series[0]!) {
-				if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
-					canEdit = false;
-				}
-			}
-		}
-
-		let teamsToEdit: TeamToEdit[] = [];
-		if (canEdit) {
-			const teamsUnsorted = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
-					seasonAttrs: [
-						"cid",
-						"did",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"winp",
-						"pts",
-						"wonDiv",
-						"lostDiv",
-						"tiedDiv",
-						"otlDiv",
-						"wonConf",
-						"lostConf",
-						"tiedConf",
-						"otlConf",
-					],
-					stats: ["pts", "oppPts", "gp"],
-					season: g.get("season"),
-					active: true,
-					showNoStats: true,
-				},
-				"noCopyCache",
+			const numGamesPlayoffSeries = g.get(
+				"numGamesPlayoffSeries",
+				inputs.season,
 			);
 
-			// Sort teams by normal playoff order
-			let teams: typeof teamsUnsorted;
-			if (playoffsByConf !== false) {
-				teams = [];
-				const teamsByConf = Map.groupBy(
-					teamsUnsorted,
-					(t) => t.seasonAttrs.cid,
-				);
-				for (const teamsConf of teamsByConf.values()) {
-					teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
+			const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
+
+			let canEdit =
+				finalMatchups && g.get("godMode") && inputs.season === g.get("season");
+			if (playIns) {
+				for (const playIn of playIns) {
+					if (playIn.length > 2) {
+						// Play-in tournament started
+						canEdit = false;
+					}
 				}
+			}
+			if (series.length === 0) {
+				canEdit = false;
 			} else {
-				teams = await orderTeams(teamsUnsorted, teamsUnsorted);
-			}
-
-			// All first round matchups
-			const matchupsToCheck = [
-				...series[0]!,
-				...(playIns ? playIns.flatMap((playIn) => playIn.slice(0, 2)) : []),
-			];
-
-			const seedsByTid = new Map();
-			for (const matchup of matchupsToCheck) {
-				seedsByTid.set(matchup.home.tid, matchup.home.seed);
-				if (matchup.away && !matchup.away.pendingPlayIn) {
-					seedsByTid.set(matchup.away.tid, matchup.away.seed);
+				for (const matchup of series[0]!) {
+					if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
+						canEdit = false;
+					}
 				}
 			}
 
-			teamsToEdit = teams.map((t) => ({
-				tid: t.tid,
-				cid: t.seasonAttrs.cid,
-				region: t.region,
-				name: t.name,
-				seed: seedsByTid.get(t.tid),
-				imgURL: t.imgURL,
-				imgURLSmall: t.imgURLSmall,
-				record: helpers.formatRecord(t.seasonAttrs),
-			}));
+			let teamsToEdit: TeamToEdit[] = [];
+			if (canEdit) {
+				const teamsUnsorted = await idb.getCopies.teamsPlus(
+					{
+						attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
+						seasonAttrs: [
+							"cid",
+							"did",
+							"won",
+							"lost",
+							"tied",
+							"otl",
+							"winp",
+							"pts",
+							"wonDiv",
+							"lostDiv",
+							"tiedDiv",
+							"otlDiv",
+							"wonConf",
+							"lostConf",
+							"tiedConf",
+							"otlConf",
+						],
+						stats: ["pts", "oppPts", "gp"],
+						season: g.get("season"),
+						active: true,
+						showNoStats: true,
+					},
+					"noCopyCache",
+				);
+
+				// Sort teams by normal playoff order
+				let teams: typeof teamsUnsorted;
+				if (playoffsByConf !== false) {
+					teams = [];
+					const teamsByConf = Map.groupBy(
+						teamsUnsorted,
+						(t) => t.seasonAttrs.cid,
+					);
+					for (const teamsConf of teamsByConf.values()) {
+						teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
+					}
+				} else {
+					teams = await orderTeams(teamsUnsorted, teamsUnsorted);
+				}
+
+				// All first round matchups
+				const matchupsToCheck = [
+					...series[0]!,
+					...(playIns ? playIns.flatMap((playIn) => playIn.slice(0, 2)) : []),
+				];
+
+				const seedsByTid = new Map();
+				for (const matchup of matchupsToCheck) {
+					seedsByTid.set(matchup.home.tid, matchup.home.seed);
+					if (matchup.away && !matchup.away.pendingPlayIn) {
+						seedsByTid.set(matchup.away.tid, matchup.away.seed);
+					}
+				}
+
+				teamsToEdit = teams.map((t) => ({
+					tid: t.tid,
+					cid: t.seasonAttrs.cid,
+					region: t.region,
+					name: t.name,
+					seed: seedsByTid.get(t.tid),
+					imgURL: t.imgURL,
+					imgURLSmall: t.imgURLSmall,
+					record: helpers.formatRecord(t.seasonAttrs),
+				}));
+			}
+
+			return {
+				canEdit,
+				confNames,
+				finalMatchups,
+				matchups,
+				numGamesPlayoffSeries,
+				numGamesToWinSeries: numGamesPlayoffSeries.map(
+					helpers.numGamesToWinSeries,
+				),
+				playIns: playIns2,
+				playoffsByConf,
+				season: inputs.season,
+				series: series2,
+				teamsToEdit,
+			};
 		}
-
-		return {
-			canEdit,
-			confNames,
-			finalMatchups,
-			matchups,
-			numGamesPlayoffSeries,
-			numGamesToWinSeries: numGamesPlayoffSeries.map(
-				helpers.numGamesToWinSeries,
-			),
-			playIns: playIns2,
-			playoffsByConf,
-			season: inputs.season,
-			series: series2,
-			teamsToEdit,
-		};
-	}
-};
-
-export default updatePlayoffs;
+	},
+);

@@ -2,12 +2,11 @@ import { allStar } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
-	UpdateEvents,
 	AllStars,
 	AllStarPlayer,
 	PlayerInjury,
 } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import { PHASE, POSITIONS } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
@@ -101,76 +100,73 @@ const augment = async (allStars: AllStars) => {
 	};
 };
 
-const updateAllStarTeams = async (
-	{ season }: ViewInput<"allStarTeams">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameAttributes") ||
-		season !== state.season
-	) {
-		const allStars = await allStar.getOrCreate(season);
-		if (allStars === undefined) {
-			if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
-				return {
-					redirectUrl: helpers.leagueUrl(["all_star", "teams", season - 1]),
+export default defineView(
+	"allStarTeams",
+	async ({ inputs: { season }, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("gameAttributes") ||
+			season !== prevInputs?.season
+		) {
+			const allStars = await allStar.getOrCreate(season);
+			if (allStars === undefined) {
+				if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
+					return {
+						redirectUrl: helpers.leagueUrl(["all_star", "teams", season - 1]),
+					};
+				}
+
+				// https://stackoverflow.com/a/59923262/786644
+				const returnValue = {
+					errorMessage: "All-Star teams not found",
 				};
+				return returnValue;
 			}
 
-			// https://stackoverflow.com/a/59923262/786644
-			const returnValue = {
-				errorMessage: "All-Star teams not found",
+			const { finalized, gid, teams, teamNames, remaining } =
+				await augment(allStars);
+
+			const nextGameIsAllStar =
+				season === g.get("season") && (await allStar.nextGameIsAllStar());
+
+			const godMode = g.get("godMode");
+
+			const started = teams[0]!.length > 1;
+
+			let allPossiblePlayers: {
+				pid: number;
+				tid: number;
+				name: string;
+				abbrev: string;
+				injury: PlayerInjury;
+			}[] = [];
+			if (godMode && (!started || allStars.type !== "draft")) {
+				allPossiblePlayers = orderBy(
+					await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
+					["lastName", "firstName"],
+				).map((p) => ({
+					pid: p.pid,
+					tid: p.tid,
+					name: `${p.firstName} ${p.lastName}`,
+					abbrev: helpers.getAbbrev(p.tid),
+					injury: p.injury,
+				}));
+			}
+
+			return {
+				allPossiblePlayers,
+				finalized,
+				gid,
+				nextGameIsAllStar,
+				remaining,
+				season,
+				stats,
+				teams,
+				teamNames,
+				type: allStars.type,
 			};
-			return returnValue;
 		}
-
-		const { finalized, gid, teams, teamNames, remaining } =
-			await augment(allStars);
-
-		const nextGameIsAllStar =
-			season === g.get("season") && (await allStar.nextGameIsAllStar());
-
-		const godMode = g.get("godMode");
-
-		const started = teams[0]!.length > 1;
-
-		let allPossiblePlayers: {
-			pid: number;
-			tid: number;
-			name: string;
-			abbrev: string;
-			injury: PlayerInjury;
-		}[] = [];
-		if (godMode && (!started || allStars.type !== "draft")) {
-			allPossiblePlayers = orderBy(
-				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
-				["lastName", "firstName"],
-			).map((p) => ({
-				pid: p.pid,
-				tid: p.tid,
-				name: `${p.firstName} ${p.lastName}`,
-				abbrev: helpers.getAbbrev(p.tid),
-				injury: p.injury,
-			}));
-		}
-
-		return {
-			allPossiblePlayers,
-			finalized,
-			gid,
-			nextGameIsAllStar,
-			remaining,
-			season,
-			stats,
-			teams,
-			teamNames,
-			type: allStars.type,
-		};
-	}
-};
-
-export default updateAllStarTeams;
+	},
+);

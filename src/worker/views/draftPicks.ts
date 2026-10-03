@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { DraftPick, UpdateEvents } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { DraftPick } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 import { getEstPicks } from "../core/team/ValueChangeCalculator.ts";
@@ -141,42 +141,39 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 	return draftPicks;
 };
 
-const updateDraftPicks = async (
-	{ abbrev, tid }: ViewInput<"draftPicks">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase") ||
-		abbrev !== state.abbrev
-	) {
-		const draftPicksRaw = (await idb.cache.draftPicks.getAll()).filter(
-			(dp) => dp.tid === tid || dp.originalTid === tid,
-		);
+export default defineView(
+	"draftPicks",
+	async ({ inputs: { abbrev, tid }, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("newPhase") ||
+			abbrev !== prevInputs?.abbrev
+		) {
+			const draftPicksRaw = (await idb.cache.draftPicks.getAll()).filter(
+				(dp) => dp.tid === tid || dp.originalTid === tid,
+			);
 
-		const draftPicksProcessed = await processDraftPicks(draftPicksRaw);
+			const draftPicksProcessed = await processDraftPicks(draftPicksRaw);
 
-		// Do this after processDraftPicks so processDraftPicks can use the same caches for both
-		const draftPicks = [];
-		const draftPicksOutgoing = [];
-		for (const dp of draftPicksProcessed) {
-			if (dp.tid === tid) {
-				draftPicks.push(dp);
-			} else if (dp.originalTid === tid) {
-				draftPicksOutgoing.push(dp);
+			// Do this after processDraftPicks so processDraftPicks can use the same caches for both
+			const draftPicks = [];
+			const draftPicksOutgoing = [];
+			for (const dp of draftPicksProcessed) {
+				if (dp.tid === tid) {
+					draftPicks.push(dp);
+				} else if (dp.originalTid === tid) {
+					draftPicksOutgoing.push(dp);
+				}
 			}
+
+			return {
+				abbrev,
+				draftPicks,
+				draftPicksOutgoing,
+				tid,
+			};
 		}
-
-		return {
-			abbrev,
-			draftPicks,
-			draftPicksOutgoing,
-			tid,
-		};
-	}
-};
-
-export default updateDraftPicks;
+	},
+);

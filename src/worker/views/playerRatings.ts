@@ -13,9 +13,8 @@ import type {
 	PlayInTournament,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
-	UpdateEvents,
 } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "./depth.ts";
 import { actualPhase } from "../util/actualPhase.ts";
@@ -215,98 +214,96 @@ export const getPlayers = async (
 	return players;
 };
 
-const updatePlayers = async (
-	inputs: ViewInput<"playerRatings">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") &&
-			updateEvents.includes("playerMovement")) ||
-		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
-		(inputs.abbrev === "playoffs" && updateEvents.includes("gameSim")) ||
-		inputs.season !== state.season ||
-		inputs.abbrev !== state.abbrev
-	) {
-		const ratings = bySport({
-			baseball: RATINGS,
-			basketball: [
-				"hgt",
-				"stre",
-				"spd",
-				"jmp",
-				"endu",
-				"ins",
-				"dnk",
-				"ft",
-				"fg",
-				"tp",
-				"oiq",
-				"diq",
-				"drb",
-				"pss",
-				"reb",
-			],
-			football: [
-				"hgt",
-				"stre",
-				"spd",
-				"endu",
-				"thv",
-				"thp",
-				"tha",
-				"bsc",
-				"elu",
-				"rtr",
-				"hnd",
-				"pbk",
-				"rbk",
-				"pcv",
-				"tck",
-				"prs",
-				"rns",
-				"kpw",
-				"kac",
-				"ppw",
-				"pac",
-			],
-			hockey: [
-				"hgt",
-				"stre",
-				"spd",
-				"endu",
-				"pss",
-				"wst",
-				"sst",
-				"stk",
-				"oiq",
-				"chk",
-				"blk",
-				"fcf",
-				"diq",
-				"glk",
-			],
-		} as const);
+export default defineView(
+	"playerRatings",
+	async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			(inputs.season === g.get("season") &&
+				updateEvents.includes("playerMovement")) ||
+			(updateEvents.includes("newPhase") &&
+				g.get("phase") === PHASE.PRESEASON) ||
+			(inputs.abbrev === "playoffs" && updateEvents.includes("gameSim")) ||
+			inputs.season !== prevInputs?.season ||
+			inputs.abbrev !== prevInputs?.abbrev
+		) {
+			const ratings = bySport({
+				baseball: RATINGS,
+				basketball: [
+					"hgt",
+					"stre",
+					"spd",
+					"jmp",
+					"endu",
+					"ins",
+					"dnk",
+					"ft",
+					"fg",
+					"tp",
+					"oiq",
+					"diq",
+					"drb",
+					"pss",
+					"reb",
+				],
+				football: [
+					"hgt",
+					"stre",
+					"spd",
+					"endu",
+					"thv",
+					"thp",
+					"tha",
+					"bsc",
+					"elu",
+					"rtr",
+					"hnd",
+					"pbk",
+					"rbk",
+					"pcv",
+					"tck",
+					"prs",
+					"rns",
+					"kpw",
+					"kac",
+					"ppw",
+					"pac",
+				],
+				hockey: [
+					"hgt",
+					"stre",
+					"spd",
+					"endu",
+					"pss",
+					"wst",
+					"sst",
+					"stk",
+					"oiq",
+					"chk",
+					"blk",
+					"fcf",
+					"diq",
+					"glk",
+				],
+			} as const);
 
-		const players = addFirstNameShort(
-			await getPlayers(
-				inputs.season,
-				inputs.abbrev,
-				[],
-				[...ratings, ...extraRatings],
-				[],
-				inputs.tid,
-			),
-		);
+			const players = addFirstNameShort(
+				await getPlayers(
+					inputs.season,
+					inputs.abbrev,
+					[],
+					[...ratings, ...extraRatings],
+					[],
+					inputs.tid,
+				),
+			);
 
-		return {
-			abbrev: inputs.abbrev,
-			season: inputs.season,
-			players,
-			ratings,
-		};
-	}
-};
-
-export default updatePlayers;
+			return {
+				abbrev: inputs.abbrev,
+				season: inputs.season,
+				players,
+				ratings,
+			};
+		}
+	},
+);

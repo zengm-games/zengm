@@ -1,59 +1,56 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 
-const updateExportPlayers = async (
-	{ season }: ViewInput<"exportPlayers">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
-		season !== state.season
-	) {
-		let playersAll;
-		if (g.get("season") === season) {
-			playersAll = await idb.cache.players.getAll();
-			playersAll = playersAll.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
-		} else {
-			playersAll = await idb.getCopies.players(
-				{
-					activeSeason: season,
-				},
-				"noCopyCache",
+export default defineView(
+	"exportPlayers",
+	async ({ inputs: { season }, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			(updateEvents.includes("newPhase") &&
+				g.get("phase") === PHASE.PRESEASON) ||
+			season !== prevInputs?.season
+		) {
+			let playersAll;
+			if (g.get("season") === season) {
+				playersAll = await idb.cache.players.getAll();
+				playersAll = playersAll.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
+			} else {
+				playersAll = await idb.getCopies.players(
+					{
+						activeSeason: season,
+					},
+					"noCopyCache",
+				);
+			}
+
+			const players = addFirstNameShort(
+				await idb.getCopies.playersPlus(playersAll, {
+					attrs: [
+						"pid",
+						"firstName",
+						"lastName",
+						"age",
+						"injury",
+						"watch",
+						"tid",
+						"abbrev",
+						"jerseyNumber",
+					],
+					ratings: ["ovr", "pot", "skills", "pos"],
+					season,
+					showNoStats: true,
+					showRookies: true,
+					fuzz: true,
+				}),
 			);
-		}
 
-		const players = addFirstNameShort(
-			await idb.getCopies.playersPlus(playersAll, {
-				attrs: [
-					"pid",
-					"firstName",
-					"lastName",
-					"age",
-					"injury",
-					"watch",
-					"tid",
-					"abbrev",
-					"jerseyNumber",
-				],
-				ratings: ["ovr", "pot", "skills", "pos"],
+			return {
+				players,
 				season,
-				showNoStats: true,
-				showRookies: true,
-				fuzz: true,
-			}),
-		);
-
-		return {
-			players,
-			season,
-		};
-	}
-};
-
-export default updateExportPlayers;
+			};
+		}
+	},
+);

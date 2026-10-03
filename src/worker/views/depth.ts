@@ -2,12 +2,8 @@ import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { posRatings } from "../../common/posRatings.ts";
-import type {
-	PlayerRatingKey,
-	UpdateEvents,
-	PlayerStatAttr,
-} from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { PlayerRatingKey, PlayerStatAttr } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import {
 	NUM_LINES,
@@ -146,168 +142,172 @@ const stats = bySport<Record<string, PlayerStatAttr[]>>({
 	},
 });
 
-const updateDepth = async (
-	{ abbrev, playoffs, pos, tid }: ViewInput<"depth">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		__SPORT !== "baseball" &&
-		__SPORT !== "football" &&
-		__SPORT !== "hockey"
-	) {
-		throw new Error("Not implemented");
-	}
+export default defineView(
+	"depth",
+	async ({
+		inputs: { abbrev, playoffs, pos, tid },
+		updateEvents,
+		prevInputs,
+	}) => {
+		if (
+			__SPORT !== "baseball" &&
+			__SPORT !== "football" &&
+			__SPORT !== "hockey"
+		) {
+			throw new Error("Not implemented");
+		}
 
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameAttributes") ||
-		updateEvents.includes("team") ||
-		pos !== state.pos ||
-		playoffs !== state.playoffs ||
-		abbrev !== state.abbrev
-	) {
-		let showDH: "noDH" | "dh" | "both" | undefined;
-		let pos2 = pos;
-		if (__SPORT === "baseball") {
-			const dh = g.get("dh");
-			if (dh === "none") {
-				showDH = "noDH";
-			} else if (dh === "all") {
-				showDH = "dh";
-			} else {
-				const confs = g.get("confs");
-				const filteredConfs = confs.filter((conf) => dh.includes(conf.cid));
-				if (confs.length === filteredConfs.length) {
-					showDH = "dh";
-				} else if (filteredConfs.length === 0) {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("gameAttributes") ||
+			updateEvents.includes("team") ||
+			pos !== prevInputs?.pos ||
+			playoffs !== prevInputs?.playoffs ||
+			abbrev !== prevInputs?.abbrev
+		) {
+			let showDH: "noDH" | "dh" | "both" | undefined;
+			let pos2 = pos;
+			if (__SPORT === "baseball") {
+				const dh = g.get("dh");
+				if (dh === "none") {
 					showDH = "noDH";
+				} else if (dh === "all") {
+					showDH = "dh";
 				} else {
-					showDH = "both";
-				}
-			}
-
-			if (showDH === "noDH") {
-				if (pos === "L") {
-					pos2 = "LP";
-				} else if (pos === "D") {
-					pos2 = "DP";
-				}
-			} else if (showDH === "dh") {
-				if (pos === "LP") {
-					pos2 = "L";
-				} else if (pos === "DP") {
-					pos2 = "D";
-				}
-			}
-		}
-
-		const editable = tid === g.get("userTid") && !g.get("spectator");
-		const ratings: PlayerRatingKey[] = [
-			...(__SPORT === "baseball"
-				? pos2 === "P"
-					? []
-					: (["hgt", "spd"] as const)
-				: (["hgt", "stre", "spd", "endu"] as const)),
-			...posRatings(pos2),
-		];
-		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
-		const players = addFirstNameShort(
-			await idb.getCopies.playersPlus(playersAll, {
-				attrs: ["pid", "firstName", "lastName", "age", "injury", "watch"],
-				ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
-				seasonType: playoffs,
-				stats: [...stats[pos2]!, "jerseyNumber"],
-				season: g.get("season"),
-				showNoStats: true,
-				showRookies: true,
-				fuzz: true,
-			}),
-		);
-
-		// Sort players based on current depth chart
-		const t = await idb.cache.teams.get(tid);
-
-		if (!t || !t.depth) {
-			throw new Error("Missing depth");
-		}
-
-		const depthPlayers = team.getDepthPlayers(t.depth, players);
-
-		const stats2: string[] = stats[pos2] ?? [];
-
-		const players2: any[] = depthPlayers[pos2] ?? [];
-
-		let multiplePositionsWarning: string | undefined;
-		if (__SPORT === "hockey" && players.length >= g.get("minRosterSize")) {
-			const playerInfoByPid = new Map<
-				number,
-				{
-					name: string;
-					positions: string[];
-				}
-			>();
-
-			for (const [pos, posPlayers] of Object.entries(depthPlayers)) {
-				const numStarters =
-					NUM_LINES[pos as keyof typeof NUM_LINES] *
-					NUM_PLAYERS_PER_LINE[pos as keyof typeof NUM_PLAYERS_PER_LINE];
-
-				for (let i = 0; i < numStarters; i++) {
-					const p = posPlayers[i];
-					if (!p) {
-						break;
+					const confs = g.get("confs");
+					const filteredConfs = confs.filter((conf) => dh.includes(conf.cid));
+					if (confs.length === filteredConfs.length) {
+						showDH = "dh";
+					} else if (filteredConfs.length === 0) {
+						showDH = "noDH";
+					} else {
+						showDH = "both";
 					}
+				}
 
-					const { firstName, lastName, pid } = p;
-					let info = playerInfoByPid.get(pid);
-					if (!info) {
-						info = {
-							name: `${firstName} ${lastName}`,
-							positions: [],
-						};
-						playerInfoByPid.set(pid, info);
+				if (showDH === "noDH") {
+					if (pos === "L") {
+						pos2 = "LP";
+					} else if (pos === "D") {
+						pos2 = "DP";
 					}
-					info.positions.push(pos);
+				} else if (showDH === "dh") {
+					if (pos === "LP") {
+						pos2 = "L";
+					} else if (pos === "DP") {
+						pos2 = "D";
+					}
 				}
 			}
 
-			const playersAtMultiplePositions = [];
-			for (const { name, positions } of playerInfoByPid.values()) {
-				if (positions.length > 1) {
-					playersAtMultiplePositions.push(`${name} (${positions.join("/")})`);
+			const editable = tid === g.get("userTid") && !g.get("spectator");
+			const ratings: PlayerRatingKey[] = [
+				...(__SPORT === "baseball"
+					? pos2 === "P"
+						? []
+						: (["hgt", "spd"] as const)
+					: (["hgt", "stre", "spd", "endu"] as const)),
+				...posRatings(pos2),
+			];
+			const playersAll = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				tid,
+			);
+			const players = addFirstNameShort(
+				await idb.getCopies.playersPlus(playersAll, {
+					attrs: ["pid", "firstName", "lastName", "age", "injury", "watch"],
+					ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
+					seasonType: playoffs,
+					stats: [...stats[pos2]!, "jerseyNumber"],
+					season: g.get("season"),
+					showNoStats: true,
+					showRookies: true,
+					fuzz: true,
+				}),
+			);
+
+			// Sort players based on current depth chart
+			const t = await idb.cache.teams.get(tid);
+
+			if (!t || !t.depth) {
+				throw new Error("Missing depth");
+			}
+
+			const depthPlayers = team.getDepthPlayers(t.depth, players);
+
+			const stats2: string[] = stats[pos2] ?? [];
+
+			const players2: any[] = depthPlayers[pos2] ?? [];
+
+			let multiplePositionsWarning: string | undefined;
+			if (__SPORT === "hockey" && players.length >= g.get("minRosterSize")) {
+				const playerInfoByPid = new Map<
+					number,
+					{
+						name: string;
+						positions: string[];
+					}
+				>();
+
+				for (const [pos, posPlayers] of Object.entries(depthPlayers)) {
+					const numStarters =
+						NUM_LINES[pos as keyof typeof NUM_LINES] *
+						NUM_PLAYERS_PER_LINE[pos as keyof typeof NUM_PLAYERS_PER_LINE];
+
+					for (let i = 0; i < numStarters; i++) {
+						const p = posPlayers[i];
+						if (!p) {
+							break;
+						}
+
+						const { firstName, lastName, pid } = p;
+						let info = playerInfoByPid.get(pid);
+						if (!info) {
+							info = {
+								name: `${firstName} ${lastName}`,
+								positions: [],
+							};
+							playerInfoByPid.set(pid, info);
+						}
+						info.positions.push(pos);
+					}
+				}
+
+				const playersAtMultiplePositions = [];
+				for (const { name, positions } of playerInfoByPid.values()) {
+					if (positions.length > 1) {
+						playersAtMultiplePositions.push(`${name} (${positions.join("/")})`);
+					}
+				}
+
+				if (playersAtMultiplePositions.length > 0) {
+					multiplePositionsWarning = `Some players are in the rotation at multiple positions, which may lead to erratic substitution patterns: ${playersAtMultiplePositions.join(
+						", ",
+					)}.`;
 				}
 			}
 
-			if (playersAtMultiplePositions.length > 0) {
-				multiplePositionsWarning = `Some players are in the rotation at multiple positions, which may lead to erratic substitution patterns: ${playersAtMultiplePositions.join(
-					", ",
-				)}.`;
+			if (__SPORT === "baseball") {
+				for (const p of players2) {
+					buffOvrDH(p);
+				}
 			}
+
+			return {
+				abbrev,
+				editable,
+				keepRosterSorted: t.keepRosterSorted,
+				multiplePositionsWarning,
+				pos: pos2,
+				players: players2,
+				playoffs,
+				ratings,
+				showDH,
+				stats: stats2,
+				tid,
+			};
 		}
-
-		if (__SPORT === "baseball") {
-			for (const p of players2) {
-				buffOvrDH(p);
-			}
-		}
-
-		return {
-			abbrev,
-			editable,
-			keepRosterSorted: t.keepRosterSorted,
-			multiplePositionsWarning,
-			pos: pos2,
-			players: players2,
-			playoffs,
-			ratings,
-			showDH,
-			stats: stats2,
-			tid,
-		};
-	}
-};
-
-export default updateDepth;
+	},
+);

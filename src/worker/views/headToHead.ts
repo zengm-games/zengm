@@ -1,125 +1,125 @@
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import { headToHead } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import hasTies from "../core/season/hasTies.ts";
 
-const updateHeadToHead = async (
-	{ abbrev, season, tid, type }: ViewInput<"headToHead">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		((season === g.get("season") || season === "all") &&
-			updateEvents.includes("gameSim")) ||
-		season !== state.season ||
-		tid !== state.tid ||
-		type !== state.type
-	) {
-		const simpleSums = [
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"pts",
-			"oppPts",
-			"seriesWon",
-			"seriesLost",
-			"finalsWon",
-			"finalsLost",
-		] as const;
-		type TeamInfo = Record<(typeof simpleSums)[number], number> & {
-			tid: number;
-		};
-
-		const totals = {
-			won: 0,
-			lost: 0,
-			tied: 0,
-			otl: 0,
-			pts: 0,
-			oppPts: 0,
-			seriesWon: 0,
-			seriesLost: 0,
-			finalsWon: 0,
-			finalsLost: 0,
-			winp: 0,
-		};
-
-		const infoByTid = new Map<number, TeamInfo>();
-
-		await headToHead.iterate(
-			{
-				tid,
-				type,
-				season,
-			},
-			(info) => {
-				const current = infoByTid.get(info.tid);
-				if (current) {
-					for (const key of simpleSums) {
-						current[key] += info[key];
-					}
-				} else {
-					infoByTid.set(info.tid, info);
-				}
-
-				for (const key of simpleSums) {
-					totals[key] += info[key];
-				}
-			},
-		);
-
-		const teamInfos = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs: ["region", "name", "abbrev", "imgURL", "imgURLSmall"],
-				season: season === "all" ? g.get("season") : season,
-				addDummySeason: true,
-			},
-			"noCopyCache",
-		);
-
-		const teams = Array.from(infoByTid.values()).map((info) => {
-			const t = teamInfos.find((t) => t.tid === info.tid);
-			if (!t) {
-				throw new Error("Team not found");
-			}
-			return {
-				...info,
-				...t,
-				winp: helpers.calcWinp(info),
+export default defineView(
+	"headToHead",
+	async ({
+		inputs: { abbrev, season, tid, type },
+		updateEvents,
+		prevInputs,
+	}) => {
+		if (
+			((season === g.get("season") || season === "all") &&
+				updateEvents.includes("gameSim")) ||
+			season !== prevInputs?.season ||
+			tid !== prevInputs?.tid ||
+			type !== prevInputs?.type
+		) {
+			const simpleSums = [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"pts",
+				"oppPts",
+				"seriesWon",
+				"seriesLost",
+				"finalsWon",
+				"finalsLost",
+			] as const;
+			type TeamInfo = Record<(typeof simpleSums)[number], number> & {
+				tid: number;
 			};
-		});
 
-		totals.winp = helpers.calcWinp(totals);
+			const totals = {
+				won: 0,
+				lost: 0,
+				tied: 0,
+				otl: 0,
+				pts: 0,
+				oppPts: 0,
+				seriesWon: 0,
+				seriesLost: 0,
+				finalsWon: 0,
+				finalsLost: 0,
+				winp: 0,
+			};
 
-		let ties = false;
-		let otl = false;
-		for (const t of teams) {
-			if (t.tied > 0) {
-				ties = true;
+			const infoByTid = new Map<number, TeamInfo>();
+
+			await headToHead.iterate(
+				{
+					tid,
+					type,
+					season,
+				},
+				(info) => {
+					const current = infoByTid.get(info.tid);
+					if (current) {
+						for (const key of simpleSums) {
+							current[key] += info[key];
+						}
+					} else {
+						infoByTid.set(info.tid, info);
+					}
+
+					for (const key of simpleSums) {
+						totals[key] += info[key];
+					}
+				},
+			);
+
+			const teamInfos = await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid"],
+					seasonAttrs: ["region", "name", "abbrev", "imgURL", "imgURLSmall"],
+					season: season === "all" ? g.get("season") : season,
+					addDummySeason: true,
+				},
+				"noCopyCache",
+			);
+
+			const teams = Array.from(infoByTid.values()).map((info) => {
+				const t = teamInfos.find((t) => t.tid === info.tid);
+				if (!t) {
+					throw new Error("Team not found");
+				}
+				return {
+					...info,
+					...t,
+					winp: helpers.calcWinp(info),
+				};
+			});
+
+			totals.winp = helpers.calcWinp(totals);
+
+			let ties = false;
+			let otl = false;
+			for (const t of teams) {
+				if (t.tied > 0) {
+					ties = true;
+				}
+				if (t.otl > 0) {
+					otl = true;
+				}
+				if (ties && otl) {
+					break;
+				}
 			}
-			if (t.otl > 0) {
-				otl = true;
-			}
-			if (ties && otl) {
-				break;
-			}
+
+			return {
+				abbrev,
+				season,
+				teams,
+				tid,
+				ties: hasTies(season === "all" ? "current" : season) || ties,
+				otl: g.get("otl", season === "all" ? "current" : season) || otl,
+				totals,
+				type,
+			};
 		}
-
-		return {
-			abbrev,
-			season,
-			teams,
-			tid,
-			ties: hasTies(season === "all" ? "current" : season) || ties,
-			otl: g.get("otl", season === "all" ? "current" : season) || otl,
-			totals,
-			type,
-		};
-	}
-};
-
-export default updateHeadToHead;
+	},
+);

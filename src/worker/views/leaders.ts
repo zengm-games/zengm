@@ -6,9 +6,8 @@ import type {
 	PlayerInjury,
 	PlayerStatAttr,
 	PlayerStatType,
-	UpdateEvents,
 } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { season } from "../core/index.ts";
@@ -742,68 +741,113 @@ export const leadersAddFirstNameShort = <
 
 const NUM_LEADERS = 10;
 
-const updateLeaders = async (
-	inputs: ViewInput<"leaders">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
-		inputs.season !== state.season ||
-		inputs.playoffs !== state.playoffs ||
-		inputs.statType !== state.statType
-	) {
-		const { categories, stats } = getCategoriesAndStats();
+export default defineView(
+	"leaders",
+	async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
+			inputs.season !== prevInputs?.season ||
+			inputs.playoffs !== prevInputs?.playoffs ||
+			inputs.statType !== prevInputs?.statType
+		) {
+			const { categories, stats } = getCategoriesAndStats();
 
-		const outputCategories = categories.map((category) => ({
-			titleOverride: category.titleOverride,
-			stat: category.stat,
-			leaders: [] as Leader[],
-		}));
+			const outputCategories = categories.map((category) => ({
+				titleOverride: category.titleOverride,
+				stat: category.stat,
+				leaders: [] as Leader[],
+			}));
 
-		// Load all gameslayedCache seasons ahead of time, so we don't make IndexedDB transaction auto commit if doing this dynamically in iterateAllPlayers
-		const gamesPlayedCache = new GamesPlayedCache();
-		let seasons: number[];
-		if (inputs.season === "career") {
-			// Nothing to cache
-			seasons = [];
-		} else if (inputs.season === "all") {
-			seasons = range(g.get("startingSeason"), g.get("season") + 1);
-		} else {
-			seasons = [inputs.season];
-		}
+			// Load all gameslayedCache seasons ahead of time, so we don't make IndexedDB transaction auto commit if doing this dynamically in iterateAllPlayers
+			const gamesPlayedCache = new GamesPlayedCache();
+			let seasons: number[];
+			if (inputs.season === "career") {
+				// Nothing to cache
+				seasons = [];
+			} else if (inputs.season === "all") {
+				seasons = range(g.get("startingSeason"), g.get("season") + 1);
+			} else {
+				seasons = [inputs.season];
+			}
 
-		if (inputs.playoffs === "combined") {
-			await gamesPlayedCache.loadSeasons(seasons, false);
-			await gamesPlayedCache.loadSeasons(seasons, true);
-		} else {
-			await gamesPlayedCache.loadSeasons(
-				seasons,
-				inputs.playoffs === "playoffs",
-			);
-		}
+			if (inputs.playoffs === "combined") {
+				await gamesPlayedCache.loadSeasons(seasons, false);
+				await gamesPlayedCache.loadSeasons(seasons, true);
+			} else {
+				await gamesPlayedCache.loadSeasons(
+					seasons,
+					inputs.playoffs === "playoffs",
+				);
+			}
 
-		const attrs = [
-			"pid",
-			"firstName",
-			"lastName",
-			"injury",
-			"watch",
-			"jerseyNumber",
-			"hof",
-			"retiredYear",
-		] as const;
-		const allStats = ["abbrev", "tid", ...stats, ...extraStats] as const;
+			const attrs = [
+				"pid",
+				"firstName",
+				"lastName",
+				"injury",
+				"watch",
+				"jerseyNumber",
+				"hof",
+				"retiredYear",
+			] as const;
+			const allStats = ["abbrev", "tid", ...stats, ...extraStats] as const;
 
-		// Returns the player, the stats row to use, and some values that differ between career and single season
-		const getPlayerInfo = async (pRaw: Player, season: number | "career") => {
-			if (season === "career") {
+			// Returns the player, the stats row to use, and some values that differ between career and single season
+			const getPlayerInfo = async (pRaw: Player, season: number | "career") => {
+				if (season === "career") {
+					const p = await idb.getCopy.playersPlus(pRaw, {
+						attrs,
+						// season and ovr only needed for bestPos
+						ratings: ["season", "ovr", "skills", "pos"],
+						stats: allStats,
+						seasonType: inputs.playoffs,
+						mergeStats: "totOnly",
+						statType: inputs.statType,
+						disableAbbrevsCacheDatabaseAccess: true,
+					});
+					if (!p) {
+						return;
+					}
+
+					const playerStats =
+						inputs.playoffs === "playoffs"
+							? p.careerStatsPlayoffs
+							: inputs.playoffs === "combined"
+								? p.careerStatsCombined
+								: p.careerStats;
+					if (!playerStats) {
+						return;
+					}
+
+					return {
+						p,
+						playerStats,
+						skills: undefined,
+						// Shitty handling of career totals, only computed if needed because it's slow
+						getTeamAndPos: () => {
+							const { bestPos, legacyTid } = processPlayersHallOfFame([p])[0]!;
+							if (legacyTid >= 0) {
+								return {
+									abbrev: helpers.getAbbrev(legacyTid),
+									pos: bestPos,
+									tid: legacyTid,
+								};
+							}
+							return {
+								abbrev: playerStats.abbrev,
+								pos: bestPos,
+								tid: playerStats.tid,
+							};
+						},
+					};
+				}
+
 				const p = await idb.getCopy.playersPlus(pRaw, {
 					attrs,
-					// season and ovr only needed for bestPos
-					ratings: ["season", "ovr", "skills", "pos"],
+					ratings: ["skills", "pos"],
 					stats: allStats,
+					season,
 					seasonType: inputs.playoffs,
 					mergeStats: "totOnly",
 					statType: inputs.statType,
@@ -813,158 +857,110 @@ const updateLeaders = async (
 					return;
 				}
 
-				const playerStats =
-					inputs.playoffs === "playoffs"
-						? p.careerStatsPlayoffs
-						: inputs.playoffs === "combined"
-							? p.careerStatsCombined
-							: p.careerStats;
-				if (!playerStats) {
-					return;
-				}
-
 				return {
 					p,
-					playerStats,
-					skills: undefined,
-					// Shitty handling of career totals, only computed if needed because it's slow
-					getTeamAndPos: () => {
-						const { bestPos, legacyTid } = processPlayersHallOfFame([p])[0]!;
-						if (legacyTid >= 0) {
-							return {
-								abbrev: helpers.getAbbrev(legacyTid),
-								pos: bestPos,
-								tid: legacyTid,
-							};
-						}
-						return {
-							abbrev: playerStats.abbrev,
-							pos: bestPos,
-							tid: playerStats.tid,
-						};
-					},
+					playerStats: p.stats,
+					skills: p.ratings.skills,
+					getTeamAndPos: () => ({
+						abbrev: p.stats.abbrev,
+						pos: p.ratings.pos,
+						tid: p.stats.tid,
+					}),
 				};
-			}
-
-			const p = await idb.getCopy.playersPlus(pRaw, {
-				attrs,
-				ratings: ["skills", "pos"],
-				stats: allStats,
-				season,
-				seasonType: inputs.playoffs,
-				mergeStats: "totOnly",
-				statType: inputs.statType,
-				disableAbbrevsCacheDatabaseAccess: true,
-			});
-			if (!p) {
-				return;
-			}
-
-			return {
-				p,
-				playerStats: p.stats,
-				skills: p.ratings.skills,
-				getTeamAndPos: () => ({
-					abbrev: p.stats.abbrev,
-					pos: p.ratings.pos,
-					tid: p.stats.tid,
-				}),
 			};
-		};
 
-		await iterateAllPlayersWithStats(inputs.season, async (pRaw, season) => {
-			const info = await getPlayerInfo(pRaw, season);
-			if (!info) {
-				return;
-			}
-			const { p, playerStats, skills, getTeamAndPos } = info;
-
-			for (const [cat, outputCat] of Iterator.zip(
-				[categories, outputCategories],
-				{ mode: "strict" },
-			)) {
-				const value = playerStats[cat.stat];
-				if (typeof value !== "number") {
-					// value should only be undefined in historical data before certain stats were tracked. Leader categories are all numeric stats
-					continue;
+			await iterateAllPlayersWithStats(inputs.season, async (pRaw, season) => {
+				const info = await getPlayerInfo(pRaw, season);
+				if (!info) {
+					return;
 				}
-				const lastValue = outputCat.leaders.at(-1)?.stat;
-				if (
-					lastValue !== undefined &&
-					outputCat.leaders.length >= NUM_LEADERS &&
-					((cat.sortAscending && value > lastValue) ||
-						(!cat.sortAscending && value < lastValue))
-				) {
-					// Value is not good enough for the top 10
-					continue;
-				}
+				const { p, playerStats, skills, getTeamAndPos } = info;
 
-				const pass = playerMeetsCategoryRequirements({
-					career: season === "career",
-					cat,
-					gamesPlayedCache,
-					p,
-					playerStats,
-					seasonType: inputs.playoffs,
-					season: season === "career" ? g.get("season") : season,
-					statType: inputs.statType,
-				});
+				for (const [cat, outputCat] of Iterator.zip(
+					[categories, outputCategories],
+					{ mode: "strict" },
+				)) {
+					const value = playerStats[cat.stat];
+					if (typeof value !== "number") {
+						// value should only be undefined in historical data before certain stats were tracked. Leader categories are all numeric stats
+						continue;
+					}
+					const lastValue = outputCat.leaders.at(-1)?.stat;
+					if (
+						lastValue !== undefined &&
+						outputCat.leaders.length >= NUM_LEADERS &&
+						((cat.sortAscending && value > lastValue) ||
+							(!cat.sortAscending && value < lastValue))
+					) {
+						// Value is not good enough for the top 10
+						continue;
+					}
 
-				if (pass) {
-					// Players can appear multiple times if looking at all seasons
-					const key = inputs.season === "all" ? `${p.pid}|${season}` : p.pid;
+					const pass = playerMeetsCategoryRequirements({
+						career: season === "career",
+						cat,
+						gamesPlayedCache,
+						p,
+						playerStats,
+						seasonType: inputs.playoffs,
+						season: season === "career" ? g.get("season") : season,
+						statType: inputs.statType,
+					});
 
-					const { abbrev, pos, tid } = getTeamAndPos();
+					if (pass) {
+						// Players can appear multiple times if looking at all seasons
+						const key = inputs.season === "all" ? `${p.pid}|${season}` : p.pid;
 
-					const userTid =
-						season !== "career" ? g.get("userTid", season) : g.get("userTid");
+						const { abbrev, pos, tid } = getTeamAndPos();
 
-					const leader = {
-						abbrev,
-						hof: p.hof,
-						injury: p.injury,
-						jerseyNumber: p.jerseyNumber,
-						key,
-						firstName: p.firstName,
-						lastName: p.lastName,
-						pid: p.pid,
-						pos,
-						retiredYear: p.retiredYear,
-						season:
-							inputs.season === "all" && season !== "career"
-								? season
-								: undefined,
-						stat: value,
-						skills,
-						tid,
-						userTeam: userTid === tid,
-						watch: p.watch,
-					};
+						const userTid =
+							season !== "career" ? g.get("userTid", season) : g.get("userTid");
 
-					outputCat.leaders = outputCat.leaders.slice(0, NUM_LEADERS - 1);
-					outputCat.leaders.push(leader);
-					if (cat.sortAscending) {
-						outputCat.leaders.sort((a, b) => a.stat - b.stat);
-					} else {
-						outputCat.leaders.sort((a, b) => b.stat - a.stat);
+						const leader = {
+							abbrev,
+							hof: p.hof,
+							injury: p.injury,
+							jerseyNumber: p.jerseyNumber,
+							key,
+							firstName: p.firstName,
+							lastName: p.lastName,
+							pid: p.pid,
+							pos,
+							retiredYear: p.retiredYear,
+							season:
+								inputs.season === "all" && season !== "career"
+									? season
+									: undefined,
+							stat: value,
+							skills,
+							tid,
+							userTeam: userTid === tid,
+							watch: p.watch,
+						};
+
+						outputCat.leaders = outputCat.leaders.slice(0, NUM_LEADERS - 1);
+						outputCat.leaders.push(leader);
+						if (cat.sortAscending) {
+							outputCat.leaders.sort((a, b) => a.stat - b.stat);
+						} else {
+							outputCat.leaders.sort((a, b) => b.stat - a.stat);
+						}
 					}
 				}
-			}
-		});
+			});
 
-		const highlightActiveAndHOF =
-			inputs.season === "career" ||
-			inputs.season === "all" ||
-			inputs.season < g.get("season");
+			const highlightActiveAndHOF =
+				inputs.season === "career" ||
+				inputs.season === "all" ||
+				inputs.season < g.get("season");
 
-		return {
-			categories: leadersAddFirstNameShort(outputCategories),
-			highlightActiveAndHOF,
-			playoffs: inputs.playoffs,
-			season: inputs.season,
-			statType: inputs.statType,
-		};
-	}
-};
-
-export default updateLeaders;
+			return {
+				categories: leadersAddFirstNameShort(outputCategories),
+				highlightActiveAndHOF,
+				playoffs: inputs.playoffs,
+				season: inputs.season,
+				statType: inputs.statType,
+			};
+		}
+	},
+);

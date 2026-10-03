@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { TeamFiltered, UpdateEvents } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { TeamFiltered } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { team } from "../core/index.ts";
 import {
 	NOT_REAL_POSITIONS,
@@ -184,70 +184,67 @@ export const addPowerRankingsStuffToTeams = async <
 	return teamsWithRankings;
 };
 
-const updatePowerRankings = async (
-	{ playoffs, season }: ViewInput<"powerRankings">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		(season === g.get("season") && updateEvents.includes("gameSim")) ||
-		season !== state.season ||
-		playoffs !== state.playoffs
-	) {
-		const teams = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid", "depth", "playThroughInjuries"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"lastTen",
-					"abbrev",
-					"region",
-					"name",
-					"cid",
-					"did",
-					"imgURL",
-					"imgURLSmall",
-				],
-				stats: ["gp", "mov", "pts", "oppPts"],
+export default defineView(
+	"powerRankings",
+	async ({ inputs: { playoffs, season }, updateEvents, prevInputs }) => {
+		if (
+			(season === g.get("season") && updateEvents.includes("gameSim")) ||
+			season !== prevInputs?.season ||
+			playoffs !== prevInputs?.playoffs
+		) {
+			const teams = await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid", "depth", "playThroughInjuries"],
+					seasonAttrs: [
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"lastTen",
+						"abbrev",
+						"region",
+						"name",
+						"cid",
+						"did",
+						"imgURL",
+						"imgURLSmall",
+					],
+					stats: ["gp", "mov", "pts", "oppPts"],
+					season,
+					showNoStats: true,
+				},
+				"noCopyCache",
+			);
+
+			const teamsWithRankings = await addPowerRankingsStuffToTeams(
+				teams,
 				season,
-				showNoStats: true,
-			},
-			"noCopyCache",
-		);
+				playoffs,
+			);
 
-		const teamsWithRankings = await addPowerRankingsStuffToTeams(
-			teams,
-			season,
-			playoffs,
-		);
+			let ties = false;
+			let otl = false;
+			for (const t of teams) {
+				if (t.seasonAttrs.tied > 0) {
+					ties = true;
+				}
+				if (t.seasonAttrs.otl > 0) {
+					otl = true;
+				}
+				if (ties && otl) {
+					break;
+				}
+			}
 
-		let ties = false;
-		let otl = false;
-		for (const t of teams) {
-			if (t.seasonAttrs.tied > 0) {
-				ties = true;
-			}
-			if (t.seasonAttrs.otl > 0) {
-				otl = true;
-			}
-			if (ties && otl) {
-				break;
-			}
+			return {
+				confs: g.get("confs", season),
+				divs: g.get("divs", season),
+				playoffs,
+				season,
+				teams: teamsWithRankings,
+				ties: hasTies(season) || ties,
+				otl: g.get("otl", season) || otl,
+			};
 		}
-
-		return {
-			confs: g.get("confs", season),
-			divs: g.get("divs", season),
-			playoffs,
-			season,
-			teams: teamsWithRankings,
-			ties: hasTies(season) || ties,
-			otl: g.get("otl", season) || otl,
-		};
-	}
-};
-
-export default updatePowerRankings;
+	},
+);

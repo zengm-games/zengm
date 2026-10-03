@@ -6,114 +6,114 @@ import {
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents, PlayerStatType } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { PlayerStatType } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
 
-const updatePlayers = async (
-	inputs: ViewInput<"playerStatDists">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("playerMovement"))) ||
-		inputs.season !== state.season ||
-		inputs.statType !== state.statType
-	) {
-		let players;
-
-		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
-			players = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				Infinity,
-			]);
-		} else {
-			players = await idb.getCopies.players(
-				{
-					activeSeason: inputs.season,
-				},
-				"noCopyCache",
-			);
-		}
-
-		let stats = undefined;
-		let statType: PlayerStatType = "perGame";
+export default defineView(
+	"playerStatDists",
+	async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			bySport({
-				baseball: true,
-				basketball: false,
-				football: true,
-				hockey: true,
-			})
+			updateEvents.includes("firstRun") ||
+			(inputs.season === g.get("season") &&
+				(updateEvents.includes("gameSim") ||
+					updateEvents.includes("playerMovement"))) ||
+			inputs.season !== prevInputs?.season ||
+			inputs.statType !== prevInputs?.statType
 		) {
-			stats = PLAYER_STATS_TABLES[inputs.statType]!.stats;
-		} else {
-			if (inputs.statType === "advanced") {
-				stats = PLAYER_STATS_TABLES.advanced!.stats;
-			} else if (inputs.statType === "shotLocations") {
-				stats = PLAYER_STATS_TABLES.shotLocations!.stats;
+			let players;
+
+			if (
+				g.get("season") === inputs.season &&
+				g.get("phase") <= PHASE.PLAYOFFS
+			) {
+				players = await idb.cache.players.indexGetAll("playersByTid", [
+					PLAYER.FREE_AGENT,
+					Infinity,
+				]);
 			} else {
-				stats = PLAYER_STATS_TABLES.regular!.stats;
-				if (inputs.statType === "totals") {
-					statType = "totals";
-				} else if (inputs.statType === "per36") {
-					statType = "per36";
-				}
+				players = await idb.getCopies.players(
+					{
+						activeSeason: inputs.season,
+					},
+					"noCopyCache",
+				);
 			}
-		}
 
-		players = await idb.getCopies.playersPlus(players, {
-			ratings: ["skills"],
-			stats: getPlayerStatsTableStats(stats),
-			season: inputs.season,
-			statType,
-		});
-		if (
-			bySport({
-				baseball: true,
-				basketball: false,
-				football: true,
-				hockey: true,
-			})
-		) {
-			const statTable = PLAYER_STATS_TABLES[inputs.statType]!;
-			const onlyShowIf = statTable.onlyShowIf;
-			if (onlyShowIf) {
-				players = players.filter((p) => {
-					for (const stat of onlyShowIf) {
-						if (hasNonZeroStat(p.stats[stat])) {
-							return true;
-						}
+			let stats = undefined;
+			let statType: PlayerStatType = "perGame";
+			if (
+				bySport({
+					baseball: true,
+					basketball: false,
+					football: true,
+					hockey: true,
+				})
+			) {
+				stats = PLAYER_STATS_TABLES[inputs.statType]!.stats;
+			} else {
+				if (inputs.statType === "advanced") {
+					stats = PLAYER_STATS_TABLES.advanced!.stats;
+				} else if (inputs.statType === "shotLocations") {
+					stats = PLAYER_STATS_TABLES.shotLocations!.stats;
+				} else {
+					stats = PLAYER_STATS_TABLES.regular!.stats;
+					if (inputs.statType === "totals") {
+						statType = "totals";
+					} else if (inputs.statType === "per36") {
+						statType = "per36";
 					}
-
-					return false;
-				});
-			}
-		}
-
-		// Only numeric values can be plotted, so skip others like playoffs, keyStats strings, byPos arrays, and missing values in historical stats
-		const statsAll: Record<string, number[]> = {};
-		for (const p of players) {
-			for (const [stat, value] of Object.entries(p.stats)) {
-				const numericValue = getNumericStat(value);
-				if (numericValue === undefined) {
-					continue;
 				}
-				statsAll[stat] ??= [];
-				statsAll[stat].push(numericValue);
 			}
+
+			players = await idb.getCopies.playersPlus(players, {
+				ratings: ["skills"],
+				stats: getPlayerStatsTableStats(stats),
+				season: inputs.season,
+				statType,
+			});
+			if (
+				bySport({
+					baseball: true,
+					basketball: false,
+					football: true,
+					hockey: true,
+				})
+			) {
+				const statTable = PLAYER_STATS_TABLES[inputs.statType]!;
+				const onlyShowIf = statTable.onlyShowIf;
+				if (onlyShowIf) {
+					players = players.filter((p) => {
+						for (const stat of onlyShowIf) {
+							if (hasNonZeroStat(p.stats[stat])) {
+								return true;
+							}
+						}
+
+						return false;
+					});
+				}
+			}
+
+			// Only numeric values can be plotted, so skip others like playoffs, keyStats strings, byPos arrays, and missing values in historical stats
+			const statsAll: Record<string, number[]> = {};
+			for (const p of players) {
+				for (const [stat, value] of Object.entries(p.stats)) {
+					const numericValue = getNumericStat(value);
+					if (numericValue === undefined) {
+						continue;
+					}
+					statsAll[stat] ??= [];
+					statsAll[stat].push(numericValue);
+				}
+			}
+
+			return {
+				season: inputs.season,
+				statsAll,
+				statType: inputs.statType,
+			};
 		}
-
-		return {
-			season: inputs.season,
-			statsAll,
-			statType: inputs.statType,
-		};
-	}
-};
-
-export default updatePlayers;
+	},
+);

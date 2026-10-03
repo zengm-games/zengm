@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, TeamSeason, Player } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { TeamSeason, Player } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
@@ -227,153 +227,153 @@ export const getHistory = async (
 	};
 };
 
-const updateTeamHistory = async (
-	inputs: ViewInput<"teamHistory">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("retiredJerseys") ||
-		updateEvents.includes("gameAttributes") ||
-		inputs.abbrev !== state.abbrev
-	) {
-		const t = await idb.cache.teams.get(inputs.tid);
-		if (!t) {
-			throw new Error("Invalid team ID number");
-		}
+export default defineView(
+	"teamHistory",
+	async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("retiredJerseys") ||
+			updateEvents.includes("gameAttributes") ||
+			inputs.abbrev !== prevInputs?.abbrev
+		) {
+			const t = await idb.cache.teams.get(inputs.tid);
+			if (!t) {
+				throw new Error("Invalid team ID number");
+			}
 
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				tid: inputs.tid,
-			},
-			"noCopyCache",
-		);
+			const teamSeasons = await idb.getCopies.teamSeasons(
+				{
+					tid: inputs.tid,
+				},
+				"noCopyCache",
+			);
 
-		const retiredJerseyNumbers = await Promise.all(
-			(t.retiredJerseyNumbers ?? []).map(async (row) => {
-				const ts = teamSeasons.find((ts) => ts.season === row.seasonTeamInfo);
-				const teamInfo = {
-					colors: ts ? ts.colors : t.colors,
-					name: ts ? ts.name : t.name,
-					region: ts ? ts.region : t.region,
-				};
+			const retiredJerseyNumbers = await Promise.all(
+				(t.retiredJerseyNumbers ?? []).map(async (row) => {
+					const ts = teamSeasons.find((ts) => ts.season === row.seasonTeamInfo);
+					const teamInfo = {
+						colors: ts ? ts.colors : t.colors,
+						name: ts ? ts.name : t.name,
+						region: ts ? ts.region : t.region,
+					};
 
-				let firstName;
-				let lastName;
-				let pos;
-				let lastSeasonWithTeam = -Infinity;
-				if (row.pid !== undefined) {
-					const p = await idb.getCopy.players({ pid: row.pid }, "noCopyCache");
-					if (p) {
-						firstName = p.firstName;
-						lastName = p.lastName;
-						pos = getBestPos(p, inputs.tid);
-						for (const row of p.stats) {
-							if (row.tid === inputs.tid && row.season > lastSeasonWithTeam) {
-								lastSeasonWithTeam = row.season;
+					let firstName;
+					let lastName;
+					let pos;
+					let lastSeasonWithTeam = -Infinity;
+					if (row.pid !== undefined) {
+						const p = await idb.getCopy.players(
+							{ pid: row.pid },
+							"noCopyCache",
+						);
+						if (p) {
+							firstName = p.firstName;
+							lastName = p.lastName;
+							pos = getBestPos(p, inputs.tid);
+							for (const row of p.stats) {
+								if (row.tid === inputs.tid && row.season > lastSeasonWithTeam) {
+									lastSeasonWithTeam = row.season;
+								}
 							}
 						}
 					}
+
+					return {
+						...row,
+						teamInfo,
+						firstName,
+						lastName,
+						pos,
+						lastSeasonWithTeam,
+					};
+				}),
+			);
+
+			const retiredByPid: Record<number, Set<string>> = {};
+			for (const { pid, number } of retiredJerseyNumbers) {
+				if (pid !== undefined) {
+					if (!retiredByPid[pid]) {
+						retiredByPid[pid] = new Set();
+					}
+					retiredByPid[pid].add(number);
+				}
+			}
+
+			const retirableJerseyNumbersByPid = new Map<
+				number,
+				Record<string, number[]>
+			>();
+			const players = (
+				await idb.getCopies.players({
+					statsTid: inputs.tid,
+				})
+			).map((p) => {
+				const stats = p.stats.filter((row) => row.tid === inputs.tid);
+				const retirableJerseyNumbers: Record<string, number[]> = {};
+				for (const { gp, jerseyNumber, playoffs, season } of stats) {
+					if (
+						!playoffs &&
+						(gp ?? 0) > 0 &&
+						jerseyNumber !== undefined &&
+						!retiredByPid[p.pid]?.has(jerseyNumber)
+					) {
+						retirableJerseyNumbers[jerseyNumber] ??= [];
+						retirableJerseyNumbers[jerseyNumber].push(season);
+					}
+				}
+
+				retirableJerseyNumbersByPid.set(p.pid, retirableJerseyNumbers);
+
+				return {
+					...p,
+					stats,
+				};
+			});
+
+			const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
+			const historyTemp = await getHistory(
+				teamSeasons,
+				players,
+				playoffsByConfBySeason,
+			);
+			const history = {
+				...historyTemp,
+				players: historyTemp.players.map((p) => ({
+					...p,
+					retirableJerseyNumbers: retirableJerseyNumbersByPid.get(p.pid) ?? {},
+				})),
+			};
+
+			const playersByPid = groupByUnique(history.players, "pid");
+			const retiredJerseyNumbers2 = retiredJerseyNumbers.map((row) => {
+				let numRings = 0;
+				if (row.pid !== undefined) {
+					numRings = playersByPid[row.pid]?.numRings ?? 0;
 				}
 
 				return {
-					...row,
-					teamInfo,
-					firstName,
-					lastName,
-					pos,
-					lastSeasonWithTeam,
+					firstName: row.firstName,
+					lastName: row.lastName,
+					number: row.number,
+					pid: row.pid,
+					pos: row.pos,
+					score: row.score,
+					lastSeasonWithTeam: row.lastSeasonWithTeam,
+					seasonRetired: row.seasonRetired,
+					seasonTeamInfo: row.seasonTeamInfo,
+					teamInfo: row.teamInfo,
+					text: row.text,
+					numRings,
 				};
-			}),
-		);
+			});
 
-		const retiredByPid: Record<number, Set<string>> = {};
-		for (const { pid, number } of retiredJerseyNumbers) {
-			if (pid !== undefined) {
-				if (!retiredByPid[pid]) {
-					retiredByPid[pid] = new Set();
-				}
-				retiredByPid[pid].add(number);
-			}
+			return {
+				...history,
+				abbrev: inputs.abbrev,
+				tid: inputs.tid,
+				retiredJerseyNumbers: retiredJerseyNumbers2,
+			};
 		}
-
-		const retirableJerseyNumbersByPid = new Map<
-			number,
-			Record<string, number[]>
-		>();
-		const players = (
-			await idb.getCopies.players({
-				statsTid: inputs.tid,
-			})
-		).map((p) => {
-			const stats = p.stats.filter((row) => row.tid === inputs.tid);
-			const retirableJerseyNumbers: Record<string, number[]> = {};
-			for (const { gp, jerseyNumber, playoffs, season } of stats) {
-				if (
-					!playoffs &&
-					(gp ?? 0) > 0 &&
-					jerseyNumber !== undefined &&
-					!retiredByPid[p.pid]?.has(jerseyNumber)
-				) {
-					retirableJerseyNumbers[jerseyNumber] ??= [];
-					retirableJerseyNumbers[jerseyNumber].push(season);
-				}
-			}
-
-			retirableJerseyNumbersByPid.set(p.pid, retirableJerseyNumbers);
-
-			return {
-				...p,
-				stats,
-			};
-		});
-
-		const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
-		const historyTemp = await getHistory(
-			teamSeasons,
-			players,
-			playoffsByConfBySeason,
-		);
-		const history = {
-			...historyTemp,
-			players: historyTemp.players.map((p) => ({
-				...p,
-				retirableJerseyNumbers: retirableJerseyNumbersByPid.get(p.pid) ?? {},
-			})),
-		};
-
-		const playersByPid = groupByUnique(history.players, "pid");
-		const retiredJerseyNumbers2 = retiredJerseyNumbers.map((row) => {
-			let numRings = 0;
-			if (row.pid !== undefined) {
-				numRings = playersByPid[row.pid]?.numRings ?? 0;
-			}
-
-			return {
-				firstName: row.firstName,
-				lastName: row.lastName,
-				number: row.number,
-				pid: row.pid,
-				pos: row.pos,
-				score: row.score,
-				lastSeasonWithTeam: row.lastSeasonWithTeam,
-				seasonRetired: row.seasonRetired,
-				seasonTeamInfo: row.seasonTeamInfo,
-				teamInfo: row.teamInfo,
-				text: row.text,
-				numRings,
-			};
-		});
-
-		return {
-			...history,
-			abbrev: inputs.abbrev,
-			tid: inputs.tid,
-			retiredJerseyNumbers: retiredJerseyNumbers2,
-		};
-	}
-};
-
-export default updateTeamHistory;
+	},
+);

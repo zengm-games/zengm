@@ -2,8 +2,8 @@ import { PLAYER } from "../../common/constants.ts";
 import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { Player, UpdateEvents } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { Player } from "../../common/types.ts";
+import { defineView, type ViewInput } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
@@ -77,36 +77,36 @@ export const formatPlayersWatchList = async (
 	return { players, stats };
 };
 
-const updatePlayers = async (
-	inputs: ViewInput<"watchList">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase") ||
-		inputs.statType !== state.statType ||
-		inputs.playoffs !== state.playoffs
-	) {
-		const playersAll = await idb.getCopies.players(
-			{
-				watch: true,
-			},
-			"noCopyCache",
-		);
+export default defineView(
+	"watchList",
+	async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("watchList") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("newPhase") ||
+			inputs.statType !== prevInputs?.statType ||
+			inputs.playoffs !== prevInputs?.playoffs
+		) {
+			const playersAll = await idb.getCopies.players(
+				{
+					watch: true,
+				},
+				"noCopyCache",
+			);
 
-		const { players, stats } = await formatPlayersWatchList(playersAll, inputs);
+			const { players, stats } = await formatPlayersWatchList(
+				playersAll,
+				inputs,
+			);
 
-		return {
-			players,
-			playoffs: inputs.playoffs,
-			statType: inputs.statType,
-			stats,
-		};
-	}
-};
-
-export default updatePlayers;
+			return {
+				players,
+				playoffs: inputs.playoffs,
+				statType: inputs.statType,
+				stats,
+			};
+		}
+	},
+);

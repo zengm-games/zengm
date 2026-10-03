@@ -1,10 +1,6 @@
 import { g } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	EventBBGM,
-	LogEventType,
-} from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { EventBBGM, LogEventType } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
 import type { FaceConfig } from "facesjs";
 import { formatEventText } from "../util/formatEventText.ts";
@@ -153,62 +149,63 @@ export const processEvents = async (
 	return eventsWithPlayers;
 };
 
-const updateNews = async (
-	{ abbrev, level, order, season, tid }: ViewInput<"news">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
-		state.season !== season ||
-		state.level !== level ||
-		state.abbrev !== abbrev ||
-		state.order !== order
-	) {
-		const eventsAll = await idb.getCopies.events({
-			season,
-		});
+export default defineView(
+	"news",
+	async ({
+		inputs: { abbrev, level, order, season, tid },
+		updateEvents,
+		prevInputs,
+	}) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("gameSim") ||
+			updateEvents.includes("newPhase") ||
+			prevInputs?.season !== season ||
+			prevInputs?.level !== level ||
+			prevInputs?.abbrev !== abbrev ||
+			prevInputs?.order !== order
+		) {
+			const eventsAll = await idb.getCopies.events({
+				season,
+			});
 
-		if (order === "newest") {
-			eventsAll.reverse();
+			if (order === "newest") {
+				eventsAll.reverse();
+			}
+
+			const events = await processEvents(eventsAll, {
+				level,
+				tid,
+				watchOnly: abbrev === "watch",
+			});
+
+			const teams = (
+				await idb.getCopies.teamsPlus(
+					{
+						seasonAttrs: [
+							"abbrev",
+							"colors",
+							"jersey",
+							"imgURL",
+							"imgURLSmall",
+							"region",
+						],
+						season,
+						addDummySeason: true,
+					},
+					"noCopyCache",
+				)
+			).map((t) => t.seasonAttrs);
+
+			return {
+				abbrev,
+				events,
+				level,
+				order,
+				season,
+				teams,
+			};
 		}
-
-		const events = await processEvents(eventsAll, {
-			level,
-			tid,
-			watchOnly: abbrev === "watch",
-		});
-
-		const teams = (
-			await idb.getCopies.teamsPlus(
-				{
-					seasonAttrs: [
-						"abbrev",
-						"colors",
-						"jersey",
-						"imgURL",
-						"imgURLSmall",
-						"region",
-					],
-					season,
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			)
-		).map((t) => t.seasonAttrs);
-
-		return {
-			abbrev,
-			events,
-			level,
-			order,
-			season,
-			teams,
-		};
-	}
-};
-
-export default updateNews;
+	},
+);

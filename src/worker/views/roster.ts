@@ -2,12 +2,8 @@ import { PHASE, POSITIONS } from "../../common/constants.ts";
 import { finances, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	Player,
-	UpdateEvents,
-	TeamSeasonAttr,
-} from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { Player, TeamSeasonAttr } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
@@ -110,297 +106,300 @@ const getStandingsInfo = async (info: { season: number; tid: number }) => {
 	};
 };
 
-const updateRoster = async (
-	inputs: ViewInput<"roster">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameAttributes") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("team") ||
-		(inputs.season === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("newPhase"))) ||
-		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
-		inputs.abbrev !== state.abbrev ||
-		inputs.playoffs !== state.playoffs ||
-		inputs.season !== state.season
-	) {
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
-		} as const);
+export default defineView(
+	"roster",
+	async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			updateEvents.includes("gameAttributes") ||
+			updateEvents.includes("playerMovement") ||
+			updateEvents.includes("team") ||
+			(inputs.season === g.get("season") &&
+				(updateEvents.includes("gameSim") ||
+					updateEvents.includes("newPhase"))) ||
+			(updateEvents.includes("newPhase") &&
+				g.get("phase") === PHASE.PRESEASON) ||
+			inputs.abbrev !== prevInputs?.abbrev ||
+			inputs.playoffs !== prevInputs?.playoffs ||
+			inputs.season !== prevInputs?.season
+		) {
+			const stats = bySport({
+				baseball: ["gp", "keyStats", "war"],
+				basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+				football: ["gp", "keyStats", "av"],
+				hockey: ["gp", "amin", "keyStats", "ops", "dps", "ps"],
+			} as const);
 
-		const editable =
-			inputs.season === g.get("season") &&
-			inputs.tid === g.get("userTid") &&
-			!g.get("spectator") &&
-			__SPORT === "basketball";
+			const editable =
+				inputs.season === g.get("season") &&
+				inputs.tid === g.get("userTid") &&
+				!g.get("spectator") &&
+				__SPORT === "basketball";
 
-		const showRelease =
-			inputs.season === g.get("season") &&
-			inputs.tid === g.get("userTid") &&
-			!g.get("spectator");
+			const showRelease =
+				inputs.season === g.get("season") &&
+				inputs.tid === g.get("userTid") &&
+				!g.get("spectator");
 
-		const seasonAttrs: TeamSeasonAttr[] = [
-			"profit",
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"playoffRoundsWon",
-			"imgURL",
-			"region",
-			"name",
-			"avgAge",
-			"note",
-		];
-		const t = await idb.getCopy.teamsPlus(
-			{
-				season: inputs.season,
-				tid: inputs.tid,
-				attrs: [
-					"tid",
-					"strategy",
-					"region",
-					"name",
-					"keepRosterSorted",
-					"playThroughInjuries",
-				],
-				seasonAttrs,
-				stats: ["pts", "oppPts", "gp"],
-				addDummySeason: true,
-			},
-			"noCopyCache",
-		);
-
-		if (!t) {
-			const returnValue = {
-				errorMessage: "Invalid team ID.",
-			};
-			return returnValue;
-		}
-
-		// tid and draft are used for checking if a player can be released without paying his salary
-		const attrs = [
-			"pid",
-			"name",
-			"tid",
-			"draft",
-			"firstName",
-			"lastName",
-			"age",
-			"born",
-			"contract",
-			"cashOwed",
-			"rosterOrder",
-			"injury",
-			"ptModifier",
-			"watch",
-			"untradable",
-			"hof",
-			"latestTransaction",
-			"value",
-			"awards",
-		] as const;
-
-		const ratings = [
-			"ovr",
-			"pot",
-			"dovr",
-			"dpot",
-			"skills",
-			"pos",
-			"ovrs",
-		] as const;
-		const stats2 = [
-			...stats,
-			"yearsWithTeam",
-			"jerseyNumber",
-			"min",
-			"gp",
-		] as const;
-
-		let players: any[];
-		let payroll: number | undefined;
-		let luxuryTaxAmount: number | undefined;
-		let minPayrollAmount: number | undefined;
-
-		if (inputs.season === g.get("season")) {
-			const schedule = await season.getSchedule();
-
-			// Show players currently on the roster
-			const playersAll = await idb.cache.players.indexGetAll(
-				"playersByTid",
-				inputs.tid,
-			);
-			payroll = await team.getPayroll(inputs.tid);
-			luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll);
-			minPayrollAmount = finances.getMinPayrollAmount(payroll);
-
-			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
-			let numGamesRemaining = 0;
-
-			for (const matchup of schedule) {
-				if (inputs.tid === matchup.homeTid || inputs.tid === matchup.awayTid) {
-					numGamesRemaining += 1;
-				}
-			}
-
-			players = await idb.getCopies.playersPlus(playersAll, {
-				attrs,
-				ratings,
-				seasonType: inputs.playoffs,
-				stats: stats2,
-				season: inputs.season,
-				tid: inputs.tid,
-				showNoStats: true,
-				showRookies: true,
-				fuzz: true,
-				numGamesRemaining,
-			});
-			players = await addMood(players, playersAll);
-
-			if (__SPORT === "basketball") {
-				players.sort((a, b) => a.rosterOrder - b.rosterOrder);
-			} else {
-				players.sort((a, b) => sortByPos(b) - sortByPos(a));
-			}
-
-			for (const p of players) {
-				// Can alway release player, even if below the minimum roster limit, cause why not. Except in the playoffs.
-				if (
-					inputs.tid === g.get("userTid") &&
-					(g.get("phase") !== PHASE.PLAYOFFS ||
-						(g.get("phase") === PHASE.PLAYOFFS &&
-							players.length > g.get("minRosterSize"))) &&
-					!g.get("gameOver") &&
-					!g.get("otherTeamsWantToHire") &&
-					g.get("phase") !== PHASE.FANTASY_DRAFT &&
-					g.get("phase") !== PHASE.EXPANSION_DRAFT
-				) {
-					p.canRelease = true;
-				} else {
-					p.canRelease = false;
-				}
-
-				// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
-				p.ptModifier = String(p.ptModifier);
-			}
-		} else {
-			// Show all players with stats for the given team and year
-			const playersAll = await idb.getCopies.players(
+			const seasonAttrs: TeamSeasonAttr[] = [
+				"profit",
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"playoffRoundsWon",
+				"imgURL",
+				"region",
+				"name",
+				"avgAge",
+				"note",
+			];
+			const t = await idb.getCopy.teamsPlus(
 				{
-					activeSeason: inputs.season,
-					statsTid: inputs.tid,
+					season: inputs.season,
+					tid: inputs.tid,
+					attrs: [
+						"tid",
+						"strategy",
+						"region",
+						"name",
+						"keepRosterSorted",
+						"playThroughInjuries",
+					],
+					seasonAttrs,
+					stats: ["pts", "oppPts", "gp"],
+					addDummySeason: true,
 				},
 				"noCopyCache",
 			);
-			players = await idb.getCopies.playersPlus(playersAll, {
-				attrs,
-				ratings,
-				seasonType: inputs.playoffs,
-				stats: stats2,
-				season: inputs.season,
-				tid: inputs.tid,
-				fuzz: true,
-			});
 
-			if (__SPORT === "basketball") {
-				players.sort(
-					(a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min,
-				);
-			} else {
-				players.sort((a, b) => sortByPos(b) - sortByPos(a));
+			if (!t) {
+				const returnValue = {
+					errorMessage: "Invalid team ID.",
+				};
+				return returnValue;
 			}
+
+			// tid and draft are used for checking if a player can be released without paying his salary
+			const attrs = [
+				"pid",
+				"name",
+				"tid",
+				"draft",
+				"firstName",
+				"lastName",
+				"age",
+				"born",
+				"contract",
+				"cashOwed",
+				"rosterOrder",
+				"injury",
+				"ptModifier",
+				"watch",
+				"untradable",
+				"hof",
+				"latestTransaction",
+				"value",
+				"awards",
+			] as const;
+
+			const ratings = [
+				"ovr",
+				"pot",
+				"dovr",
+				"dpot",
+				"skills",
+				"pos",
+				"ovrs",
+			] as const;
+			const stats2 = [
+				...stats,
+				"yearsWithTeam",
+				"jerseyNumber",
+				"min",
+				"gp",
+			] as const;
+
+			let players: any[];
+			let payroll: number | undefined;
+			let luxuryTaxAmount: number | undefined;
+			let minPayrollAmount: number | undefined;
+
+			if (inputs.season === g.get("season")) {
+				const schedule = await season.getSchedule();
+
+				// Show players currently on the roster
+				const playersAll = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					inputs.tid,
+				);
+				payroll = await team.getPayroll(inputs.tid);
+				luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll);
+				minPayrollAmount = finances.getMinPayrollAmount(payroll);
+
+				// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
+				let numGamesRemaining = 0;
+
+				for (const matchup of schedule) {
+					if (
+						inputs.tid === matchup.homeTid ||
+						inputs.tid === matchup.awayTid
+					) {
+						numGamesRemaining += 1;
+					}
+				}
+
+				players = await idb.getCopies.playersPlus(playersAll, {
+					attrs,
+					ratings,
+					seasonType: inputs.playoffs,
+					stats: stats2,
+					season: inputs.season,
+					tid: inputs.tid,
+					showNoStats: true,
+					showRookies: true,
+					fuzz: true,
+					numGamesRemaining,
+				});
+				players = await addMood(players, playersAll);
+
+				if (__SPORT === "basketball") {
+					players.sort((a, b) => a.rosterOrder - b.rosterOrder);
+				} else {
+					players.sort((a, b) => sortByPos(b) - sortByPos(a));
+				}
+
+				for (const p of players) {
+					// Can alway release player, even if below the minimum roster limit, cause why not. Except in the playoffs.
+					if (
+						inputs.tid === g.get("userTid") &&
+						(g.get("phase") !== PHASE.PLAYOFFS ||
+							(g.get("phase") === PHASE.PLAYOFFS &&
+								players.length > g.get("minRosterSize"))) &&
+						!g.get("gameOver") &&
+						!g.get("otherTeamsWantToHire") &&
+						g.get("phase") !== PHASE.FANTASY_DRAFT &&
+						g.get("phase") !== PHASE.EXPANSION_DRAFT
+					) {
+						p.canRelease = true;
+					} else {
+						p.canRelease = false;
+					}
+
+					// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
+					p.ptModifier = String(p.ptModifier);
+				}
+			} else {
+				// Show all players with stats for the given team and year
+				const playersAll = await idb.getCopies.players(
+					{
+						activeSeason: inputs.season,
+						statsTid: inputs.tid,
+					},
+					"noCopyCache",
+				);
+				players = await idb.getCopies.playersPlus(playersAll, {
+					attrs,
+					ratings,
+					seasonType: inputs.playoffs,
+					stats: stats2,
+					season: inputs.season,
+					tid: inputs.tid,
+					fuzz: true,
+				});
+
+				if (__SPORT === "basketball") {
+					players.sort(
+						(a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min,
+					);
+				} else {
+					players.sort((a, b) => sortByPos(b) - sortByPos(a));
+				}
+
+				for (const p of players) {
+					p.canRelease = false;
+				}
+
+				const teamSeason = await idb.getCopy.teamSeasons({
+					season: inputs.season,
+					tid: inputs.tid,
+				});
+
+				// >0 check handles old leagues that might have it undefined, and real players leagues that have a dummy negative value
+				if (teamSeason && teamSeason.payrollEndOfSeason > 0) {
+					payroll = teamSeason.payrollEndOfSeason;
+					luxuryTaxAmount = teamSeason.expenses.luxuryTax;
+					minPayrollAmount = teamSeason.expenses.minTax;
+				}
+			}
+
+			const playoffsOvr =
+				(g.get("phase") === PHASE.PLAYOFFS &&
+					g.get("season") === inputs.season) ||
+				inputs.playoffs === "playoffs";
+
+			const { gb, playoffsByConf, rank, usePts } =
+				await getStandingsInfo(inputs);
+
+			const t2 = {
+				...t,
+				ovr: team.ovr(players, {
+					playoffs: playoffsOvr,
+				}),
+				ovrCurrent: team.ovr(players, {
+					accountForInjuredPlayers: {
+						numDaysInFuture: 0,
+						playThroughInjuries: getActualPlayThroughInjuries(t),
+					},
+					playoffs: playoffsOvr,
+				}),
+				roundsWonText: helpers.roundsWonText({
+					playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
+					numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season)
+						.length,
+					playoffsByConf: await season.getPlayoffsByConf(inputs.season),
+				}),
+				gb,
+				rank,
+			};
+			t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 
 			for (const p of players) {
-				p.canRelease = false;
+				p.awards = p.awards.filter(
+					(award: Player["awards"][number]) => award.season === inputs.season,
+				);
 			}
 
-			const teamSeason = await idb.getCopy.teamSeasons({
+			return {
+				abbrev: inputs.abbrev,
+				editable,
+				maxRosterSize: g.get("maxRosterSize"),
+				numPlayersOnCourt: g.get("numPlayersOnCourt"),
+				luxuryTaxAmount,
+				minPayrollAmount,
+				payroll,
+				playoffs: inputs.playoffs,
+				playoffsByConf,
+				players: addFirstNameShort(players),
 				season: inputs.season,
+				showSpectatorWarning:
+					inputs.season === g.get("season") &&
+					inputs.tid === g.get("userTid") &&
+					g.get("spectator"),
+				showRelease,
+				showTradeFor:
+					inputs.season === g.get("season") &&
+					inputs.tid !== g.get("userTid") &&
+					!g.get("spectator"),
+				showTradingBlock:
+					inputs.season === g.get("season") &&
+					inputs.tid === g.get("userTid") &&
+					!g.get("spectator"),
+				stats,
+				t: t2,
 				tid: inputs.tid,
-			});
-
-			// >0 check handles old leagues that might have it undefined, and real players leagues that have a dummy negative value
-			if (teamSeason && teamSeason.payrollEndOfSeason > 0) {
-				payroll = teamSeason.payrollEndOfSeason;
-				luxuryTaxAmount = teamSeason.expenses.luxuryTax;
-				minPayrollAmount = teamSeason.expenses.minTax;
-			}
+				usePts,
+			};
 		}
-
-		const playoffsOvr =
-			(g.get("phase") === PHASE.PLAYOFFS &&
-				g.get("season") === inputs.season) ||
-			inputs.playoffs === "playoffs";
-
-		const { gb, playoffsByConf, rank, usePts } = await getStandingsInfo(inputs);
-
-		const t2 = {
-			...t,
-			ovr: team.ovr(players, {
-				playoffs: playoffsOvr,
-			}),
-			ovrCurrent: team.ovr(players, {
-				accountForInjuredPlayers: {
-					numDaysInFuture: 0,
-					playThroughInjuries: getActualPlayThroughInjuries(t),
-				},
-				playoffs: playoffsOvr,
-			}),
-			roundsWonText: helpers.roundsWonText({
-				playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
-				numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
-				playoffsByConf: await season.getPlayoffsByConf(inputs.season),
-			}),
-			gb,
-			rank,
-		};
-		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
-
-		for (const p of players) {
-			p.awards = p.awards.filter(
-				(award: Player["awards"][number]) => award.season === inputs.season,
-			);
-		}
-
-		return {
-			abbrev: inputs.abbrev,
-			editable,
-			maxRosterSize: g.get("maxRosterSize"),
-			numPlayersOnCourt: g.get("numPlayersOnCourt"),
-			luxuryTaxAmount,
-			minPayrollAmount,
-			payroll,
-			playoffs: inputs.playoffs,
-			playoffsByConf,
-			players: addFirstNameShort(players),
-			season: inputs.season,
-			showSpectatorWarning:
-				inputs.season === g.get("season") &&
-				inputs.tid === g.get("userTid") &&
-				g.get("spectator"),
-			showRelease,
-			showTradeFor:
-				inputs.season === g.get("season") &&
-				inputs.tid !== g.get("userTid") &&
-				!g.get("spectator"),
-			showTradingBlock:
-				inputs.season === g.get("season") &&
-				inputs.tid === g.get("userTid") &&
-				!g.get("spectator"),
-			stats,
-			t: t2,
-			tid: inputs.tid,
-			usePts,
-		};
-	}
-};
-
-export default updateRoster;
+	},
+);

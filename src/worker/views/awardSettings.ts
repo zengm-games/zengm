@@ -1,5 +1,4 @@
 import { g } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
@@ -7,6 +6,7 @@ import { actualPhase } from "../util/actualPhase.ts";
 import { PHASE } from "../../common/constants.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { defaultAwards } from "../../common/defaultGameAttributes.ts";
+import { defineView } from "../util/defineView.ts";
 
 const getTeams = async (season: number) => {
 	const teams = await idb.getCopies.teamsPlus(
@@ -21,10 +21,7 @@ const getTeams = async (season: number) => {
 	return teams;
 };
 
-const updateAwardSettings = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("awardSettings", async ({ updateEvents }) => {
 	if (
 		// In theory could update on gameSim and playerMovement, but it's actually tricky to keep editing state in sync so save it for later
 		updateEvents.includes("firstRun")
@@ -85,6 +82,4 @@ const updateAwardSettings = async (
 			teams: groupByUnique(teams, "tid"),
 		};
 	}
-};
-
-export default updateAwardSettings;
+});

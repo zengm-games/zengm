@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, AllStars, Awards } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { AllStars, Awards } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { season } from "../core/index.ts";
 import { omit, orderBy } from "../../common/utils.ts";
 
@@ -290,220 +290,219 @@ const sumRecordsFor = (
 	return output;
 };
 
-const updateTeamRecords = async (
-	{ byType, filter }: ViewInput<"teamRecords">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		byType !== state.byType ||
-		filter !== state.filter
-	) {
-		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
-		const allStars = await idb.getCopies.allStars(undefined, "noCopyCache");
+export default defineView(
+	"teamRecords",
+	async ({ inputs: { byType, filter }, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			byType !== prevInputs?.byType ||
+			filter !== prevInputs?.filter
+		) {
+			const awards = await idb.getCopies.awards(undefined, "noCopyCache");
+			const allStars = await idb.getCopies.allStars(undefined, "noCopyCache");
 
-		// Show newest awards in leftmost columns if we scan in order from most recent
-		awards.reverse();
-		const awardTypes: {
-			name: string;
-			shortName: string;
-		}[] = [];
-		const seenAwardTypes = new Set<string>();
-		for (const row of awards) {
-			for (const award of row.awards) {
-				if (typeof award.statRange === "number") {
-					// Skip playoff series awards - usually not that much info there, like if you won FMVP you also probably won a championship
+			// Show newest awards in leftmost columns if we scan in order from most recent
+			awards.reverse();
+			const awardTypes: {
+				name: string;
+				shortName: string;
+			}[] = [];
+			const seenAwardTypes = new Set<string>();
+			for (const row of awards) {
+				for (const award of row.awards) {
+					if (typeof award.statRange === "number") {
+						// Skip playoff series awards - usually not that much info there, like if you won FMVP you also probably won a championship
+						continue;
+					}
+
+					if (!seenAwardTypes.has(award.shortName)) {
+						seenAwardTypes.add(award.shortName);
+						awardTypes.push({
+							name: award.name,
+							shortName: award.shortName,
+						});
+					}
+				}
+			}
+
+			const teamsAll = orderBy(
+				await idb.getCopies.teamsPlus(
+					{
+						attrs: [
+							"tid",
+							"abbrev",
+							"region",
+							"name",
+							"cid",
+							"did",
+							"disabled",
+							"imgURL",
+							"imgURLSmall",
+						],
+						seasonAttrs: [
+							"abbrev",
+							"region",
+							"name",
+							"season",
+							"won",
+							"lost",
+							"tied",
+							"otl",
+							"pts",
+							"ptsMax",
+							"playoffRoundsWon",
+						],
+					},
+					"noCopyCache",
+				),
+				["region", "name", "tid"],
+			);
+
+			let teams: Team[] = [];
+
+			for (const t of teamsAll) {
+				const seasonAttrsFiltered =
+					filter === "your_teams"
+						? t.seasonAttrs.filter(
+								(ts) => t.tid === g.get("userTid", ts.season),
+							)
+						: t.seasonAttrs;
+
+				// Root object
+				const row = {
+					root: true,
+					tid: t.tid,
+					disabled: t.disabled,
+					abbrev: t.abbrev,
+					region: t.region,
+					name: t.name,
+					imgURL: t.imgURL,
+					imgURLSmall: t.imgURLSmall,
+					...(await getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars)),
+					sortValue: teams.length,
+				};
+
+				if (row.start === undefined && row.end === undefined) {
 					continue;
 				}
 
-				if (!seenAwardTypes.has(award.shortName)) {
-					seenAwardTypes.add(award.shortName);
-					awardTypes.push({
-						name: award.name,
-						shortName: award.shortName,
-					});
-				}
-			}
-		}
+				teams.push(row);
 
-		const teamsAll = orderBy(
-			await idb.getCopies.teamsPlus(
-				{
-					attrs: [
-						"tid",
-						"abbrev",
-						"region",
-						"name",
-						"cid",
-						"did",
-						"disabled",
-						"imgURL",
-						"imgURLSmall",
-					],
-					seasonAttrs: [
-						"abbrev",
-						"region",
-						"name",
-						"season",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"pts",
-						"ptsMax",
-						"playoffRoundsWon",
-					],
-				},
-				"noCopyCache",
-			),
-			["region", "name", "tid"],
-		);
+				if (byType === "by_team") {
+					// by_team only - Any name changes or season gaps? If so, separate
+					const partials: typeof teams = [];
+					const addPartial = async (
+						tid: number,
+						seasonAttrs: typeof t.seasonAttrs,
+					) => {
+						partials.push({
+							root: false,
+							tid,
+							abbrev: seasonAttrs[0]!.abbrev,
+							region: seasonAttrs[0]!.region,
+							name: seasonAttrs[0]!.name,
+							...(await getRowInfo(tid, seasonAttrs, awards, allStars)),
+							sortValue: teams.length + partials.length,
+						});
+					};
+					let prevName: string | undefined;
+					let prevSeason: number | undefined;
+					let seasonAttrs: typeof t.seasonAttrs = [];
 
-		let teams: Team[] = [];
+					// Start with newest season
+					seasonAttrsFiltered.reverse();
+					for (const ts of seasonAttrsFiltered) {
+						const name = `${ts.region} ${ts.name}`;
+						if (prevName !== name || prevSeason !== ts.season + 1) {
+							// Either this is the first iteration of the loop, or the team name/region changed, or there is a gap in seasons
+							if (seasonAttrs.length > 0) {
+								await addPartial(t.tid, seasonAttrs);
+							}
 
-		for (const t of teamsAll) {
-			const seasonAttrsFiltered =
-				filter === "your_teams"
-					? t.seasonAttrs.filter((ts) => t.tid === g.get("userTid", ts.season))
-					: t.seasonAttrs;
+							seasonAttrs = [];
+							prevName = name;
+						}
+						prevSeason = ts.season;
+						seasonAttrs.push(ts);
+					}
 
-			// Root object
-			const row = {
-				root: true,
-				tid: t.tid,
-				disabled: t.disabled,
-				abbrev: t.abbrev,
-				region: t.region,
-				name: t.name,
-				imgURL: t.imgURL,
-				imgURLSmall: t.imgURLSmall,
-				...(await getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars)),
-				sortValue: teams.length,
-			};
-
-			if (row.start === undefined && row.end === undefined) {
-				continue;
-			}
-
-			teams.push(row);
-
-			if (byType === "by_team") {
-				// by_team only - Any name changes or season gaps? If so, separate
-				const partials: typeof teams = [];
-				const addPartial = async (
-					tid: number,
-					seasonAttrs: typeof t.seasonAttrs,
-				) => {
-					partials.push({
-						root: false,
-						tid,
-						abbrev: seasonAttrs[0]!.abbrev,
-						region: seasonAttrs[0]!.region,
-						name: seasonAttrs[0]!.name,
-						...(await getRowInfo(tid, seasonAttrs, awards, allStars)),
-						sortValue: teams.length + partials.length,
-					});
-				};
-				let prevName: string | undefined;
-				let prevSeason: number | undefined;
-				let seasonAttrs: typeof t.seasonAttrs = [];
-
-				// Start with newest season
-				seasonAttrsFiltered.reverse();
-				for (const ts of seasonAttrsFiltered) {
-					const name = `${ts.region} ${ts.name}`;
-					if (prevName !== name || prevSeason !== ts.season + 1) {
-						// Either this is the first iteration of the loop, or the team name/region changed, or there is a gap in seasons
+					if (partials.length > 0) {
 						if (seasonAttrs.length > 0) {
 							await addPartial(t.tid, seasonAttrs);
 						}
 
-						seasonAttrs = [];
-						prevName = name;
+						teams.push(...partials);
 					}
-					prevSeason = ts.season;
-					seasonAttrs.push(ts);
-				}
-
-				if (partials.length > 0) {
-					if (seasonAttrs.length > 0) {
-						await addPartial(t.tid, seasonAttrs);
-					}
-
-					teams.push(...partials);
 				}
 			}
-		}
 
-		if (byType === "by_conf") {
-			teams = g.get("confs", "current").map((conf) =>
-				sumRecordsFor(
-					conf.name,
-					teams.filter((t) => {
-						const t2 = teamsAll.find((t2) => t2.tid === t.tid);
-						if (!t2) {
-							return false;
-						}
-						return t2.cid === conf.cid;
-					}),
-					seenAwardTypes,
-				),
-			);
-		} else if (byType === "by_div") {
-			teams = g.get("divs", "current").map((div) => {
-				let confName;
-				const conf = g
-					.get("confs", "current")
-					.find((conf) => conf.cid === div.cid);
-				if (conf) {
-					confName = conf.name;
-				}
-
-				return {
-					...sumRecordsFor(
-						div.name,
+			if (byType === "by_conf") {
+				teams = g.get("confs", "current").map((conf) =>
+					sumRecordsFor(
+						conf.name,
 						teams.filter((t) => {
 							const t2 = teamsAll.find((t2) => t2.tid === t.tid);
 							if (!t2) {
 								return false;
 							}
-							return t2.did === div.did;
+							return t2.cid === conf.cid;
 						}),
 						seenAwardTypes,
 					),
-					confName,
-				};
-			});
+				);
+			} else if (byType === "by_div") {
+				teams = g.get("divs", "current").map((div) => {
+					let confName;
+					const conf = g
+						.get("confs", "current")
+						.find((conf) => conf.cid === div.cid);
+					if (conf) {
+						confName = conf.name;
+					}
+
+					return {
+						...sumRecordsFor(
+							div.name,
+							teams.filter((t) => {
+								const t2 = teamsAll.find((t2) => t2.tid === t.tid);
+								if (!t2) {
+									return false;
+								}
+								return t2.did === div.did;
+							}),
+							seenAwardTypes,
+						),
+						confName,
+					};
+				});
+			}
+
+			let ties = false;
+			let otl = false;
+			for (const t of teams) {
+				if (t.tied > 0) {
+					ties = true;
+				}
+				if (t.otl > 0) {
+					otl = true;
+				}
+				if (ties && otl) {
+					break;
+				}
+			}
+
+			const pointsFormula = g.get("pointsFormula");
+			const usePts = pointsFormula !== "";
+
+			return {
+				awardTypes,
+				byType,
+				filter,
+				teams,
+				ties: season.hasTies(Infinity) || ties,
+				otl: g.get("otl") || otl,
+				usePts,
+			};
 		}
-
-		let ties = false;
-		let otl = false;
-		for (const t of teams) {
-			if (t.tied > 0) {
-				ties = true;
-			}
-			if (t.otl > 0) {
-				otl = true;
-			}
-			if (ties && otl) {
-				break;
-			}
-		}
-
-		const pointsFormula = g.get("pointsFormula");
-		const usePts = pointsFormula !== "";
-
-		return {
-			awardTypes,
-			byType,
-			filter,
-			teams,
-			ties: season.hasTies(Infinity) || ties,
-			otl: g.get("otl") || otl,
-			usePts,
-		};
-	}
-};
-
-export default updateTeamRecords;
+	},
+);

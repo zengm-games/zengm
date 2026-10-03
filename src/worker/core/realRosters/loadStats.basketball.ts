@@ -65,7 +65,7 @@ let cachedPromise: Promise<BasketballStats> | undefined;
 const loadData = () => {
 	if (!cachedPromise) {
 		cachedPromise = (async () => {
-			const response = await fetch("/gen/real-player-stats.json");
+			const response = await fetch(__JSON_URLS.realPlayerStats);
 			if (!response.ok) {
 				throw new Error(`HTTP error ${response.status}`);
 			}

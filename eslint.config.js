@@ -132,6 +132,7 @@ export default defineConfig(
 				...globals.sharedWorker,
 				__NODE_ENV: "readonly",
 				__SPORT: "readonly",
+				__JSON_URLS: "readonly",
 
 				// This is needed for no-undef
 				IDBValidKey: false,

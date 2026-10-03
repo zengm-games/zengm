@@ -169,7 +169,7 @@ let cachedPromise: Promise<Basketball> | undefined;
 const loadData = () => {
 	if (!cachedPromise) {
 		cachedPromise = (async () => {
-			const response = await fetch("/gen/real-player-data.json");
+			const response = await fetch(__JSON_URLS.realPlayerData);
 			if (!response.ok) {
 				throw new Error(`HTTP error ${response.status}`);
 			}

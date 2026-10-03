@@ -65,6 +65,12 @@ declare global {
 
 	const __NODE_ENV: "development" | "production" | "test";
 	const __SPORT: "basketball" | "football" | "baseball" | "hockey";
+	const __JSON_URLS: {
+		names: string;
+		namesFemale: string;
+		realPlayerData: string;
+		realPlayerStats: string;
+	};
 }
 
 type ViewsKeys = keyof typeof views;

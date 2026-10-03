@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { BuildOptions } from "rolldown";
 import { type Sport } from "./getSport.ts";
+import { jsonUrlsDefine, type JsonHashes } from "./jsonUrls.ts";
 // @ts-expect-error
 import blacklist from "rollup-plugin-blacklist";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -21,6 +22,7 @@ export const rolldownConfig = (
 		| {
 				nodeEnv: "production";
 				blacklistOptions: RegExp[];
+				jsonHashes: JsonHashes;
 				onModulepreloadFilenames: (filenames: string[]) => void;
 				versionNumber: string;
 		  }
@@ -81,6 +83,11 @@ export const rolldownConfig = (
 			define: {
 				__NODE_ENV: JSON.stringify(envOptions.nodeEnv),
 				__SPORT: JSON.stringify(sport),
+				...jsonUrlsDefine(
+					envOptions.nodeEnv === "production"
+						? envOptions.jsonHashes
+						: undefined,
+				),
 			},
 			jsx: "react-jsx",
 		},

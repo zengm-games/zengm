@@ -5,8 +5,40 @@ import { fileHash } from "./fileHash.ts";
 import { replace } from "./replace.ts";
 import { FOLDER } from "../lib/rolldownConfig.ts";
 import type { Sport } from "../lib/getSport.ts";
+import { JSON_FILENAMES, jsonKeys, type JsonHashes } from "../lib/jsonUrls.ts";
+
+// Minify the JSON files and add a hash to their filenames. This needs to happen before bundling the JS, because the hashed URLs are inserted into the bundle by rolldown.
+const hashJsonFiles = async () => {
+	const jsonHashes: JsonHashes = {};
+	for (const key of jsonKeys) {
+		const filePath = path.join("build", FOLDER, `${JSON_FILENAMES[key]}.json`);
+		let string;
+		try {
+			string = await fs.readFile(filePath, "utf8");
+		} catch (error) {
+			// File doesn't exist in this sport
+			if (error.code === "ENOENT") {
+				continue;
+			}
+			throw error;
+		}
+
+		const compressed = JSON.stringify(JSON.parse(string));
+
+		const hash = fileHash(compressed);
+		const newFilename = filePath.replace(".json", `-${hash}.json`);
+		await fs.rm(filePath);
+		await fs.writeFile(newFilename, compressed);
+
+		jsonHashes[key] = hash;
+	}
+
+	return jsonHashes;
+};
 
 export const buildJs = async (sport: Sport, versionNumber: string) => {
+	const jsonHashes = await hashJsonFiles();
+
 	const promises: Promise<string[]>[] = [];
 	for (const name of ["ui", "worker"]) {
 		promises.push(
@@ -15,6 +47,7 @@ export const buildJs = async (sport: Sport, versionNumber: string) => {
 					new URL("buildJsWorker.ts", import.meta.url),
 					{
 						workerData: {
+							jsonHashes,
 							name,
 							sport,
 							versionNumber,
@@ -44,43 +77,6 @@ export const buildJs = async (sport: Sport, versionNumber: string) => {
 				replaceValue: ";\n//# sourceMappingURL",
 			},
 		],
-	});
-
-	const jsonFiles = [
-		"names",
-		"names-female",
-		"real-player-data",
-		"real-player-stats",
-	];
-	const replaces = [];
-	for (const filename of jsonFiles) {
-		const filePath = path.join("build", FOLDER, `${filename}.json`);
-		let string;
-		try {
-			string = await fs.readFile(filePath, "utf8");
-		} catch (error) {
-			// File doesn't exist in this sport
-			if (error.code === "ENOENT") {
-				continue;
-			}
-			throw error;
-		}
-
-		const compressed = JSON.stringify(JSON.parse(string));
-
-		const hash = fileHash(compressed);
-		const newFilename = filePath.replace(".json", `-${hash}.json`);
-		await fs.rm(filePath);
-		await fs.writeFile(newFilename, compressed);
-
-		replaces.push({
-			searchValue: `/${FOLDER}/${filename}.json`,
-			replaceValue: `/${FOLDER}/${filename}-${hash}.json`,
-		});
-	}
-	await replace({
-		paths: [path.join("build", FOLDER, `worker-${versionNumber}.js`)],
-		replaces,
 	});
 
 	return modulepreloadPaths;

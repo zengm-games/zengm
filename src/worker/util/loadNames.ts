@@ -85,7 +85,7 @@ export const initDefaults = async (
 				portuguese: dummyNames,
 			};
 		} else {
-			const response = await fetch("/gen/names.json");
+			const response = await fetch(__JSON_URLS.names);
 			if (!response.ok) {
 				throw new Error(`HTTP error ${response.status}`);
 			}
@@ -106,7 +106,7 @@ export const initDefaults = async (
 
 		// Handle female names
 		if (gender === "female") {
-			const response = await fetch("/gen/names-female.json");
+			const response = await fetch(__JSON_URLS.namesFemale);
 			if (!response.ok) {
 				throw new Error(`HTTP error ${response.status}`);
 			}

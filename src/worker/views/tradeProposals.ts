@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { TradeTeams, UpdateEvents } from "../../common/types.ts";
+import type { TradeTeams } from "../../common/types.ts";
 import isUntradable from "../core/trade/isUntradable.ts";
 import makeItWork from "../core/trade/makeItWork.ts";
 import summary from "../core/trade/summary.ts";
@@ -8,6 +8,7 @@ import { augmentOffers } from "../api/index.ts";
 import { shuffle, uniformSeed, choice } from "../../common/random.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import { orderBy } from "../../common/utils.ts";
+import { defineView } from "../util/defineView.ts";
 
 const getOffers = async (seed: number) => {
 	const NUM_OFFERS = 5;
@@ -151,10 +152,7 @@ export const addInlinePlayerInfo = <T extends AugmentedOffer>(offer: T) => {
 	};
 };
 
-const updateTradeProposals = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("tradeProposals", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
@@ -185,6 +183,4 @@ const updateTradeProposals = async (
 			seed,
 		};
 	}
-};
-
-export default updateTradeProposals;
+});

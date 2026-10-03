@@ -2,15 +2,13 @@ import { PHASE, PLAYER } from "../../common/constants.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { addMood } from "./freeAgents.ts";
 
-const updateUpcomingFreeAgents = async (
-	inputs: ViewInput<"upcomingFreeAgents">,
-) => {
+export default defineView("upcomingFreeAgents", async ({ inputs }) => {
 	const stats = bySport({
 		baseball: ["gp", "keyStats", "war"],
 		basketball: ["min", "pts", "trb", "ast", "per"],
@@ -95,6 +93,4 @@ const updateUpcomingFreeAgents = async (
 		season: inputs.season,
 		stats,
 	};
-};
-
-export default updateUpcomingFreeAgents;
+});

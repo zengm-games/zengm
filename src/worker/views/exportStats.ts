@@ -1,7 +1,7 @@
 import { g } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateExportStats = (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("exportStats", ({ updateEvents }) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
 		const options = [
 			{
@@ -25,6 +25,4 @@ const updateExportStats = (inputs: unknown, updateEvents: UpdateEvents) => {
 			seasons: options,
 		};
 	}
-};
-
-export default updateExportStats;
+});

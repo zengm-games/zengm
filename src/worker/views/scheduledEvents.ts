@@ -1,11 +1,8 @@
-import type { UpdateEvents } from "../../common/types.ts";
 import { last } from "../../common/utils.ts";
 import { idb } from "../db/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateScheduledEvents = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("scheduledEvents", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("newPhase") ||
@@ -42,6 +39,4 @@ const updateScheduledEvents = async (
 			scheduledEvents: augmented,
 		};
 	}
-};
-
-export default updateScheduledEvents;
+});

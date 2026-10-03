@@ -4,12 +4,12 @@ import type {
 	Game,
 	ScheduleGameWithoutKey,
 	TeamFiltered,
-	UpdateEvents,
 } from "../../common/types.ts";
 import { groupByUnique, maxBy, orderBy } from "../../common/utils.ts";
 import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
+import { defineView } from "../util/defineView.ts";
 
 export const formatScheduleForEditor = (
 	scheduleRaw: ScheduleGameWithoutKey[],
@@ -75,10 +75,7 @@ export const formatScheduleForEditor = (
 	return schedule2;
 };
 
-const updateScheduleEditor = async (
-	inputs: void,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("scheduleEditor", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -140,6 +137,4 @@ const updateScheduleEditor = async (
 			tradeDeadline: g.get("tradeDeadline"),
 		};
 	}
-};
-
-export default updateScheduleEditor;
+});

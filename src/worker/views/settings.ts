@@ -4,11 +4,11 @@ import type {
 	GetLeagueOptionsReal,
 	InjuriesSetting,
 	TragicDeaths,
-	UpdateEvents,
 } from "../../common/types.ts";
 import goatFormula from "../util/goatFormula.ts";
 import { defaultTragicDeaths } from "../util/defaultTragicDeaths.ts";
 import { defaultInjuries } from "../util/defaultInjuries.ts";
+import { defineView } from "../util/defineView.ts";
 
 type Key =
 	| "godMode"
@@ -226,7 +226,7 @@ export type Settings = Pick<
 	numActiveTeams: number | undefined;
 };
 
-const updateSettings = (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("settings", ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")
@@ -420,6 +420,4 @@ const updateSettings = (inputs: unknown, updateEvents: UpdateEvents) => {
 			initialSettings,
 		};
 	}
-};
-
-export default updateSettings;
+});

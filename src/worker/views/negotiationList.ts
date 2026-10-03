@@ -4,6 +4,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { addMood, freeAgentStats } from "./freeAgents.ts";
+import { defineView } from "../util/defineView.ts";
 
 export const getNegotiationPids = async (tid: number) => {
 	const negotiations = await idb.cache.negotiations.getAll();
@@ -16,7 +17,7 @@ export const getNegotiationPids = async (tid: number) => {
 	);
 };
 
-const updateNegotiationList = async () => {
+export default defineView("negotiationList", async () => {
 	const stats = ["yearsWithTeam", ...freeAgentStats] as const;
 
 	const userTid = g.get("userTid");
@@ -86,6 +87,4 @@ const updateNegotiationList = async () => {
 		sumContracts,
 		userPlayers,
 	};
-};
-
-export default updateNegotiationList;
+});

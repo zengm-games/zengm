@@ -1,10 +1,11 @@
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents, TeamSeason, Player } from "../../common/types.ts";
+import type { TeamSeason, Player } from "../../common/types.ts";
 import { getHistory, getHistoryTeam } from "./teamHistory.ts";
 import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("gmHistory", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -110,6 +111,4 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			teamHistories,
 		};
 	}
-};
-
-export default updateGmHistory;
+});

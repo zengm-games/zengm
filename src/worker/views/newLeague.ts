@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import type { RealTeamInfo } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import { env } from "../util/env.ts";
 import type { Settings } from "./settings.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
@@ -469,7 +469,7 @@ export const getRealTeamInfo = async () => {
 	return realTeamInfo;
 };
 
-const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
+export default defineView("newLeague", async ({ inputs: { lid, type } }) => {
 	const godModeLimits = newLeagueGodModeLimits();
 
 	const overrides = (await idb.meta.get(
@@ -510,6 +510,4 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		godModeLimits,
 		defaultSettings,
 	};
-};
-
-export default updateNewLeague;
+});

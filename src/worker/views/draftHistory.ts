@@ -2,7 +2,7 @@ import { PLAYER } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { PlayerAward } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique, last, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -39,7 +39,7 @@ export const getDraftTeamsByTid = async (season: number) => {
 	return teamsByTid;
 };
 
-const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
+export default defineView("draftHistory", async ({ inputs }) => {
 	// Update every time because anything could change this (unless all players from class are retired)
 
 	const stats = bySport({
@@ -169,6 +169,4 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		summaryStat,
 		teamsByTid,
 	};
-};
-
-export default updateDraftHistory;
+});

@@ -1,6 +1,6 @@
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateExibitionGame = ({ liveSim }: ViewInput<"exhibitionGame">) => {
+export default defineView("exhibitionGame", ({ inputs: { liveSim } }) => {
 	const redirect = {
 		redirectUrl: "/exhibition",
 	};
@@ -12,6 +12,4 @@ const updateExibitionGame = ({ liveSim }: ViewInput<"exhibitionGame">) => {
 	return {
 		liveSim,
 	};
-};
-
-export default updateExibitionGame;
+});

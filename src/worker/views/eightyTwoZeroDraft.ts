@@ -4,8 +4,9 @@ import {
 	checkCanUse,
 	DEFAULT_EIGHTY_TWO_ZERO_DRAFT,
 } from "../api/eightyTwoZeroDraft.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateEightyTwoZeroDraft = () => {
+export default defineView("eightyTwoZeroDraft", () => {
 	try {
 		checkCanUse();
 	} catch (error) {
@@ -32,6 +33,4 @@ const updateEightyTwoZeroDraft = () => {
 		},
 		stats,
 	};
-};
-
-export default updateEightyTwoZeroDraft;
+});

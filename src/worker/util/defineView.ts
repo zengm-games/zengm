@@ -25,7 +25,7 @@ export type ViewArgs<T extends string, Keep = EmptyObject> = {
 
 type ViewFunction<Id extends ViewId, Keep, Data> = (
 	args: ViewArgs<Id, Keep>,
-) => Promise<Data>;
+) => Data | Promise<Data>;
 
 // A view can return nothing (no update needed), and if it returns one of the properties listed in the keepPrevOutput option, the type must match what it declared there
 type ViewData<Keep> = void | (Partial<Keep> & Record<string, unknown>);

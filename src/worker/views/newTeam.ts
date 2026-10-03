@@ -5,7 +5,7 @@ import { season, team } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { getHistoryTeam } from "./teamHistory.ts";
 import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
-import type { UpdateEvents } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 
 export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -114,10 +114,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 	return teamsAugmented;
 };
 
-const updateTeamSelect = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("newTeam", async ({ updateEvents }) => {
 	// When switching teams, the "leagues" update event is sent out, so we want to ignore that because otherwise the UI flickers before redirecting
 	if (!updateEvents.includes("leagues")) {
 		const rawTeams = await idb.getCopies.teamsPlus(
@@ -224,6 +221,4 @@ const updateTeamSelect = async (
 			teams: finalTeams,
 		};
 	}
-};
-
-export default updateTeamSelect;
+});

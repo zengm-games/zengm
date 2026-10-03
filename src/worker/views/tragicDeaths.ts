@@ -1,12 +1,12 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import { defineView } from "../util/defineView.ts";
 
-const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("tragicDeaths", async ({ updateEvents }) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun")) {
 		const events = await idb.getCopies.events(
@@ -84,6 +84,4 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stats,
 		};
 	}
-};
-
-export default tragicDeaths;
+});

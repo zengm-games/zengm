@@ -1,8 +1,8 @@
 import { g, helpers } from "../util/index.ts";
 import getTeamInfos from "../../common/getTeamInfos.ts";
-import type { UpdateEvents } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateExpand = (inputs: void, updateEvents: UpdateEvents) => {
+export default defineView("autoExpand", ({ updateEvents }) => {
 	// Ignore team updateEvent from relocateVote, and newPhase from starting the expansion draft
 	if (!updateEvents.includes("team") && !updateEvents.includes("newPhase")) {
 		const autoExpand = g.get("autoExpand");
@@ -32,6 +32,4 @@ const updateExpand = (inputs: void, updateEvents: UpdateEvents) => {
 			newTeams,
 		};
 	}
-};
-
-export default updateExpand;
+});

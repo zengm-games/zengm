@@ -1,9 +1,5 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
-import type {
-	Player,
-	PlayerStatAttr,
-	UpdateEvents,
-} from "../../common/types.ts";
+import type { Player, PlayerStatAttr } from "../../common/types.ts";
 import { draft } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local } from "../util/index.ts";
@@ -11,6 +7,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { minBy } from "../../common/utils.ts";
 import { getDraftTeamsByTid } from "./draftHistory.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { defineView } from "../util/defineView.ts";
 
 const getUserNextPickYear = async () => {
 	const userTids = g.get("userTids");
@@ -28,7 +25,7 @@ const getUserNextPickYear = async () => {
 	return nextPickYear;
 };
 
-const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("draft", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
@@ -278,6 +275,4 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			userPlayers,
 		};
 	}
-};
-
-export default updateDraft;
+});

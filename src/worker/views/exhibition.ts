@@ -1,6 +1,7 @@
 import { getDefaultSettings, getRealTeamInfo } from "./newLeague.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateExhibition = async () => {
+export default defineView("exhibition", async () => {
 	const defaultSettings = {
 		...getDefaultSettings(),
 		numActiveTeams: undefined,
@@ -10,6 +11,4 @@ const updateExhibition = async () => {
 		defaultSettings,
 		realTeamInfo: await getRealTeamInfo(),
 	};
-};
-
-export default updateExhibition;
+});

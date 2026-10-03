@@ -1,8 +1,8 @@
 import { idb } from "../db/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import { getGlobalSettings } from "../util/getGlobalSettings.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("globalSettings", async ({ updateEvents }) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("options")) {
 		const options = await getGlobalSettings();
 
@@ -25,6 +25,4 @@ const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			phaseChangeRedirects: options.phaseChangeRedirects,
 		};
 	}
-};
-
-export default updateOptions;
+});

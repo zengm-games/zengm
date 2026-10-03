@@ -6,8 +6,8 @@ import {
 	setTeamInfo,
 	type TeamSeasonOverride,
 } from "./gameLog.ts";
-import type { AllStars, Game, UpdateEvents } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { AllStars, Game } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/constants.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
@@ -171,10 +171,7 @@ export const boxScoreToLiveSim = async ({
 	};
 };
 
-const updatePlayByPlay = async (
-	inputs: ViewInput<"liveGame">,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("liveGame", async ({ inputs, updateEvents }) => {
 	const redirectToMenu = {
 		redirectUrl: helpers.leagueUrl(["daily_schedule"]),
 	};
@@ -242,6 +239,4 @@ const updatePlayByPlay = async (
 			playByPlay: inputs.playByPlay,
 		});
 	}
-};
-
-export default updatePlayByPlay;
+});

@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
 import { helpers } from "../util/index.ts";
-import type { UpdateEvents, Player } from "../../common/types.ts";
+import type { Player } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
@@ -98,9 +99,14 @@ const reducer = (
 };
 
 export const genView = (
+	id:
+		| "colleges"
+		| "countries"
+		| "frivolitiesDraftPosition"
+		| "frivolitiesJerseyNumbers",
 	type: "college" | "country" | "draftPosition" | "jerseyNumbers",
 ) => {
-	return async (inputs: unknown, updateEvents: UpdateEvents) => {
+	return defineView(id, async ({ updateEvents }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun")) {
 			const displayStat = bySport({
@@ -204,7 +210,7 @@ export const genView = (
 				displayStat,
 			};
 		}
-	};
+	});
 };
 
-export default genView("college");
+export default genView("colleges", "college");

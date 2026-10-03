@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, AllStars } from "../../common/types.ts";
+import type { AllStars } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 
 const addAbbrevAndCount = <
 	T extends {
@@ -79,16 +80,11 @@ const augment = (allAllStars: AllStars[]) => {
 	return augmented;
 };
 
-const updateAllStarHistory = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("allStarHistory", async ({ updateEvents }) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
 		const allAllStars = await idb.getCopies.allStars();
 		return {
 			allAllStars: augment(allAllStars),
 		};
 	}
-};
-
-export default updateAllStarHistory;
+});

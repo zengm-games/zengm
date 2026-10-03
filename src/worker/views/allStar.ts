@@ -1,8 +1,8 @@
 import { allStar } from "../core/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import { g } from "../util/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateAllStar = async (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("allStar", async ({ updateEvents }) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
 		const allStars = await allStar.getOrCreate(g.get("season"));
 		const showDunk = allStars?.dunk !== undefined;
@@ -25,6 +25,4 @@ const updateAllStar = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			showThree,
 		};
 	}
-};
-
-export default updateAllStar;
+});

@@ -7,8 +7,9 @@ import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { newLeagueGodModeLimits } from "../util/newLeagueGodModeLimits.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateExpansionDraft = async () => {
+export default defineView("expansionDraft", async () => {
 	const expansionDraft = g.get("expansionDraft");
 	if (expansionDraft.phase === "protection") {
 		// https://stackoverflow.com/a/59923262/786644
@@ -107,6 +108,4 @@ const updateExpansionDraft = async () => {
 		minRosterSize: g.get("minRosterSize"),
 		numActiveTeams: g.get("numActiveTeams"),
 	};
-};
-
-export default updateExpansionDraft;
+});

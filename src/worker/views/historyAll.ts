@@ -1,11 +1,11 @@
 import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, last, orderBy, range } from "../../common/utils.ts";
 import { formatAwardNamePrefix } from "../core/awards/prefixes.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { PlayersCache } from "../db/PlayersCache.ts";
+import { defineView } from "../util/defineView.ts";
 
 const getAbbrev = (
 	tid: number,
@@ -35,7 +35,7 @@ const getAbbrev = (
 	return seasonAttrs.abbrev;
 };
 
-const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("historyAll", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		(updateEvents.includes("newPhase") &&
@@ -346,6 +346,4 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			seasons,
 		};
 	}
-};
-
-export default updateHistory;
+});

@@ -1,8 +1,9 @@
 import { idb } from "../db/index.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { g } from "../util/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateConfs = async () => {
+export default defineView("manageConfs", async () => {
 	const initialConfs = g.get("confs");
 	const initialDivs = g.get("divs");
 
@@ -44,6 +45,4 @@ const updateConfs = async () => {
 		initialDivs,
 		initialTeams,
 	};
-};
-
-export default updateConfs;
+});

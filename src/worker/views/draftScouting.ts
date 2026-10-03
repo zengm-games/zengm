@@ -1,9 +1,10 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents, Player } from "../../common/types.ts";
+import type { Player } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { last } from "../../common/utils.ts";
+import { defineView } from "../util/defineView.ts";
 
 const getSeason = async (playersAll: Player[], season: number) => {
 	const playersAllFiltered = playersAll.filter((p) => p.draft.year === season);
@@ -44,10 +45,7 @@ const getSeason = async (playersAll: Player[], season: number) => {
 	};
 };
 
-const updateDraftScouting = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("draftScouting", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
@@ -86,6 +84,4 @@ const updateDraftScouting = async (
 			seasons,
 		};
 	}
-};
-
-export default updateDraftScouting;
+});

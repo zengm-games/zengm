@@ -1,10 +1,7 @@
-import type { UpdateEvents } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateMultiTeamMode = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("multiTeamMode", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
@@ -24,6 +21,4 @@ const updateMultiTeamMode = async (
 			teams,
 		};
 	}
-};
-
-export default updateMultiTeamMode;
+});

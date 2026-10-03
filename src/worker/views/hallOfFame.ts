@@ -1,10 +1,10 @@
 import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import { defineView } from "../util/defineView.ts";
 
 // gpF is used on processPlayersHallOfFame for baseball
 export const extraStats = bySport({
@@ -14,7 +14,7 @@ export const extraStats = bySport({
 	hockey: [],
 } as const);
 
-const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("hallOfFame", async ({ updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		(updateEvents.includes("newPhase") &&
@@ -84,6 +84,4 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stats,
 		};
 	}
-};
-
-export default updatePlayers;
+});

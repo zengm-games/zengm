@@ -1,11 +1,8 @@
 import { idb } from "../db/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateKeyboardShortcuts = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("keyboardShortcuts", async ({ updateEvents }) => {
 	if (updateEvents.includes("firstRun")) {
 		const attributesStore = (await idb.meta.transaction("attributes")).store;
 
@@ -17,6 +14,4 @@ const updateKeyboardShortcuts = async (
 			keyboardShortcutsLocal,
 		};
 	}
-};
-
-export default updateKeyboardShortcuts;
+});

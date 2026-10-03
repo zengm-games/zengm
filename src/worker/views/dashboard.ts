@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateDashboard = async (inputs: unknown, updateEvents: UpdateEvents) => {
+export default defineView("dashboard", async ({ updateEvents }) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("leagues")) {
 		const leagues = await idb.meta.getAll("leagues");
 
@@ -14,6 +14,4 @@ const updateDashboard = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			leagues,
 		};
 	}
-};
-
-export default updateDashboard;
+});

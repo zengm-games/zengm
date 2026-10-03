@@ -2,8 +2,9 @@ import { g, helpers } from "../util/index.ts";
 import { idb } from "../db/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateProtectPlayers = async () => {
+export default defineView("protectPlayers", async () => {
 	const expansionDraft = g.get("expansionDraft");
 	if (expansionDraft.phase === "setup") {
 		// https://stackoverflow.com/a/59923262/786644
@@ -76,6 +77,4 @@ const updateProtectPlayers = async () => {
 		players,
 		stats,
 	};
-};
-
-export default updateProtectPlayers;
+});

@@ -1,9 +1,7 @@
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateToken = (inputs: ViewInput<"resetPassword">) => {
+export default defineView("resetPassword", ({ inputs }) => {
 	return {
 		token: inputs.token,
 	};
-};
-
-export default updateToken;
+});

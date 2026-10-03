@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateInbox = async () => {
+export default defineView("inbox", async () => {
 	const messages = await idb.getCopies.messages();
 	messages.reverse();
 	let anyUnread = false;
@@ -17,6 +18,4 @@ const updateInbox = async () => {
 		anyUnread,
 		messages,
 	};
-};
-
-export default updateInbox;
+});

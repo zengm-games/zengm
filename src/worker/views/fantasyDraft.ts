@@ -1,11 +1,8 @@
 import { idb } from "../db/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import { shuffle } from "../../common/random.ts";
+import { defineView } from "../util/defineView.ts";
 
-const updateFantasyDraft = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("fantasyDraft", async ({ updateEvents }) => {
 	if (updateEvents.includes("firstRun")) {
 		const teams = await idb.getCopies.teamsPlus(
 			{
@@ -19,6 +16,4 @@ const updateFantasyDraft = async (
 			teams,
 		};
 	}
-};
-
-export default updateFantasyDraft;
+});

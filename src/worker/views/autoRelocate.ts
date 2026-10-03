@@ -1,8 +1,8 @@
 import { g, helpers } from "../util/index.ts";
 import getTeamInfos from "../../common/getTeamInfos.ts";
 import { idb } from "../db/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
+import { defineView } from "../util/defineView.ts";
 
 const getRealignInfo = (
 	teams: {
@@ -69,7 +69,7 @@ const getRealignInfo = (
 	return current;
 };
 
-const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
+export default defineView("autoRelocate", async ({ updateEvents }) => {
 	// Ignore team updateEvent from relocateVote
 	if (!updateEvents.includes("team")) {
 		const autoRelocate = g.get("autoRelocate");
@@ -167,6 +167,4 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 			realignInfo,
 		};
 	}
-};
-
-export default updateRelocate;
+});

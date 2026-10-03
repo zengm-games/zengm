@@ -1,17 +1,13 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { augmentOffers } from "../api/index.ts";
 import { addMissingAssets } from "./savedTrades.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 
-const updateUserRoster = async (
-	inputs: ViewInput<"tradingBlock">,
-	updateEvents: UpdateEvents,
-) => {
+export default defineView("tradingBlock", async ({ inputs, updateEvents }) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
@@ -144,6 +140,4 @@ const updateUserRoster = async (
 			userRoster,
 		};
 	}
-};
-
-export default updateUserRoster;
+});

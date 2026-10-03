@@ -2,7 +2,7 @@ import { PLAYER } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { Player } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 import { getNumToPick } from "../core/draft/genOrder.ts";
@@ -10,9 +10,7 @@ import { last, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
 
-const updateDraftTeamHistory = async (
-	inputs: ViewInput<"draftTeamHistory">,
-) => {
+export default defineView("draftTeamHistory", async ({ inputs }) => {
 	let filter;
 	if (inputs.tid >= 0) {
 		filter = (p: Player) => p.draft.tid === inputs.tid;
@@ -137,6 +135,4 @@ const updateDraftTeamHistory = async (
 		stats,
 		tid: inputs.tid,
 	};
-};
-
-export default updateDraftTeamHistory;
+});

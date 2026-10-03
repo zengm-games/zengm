@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { team } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { PHASE } from "../../common/constants.ts";

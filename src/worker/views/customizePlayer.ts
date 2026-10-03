@@ -4,10 +4,10 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
 	UpdateEvents,
-	ViewInput,
 	PlayerWithoutKey,
 	Player,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { upgradeFace } from "../util/face.ts";
 

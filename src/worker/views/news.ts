@@ -1,10 +1,10 @@
 import { g } from "../util/index.ts";
 import type {
 	UpdateEvents,
-	ViewInput,
 	EventBBGM,
 	LogEventType,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
 import type { FaceConfig } from "facesjs";
 import { formatEventText } from "../util/formatEventText.ts";

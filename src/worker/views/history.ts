@@ -6,8 +6,8 @@ import type {
 	AwardInfoTeam,
 	AwardPlayer,
 	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { groupByUnique, last } from "../../common/utils.ts";

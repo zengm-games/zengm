@@ -5,8 +5,8 @@ import type {
 	PlayerRatingKey,
 	PlayerStatAttr,
 	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,

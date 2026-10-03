@@ -6,12 +6,8 @@ import {
 	setTeamInfo,
 	type TeamSeasonOverride,
 } from "./gameLog.ts";
-import type {
-	AllStars,
-	Game,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { AllStars, Game, UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/constants.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";

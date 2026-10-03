@@ -3,9 +3,9 @@ import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	Player,
-	ViewInput,
 	GameAttributesLeague,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";

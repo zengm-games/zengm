@@ -1,10 +1,6 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
-import type {
-	Phase,
-	Player,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { Phase, Player, UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";

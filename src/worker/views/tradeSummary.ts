@@ -10,8 +10,8 @@ import type {
 	PlayerContract,
 	PlayerStats,
 	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { player, team } from "../core/index.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { idb } from "../db/index.ts";

@@ -1,5 +1,6 @@
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { averageTeamStats, getStats, ignoreStats } from "./teamStats.ts";
 import { PHASE, TEAM_STATS_TABLES } from "../../common/constants.ts";
 import { season } from "../core/index.ts";

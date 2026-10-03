@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
 import { formatEventText } from "../util/formatEventText.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { getWatchPids } from "./news.ts";
 
 const updateEventLog = async (

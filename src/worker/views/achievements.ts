@@ -1,9 +1,6 @@
 import { achievement } from "../util/index.ts";
-import type {
-	Conditions,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { Conditions, UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { checkAccount } from "../util/checkAccount.ts";
 
 const updateAchievements = async (

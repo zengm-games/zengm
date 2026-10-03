@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { ByConf, UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { ByConf, UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { getTiebreakers, orderTeams } from "../util/orderTeams.ts";
 import { season } from "../core/index.ts";
 

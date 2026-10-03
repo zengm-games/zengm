@@ -7,8 +7,8 @@ import type {
 	PlayerStatAttr,
 	PlayerStatType,
 	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { season } from "../core/index.ts";

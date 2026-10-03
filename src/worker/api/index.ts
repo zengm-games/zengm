@@ -3711,14 +3711,14 @@ const runBefore = async (
 		params,
 		ctxBBGM,
 		updateEvents,
-		prevData,
+		prevOutput,
 		prevInputs,
 	}: {
 		viewId: string;
 		params: any;
 		ctxBBGM: any;
 		updateEvents: UpdateEvents;
-		prevData: any;
+		prevOutput: any;
 		prevInputs: any;
 	},
 	conditions: Conditions,
@@ -3730,8 +3730,8 @@ const runBefore = async (
 	// Sent back as prevInputs next time, if this page is still loaded
 	inputs?: any;
 
-	// If defined, then next time prevData only needs to contain these properties
-	prevDataKeys?: string[];
+	// If defined, then next time prevOutput only needs to contain these properties
+	keepPrevOutputKeys?: string[];
 }> => {
 	// Special case for errors, so that the condition right below (when league is loading) does not cause no update
 	if (viewId === "error") {
@@ -3767,16 +3767,21 @@ const runBefore = async (
 	const view = views[viewId];
 
 	if (view) {
-		// PROTOTYPE: views created with defineView take { inputs, data } rather than just the previous data, and say which properties of the previous data they need. Goes away when all views are converted.
-		const prevDataKeys: string[] | undefined = view.prevDataKeys;
-		const prev = prevDataKeys
-			? { inputs: prevInputs, data: prevData }
-			: prevData;
+		// PROTOTYPE: views created with defineView take a single object, and say which properties of the previous data they need. Goes away when all views are converted.
+		const keepPrevOutputKeys: string[] | undefined = view.keepPrevOutputKeys;
 
 		const data = await lock.runView(() =>
-			view(inputs, updateEvents, prev, conditions),
+			keepPrevOutputKeys
+				? view({
+						inputs,
+						updateEvents,
+						prevInputs,
+						prevOutput,
+						conditions,
+					})
+				: view(inputs, updateEvents, prevOutput, conditions),
 		);
-		return { data: data ?? {}, inputs, prevDataKeys };
+		return { data: data ?? {}, inputs, keepPrevOutputKeys };
 	}
 
 	return { data: {}, inputs };

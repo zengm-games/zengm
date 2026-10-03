@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers, updatePlayMenu, updateStatus } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 

@@ -1,11 +1,8 @@
 import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	PlayoffSeries,
-} from "../../common/types.ts";
+import type { UpdateEvents, PlayoffSeries } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { orderTeams } from "../util/orderTeams.ts";
 
 type SeriesTeam = {

@@ -1,5 +1,6 @@
 import { idb } from "../db/index.ts";
-import type { ViewInput, RealTeamInfo } from "../../common/types.ts";
+import type { RealTeamInfo } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { env } from "../util/env.ts";
 import type { Settings } from "./settings.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";

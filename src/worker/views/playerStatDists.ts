@@ -6,11 +6,8 @@ import {
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	PlayerStatType,
-} from "../../common/types.ts";
+import type { UpdateEvents, PlayerStatType } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
 

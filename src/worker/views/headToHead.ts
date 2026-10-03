@@ -1,5 +1,6 @@
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { headToHead } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import hasTies from "../core/season/hasTies.ts";

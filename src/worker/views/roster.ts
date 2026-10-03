@@ -5,9 +5,9 @@ import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
 	UpdateEvents,
-	ViewInput,
 	TeamSeasonAttr,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";

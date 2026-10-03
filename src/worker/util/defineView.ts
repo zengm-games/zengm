@@ -1,47 +1,59 @@
-import type {
-	Conditions,
-	UpdateEvents,
-	ViewInputOrEmpty,
-	ViewPrev,
-} from "../../common/types.ts";
+import type { Conditions, UpdateEvents } from "../../common/types.ts";
+import type processInputs from "../api/processInputs.ts";
 import type { ViewId } from "../../ui/router/types.ts";
 
 type EmptyObject = Record<never, never>;
 
-type ViewFunction<Id extends ViewId, PrevData, Data> = (
-	inputs: ViewInputOrEmpty<Id>,
-	updateEvents: UpdateEvents,
-	prev: ViewPrev<Id, PrevData>,
-	conditions: Conditions,
-) => Promise<Data>;
+export type ViewInput<T extends keyof typeof processInputs> = Exclude<
+	ReturnType<(typeof processInputs)[T]>,
+	{ redirectUrl: string }
+>;
 
-// A view can return nothing (no update needed), and if it returns one of the properties it reads back in prev.data, the type must match what it declared
-type ViewData<PrevData> = void | (Partial<PrevData> & Record<string, unknown>);
+// Like ViewInput, but works for views with no processInputs function too
+type ViewInputOrEmpty<T extends string> = T extends keyof typeof processInputs
+	? ViewInput<T>
+	: EmptyObject;
 
-type DefinedView<Id extends ViewId, PrevData, Data> = ViewFunction<
-	Id,
-	PrevData,
-	Data
-> & {
-	// Only these properties of the data previously returned by this view are sent back from the UI, in prev.data
-	prevDataKeys: string[];
+// The argument of a worker view function. See defineView for details.
+export type ViewArgs<T extends string, Keep = EmptyObject> = {
+	inputs: ViewInputOrEmpty<T>;
+	updateEvents: UpdateEvents;
+	prevInputs: ViewInputOrEmpty<T> | undefined;
+	prevOutput: Partial<Keep>;
+	conditions: Conditions;
 };
 
-// Use in the prevData option of defineView to declare the type of a property. There is no actual value, the only thing that exists at runtime is the key.
-export const prevType = <T>() => undefined as unknown as T;
+type ViewFunction<Id extends ViewId, Keep, Data> = (
+	args: ViewArgs<Id, Keep>,
+) => Promise<Data>;
+
+// A view can return nothing (no update needed), and if it returns one of the properties listed in the keepPrevOutput option, the type must match what it declared there
+type ViewData<Keep> = void | (Partial<Keep> & Record<string, unknown>);
+
+type DefinedView<Id extends ViewId, Keep, Data> = ViewFunction<
+	Id,
+	Keep,
+	Data
+> & {
+	// Keys of the keepPrevOutput option. Only these properties of the data previously returned by this view are sent back from the UI, as prevOutput
+	keepPrevOutputKeys: string[];
+};
+
+// Use in the keepPrevOutput option of defineView to declare the type of a property. There is no actual value, the only thing that exists at runtime is the key.
+export const keepType = <T>() => undefined as unknown as T;
 
 /**
- * Define a worker view. id must be one of the ids in routeInfos. The view function receives:
+ * Define a worker view. id must be one of the ids in routeInfos. The view function receives an object containing:
  *
  * - inputs: output of the processInputs function for this view, if there is one
  * - updateEvents
- * - prev.inputs: inputs from the last time this view ran, or undefined if the page was not already loaded
- * - prev.data: properties of the previously returned data that are listed in the prevData option. Could be missing, like on the first run.
+ * - prevInputs: inputs from the last time this view ran, or undefined if the page was not already loaded
+ * - prevOutput: properties of the previously returned data that are listed in the keepPrevOutput option. Could be missing, like on the first run. This is everything the view has returned since the page was loaded, merged together, so a property can come from an earlier run than the last one.
  * - conditions
  *
- * prevData is needed because the type of prev.data can't be inferred from what the view returns, since what it returns can depend on prev.data. So declare the type here and then it's checked against what the view actually returns:
+ * The keepPrevOutput option is needed because the type of prevOutput can't be inferred from what the view returns, since what it returns can depend on prevOutput. So declare the type here and then it's checked against what the view actually returns:
  *
- *     defineView("schedule", { prevData: { completed: prevType<Game[]>() } }, async (inputs, updateEvents, prev) => { ... })
+ *     defineView("schedule", { keepPrevOutput: { completed: keepType<Game[]>() } }, async ({ inputs, updateEvents, prevOutput }) => { ... })
  */
 export function defineView<
 	Id extends ViewId,
@@ -52,25 +64,25 @@ export function defineView<
 ): DefinedView<Id, EmptyObject, Data>;
 export function defineView<
 	Id extends ViewId,
-	PrevData extends Record<string, unknown>,
-	Data extends ViewData<PrevData>,
+	Keep extends Record<string, unknown>,
+	Data extends ViewData<Keep>,
 >(
 	id: Id,
-	options: { prevData: PrevData },
-	view: ViewFunction<Id, PrevData, Data>,
-): DefinedView<Id, PrevData, Data>;
+	options: { keepPrevOutput: Keep },
+	view: ViewFunction<Id, Keep, Data>,
+): DefinedView<Id, Keep, Data>;
 export function defineView(
 	id: string,
 	optionsOrView:
-		| { prevData: Record<string, unknown> }
+		| { keepPrevOutput: Record<string, unknown> }
 		| ViewFunction<any, any, any>,
 	maybeView?: ViewFunction<any, any, any>,
 ) {
 	const view = typeof optionsOrView === "function" ? optionsOrView : maybeView!;
-	const prevDataKeys =
+	const keepPrevOutputKeys =
 		typeof optionsOrView === "function"
 			? []
-			: Object.keys(optionsOrView.prevData);
+			: Object.keys(optionsOrView.keepPrevOutput);
 
-	return Object.assign(view, { prevDataKeys });
+	return Object.assign(view, { keepPrevOutputKeys });
 }

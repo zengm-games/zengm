@@ -1,7 +1,8 @@
 import { PLAYER } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { PlayerAward, ViewInput } from "../../common/types.ts";
+import type { PlayerAward } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique, last, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";

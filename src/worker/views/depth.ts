@@ -5,9 +5,9 @@ import { posRatings } from "../../common/posRatings.ts";
 import type {
 	PlayerRatingKey,
 	UpdateEvents,
-	ViewInput,
 	PlayerStatAttr,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import {
 	NUM_LINES,

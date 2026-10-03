@@ -2,10 +2,10 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
-	ViewInput,
 	TeamStatAttr,
 	TeamSeasonAttr,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { TEAM_STATS_TABLES } from "../../common/constants.ts";
 import { season, team } from "../core/index.ts";
 import { lowerIsBetter } from "../../common/lowerIsBetter.ts";

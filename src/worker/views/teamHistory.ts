@@ -1,11 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	TeamSeason,
-	Player,
-} from "../../common/types.ts";
+import type { UpdateEvents, TeamSeason, Player } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";

@@ -1,9 +1,6 @@
 import { allStar } from "../core/index.ts";
-import type {
-	DunkAttempt,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { DunkAttempt, UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { PHASE } from "../../common/constants.ts";

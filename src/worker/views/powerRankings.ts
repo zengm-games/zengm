@@ -1,10 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type {
-	TeamFiltered,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { TeamFiltered, UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { team } from "../core/index.ts";
 import {
 	NOT_REAL_POSITIONS,

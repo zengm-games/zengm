@@ -10,8 +10,8 @@ import type {
 	TeamFiltered,
 	TeamSeasonAttr,
 	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import type { TeamStatAttr } from "../../common/types.baseball.ts";
 import { season } from "../core/index.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";

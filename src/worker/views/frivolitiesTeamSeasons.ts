@@ -1,11 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	TeamSeason,
-	ByConf,
-} from "../../common/types.ts";
+import type { UpdateEvents, TeamSeason, ByConf } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { PHASE } from "../../common/constants.ts";
 import { team } from "../core/index.ts";
 import hasTies from "../core/season/hasTies.ts";

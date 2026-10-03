@@ -6,11 +6,8 @@ import {
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	PlayerStatType,
-} from "../../common/types.ts";
+import type { UpdateEvents, PlayerStatType } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport } from "../../common/sportFunctions.ts";

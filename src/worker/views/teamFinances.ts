@@ -2,11 +2,8 @@ import { PHASE } from "../../common/constants.ts";
 import { finances, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	TeamSeason,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import type { TeamSeason, UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { getAutoTicketPriceByTid } from "../core/game/attendance.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 

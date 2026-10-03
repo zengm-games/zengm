@@ -1,13 +1,7 @@
 import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	ViewPrev,
-	Game,
-	PlayerInjury,
-} from "../../common/types.ts";
+import type { Game, PlayerInjury } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
 import { groupByUnique, last, orderBy } from "../../common/utils.ts";
 import {
@@ -22,7 +16,7 @@ import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
 import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
-import { defineView, prevType } from "../util/defineView.ts";
+import { defineView, keepType, type ViewArgs } from "../util/defineView.ts";
 
 export const getUpcoming = async ({
 	cid,
@@ -479,17 +473,17 @@ export const getTopPlayers = async <T extends any[]>(
 	}
 };
 
-const updateUpcoming = async (
-	inputs: ViewInput<"schedule">,
-	updateEvents: UpdateEvents,
-	prev: ViewPrev<"schedule">,
-) => {
+const updateUpcoming = async ({
+	inputs,
+	updateEvents,
+	prevInputs,
+}: ViewArgs<"schedule">) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase") ||
-		inputs.abbrev !== prev.inputs?.abbrev
+		inputs.abbrev !== prevInputs?.abbrev
 	) {
 		const upcoming = await getUpcoming({
 			tid: inputs.tid,
@@ -519,20 +513,20 @@ const updateUpcoming = async (
 	}
 };
 
-// The part of the previously returned data that this view reads back
-const prevData = {
-	completed: prevType<Game[]>(),
+const keepPrevOutput = {
+	completed: keepType<Game[]>(),
 };
 
 // Based on views.gameLog.updateGamesList
-const updateCompleted = async (
-	inputs: ViewInput<"schedule">,
-	updateEvents: UpdateEvents,
-	prev: ViewPrev<"schedule", typeof prevData>,
-) => {
+const updateCompleted = async ({
+	inputs,
+	updateEvents,
+	prevInputs,
+	prevOutput,
+}: ViewArgs<"schedule", typeof keepPrevOutput>) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		inputs.abbrev !== prev.inputs?.abbrev
+		inputs.abbrev !== prevInputs?.abbrev
 	) {
 		// Load all games in list
 		const completed = await getProcessedGames({
@@ -547,14 +541,13 @@ const updateCompleted = async (
 	}
 
 	if (updateEvents.includes("gameSim")) {
-		console.log("RENDER SECOND");
 		// Partial update of only new games
-		const completed = prev.data.completed ?? [];
+		const completed = prevOutput.completed ?? [];
 
 		const games = await getProcessedGames({
 			tid: inputs.tid,
 			season: g.get("season"),
-			loadedGames: prev.data.completed,
+			loadedGames: prevOutput.completed,
 			includeAllStarGame: true,
 		});
 
@@ -568,14 +561,10 @@ const updateCompleted = async (
 	}
 };
 
-export default defineView(
-	"schedule",
-	{ prevData },
-	async (inputs, updateEvents, prev) => {
-		return Object.assign(
-			{},
-			await updateUpcoming(inputs, updateEvents, prev),
-			await updateCompleted(inputs, updateEvents, prev),
-		);
-	},
-);
+export default defineView("schedule", { keepPrevOutput }, async (args) => {
+	return Object.assign(
+		{},
+		await updateUpcoming(args),
+		await updateCompleted(args),
+	);
+});

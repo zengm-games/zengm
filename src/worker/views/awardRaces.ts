@@ -4,33 +4,36 @@ import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { defineView } from "../util/defineView.ts";
 
-export default defineView("awardRaces", async (inputs, updateEvents, prev) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("playerMovement"))) ||
-		inputs.season !== prev.inputs?.season
-	) {
-		const awardCandidates = (
-			await getAwardCandidates(inputs.season)
-		).awardCandidates.flat();
+export default defineView(
+	"awardRaces",
+	async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.includes("firstRun") ||
+			(inputs.season === g.get("season") &&
+				(updateEvents.includes("gameSim") ||
+					updateEvents.includes("playerMovement"))) ||
+			inputs.season !== prevInputs?.season
+		) {
+			const awardCandidates = (
+				await getAwardCandidates(inputs.season)
+			).awardCandidates.flat();
 
-		const teams = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs: ["won", "lost", "tied", "otl"],
+			const teams = await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid"],
+					seasonAttrs: ["won", "lost", "tied", "otl"],
+					season: inputs.season,
+				},
+				"noCopyCache",
+			);
+
+			return {
+				awardCandidates,
+				confs: g.get("confs", inputs.season),
+				divs: g.get("divs", inputs.season),
 				season: inputs.season,
-			},
-			"noCopyCache",
-		);
-
-		return {
-			awardCandidates,
-			confs: g.get("confs", inputs.season),
-			divs: g.get("divs", inputs.season),
-			season: inputs.season,
-			teams: groupByUnique(teams, "tid"),
-		};
-	}
-});
+				teams: groupByUnique(teams, "tid"),
+			};
+		}
+	},
+);

@@ -1,7 +1,6 @@
 import * as z from "zod";
 import type { FaceConfig } from "facesjs";
 import type { ReactNode } from "react";
-import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
 
 import {
@@ -78,21 +77,6 @@ export type View<Name extends ViewsKeys> = Exclude<
 	>,
 	void | { redirectUrl: string } | { errorMessage: string }
 >;
-
-export type ViewInput<T extends keyof typeof processInputs> = Exclude<
-	ReturnType<(typeof processInputs)[T]>,
-	{ redirectUrl: string }
->;
-
-// Like ViewInput, but works for views with no processInputs function too
-export type ViewInputOrEmpty<T extends string> =
-	T extends keyof typeof processInputs ? ViewInput<T> : Record<never, never>;
-
-// What a worker view knows about its previous run, while the same page stays loaded. See defineView for details.
-export type ViewPrev<T extends string, PrevData = Record<never, never>> = {
-	inputs: ViewInputOrEmpty<T> | undefined;
-	data: Partial<PrevData>;
-};
 
 export type AchievementWhen =
 	| "afterAwards"

@@ -2,11 +2,11 @@ import { idb } from "../db/index.ts";
 import { CacheTeamInfoSeason } from "../util/getTeamInfoBySeason.ts";
 import type {
 	UpdateEvents,
-	ViewInput,
 	DiscriminateUnion,
 	EventBBGM,
 	Phase,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { processAssets } from "./tradeSummary.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { getWatchPids } from "./news.ts";

@@ -7,12 +7,7 @@ import {
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	ViewPrev,
-	PlayerStatType,
-} from "../../common/types.ts";
+import type { PlayerStatType } from "../../common/types.ts";
 import { POS_NUMBERS } from "../../common/constants.baseball.ts";
 import { last, maxBy } from "../../common/utils.ts";
 import {
@@ -21,7 +16,7 @@ import {
 } from "../../common/advancedPlayerSearch.ts";
 import { choice } from "../../common/random.ts";
 import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
-import { defineView } from "../util/defineView.ts";
+import { defineView, type ViewArgs } from "../util/defineView.ts";
 
 export const statTypes = [
 	"bio",
@@ -223,9 +218,7 @@ const getPlayerStats = async (
 
 const updatePlayers = async (
 	axis: "X" | "Y",
-	inputs: ViewInput<"playerGraphs">,
-	updateEvents: UpdateEvents,
-	prev: ViewPrev<"playerGraphs">,
+	{ inputs, updateEvents, prevInputs }: ViewArgs<"playerGraphs">,
 ) => {
 	const season = `season${axis}` as const;
 	const statType = `statType${axis}` as const;
@@ -236,9 +229,9 @@ const updatePlayers = async (
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		// Purposely skip checking statX, statY, minGames - those are only used client side, they in the URL for usability
-		inputs[season] !== prev.inputs?.[season] ||
-		inputs[statType] !== prev.inputs?.[statType] ||
-		inputs[playoffs] !== prev.inputs?.[playoffs]
+		inputs[season] !== prevInputs?.[season] ||
+		inputs[statType] !== prevInputs?.[statType] ||
+		inputs[playoffs] !== prevInputs?.[playoffs]
 	) {
 		const statForAxis = await getPlayerStats(
 			inputs[statType],
@@ -271,15 +264,14 @@ export type PlayerGraphsPlayer = Awaited<
 >["players"][number];
 
 const updateClientSide = (
-	inputs: ViewInput<"playerGraphs">,
-	prev: ViewPrev<"playerGraphs">,
+	{ inputs, prevInputs }: ViewArgs<"playerGraphs">,
 	x: Awaited<ReturnType<typeof updatePlayers>>,
 	y: Awaited<ReturnType<typeof updatePlayers>>,
 ) => {
 	if (
-		inputs.minGames !== prev.inputs?.minGames ||
-		inputs.statX !== prev.inputs?.statX ||
-		inputs.statY !== prev.inputs?.statY
+		inputs.minGames !== prevInputs?.minGames ||
+		inputs.statX !== prevInputs?.statX ||
+		inputs.statY !== prevInputs?.statY
 	) {
 		// Check x and y for statX and statY in case they were already specified there, such as randomly selecting from statForAxis
 		return {
@@ -305,12 +297,9 @@ const updateClientSide = (
 	}
 };
 
-export default defineView(
-	"playerGraphs",
-	async (inputs, updateEvents, prev) => {
-		const x = await updatePlayers("X", inputs, updateEvents, prev);
-		const y = await updatePlayers("Y", inputs, updateEvents, prev);
+export default defineView("playerGraphs", async (args) => {
+	const x = await updatePlayers("X", args);
+	const y = await updatePlayers("Y", args);
 
-		return Object.assign({}, x, y, updateClientSide(inputs, prev, x, y));
-	},
-);
+	return Object.assign({}, x, y, updateClientSide(args, x, y));
+});

@@ -4,13 +4,13 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
 	UpdateEvents,
-	ViewInput,
 	DraftType,
 	DraftLotteryResult,
 	GameAttributesLeague,
 	TeamFiltered,
 	DraftPickWithoutKey,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import {
 	getNumToPick,
 	NotEnoughTeamsError,

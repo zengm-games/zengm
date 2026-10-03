@@ -1,7 +1,8 @@
 import { PLAYER_GAME_STATS } from "../../common/constants.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import getWinner from "../../common/getWinner.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { getCommon } from "./player.ts";

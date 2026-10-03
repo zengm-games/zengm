@@ -17,8 +17,8 @@ import type {
 	PlayerStatAttr,
 	PlayerAwardSimple,
 	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { orderBy } from "../../common/utils.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import { upgradeFace } from "../util/face.ts";

@@ -5,8 +5,8 @@ import {
 	type ByConf,
 	type PlayerStatType,
 	type UpdateEvents,
-	type ViewInput,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { processDraftPicks } from "./draftPicks.ts";
 import getWinner from "../../common/getWinner.ts";

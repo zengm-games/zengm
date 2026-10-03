@@ -1,5 +1,6 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { omit, orderBy } from "../../common/utils.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";

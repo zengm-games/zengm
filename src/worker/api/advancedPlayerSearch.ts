@@ -9,8 +9,8 @@ import type {
 	PlayerRatingAttr,
 	PlayerStatAttr,
 	PlayerStatType,
-	ViewInput,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { last, maxBy } from "../../common/utils.ts";
 import { normalizeIntl } from "../../common/normalizeIntl.ts";
 import { idb } from "../db/index.ts";

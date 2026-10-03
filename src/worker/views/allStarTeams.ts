@@ -4,10 +4,10 @@ import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	AllStars,
-	ViewInput,
 	AllStarPlayer,
 	PlayerInjury,
 } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { PHASE, POSITIONS } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";

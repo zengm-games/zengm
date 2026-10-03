@@ -1,4 +1,4 @@
-import type { ViewInput } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 
 const updateToken = (inputs: ViewInput<"resetPassword">) => {
 	return {

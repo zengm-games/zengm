@@ -1,6 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, Player, ViewInput } from "../../common/types.ts";
+import type { UpdateEvents, Player } from "../../common/types.ts";
+import type { ViewInput } from "../util/defineView.ts";
 import { omit, orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { player } from "../core/index.ts";
 import { PLAYER } from "../../common/constants.ts";

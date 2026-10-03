@@ -101,11 +101,11 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("watchList") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("newPhase") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("watchList") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("newPhase") ||
 			inputs.statType !== prevInputs?.statType ||
 			inputs.playoffs !== prevInputs?.playoffs
 		) {

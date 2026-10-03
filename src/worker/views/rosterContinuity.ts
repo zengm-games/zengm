@@ -65,9 +65,9 @@ export default defineView({
 		| undefined
 	> => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("playerMovement")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("playerMovement")
 		) {
 			const seasons: (number | undefined)[][] = [];
 			let prevMinutesAll: Map<number, number>[] | undefined;

@@ -106,14 +106,14 @@ export default defineView({
 		| undefined
 	> => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("newPhase") ||
-			updateEvents.includes("draftLottery") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("newPhase") ||
+			updateEvents.has("draftLottery") ||
 			season !== prevInputs?.season ||
 			(season === g.get("season") &&
-				(updateEvents.includes("gameSim") ||
-					updateEvents.includes("gameAttributes") ||
-					updateEvents.includes("playerMovement")))
+				(updateEvents.has("gameSim") ||
+					updateEvents.has("gameAttributes") ||
+					updateEvents.has("playerMovement")))
 		) {
 			let showExpansionTeamMessage = false;
 			if (season === g.get("season")) {

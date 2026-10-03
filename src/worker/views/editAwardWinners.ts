@@ -10,10 +10,7 @@ export default defineView({
 	id: "editAwardWinners",
 	processInputs: validateSeasonOnly,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
-		if (
-			updateEvents.includes("firstRun") ||
-			prevInputs?.season !== inputs.season
-		) {
+		if (updateEvents.has("firstRun") || prevInputs?.season !== inputs.season) {
 			if (!g.get("godMode")) {
 				// https://stackoverflow.com/a/59923262/786644
 				const returnValue = {

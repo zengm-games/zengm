@@ -6,7 +6,7 @@ import { defineView } from "../util/defineView.ts";
 export default defineView({
 	id: "accountUpdateCard",
 	load: async ({ updateEvents, conditions }) => {
-		if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
+		if (updateEvents.has("firstRun") || updateEvents.has("account")) {
 			const partialTopMenu = await checkAccount(conditions);
 
 			try {

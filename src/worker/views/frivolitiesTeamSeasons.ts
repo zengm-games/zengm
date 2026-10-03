@@ -210,7 +210,7 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs: { type }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-		if (updateEvents.includes("firstRun") || type !== prevInputs?.type) {
+		if (updateEvents.has("firstRun") || type !== prevInputs?.type) {
 			let filter: Parameters<typeof getMostXTeamSeasons>[0]["filter"];
 			let getValue: Parameters<typeof getMostXTeamSeasons>[0]["getValue"];
 			let after: Parameters<typeof getMostXTeamSeasons>[0]["after"];

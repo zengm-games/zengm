@@ -118,7 +118,7 @@ export default defineView({
 	id: "newTeam",
 	load: async ({ updateEvents }) => {
 		// When switching teams, the "leagues" update event is sent out, so we want to ignore that because otherwise the UI flickers before redirecting
-		if (!updateEvents.includes("leagues")) {
+		if (!updateEvents.has("leagues")) {
 			const rawTeams = await idb.getCopies.teamsPlus(
 				{
 					attrs: [

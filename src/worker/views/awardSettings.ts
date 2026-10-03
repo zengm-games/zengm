@@ -26,7 +26,7 @@ export default defineView({
 	load: async ({ updateEvents }) => {
 		if (
 			// In theory could update on gameSim and playerMovement, but it's actually tricky to keep editing state in sync so save it for later
-			updateEvents.includes("firstRun")
+			updateEvents.has("firstRun")
 		) {
 			let season;
 			let teams;

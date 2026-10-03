@@ -55,9 +55,9 @@ export default defineView({
 		const currentSeason = g.get("season");
 
 		if (
-			updateEvents.includes("firstRun") ||
-			(inputs.season === currentSeason && updateEvents.includes("gameSim")) ||
-			updateEvents.includes("newPhase") ||
+			updateEvents.has("firstRun") ||
+			(inputs.season === currentSeason && updateEvents.has("gameSim")) ||
+			updateEvents.has("newPhase") ||
 			inputs.season !== prevInputs?.season ||
 			inputs.day !== prevOutput.day ||
 			inputs.cid !== prevInputs?.cid
@@ -86,7 +86,7 @@ export default defineView({
 					// What day is it? Get it from URL by default, but that could be undefined
 					day = inputsDayOverride ?? inputs.day ?? -1;
 					if (day === -1) {
-						if (updateEvents.includes("firstRun")) {
+						if (updateEvents.has("firstRun")) {
 							// If this is a new load of the view, initialize to the current day (current season) or day 1 (past season)
 							day = -1;
 						} else if (prevInputs?.day !== undefined) {

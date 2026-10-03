@@ -195,11 +195,11 @@ export default defineView({
 		}
 
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("gameAttributes") ||
-			updateEvents.includes("team") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("gameAttributes") ||
+			updateEvents.has("team") ||
 			pos !== prevInputs?.pos ||
 			playoffs !== prevInputs?.playoffs ||
 			abbrev !== prevInputs?.abbrev

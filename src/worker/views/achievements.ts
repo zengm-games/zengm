@@ -5,7 +5,7 @@ import { checkAccount } from "../util/checkAccount.ts";
 export default defineView({
 	id: "achievements",
 	load: async ({ updateEvents, conditions }) => {
-		if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
+		if (updateEvents.has("firstRun") || updateEvents.has("account")) {
 			await checkAccount(conditions);
 			const achievements = await achievement.getAll();
 

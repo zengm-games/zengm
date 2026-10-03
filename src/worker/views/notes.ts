@@ -31,8 +31,8 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs: { type }, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("notes") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("notes") ||
 			type !== prevInputs?.type
 		) {
 			if (type === "draftPick") {

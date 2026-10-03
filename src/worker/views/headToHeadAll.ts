@@ -28,7 +28,7 @@ export default defineView({
 	load: async ({ inputs: { season, type }, updateEvents, prevInputs }) => {
 		if (
 			((season === g.get("season") || season === "all") &&
-				updateEvents.includes("gameSim")) ||
+				updateEvents.has("gameSim")) ||
 			season !== prevInputs?.season ||
 			type !== prevInputs?.type
 		) {

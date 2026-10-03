@@ -256,10 +256,9 @@ const updatePlayers = async (
 	const statType = `statType${axis}` as const;
 	const playoffs = `playoffs${axis}` as const;
 	if (
-		updateEvents.includes("firstRun") ||
+		updateEvents.has("firstRun") ||
 		(inputs[season] === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("playerMovement"))) ||
+			(updateEvents.has("gameSim") || updateEvents.has("playerMovement"))) ||
 		// Purposely skip checking statX, statY, minGames - those are only used client side, they in the URL for usability
 		inputs[season] !== prevInputs?.[season] ||
 		inputs[statType] !== prevInputs?.[statType] ||

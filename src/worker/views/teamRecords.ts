@@ -305,7 +305,7 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs: { byType, filter }, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			byType !== prevInputs?.byType ||
 			filter !== prevInputs?.filter
 		) {

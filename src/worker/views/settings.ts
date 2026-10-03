@@ -229,10 +229,7 @@ export type Settings = Pick<
 export default defineView({
 	id: "settings",
 	load: ({ updateEvents }) => {
-		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameAttributes")
-		) {
+		if (updateEvents.has("firstRun") || updateEvents.has("gameAttributes")) {
 			const initialSettings: Settings = {
 				godMode: g.get("godMode"),
 				godModeInPast: g.get("godModeInPast"),

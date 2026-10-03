@@ -4,10 +4,7 @@ import { defineView } from "../util/defineView.ts";
 export default defineView({
 	id: "exportStats",
 	load: ({ updateEvents }) => {
-		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("newPhase")
-		) {
+		if (updateEvents.has("firstRun") || updateEvents.has("newPhase")) {
 			const options = [
 				{
 					key: "all",

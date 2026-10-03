@@ -39,9 +39,8 @@ export default defineView({
 	id: "historyAll",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			(updateEvents.includes("newPhase") &&
-				g.get("phase") === PHASE.DRAFT_LOTTERY)
+			updateEvents.has("firstRun") ||
+			(updateEvents.has("newPhase") && g.get("phase") === PHASE.DRAFT_LOTTERY)
 		) {
 			const teams = await idb.getCopies.teamsPlus(
 				{

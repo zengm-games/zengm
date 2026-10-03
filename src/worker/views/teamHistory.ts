@@ -239,10 +239,10 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("retiredJerseys") ||
-			updateEvents.includes("gameAttributes") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("retiredJerseys") ||
+			updateEvents.has("gameAttributes") ||
 			inputs.abbrev !== prevInputs?.abbrev
 		) {
 			const t = await idb.cache.teams.get(inputs.tid);

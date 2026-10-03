@@ -12,7 +12,7 @@ import { orderTeams } from "../util/orderTeams.ts";
 import { getNumericStat } from "../../common/statValue.ts";
 
 const updateInbox = async ({ updateEvents }: ViewArgs) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
+	if (updateEvents.has("firstRun") || updateEvents.has("newPhase")) {
 		const messages = await idb.getCopies.messages(
 			{
 				limit: 2,
@@ -33,10 +33,10 @@ const updateInbox = async ({ updateEvents }: ViewArgs) => {
 
 const updateTeam = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
 		const t = await idb.cache.teams.get(g.get("userTid"));
 		const latestSeason = await idb.cache.teamSeasons.indexGet(
@@ -70,10 +70,7 @@ const updateTeam = async ({ updateEvents }: ViewArgs) => {
 };
 
 const updatePayroll = async ({ updateEvents }: ViewArgs) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement")
-	) {
+	if (updateEvents.has("firstRun") || updateEvents.has("playerMovement")) {
 		const payroll = await team.getPayroll(g.get("userTid"));
 		return {
 			payroll, // [millions of dollars]
@@ -83,10 +80,10 @@ const updatePayroll = async ({ updateEvents }: ViewArgs) => {
 
 const updateTeams = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
 		const stats = bySport({
 			baseball: ["pts", "oppPts", "ops", "era"] as const,
@@ -212,10 +209,10 @@ const updateTeams = async ({ updateEvents }: ViewArgs) => {
 
 const updatePlayers = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
 		const startersStats = bySport({
 			baseball: ["war", "hr", "ba", "ops", "era", "ip"],
@@ -398,9 +395,9 @@ const updatePlayers = async ({ updateEvents }: ViewArgs) => {
 
 const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
-		(updateEvents.includes("newPhase") &&
+		updateEvents.has("firstRun") ||
+		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.has("gameSim")) ||
+		(updateEvents.has("newPhase") &&
 			(g.get("phase") === PHASE.PLAYOFFS || g.get("phase") === PHASE.PRESEASON))
 	) {
 		const playoffSeries = await idb.getCopy.playoffSeries({
@@ -492,7 +489,7 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 };
 
 const updateStandings = async ({ updateEvents }: ViewArgs) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
+	if (updateEvents.has("firstRun") || updateEvents.has("gameSim")) {
 		const teams = await idb.getCopies.teamsPlus(
 			{
 				attrs: ["tid"],
@@ -595,10 +592,10 @@ const updateStandings = async ({ updateEvents }: ViewArgs) => {
 
 const updateNewsFeed = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("newPhase")
 	) {
 		const NUM_EVENTS = 8;
 

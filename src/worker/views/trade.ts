@@ -257,7 +257,7 @@ export default defineView({
 			forceTrade: false,
 			numDraftRounds: g.get("numDraftRounds"),
 			multiTeamMode: g.get("userTids").length > 1,
-			resetMessage: updateEvents.includes("undoTrade"),
+			resetMessage: updateEvents.has("undoTrade"),
 		};
 	},
 });

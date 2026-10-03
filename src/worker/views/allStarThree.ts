@@ -16,9 +16,9 @@ export default defineView({
 		}
 
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameAttributes") ||
-			updateEvents.includes("allStarThree") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameAttributes") ||
+			updateEvents.has("allStarThree") ||
 			season !== prevInputs?.season
 		) {
 			const allStars = await allStar.getOrCreate(season);

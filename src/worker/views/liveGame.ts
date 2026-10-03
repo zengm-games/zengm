@@ -197,7 +197,7 @@ export default defineView({
 			redirectUrl: helpers.leagueUrl(["daily_schedule"]),
 		};
 
-		if (updateEvents.includes("firstRun") && !inputs.fromAction) {
+		if (updateEvents.has("firstRun") && !inputs.fromAction) {
 			return redirectToMenu;
 		}
 

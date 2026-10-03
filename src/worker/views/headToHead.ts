@@ -27,7 +27,7 @@ export default defineView({
 	}) => {
 		if (
 			((season === g.get("season") || season === "all") &&
-				updateEvents.includes("gameSim")) ||
+				updateEvents.has("gameSim")) ||
 			season !== prevInputs?.season ||
 			tid !== prevInputs?.tid ||
 			type !== prevInputs?.type

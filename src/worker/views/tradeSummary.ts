@@ -557,10 +557,10 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs: { eid }, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("newPhase") ||
-			updateEvents.includes("playerMovement") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase") ||
+			updateEvents.has("playerMovement") ||
 			eid !== prevInputs?.eid
 		) {
 			const event = await idb.getCopy.events({ eid }, "noCopyCache");

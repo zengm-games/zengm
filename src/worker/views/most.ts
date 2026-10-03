@@ -228,10 +228,10 @@ export default defineView({
 	load: async ({ inputs: { arg, type }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			type !== prevInputs?.type ||
-			(type === "goat" && updateEvents.includes("g.goatFormula")) ||
-			(type === "goat_season" && updateEvents.includes("g.goatSeasonFormula"))
+			(type === "goat" && updateEvents.has("g.goatFormula")) ||
+			(type === "goat_season" && updateEvents.has("g.goatSeasonFormula"))
 		) {
 			let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 			let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];

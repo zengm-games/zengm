@@ -17,7 +17,7 @@ export default defineView({
 	id: "fantasyDraft",
 	processInputs,
 	load: async ({ updateEvents }) => {
-		if (updateEvents.includes("firstRun")) {
+		if (updateEvents.has("firstRun")) {
 			const teams = await idb.getCopies.teamsPlus(
 				{
 					attrs: ["tid", "abbrev", "region", "name"],

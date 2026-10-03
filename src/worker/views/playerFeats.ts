@@ -41,8 +41,8 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
 			inputs.abbrev !== prevInputs?.abbrev ||
 			inputs.season !== prevInputs?.season
 		) {

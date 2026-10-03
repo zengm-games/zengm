@@ -156,11 +156,11 @@ export default defineView({
 	id: "tradeProposals",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("newPhase") ||
-			updateEvents.includes("g.tradeProposalsSeed")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase") ||
+			updateEvents.has("g.tradeProposalsSeed")
 		) {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",

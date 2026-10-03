@@ -10,9 +10,8 @@ export default defineView({
 	processInputs: validateSeasonOnly,
 	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			(updateEvents.includes("newPhase") &&
-				g.get("phase") === PHASE.PRESEASON) ||
+			updateEvents.has("firstRun") ||
+			(updateEvents.has("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
 			season !== prevInputs?.season
 		) {
 			let playersAll;

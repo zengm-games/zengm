@@ -157,10 +157,10 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs: { abbrev, tid }, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("newPhase") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("newPhase") ||
 			abbrev !== prevInputs?.abbrev
 		) {
 			const draftPicksRaw = (await idb.cache.draftPicks.getAll()).filter(

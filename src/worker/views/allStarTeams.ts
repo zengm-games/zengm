@@ -106,10 +106,10 @@ export default defineView({
 	processInputs: validateSeasonOnly,
 	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("gameAttributes") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("gameAttributes") ||
 			season !== prevInputs?.season
 		) {
 			const allStars = await allStar.getOrCreate(season);

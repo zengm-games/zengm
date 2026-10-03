@@ -48,10 +48,7 @@ const getSeason = async (playersAll: Player[], season: number) => {
 export default defineView({
 	id: "draftScouting",
 	load: async ({ updateEvents }) => {
-		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("playerMovement")
-		) {
+		if (updateEvents.has("firstRun") || updateEvents.has("playerMovement")) {
 			const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;
 
 			// In fantasy draft, use temp tid

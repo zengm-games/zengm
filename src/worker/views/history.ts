@@ -47,7 +47,7 @@ export default defineView({
 			viewedSeasonSummary();
 		}
 
-		if (updateEvents.includes("firstRun") || prevInputs?.season !== season) {
+		if (updateEvents.has("firstRun") || prevInputs?.season !== season) {
 			const awards = await idb.getCopy.awards({
 				season,
 			});

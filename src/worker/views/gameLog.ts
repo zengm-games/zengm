@@ -254,7 +254,7 @@ const updateBoxScore = async ({
 	updateEvents,
 	prevInputs,
 }: ViewArgs<typeof processInputs>) => {
-	if (updateEvents.includes("firstRun") || gid !== prevInputs?.gid) {
+	if (updateEvents.has("firstRun") || gid !== prevInputs?.gid) {
 		const game = await boxScore(gid);
 		return { boxScore: game };
 	}
@@ -317,11 +317,11 @@ const updateGamesList = async ({
 	prevOutput: { gamesList },
 }: ViewArgs<typeof processInputs, typeof keepPrevOutput>) => {
 	if (
-		updateEvents.includes("firstRun") ||
+		updateEvents.has("firstRun") ||
 		!gamesList ||
 		tid !== gamesList.tid ||
 		season !== gamesList.season ||
-		(updateEvents.includes("gameSim") && season === g.get("season"))
+		(updateEvents.has("gameSim") && season === g.get("season"))
 	) {
 		let games: Game[];
 		let abbrevs: Record<number, string>;

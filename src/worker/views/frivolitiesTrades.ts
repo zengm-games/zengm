@@ -171,7 +171,7 @@ export default defineView({
 	load: async ({ inputs: { abbrev, tid, type }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			type !== prevInputs?.type ||
 			abbrev !== prevInputs?.abbrev
 		) {

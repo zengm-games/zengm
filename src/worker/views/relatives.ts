@@ -93,7 +93,7 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs: { pid }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-		if (updateEvents.includes("firstRun") || pid !== prevInputs?.pid) {
+		if (updateEvents.has("firstRun") || pid !== prevInputs?.pid) {
 			const stats = bySport({
 				baseball: ["gp", "keyStats", "war"],
 				basketball: [

@@ -6,9 +6,9 @@ export default defineView({
 	id: "scheduledEvents",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("newPhase") ||
-			updateEvents.includes("scheduledEvents")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("newPhase") ||
+			updateEvents.has("scheduledEvents")
 		) {
 			const scheduledEvents = await idb.getCopies.scheduledEvents(
 				undefined,

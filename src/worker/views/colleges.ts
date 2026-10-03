@@ -110,7 +110,7 @@ export const genView = (
 		id,
 		load: async ({ updateEvents }) => {
 			// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-			if (updateEvents.includes("firstRun")) {
+			if (updateEvents.has("firstRun")) {
 				const displayStat = bySport({
 					baseball: "war",
 					basketball: "ws",

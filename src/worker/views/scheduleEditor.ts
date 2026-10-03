@@ -79,9 +79,9 @@ export default defineView({
 	id: "scheduleEditor",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("newPhase")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase")
 		) {
 			const scheduleRaw = await season.getSchedule();
 

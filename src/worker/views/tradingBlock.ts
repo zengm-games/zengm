@@ -20,10 +20,10 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs, updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("newPhase")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase")
 		) {
 			const stats = bySport({
 				baseball: ["gp", "keyStats", "war"],

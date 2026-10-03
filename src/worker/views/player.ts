@@ -493,8 +493,8 @@ export default defineView({
 	keepPrevOutput,
 	load: async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("playerMovement") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
 			!prevOutput.retired ||
 			prevInputs?.pid !== inputs.pid
 		) {

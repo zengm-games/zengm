@@ -16,7 +16,7 @@ export default defineView({
 	id: "account",
 	processInputs,
 	load: async ({ inputs, updateEvents, conditions }) => {
-		if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
+		if (updateEvents.has("firstRun") || updateEvents.has("account")) {
 			const partialTopMenu = await checkAccount(conditions);
 			const loggedIn =
 				partialTopMenu.username !== undefined &&

@@ -43,7 +43,7 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.length >= 0 ||
+			updateEvents.size >= 1 ||
 			inputs.season !== prevInputs?.season ||
 			inputs.abbrev !== prevInputs?.abbrev ||
 			inputs.eventType !== prevInputs?.eventType

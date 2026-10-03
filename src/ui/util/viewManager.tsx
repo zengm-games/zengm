@@ -1,4 +1,4 @@
-import type { UpdateEvents } from "../../common/types.ts";
+import type { UpdateEvent, UpdateEvents } from "../../common/types.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { type Context, makeRegex, router } from "../router/index.ts";
 import { local, localActions } from "./local.ts";
@@ -26,6 +26,8 @@ type Action = {
 };
 
 type ActionWithResolve = Action & {
+	// True if this is going to a different page than the one currently shown
+	navigationEvent: boolean;
 	resolve: () => void;
 };
 
@@ -87,6 +89,14 @@ class ViewManager {
 	viewInputs: unknown;
 	viewKeepPrevOutputKeys: string[] | undefined;
 	idLoaded: string | undefined;
+
+	// updateEvents for a page that have not been handled by a load whose result was shown yet. Usually that's just the events of the current load, but if a load is discarded (because a newer navigation started) or a queued update is dropped, its events stay here and are included in the next load of the same page. Otherwise the page could show stale data.
+	unhandledUpdateEvents:
+		| {
+				id: string;
+				updateEvents: Set<UpdateEvent>;
+		  }
+		| undefined;
 	processingAction: boolean;
 	routes: {
 		id: string;
@@ -112,8 +122,26 @@ class ViewManager {
 		}
 	}
 
+	private addUnhandledUpdateEvents(id: string, updateEvents: UpdateEvents) {
+		// Events for a different page don't matter, because going back to that page will be a firstRun
+		if (this.unhandledUpdateEvents?.id !== id) {
+			this.unhandledUpdateEvents = {
+				id,
+				updateEvents: new Set(updateEvents),
+			};
+		} else {
+			for (const updateEvent of updateEvents) {
+				this.unhandledUpdateEvents.updateEvents.add(updateEvent);
+			}
+		}
+	}
+
 	private clearQueue() {
 		for (const action of this.queue) {
+			// Queued actions are either refreshes of the current page or navigations to it with different parameters, since navigations to other pages don't get queued
+			if (this.idLoaded !== undefined) {
+				this.addUnhandledUpdateEvents(this.idLoaded, action.updateEvents);
+			}
 			action.resolve();
 		}
 		this.queue = [];
@@ -161,6 +189,7 @@ class ViewManager {
 
 			const actionWithResolve: ActionWithResolve = {
 				...action,
+				navigationEvent,
 				resolve,
 			};
 
@@ -180,11 +209,17 @@ class ViewManager {
 		url,
 		refresh,
 		replace,
+		navigationEvent,
 		resolve,
 		updateEvents,
 		raw,
 	}: ActionWithResolve) {
 		this.processingAction = true;
+
+		// Track these now rather than waiting for processUpdate, because if another navigation happens before router.navigate gets to processUpdate, this action will be skipped and the next load of this page needs to handle its events
+		if (!navigationEvent && this.idLoaded !== undefined) {
+			this.addUnhandledUpdateEvents(this.idLoaded, updateEvents);
+		}
 
 		const state: any = {
 			noTrack: refresh || replace,
@@ -255,6 +290,14 @@ class ViewManager {
 			keepPrevOutputKeys = this.viewKeepPrevOutputKeys;
 		}
 
+		// Also include any events from previous loads of this page that were never shown
+		this.addUnhandledUpdateEvents(id, updateEvents);
+
+		// Copy, because unhandledUpdateEvents can change before this load finishes
+		const updateEventsToSend = new Set(
+			this.unhandledUpdateEvents!.updateEvents,
+		);
+
 		const lidCurrent = local.getState().lid;
 
 		// Previously this was only called if necessary (switching to a new league, or leaving a league) but sometimes Safari seems to kill/restart the worker and then league state (g, idb) needs to be reset. And that can happen at any time!
@@ -285,7 +328,7 @@ class ViewManager {
 			viewId: id,
 			params: context.params,
 			ctxBBGM,
-			updateEvents,
+			updateEvents: updateEventsToSend,
 			prevOutput: Object.fromEntries(
 				(keepPrevOutputKeys ?? [])
 					.filter((key) => Object.hasOwn(prevData, key))
@@ -358,6 +401,11 @@ class ViewManager {
 		this.viewData = vars.data;
 		this.viewInputs = resultsAndInputs.inputs;
 		this.viewKeepPrevOutputKeys = resultsAndInputs.keepPrevOutputKeys;
+		if (this.unhandledUpdateEvents?.id === id) {
+			for (const updateEvent of updateEventsToSend) {
+				this.unhandledUpdateEvents.updateEvents.delete(updateEvent);
+			}
+		}
 
 		this.initNextAction();
 	}

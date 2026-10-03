@@ -67,7 +67,7 @@ export default defineView({
 			return returnValue;
 		}
 
-		if (updateEvents.includes("firstRun")) {
+		if (updateEvents.has("firstRun")) {
 			const teams = (await idb.cache.teams.getAll())
 				.filter((t) => !t.disabled)
 				.map((t) => {

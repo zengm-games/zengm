@@ -5,9 +5,9 @@ export default defineView({
 	id: "multiTeamMode",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameAttributes") ||
-			updateEvents.includes("newPhase")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameAttributes") ||
+			updateEvents.has("newPhase")
 		) {
 			const teamsAll = await idb.cache.teams.getAll();
 

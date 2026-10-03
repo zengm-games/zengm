@@ -1,4 +1,4 @@
-import type { Conditions, UpdateEvents } from "../../common/types.ts";
+import type { Conditions, UpdateEvent } from "../../common/types.ts";
 import type { RouteParams, ViewId } from "../../ui/router/types.ts";
 
 type EmptyObject = Record<never, never>;
@@ -17,7 +17,7 @@ export type ViewInput<P> = P extends (...args: any) => infer Inputs
 // The argument of a worker view function. P is the type of the view's processInputs function, if it has one. See defineView for details.
 export type ViewArgs<P = undefined, Keep = EmptyObject> = {
 	inputs: ViewInput<P>;
-	updateEvents: UpdateEvents;
+	updateEvents: ReadonlySet<UpdateEvent>;
 	prevInputs: ViewInput<P> | undefined;
 	prevOutput: Partial<Keep>;
 	conditions: Conditions;

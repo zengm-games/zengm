@@ -10,7 +10,7 @@ export default defineView({
 	id: "tragicDeaths",
 	load: async ({ updateEvents }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-		if (updateEvents.includes("firstRun")) {
+		if (updateEvents.has("firstRun")) {
 			const events = await idb.getCopies.events(
 				{
 					filter: (event) => event.type === "tragedy",

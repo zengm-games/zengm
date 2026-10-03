@@ -83,7 +83,7 @@ const augment = (allAllStars: AllStars[]) => {
 export default defineView({
 	id: "allStarHistory",
 	load: async ({ updateEvents }) => {
-		if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
+		if (updateEvents.has("firstRun") || updateEvents.has("gameSim")) {
 			const allAllStars = await idb.getCopies.allStars();
 			return {
 				allAllStars: augment(allAllStars),

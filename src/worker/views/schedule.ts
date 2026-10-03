@@ -486,10 +486,10 @@ const updateUpcoming = async ({
 	prevInputs,
 }: ViewArgs<typeof processInputs>) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameAttributes") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameAttributes") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("newPhase") ||
 		inputs.abbrev !== prevInputs?.abbrev
 	) {
 		const upcoming = await getUpcoming({
@@ -531,10 +531,7 @@ const updateCompleted = async ({
 	prevInputs,
 	prevOutput,
 }: ViewArgs<typeof processInputs, typeof keepPrevOutput>) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		inputs.abbrev !== prevInputs?.abbrev
-	) {
+	if (updateEvents.has("firstRun") || inputs.abbrev !== prevInputs?.abbrev) {
 		// Load all games in list
 		const completed = await getProcessedGames({
 			tid: inputs.tid,
@@ -547,7 +544,7 @@ const updateCompleted = async ({
 		};
 	}
 
-	if (updateEvents.includes("gameSim")) {
+	if (updateEvents.has("gameSim")) {
 		// Partial update of only new games
 		const completed = prevOutput.completed ?? [];
 

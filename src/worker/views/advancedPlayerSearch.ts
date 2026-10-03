@@ -57,7 +57,7 @@ export default defineView({
 		},
 		updateEvents,
 	}) => {
-		if (updateEvents.includes("firstRun")) {
+		if (updateEvents.has("firstRun")) {
 			return {
 				seasonStart,
 				seasonEnd,

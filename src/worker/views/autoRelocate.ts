@@ -73,7 +73,7 @@ export default defineView({
 	id: "autoRelocate",
 	load: async ({ updateEvents }) => {
 		// Ignore team updateEvent from relocateVote
-		if (!updateEvents.includes("team")) {
+		if (!updateEvents.has("team")) {
 			const autoRelocate = g.get("autoRelocate");
 			if (!autoRelocate) {
 				// https://stackoverflow.com/a/59923262/786644

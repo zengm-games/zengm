@@ -150,15 +150,13 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameAttributes") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("team") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameAttributes") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("team") ||
 			(inputs.season === g.get("season") &&
-				(updateEvents.includes("gameSim") ||
-					updateEvents.includes("newPhase"))) ||
-			(updateEvents.includes("newPhase") &&
-				g.get("phase") === PHASE.PRESEASON) ||
+				(updateEvents.has("gameSim") || updateEvents.has("newPhase"))) ||
+			(updateEvents.has("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
 			inputs.abbrev !== prevInputs?.abbrev ||
 			inputs.playoffs !== prevInputs?.playoffs ||
 			inputs.season !== prevInputs?.season

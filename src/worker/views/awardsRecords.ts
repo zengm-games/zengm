@@ -210,7 +210,7 @@ export default defineView({
 		}
 
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			inputs.awardType !== prevInputs?.awardType
 		) {
 			const playersAll = await idb.getCopies.players(

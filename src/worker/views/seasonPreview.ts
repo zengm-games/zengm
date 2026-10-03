@@ -12,7 +12,7 @@ export default defineView({
 	id: "seasonPreview",
 	processInputs: validateSeasonOnly,
 	load: async ({ inputs: { season }, updateEvents, prevInputs }) => {
-		if (updateEvents.includes("firstRun") || prevInputs?.season !== season) {
+		if (updateEvents.has("firstRun") || prevInputs?.season !== season) {
 			const NUM_PLAYERS_TO_SHOW = 10;
 			const NUM_TEAMS_TO_SHOW = 5;
 

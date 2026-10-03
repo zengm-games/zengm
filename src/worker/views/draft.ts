@@ -55,9 +55,9 @@ export default defineView({
 	processInputs,
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("newPhase")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("newPhase")
 		) {
 			const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;
 			const expansionDraft = g.get("expansionDraft");

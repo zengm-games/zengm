@@ -5,7 +5,7 @@ import { defineView } from "../util/defineView.ts";
 export default defineView({
 	id: "allStar",
 	load: async ({ updateEvents }) => {
-		if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
+		if (updateEvents.has("firstRun") || updateEvents.has("gameSim")) {
 			const allStars = await allStar.getOrCreate(g.get("season"));
 			const showDunk = allStars?.dunk !== undefined;
 			const showThree = allStars?.three !== undefined;

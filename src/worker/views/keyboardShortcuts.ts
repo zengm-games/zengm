@@ -5,7 +5,7 @@ import { defineView } from "../util/defineView.ts";
 export default defineView({
 	id: "keyboardShortcuts",
 	load: async ({ updateEvents }) => {
-		if (updateEvents.includes("firstRun")) {
+		if (updateEvents.has("firstRun")) {
 			const attributesStore = (await idb.meta.transaction("attributes")).store;
 
 			const keyboardShortcutsLocal = (await attributesStore.get(

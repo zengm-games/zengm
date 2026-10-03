@@ -2299,7 +2299,7 @@ export type Trade = {
 	teams: TradeTeams;
 };
 
-export type UpdateEvents = (
+export type UpdateEvent =
 	| "account"
 	| "allStarDunk"
 	| "allStarThree"
@@ -2324,8 +2324,9 @@ export type UpdateEvents = (
 	| "undoTrade"
 
 	// This should be used for things that do stuff like "select all players on watch list", not updating the watch property for individual players. crossTabEmit handles that automatically.
-	| "watchList"
-)[];
+	| "watchList";
+
+export type UpdateEvents = UpdateEvent[];
 
 export const realPlayerPhotosSchema = z.record(z.string(), z.string());
 export type RealPlayerPhotos = z.infer<typeof realPlayerPhotosSchema>;

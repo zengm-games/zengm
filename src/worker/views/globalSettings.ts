@@ -5,7 +5,7 @@ import { defineView } from "../util/defineView.ts";
 export default defineView({
 	id: "globalSettings",
 	load: async ({ updateEvents }) => {
-		if (updateEvents.includes("firstRun") || updateEvents.includes("options")) {
+		if (updateEvents.has("firstRun") || updateEvents.has("options")) {
 			const options = await getGlobalSettings();
 
 			const attributesStore = (await idb.meta.transaction("attributes")).store;

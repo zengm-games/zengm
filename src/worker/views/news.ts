@@ -196,10 +196,10 @@ export default defineView({
 		prevInputs,
 	}) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("newPhase") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase") ||
 			prevInputs?.season !== season ||
 			prevInputs?.level !== level ||
 			prevInputs?.abbrev !== abbrev ||

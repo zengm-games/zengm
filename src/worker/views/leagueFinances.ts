@@ -8,10 +8,9 @@ export default defineView({
 	processInputs: validateSeasonOnly,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			(inputs.season === g.get("season") &&
-				(updateEvents.includes("gameSim") ||
-					updateEvents.includes("newPhase"))) ||
+				(updateEvents.has("gameSim") || updateEvents.has("newPhase"))) ||
 			prevInputs?.season !== inputs.season
 		) {
 			const players = await idb.cache.players.indexGetAll("playersByTid", [

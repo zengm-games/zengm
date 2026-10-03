@@ -163,10 +163,9 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs: { season, type }, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			season === "current" ||
-			(updateEvents.includes("newPhase") &&
-				g.get("phase") === PHASE.FREE_AGENCY) ||
+			(updateEvents.has("newPhase") && g.get("phase") === PHASE.FREE_AGENCY) ||
 			season !== prevInputs?.season ||
 			type !== prevInputs?.type
 		) {

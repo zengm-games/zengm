@@ -58,6 +58,7 @@ import {
 	type LockName,
 	type Player,
 	type PlayerWithoutKey,
+	type UpdateEvent,
 	type UpdateEvents,
 	type TradeTeams,
 	type MinimalPlayerRatings,
@@ -3716,7 +3717,7 @@ const runBefore = async (
 		viewId: string;
 		params: any;
 		ctxBBGM: any;
-		updateEvents: UpdateEvents;
+		updateEvents: ReadonlySet<UpdateEvent>;
 		prevOutput: any;
 		prevInputs: any;
 	},

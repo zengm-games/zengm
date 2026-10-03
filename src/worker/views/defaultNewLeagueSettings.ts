@@ -8,7 +8,7 @@ import { defineView } from "../util/defineView.ts";
 export default defineView({
 	id: "defaultNewLeagueSettings",
 	load: async ({ updateEvents }) => {
-		if (updateEvents.includes("firstRun")) {
+		if (updateEvents.has("firstRun")) {
 			const overrides = (await idb.meta.get(
 				"attributes",
 				"defaultSettingsOverrides",

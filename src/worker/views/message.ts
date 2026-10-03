@@ -23,7 +23,7 @@ export default defineView({
 	load: async ({ inputs, updateEvents, prevOutput }) => {
 		// Complexity of updating is to handle auto-read message, so inputs.mid is blank
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			!prevOutput.message ||
 			prevOutput.message.mid !== inputs.mid
 		) {

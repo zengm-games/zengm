@@ -18,9 +18,8 @@ export default defineView({
 	id: "hallOfFame",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			(updateEvents.includes("newPhase") &&
-				g.get("phase") === PHASE.DRAFT_LOTTERY)
+			updateEvents.has("firstRun") ||
+			(updateEvents.has("newPhase") && g.get("phase") === PHASE.DRAFT_LOTTERY)
 		) {
 			const stats = bySport({
 				baseball: ["keyStats", "war"],

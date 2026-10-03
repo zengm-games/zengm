@@ -28,8 +28,8 @@ export default defineView({
 	id: "frivolitiesDraftClasses",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON)
+			updateEvents.has("firstRun") ||
+			(updateEvents.has("newPhase") && g.get("phase") === PHASE.PRESEASON)
 		) {
 			type DraftClass = {
 				season: number;

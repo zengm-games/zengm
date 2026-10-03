@@ -4,7 +4,7 @@ import { defineView } from "../util/defineView.ts";
 export default defineView({
 	id: "exportLeague",
 	load: ({ updateEvents }) => {
-		if (updateEvents.includes("firstRun")) {
+		if (updateEvents.has("firstRun")) {
 			return {
 				stats,
 			};

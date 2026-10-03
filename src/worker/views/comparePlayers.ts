@@ -436,7 +436,7 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			hasPlayerInfoChanged(inputs.players, prevInputs?.players)
 		) {
 			const currentPlayers = (await idb.cache.players.getAll()).filter((p) => {

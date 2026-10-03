@@ -6,7 +6,7 @@ export default defineView({
 	id: "autoExpand",
 	load: ({ updateEvents }) => {
 		// Ignore team updateEvent from relocateVote, and newPhase from starting the expansion draft
-		if (!updateEvents.includes("team") && !updateEvents.includes("newPhase")) {
+		if (!updateEvents.has("team") && !updateEvents.has("newPhase")) {
 			const autoExpand = g.get("autoExpand");
 			if (!autoExpand) {
 				// https://stackoverflow.com/a/59923262/786644

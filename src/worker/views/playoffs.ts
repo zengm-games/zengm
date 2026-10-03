@@ -81,10 +81,10 @@ export default defineView({
 		| undefined
 	> => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("playoffs") ||
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playoffs") ||
 			inputs.season !== prevInputs?.season ||
-			(inputs.season === g.get("season") && updateEvents.includes("gameSim"))
+			(inputs.season === g.get("season") && updateEvents.has("gameSim"))
 		) {
 			let finalMatchups = false;
 			let series: PlayoffSeries["series"];

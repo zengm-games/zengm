@@ -51,7 +51,7 @@ export default defineView({
 	processInputs,
 	load: async ({ inputs, updateEvents, prevInputs }) => {
 		if (
-			updateEvents.includes("firstRun") ||
+			updateEvents.has("firstRun") ||
 			inputs.stat !== prevInputs?.stat ||
 			inputs.playoffs !== prevInputs?.playoffs ||
 			inputs.statType !== prevInputs?.statType

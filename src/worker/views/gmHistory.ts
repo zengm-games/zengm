@@ -9,9 +9,9 @@ export default defineView({
 	id: "gmHistory",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("gameAttributes")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("gameAttributes")
 		) {
 			const seasonsByTid: Record<number, Set<number>> = {};
 			const teamSeasonsByTeam: TeamSeason[][] = [];

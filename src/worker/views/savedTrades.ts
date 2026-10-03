@@ -189,11 +189,11 @@ export default defineView({
 	id: "savedTrades",
 	load: async ({ updateEvents }) => {
 		if (
-			updateEvents.includes("firstRun") ||
-			updateEvents.includes("playerMovement") ||
-			updateEvents.includes("savedTrades") ||
-			updateEvents.includes("gameSim") ||
-			updateEvents.includes("newPhase")
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("savedTrades") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase")
 		) {
 			const offers = await getOffers();
 

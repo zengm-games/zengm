@@ -1,7 +1,12 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, AllStars, Game } from "../../common/types.ts";
-import type { ViewInput } from "../util/defineView.ts";
+import type { AllStars, Game } from "../../common/types.ts";
+import {
+	defineView,
+	keepType,
+	type ViewArgs,
+	type ViewInput,
+} from "../util/defineView.ts";
 import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/constants.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
 
@@ -227,16 +232,12 @@ const updateTeamSeason = (inputs: ViewInput<"gameLog">) => {
  * @memberOf views.gameLog
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
-const updateBoxScore = async (
-	{ gid }: ViewInput<"gameLog">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		!state.boxScore ||
-		gid !== state.boxScore.gid
-	) {
+const updateBoxScore = async ({
+	inputs: { gid },
+	updateEvents,
+	prevInputs,
+}: ViewArgs<"gameLog">) => {
+	if (updateEvents.includes("firstRun") || gid !== prevInputs?.gid) {
 		const game = await boxScore(gid);
 		return { boxScore: game };
 	}
@@ -273,6 +274,16 @@ export const loadAbbrevs = async (season: number) => {
 	return abbrevs;
 };
 
+// The list of games is added to incrementally, rather than being recomputed every time
+const keepPrevOutput = {
+	gamesList: keepType<{
+		abbrevs: Record<number, string>;
+		games: Game[];
+		tid: number;
+		season: number;
+	}>(),
+};
+
 /**
  * Update the game log list, as necessary.
  *
@@ -283,20 +294,11 @@ export const loadAbbrevs = async (season: number) => {
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
-const updateGamesList = async (
-	{ season, tid }: ViewInput<"gameLog">,
-	updateEvents: UpdateEvents,
-	{
-		gamesList,
-	}: {
-		gamesList?: {
-			abbrevs: Record<number, string>;
-			games: Game[];
-			tid: number;
-			season: number;
-		};
-	},
-) => {
+const updateGamesList = async ({
+	inputs: { season, tid },
+	updateEvents,
+	prevOutput: { gamesList },
+}: ViewArgs<"gameLog", typeof keepPrevOutput>) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		!gamesList ||
@@ -346,15 +348,11 @@ const updateGamesList = async (
 	}
 };
 
-export default async (
-	inputs: ViewInput<"gameLog">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
+export default defineView("gameLog", { keepPrevOutput }, async (args) => {
 	return Object.assign(
 		{},
-		await updateBoxScore(inputs, updateEvents, state),
-		await updateGamesList(inputs, updateEvents, state),
-		await updateTeamSeason(inputs),
+		await updateBoxScore(args),
+		await updateGamesList(args),
+		await updateTeamSeason(args.inputs),
 	);
-};
+});

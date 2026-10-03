@@ -286,13 +286,11 @@ class ViewManager {
 			params: context.params,
 			ctxBBGM,
 			updateEvents,
-			prevOutput: keepPrevOutputKeys
-				? Object.fromEntries(
-						keepPrevOutputKeys
-							.filter((key) => Object.hasOwn(prevData, key))
-							.map((key) => [key, prevData[key]]),
-					)
-				: prevData,
+			prevOutput: Object.fromEntries(
+				(keepPrevOutputKeys ?? [])
+					.filter((key) => Object.hasOwn(prevData, key))
+					.map((key) => [key, prevData[key]]),
+			),
 			prevInputs,
 		});
 

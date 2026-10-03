@@ -36,7 +36,7 @@ type DefinedView<Id extends ViewId, Keep, Data> = ViewFunction<
 	Data
 > & {
 	// Keys of the keepPrevOutput option. Only these properties of the data previously returned by this view are sent back from the UI, as prevOutput
-	keepPrevOutputKeys: string[];
+	keepPrevOutputKeys?: string[];
 };
 
 // Use in the keepPrevOutput option of defineView to declare the type of a property. There is no actual value, the only thing that exists at runtime is the key.
@@ -78,11 +78,11 @@ export function defineView(
 		| ViewFunction<any, any, any>,
 	maybeView?: ViewFunction<any, any, any>,
 ) {
-	const view = typeof optionsOrView === "function" ? optionsOrView : maybeView!;
-	const keepPrevOutputKeys =
-		typeof optionsOrView === "function"
-			? []
-			: Object.keys(optionsOrView.keepPrevOutput);
+	if (typeof optionsOrView === "function") {
+		return optionsOrView;
+	}
 
-	return Object.assign(view, { keepPrevOutputKeys });
+	return Object.assign(maybeView!, {
+		keepPrevOutputKeys: Object.keys(optionsOrView.keepPrevOutput),
+	});
 }

@@ -3730,7 +3730,7 @@ const runBefore = async (
 	// Sent back as prevInputs next time, if this page is still loaded
 	inputs?: any;
 
-	// If defined, then next time prevOutput only needs to contain these properties
+	// Next time, prevOutput only needs to contain these properties
 	keepPrevOutputKeys?: string[];
 }> => {
 	// Special case for errors, so that the condition right below (when league is loading) does not cause no update
@@ -3767,21 +3767,20 @@ const runBefore = async (
 	const view = views[viewId];
 
 	if (view) {
-		// PROTOTYPE: views created with defineView take a single object, and say which properties of the previous data they need. Goes away when all views are converted.
-		const keepPrevOutputKeys: string[] | undefined = view.keepPrevOutputKeys;
-
 		const data = await lock.runView(() =>
-			keepPrevOutputKeys
-				? view({
-						inputs,
-						updateEvents,
-						prevInputs,
-						prevOutput,
-						conditions,
-					})
-				: view(inputs, updateEvents, prevOutput, conditions),
+			view({
+				inputs,
+				updateEvents,
+				prevInputs,
+				prevOutput,
+				conditions,
+			}),
 		);
-		return { data: data ?? {}, inputs, keepPrevOutputKeys };
+		return {
+			data: data ?? {},
+			inputs,
+			keepPrevOutputKeys: view.keepPrevOutputKeys,
+		};
 	}
 
 	return { data: {}, inputs };

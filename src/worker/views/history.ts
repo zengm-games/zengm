@@ -156,7 +156,7 @@ export default defineView({
 
 				return {
 					pid,
-					name: p2.name as string,
+					name: p2.name,
 					pos: pos ?? getPosByGpF(p2.stats.gpF, ratingsPos),
 					statOverrides,
 					stats: {

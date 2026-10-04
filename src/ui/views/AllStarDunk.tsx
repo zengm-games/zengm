@@ -2,7 +2,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocal } from "../util/local.ts";
-import type { DunkAttempt, Player, View } from "../../common/types.ts";
+import type { DunkAttempt, View } from "../../common/types.ts";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { useEffect, useState } from "react";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
@@ -527,7 +527,7 @@ export const ContestantProfiles = ({
 
 				const checkboxID = `control-player-${i}`;
 
-				const yearsWon = (p.awards as Player["awards"])
+				const yearsWon = p.awards
 					.filter(
 						(award) =>
 							award.type ===

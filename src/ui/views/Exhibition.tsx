@@ -237,12 +237,12 @@ const SelectTeam = ({
 
 		const newGameAttributes = getGameAttributes(newInfo.gameAttributes);
 
-		setTeams(newTeams as any);
+		setTeams(newTeams);
 		setTid(newTeam.tid);
 		setGameAttributes(newGameAttributes);
 		setLoadingTeams(false);
 
-		onChange(league, newTeam as any, newGameAttributes);
+		onChange(league, newTeam, newGameAttributes);
 	};
 
 	const awaitingInitialLoad = useRef(true);
@@ -348,7 +348,7 @@ const SelectTeam = ({
 							const newTid = Number.parseInt(event.target.value);
 							setTid(newTid);
 							const newTeam = teams.find((t) => t.tid === newTid);
-							onChange(league!, newTeam as any, gameAttributes);
+							onChange(league!, newTeam, gameAttributes);
 						}}
 						disabled={loadingTeams || disabled || !league}
 					>

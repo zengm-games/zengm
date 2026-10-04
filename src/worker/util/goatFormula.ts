@@ -220,7 +220,7 @@ const evaluate = (
 				}
 			} else {
 				if (info.type === "career") {
-					if (value > object[peak]!) {
+					if (value > object[peak]) {
 						object[peak] = value;
 					}
 
@@ -309,7 +309,7 @@ const evaluate = (
 
 			object[short] ??= 0;
 			if (row.type === long) {
-				object[short]! += 1;
+				object[short] += 1;
 			}
 		}
 

@@ -237,8 +237,8 @@ const addTeam = async () => {
 		did: t.did,
 		disabled: t.disabled,
 		jersey: t.jersey ?? DEFAULT_JERSEY,
-		pop: t.pop!, // See comment in types.ts about upgrade
-		stadiumCapacity: t.stadiumCapacity!, // See comment in types.ts about upgrade
+		pop: t.pop, // See comment in types.ts about upgrade
+		stadiumCapacity: t.stadiumCapacity, // See comment in types.ts about upgrade
 		colors: t.colors,
 	};
 };

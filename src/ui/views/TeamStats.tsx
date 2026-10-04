@@ -195,8 +195,8 @@ const TeamStats = ({
 
 				// Determine our team's percentile for this stat type. Closer to the start is better.
 				const statTypeValue = Object.hasOwn(t.stats, statType)
-					? (t.stats as any)[statType]
-					: (t.seasonAttrs as any)[statType];
+					? t.stats[statType]
+					: t.seasonAttrs[statType];
 				const rank =
 					expandedTeams.length - allStats[statType].indexOf(statTypeValue);
 
@@ -212,7 +212,7 @@ const TeamStats = ({
 			key:
 				__SPORT === "baseball" &&
 				(teamOpponent === "fielding" || teamOpponent === "oppFielding")
-					? `${t.tid}-${(t.stats as any).pos}`
+					? `${t.tid}-${t.stats.pos}`
 					: t.tid,
 			data: [
 				null,

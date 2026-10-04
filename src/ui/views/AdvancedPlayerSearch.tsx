@@ -142,7 +142,7 @@ const ValueInput = ({
 				inputMode={type === "numeric" ? "numeric" : undefined}
 				value={value}
 				onChange={(event) => {
-					onChange(event.target.value as any);
+					onChange(event.target.value);
 				}}
 				style={{
 					width: 150,
@@ -172,9 +172,9 @@ const SelectTeam = ({
 	return (
 		<select
 			className="form-select"
-			value={value as any}
+			value={value}
 			onChange={(event) => {
-				onChange(event.target.value as any);
+				onChange(event.target.value);
 			}}
 			style={{
 				width: 308,
@@ -599,7 +599,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				const info = getFilterInfo(filter.category, filter.key);
 				return {
 					filter,
-					info: info!,
+					info,
 				};
 			})
 			.filter((row) => !!row.info);

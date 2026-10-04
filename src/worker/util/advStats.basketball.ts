@@ -157,7 +157,7 @@ const calculatePER = (
 		}
 
 		aPER[i] = paceAdj[t.tid]! * uPER;
-		league.aPER += aPER[i]! * p.stats.min;
+		league.aPER += aPER[i] * p.stats.min;
 		mins[i] = p.stats.min; // Save for EWA calculation
 	}
 

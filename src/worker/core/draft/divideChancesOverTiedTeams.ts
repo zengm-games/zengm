@@ -24,7 +24,7 @@ const divideChancesOverTiedTeams = (
 	let tc = 0;
 
 	for (const wp of wps) {
-		let val = wp[1]!;
+		let val = wp[1];
 
 		if (val > 1) {
 			if (tc + val >= chances.length) {

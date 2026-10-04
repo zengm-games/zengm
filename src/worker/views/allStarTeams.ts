@@ -135,7 +135,7 @@ export default defineView({
 
 			const godMode = g.get("godMode");
 
-			const started = teams[0]!.length > 1;
+			const started = teams[0].length > 1;
 
 			let allPossiblePlayers: {
 				pid: number;

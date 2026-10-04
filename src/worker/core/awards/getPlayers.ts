@@ -284,8 +284,8 @@ const getPlayoffSeriesStats = async (
 						for (const [pidString, info] of Object.entries(statOverrides)) {
 							const pid = Number.parseInt(pidString);
 							rowsByPid[pid] = {
-								...info!,
-								abbrev: abbrevsByTid.get(info!.tid) ?? "???",
+								...info,
+								abbrev: abbrevsByTid.get(info.tid) ?? "???",
 								jerseyNumber: "", // Would be nice to get this from player stats, but whatever
 								season,
 								playoffs: "playoffSeries",
@@ -430,7 +430,7 @@ export const getPlayers = async (
 	}
 
 	for (const p of players) {
-		p.currentStats = {} as any;
+		p.currentStats = {};
 		for (const statRange of statRanges) {
 			if (typeof statRange === "number") {
 				const row = playoffSeriesStats[statRange]?.[p.pid];

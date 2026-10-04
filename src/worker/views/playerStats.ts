@@ -202,7 +202,7 @@ export default defineView({
 				rows = players.map(({ ratings, ...p }) => ({
 					...p,
 					pos: ratings.pos,
-					skills: ratings.skills as string[] | undefined,
+					skills: ratings.skills,
 				}));
 			} else {
 				const players = await idb.getCopies.playersPlus(
@@ -228,7 +228,7 @@ export default defineView({
 								return {
 									...p,
 									pos: ratings.pos,
-									skills: ratings.skills as string[] | undefined,
+									skills: ratings.skills,
 									stats,
 								};
 							}),

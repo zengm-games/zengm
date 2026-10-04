@@ -225,7 +225,7 @@ export default defineView({
 				}
 
 				return memo;
-			}, {}) as never as StatsAll;
+			}, {});
 
 			return {
 				season: inputs.season,

@@ -83,7 +83,7 @@ const getSeasonInfoLeague = async ({
 				[key]: value,
 			},
 			key,
-		) as any;
+		);
 	};
 
 	const gameAttributes: Partial<GameAttributesLeague> = {};

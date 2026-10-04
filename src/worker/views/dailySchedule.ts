@@ -29,8 +29,7 @@ const processInputs = (params: RouteParams<"dailySchedule">) => {
 
 	const season = validateSeason(params.season);
 
-	let day =
-		params.day === undefined ? undefined : Number.parseInt(params.day as any);
+	let day = params.day === undefined ? undefined : Number.parseInt(params.day);
 	if (Number.isNaN(day)) {
 		day = 1;
 	}

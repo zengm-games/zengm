@@ -66,7 +66,7 @@ const genTeam = async (
 	i: 0 | 1,
 	cacheTeamInfoSeason: CacheTeamInfoSeason,
 ): Promise<Team> => {
-	const tid = event.tids[i]!;
+	const tid = event.tids[i];
 	const teamInfo = await cacheTeamInfoSeason.get(tid);
 	if (!teamInfo) {
 		throw new Error("teamInfo not found");

@@ -129,7 +129,7 @@ export const PlayPauseNext = ({
 						id="fast-forward"
 						className="btn-light-bordered fast-forward"
 						disabled={disabled || !paused || fastForwards.length === 0}
-						variant={"no-class" as any}
+						variant="no-class"
 						title="Fast Forward"
 					>
 						<span className="glyphicon glyphicon-fast-forward" />

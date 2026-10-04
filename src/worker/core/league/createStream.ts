@@ -1373,7 +1373,7 @@ const adjustSeasonPlayer = (p: Partial<PlayerWithoutKey>) => {
 		const keys = ["awards", "injuries", "ratings", "salaries"] as const;
 		for (const key of keys) {
 			if (p[key]) {
-				for (const row of p[key]!) {
+				for (const row of p[key]) {
 					row.season += diff;
 				}
 			}

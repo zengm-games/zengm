@@ -192,7 +192,7 @@ const getResultsGroupedDefault = ({
 						toWorker("playMenu", option.id as any, undefined);
 					}
 				},
-			} as AnchorProps,
+			},
 		})),
 	);
 
@@ -247,7 +247,7 @@ const getResultsGroupedTeams = ({
 			anchorProps: {
 				href: helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`]),
 				onClick: onHide,
-			} as AnchorProps,
+			},
 		}))
 		.filter((t) => !hideDisabledTeams || !t.disabled);
 
@@ -410,7 +410,7 @@ const getResultsGroupedPlayers = async ({
 				anchorProps: {
 					href: helpers.leagueUrl(["player", p.pid]),
 					onClick: onHide,
-				} as AnchorProps,
+				},
 			};
 		},
 	);

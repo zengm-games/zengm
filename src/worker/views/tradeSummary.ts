@@ -614,7 +614,7 @@ export default defineView({
 			const seasonsToPlot = await getSeasonsToPlot(
 				event.season,
 				event.phase,
-				event.tids as [number, number],
+				event.tids,
 				statSumsBySeason,
 			);
 

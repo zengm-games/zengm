@@ -857,7 +857,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			} else if (state.customize === "legends") {
 				getLeagueOptions = {
 					type: "legends",
-					decade: state.legend as LegendKey,
+					decade: state.legend,
 				};
 			}
 

@@ -1076,7 +1076,7 @@ class GameSim extends GameSimBase {
 			}
 			this.playByPlay.logEvent({
 				type: "stealEnd",
-				pid: p!.id,
+				pid: p.id,
 				to: (i + 2) as any,
 				out: !success,
 				throw: throwAt === i,
@@ -2390,7 +2390,7 @@ class GameSim extends GameSimBase {
 			}
 
 			// Probably will never happen, but just in case
-			return choice(this.team[t].depth.pitchers)!;
+			return choice(this.team[t].depth.pitchers);
 		}) as [PlayerGameSim, PlayerGameSim];
 
 		const reversedTeamNums = [1, 0] as const;

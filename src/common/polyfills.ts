@@ -322,3 +322,20 @@ if (!Promise.withResolvers) {
 		return { promise, resolve, reject };
 	};
 }
+
+// Chrome 147, Firefox 137, Safari 26.2
+declare global {
+	interface Math {
+		sumPrecise(items: Iterable<number>): number;
+	}
+}
+if (!Math.sumPrecise) {
+	// Not actually precise, just a basic sum
+	Math.sumPrecise = (items) => {
+		let total = 0;
+		for (const value of items) {
+			total += value;
+		}
+		return total;
+	};
+}

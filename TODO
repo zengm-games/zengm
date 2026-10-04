@@ -1,3 +1,6 @@
+bulk actions on leagues table https://www.reddit.com/r/BasketballGM/comments/1w3vlzm/monthly_suggestions_thread/pbza8y5/
+- delete leagues
+
 hockey auto sort should play C/W out of position if that is the difference between being on the bench or not https://discord.com/channels/290013534023057409/1553484440796397708/1553484440796397708 - currently there is a bonus in `score` but maybe we should ignore that for players who are not in the starting lines
 
 seasonFraction maybe doesn't make much sense in basketball awards like MVP. gp/teamGp or gp/82 might be better - the former would max at 1 regardles of numGames, but the latter would give more or less weight to winp based on how long the season is, which would also scale them with EWA+VORP. fracWS should maybe also get multiplied by gp/82.

@@ -4,7 +4,6 @@ import type {
 	DraftLotteryResultArray,
 	DraftType,
 } from "../../../common/types.ts";
-import helpers from "../../util/helpers.ts";
 
 // This just came from testing on my machine to see where it gets slower than 1 second to generate the probabilities. nba2027 basically never triggers this because numEquivalenceClasses is low
 const draftLotteryProbsTooSlow = (
@@ -254,7 +253,7 @@ const monteCarloLotteryProbs = (
 			? 0
 			: row.chances,
 	);
-	const firstPickChancesSum = helpers.sum(firstPickChances);
+	const firstPickChancesSum = Math.sumPrecise(firstPickChances);
 	for (const [i, chances] of firstPickChances.entries()) {
 		if (chances > 0) {
 			probs[i]![0] = chances / firstPickChancesSum;

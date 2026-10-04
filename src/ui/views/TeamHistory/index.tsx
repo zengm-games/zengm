@@ -49,6 +49,7 @@ const TeamHistory = ({
 							bestRecord={bestRecord}
 							championships={championships}
 							finalsAppearances={finalsAppearances}
+							numSeasons={history.length}
 							playoffAppearances={playoffAppearances}
 							totalLost={totalLost}
 							totalOtl={totalOtl}

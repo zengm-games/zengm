@@ -51,6 +51,9 @@ const GmHistory = ({
 								bestRecord={bestRecord}
 								championships={championships}
 								finalsAppearances={finalsAppearances}
+								numSeasons={Math.sumPrecise(
+									teamHistories.map((row) => row.history.length),
+								)}
 								playoffAppearances={playoffAppearances}
 								totalLost={totalLost}
 								totalTied={totalTied}
@@ -76,6 +79,7 @@ const GmHistory = ({
 									bestRecord={teamHistory.bestRecord}
 									championships={teamHistory.championships}
 									finalsAppearances={teamHistory.finalsAppearances}
+									numSeasons={teamHistory.history.length}
 									playoffAppearances={teamHistory.playoffAppearances}
 									totalLost={teamHistory.totalLost}
 									totalTied={teamHistory.totalTied}

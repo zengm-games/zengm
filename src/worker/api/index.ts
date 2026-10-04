@@ -3717,7 +3717,7 @@ const runBefore = async (
 		ctxBBGM: unknown;
 		updateEvents: ReadonlySet<UpdateEvent>;
 		prevOutput: unknown;
-		prevInputs: any;
+		prevInputs: unknown;
 	},
 	conditions: Conditions,
 ): Promise<void | {
@@ -3726,7 +3726,7 @@ const runBefore = async (
 	};
 
 	// Sent back as prevInputs next time, if this page is still loaded
-	inputs?: any;
+	inputs?: unknown;
 
 	// Next time, prevOutput only needs to contain these properties
 	keepPrevOutputKeys?: string[];

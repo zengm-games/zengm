@@ -6,7 +6,7 @@ import { registerGlobal } from "../../common/registerGlobal.ts";
 type API = typeof api;
 
 // https://stackoverflow.com/a/70818666/786644
-type ParametersUnconstrained<T> = T extends (...args: infer P) => any
+type ParametersUnconstrained<T> = T extends (...args: infer P) => unknown
 	? P
 	: never;
 type ReturnTypeUnconstrained<T> = T extends (...args: any) => infer P

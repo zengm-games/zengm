@@ -219,7 +219,7 @@ const BoxScore = ({
 	forceRowUpdate,
 }: {
 	boxScore: any;
-	Row: any;
+	Row: unknown;
 	forceRowUpdate: boolean;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games

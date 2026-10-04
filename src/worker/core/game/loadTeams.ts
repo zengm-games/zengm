@@ -133,7 +133,7 @@ export const processTeam = async (
 	teamInput: {
 		tid: number;
 		playThroughInjuries: [number, number];
-		depth?: any;
+		depth?: unknown;
 	},
 	teamSeason: {
 		won: number;

@@ -832,7 +832,13 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							className="form-select"
 							value={singleSeason}
 							onChange={(event) => {
-								setSingleSeason(event.target.value as any);
+								const newSingleSeason = event.target.value;
+								if (
+									newSingleSeason === "singleSeason" ||
+									newSingleSeason === "totals"
+								) {
+									setSingleSeason(newSingleSeason);
+								}
 							}}
 						>
 							<option value="singleSeason">Single season</option>

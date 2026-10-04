@@ -89,7 +89,6 @@ export type TeamStatAttr =
 	| "oppXpPct"
 	| "oppKickingPts"
 	| "oppPntYdsPerAtt"
-	| "oppPntYdsPerAtt"
 	| "oppPrYdsPerAtt"
 	| "oppKrYdsPerAtt"
 	| "oppAllPurposeYds"

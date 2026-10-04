@@ -451,7 +451,7 @@ export const processAwards = async ({
 
 							return ps.min * ps.gp >= minCutoff / 2;
 						})
-						.map((ps: any) => {
+						.map((ps) => {
 							// This is needed for numWon and some other things that are on currentStats but not raw stats rows - hacky and kind of incorrect, but probably nobody wants to be doing it anyway, so just don't error at least
 							const mergedStats = { ...currentStats, ...ps };
 

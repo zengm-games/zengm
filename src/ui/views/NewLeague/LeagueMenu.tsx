@@ -99,10 +99,7 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 					className="form-select"
 					value={value}
 					onChange={async (event) => {
-						await handleNewValue(
-							event.target.value as unknown as Value,
-							value2,
-						);
+						await handleNewValue(event.target.value as Value, value2);
 					}}
 				>
 					{values.map(({ key, value }) => {

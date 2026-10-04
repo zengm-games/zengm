@@ -43,7 +43,7 @@ export const splitRegularSeasonPlayoffsCombined = <
 };
 
 const max = (
-	rows: any[],
+	rows: unknown[],
 	getValue: (row: any) => number,
 	statInfo?: ReturnType<typeof getLeaderRequirements>["string"],
 ) => {

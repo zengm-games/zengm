@@ -26,7 +26,7 @@ const checkObject = (
 	return foundNaN;
 };
 
-const wrap = (parent: any, name: any, wrapper: (x: any) => any) => {
+const wrap = (parent: any, name: any, wrapper: (x: unknown) => unknown) => {
 	const original = parent[name];
 	parent[name] = wrapper(original);
 };

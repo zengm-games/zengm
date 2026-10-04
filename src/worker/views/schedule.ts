@@ -251,7 +251,7 @@ export const getTopPlayers = async <T extends any[]>(
 		const playersByPid = groupByUnique(players, "pid");
 		const teams = await idb.cache.teams.getAll();
 		const processedPlayersByTid: Record<number, any[]> = {};
-		const processedPlayersByPid: Record<number, any> = {};
+		const processedPlayersByPid: Record<number, unknown> = {};
 
 		// Need to keep track of injury without mutating player objects (since injuries are shown in UI), to predict future day starters. Might as well track pFatigue here too, for clarity.
 		const extraInfo: Record<
@@ -376,7 +376,7 @@ export const getTopPlayers = async <T extends any[]>(
 				});
 			};
 
-			const getStarter = async (players: any[]) => {
+			const getStarter = async (players: unknown[]) => {
 				const augmentedPlayers = await addExtraInfo(players);
 				if (__SPORT === "baseball") {
 					return getStartingPitcher(augmentedPlayers, false);

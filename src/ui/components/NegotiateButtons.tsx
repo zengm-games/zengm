@@ -34,7 +34,13 @@ export const NegotiateButtons = ({
 	minContract: number;
 	onNegotiate: () => void;
 	spectator: boolean;
-	p: any;
+	p: {
+		pid: number;
+		firstName: string;
+		lastName: string;
+		contract: { exp: number };
+		mood: { user: { contractAmount: number } };
+	};
 	willingToNegotiate: boolean;
 }) => {
 	if (spectator) {

@@ -29,12 +29,12 @@ type State = {
 	idLoaded: string | undefined;
 	idLoading: string | undefined;
 	inLeague: boolean;
-	data: Record<string, any>;
+	data: Record<string, unknown>;
 	scrollToTop: boolean;
 };
 
 type ViewInfo = {
-	Component: any;
+	Component: unknown;
 	id: string;
 	inLeague: boolean;
 	context: Context;

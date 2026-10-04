@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState, type SubmitEvent, useEffect } from "react";
+import { useState, type ReactNode, type SubmitEvent, useEffect } from "react";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
@@ -126,7 +126,7 @@ const GodModeSettingsButton = ({
 	disabled,
 	onClick,
 }: {
-	children: any;
+	children: ReactNode;
 	className?: string;
 	godMode: boolean;
 	disabled?: boolean;
@@ -396,7 +396,7 @@ const SettingsForm = ({
 		event.preventDefault();
 		setSubmitting(true);
 
-		const output = {} as unknown as Settings;
+		const output = {} as Settings;
 		for (const primaryOption of filteredSettings) {
 			const options = [primaryOption];
 			if (primaryOption.partners) {

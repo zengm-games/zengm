@@ -1355,7 +1355,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											]}
 											value2={state.phase}
 											values2={phases}
-											onNewValue2={(phase: any) => {
+											onNewValue2={(phase) => {
 												dispatch({
 													type: "setPhase",
 													phase,

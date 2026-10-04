@@ -18,7 +18,7 @@ const processInputs = (params: RouteParams<"liveGame">, ctxBBGM: any) => {
 	const obj: {
 		fromAction: boolean;
 		gid?: number;
-		playByPlay?: any[];
+		playByPlay?: unknown[];
 	} = {
 		fromAction: !!ctxBBGM.fromAction,
 	};
@@ -41,7 +41,7 @@ export const boxScoreToLiveSim = async ({
 	allStars: AllStars | undefined;
 	boxScore: Game;
 	confetti: boolean;
-	playByPlay: any[];
+	playByPlay: unknown[];
 	teamSeasonOverrides?: [TeamSeasonOverride, TeamSeasonOverride];
 }) => {
 	const otl = g.get("otl", "current");

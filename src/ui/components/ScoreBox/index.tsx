@@ -23,7 +23,7 @@ type Team = {
 	lost?: number;
 	tied?: number;
 	otl?: number;
-	players?: any[];
+	players?: unknown[];
 	playoffs?: {
 		seed: number;
 		won: number;

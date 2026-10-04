@@ -134,7 +134,7 @@ export const getPlayers = async (playoffs: boolean) => {
 		ratings: {
 			pos: string;
 		};
-		stats: any[];
+		stats: unknown[];
 		tid: number;
 	}[] = [];
 	for (const p of playersRaw) {

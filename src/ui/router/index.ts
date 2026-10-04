@@ -198,7 +198,7 @@ class Router {
 		}: {
 			refresh?: boolean;
 			replace?: boolean;
-			state?: { [key: string]: any };
+			state?: { [key: string]: unknown };
 		} = {},
 	) {
 		const context: Context = {

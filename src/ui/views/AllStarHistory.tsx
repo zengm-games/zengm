@@ -78,9 +78,7 @@ const resultText = ({
 		}
 	}
 
-	return `${teamNames[tw]} ${score[tw]}${sPts ? ` (${sPts[tw]})` : ""}, ${teamNames[tl]} ${score[tl]}${sPts ? ` (${sPts[tl]})` : ""},${{
-		overtimeText,
-	}}`;
+	return `${teamNames[tw]} ${score[tw]}${sPts ? ` (${sPts[tw]})` : ""}, ${teamNames[tl]} ${score[tl]}${sPts ? ` (${sPts[tl]})` : ""}${overtimeText}`;
 };
 const ResultText = ({
 	gid,

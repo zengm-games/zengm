@@ -790,7 +790,7 @@ const getPlayerStats = (
 	type SeasonInfo = {
 		season: number;
 		seasonType: "regularSeason" | "playoffs" | "combined";
-		rows: any[];
+		rows: unknown[];
 	};
 	const seasonInfos: SeasonInfo[] = [];
 	const seasonInfosByKey: Record<string, SeasonInfo> = {};
@@ -1041,7 +1041,7 @@ const getAttrsToSum = (statsRows: any[]) => {
 const processStats = (
 	output: any,
 	p: Player,
-	playerStatsInput: any[],
+	playerStatsInput: unknown[],
 	{
 		mergeStats,
 		playoffs,

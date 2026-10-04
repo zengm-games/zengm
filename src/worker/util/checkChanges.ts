@@ -14,10 +14,8 @@ const FETCH_LIMIT = 10;
 export const checkChanges = async (conditions: Conditions) => {
 	// Fall back to LAST_VERSION_BEFORE_THIS_EXISTED if data doesn't exist - must be a user from before then
 	const lastChangesVersion =
-		((await idb.meta.get(
-			"attributes",
-			"lastChangesVersion",
-		)) as unknown as string) ?? LAST_VERSION_BEFORE_THIS_EXISTED;
+		((await idb.meta.get("attributes", "lastChangesVersion")) as string) ??
+		LAST_VERSION_BEFORE_THIS_EXISTED;
 
 	if (env.bbgmVersion > lastChangesVersion) {
 		const changes = (await fetchWrapper({
@@ -29,7 +27,7 @@ export const checkChanges = async (conditions: Conditions) => {
 				sport: __SPORT,
 				limit: String(FETCH_LIMIT),
 			},
-		})) as unknown as {
+		})) as {
 			version: string;
 			text: string;
 

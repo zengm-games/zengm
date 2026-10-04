@@ -302,7 +302,7 @@ const getPlayoffSeriesStats = async (
 		number,
 		{
 			info: StatsRowDefined;
-			rawStats: Record<string, any>;
+			rawStats: Record<string, unknown>;
 		}
 	> = new Map();
 

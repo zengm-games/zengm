@@ -303,7 +303,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 	const quarters = useRef([]);
 	const possessionChange = useRef<boolean | undefined>(undefined);
 	const componentIsMounted = useRef(false);
-	const events = useRef<any[] | undefined>(undefined);
+	const events = useRef<unknown[] | undefined>(undefined);
 	const sportState = useRef(
 		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
 	);

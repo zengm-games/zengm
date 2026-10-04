@@ -121,7 +121,9 @@ const stringifyInfinity = (array: (number | string | boolean)[]) => {
 	return JSON.stringify(array);
 };
 const parseInfinity = (string: string) => {
-	return JSON.parse(string).map((val: any) => (val === null ? Infinity : val));
+	return JSON.parse(string).map((val: unknown) =>
+		val === null ? Infinity : val,
+	);
 };
 const getIndexKey = (
 	index: {
@@ -756,7 +758,7 @@ class Cache {
 		}
 
 		if (local.autoSave) {
-			this._data = {} as Record<Store, any>;
+			this._data = {} as Record<Store, unknown>;
 		}
 
 		for (const store of STORES) {
@@ -977,7 +979,7 @@ class Cache {
 		}
 
 		const [min, max] = key;
-		let output: any[] = [];
+		let output: unknown[] = [];
 
 		for (const keyString of Object.keys(this._indexes[index])) {
 			let keyParsed;
@@ -1061,7 +1063,7 @@ class Cache {
 		return this._storeObj("add", store, obj);
 	}
 
-	async _addAll(store: Store, objs: Iterable<any>): Promise<void> {
+	async _addAll(store: Store, objs: Iterable<unknown>): Promise<void> {
 		await this._waitForStatus("full");
 		for (const obj of objs) {
 			this._storeObj("add", store, obj);
@@ -1073,7 +1075,7 @@ class Cache {
 		return this._storeObj("put", store, obj);
 	}
 
-	async _putAll(store: Store, objs: Iterable<any>): Promise<void> {
+	async _putAll(store: Store, objs: Iterable<unknown>): Promise<void> {
 		await this._waitForStatus("full");
 		for (const obj of objs) {
 			this._storeObj("put", store, obj);

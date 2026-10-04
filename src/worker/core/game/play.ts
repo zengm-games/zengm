@@ -417,7 +417,7 @@ const play = async (
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
 	const cbSimGames = async (
 		schedule: ScheduleGame[],
-		teams: Record<number, any>,
+		teams: Record<number, unknown>,
 		dayOver: boolean,
 	) => {
 		const results = [];

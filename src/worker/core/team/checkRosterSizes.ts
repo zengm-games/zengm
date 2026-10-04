@@ -184,7 +184,7 @@ const checkRosterSizes = async (
 				// Auto-add players
 				while (numPlayersOnRoster < g.get("minRosterSize")) {
 					// See also core.phase
-					let p: any = minFreeAgents.shift();
+					let p = minFreeAgents.shift();
 
 					if (!p) {
 						p = await player.genRandomFreeAgent();

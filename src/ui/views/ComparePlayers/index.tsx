@@ -155,7 +155,7 @@ const HeaderRow = ({
 const playersToValues = (
 	players: PlayerInfoAndLegend[],
 	// Not called for the legend column
-	toValue: (p: PlayerInfo["p"], i: number) => any,
+	toValue: (p: PlayerInfo["p"], i: number) => unknown,
 ) => {
 	return players.map(({ p }, i) => (p === "legend" ? "legend" : toValue(p, i)));
 };

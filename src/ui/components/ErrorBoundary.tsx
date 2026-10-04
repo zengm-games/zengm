@@ -32,7 +32,7 @@ export const ErrorBoundary = ({
 	children,
 	local,
 }: {
-	children: any;
+	children: React.ReactNode;
 	local?: boolean;
 }) => {
 	return (

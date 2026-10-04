@@ -1635,7 +1635,7 @@ const afterDBStream = async ({
 		}
 
 		// This is redundant for a normal real players league, but oh well, it's not very slow. Can't get rid of it in getLeague because that runs on all players, not just active. Can't get rid of it here because it's needed for other types of leagues
-		addRelatives(activePlayers as unknown as Player[], basketball.relatives);
+		addRelatives(activePlayers as Player[], basketball.relatives);
 	}
 
 	// For random debuts we don't want addDraftProspects to be called, since it will fill in with random players. However this does imply that future pick value is going to be messed up for those transition years between random debuts generations, since getPickValues does not support partial draft classes.

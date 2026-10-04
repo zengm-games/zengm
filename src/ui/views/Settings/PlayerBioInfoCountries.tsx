@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Dropdown } from "react-bootstrap";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
@@ -336,9 +336,15 @@ export const CountriesEditor = ({
 }: {
 	defaults: Defaults;
 	defaultsState: PlayerBioInfoState;
-	handleCancel: any;
-	handleChange: any;
-	handleSave: any;
+	handleCancel: () => void;
+	handleChange: (
+		key: "country" | "frequency",
+		i: number,
+	) => (event: ChangeEvent<HTMLInputElement>) => void;
+	handleSave: (event: {
+		preventDefault: () => void;
+		stopPropagation: () => void;
+	}) => void;
 	onSetDefault: (
 		type: "colleges" | "flag" | "names" | "races",
 		i: number,

@@ -1,5 +1,5 @@
 import { LazyMotion } from "framer-motion";
-import { memo, useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect, type ReactNode } from "react";
 import { localActions, useLocal } from "../../util/local.ts";
 import { CommandPalette } from "../CommandPalette/index.tsx";
 import { Footer } from "./Footer.tsx";
@@ -30,7 +30,7 @@ const minWidth0 = {
 };
 
 type KeepPreviousRenderWhileUpdatingProps = {
-	children: any;
+	children: ReactNode;
 	updating: boolean;
 };
 const KeepPreviousRenderWhileUpdating = memo(

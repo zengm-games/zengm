@@ -79,74 +79,14 @@ export type BulkAction = {
 	textLong?: ReactNode;
 };
 
-export const BulkActions = ({
-	extraActions,
-	hasTitle,
-	hideAllControls,
-	name,
-	selectedRows,
-	wrapperRef,
-}: {
-	extraActions: BulkAction[] | undefined;
-	hasTitle: boolean;
-	hideAllControls: Props["hideAllControls"];
-	name: string;
-	selectedRows: SelectedRows;
-	wrapperRef: RefObject<HTMLDivElement | null>;
-}) => {
-	const { godMode, numWatchColors } = useLocal(["godMode", "numWatchColors"]);
+// Built-in actions for tables where rows are players
+const usePlayerBulkActions = (selectedRows: SelectedRows) => {
+	const { numWatchColors } = useLocal(["numWatchColors"]);
 	const [exportModalStatus, setExportModalStatus] = useState<ExportModalStatus>(
 		{
 			show: false,
 		},
 	);
-
-	const numExtraActions = extraActions?.length ?? 0;
-
-	const getUpdatedShowInlineButtons = useCallback(() => {
-		// Never show inline if there's a title, because there's no room!
-		if (hasTitle || !wrapperRef.current) {
-			return false;
-		}
-
-		// Cutoff for when there is enough room to show inline buttons - changes when more buttons are shown or more space is available
-		let baseCutoff = 460;
-
-		// Assume 80 pixels per button
-		baseCutoff += numExtraActions * 80;
-
-		if (godMode) {
-			baseCutoff += 108;
-		}
-
-		if (hideAllControls) {
-			baseCutoff -= 220;
-		}
-
-		return wrapperRef.current.offsetWidth >= baseCutoff;
-	}, [godMode, hasTitle, hideAllControls, numExtraActions, wrapperRef]);
-
-	const [showInlineButtons, setShowInlineButtons] = useState(false);
-
-	useEffect(() => {
-		if (wrapperRef.current) {
-			getUpdatedShowInlineButtons();
-
-			const update = () => {
-				setShowInlineButtons(getUpdatedShowInlineButtons);
-			};
-
-			const resizeObserver = new ResizeObserver(update);
-			resizeObserver.observe(wrapperRef.current);
-
-			return () => {
-				resizeObserver.disconnect();
-			};
-		}
-	}, [getUpdatedShowInlineButtons, wrapperRef]);
-
-	const hasSomeSelected = selectedRows.map.size > 0;
-
 	const onComparePlayers = async () => {
 		const seasonTypes = {
 			combined: "c",
@@ -307,7 +247,6 @@ export const BulkActions = ({
 				</>
 			),
 		},
-		...(extraActions ?? []),
 		{
 			godMode: true,
 			onClick: onDeletePlayers,
@@ -322,14 +261,87 @@ export const BulkActions = ({
 		},
 	];
 
+	return {
+		actions,
+		exportModal: <ExportModal {...exportModalStatus} />,
+	};
+};
+
+// Approximate widths, for determining if there is enough room to show inline buttons
+const CONTROLS_WIDTH = 220;
+const BUTTON_WIDTH = 80;
+
+export const BulkActions = ({
+	extraActions,
+	hasTitle,
+	hideAllControls,
+	metadataType,
+	name,
+	selectedRows,
+	wrapperRef,
+}: {
+	extraActions: BulkAction[] | undefined;
+	hasTitle: boolean;
+	hideAllControls: Props["hideAllControls"];
+	metadataType: DataTableRowMetadata["type"] | undefined;
+	name: string;
+	selectedRows: SelectedRows;
+	wrapperRef: RefObject<HTMLDivElement | null>;
+}) => {
+	const { godMode } = useLocal(["godMode"]);
+
+	// Always need to call this because React, even if this is not a table of players
+	const playerBulkActions = usePlayerBulkActions(selectedRows);
+	const builtInActions =
+		metadataType === "player" ? playerBulkActions.actions : [];
+
+	// God mode actions go at the end, after any extra actions
+	const actions = [
+		...builtInActions.filter((action) => !action.godMode),
+		...(extraActions ?? []),
+		...builtInActions.filter((action) => action.godMode),
+	].filter((action) => !action.godMode || godMode);
+
+	const numActions = actions.length;
+
+	const getUpdatedShowInlineButtons = useCallback(() => {
+		// Never show inline if there's a title, because there's no room!
+		if (hasTitle || !wrapperRef.current) {
+			return false;
+		}
+
+		// Cutoff for when there is enough room to show inline buttons - changes when more buttons are shown or more space is available
+		const cutoff =
+			numActions * BUTTON_WIDTH + (hideAllControls ? 0 : CONTROLS_WIDTH);
+
+		return wrapperRef.current.offsetWidth >= cutoff;
+	}, [hasTitle, hideAllControls, numActions, wrapperRef]);
+
+	const [showInlineButtons, setShowInlineButtons] = useState(false);
+
+	useEffect(() => {
+		if (wrapperRef.current) {
+			getUpdatedShowInlineButtons();
+
+			const update = () => {
+				setShowInlineButtons(getUpdatedShowInlineButtons);
+			};
+
+			const resizeObserver = new ResizeObserver(update);
+			resizeObserver.observe(wrapperRef.current);
+
+			return () => {
+				resizeObserver.disconnect();
+			};
+		}
+	}, [getUpdatedShowInlineButtons, wrapperRef]);
+
+	const hasSomeSelected = selectedRows.map.size > 0;
+
 	if (showInlineButtons) {
 		return (
 			<div className="d-flex align-items-start gap-2 mb-2">
 				{actions.map((action, i) => {
-					if (action.godMode && !godMode) {
-						return null;
-					}
-
 					return (
 						<button
 							key={i}
@@ -362,10 +374,6 @@ export const BulkActions = ({
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
 					{actions.map((action, i) => {
-						if (action.godMode && !godMode) {
-							return null;
-						}
-
 						return (
 							<Dropdown.Item
 								key={i}
@@ -381,11 +389,12 @@ export const BulkActions = ({
 					})}
 					<Dropdown.Header>
 						{selectedRows.map.size}{" "}
-						{helpers.plural("player", selectedRows.map.size)} selected
+						{helpers.plural(metadataType ?? "row", selectedRows.map.size)}{" "}
+						selected
 					</Dropdown.Header>
 				</Dropdown.Menu>
 			</Dropdown>
-			<ExportModal {...exportModalStatus} />
+			{playerBulkActions.exportModal}
 		</>
 	);
 };

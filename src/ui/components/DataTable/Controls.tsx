@@ -137,7 +137,7 @@ const Controls = ({
 					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
-					{metadataType === "player" ? (
+					{metadataType === "player" || metadataType === "league" ? (
 						<Dropdown.Item onClick={onBulkSelectRows}>
 							{bulkSelectRows ? "Hide bulk select" : "Bulk select"}
 							{alwaysShowBulkSelectRows ? " actions" : null}

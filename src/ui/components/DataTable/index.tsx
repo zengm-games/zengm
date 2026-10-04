@@ -79,6 +79,10 @@ export type DataTableRowMetadata =
 			playoffs: "playoffs" | "regularSeason" | "combined";
 	  }
 	| {
+			type: "league";
+			lid: number;
+	  }
+	| {
 			type: "row";
 	  };
 
@@ -588,6 +592,7 @@ export const DataTable = ({
 									extraActions={extraBulkActions}
 									hasTitle={title !== undefined}
 									hideAllControls={hideAllControls}
+									metadataType={metadataType}
 									name={name}
 									selectedRows={selectedRows}
 									wrapperRef={wrapperRef}

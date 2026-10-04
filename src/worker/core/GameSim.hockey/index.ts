@@ -214,12 +214,14 @@ class GameSim extends GameSimBase {
 			{
 				F: [],
 				D: [],
+				G: [],
 			},
 			{
 				F: [],
 				D: [],
+				G: [],
 			},
-		] as any;
+		];
 
 		for (const t of teamNums) {
 			// First, make sure players listed in the main lines for G/D/F are reserved and not used as injury replacements

@@ -242,9 +242,7 @@ const monteCarloLotteryProbs = (
 		for (let j = 0; j < result.length; j++) {
 			const k = result[j]!;
 			probs[k] ??= [];
-			probs[k][j] ??= 0;
-			// @ts-expect-error
-			probs[k][j] += 1 / ITERATIONS;
+			probs[k][j] = (probs[k][j] ?? 0) + 1 / ITERATIONS;
 		}
 	}
 

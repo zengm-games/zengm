@@ -76,9 +76,8 @@ const genTeam = async (
 
 	let statSum = 0;
 	for (const asset of assets) {
-		const stat = "stat" in asset ? asset.stat : undefined;
-		if (typeof stat === "number") {
-			statSum += stat;
+		if (asset.type === "player" || asset.type === "realizedPick") {
+			statSum += asset.stat;
 		}
 	}
 
@@ -188,10 +187,8 @@ export default defineView({
 					let scoreMax = 0;
 					for (const t of teams) {
 						for (const asset of t.assets) {
-							// https://github.com/microsoft/TypeScript/issues/21732
-							const { ovr, pot } = asset as any;
-							if (typeof ovr === "number" && typeof pot === "number") {
-								const score = ovr + 0.25 * pot;
+							if (asset.type === "player" || asset.type === "realizedPick") {
+								const score = asset.ovr + 0.25 * asset.pot;
 								if (score > scoreMax) {
 									scoreMax = score;
 								}

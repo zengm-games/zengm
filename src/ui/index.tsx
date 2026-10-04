@@ -68,8 +68,7 @@ const handleVersion = () => {
 		if (cmpResult === 1) {
 			// This version is newer than another tab's - send a signal to the other tabs
 			let conflictNum = Number.parseInt(
-				// @ts-expect-error
-				safeLocalStorage.getItem("bbgmVersionConflict"),
+				safeLocalStorage.getItem("bbgmVersionConflict") ?? "",
 			);
 
 			if (Number.isNaN(conflictNum)) {

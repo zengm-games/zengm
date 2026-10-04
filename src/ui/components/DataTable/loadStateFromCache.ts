@@ -36,8 +36,7 @@ const loadStateFromCache = ({
 }: LoadStateFromCacheProps): State => {
 	const settingsCache = new SettingsCache(name, !!disableSettingsCache);
 
-	// @ts-expect-error
-	let perPage = Number.parseInt(safeLocalStorage.getItem("perPage"));
+	let perPage = Number.parseInt(safeLocalStorage.getItem("perPage") ?? "");
 
 	if (Number.isNaN(perPage)) {
 		perPage = 10;

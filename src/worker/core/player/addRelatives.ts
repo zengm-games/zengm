@@ -1,3 +1,4 @@
+import { last } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player, Relative, RelativeType } from "../../../common/types.ts";
@@ -98,9 +99,7 @@ const makeSimilarJerseyNumber = async (
 	}
 
 	if (JERSEY_NUMBERS_BY_POSITION) {
-		if (
-			existingRelative.ratings.at(-1)!.pos !== newRelative.ratings.at(-1)!.pos
-		) {
+		if (last(existingRelative.ratings).pos !== last(newRelative.ratings).pos) {
 			return;
 		}
 	}

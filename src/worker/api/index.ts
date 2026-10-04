@@ -2674,7 +2674,7 @@ const handleUploadedDraftClass = async ({
 			uploadedFile.version,
 		);
 		p2.draft.year = draftYear;
-		p2.ratings.at(-1)!.season = draftYear;
+		last(p2.ratings).season = draftYear;
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (Object.hasOwn(p2, "pid")) {

@@ -18,7 +18,7 @@ import type {
 	PlayerAwardSimple,
 } from "../../common/types.ts";
 import { defineView, keepType } from "../util/defineView.ts";
-import { orderBy } from "../../common/utils.ts";
+import { last, orderBy } from "../../common/utils.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import { upgradeFace } from "../util/face.ts";
 import { choice } from "../../common/random.ts";
@@ -298,7 +298,7 @@ export const getCommon = async (
 			}
 		}
 	} else {
-		bestPos = p.ratings.at(-1)!.pos;
+		bestPos = last(p.ratings).pos;
 	}
 	if (teamColors === undefined) {
 		teamColors = await getTeamColors(p.tid);
@@ -346,7 +346,7 @@ export const getCommon = async (
 			"value",
 			"desc",
 		).map((p2) => {
-			const ratings = p2.ratings.at(-1)!;
+			const ratings = last(p2.ratings);
 
 			const age = g.get("season") - p2.born.year;
 

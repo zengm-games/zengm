@@ -146,7 +146,15 @@ export const sportFunctions = (
 					//
 					// Also supports a "default" property, used for any non-matching sport.
 
-					const argument = node.arguments[0];
+					// Unwrap things like `bySport({...} as const)` and `bySport({...} satisfies Whatever)`
+					let argument: Node | undefined = node.arguments[0];
+					while (
+						argument?.type === "TSAsExpression" ||
+						argument?.type === "TSSatisfiesExpression" ||
+						argument?.type === "ParenthesizedExpression"
+					) {
+						argument = argument.expression;
+					}
 					if (argument?.type !== "ObjectExpression") {
 						throw new Error(
 							`Unexpected bySport argument type "${argument?.type}"`,

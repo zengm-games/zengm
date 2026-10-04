@@ -4,7 +4,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { BoxPlot } from "../components/BoxPlot.tsx";
 
-const proStatsAll =
+const proStatsAll: Record<string, number[]> =
 	__SPORT === "basketball"
 		? {
 				won: [
@@ -114,7 +114,7 @@ const proStatsAll =
 		: {};
 
 // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
-const scale =
+const scale: Record<string, [number, number]> =
 	__SPORT === "basketball"
 		? {
 				won: [0, 82],
@@ -170,23 +170,23 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 
 			<table>
 				<tbody>
-					{Object.keys(statsAll)
-						.filter((stat) => stat !== "playoffs")
-						.map((stat) => {
+					{Object.entries(statsAll)
+						.filter(([stat]) => stat !== "playoffs")
+						.map(([stat, values]) => {
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
 									<td className="pe-3 text-end">{stat}</td>
 									<td style={width100}>
 										<BoxPlot
 											color="var(--bs-blue)"
-											data={(statsAll as any)[stat]}
-											scale={(scale as any)[stat]}
+											data={values}
+											scale={scale[stat]}
 										/>
 									</td>
 								</tr>
 							);
 							let proPlot: ReactNode = null;
-							if ((proStatsAll as any)[stat]) {
+							if (proStatsAll[stat]) {
 								proPlot = (
 									<tr key={`${stat}-pro`}>
 										<td />
@@ -194,9 +194,9 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 											<div style={{ marginTop: "-26px" }}>
 												<BoxPlot
 													color="var(--bs-green)"
-													data={(proStatsAll as any)[stat]}
+													data={proStatsAll[stat]}
 													labels={false}
-													scale={(scale as any)[stat]}
+													scale={scale[stat]}
 												/>
 											</div>
 										</td>

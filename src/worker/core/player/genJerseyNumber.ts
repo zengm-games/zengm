@@ -367,7 +367,9 @@ const genFootballWeightFunction = (boost: number[]) => {
 	};
 };
 
-const weightFunctionsByPosition = bySport({
+const weightFunctionsByPosition = bySport<
+	Record<string, (jerseyNumber: string) => number> | undefined
+>({
 	football: {
 		QB: genFootballWeightFunction(range(1, 20)),
 		RB: genFootballWeightFunction([...range(1, 50), ...range(80, 90)]),
@@ -489,8 +491,8 @@ const genJerseyNumber = async (
 
 	if (weightFunctionsByPosition) {
 		const pos = last(p.ratings).pos;
-		if ((weightFunctionsByPosition as any)[pos]) {
-			return choice(candidates, (weightFunctionsByPosition as any)[pos]);
+		if (weightFunctionsByPosition[pos]) {
+			return choice(candidates, weightFunctionsByPosition[pos]);
 		}
 		return choice(candidates);
 	}

@@ -164,7 +164,7 @@ const getBestPenaltyResult = <
 
 	const numScores = scores[0]!.length;
 	const scoreIndexes = range(numScores);
-	const orders = ([...scoreIndexes] as any[]).fill("desc");
+	const orders = scoreIndexes.map(() => "desc" as const);
 	const orderedScores = orderBy(scores, scoreIndexes, orders);
 	// console.log(scores, orderedScores);
 

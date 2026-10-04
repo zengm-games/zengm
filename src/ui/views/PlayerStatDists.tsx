@@ -10,7 +10,7 @@ const width100 = {
 	width: "100%",
 };
 
-const proQuartiles =
+const proQuartiles: Record<string, [number, number, number, number, number]> =
 	__SPORT === "basketball"
 		? {
 				gp: [4.0, 27.75, 53.0, 73.0, 82.0],
@@ -52,7 +52,7 @@ const PlayerStatDists = ({
 	});
 
 	// Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
-	const scale =
+	const scale: Record<string, [number, number]> =
 		__SPORT === "basketball" && statType === "perGame"
 			? {
 					gp: [0, numGames],
@@ -120,13 +120,13 @@ const PlayerStatDists = ({
 										<BoxPlot
 											color="var(--bs-blue)"
 											data={values}
-											scale={(scale as any)[stat]}
+											scale={scale[stat]}
 										/>
 									</td>
 								</tr>
 							);
 							let proPlot: ReactNode = null;
-							if ((proQuartiles as any)[stat] && statType === "perGame") {
+							if (proQuartiles[stat] && statType === "perGame") {
 								proPlot = (
 									<tr key={`${stat}-pro`}>
 										<td />
@@ -135,12 +135,8 @@ const PlayerStatDists = ({
 												<BoxPlot
 													color="var(--bs-green)"
 													labels={false}
-													scale={
-														__SPORT === "basketball"
-															? (scale as any)[stat]
-															: [undefined, undefined]
-													}
-													quartiles={(proQuartiles as any)[stat]}
+													scale={scale[stat]}
+													quartiles={proQuartiles[stat]}
 												/>
 											</div>
 										</td>

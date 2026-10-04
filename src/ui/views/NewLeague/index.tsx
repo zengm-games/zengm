@@ -730,12 +730,12 @@ const NewLeague = (props: View<"newLeague">) => {
 				phase = PHASE.PRESEASON;
 				// Can't set tid yet because we haven't loaded teams for this season - do it later with rebuildAbbrevPending
 			} else {
-				season = Number.parseInt(safeLocalStorage.getItem("prevSeason") as any);
+				season = Number.parseInt(safeLocalStorage.getItem("prevSeason") ?? "");
 				if (Number.isNaN(season)) {
 					season = REAL_PLAYERS_INFO?.MAX_SEASON ?? new Date().getFullYear();
 				}
 				phase = Number.parseInt(
-					safeLocalStorage.getItem("prevPhase") as any,
+					safeLocalStorage.getItem("prevPhase") ?? "",
 				) as any;
 				if (Number.isNaN(phase)) {
 					phase = PHASE.PRESEASON;

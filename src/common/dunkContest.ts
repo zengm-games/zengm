@@ -136,7 +136,7 @@ export const getValidMoves = (otherMove: string) => {
 export const isDunkContest = (
 	contest: View<"allStarDunk">["dunk"] | View<"allStarThree">["three"],
 ): contest is View<"allStarDunk">["dunk"] => {
-	return !!(contest as any).controlling;
+	return "controlling" in contest && !!contest.controlling;
 };
 
 // This assumes half the round advances, rounding down to a power of 2 in the first round if it's not already one

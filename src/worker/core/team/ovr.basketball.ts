@@ -6,6 +6,7 @@ const ovr = (
 		ratings: {
 			ovr: number;
 			pos: string;
+			[key: string]: unknown;
 		};
 	}[],
 	{
@@ -25,7 +26,7 @@ const ovr = (
 				return p.ratings.ovr;
 			}
 
-			const val = (p.ratings as any)[rating];
+			const val = p.ratings[rating];
 			if (typeof val === "number") {
 				return val;
 			}

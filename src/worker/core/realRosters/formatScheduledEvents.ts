@@ -126,23 +126,25 @@ const processTeams = (
 		}
 	}
 
-	let initialTeams: {
-		region: string;
-		name: string;
-		pop: number;
-		colors: [string, string, string];
-		abbrev: string;
-		imgURL: string;
-		imgURLSmall?: string;
-		srID: string;
-		tid: number;
-		cid: number;
-		did: number;
-		disabled?: boolean;
-		firstSeasonAfterExpansion?: number;
-		seasons?: TeamSeasonWithoutKey[];
-		retiredJerseyNumbers?: Team["retiredJerseyNumbers"];
-	}[];
+	let initialTeams:
+		| {
+				region: string;
+				name: string;
+				pop: number;
+				colors: [string, string, string];
+				abbrev: string;
+				imgURL: string;
+				imgURLSmall?: string;
+				srID: string;
+				tid: number;
+				cid: number;
+				did: number;
+				disabled?: boolean;
+				firstSeasonAfterExpansion?: number;
+				seasons?: TeamSeasonWithoutKey[];
+				retiredJerseyNumbers?: Team["retiredJerseyNumbers"];
+		  }[]
+		| undefined;
 
 	// Keep track of initial teams
 	let prevState: any[] = [];
@@ -150,7 +152,6 @@ const processTeams = (
 		if (
 			(event.season > season ||
 				(event.season === season && event.phase > phase)) &&
-			// @ts-expect-error
 			initialTeams === undefined
 		) {
 			initialTeams = helpers.deepCopy(prevState);
@@ -210,7 +211,6 @@ const processTeams = (
 	}
 
 	// Handle initialTeams for the last season, where the season + 1 condition above can never be met
-	// @ts-expect-error
 	if (initialTeams === undefined) {
 		initialTeams = helpers.deepCopy(prevState);
 	}

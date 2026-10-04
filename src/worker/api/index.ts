@@ -1446,7 +1446,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 	// Ugh
 	const shotLocationsGetCols = (cols: string[]) => {
 		const colNames: string[] = [];
-		const overrides = {
+		const overrides: Record<string, string> = {
 			"stat:fgAtRim": "AtRimFG",
 			"stat:fgaAtRim": "AtRimFGA",
 			"stat:fgpAtRim": "AtRimFGP",
@@ -1458,9 +1458,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 			"stat:fgpMidRange": "MidRangeFGP",
 		};
 		for (const col of cols) {
-			// @ts-expect-error
 			if (overrides[col]) {
-				// @ts-expect-error
 				colNames.push(overrides[col]);
 			} else {
 				const col2 = getCol(col);

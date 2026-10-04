@@ -76,7 +76,7 @@ const calculateOnOff = (players: any[], teamsByTid: Record<string, Team>) => {
 	};
 };
 
-const prls = {
+const prls: Record<string, number> = {
 	PG: 11,
 	G: 10.75,
 	SG: 10.5,
@@ -95,8 +95,6 @@ export const getEWA = (
 	gameLengthFactor: number,
 ) => {
 	// Fallback should never happen unless someone manually enters the wrong position, which can happen in custom roster files
-	// https://github.com/microsoft/TypeScript/issues/21732
-	// @ts-expect-error
 	const prl = prls[pos] ?? 10.75;
 
 	const va = (min * (per - prl)) / 67 / gameLengthFactor;

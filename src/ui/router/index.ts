@@ -132,13 +132,7 @@ const findAnchor = (
 	return el as HTMLAnchorElement | SVGAElement;
 };
 
-const sameOrigin = (href: string) => {
-	if (!href) {
-		return false;
-	}
-
-	const url = new URL(href, window.location.toString());
-
+const sameOrigin = (url: URL) => {
 	return (
 		window.location.protocol === url.protocol &&
 		window.location.hostname === url.hostname &&
@@ -146,7 +140,7 @@ const sameOrigin = (href: string) => {
 	);
 };
 
-const samePath = (url: HTMLAnchorElement) => {
+const samePath = (url: URL) => {
 	return (
 		url.pathname === window.location.pathname &&
 		url.search === window.location.search
@@ -369,12 +363,19 @@ class Router {
 			return;
 		}
 
-		// There are various special cases for SVGs, not everything will work right
+		// In SVG links (like in Player Graphs) href and target are SVGAnimatedString rather than string
 		const svg = anchor instanceof SVGAElement;
+		const href = svg ? anchor.href.baseVal : anchor.href;
+		const target = svg ? anchor.target.baseVal : anchor.target;
+
+		if (!href) {
+			return;
+		}
+		const url = new URL(href, window.location.href);
 
 		// ensure non-hash for the same path
 		const link = anchor.getAttribute("href");
-		if (!svg && samePath(anchor) && (anchor.hash || link === "#")) {
+		if (samePath(url) && (url.hash || link === "#")) {
 			return;
 		}
 
@@ -382,24 +383,15 @@ class Router {
 			return;
 		}
 
-		// string check is needed otherwise links inside an SVG (like in Player Graphs) will always get caught here
-		if (typeof anchor.target === "string" && anchor.target.startsWith("_")) {
+		if (target.startsWith("_")) {
 			return;
 		}
 
-		if (!svg && !sameOrigin(anchor.href)) {
+		if (!sameOrigin(url)) {
 			return;
 		}
 
-		// rebuild path
-		let path;
-		if (svg) {
-			// Special case for SVG links
-			path = anchor.href.baseVal;
-		} else {
-			path = anchor.pathname + anchor.search + (anchor.hash || "");
-			path = path[0] !== "/" ? `/${path}` : path;
-		}
+		const path = url.pathname + url.search + url.hash;
 
 		e.preventDefault();
 

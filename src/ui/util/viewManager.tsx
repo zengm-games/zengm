@@ -177,11 +177,12 @@ class ViewManager {
 			this.addUnhandledUpdateEvents(this.idLoaded, action.updateEvents);
 		}
 
-		const currentURL = window.location.pathname + window.location.search;
+		const { pathname, search } = router.location;
+		const currentURL = pathname + search;
 		const sameURL =
 			action.url === undefined ||
 			action.url === currentURL ||
-			action.url === window.location.pathname;
+			action.url === pathname;
 
 		// raw is passed to the page through the navigation, so that needs a navigation even for the same URL
 		if (sameURL && !action.raw) {
@@ -227,17 +228,15 @@ class ViewManager {
 				const refreshResolves = this.refreshResolves;
 				this.refreshResolves = [];
 
-				await router.navigate(
-					window.location.pathname + window.location.search,
-					{
-						state: {
-							noTrack: true,
-							updateEvents: [],
-							navigationId: this.navigationId,
-						},
-						refresh: true,
+				const { pathname, search } = router.location;
+				await router.navigate(pathname + search, {
+					state: {
+						noTrack: true,
+						updateEvents: [],
+						navigationId: this.navigationId,
 					},
-				);
+					refresh: true,
+				});
 
 				for (const resolve of refreshResolves) {
 					resolve();

@@ -65,13 +65,14 @@ test("navigates", async () => {
 	assert.strictEqual(counts["/0"], countBefore + 1);
 });
 
+// This is to wait for the asynchronous effect of window.history.back() and window.history.forward() to occur
+const waitForPopstate = () => {
+	return new Promise((resolve) => {
+		window.addEventListener("popstate", resolve, { once: true });
+	});
+};
+
 test("handles back/forward navigation", async () => {
-	// This is to wait for the asynchronous effect of window.history.back() and window.history.forward() to occur
-	const waitForPopstate = () => {
-		return new Promise((resolve) => {
-			window.addEventListener("popstate", resolve, { once: true });
-		});
-	};
 	let promise;
 
 	await router.navigate("/");
@@ -226,4 +227,64 @@ test("shouldBlock false allows navigation", async () => {
 
 	await router.navigate("/");
 	assert.strictEqual(window.location.pathname, "/");
+});
+
+test("shouldBlock true restores URL after blocked back/forward navigation", async () => {
+	router.shouldBlock = undefined;
+	await router.navigate("/1");
+	await router.navigate("/2");
+	await router.navigate("/0");
+	const countBefore = counts["/1"];
+
+	// Go back two entries, to make sure it returns to the right place
+	router.shouldBlock = () => true;
+	let promise = waitForPopstate();
+	window.history.go(-2);
+	await promise;
+	assert.strictEqual(window.location.pathname, "/1");
+	assert.strictEqual(router.location.pathname, "/0");
+
+	// Blocked, so the router goes forward again
+	await waitForPopstate();
+	assert.strictEqual(window.location.pathname, "/0");
+	assert.strictEqual(counts["/1"], countBefore);
+
+	// History is intact, so unblocked back navigation works normally
+	router.shouldBlock = undefined;
+	promise = waitForPopstate();
+	window.history.back();
+	await promise;
+	assert.strictEqual(window.location.pathname, "/2");
+
+	// Blocked forward navigation
+	router.shouldBlock = () => true;
+	promise = waitForPopstate();
+	window.history.forward();
+	await promise;
+	assert.strictEqual(window.location.pathname, "/0");
+	await waitForPopstate();
+	assert.strictEqual(window.location.pathname, "/2");
+
+	router.shouldBlock = undefined;
+});
+
+test("tracks history entries created by hash links", async () => {
+	await router.navigate("/1");
+
+	let promise = waitForPopstate();
+	window.location.hash = "foo";
+	await promise;
+	await router.navigate("/2");
+
+	// Go back past the hash entry, and get blocked
+	router.shouldBlock = () => true;
+	promise = waitForPopstate();
+	window.history.go(-2);
+	await promise;
+	assert.strictEqual(window.location.pathname, "/1");
+	assert.strictEqual(window.location.hash, "");
+	await waitForPopstate();
+	assert.strictEqual(window.location.pathname, "/2");
+
+	router.shouldBlock = undefined;
 });

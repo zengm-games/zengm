@@ -2,7 +2,7 @@ import * as React from "react";
 import Bugsnag from "@bugsnag/browser";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 
-const FallbackGlobal = ({ error, info }: { error: Error; info?: any }) => {
+const FallbackGlobal = ({ error, info }: { error: Error; info?: unknown }) => {
 	console.log(error, info);
 	useTitleBar({
 		title: "Error",
@@ -16,7 +16,7 @@ const FallbackGlobal = ({ error, info }: { error: Error; info?: any }) => {
 	);
 };
 
-const FallbackLocal = ({ error, info }: { error: Error; info?: any }) => {
+const FallbackLocal = ({ error, info }: { error: Error; info?: unknown }) => {
 	console.log(error, info);
 	return (
 		<p>

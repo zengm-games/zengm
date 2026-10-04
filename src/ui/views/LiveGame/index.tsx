@@ -224,7 +224,7 @@ const PlayByPlay = ({
 	entries,
 	playByPlayDivRef,
 }: {
-	boxScore: any;
+	boxScore: unknown;
 	entries: PlayByPlayEntryInfo[];
 	playByPlayDivRef: RefObject<HTMLDivElement | null>;
 }) => {
@@ -515,7 +515,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 	}, []);
 
 	const startLiveGame = useCallback(
-		(events2: any[]) => {
+		(events2: unknown[]) => {
 			events.current = events2;
 			setTimeout(() => {
 				processToNextPause();

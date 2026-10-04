@@ -26,7 +26,7 @@ const PlayerTeam = ({
 	p,
 	season,
 }: {
-	children: any;
+	children: unknown;
 	p:
 		| {
 				abbrev: string;

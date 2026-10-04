@@ -87,7 +87,7 @@ export const encodeDecodeFunctions = {
 	},
 	string: {},
 	jsonString: {
-		stringify: (value: any) => JSON.stringify(value),
+		stringify: (value: unknown) => JSON.stringify(value),
 		parse: (value: string) => JSON.parse(value),
 	},
 	rangePercent: {
@@ -309,7 +309,7 @@ const SettingsForm = ({
 	});
 
 	const handleGodModeToggle = async () => {
-		let proceed: any = true;
+		let proceed: unknown = true;
 		if (
 			!state.godMode &&
 			!state.godModeInPast &&

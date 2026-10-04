@@ -221,7 +221,7 @@ const StatsTable = ({
 	boxScore,
 	type,
 }: {
-	Row: any;
+	Row: unknown;
 	boxScore: BoxScore;
 	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
@@ -940,7 +940,7 @@ const BoxScore = ({
 }: {
 	boxScore: BoxScore;
 	sportState: SportState;
-	Row: any;
+	Row: unknown;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll

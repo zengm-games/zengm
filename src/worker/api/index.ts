@@ -767,7 +767,7 @@ const createLeague = async (
 			const stream0 = baseStream;
 
 			// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
-			(self as any).stream0 = stream0;
+			self.stream0 = stream0;
 
 			leagueData = (
 				await decompressStreamIfNecessary(
@@ -807,7 +807,7 @@ const createLeague = async (
 
 		return lid;
 	} finally {
-		delete (self as any).stream0;
+		delete self.stream0;
 
 		toUI(
 			"updateLocal",
@@ -3715,10 +3715,10 @@ const runBefore = async (
 		prevInputs,
 	}: {
 		viewId: string;
-		params: any;
-		ctxBBGM: any;
+		params: unknown;
+		ctxBBGM: unknown;
 		updateEvents: ReadonlySet<UpdateEvent>;
-		prevOutput: any;
+		prevOutput: unknown;
 		prevInputs: any;
 	},
 	conditions: Conditions,

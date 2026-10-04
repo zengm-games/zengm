@@ -41,7 +41,7 @@ const RelativesForm = ({
 		field: string,
 		event: {
 			target: {
-				value: any;
+				value: unknown;
 			};
 		},
 	) => void;

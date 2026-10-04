@@ -48,6 +48,7 @@ export type Env = {
 
 declare global {
 	var bbgm: any; // Just for debugging, in worker and UI
+	var stream0: unknown; // Only in worker, see where it is assigned
 	interface Window {
 		bbgmVersion: string;
 		bugsnagKey: string;
@@ -419,7 +420,7 @@ export type Game = {
 	numPlayersOnCourt?: number;
 	playoffs?: boolean;
 	overtimes: number;
-	scoringSummary?: any;
+	scoringSummary?: unknown;
 	season: number;
 	teams: [GameTeam, GameTeam];
 	won: {

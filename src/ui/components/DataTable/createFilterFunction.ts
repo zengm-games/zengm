@@ -21,7 +21,7 @@ const evalFilter = (
 		text: string;
 	},
 	sortType: SortType | undefined,
-	value: any,
+	value: unknown,
 ) => {
 	if (not) {
 		const checkTextSearch = () => {
@@ -175,7 +175,7 @@ const createFilterFunction = (
 		});
 
 	// false - doesn't match. true - does match
-	return (value: any) => {
+	return (value: unknown) => {
 		if (filters.length === 0) {
 			return true;
 		}

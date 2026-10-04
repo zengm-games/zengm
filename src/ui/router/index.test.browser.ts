@@ -105,7 +105,7 @@ test("fires routematched event", async () => {
 	const { promise, resolve, reject } = Promise.withResolvers<void>();
 
 	const countBefore = counts["/2"] ?? 0;
-	const callback = (arg: any) => {
+	const callback = (arg: unknown) => {
 		try {
 			assert.strictEqual(counts["/2"] ?? 0, countBefore); // Hasn't navigated yet
 			assert.deepStrictEqual(arg, {
@@ -133,7 +133,7 @@ test("fires navigationend event", async () => {
 	const { promise, resolve, reject } = Promise.withResolvers<void>();
 
 	const countBefore = counts["/3/:foo"] ?? 0;
-	const callback = (arg: any) => {
+	const callback = (arg: unknown) => {
 		try {
 			assert.strictEqual(counts["/3/:foo"], countBefore + 1);
 			assert.deepStrictEqual(arg, {

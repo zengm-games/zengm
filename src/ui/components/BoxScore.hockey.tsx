@@ -340,7 +340,7 @@ const BoxScore = ({
 }: {
 	boxScore: BoxScore;
 	forceRowUpdate: boolean;
-	Row: any;
+	Row: unknown;
 }) => {
 	const processedEvents = useMemo(
 		() => processEvents(boxScore.scoringSummary),

@@ -704,7 +704,7 @@ const PlayerBioInfo2 = ({
 						onSetDefault={(type, i) => {
 							const country = infoState.countries[i]!.country;
 
-							let array: any;
+							let array: unknown;
 
 							if (type === "colleges") {
 								array = [...infoState.defaultColleges];

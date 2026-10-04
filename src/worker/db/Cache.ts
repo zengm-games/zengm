@@ -1056,7 +1056,7 @@ class Cache {
 		return obj[pk];
 	}
 
-	async _add(store: Store, obj: any): Promise<number | string> {
+	async _add(store: Store, obj: unknown): Promise<number | string> {
 		await this._waitForStatus("full");
 		return this._storeObj("add", store, obj);
 	}
@@ -1068,7 +1068,7 @@ class Cache {
 		}
 	}
 
-	async _put(store: Store, obj: any): Promise<number | string> {
+	async _put(store: Store, obj: unknown): Promise<number | string> {
 		await this._waitForStatus("full");
 		return this._storeObj("put", store, obj);
 	}

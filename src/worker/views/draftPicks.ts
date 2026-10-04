@@ -115,7 +115,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 					for (const i of [0, 1] as const) {
 						if (
 							event.teams[i].assets.some(
-								(asset) => (asset as any).dpid === dp.dpid,
+								(asset) => "dpid" in asset && asset.dpid === dp.dpid,
 							)
 						) {
 							tid = event.tids[i];

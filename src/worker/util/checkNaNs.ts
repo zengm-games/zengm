@@ -31,8 +31,8 @@ const wrap = (parent: any, name: any, wrapper: (x: any) => any) => {
 	parent[name] = wrapper(original);
 };
 
-const wrapperNaNChecker = (_super: any) => {
-	return function (obj: any, ...args: any[]) {
+const wrapperNaNChecker = (_super: unknown) => {
+	return function (obj: unknown, ...args: unknown[]) {
 		/*if (checkObject(obj)) {
 			const error = new Error("NaN found before writing to IndexedDB");
 			void toUI("bugsnagNotify", [

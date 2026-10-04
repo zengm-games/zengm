@@ -9,8 +9,8 @@ export const formatScoringSummaryEvent = (
 	period: number,
 ): PlayByPlayEventScore | undefined => {
 	if (
-		(event as any).safety ||
-		(event as any).td ||
+		("safety" in event && event.safety) ||
+		("td" in event && event.td) ||
 		event.type === "extraPoint" ||
 		event.type === "twoPointConversionFailed" ||
 		// Include missed FGs

@@ -453,7 +453,7 @@ const BoxScore = ({
 	boxScore: BoxScore;
 	forceRowUpdate: boolean;
 	sportState: SportState;
-	Row: any;
+	Row: unknown;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll

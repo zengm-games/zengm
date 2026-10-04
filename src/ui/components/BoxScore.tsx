@@ -5,10 +5,10 @@ import BoxScoreFootball from "./BoxScore.football.tsx";
 import BoxScoreHockey from "./BoxScore.hockey.tsx";
 
 export const BoxScore = (props: {
-	boxScore: any;
-	Row: any;
+	boxScore: unknown;
+	Row: unknown;
 	forceRowUpdate: boolean;
-	sportState?: any;
+	sportState?: unknown;
 }) => {
 	return bySport({
 		baseball: BoxScoreBaseball(props as any),

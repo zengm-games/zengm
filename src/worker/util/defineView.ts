@@ -6,7 +6,7 @@ type EmptyObject = Record<never, never>;
 // Turns the URL parameters for a view into the inputs to the view. Can return { redirectUrl } instead to redirect.
 type ProcessInputs<Id extends ViewId> = (
 	params: RouteParams<Id>,
-	ctxBBGM: any,
+	ctxBBGM: unknown,
 ) => object | undefined;
 
 // Output of a processInputs function, or an empty object if there is none

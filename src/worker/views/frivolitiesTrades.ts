@@ -76,8 +76,7 @@ const genTeam = async (
 
 	let statSum = 0;
 	for (const asset of assets) {
-		// https://github.com/microsoft/TypeScript/issues/21732
-		const stat = (asset as any).stat;
+		const stat = "stat" in asset ? asset.stat : undefined;
 		if (typeof stat === "number") {
 			statSum += stat;
 		}

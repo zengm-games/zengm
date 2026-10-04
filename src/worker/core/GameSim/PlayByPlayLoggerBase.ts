@@ -15,7 +15,7 @@ type PlayByPlayEventStat = {
 
 type PlayByPlayEventInit = {
 	type: "init";
-	boxScore: any;
+	boxScore: unknown;
 };
 
 type SportEvent = FootballEvent | BaseballEvent | BasketballEvent | HockeyEvent;
@@ -47,7 +47,7 @@ export abstract class PlayByPlayLoggerBase<T extends SportEvent> {
 		});
 	}
 
-	getPlayByPlay(boxScore: any): PlayByPlayEvent<T>[] | undefined {
+	getPlayByPlay(boxScore: unknown): PlayByPlayEvent<T>[] | undefined {
 		if (!this.active) {
 			return;
 		}

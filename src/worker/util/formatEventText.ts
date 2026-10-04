@@ -24,8 +24,7 @@ type PickAsset = {
 export const assetIsPlayer = (
 	asset: PlayerAsset | PickAsset,
 ): asset is PlayerAsset => {
-	// https://github.com/microsoft/TypeScript/issues/21732
-	return (asset as any).pid !== undefined;
+	return "pid" in asset && asset.pid !== undefined;
 };
 
 export const getPlayerFromPick = async (dp: PickAsset) => {

@@ -35,7 +35,7 @@ const wrapperNaNChecker = (_super: unknown) => {
 	return function (obj: unknown, ...args: unknown[]) {
 		/*if (checkObject(obj)) {
 			const error = new Error("NaN found before writing to IndexedDB");
-			void toUI("bugsnagNotify", [
+			void toUI("sentryCaptureException", [
 				error,
 				JSON.stringify(obj, (key, value) => {
 					if (Number.isNaN(value)) {

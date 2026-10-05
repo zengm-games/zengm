@@ -2,7 +2,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Worker } from "node:worker_threads";
 import { fileHash } from "./fileHash.ts";
-import { replace } from "./replace.ts";
 import { FOLDER } from "../lib/rolldownConfig.ts";
 import type { Sport } from "../lib/getSport.ts";
 import { JSON_FILENAMES, jsonKeys, type JsonHashes } from "../lib/jsonUrls.ts";
@@ -64,20 +63,6 @@ export const buildJs = async (sport: Sport, versionNumber: string) => {
 	const modulepreloadPaths = (await Promise.all(promises))
 		.flat()
 		.map((filename) => `/${FOLDER}/${filename}`);
-
-	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
-	const replacePaths = (await fs.readdir(path.join("build", FOLDER)))
-		.filter((filename) => filename.endsWith(".js"))
-		.map((filename) => path.join("build", FOLDER, filename));
-	await replace({
-		paths: replacePaths,
-		replaces: [
-			{
-				searchValue: ";//# sourceMappingURL",
-				replaceValue: ";\n//# sourceMappingURL",
-			},
-		],
-	});
 
 	return modulepreloadPaths;
 };

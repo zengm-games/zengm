@@ -1,4 +1,4 @@
-import "./util/initBugsnag.ts";
+import "./util/initSentry.ts";
 import "../common/polyfills.ts";
 import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
@@ -14,7 +14,7 @@ import {
 	WEBSITE_ROOT,
 	ERROR_MESSSAGE_LEAGUE_NOT_FOUND,
 } from "../common/constants.ts";
-import Bugsnag from "@bugsnag/browser";
+import * as Sentry from "@sentry/react";
 import { LeagueNotFoundMessage } from "./components/LeagueNotFoundMessage.tsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.tsx";
 import { ads } from "./util/ads.ts";
@@ -184,7 +184,7 @@ const setupRoutes = async () => {
 					errorMessage = error.message;
 				} else {
 					// Log any error not explicitly handled above
-					Bugsnag.notify(error);
+					Sentry.captureException(error);
 
 					console.error("Error from view:");
 					console.error(error);

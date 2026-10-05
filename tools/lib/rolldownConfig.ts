@@ -5,6 +5,7 @@ import { type Sport } from "./getSport.ts";
 import { jsonUrlsDefine, type JsonHashes } from "./jsonUrls.ts";
 // @ts-expect-error
 import blacklist from "rollup-plugin-blacklist";
+import { sentryRollupPlugin } from "@sentry/rollup-plugin";
 import { visualizer } from "rollup-plugin-visualizer";
 import { modulepreload } from "./rolldownPlugins/modulepreload.ts";
 import { sportFunctions } from "./rolldownPlugins/sportFunctions.ts";
@@ -40,6 +41,26 @@ export const rolldownConfig = (
 	const plugins: BuildOptions["plugins"] = [
 		sportFunctions(envOptions.nodeEnv, sport),
 	];
+
+	if (name === "ui" && envOptions.nodeEnv !== "test") {
+		plugins.push(
+			// This is only used to mark the UI bundle as first party code, for thirdPartyErrorFilterIntegration in src/ui/util/initSentry.ts. Source maps are public, so they don't need to be uploaded.
+			sentryRollupPlugin({
+				applicationKey: "zengm",
+				release: {
+					create: false,
+					inject: false,
+				},
+				sourcemaps: {
+					disable: true,
+				},
+				telemetry: false,
+
+				// Otherwise it warns about not having an auth token, which is only needed for the features disabled above
+				silent: true,
+			}),
+		);
+	}
 
 	if (envOptions.nodeEnv === "development") {
 		plugins.push(

@@ -1,4 +1,4 @@
-import Bugsnag from "@bugsnag/browser";
+import * as Sentry from "@sentry/react";
 import { PWBHost } from "promise-worker-bi";
 
 const workerPath =
@@ -12,7 +12,7 @@ const worker = window.useSharedWorker
 export const promiseWorker = new PWBHost(worker);
 
 promiseWorker.addEventListener("error", ({ error }) => {
-	Bugsnag.notify(error);
+	Sentry.captureException(error);
 
 	console.error("Error from worker:");
 	console.error(error);

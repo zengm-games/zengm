@@ -1,4 +1,4 @@
-import Bugsnag from "@bugsnag/browser";
+import * as Sentry from "@sentry/react";
 import { useEffect, useEffectEvent, useRef } from "react";
 import { NextPrevButtons } from "../../components/NextPrevButtons.tsx";
 import { showNotification } from "../../util/showNotification.ts";
@@ -41,7 +41,7 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 			}
 		} catch (error) {
 			console.error(error);
-			Bugsnag.notify(error);
+			Sentry.captureException(error);
 			showNotification({
 				type: "error",
 				text: `Error loading real team data: ${error.message}`,

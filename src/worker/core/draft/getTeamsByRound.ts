@@ -1,7 +1,11 @@
 import { PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
-import { getDivisionRanks, orderTeams } from "../../util/orderTeams.ts";
+import {
+	getDivisionRanks,
+	orderTeams,
+	type BaseTeam,
+} from "../../util/orderTeams.ts";
 import type {
 	DraftPickWithoutKey,
 	DraftType,
@@ -64,6 +68,212 @@ const ORDER_AFTER_FIRST_ROUND = bySport<"record" | "firstRound">({
 	hockey: "firstRound",
 });
 
+export type Nba2027PlayIn = {
+	tidPlayIn910: [number, number, number, number];
+	tidPlayIn78Loser: [number, number];
+	tidPlayIn78Winner: [number, number];
+};
+
+export const getNba2027PlayIn = (
+	playIns: PlayInTournament[] | undefined,
+): Nba2027PlayIn | undefined => {
+	// Only do this stuff if play-in is exactly 2 conferences, otherwise who knows what it should be
+	if (playIns?.length !== 2) {
+		return;
+	}
+
+	const playIn0 = playIns[0]!;
+	const playIn1 = playIns[1]!;
+
+	const nba2027PlayIn: Nba2027PlayIn = {
+		tidPlayIn910: [
+			playIn0[1].away.tid,
+			playIn1[1].away.tid,
+			playIn0[1].home.tid,
+			playIn1[1].home.tid,
+		],
+		tidPlayIn78Loser: [playIn0[0].away.tid, playIn1[0].away.tid],
+		tidPlayIn78Winner: [playIn0[0].home.tid, playIn1[0].home.tid],
+	};
+
+	// If 7/8 game has already happened, account for actual winner/loser
+	if (playIn0[0].away.won > 0) {
+		nba2027PlayIn.tidPlayIn78Loser[0] = playIn0[0].home.tid;
+		nba2027PlayIn.tidPlayIn78Winner[0] = playIn0[0].away.tid;
+	}
+	if (playIn1[0].away.won > 0) {
+		nba2027PlayIn.tidPlayIn78Loser[1] = playIn1[0].home.tid;
+		nba2027PlayIn.tidPlayIn78Winner[1] = playIn1[0].away.tid;
+	}
+
+	return nba2027PlayIn;
+};
+
+// Order of teams in the first round before the lottery, given which teams made the playoffs. This is separate from getTeamsByRound so it can also be used on hypothetical standings
+export const getFirstRoundTeams = async <
+	T extends BaseTeam & {
+		seasonAttrs: {
+			playoffRoundsWon: number;
+		};
+	},
+>({
+	allTeams,
+	teams,
+	draftType,
+	tidPlayoffs,
+	nba2027PlayIn,
+	orderTeamsSettings,
+	checkForTies,
+}: {
+	allTeams: T[];
+
+	// Like allTeams, but only teams with draft picks
+	teams: T[];
+	draftType: DraftType;
+	tidPlayoffs: number[];
+	nba2027PlayIn: Nba2027PlayIn | undefined;
+	orderTeamsSettings: Parameters<typeof orderTeams>[2];
+	checkForTies?: (teamsToCheck: T[]) => void;
+}) => {
+	const firstRound: T[] = [];
+
+	const nonPlayoffTeams = teams.filter(
+		(t) =>
+			t.seasonAttrs.playoffRoundsWon < 0 &&
+			!tidPlayoffs.includes(t.tid) &&
+			!(
+				nba2027PlayIn &&
+				(nba2027PlayIn.tidPlayIn78Loser.includes(t.tid) ||
+					nba2027PlayIn.tidPlayIn910.includes(t.tid) ||
+					nba2027PlayIn.tidPlayIn78Winner.includes(t.tid))
+			),
+	);
+	const nonPlayoffTeamsOrdered = (
+		await orderTeams(nonPlayoffTeams, allTeams, {
+			...orderTeamsSettings,
+
+			// If division leaders matter for playoff seeding, then they should not matter here. But for expansion teams, that can cause a problem, if a new division is added at the same time, they will appear as the only member because they have no entry there
+			skipDivisionLeaders: true,
+		})
+	).reverse();
+	checkForTies?.(nonPlayoffTeamsOrdered);
+	firstRound.push(...nonPlayoffTeamsOrdered);
+
+	if (nba2027PlayIn) {
+		const teamsByTid = groupByUnique(teams, "tid");
+		for (const tid of [
+			...nba2027PlayIn.tidPlayIn910,
+			...nba2027PlayIn.tidPlayIn78Loser,
+		]) {
+			const t = teamsByTid[tid];
+			if (t) {
+				firstRound.push(t);
+			}
+		}
+	}
+
+	// For nba2027 exclude all the teams that get special treatment (from play-in - 7/8 loser, 9/10 teams)
+	const playoffTeams = teams.filter(
+		(t) =>
+			(t.seasonAttrs.playoffRoundsWon >= 0 ||
+				tidPlayoffs.includes(t.tid) ||
+				nba2027PlayIn?.tidPlayIn78Winner.includes(t.tid)) &&
+			!nba2027PlayIn?.tidPlayIn78Loser.includes(t.tid) &&
+			!nba2027PlayIn?.tidPlayIn910.includes(t.tid),
+	);
+	if (playoffTeams.length > 0) {
+		// For COLA, since first round losers get to be in the draft lottery, we need to sort by playoff performance regardless of the sport's default behavior
+		const firstRoundPlayoffTeamsOrder =
+			draftType === "cola" ? "playoffs" : FIRST_ROUND_PLAYOFF_TEAMS_ORDER;
+		if (firstRoundPlayoffTeamsOrder === "record") {
+			const playoffTeamsOrdered = (
+				await orderTeams(playoffTeams, allTeams, orderTeamsSettings)
+			).reverse();
+			checkForTies?.(playoffTeamsOrdered);
+			firstRound.push(...playoffTeamsOrdered);
+		} else if (firstRoundPlayoffTeamsOrder === "playoffs") {
+			let minPlayoffRoundsWon = Infinity;
+			let maxPlayoffRoundsWon = -Infinity;
+			for (const t of playoffTeams) {
+				if (t.seasonAttrs.playoffRoundsWon < minPlayoffRoundsWon) {
+					minPlayoffRoundsWon = t.seasonAttrs.playoffRoundsWon;
+				}
+				if (t.seasonAttrs.playoffRoundsWon > maxPlayoffRoundsWon) {
+					maxPlayoffRoundsWon = t.seasonAttrs.playoffRoundsWon;
+				}
+			}
+
+			for (
+				let playoffRoundsWon = minPlayoffRoundsWon;
+				playoffRoundsWon <= maxPlayoffRoundsWon;
+				playoffRoundsWon++
+			) {
+				const playoffRoundTeams = playoffTeams.filter(
+					(t) => t.seasonAttrs.playoffRoundsWon === playoffRoundsWon,
+				);
+				const playoffRoundTeamsOrdered = (
+					await orderTeams(playoffRoundTeams, allTeams, orderTeamsSettings)
+				).reverse();
+				checkForTies?.(playoffRoundTeamsOrdered);
+				firstRound.push(...playoffRoundTeamsOrdered);
+			}
+		} else {
+			// playoffsHockey
+			const divisionRanks = await getDivisionRanks(
+				// Pass allTeams rather than teams because there is currently a bug in getDivisionLeaders where only teams in the first arg can be selected. This works around that bug, and also will continue to work after the bug is fixed.
+				allTeams,
+				allTeams,
+				{
+					skipTiebreakers: orderTeamsSettings?.skipTiebreakers,
+				},
+			);
+			const divisionWinners = new Set<number>();
+			for (const [tid, rank] of divisionRanks) {
+				if (rank === 1) {
+					divisionWinners.add(tid);
+				}
+			}
+
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+
+			// group 0: playoff teams that did not win their divisions and did not make the conference finals, sorted by points
+			// group 1: playoff teams that won their divisions and did not make the conference finals, sorted by points
+			// group 2: conference finals losers sorted by points are assigned picks 29 and 30
+			// group 3: finals loser
+			// group 4: finals winner
+			const groups: [T[], T[], T[], T[], T[]] = [[], [], [], [], []];
+
+			for (const t of playoffTeams) {
+				const playoffRoundsWon = t.seasonAttrs.playoffRoundsWon;
+				if (playoffRoundsWon === numPlayoffRounds) {
+					groups[4].push(t);
+				} else if (playoffRoundsWon === numPlayoffRounds - 1) {
+					groups[3].push(t);
+				} else if (playoffRoundsWon === numPlayoffRounds - 2) {
+					groups[2].push(t);
+				} else if (divisionWinners.has(t.tid)) {
+					groups[1].push(t);
+				} else {
+					groups[0].push(t);
+				}
+			}
+
+			for (const group of groups) {
+				const groupOrdered = (
+					await orderTeams(group, allTeams, orderTeamsSettings)
+				).reverse();
+				checkForTies?.(group);
+				firstRound.push(...groupOrdered);
+			}
+		}
+	}
+
+	return {
+		firstRound,
+		playoffTeams,
+	};
+};
+
 const getTeamsByRound = async (
 	draftType: DraftType,
 	draftPicksIndexed: DraftPickWithoutKey[][],
@@ -97,49 +307,14 @@ const getTeamsByRound = async (
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	let tidPlayoffs: number[] = [];
-	let nba2027Stuff:
-		| {
-				tidPlayIn910: [number, number, number, number];
-				tidPlayIn78Loser: [number, number];
-				tidPlayIn78Winner: [number, number];
-		  }
-		| undefined;
+	let nba2027Stuff: Nba2027PlayIn | undefined;
 	const phase = actualPhase();
-
-	const setNba2027Stuff = (playIns: PlayInTournament[] | undefined) => {
-		// Only do this stuff if play-in is exactly 2 conferences, otherwise who knows what it should be
-		if (playIns?.length === 2) {
-			const playIn0 = playIns[0]!;
-			const playIn1 = playIns[1]!;
-
-			nba2027Stuff = {
-				tidPlayIn910: [
-					playIn0[1].away.tid,
-					playIn1[1].away.tid,
-					playIn0[1].home.tid,
-					playIn1[1].home.tid,
-				],
-				tidPlayIn78Loser: [playIn0[0].away.tid, playIn1[0].away.tid],
-				tidPlayIn78Winner: [playIn0[0].home.tid, playIn1[0].home.tid],
-			};
-
-			// If 7/8 game has already happened, account for actual winner/loser
-			if (playIn0[0].away.won > 0) {
-				nba2027Stuff.tidPlayIn78Loser[0] = playIn0[0].home.tid;
-				nba2027Stuff.tidPlayIn78Winner[0] = playIn0[0].away.tid;
-			}
-			if (playIn1[0].away.won > 0) {
-				nba2027Stuff.tidPlayIn78Loser[1] = playIn1[0].home.tid;
-				nba2027Stuff.tidPlayIn78Winner[1] = playIn1[0].away.tid;
-			}
-		}
-	};
 
 	const predictPlayoffs = async () => {
 		const info = await genPlayoffSeriesFromTeams(allTeams);
 		tidPlayoffs = info.tidPlayoffs;
 		if (draftType === "nba2027") {
-			setNba2027Stuff(info.playIns);
+			nba2027Stuff = getNba2027PlayIn(info.playIns);
 		}
 	};
 
@@ -148,7 +323,7 @@ const getTeamsByRound = async (
 	} else if (draftType === "nba2027") {
 		const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 		if (playoffSeries) {
-			setNba2027Stuff(playoffSeries.playIns);
+			nba2027Stuff = getNba2027PlayIn(playoffSeries.playIns);
 		} else {
 			// This should never happen, but if somehow playoffSeries does not exist, might as well recompute it
 			await predictPlayoffs();
@@ -230,141 +405,15 @@ const getTeamsByRound = async (
 		}
 	};
 
-	const firstRound: MyTeam[] = [];
-
-	const nonPlayoffTeams = teams.filter(
-		(t) =>
-			t.seasonAttrs.playoffRoundsWon < 0 &&
-			!tidPlayoffs.includes(t.tid) &&
-			!(
-				nba2027Stuff &&
-				(nba2027Stuff.tidPlayIn78Loser.includes(t.tid) ||
-					nba2027Stuff.tidPlayIn910.includes(t.tid) ||
-					nba2027Stuff.tidPlayIn78Winner.includes(t.tid))
-			),
-	);
-	const nonPlayoffTeamsOrdered = (
-		await orderTeams(nonPlayoffTeams, allTeams, {
-			...orderTeamsSettings,
-
-			// If division leaders matter for playoff seeding, then they should not matter here. But for expansion teams, that can cause a problem, if a new division is added at the same time, they will appear as the only member because they have no entry there
-			skipDivisionLeaders: true,
-		})
-	).reverse();
-	checkForTies(nonPlayoffTeamsOrdered, 1);
-	firstRound.push(...nonPlayoffTeamsOrdered);
-
-	if (nba2027Stuff) {
-		const teamsByTid = groupByUnique(teams, "tid");
-		for (const tid of [
-			...nba2027Stuff.tidPlayIn910,
-			...nba2027Stuff.tidPlayIn78Loser,
-		]) {
-			const t = teamsByTid[tid];
-			if (t) {
-				firstRound.push(t);
-			}
-		}
-	}
-
-	// For nba2027 exclude all the teams that get special treatment (from play-in - 7/8 loser, 9/10 teams)
-	const playoffTeams = teams.filter(
-		(t) =>
-			(t.seasonAttrs.playoffRoundsWon >= 0 ||
-				tidPlayoffs.includes(t.tid) ||
-				nba2027Stuff?.tidPlayIn78Winner.includes(t.tid)) &&
-			!nba2027Stuff?.tidPlayIn78Loser.includes(t.tid) &&
-			!nba2027Stuff?.tidPlayIn910.includes(t.tid),
-	);
-	if (playoffTeams.length > 0) {
-		// For COLA, since first round losers get to be in the draft lottery, we need to sort by playoff performance regardless of the sport's default behavior
-		const firstRoundPlayoffTeamsOrder =
-			draftType === "cola" ? "playoffs" : FIRST_ROUND_PLAYOFF_TEAMS_ORDER;
-		if (firstRoundPlayoffTeamsOrder === "record") {
-			const playoffTeamsOrdered = (
-				await orderTeams(playoffTeams, allTeams, orderTeamsSettings)
-			).reverse();
-			checkForTies(playoffTeamsOrdered, 1);
-			firstRound.push(...playoffTeamsOrdered);
-		} else if (firstRoundPlayoffTeamsOrder === "playoffs") {
-			let minPlayoffRoundsWon = Infinity;
-			let maxPlayoffRoundsWon = -Infinity;
-			for (const t of playoffTeams) {
-				if (t.seasonAttrs.playoffRoundsWon < minPlayoffRoundsWon) {
-					minPlayoffRoundsWon = t.seasonAttrs.playoffRoundsWon;
-				}
-				if (t.seasonAttrs.playoffRoundsWon > maxPlayoffRoundsWon) {
-					maxPlayoffRoundsWon = t.seasonAttrs.playoffRoundsWon;
-				}
-			}
-
-			for (
-				let playoffRoundsWon = minPlayoffRoundsWon;
-				playoffRoundsWon <= maxPlayoffRoundsWon;
-				playoffRoundsWon++
-			) {
-				const playoffRoundTeams = playoffTeams.filter(
-					(t) => t.seasonAttrs.playoffRoundsWon === playoffRoundsWon,
-				);
-				const playoffRoundTeamsOrdered = (
-					await orderTeams(playoffRoundTeams, allTeams, orderTeamsSettings)
-				).reverse();
-				checkForTies(playoffRoundTeamsOrdered, 1);
-				firstRound.push(...playoffRoundTeamsOrdered);
-			}
-		} else {
-			// playoffsHockey
-			const divisionRanks = await getDivisionRanks(
-				// Pass allTeams rather than teams because there is currently a bug in getDivisionLeaders where only teams in the first arg can be selected. This works around that bug, and also will continue to work after the bug is fixed.
-				allTeams,
-				allTeams,
-			);
-			const divisionWinners = new Set<number>();
-			for (const [tid, rank] of divisionRanks) {
-				if (rank === 1) {
-					divisionWinners.add(tid);
-				}
-			}
-
-			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
-
-			// group 0: playoff teams that did not win their divisions and did not make the conference finals, sorted by points
-			// group 1: playoff teams that won their divisions and did not make the conference finals, sorted by points
-			// group 2: conference finals losers sorted by points are assigned picks 29 and 30
-			// group 3: finals loser
-			// group 4: finals winner
-			const groups: [MyTeam[], MyTeam[], MyTeam[], MyTeam[], MyTeam[]] = [
-				[],
-				[],
-				[],
-				[],
-				[],
-			];
-
-			for (const t of playoffTeams) {
-				const playoffRoundsWon = t.seasonAttrs.playoffRoundsWon;
-				if (playoffRoundsWon === numPlayoffRounds) {
-					groups[4].push(t);
-				} else if (playoffRoundsWon === numPlayoffRounds - 1) {
-					groups[3].push(t);
-				} else if (playoffRoundsWon === numPlayoffRounds - 2) {
-					groups[2].push(t);
-				} else if (divisionWinners.has(t.tid)) {
-					groups[1].push(t);
-				} else {
-					groups[0].push(t);
-				}
-			}
-
-			for (const group of groups) {
-				const groupOrdered = (
-					await orderTeams(group, allTeams, orderTeamsSettings)
-				).reverse();
-				checkForTies(group, 1);
-				firstRound.push(...groupOrdered);
-			}
-		}
-	}
+	const { firstRound, playoffTeams } = await getFirstRoundTeams({
+		allTeams,
+		teams,
+		draftType,
+		tidPlayoffs,
+		nba2027PlayIn: nba2027Stuff,
+		orderTeamsSettings,
+		checkForTies: (teamsToCheck) => checkForTies(teamsToCheck, 1),
+	});
 
 	const nba2027NumLotteryTeams =
 		draftType === "nba2027" ? teams.length - playoffTeams.length : undefined;

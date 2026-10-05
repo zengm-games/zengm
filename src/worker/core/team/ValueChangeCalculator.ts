@@ -65,7 +65,7 @@ const getEstWinPercent = ({
 }) => {
 	const gp = teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
 
-	if (!teamSeason || gp === 0) {
+	if (!teamSeason || gp === 0 || Number.isNaN(gp)) {
 		// Expansion team?
 		return teamOvrWinp;
 	}
@@ -286,7 +286,7 @@ const getPickNumber = async (
 const getPickInfo = async (
 	cache: ValueChangeCache,
 	dp: DraftPick,
-	rookieSalaries: any,
+	rookieSalaries: number[],
 	pidsAdd: number[],
 	pidsRemove: number[],
 	tid: number,
@@ -326,7 +326,11 @@ const getPickInfo = async (
 
 	let contractValue = getContractValue(
 		{
-			amount: rookieSalaries[estPick - 1],
+			// Could be undefined if there are picks beyond numDraftRounds
+			amount:
+				rookieSalaries[estPick - 1] ??
+				rookieSalaries.at(-1) ??
+				g.get("minContract"),
 			exp: season + 2,
 		},
 		value,

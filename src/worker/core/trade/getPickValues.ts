@@ -71,7 +71,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 
 	// Defaults are the average of future drafts
 	const seasons = Array.from(playersByDraftYear.keys());
-	pickValues.default = range(numPicksDefault).map((i) => {
+	const defaultValues = range(numPicksDefault).map((i) => {
 		const vals = seasons
 			.filter((season) => {
 				const seasonPickValues = pickValues[season];
@@ -88,8 +88,25 @@ const getPickValues = async (): Promise<TradePickValues> => {
 				return true;
 			})
 			.map((season) => pickValues[season]![i]!);
+		if (vals.length === 0) {
+			return undefined;
+		}
 		return vals.reduce((total, val) => total + val, 0) / vals.length;
 	});
+
+	// If no draft class has a prospect at some pick, use the value of the nearest earlier pick, or the first pick with a value if there is no earlier one
+	const firstValue = defaultValues.find((value) => value !== undefined);
+	if (firstValue === undefined) {
+		pickValues.default = [];
+	} else {
+		let prevValue = firstValue;
+		pickValues.default = defaultValues.map((value) => {
+			if (value !== undefined) {
+				prevValue = value;
+			}
+			return prevValue;
+		});
+	}
 
 	return pickValues;
 };

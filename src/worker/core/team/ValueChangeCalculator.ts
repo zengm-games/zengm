@@ -87,7 +87,6 @@ const getContractValue = (
 const getPlayers = async ({
 	add,
 	remove,
-	roster,
 	pidsAdd,
 	pidsRemove,
 	tid,
@@ -95,7 +94,6 @@ const getPlayers = async ({
 }: {
 	add: Asset[];
 	remove: Asset[];
-	roster: Asset[];
 	pidsAdd: number[];
 	pidsRemove: number[];
 	tid: number;
@@ -115,36 +113,30 @@ const getPlayers = async ({
 			? 1.05
 			: 1) * difficultyFudgeFactor;
 
-	// Get roster and players to remove
+	// Get players to remove
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
 	for (const p of players) {
-		const value = zscore(p.value);
 		if (!pidsRemove.includes(p.pid)) {
-			roster.push({
-				type: "player",
-				value,
-				contractValue: getContractValue(p.contract, value),
-				injury: p.injury,
-				age: g.get("season") - p.born.year,
-				justDrafted: helpers.justDrafted(p, phase, season),
-			});
-		} else {
-			// Only apply fudge factor to positive assets
-			let fudgedValue = value;
-			if (fudgedValue > 0) {
-				fudgedValue *= fudgeFactor;
-			}
-
-			remove.push({
-				type: "player",
-				value: fudgedValue,
-				contractValue: getContractValue(p.contract, value),
-				injury: p.injury,
-				age: g.get("season") - p.born.year,
-				justDrafted: helpers.justDrafted(p, phase, season),
-			});
+			continue;
 		}
+
+		const value = zscore(p.value);
+
+		// Only apply fudge factor to positive assets
+		let fudgedValue = value;
+		if (fudgedValue > 0) {
+			fudgedValue *= fudgeFactor;
+		}
+
+		remove.push({
+			type: "player",
+			value: fudgedValue,
+			contractValue: getContractValue(p.contract, value),
+			injury: p.injury,
+			age: g.get("season") - p.born.year,
+			justDrafted: helpers.justDrafted(p, phase, season),
+		});
 	}
 
 	// Get players to add
@@ -417,7 +409,7 @@ const getPicks = async ({
 			if (numBeyond2Other > 0) {
 				for (const pick of otherPicks) {
 					if (pick.value > 0) {
-						pick.value *= 1 + numBeyond2 / (SPORT_FACTOR * pick.dp.round);
+						pick.value *= 1 + numBeyond2Other / (SPORT_FACTOR * pick.dp.round);
 					}
 				}
 			}
@@ -726,7 +718,6 @@ export class ValueChangeCalculator {
 		}
 
 		// Get value and skills for each player on team or involved in the proposed transaction
-		const roster: Asset[] = [];
 		const add: Asset[] = [];
 		const remove: Asset[] = [];
 		const t = await idb.cache.teams.get(tid);
@@ -740,7 +731,6 @@ export class ValueChangeCalculator {
 		await getPlayers({
 			add,
 			remove,
-			roster,
 			pidsAdd,
 			pidsRemove,
 			tid,

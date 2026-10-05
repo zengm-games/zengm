@@ -86,12 +86,14 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 						};
 					})
 					.sort((a, b) => b.ovr - a.ovr);
-				const { estPicks } = await getEstPicks(teamOvrsSorted);
-				estPicksCache = estPicks;
+				estPicksCache = await getEstPicks(teamOvrsSorted);
 			}
 
 			projectedPick = adjustProjectedPick({
-				projectedPick: estPicksCache[dp.originalTid]!,
+				projectedPick: (dp.season > g.get("season")
+					? estPicksCache.future
+					: estPicksCache
+				).estPicks[dp.originalTid]!,
 				numSeasons: dp.season - g.get("season"),
 				numTeams: teamsWithRankings.length,
 			});

@@ -1,11 +1,2 @@
 allowBuilds:
   unrs-resolver: false
-minimumReleaseAgeExclude:
-  - "@vitest/mocker@5.0.3"
-  - "@vitest/spy@5.0.3"
-  - vitest@5.0.3
-  - "@vitest/browser@5.0.3"
-  - "@vitest/pretty-format@5.0.3"
-  - "@vitest/ui@5.0.3"
-  - "@vitest/utils@5.0.3"
-  - "@vitest/browser-playwright@5.0.3"

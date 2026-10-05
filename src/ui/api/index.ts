@@ -17,7 +17,7 @@ import { confirmDeleteAllLeagues } from "../util/confirmDeleteAllLeagues.tsx";
 import { requestPersistentStorage } from "../util/requestPersistentStorage.tsx";
 import { confirm } from "../util/confirm.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
-import Bugsnag from "@bugsnag/browser";
+import * as Sentry from "@sentry/react";
 import { registerGlobal } from "../../common/registerGlobal.ts";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
@@ -134,23 +134,16 @@ const crossTabEmit = (
 	crossTabEmitter.emit(...parameters);
 };
 
-const bugsnagNotify = (
+const sentryCaptureException = (
 	error: Error,
-	metadata?: Record<string, Record<string, string>>,
+	contexts?: Record<string, Record<string, string>>,
 ) => {
-	Bugsnag.notify(error, (event) => {
-		if (metadata) {
-			for (const [name, object] of Object.entries(metadata)) {
-				event.addMetadata(name, object);
-			}
-		}
-	});
+	Sentry.captureException(error, { contexts });
 };
 
 const api = {
 	analyticsEvent,
 	autoPlayDialog,
-	bugsnagNotify,
 	confirm,
 	confirmDeleteAllLeagues,
 	crossTabEmit,
@@ -162,6 +155,7 @@ const api = {
 	realtimeUpdate: realtimeUpdate2,
 	requestPersistentStorage,
 	resetLeague,
+	sentryCaptureException,
 	setGameAttributes,
 	showNotification: showNotification2,
 	showModal,

@@ -52,7 +52,7 @@ const connectIndexedDB = async <DBTypes>({
 					await migrate({ db, lid, oldVersion, transaction });
 				}
 			} catch (error) {
-				void toUI("bugsnagNotify", [error]);
+				void toUI("sentryCaptureException", [error]);
 				console.log(error);
 				transaction.abort();
 			}

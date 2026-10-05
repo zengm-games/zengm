@@ -51,7 +51,6 @@ declare global {
 	var stream0: unknown; // Only in worker, see where it is assigned
 	interface Window {
 		bbgmVersion: string;
-		bugsnagKey: string;
 		enableLogging: boolean;
 		freestar: any;
 		getTheme: () => "dark" | "light";

@@ -98,7 +98,7 @@ export const initServiceWorker = async () => {
 		try {
 			await workbox.register();
 		} catch (error) {
-			// googlebot throws an error with the message "Rejected" on navigator.serviceWorker.register, IDK why, but this at least hides it from Bugsnag
+			// googlebot throws an error with the message "Rejected" on navigator.serviceWorker.register, IDK why, but this at least hides it from Sentry
 			// https://stackoverflow.com/q/63301353/786644
 			if (error.message === "Rejected") {
 				return;

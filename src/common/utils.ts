@@ -118,7 +118,8 @@ const createSortFunction = <Item, Key extends OrderByKey<Item>>(
 	const ordersArray = typeof orders === "string" ? [orders] : orders;
 
 	return (a: Item, b: Item) => {
-		for (const [i, key] of keysArray.entries()) {
+		for (let i = 0; i < keysArray.length; i++) {
+			const key = keysArray[i]!;
 			const order = ordersArray?.[i];
 
 			const valueA = getValueByIteratee(key, a) ?? Infinity;

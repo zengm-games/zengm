@@ -26,7 +26,7 @@ const wonMinusLost = (obj?: { won?: number; lost?: number; otl?: number }) => {
 
 type Tiebreaker = keyof typeof TIEBREAKERS;
 
-type BaseTeam = {
+export type BaseTeam = {
 	seasonAttrs: {
 		winp: number;
 		pts: number;
@@ -623,9 +623,12 @@ export const orderTeams = async <T extends BaseTeam>(
 	}
 
 	const usePts = g.get("pointsFormula", season) !== "";
+	const numTeamsDiv = g.get("playoffsNumTeamsDiv", season);
 
 	const divisionRanks = await getDivisionRanks(teams, allTeams, {
-		skipDivisionLeaders,
+		// Division ranks are used for the division leader boost and for tiebreakers. If neither of those apply, skip it, because it's slow when this is called many times
+		skipDivisionLeaders:
+			skipDivisionLeaders || (skipTiebreakers && numTeamsDiv <= 0),
 		skipTiebreakers,
 		season,
 	});
@@ -636,7 +639,6 @@ export const orderTeams = async <T extends BaseTeam>(
 		(t: T) => wonMinusLost(t.seasonAttrs),
 	];
 	const orders: ("asc" | "desc")[] = ["desc", "desc"];
-	const numTeamsDiv = g.get("playoffsNumTeamsDiv", season);
 	if (numTeamsDiv > 0 && divisionRanks.size > 0) {
 		// ...and apply division leader boost, if necessary
 		iterees.unshift((t) => {

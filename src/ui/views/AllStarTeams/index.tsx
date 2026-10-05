@@ -69,7 +69,7 @@ const PlayersTable = ({
 		// Filter everything, because `players` might have empty slots too due to deleted players
 		.filter((p) => p !== undefined);
 
-	const rows: DataTableRow[] = playersAugmented
+	const rows: DataTableRow<"player">[] = playersAugmented
 		.filter((p) => {
 			if (!pidsRemove) {
 				return true;

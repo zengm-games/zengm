@@ -676,10 +676,6 @@ in late game critical situations (like tied, 0 outs, bases loaded) there should 
 zgmb should have more doubles and triples https://discord.com/channels/290013534023057409/944392892905037885/1332600467502661717
 
 bulk actions - tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table) 
-  - if this was done, then most metadata type checks like `metadata.type === "player"` in BulkActions and ExportPlayers would not be needed, those are just for typescript
-  - something like this works, but is kind of annoying with the generic being needed in various places:
-    `type RowOfType<T extends RowMetadata["type"]> = T extends RowMetadata["type"] ? { metadata: Extract<RowMetadata, { type: T }>; other: string } : never;`
 - other places to use
   - re-signing player and free agents table - sign multiple players at the same time https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkHjZVVXMJCrJkQVrDlmZjHph
     - button needs to be disabled if not allowed under the cap
@@ -727,11 +723,6 @@ for stat tables with gap placeholders (like on a player profile page, there's a 
 - somehow need to hide these based on table sort - how to propagate that info?
 
 Add https://mail.google.com/mail/u/0/#inbox/FMfcgzQXKhJZvwmSjwbthGLcdXGfCrJH to rebuilding/contending strategy rewrite
-
-vector logo generation
-- https://www.recraft.ai/ai-image-vectorizer
-- https://sagipolaczek.github.io/NeuralSVG/
-- https://neosvg.com/
 
 counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 - https://discord.com/channels/290013534023057409/569726303926878219/840367834965213194

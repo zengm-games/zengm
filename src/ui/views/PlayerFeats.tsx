@@ -33,7 +33,7 @@ const PlayerFeats = ({
 		"Type",
 	]);
 
-	const rows: DataTableRow[] = feats.map((p) => {
+	const rows: DataTableRow<"player">[] = feats.map((p) => {
 		const result = `${p.result} ${p.score}`;
 
 		return {

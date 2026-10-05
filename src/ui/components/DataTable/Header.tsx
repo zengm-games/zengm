@@ -7,7 +7,14 @@ import {
 	useRef,
 	useLayoutEffect,
 } from "react";
-import type { Col, DataTableRow, Props, SortBy, SuperCol } from "./index.tsx";
+import type {
+	Col,
+	DataTableRow,
+	MetadataType,
+	Props,
+	SortBy,
+	SuperCol,
+} from "./index.tsx";
 import { range } from "../../../common/utils.ts";
 import { Dropdown } from "react-bootstrap";
 import type { SelectedRows } from "./useBulkSelectRows.ts";
@@ -220,9 +227,9 @@ const CustomToggle = forwardRef(
 
 type BulkSelectProps = {
 	disableBulkSelectKeys: Props["disableBulkSelectKeys"];
-	filteredRows: DataTableRow[];
-	filteredRowsPage: DataTableRow[];
-	selectedRows: SelectedRows;
+	filteredRows: DataTableRow<MetadataType>[];
+	filteredRowsPage: DataTableRow<MetadataType>[];
+	selectedRows: SelectedRows<MetadataType>;
 };
 
 const BulkSelectHeaderCheckbox = ({
@@ -269,7 +276,7 @@ const BulkSelectHeaderCheckbox = ({
 		}
 	};
 
-	const rowCanBeSelected = (row: DataTableRow) =>
+	const rowCanBeSelected = (row: DataTableRow<MetadataType>) =>
 		row.metadata &&
 		(!disableBulkSelectKeys || !disableBulkSelectKeys.has(row.key));
 

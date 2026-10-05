@@ -24,14 +24,14 @@ import {
 	type ReactNode,
 	type RefObject,
 } from "react";
-import type { DataTableRow } from "./index.tsx";
+import type { DataTableRow, MetadataType } from "./index.tsx";
 import clsx from "clsx";
 
 export type DisableRow = (index: number) => boolean;
 
 export type HighlightHandle = (a: {
 	index: number;
-	row: DataTableRow;
+	row: DataTableRow<MetadataType>;
 }) => boolean;
 
 export const SortableTableContext = createContext<{
@@ -40,13 +40,13 @@ export const SortableTableContext = createContext<{
 	draggedIndex: number | undefined;
 	highlightHandle: HighlightHandle | undefined;
 	renderRow: (props: RenderRowProps) => ReactNode;
-	rows: DataTableRow[];
+	rows: DataTableRow<MetadataType>[];
 	tableRef: RefObject<HTMLTableElement | null>;
 }>({} as any);
 
 type SortableHandleProps = {
 	index: number;
-	row: DataTableRow;
+	row: DataTableRow<MetadataType>;
 	overlay?: boolean;
 	style?: CSSProperties;
 } & Partial<
@@ -138,7 +138,7 @@ export const DraggableRow = ({
 	row,
 }: {
 	id: string;
-	row: DataTableRow;
+	row: DataTableRow<MetadataType>;
 }) => {
 	const {
 		attributes,
@@ -170,7 +170,7 @@ export const DraggableRow = ({
 	});
 };
 
-export const getId = (row: DataTableRow) => {
+export const getId = (row: DataTableRow<MetadataType>) => {
 	// string rather than string | number because 0 as an ID doesn't work, and that's more likely than an empty string!
 	return String(row.key);
 };
@@ -191,7 +191,7 @@ export const SortableContextWrappers = ({
 	onChange: (a: { oldIndex: number; newIndex: number }) => void;
 	onSwap: (index1: number, index2: number) => void;
 	renderRow: (props: RenderRowProps) => ReactNode;
-	rows: DataTableRow[];
+	rows: DataTableRow<MetadataType>[];
 	tableRef: RefObject<HTMLTableElement | null>;
 }) => {
 	const [draggedIndex, setDraggedIndex] = useState<number | undefined>(

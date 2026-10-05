@@ -72,7 +72,7 @@ const Most = ({
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map((p, i) => {
+	const rows: DataTableRow<"player">[] = players.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 
 		const draftPick =

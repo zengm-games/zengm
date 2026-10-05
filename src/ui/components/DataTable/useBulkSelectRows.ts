@@ -1,9 +1,26 @@
 import { useCallback, useState } from "react";
-import type { DataTableRow, DataTableRowMetadata } from "./index.tsx";
+import type {
+	DataTableRow,
+	DataTableRowMetadata,
+	MetadataType,
+} from "./index.tsx";
 
-export const useSelectedRows = () => {
-	type Key = DataTableRow["key"];
-	type Metadata = DataTableRowMetadata;
+type Key = DataTableRow["key"];
+
+export type SelectedRows<Type extends MetadataType = undefined> = {
+	// These are methods rather than function properties so that SelectedRows with a specific type of metadata can be passed to the internal parts of DataTable that work with any type of metadata
+	clear(): void;
+	delete(key: Key): void;
+	deleteAll(keys: Iterable<Key>): void;
+	map: Map<Key, DataTableRowMetadata<Type>>;
+	toggle(key: Key, metadata: DataTableRowMetadata<Type>): void;
+	setAll(records: { key: Key; metadata: DataTableRowMetadata<Type> }[]): void;
+};
+
+export const useSelectedRows = <
+	Type extends MetadataType = undefined,
+>(): SelectedRows<Type> => {
+	type Metadata = DataTableRowMetadata<Type>;
 
 	const [map, setMap] = useState(new Map<Key, Metadata>());
 
@@ -61,21 +78,19 @@ export const useSelectedRows = () => {
 	};
 };
 
-export type SelectedRows = ReturnType<typeof useSelectedRows>;
-
-export const useBulkSelectRows = ({
+export const useBulkSelectRows = <Type extends MetadataType>({
 	alwaysShowBulkSelectRows,
 	controlledSelectedRows,
 	rows,
 }: {
 	alwaysShowBulkSelectRows?: boolean;
-	controlledSelectedRows?: SelectedRows;
-	rows: DataTableRow[];
+	controlledSelectedRows?: SelectedRows<Type>;
+	rows: DataTableRow<Type>[];
 }) => {
 	const [bulkSelectRows, setBulkSelectRows] = useState(false);
 
 	// We always need to call useSelectedRows because React, even if we are not using it
-	let selectedRows = useSelectedRows();
+	let selectedRows = useSelectedRows<Type>();
 	if (controlledSelectedRows) {
 		selectedRows = controlledSelectedRows;
 	}
@@ -84,16 +99,12 @@ export const useBulkSelectRows = ({
 	const [info, setInfo] = useState<
 		| undefined
 		| {
-				metadataType: NonNullable<DataTableRow["metadata"]>["type"];
-		  }
-		| {
-				metadataType: undefined;
+				metadataType: MetadataType;
 		  }
 	>(undefined);
 	if (info === undefined && rows.length > 0) {
 		// Setting state during render makes React immediately re-render with the new value
 		setInfo({
-			// This assumes metadata type the same in every row, no table mixing two types! Some rows having no metadata is fine though (such as drafted players during draft)
 			metadataType: rows.find((row) => row.metadata)?.metadata?.type,
 		});
 	}

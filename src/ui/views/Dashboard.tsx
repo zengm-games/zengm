@@ -6,7 +6,10 @@ import {
 	REAL_PLAYERS_INFO,
 	WEBSITE_PLAY,
 } from "../../common/constants.ts";
-import { DataTable } from "../components/DataTable/index.tsx";
+import {
+	DataTable,
+	type DataTableRow,
+} from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
@@ -230,7 +233,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		},
 	);
 
-	const rows = leagues.map((league) => {
+	const rows: DataTableRow<"league">[] = leagues.map((league) => {
 		const disabled =
 			deletingLID !== undefined ||
 			loadingLID !== undefined ||
@@ -239,7 +242,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		return {
 			key: league.lid,
 			metadata: {
-				type: "league" as const,
+				type: "league",
 				lid: league.lid,
 			},
 			data: [
@@ -399,12 +402,12 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	const pagination = rows.length > 100;
 
-	const extraBulkActions: BulkAction[] = [
+	const extraBulkActions: BulkAction<"league">[] = [
 		{
 			onClick: async (selectedRows) => {
-				const lids = Array.from(selectedRows.map.values())
-					.filter((metadata) => metadata.type === "league")
-					.map((metadata) => metadata.lid);
+				const lids = Array.from(selectedRows.map.values()).map(
+					(metadata) => metadata.lid,
+				);
 
 				const proceed = await confirm(
 					`Are you sure you want to delete ${helpers.numberWithCommas(lids.length)} ${helpers.plural("league", lids.length)}? You will permanently lose any record of all seasons, players, and games from ${lids.length === 1 ? "this league" : "these leagues"}.`,

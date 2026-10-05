@@ -89,7 +89,7 @@ const NegotiationList = ({
 		},
 	);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		const negotiateButtons = (
 			<NegotiateButtons
 				canGoOverCap={salaryCapType === "none" || salaryCapType === "soft"}

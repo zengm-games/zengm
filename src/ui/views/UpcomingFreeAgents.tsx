@@ -62,7 +62,7 @@ const UpcomingFreeAgents = ({
 	cols[6 + stats.length]!.title = "Your Team";
 	cols[7 + stats.length]!.title = "Current Team";
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {

@@ -664,7 +664,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		rendered.seasonStart === currentSeason;
 
 	// useMemo because this is slow, don't want to run it on every unrelated state change
-	const rows = useMemo<DataTableRow[] | undefined>(() => {
+	const rows = useMemo<DataTableRow<"player">[] | undefined>(() => {
 		return rendered.players?.map((p, i) => {
 			const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 

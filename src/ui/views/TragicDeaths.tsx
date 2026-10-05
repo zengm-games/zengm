@@ -52,7 +52,7 @@ const TragicDeaths = ({ players, stats }: View<"tragicDeaths">) => {
 		"Details",
 	]);
 
-	const rows: DataTableRow[] = players.map((p, i) => {
+	const rows: DataTableRow<"player">[] = players.map((p, i) => {
 		const lastRatings = last(p.ratings);
 		const lastStats = p.stats.at(-1);
 

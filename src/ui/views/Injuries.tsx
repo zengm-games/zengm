@@ -42,7 +42,7 @@ const Injuries = ({ abbrev, injuries, season, stats }: View<"injuries">) => {
 
 	const numericSeason = typeof season === "number" ? season : currentSeason;
 
-	const rows: DataTableRow[] = injuries.map((p, i) => {
+	const rows: DataTableRow<"player">[] = injuries.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return {

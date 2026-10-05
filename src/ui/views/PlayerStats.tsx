@@ -127,7 +127,7 @@ const PlayerStats = ({
 		});
 	}
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		// HACKS to show right stats, info
 		let actualAbbrev;
 		let actualTid;

@@ -239,7 +239,7 @@ const FreeAgents = ({
 		freeAgencySeason +
 		(season === "current" && phase < PHASE.FREE_AGENCY ? 1 : 0);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {

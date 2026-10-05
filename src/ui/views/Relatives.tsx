@@ -70,7 +70,7 @@ const Relatives = ({ pid, players, stats }: View<"relatives">) => {
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		const relationArray: (string | undefined)[] = [];
 		if (target) {
 			relationArray.push(p.relationText);

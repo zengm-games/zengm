@@ -58,7 +58,7 @@ const AwardsRecords = ({
 		},
 	);
 
-	const rows: DataTableRow[] = awardsRecords.map((a) => {
+	const rows: DataTableRow<"player">[] = awardsRecords.map((a) => {
 		const yearsGrouped = Object.groupBy(a.years, (row) => row.team) as YearInfo;
 
 		return {

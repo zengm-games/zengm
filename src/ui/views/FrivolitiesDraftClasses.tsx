@@ -52,7 +52,7 @@ const FrivolitiesDraftClasses = ({
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = draftClasses.map((draftClass, i) => {
+	const rows: DataTableRow<"player">[] = draftClasses.map((draftClass, i) => {
 		const p = draftClass.bestPlayer;
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 

@@ -1,4 +1,4 @@
-import type { DataTableRow, Props } from "./index.tsx";
+import type { DataTableRow, MetadataType, Props } from "./index.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 import { orderBy } from "../../../common/utils.ts";
 import createFilterFunction from "./createFilterFunction.ts";
@@ -13,7 +13,7 @@ export const processRows = ({
 	state,
 }: {
 	state: State;
-} & Pick<Props, "cols" | "rankCol" | "rows">) => {
+} & Pick<Props<MetadataType>, "cols" | "rankCol" | "rows">) => {
 	const filterFunctions = state.enableFilters
 		? state.filters.map((filter, i) =>
 				createFilterFunction(
@@ -77,15 +77,17 @@ export const processRows = ({
 	if (state.sortBys === undefined) {
 		rowsOrdered = rowsFiltered;
 	} else {
-		const sortKeys = state.sortBys.map((sortBy) => (row: DataTableRow) => {
-			let i = sortBy[0];
+		const sortKeys = state.sortBys.map(
+			(sortBy) => (row: DataTableRow<MetadataType>) => {
+				let i = sortBy[0];
 
-			if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
-				i = 0;
-			}
+				if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
+					i = 0;
+				}
 
-			return getSortVal(row.data[i], cols[i]!.sortType);
-		});
+				return getSortVal(row.data[i], cols[i]!.sortType);
+			},
+		);
 
 		rowsOrdered = orderBy(
 			rowsFiltered,

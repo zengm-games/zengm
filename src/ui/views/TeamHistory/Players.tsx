@@ -93,7 +93,7 @@ const Players = ({
 		cols.pop();
 	}
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		const { retirableJerseyNumbers } = p;
 
 		const canRetireJerseyNumber =

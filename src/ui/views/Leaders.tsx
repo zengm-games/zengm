@@ -106,7 +106,7 @@ const Leaders = ({
 						const title = cat.titleOverride ?? statCol.desc ?? "???";
 						const desc = cat.titleOverride ? statCol.desc : undefined;
 
-						const rows: DataTableRow[] = cat.leaders.map((p, j) => {
+						const rows: DataTableRow<"player">[] = cat.leaders.map((p, j) => {
 							const numericSeason =
 								season === "career"
 									? undefined

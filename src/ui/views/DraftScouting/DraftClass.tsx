@@ -30,7 +30,7 @@ const DraftClass = ({
 
 	const cols = getCols(["#", "Name", "Pos", "Age", "Ovr", "Pot"]);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {

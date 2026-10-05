@@ -257,7 +257,7 @@ const Roster = ({
 	// Sort by pos for non-basketball sports
 	const defaultSortCol = 1;
 
-	const rows: DataTableRow[] = playersSorted.map((p, i) => {
+	const rows: DataTableRow<"player">[] = playersSorted.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return {
@@ -434,11 +434,11 @@ const Roster = ({
 											},
 										);
 										if (proceed) {
-											const pids = Array.from(selectedRows.map.values())
-												.filter((metadata) => metadata.type === "player")
-												.map((metadata) => {
+											const pids = Array.from(selectedRows.map.values()).map(
+												(metadata) => {
 													return metadata.pid;
-												});
+												},
+											);
 											const errorMsg = await toWorker("main", "releasePlayer", {
 												pids,
 											});
@@ -456,7 +456,7 @@ const Roster = ({
 									text: "Release",
 									textLong: "Release players",
 								},
-							] as BulkAction[])
+							] as BulkAction<"player">[])
 						: []),
 					...(showTradeFor || showTradingBlock
 						? ([
@@ -466,7 +466,6 @@ const Roster = ({
 
 										const playersByPid = groupByUnique(players, "pid");
 										const pids = Array.from(selectedRows.map.values())
-											.filter((metadata) => metadata.type === "player")
 											.map((metadata) => {
 												return metadata.pid;
 											})
@@ -505,7 +504,7 @@ const Roster = ({
 										? "Trade for players"
 										: "Trade away players",
 								},
-							] as BulkAction[])
+							] as BulkAction<"player">[])
 						: []),
 				]}
 				name="Roster"

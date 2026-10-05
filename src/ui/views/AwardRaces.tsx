@@ -68,7 +68,7 @@ const getRows = ({
 } & Pick<View<"awardRaces">, "season" | "teams">) => {
 	const { mip, rookie, players, stats } = award;
 
-	const rows: DataTableRow[] = players.map((p, j) => {
+	const rows: DataTableRow<"player">[] = players.map((p, j) => {
 		const ps = p.currentStats;
 		const pr = p.ratings.findLast((row) => row.season === season);
 

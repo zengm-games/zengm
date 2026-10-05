@@ -82,7 +82,7 @@ export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 		),
 	];
 
-	const selectedRows = useSelectedRows();
+	const selectedRows = useSelectedRows<"row">();
 
 	const links = (
 		<MoreLinks
@@ -141,11 +141,11 @@ export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 
 	const disableButtons = status !== undefined && status !== "success";
 
-	const metadata: DataTableRow["metadata"] = {
+	const metadata: DataTableRow<"row">["metadata"] = {
 		type: "row",
 	};
 
-	const rows: DataTableRow[] = players.map((player, i) => {
+	const rows: DataTableRow<"row">[] = players.map((player, i) => {
 		const {
 			p,
 			contractAmount,

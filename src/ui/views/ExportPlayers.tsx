@@ -96,8 +96,8 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 		dropdownFields: { seasons: season },
 	});
 
-	const selectedRows = useSelectedRows();
-	const selectedRows2 = useSelectedRows();
+	const selectedRows = useSelectedRows<"player">();
+	const selectedRows2 = useSelectedRows<"player">();
 
 	// When we switch to a new season of players, clear any checkboxes because some might not exist in the new season
 	// clearSelectedRows is for eslint
@@ -145,7 +145,7 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 
 	const selectedPids = new Set(selected.map(({ p }) => p.pid));
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -171,7 +171,7 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 		};
 	});
 
-	const rows2: DataTableRow[] = selected.map(({ p }, i) => {
+	const rows2: DataTableRow<"player">[] = selected.map(({ p }, i) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -239,7 +239,6 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 								);
 								const newSelectedPids = new Set(
 									Array.from(selectedRows.map.values())
-										.filter((metadata) => metadata.type === "player")
 										.filter((p) => !currentSelectedPids.has(p.pid))
 										.map((p) => p.pid),
 								);
@@ -324,9 +323,7 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 									className="btn btn-secondary"
 									onClick={() => {
 										const pidsToRemove = new Set(
-											Array.from(selectedRows2.map.values())
-												.filter((metadata) => metadata.type === "player")
-												.map((p) => p.pid),
+											Array.from(selectedRows2.map.values()).map((p) => p.pid),
 										);
 										setSelected(
 											selected.filter((p) => !pidsToRemove.has(p.p.pid)),

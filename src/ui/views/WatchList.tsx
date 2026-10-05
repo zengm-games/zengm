@@ -125,7 +125,7 @@ export const getWatchListColsAndRows = ({
 		},
 	);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		let contract;
 		let exp = null;
 		if (p.tid === PLAYER.RETIRED) {

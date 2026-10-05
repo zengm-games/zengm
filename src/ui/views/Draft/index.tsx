@@ -167,7 +167,7 @@ const Draft = ({
 		colsUndrafted.splice(3, 0, ...getCols(["Team"]));
 	}
 
-	const rowsUndrafted: DataTableRow[] = undrafted.map((p) => {
+	const rowsUndrafted: DataTableRow<"player">[] = undrafted.map((p) => {
 		const data: DataTableRow["data"] = [
 			p.rank,
 			wrappedPlayerNameLabels({
@@ -251,7 +251,7 @@ const Draft = ({
 		colsDrafted.splice(2, 0, getCol("From"));
 	}
 
-	const rowsDrafted: DataTableRow[] = draftedSorted.map((p) => {
+	const rowsDrafted: DataTableRow<"player">[] = draftedSorted.map((p) => {
 		// Team before the draft, for fantasy/expansion drafts
 		const prevAbbrev = isDraftedPlayer(p) ? p.prevAbbrev : undefined;
 		const prevTid = isDraftedPlayer(p) ? p.prevTid : undefined;

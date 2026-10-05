@@ -123,7 +123,7 @@ const DraftedPlayersTable = ({
 		},
 	);
 
-	const rows: DataTableRow[] = picks.map((pick, i) => {
+	const rows: DataTableRow<"player">[] = picks.map((pick, i) => {
 		return {
 			key: `${pick.p.pid ?? pick.p.srID ?? i}-${i}`,
 			metadata:

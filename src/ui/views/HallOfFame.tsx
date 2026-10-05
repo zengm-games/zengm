@@ -41,7 +41,7 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {

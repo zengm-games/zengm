@@ -247,7 +247,7 @@ const Depth = ({
 		overrides,
 	);
 
-	const rows: DataTableRow[] = playersSorted.map((p, i) => {
+	const rows: DataTableRow<"player">[] = playersSorted.map((p, i) => {
 		let highlightPosOvr: string | undefined;
 		if (__SPORT === "hockey" && pos === "F" && i < numLines * numStarters) {
 			highlightPosOvr = i % numStarters === 0 ? "C" : "W";

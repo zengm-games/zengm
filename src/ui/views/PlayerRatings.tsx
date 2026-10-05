@@ -63,7 +63,7 @@ const PlayerRatings = ({
 		...ovrsPotsColNames,
 	]);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		const ovrsPotsRatings: (number | null)[] = [];

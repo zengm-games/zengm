@@ -55,7 +55,7 @@ const LeadersYears = ({
 
 	const totals = statType === "totals";
 
-	const rows: DataTableRow[] = allLeaders.map(
+	const rows: DataTableRow<"player">[] = allLeaders.map(
 		({ season, leaders, linkSeason }) => {
 			return {
 				key: season,

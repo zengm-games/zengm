@@ -82,3 +82,62 @@ for (const playIn of [true, false]) {
 		});
 	}
 }
+
+test("teams that already clinched can't change", async () => {
+	g.setWithoutSavingToDB("playIn", false);
+
+	// All teams are projected to be about the same, but one has already won enough games to be the best team and one has already lost enough to be the worst
+	const teams = getTeams().map((t) => {
+		return {
+			...t,
+			winp: 0.5,
+			winpMin: 0.3,
+			winpMax: 0.7,
+		};
+	});
+	teams[3] = {
+		...teams[3]!,
+		winp: 0.8,
+		winpMin: 0.75,
+		winpMax: 0.85,
+	};
+	teams[4] = {
+		...teams[4]!,
+		winp: 0.2,
+		winpMin: 0.15,
+		winpMax: 0.25,
+	};
+
+	const probs = await getFirstRoundSlotProbs({
+		teams,
+		draftType: "nba2019",
+		numSims: NUM_SIMS,
+	});
+
+	assert.strictEqual(probs.get(teams[3]!.tid)!.at(-1), 1);
+	assert.strictEqual(probs.get(teams[4]!.tid)![0], 1);
+});
+
+test("teams with no draft pick are not in the draft order", async () => {
+	g.setWithoutSavingToDB("playIn", false);
+
+	const teams = getTeams().map((t, i) => {
+		return {
+			...t,
+			noDraftPick: i === 0,
+		};
+	});
+
+	const probs = await getFirstRoundSlotProbs({
+		teams,
+		draftType: "nba2019",
+		numSims: NUM_SIMS,
+	});
+
+	assert.strictEqual(probs.size, teams.length - 1);
+	assert.isFalse(probs.has(teams[0]!.tid));
+	for (const row of probs.values()) {
+		assert.strictEqual(row.length, teams.length - 1);
+		assert.closeTo(sum(row), 1, 1e-9);
+	}
+});

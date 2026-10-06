@@ -1,5 +1,5 @@
 import type { DraftType, PlayInTournament } from "../../../common/types.ts";
-import { g } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
 import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
 import { getFirstRoundTeams, getNba2027PlayIn } from "./getTeamsByRound.ts";
@@ -84,7 +84,7 @@ const simPlayIn = (playIn: PlayInTournament, getUniform: () => number) => {
 /**
  * Before the regular season is over, we don't know the order of teams going into the draft lottery. This estimates it by simulating the rest of the season many times, using the real rules for playoff qualification and draft order.
  *
- * Returns the probability of each team being in each slot of the first round order before the lottery (so index 0 is the team with the best lottery odds).
+ * Returns the probability of each team being in each slot of the first round order before the lottery (so index 0 is the team with the best lottery odds). Teams with no draft pick are not included.
  */
 export const getFirstRoundSlotProbs = async ({
 	teams,
@@ -99,6 +99,13 @@ export const getFirstRoundSlotProbs = async ({
 		// Projected final winning percentage, and uncertainty in it
 		winp: number;
 		winpStd: number;
+
+		// Lowest and highest possible final winning percentage, based on games already played
+		winpMin?: number;
+		winpMax?: number;
+
+		// For challengeNoDraftPicks. These teams still affect who makes the playoffs, but they are not in the draft order
+		noDraftPick?: boolean;
 	}[];
 	draftType: DraftType;
 	numSims?: number;
@@ -141,18 +148,25 @@ export const getFirstRoundSlotProbs = async ({
 		};
 	});
 
+	const simTeamsWithPicks = simTeams.filter((t, i) => !teams[i]!.noDraftPick);
+	const numSlots = simTeamsWithPicks.length;
+
 	const indexesByTid = new Map<number, number>();
 	const counts: number[][] = [];
 	for (const [i, t] of teams.entries()) {
 		indexesByTid.set(t.tid, i);
-		counts.push(new Array(numTeams).fill(0));
+		counts.push(new Array(numSlots).fill(0));
 	}
 
 	for (let sim = 0; sim < numSims; sim++) {
 		for (let i = 0; i < numTeams; i++) {
 			const t = teams[i]!;
 			const seasonAttrs = simTeams[i]!.seasonAttrs;
-			const winp = t.winp + t.winpStd * normals[sim * numTeams + i]!;
+			const winp = helpers.bound(
+				t.winp + t.winpStd * normals[sim * numTeams + i]!,
+				t.winpMin ?? -Infinity,
+				t.winpMax ?? Infinity,
+			);
 			seasonAttrs.winp = winp;
 			seasonAttrs.won = winp * numGames;
 			seasonAttrs.lost = numGames - seasonAttrs.won;
@@ -180,7 +194,7 @@ export const getFirstRoundSlotProbs = async ({
 
 		const { firstRound } = await getFirstRoundTeams({
 			allTeams: simTeams,
-			teams: simTeams,
+			teams: simTeamsWithPicks,
 			draftType,
 			tidPlayoffs,
 			nba2027PlayIn:
@@ -197,10 +211,12 @@ export const getFirstRoundSlotProbs = async ({
 
 	const probs = new Map<number, number[]>();
 	for (const [i, t] of teams.entries()) {
-		probs.set(
-			t.tid,
-			counts[i]!.map((count) => count / numSims),
-		);
+		if (!t.noDraftPick) {
+			probs.set(
+				t.tid,
+				counts[i]!.map((count) => count / numSims),
+			);
+		}
 	}
 
 	return probs;

@@ -1,3 +1,4 @@
+import { makeSeededRandom, realGauss } from "../../../common/random.ts";
 import type { DraftType, PlayInTournament } from "../../../common/types.ts";
 import { g, helpers } from "../../util/index.ts";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
@@ -13,16 +14,6 @@ const DEFAULT_NUM_SIMS = 2000;
 
 // Upper bound on play-in games per simulated season (3 per conference)
 const MAX_PLAY_IN_GAMES = 48;
-
-// Small seeded random number generator (mulberry32), returns numbers in [0, 1)
-const makeRandom = (seed: number) => {
-	return () => {
-		seed = (seed + 0x6d2b79f5) | 0;
-		let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-	};
-};
 
 // The random numbers are always the same, so the same inputs always produce the same output. Otherwise the value of a draft pick would change every time it's evaluated.
 let randomNumbersCache:
@@ -41,14 +32,11 @@ const getRandomNumbers = (numSims: number, numTeams: number) => {
 		return randomNumbersCache;
 	}
 
-	const random = makeRandom(1);
+	const random = makeSeededRandom(1);
 
 	const normals = new Float64Array(numSims * numTeams);
 	for (let i = 0; i < normals.length; i++) {
-		// Box-Muller transform
-		const u1 = Math.max(random(), Number.MIN_VALUE);
-		const u2 = random();
-		normals[i] = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+		normals[i] = realGauss(0, 1, random);
 	}
 
 	const uniforms = new Float64Array(numSims * MAX_PLAY_IN_GAMES);

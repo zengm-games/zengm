@@ -21,6 +21,22 @@ export const uniformSeed = (seed?: number): number => {
 };
 
 /**
+ * Makes a function that works like Math.random, except it returns the same sequence of numbers every time for a given seed.
+ *
+ * Use this when you need many reproducible random numbers. uniformSeed is for when you need just one random number determined by a seed, and it should not be replaced with this because that would change results in existing leagues.
+ *
+ * This is the mulberry32 algorithm. The seed is truncated to an integer.
+ */
+export const makeSeededRandom = (seed: number) => {
+	return () => {
+		seed = (seed + 0x6d2b79f5) | 0;
+		let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	};
+};
+
+/**
  * Choose a random integer from [a, b]
  *
  * @memberOf util.random
@@ -93,16 +109,21 @@ export const gauss = (mu: number = 0, sigma: number = 1): number => {
  * @memberOf util.random
  * @param {number} mu Mean (default: 0).
  * @param {number} sigma Standard deviation (default: 1).
+ * @param {function} random Source of uniform random numbers in [0, 1), for when the results need to be reproducible (default: Math.random).
  * @return {number} Random number from Gaussian distribution.
  */
-export const realGauss = (mu: number = 0, sigma: number = 1): number => {
+export const realGauss = (
+	mu: number = 0,
+	sigma: number = 1,
+	random: () => number = Math.random,
+): number => {
 	let radius;
 	let z1;
 	let z2;
 
 	do {
-		z1 = 2 * Math.random() - 1;
-		z2 = 2 * Math.random() - 1;
+		z1 = 2 * random() - 1;
+		z2 = 2 * random() - 1;
 		radius = z1 * z1 + z2 * z2;
 	} while (radius >= 1 || radius === 0); // only use inside the unit circle
 

@@ -374,11 +374,20 @@ const getPickNumber = async (
 		seasons += 0.5;
 	}
 
-	// Weighted average of slot and regressionTarget. No rounding, because rounding can result in a better team having a more valuable pick
-	const regressedSlot =
-		(slot * (5 - seasons)) / 5 + (regressionTarget * seasons) / 5;
+	// regressionTarget is a pick, so do the regression on the pick this slot gets. They're only different if the best team picks first
+	const reverse = getRoundOrderRule(g.get("draftType"), dp.round) === "reverse";
+	const projectedPick = reverse ? numPicksPerRound + 1 - slot : slot;
 
-	let estPick = regressedSlot;
+	// Weighted average of projectedPick and regressionTarget. No rounding, because rounding can result in a better team having a more valuable pick
+	const regressedPick =
+		(projectedPick * (5 - seasons)) / 5 + (regressionTarget * seasons) / 5;
+
+	// Convert back to a slot, since bias is applied to the slot
+	const regressedSlot = reverse
+		? numPicksPerRound + 1 - regressedPick
+		: regressedPick;
+
+	let estPick = regressedPick;
 	if (tradeWithUser && seasons > 0) {
 		if (usersPick) {
 			// Penalty for user draft picks
@@ -404,7 +413,7 @@ const getPickNumber = async (
 		slot,
 		tradeShift: cachedSlot !== undefined ? slot - cachedSlot : 0,
 		bias: regressedSlot - slot,
-		userTradeShift: estPick - regressedSlot,
+		userTradeShift: estPick - regressedPick,
 	};
 };
 
@@ -557,11 +566,7 @@ const getSlotProbs = async (
 	dp: DraftPick,
 	pickNumber: Extract<PickNumber, { type: "projected" }>,
 ) => {
-	// If the best team picks first, then this needs to go in the opposite direction to have the same effect
-	let shift =
-		getRoundOrderRule(g.get("draftType"), dp.round) === "reverse"
-			? -pickNumber.bias
-			: pickNumber.bias;
+	let shift = pickNumber.bias;
 
 	// After the first round the differences between picks are small, so it's not worth worrying about uncertainty
 	let slotProbs;
@@ -648,7 +653,13 @@ const getPickInfo = async (
 		g.get("phase") >= PHASE.PLAYOFFS
 	) {
 		cache.currentFirstRoundPickProbs ??= getCurrentFirstRoundPickProbs();
-		currentPickProbs = (await cache.currentFirstRoundPickProbs)?.get(dp.dpid);
+		try {
+			currentPickProbs = (await cache.currentFirstRoundPickProbs)?.get(dp.dpid);
+		} catch (error) {
+			// Don't keep a rejected promise in the cache, so the next call tries again
+			cache.currentFirstRoundPickProbs = undefined;
+			throw error;
+		}
 	}
 
 	let estPick;

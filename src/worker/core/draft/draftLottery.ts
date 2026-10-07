@@ -490,12 +490,9 @@ export const getDraftLotteryProbs = (
 
 				// Place all remaining undrawn teams into the remaining slots in strict standings order
 				let skippedPicksByPriorClasses = 0;
-				for (const [equivalenceClass, skipSize] of Iterator.zip(
-					[equivalenceClasses, skipped],
-					{
-						mode: "strict",
-					},
-				)) {
+				for (let i = 0; i < equivalenceClasses.length; i++) {
+					const equivalenceClass = equivalenceClasses[i]!;
+					const skipSize = skipped[i]!;
 					const classSize = equivalenceClass.teamIndices.length;
 					const probNotPicked = (classSize - skipSize) / classSize;
 
@@ -602,12 +599,10 @@ export const getDraftLotteryProbs = (
 			}
 
 			// Use the first active team per class
-			for (const [equivalenceClass, activeTeams, classProb] of Iterator.zip(
-				[equivalenceClasses, activeTeamsPerClass, classProbs],
-				{
-					mode: "strict",
-				},
-			)) {
+			for (let i = 0; i < equivalenceClasses.length; i++) {
+				const equivalenceClass = equivalenceClasses[i]!;
+				const activeTeams = activeTeamsPerClass[i]!;
+				const classProb = classProbs[i]!;
 				const repTeamIdx = activeTeams[0];
 				if (repTeamIdx === undefined) {
 					continue;

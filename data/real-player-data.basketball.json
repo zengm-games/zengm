@@ -172769,6 +172769,12 @@
     ],
     "hukpoar01": [
       {
+        "gamesRemaining": 150,
+        "phase": 0,
+        "season": 2027,
+        "type": "Injured"
+      },
+      {
         "gamesRemaining": 40,
         "phase": 3,
         "season": 2025,
@@ -556400,24 +556406,24 @@
       "tp": 54
     },
     {
-      "diq": 27,
-      "dnk": 7,
-      "drb": 48,
-      "endu": 65,
-      "fg": 77,
-      "ft": 48,
+      "diq": 31,
+      "dnk": 11,
+      "drb": 52,
+      "endu": 69,
+      "fg": 81,
+      "ft": 52,
       "fuzz": 0,
       "hgt": 25,
-      "ins": 26,
-      "jmp": 21,
-      "oiq": 56,
-      "pss": 52,
-      "reb": 61,
+      "ins": 30,
+      "jmp": 25,
+      "oiq": 60,
+      "pss": 56,
+      "reb": 65,
       "season": 2027,
       "slug": "nembhry01",
-      "spd": 55,
-      "stre": 29,
-      "tp": 50
+      "spd": 59,
+      "stre": 33,
+      "tp": 54
     },
     {
       "diq": 58,
@@ -772372,8 +772378,8 @@
       },
       {
         "amounts": [
-          3500000,
-          3500000
+          5030000,
+          5030000
         ],
         "exp": 2028,
         "start": 2027
@@ -772475,9 +772481,13 @@
       },
       {
         "amounts": [
-          9600000
+          40000000,
+          40000000,
+          40000000,
+          40000000,
+          40000000
         ],
-        "exp": 2027,
+        "exp": 2031,
         "start": 2027
       }
     ],
@@ -821210,11 +821220,19 @@
       {
         "amounts": [
           1862265,
-          1955377,
-          2296271
+          1955377
         ],
-        "exp": 2027,
+        "exp": 2026,
         "start": 2025
+      },
+      {
+        "amounts": [
+          8000000,
+          8000000,
+          8000000
+        ],
+        "exp": 2029,
+        "start": 2027
       }
     ],
     "sheltlo01": [
@@ -905917,7 +905935,7 @@
       },
       {
         "abbrev": "PHI",
-        "jerseyNumber": "24",
+        "jerseyNumber": "21",
         "season": 2027
       }
     ],
@@ -923293,7 +923311,7 @@
         "season": 2026
       },
       {
-        "abbrev": "MEM",
+        "abbrev": "CHI",
         "jerseyNumber": "24",
         "season": 2027
       }
@@ -965721,6 +965739,11 @@
         "abbrev": "DAL",
         "jerseyNumber": "9",
         "season": 2026
+      },
+      {
+        "abbrev": "DEN",
+        "jerseyNumber": "9",
+        "season": 2027
       }
     ],
     "nesbyty01": [

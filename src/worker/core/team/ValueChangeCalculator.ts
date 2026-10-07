@@ -7,6 +7,7 @@ import type {
 	PlayerContract,
 	PlayerInjury,
 	DraftPick,
+	Team,
 } from "../../../common/types.ts";
 import { getNumPicksPerRound } from "../trade/getPickValues.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
@@ -21,7 +22,9 @@ import {
 	getDraftLotteryProbsCached,
 	getFirstRoundSlotProbsCached,
 	getSlotPickProbsCached,
+	type ProjectedTeam,
 } from "./pickProbsCache.ts";
+import type { TeamSeasonRecord } from "./getHypotheticalTeam.ts";
 
 type Asset =
 	| {
@@ -96,48 +99,61 @@ const getEstWinPercent = ({
 const TEAM_QUALITY_STD_CURRENT_SEASON = 0.05;
 const TEAM_QUALITY_STD_FUTURE_SEASON = 0.1;
 
-// How uncertain is the projection from getEstWinPercent? Early in the season anything can happen. Late in the season there are few games left to change things, and some things can't change at all, like if a team has already clinched a playoff spot.
-const getEstWinPercentUncertainty = ({
+// What the simulation in getFirstRoundSlotProbs needs to know about a team: the results of games already played, how many games are left, and how we expect it to do in those games. Early in the season anything can happen. Late in the season there are few games left to change things, and some things can't change at all, like if a team has already clinched a playoff spot.
+const getProjectedTeam = ({
 	futureDraft,
+	noDraftPick,
+	t,
+	teamOvrWinp,
 	teamSeason,
 	wp,
 }: {
 	futureDraft: boolean;
-	teamSeason: Parameters<typeof getEstWinPercent>[0]["teamSeason"];
+	noDraftPick: boolean;
+	t: Pick<Team, "tid" | "cid" | "did">;
+	teamOvrWinp: number;
+	teamSeason: TeamSeasonRecord | undefined;
 	wp: number;
-}) => {
-	const numGames = g.get("numGames");
-
+}): ProjectedTeam => {
 	// For a future draft, the whole season is left to play
-	const gp =
-		!futureDraft && teamSeason ? helpers.getTeamSeasonGp(teamSeason) : 0;
-	const numGamesRemaining = Math.max(numGames - gp, 0);
-	const fractionRemaining = numGames > 0 ? numGamesRemaining / numGames : 0;
+	const currentTeamSeason = futureDraft ? undefined : teamSeason;
+	const gp = currentTeamSeason ? helpers.getTeamSeasonGp(currentTeamSeason) : 0;
+	const gamesLeft = Math.max(g.get("numGames") - gp, 0);
 
-	// Randomness in the results of the remaining games, which is larger in sports with fewer games. Bound wp so it never looks like a team has no chance of winning or losing a game.
-	const wpBounded = helpers.bound(wp, 0.1, 0.9);
+	// For this season, what happened so far is in currentTeamSeason, so this is just about the rest of the season. For a future season, wp already includes everything we know.
+	const winp = futureDraft ? wp : teamOvrWinp;
+
+	// Randomness in the results of the remaining games, which is larger when there are fewer games. Bound winp so it never looks like a team has no chance of winning or losing a game.
+	const winpBounded = helpers.bound(winp, 0.1, 0.9);
 	const varianceGames =
-		numGames > 0
-			? (wpBounded * (1 - wpBounded) * numGamesRemaining) / numGames ** 2
-			: 0;
+		gamesLeft > 0 ? (winpBounded * (1 - winpBounded)) / gamesLeft : 0;
 
-	const stdTeamQuality =
-		(futureDraft
-			? TEAM_QUALITY_STD_FUTURE_SEASON
-			: TEAM_QUALITY_STD_CURRENT_SEASON) * fractionRemaining;
-
-	// Results of games already played can't change
-	let wpMin;
-	let wpMax;
-	if (teamSeason && gp > 0 && numGames > 0) {
-		wpMin = (helpers.calcWinp(teamSeason) * gp) / numGames;
-		wpMax = wpMin + fractionRemaining;
-	}
+	const stdTeamQuality = futureDraft
+		? TEAM_QUALITY_STD_FUTURE_SEASON
+		: TEAM_QUALITY_STD_CURRENT_SEASON;
 
 	return {
-		wpStd: Math.sqrt(varianceGames + stdTeamQuality ** 2),
-		wpMin,
-		wpMax,
+		teamSeason: {
+			tid: t.tid,
+			cid: currentTeamSeason?.cid ?? t.cid,
+			did: currentTeamSeason?.did ?? t.did,
+			won: currentTeamSeason?.won ?? 0,
+			lost: currentTeamSeason?.lost ?? 0,
+			otl: currentTeamSeason?.otl ?? 0,
+			tied: currentTeamSeason?.tied ?? 0,
+			wonDiv: currentTeamSeason?.wonDiv ?? 0,
+			lostDiv: currentTeamSeason?.lostDiv ?? 0,
+			otlDiv: currentTeamSeason?.otlDiv ?? 0,
+			tiedDiv: currentTeamSeason?.tiedDiv ?? 0,
+			wonConf: currentTeamSeason?.wonConf ?? 0,
+			lostConf: currentTeamSeason?.lostConf ?? 0,
+			otlConf: currentTeamSeason?.otlConf ?? 0,
+			tiedConf: currentTeamSeason?.tiedConf ?? 0,
+		},
+		gamesLeft,
+		winp,
+		winpStd: Math.sqrt(varianceGames + stdTeamQuality ** 2),
+		noDraftPick,
 	};
 };
 
@@ -426,7 +442,7 @@ const getPickTradeValue = (
 
 // Number of teams in the order going into the draft
 const getNumSlots = (cache: ValueChangeCache) => {
-	return cache.wps.filter((row) => !row.noDraftPick).length;
+	return cache.wps.filter((row) => !row.projectedTeam.noDraftPick).length;
 };
 
 // After the regular season is over, we don't need to project where teams will be going into the draft, we can just look. This returns the probability of each pick in the first round, for each first round pick in this season's draft. Keys are dpid, and arrays are 0 indexed (so index 0 is the 1st pick).
@@ -495,18 +511,7 @@ const getCurrentFirstRoundPickProbs = async () => {
 
 const getSimulatedSlotProbs = (pickEstimates: PickEstimates) => {
 	pickEstimates.firstRoundSlotProbs ??= getFirstRoundSlotProbsCached(
-		pickEstimates.wps.map((row) => {
-			return {
-				tid: row.tid,
-				cid: row.cid,
-				did: row.did,
-				winp: row.wp,
-				winpStd: row.wpStd,
-				winpMin: row.wpMin,
-				winpMax: row.wpMax,
-				noDraftPick: row.noDraftPick,
-			};
-		}),
+		pickEstimates.wps.map((row) => row.projectedTeam),
 	);
 
 	return pickEstimates.firstRoundSlotProbs;
@@ -935,9 +940,7 @@ export const getEstPicks = async (
 		}
 
 		return {
-			tid: t.tid,
-			cid: t.cid,
-			did: t.did,
+			t,
 			noDraftPick:
 				g.get("challengeNoDraftPicks") && g.get("userTids").includes(t.tid),
 			// 25% to 75% based on rank
@@ -948,19 +951,21 @@ export const getEstPicks = async (
 
 	// Estimate the order of the picks by team
 	const getPickEstimates = (futureDraft: boolean): PickEstimates => {
-		const wps = teamInfos.map(
-			({ tid, cid, did, noDraftPick, teamOvrWinp, teamSeason }) => {
-				const wp = getEstWinPercent({ futureDraft, teamOvrWinp, teamSeason });
-				return {
-					tid,
-					cid,
-					did,
+		const wps = teamInfos.map(({ t, noDraftPick, teamOvrWinp, teamSeason }) => {
+			const wp = getEstWinPercent({ futureDraft, teamOvrWinp, teamSeason });
+			return {
+				tid: t.tid,
+				wp,
+				projectedTeam: getProjectedTeam({
+					futureDraft,
 					noDraftPick,
+					t,
+					teamOvrWinp,
+					teamSeason,
 					wp,
-					...getEstWinPercentUncertainty({ futureDraft, teamSeason, wp }),
-				};
-			},
-		);
+				}),
+			};
+		});
 
 		// Get rank order of wps http://stackoverflow.com/a/14834599/786644
 		wps.sort((a, b) => a.wp - b.wp);
@@ -989,15 +994,10 @@ type PickEstimates = {
 	estPicks: Record<number, number>;
 	wps: {
 		tid: number;
-		cid: number;
-		did: number;
 		wp: number;
-		wpStd: number;
-		wpMin: number | undefined;
-		wpMax: number | undefined;
 
-		// For challengeNoDraftPicks
-		noDraftPick: boolean;
+		// Same team, in the format needed for getFirstRoundSlotProbs
+		projectedTeam: ProjectedTeam;
 	}[];
 
 	// Filled in only when needed, since it's slow

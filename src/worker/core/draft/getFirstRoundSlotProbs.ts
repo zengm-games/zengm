@@ -3,6 +3,10 @@ import { g, helpers } from "../../util/index.ts";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
 import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
 import { getFirstRoundTeams, getNba2027PlayIn } from "./getTeamsByRound.ts";
+import {
+	getHypotheticalTeam,
+	type TeamSeasonRecord,
+} from "../team/getHypotheticalTeam.ts";
 
 const DEFAULT_NUM_SIMS = 2000;
 
@@ -92,17 +96,15 @@ export const getFirstRoundSlotProbs = async ({
 	numSims = DEFAULT_NUM_SIMS,
 }: {
 	teams: {
-		tid: number;
-		cid: number;
-		did: number;
+		// Results of games already played this season. If this is for a future season, everything should be 0.
+		teamSeason: TeamSeasonRecord;
 
-		// Projected final winning percentage, and uncertainty in it
+		// Number of games left to play, which is all of them for a future season
+		gamesLeft: number;
+
+		// Projected winning percentage in those games, and uncertainty (standard deviation) in it
 		winp: number;
 		winpStd: number;
-
-		// Lowest and highest possible final winning percentage, based on games already played
-		winpMin?: number;
-		winpMax?: number;
 
 		// For challengeNoDraftPicks. These teams still affect who makes the playoffs, but they are not in the draft order
 		noDraftPick?: boolean;
@@ -111,69 +113,46 @@ export const getFirstRoundSlotProbs = async ({
 	numSims?: number;
 }) => {
 	const numTeams = teams.length;
-	const numGames = g.get("numGames");
+	const usePts = g.get("pointsFormula", "current") !== "";
 	const byConf = await getPlayoffsByConf(g.get("season"));
 	const { normals, uniforms } = getRandomNumbers(numSims, numTeams);
 
-	const simTeams = teams.map((t) => {
-		return {
-			tid: t.tid,
-			seasonAttrs: {
-				cid: t.cid,
-				did: t.did,
-				winp: 0,
-				pts: 0,
-				won: 0,
-				lost: 0,
-				otl: 0,
-				tied: 0,
-				wonDiv: 0,
-				lostDiv: 0,
-				otlDiv: 0,
-				tiedDiv: 0,
-				wonConf: 0,
-				lostConf: 0,
-				otlConf: 0,
-				tiedConf: 0,
-
-				// This makes all playoff teams be ordered by record, even in sports where the real draft order depends on playoff results
-				playoffRoundsWon: -1,
-			},
-			stats: {
-				playoffs: false,
-				gp: numGames,
-				pts: 0,
-				oppPts: 0,
-			},
-		};
-	});
-
-	const simTeamsWithPicks = simTeams.filter((t, i) => !teams[i]!.noDraftPick);
-	const numSlots = simTeamsWithPicks.length;
+	const numSlots = teams.filter((t) => !t.noDraftPick).length;
 
 	const indexesByTid = new Map<number, number>();
 	const counts: number[][] = [];
 	for (const [i, t] of teams.entries()) {
-		indexesByTid.set(t.tid, i);
+		indexesByTid.set(t.teamSeason.tid, i);
 		counts.push(new Array(numSlots).fill(0));
 	}
 
 	for (let sim = 0; sim < numSims; sim++) {
-		for (let i = 0; i < numTeams; i++) {
-			const t = teams[i]!;
-			const seasonAttrs = simTeams[i]!.seasonAttrs;
+		const simTeams = teams.map((t, i) => {
 			const winp = helpers.bound(
 				t.winp + t.winpStd * normals[sim * numTeams + i]!,
-				t.winpMin ?? -Infinity,
-				t.winpMax ?? Infinity,
+				0,
+				1,
 			);
-			seasonAttrs.winp = winp;
-			seasonAttrs.won = winp * numGames;
-			seasonAttrs.lost = numGames - seasonAttrs.won;
+			const won = t.gamesLeft * winp;
 
-			// Not real points, but order is the same
-			seasonAttrs.pts = seasonAttrs.won;
-		}
+			const simTeam = getHypotheticalTeam({
+				teamSeason: t.teamSeason,
+				won,
+				lost: t.gamesLeft - won,
+				usePts,
+			});
+
+			return {
+				...simTeam,
+				seasonAttrs: {
+					...simTeam.seasonAttrs,
+
+					// This makes all playoff teams be ordered by record, even in sports where the real draft order depends on playoff results
+					playoffRoundsWon: -1,
+				},
+			};
+		});
+		const simTeamsWithPicks = simTeams.filter((t, i) => !teams[i]!.noDraftPick);
 
 		const { playIns, tidPlayoffs } = await genPlayoffSeriesFromTeams(simTeams, {
 			byConf,
@@ -213,7 +192,7 @@ export const getFirstRoundSlotProbs = async ({
 	for (const [i, t] of teams.entries()) {
 		if (!t.noDraftPick) {
 			probs.set(
-				t.tid,
+				t.teamSeason.tid,
 				counts[i]!.map((count) => count / numSims),
 			);
 		}

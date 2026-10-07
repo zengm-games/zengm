@@ -6,13 +6,39 @@ import { getFirstRoundSlotProbs } from "./getFirstRoundSlotProbs.ts";
 
 const NUM_SIMS = 500;
 
-// Projected winp evenly spaced from 25% to 75%, with teams from both conferences mixed throughout
+const NUM_GAMES = 82;
+
+// Record so far this season, with some number of wins and losses
+const getTeamSeason = (
+	t: { tid: number; cid: number; did: number },
+	won: number,
+	lost: number,
+) => {
+	return {
+		tid: t.tid,
+		cid: t.cid,
+		did: t.did,
+		won,
+		lost,
+		otl: 0,
+		tied: 0,
+		wonDiv: 0,
+		lostDiv: 0,
+		otlDiv: 0,
+		tiedDiv: 0,
+		wonConf: 0,
+		lostConf: 0,
+		otlConf: 0,
+		tiedConf: 0,
+	};
+};
+
+// Before the season starts. Projected winp evenly spaced from 25% to 75%, with teams from both conferences mixed throughout
 const getTeams = () => {
 	return helpers.getTeamsDefault().map((t, i, teams) => {
 		return {
-			tid: t.tid,
-			cid: t.cid,
-			did: t.did,
+			teamSeason: getTeamSeason(t, 0, 0),
+			gamesLeft: NUM_GAMES,
 			winp: 0.25 + (0.5 * ((i * 7) % teams.length)) / (teams.length - 1),
 			winpStd: 0.08,
 		};
@@ -71,7 +97,7 @@ for (const playIn of [true, false]) {
 			// 16 teams make the playoffs, and there is a smooth transition between teams projected to make it and teams projected to miss it
 			const teamsSorted = teams.toSorted((a, b) => a.winp - b.winp);
 			const probsNoPlayoffs = teamsSorted.map((t) =>
-				sum(probs.get(t.tid)!.slice(0, 14)),
+				sum(probs.get(t.teamSeason.tid)!.slice(0, 14)),
 			);
 			assert.isAbove(probsNoPlayoffs[0]!, 0.9);
 			assert.isBelow(probsNoPlayoffs.at(-1)!, 0.1);
@@ -86,27 +112,23 @@ for (const playIn of [true, false]) {
 test("teams that already clinched can't change", async () => {
 	g.setWithoutSavingToDB("playIn", false);
 
-	// All teams are projected to be about the same, but one has already won enough games to be the best team and one has already lost enough to be the worst
-	const teams = getTeams().map((t) => {
+	// With 7 games left, all teams are about the same, except one has already won enough games to be the best team and one has already lost enough to be the worst
+	const gamesLeft = 7;
+	const teams = helpers.getTeamsDefault().map((t, i) => {
+		let won = 37;
+		if (i === 3) {
+			won = 70;
+		} else if (i === 4) {
+			won = 5;
+		}
+
 		return {
-			...t,
+			teamSeason: getTeamSeason(t, won, NUM_GAMES - gamesLeft - won),
+			gamesLeft,
 			winp: 0.5,
-			winpMin: 0.3,
-			winpMax: 0.7,
+			winpStd: 0.2,
 		};
 	});
-	teams[3] = {
-		...teams[3]!,
-		winp: 0.8,
-		winpMin: 0.75,
-		winpMax: 0.85,
-	};
-	teams[4] = {
-		...teams[4]!,
-		winp: 0.2,
-		winpMin: 0.15,
-		winpMax: 0.25,
-	};
 
 	const probs = await getFirstRoundSlotProbs({
 		teams,
@@ -114,8 +136,8 @@ test("teams that already clinched can't change", async () => {
 		numSims: NUM_SIMS,
 	});
 
-	assert.strictEqual(probs.get(teams[3]!.tid)!.at(-1), 1);
-	assert.strictEqual(probs.get(teams[4]!.tid)![0], 1);
+	assert.strictEqual(probs.get(teams[3]!.teamSeason.tid)!.at(-1), 1);
+	assert.strictEqual(probs.get(teams[4]!.teamSeason.tid)![0], 1);
 });
 
 test("teams with no draft pick are not in the draft order", async () => {
@@ -135,9 +157,47 @@ test("teams with no draft pick are not in the draft order", async () => {
 	});
 
 	assert.strictEqual(probs.size, teams.length - 1);
-	assert.isFalse(probs.has(teams[0]!.tid));
+	assert.isFalse(probs.has(teams[0]!.teamSeason.tid));
 	for (const row of probs.values()) {
 		assert.strictEqual(row.length, teams.length - 1);
 		assert.closeTo(sum(row), 1, 1e-9);
 	}
+});
+
+test("standings are based on points when there is a points formula", async () => {
+	g.setWithoutSavingToDB("playIn", false);
+
+	// Season is over. One team has the fewest wins, but with overtime losses it has more points than a few other teams
+	const teams = helpers.getTeamsDefault().map((t, i) => {
+		const teamSeason = getTeamSeason(t, 20 + i, NUM_GAMES - 20 - i);
+		if (i === 0) {
+			teamSeason.lost -= 30;
+			teamSeason.otl += 30;
+		}
+
+		return {
+			teamSeason,
+			gamesLeft: 0,
+			winp: 0.5,
+			winpStd: 0.1,
+		};
+	});
+	const tid = teams[0]!.teamSeason.tid;
+
+	const getSlot = async () => {
+		const probs = await getFirstRoundSlotProbs({
+			teams,
+			draftType: "noLottery",
+			numSims: NUM_SIMS,
+		});
+		return probs.get(tid)!.indexOf(1);
+	};
+
+	// Worst team by winning percentage
+	assert.strictEqual(await getSlot(), 0);
+
+	// 20 wins and 30 overtime losses is 70 points, same as 35 wins. So it's ahead of the 14 teams with fewer than 35 wins
+	g.setWithoutSavingToDB("pointsFormula", "2*W+OTL+T");
+	assert.isAtLeast(await getSlot(), 14);
+	g.setWithoutSavingToDB("pointsFormula", "");
 });

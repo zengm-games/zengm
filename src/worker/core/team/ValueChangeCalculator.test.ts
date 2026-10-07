@@ -205,6 +205,66 @@ describe("trading with the user", () => {
 		return -dv;
 	};
 
+	test("in a random draft, all picks are worth the same even when trading with the user", async () => {
+		g.setWithoutSavingToDB("draftType", "random");
+		const userTid = g.get("userTid");
+
+		const evaluate = async (
+			tid: number,
+			tradingPartnerTid: number,
+			dpidsAdd: number[],
+			dpidsRemove: number[],
+		) => {
+			const dv = await new ValueChangeCalculator().evaluate({
+				tid,
+				pidsAdd: [],
+				pidsRemove: [],
+				dpidsAdd,
+				dpidsRemove,
+				tradingPartnerTid,
+			});
+			return Math.abs(dv);
+		};
+
+		// A bad team and a good team, with the same strategy so they value picks the same
+		const tidBad = 2;
+		const tidGood = 27;
+		for (const tid of [tidBad, tidGood]) {
+			const t = (await idb.cache.teams.get(tid))!;
+			t.strategy = "rebuilding";
+			await idb.cache.teams.put(t);
+		}
+
+		const badWithAi = await evaluate(
+			tidBad,
+			TRADING_PARTNER_TID,
+			[],
+			[dpids[tidBad]![1]!],
+		);
+		const badWithUser = await evaluate(
+			tidBad,
+			userTid,
+			[],
+			[dpids[tidBad]![1]!],
+		);
+		const goodWithUser = await evaluate(
+			tidGood,
+			userTid,
+			[],
+			[dpids[tidGood]![1]!],
+		);
+		const badGetsUserPick = await evaluate(
+			tidBad,
+			userTid,
+			[dpids[userTid]![1]!],
+			[],
+		);
+
+		assert.closeTo(badWithUser, badWithAi, 1e-6);
+		assert.closeTo(goodWithUser, badWithAi, 1e-6);
+		assert.closeTo(badGetsUserPick, badWithAi, 1e-6);
+	});
+
 	test("AI teams value their picks more when trading with the user, even with a lottery that makes most picks similar", async () => {
 		for (const draftType of ["noLottery", "nba2019", "nba2027"] as const) {
 			const withAi = await getOwnPickValue(draftType, TRADING_PARTNER_TID);

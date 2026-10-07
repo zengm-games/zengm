@@ -669,9 +669,15 @@ const getPickInfo = async (
 		value = Math.max(MIN_PICK_VALUE, getPickValue(cache, season, estPick));
 	} else {
 		// We don't know where this pick will be, so consider all the possibilities
+		// userTradeShift is there because the user has a lot of control over where its picks wind up, and knows more than the AI about how good teams will be. Neither of those matter when the draft order is random.
+		const userTradeShift =
+			getRoundOrderRule(g.get("draftType"), dp.round) === "random"
+				? 0
+				: pickNumber.userTradeShift;
+
 		const pickProbs = shiftProbs(
 			currentPickProbs ?? (await getPickProbs(cache, dp, pickNumber)),
-			pickNumber.userTradeShift,
+			userTradeShift,
 		);
 
 		let tradeValue = 0;

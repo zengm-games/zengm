@@ -3,6 +3,7 @@ import { g, helpers } from "../../util/index.ts";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
 import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
 import { getFirstRoundTeams, getNba2027PlayIn } from "./getTeamsByRound.ts";
+import { getDivisionRanks } from "../../util/orderTeams.ts";
 import {
 	getHypotheticalTeam,
 	type TeamSeasonRecord,
@@ -114,6 +115,9 @@ export const getFirstRoundSlotProbs = async ({
 }) => {
 	const numTeams = teams.length;
 	const usePts = g.get("pointsFormula", "current") !== "";
+
+	// Division ranks only matter if division leaders get a seeding boost in the playoffs
+	const needDivisionRanks = g.get("playoffsNumTeamsDiv", "current") > 0;
 	const byConf = await getPlayoffsByConf(g.get("season"));
 	const { normals, uniforms } = getRandomNumbers(numSims, numTeams);
 
@@ -154,8 +158,16 @@ export const getFirstRoundSlotProbs = async ({
 		});
 		const simTeamsWithPicks = simTeams.filter((t, i) => !teams[i]!.noDraftPick);
 
+		// Many things below need this, so only compute it once
+		const divisionRanks = needDivisionRanks
+			? await getDivisionRanks(simTeams, simTeams, {
+					skipTiebreakers: true,
+				})
+			: undefined;
+
 		const { playIns, tidPlayoffs } = await genPlayoffSeriesFromTeams(simTeams, {
 			byConf,
+			divisionRanks,
 			skipTiebreakers: true,
 		});
 
@@ -179,6 +191,7 @@ export const getFirstRoundSlotProbs = async ({
 			nba2027PlayIn:
 				draftType === "nba2027" ? getNba2027PlayIn(playIns) : undefined,
 			orderTeamsSettings: {
+				divisionRanks,
 				skipTiebreakers: true,
 			},
 		});

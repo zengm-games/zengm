@@ -8,6 +8,9 @@ import type { DraftLotteryResult } from "../../../common/types.ts";
 
 const NUM_SIMS = 1000;
 
+// For when speed matters more than precision, like the many trades between AI teams that are evaluated while simulating games
+const NUM_SIMS_QUICK = 100;
+
 // Remembers the most recent results, including pending ones so concurrent calls don't duplicate work
 const makeCache = <T>(maxSize: number) => {
 	const cache = new Map<string, Promise<T>>();
@@ -63,14 +66,18 @@ export type ProjectedTeam = Parameters<
 const firstRoundSlotProbsCache =
 	makeCache<Awaited<ReturnType<typeof getFirstRoundSlotProbs>>>(20);
 
-export const getFirstRoundSlotProbsCached = (teams: ProjectedTeam[]) => {
-	const key = JSON.stringify([getSettingsKey(), teams]);
+export const getFirstRoundSlotProbsCached = (
+	teams: ProjectedTeam[],
+	quick: boolean,
+) => {
+	const numSims = quick ? NUM_SIMS_QUICK : NUM_SIMS;
+	const key = JSON.stringify([getSettingsKey(), numSims, teams]);
 
 	return firstRoundSlotProbsCache(key, () => {
 		return getFirstRoundSlotProbs({
 			teams,
 			draftType: g.get("draftType"),
-			numSims: NUM_SIMS,
+			numSims,
 		});
 	});
 };

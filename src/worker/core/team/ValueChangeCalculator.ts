@@ -515,9 +515,13 @@ const getCurrentFirstRoundPickProbs = async () => {
 	return pickProbs;
 };
 
-const getSimulatedSlotProbs = (pickEstimates: PickEstimates) => {
+const getSimulatedSlotProbs = (
+	pickEstimates: PickEstimates,
+	quick: boolean,
+) => {
 	pickEstimates.firstRoundSlotProbs ??= getFirstRoundSlotProbsCached(
 		pickEstimates.wps.map((row) => row.projectedTeam),
+		quick,
 	);
 
 	return pickEstimates.firstRoundSlotProbs;
@@ -563,7 +567,7 @@ const getSlotProbs = async (
 	let slotProbs;
 	if (dp.round === 1) {
 		const pickEstimates = pickNumber.futureDraft ? cache.future : cache;
-		slotProbs = (await getSimulatedSlotProbs(pickEstimates)).get(
+		slotProbs = (await getSimulatedSlotProbs(pickEstimates, cache.quick)).get(
 			dp.originalTid,
 		);
 	}
@@ -995,6 +999,9 @@ type ValueChangeCache = PickEstimates & {
 	estValues: TradePickValues;
 	future: PickEstimates;
 
+	// See ValueChangeCalculator
+	quick: boolean;
+
 	// Filled in only when needed
 	currentFirstRoundPickProbs?: ReturnType<typeof getCurrentFirstRoundPickProbs>;
 
@@ -1014,10 +1021,18 @@ type ToUpdate = {
 // tradingPartnerTid is currently just used to determine if this is a trade with the user, so additional fuzz can be applied
 export class ValueChangeCalculator {
 	private cache: ValueChangeCache | undefined;
+
+	// Less precise draft pick values, for when speed matters more
+	private quick: boolean;
+
 	private toUpdate: ToUpdate = {
 		draft: true,
 		teams: "all",
 	};
+
+	constructor({ quick = false }: { quick?: boolean } = {}) {
+		this.quick = quick;
+	}
 
 	private async init() {
 		await player.updateOvrMeanStd();
@@ -1081,6 +1096,7 @@ export class ValueChangeCalculator {
 				...(await getEstPicks(teamOvrs)),
 				currentFirstRoundPickProbs: undefined,
 				estValues,
+				quick: this.quick,
 				teamOvrs,
 			};
 		} else {

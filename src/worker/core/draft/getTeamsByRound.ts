@@ -219,14 +219,16 @@ export const getFirstRoundTeams = async <
 			}
 		} else {
 			// playoffsHockey
-			const divisionRanks = await getDivisionRanks(
-				// Pass allTeams rather than teams because there is currently a bug in getDivisionLeaders where only teams in the first arg can be selected. This works around that bug, and also will continue to work after the bug is fixed.
-				allTeams,
-				allTeams,
-				{
-					skipTiebreakers: orderTeamsSettings?.skipTiebreakers,
-				},
-			);
+			const divisionRanks =
+				orderTeamsSettings?.divisionRanks ??
+				(await getDivisionRanks(
+					// Pass allTeams rather than teams because there is currently a bug in getDivisionLeaders where only teams in the first arg can be selected. This works around that bug, and also will continue to work after the bug is fixed.
+					allTeams,
+					allTeams,
+					{
+						skipTiebreakers: orderTeamsSettings?.skipTiebreakers,
+					},
+				));
 			const divisionWinners = new Set<number>();
 			for (const [tid, rank] of divisionRanks) {
 				if (rank === 1) {

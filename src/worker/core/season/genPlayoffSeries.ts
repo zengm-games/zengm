@@ -155,10 +155,14 @@ export const genPlayoffSeriesFromTeams = async (
 	teams: MyTeam[],
 	{
 		byConf: byConfOverride,
+		divisionRanks,
 		skipTiebreakers,
 	}: {
 		// Pass this to skip looking it up, for when this is called many times
 		byConf?: ByConf;
+
+		// See orderTeams
+		divisionRanks?: Map<number, number>;
 		skipTiebreakers?: boolean;
 	} = {},
 ): Promise<{
@@ -182,7 +186,7 @@ export const genPlayoffSeriesFromTeams = async (
 	let playoffsByConf =
 		byConfOverride ?? (await getPlayoffsByConf(g.get("season")));
 
-	const orderTeamsOptions = { skipTiebreakers };
+	const orderTeamsOptions = { divisionRanks, skipTiebreakers };
 
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 

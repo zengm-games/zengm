@@ -184,3 +184,32 @@ describe("second round", () => {
 		assertAllEqual(values);
 	});
 });
+
+describe("trading with the user", () => {
+	// How much does an AI team value its own first round pick, when trading it to another team?
+	const getOwnPickValue = async (
+		draftType: DraftType,
+		tradingPartnerTid: number,
+	) => {
+		g.setWithoutSavingToDB("draftType", draftType);
+
+		const dv = await new ValueChangeCalculator().evaluate({
+			tid: TID,
+			pidsAdd: [],
+			pidsRemove: [],
+			dpidsAdd: [],
+			dpidsRemove: [dpids[TID]![1]!],
+			tradingPartnerTid,
+		});
+
+		return -dv;
+	};
+
+	test("AI teams value their picks more when trading with the user, even with a lottery that makes most picks similar", async () => {
+		for (const draftType of ["noLottery", "nba2019", "nba2027"] as const) {
+			const withAi = await getOwnPickValue(draftType, TRADING_PARTNER_TID);
+			const withUser = await getOwnPickValue(draftType, g.get("userTid"));
+			assert.isAbove(withUser, 2 * withAi, draftType);
+		}
+	});
+});

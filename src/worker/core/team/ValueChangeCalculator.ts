@@ -302,8 +302,11 @@ type PickNumber =
 			// How much this trade changed slot, which is usually 0
 			tradeShift: number;
 
-			// How much we should adjust slot by, to account for uncertainty in the future and for intentionally valuing draft picks differently when trading with the user. This is not necessarily an integer
+			// How much we should adjust slot by, to account for uncertainty in the future. This is not necessarily an integer
 			bias: number;
+
+			// When trading with the user, we intentionally value draft picks differently. This is how much to adjust the pick by, after accounting for the draft lottery or anything else that determines which pick a slot gets. It's applied to the pick rather than the slot because otherwise a draft lottery would weaken it. This is not necessarily an integer
+			userTradeShift: number;
 	  };
 
 // All numbers returned here are relative to the start of a round
@@ -372,8 +375,10 @@ const getPickNumber = async (
 	}
 
 	// Weighted average of slot and regressionTarget. No rounding, because rounding can result in a better team having a more valuable pick
-	let estPick = (slot * (5 - seasons)) / 5 + (regressionTarget * seasons) / 5;
+	const regressedSlot =
+		(slot * (5 - seasons)) / 5 + (regressionTarget * seasons) / 5;
 
+	let estPick = regressedSlot;
 	if (tradeWithUser && seasons > 0) {
 		if (usersPick) {
 			// Penalty for user draft picks
@@ -398,7 +403,8 @@ const getPickNumber = async (
 		futureDraft,
 		slot,
 		tradeShift: cachedSlot !== undefined ? slot - cachedSlot : 0,
-		bias: estPick - slot,
+		bias: regressedSlot - slot,
+		userTradeShift: estPick - regressedSlot,
 	};
 };
 
@@ -517,48 +523,28 @@ const getSimulatedSlotProbs = (pickEstimates: PickEstimates) => {
 	return pickEstimates.firstRoundSlotProbs;
 };
 
-// For each slot in the order of teams going into the draft (0 is the worst team), what do we expect from a pick in this round? Because of the draft lottery or other draft types where the worst team doesn't necessarily pick first, it's not the same as just looking at the value of the pick with the same number as the slot.
-const getSlotInfo = async (
-	cache: ValueChangeCache,
-	season: number,
-	round: number,
-) => {
-	const key = `${season}_${round}`;
-	let slotInfo = cache.slotInfo.get(key);
-	if (!slotInfo) {
-		const numSlots = getNumSlots(cache);
-		const slotPickProbs = await getSlotPickProbsCached(round, numSlots);
-		const numPicksBeforeRound = getNumPicksPerRound() * (round - 1);
-
-		const pickTradeValues: number[] = [];
-		for (let i = 0; i < numSlots; i++) {
-			pickTradeValues.push(
-				getPickTradeValue(cache, season, numPicksBeforeRound + i + 1),
-			);
-		}
-
-		slotInfo = slotPickProbs.map((probs) => {
-			let tradeValue = 0;
-			let pick = 0;
-			for (const [i, prob] of probs.entries()) {
-				if (prob > 0) {
-					tradeValue += prob * pickTradeValues[i]!;
-					pick += prob * (i + 1);
-				}
-			}
-
-			return {
-				// Expected value of pick
-				tradeValue,
-
-				// Expected pick number, relative to the start of the round
-				pick,
-			};
-		});
-		cache.slotInfo.set(key, slotInfo);
+// Move everything in probs by some number of positions, which does not need to be an integer. Anything that would go past either end of the array stays at that end.
+const shiftProbs = (probs: number[], shift: number) => {
+	if (shift === 0) {
+		return probs;
 	}
 
-	return slotInfo;
+	const maxIndex = probs.length - 1;
+	const shifted = new Array<number>(probs.length).fill(0);
+	for (const [i, prob] of probs.entries()) {
+		if (prob > 0) {
+			// If it's between two positions, split it between them
+			const index = i + shift;
+			const indexBelow = Math.floor(index);
+			const fractionAbove = index - indexBelow;
+			shifted[helpers.bound(indexBelow, 0, maxIndex)]! +=
+				prob * (1 - fractionAbove);
+			shifted[helpers.bound(indexBelow + 1, 0, maxIndex)]! +=
+				prob * fractionAbove;
+		}
+	}
+
+	return shifted;
 };
 
 // Probability of a team being in each slot in the order of teams going into the draft, where index 0 is the worst team
@@ -567,50 +553,60 @@ const getSlotProbs = async (
 	dp: DraftPick,
 	pickNumber: Extract<PickNumber, { type: "projected" }>,
 ) => {
-	const numSlots = getNumSlots(cache);
-
-	// If the best team picks first, then the adjustments for trading with the user need to go in the opposite direction to have the same effect
-	const bias =
-		typeof dp.season === "number" &&
+	// If the best team picks first, then this needs to go in the opposite direction to have the same effect
+	let shift =
 		getRoundOrderRule(g.get("draftType"), dp.round) === "reverse"
 			? -pickNumber.bias
 			: pickNumber.bias;
 
-	const slotProbs = new Array<number>(numSlots).fill(0);
-	const addProb = (slot: number, prob: number) => {
-		// -1 is to convert to 0 indexed, like slotProbs
-		const index = slot + bias - 1;
-
-		// If it's between two slots, split it between them
-		const indexBelow = Math.floor(index);
-		const fractionAbove = index - indexBelow;
-		slotProbs[helpers.bound(indexBelow, 0, numSlots - 1)]! +=
-			prob * (1 - fractionAbove);
-		slotProbs[helpers.bound(indexBelow + 1, 0, numSlots - 1)]! +=
-			prob * fractionAbove;
-	};
-
 	// After the first round the differences between picks are small, so it's not worth worrying about uncertainty
-	let simulatedSlotProbs;
+	let slotProbs;
 	if (dp.round === 1) {
 		const pickEstimates = pickNumber.futureDraft ? cache.future : cache;
-		simulatedSlotProbs = (await getSimulatedSlotProbs(pickEstimates)).get(
+		slotProbs = (await getSimulatedSlotProbs(pickEstimates)).get(
 			dp.originalTid,
 		);
 	}
 
-	if (simulatedSlotProbs) {
+	if (slotProbs) {
 		// If this trade changes where we project the team to be, shift everything by that amount
-		for (const [i, prob] of simulatedSlotProbs.entries()) {
-			if (prob > 0) {
-				addProb(i + 1 + pickNumber.tradeShift, prob);
-			}
-		}
+		shift += pickNumber.tradeShift;
 	} else {
-		addProb(pickNumber.slot, 1);
+		// No uncertainty, team is just in its projected slot. -1 is to convert to 0 indexed, like slotProbs
+		slotProbs = new Array<number>(getNumSlots(cache)).fill(0);
+		slotProbs[0] = 1;
+		shift += pickNumber.slot - 1;
 	}
 
-	return slotProbs;
+	return shiftProbs(slotProbs, shift);
+};
+
+// Probability of getting each pick in a round, where index 0 is the first pick in the round
+const getPickProbs = async (
+	cache: ValueChangeCache,
+	dp: DraftPick,
+	pickNumber: Extract<PickNumber, { type: "projected" }>,
+) => {
+	const slotProbs = await getSlotProbs(cache, dp, pickNumber);
+
+	// Because of the draft lottery or other draft types where the worst team doesn't necessarily pick first, a team's pick is not always the same as its slot
+	const slotPickProbs = await getSlotPickProbsCached(
+		dp.round,
+		slotProbs.length,
+	);
+
+	const pickProbs = new Array<number>(slotProbs.length).fill(0);
+	for (const [slotProb, probs] of Iterator.zip([slotProbs, slotPickProbs], {
+		mode: "strict",
+	})) {
+		if (slotProb > 0) {
+			for (const [i, prob] of probs.entries()) {
+				pickProbs[i]! += slotProb * prob;
+			}
+		}
+	}
+
+	return pickProbs;
 };
 
 const getPickInfo = async (
@@ -660,36 +656,27 @@ const getPickInfo = async (
 			(pickNumber.type === "known"
 				? pickNumber.pick
 				: helpers.bound(
-						Math.round(pickNumber.slot + pickNumber.bias),
+						Math.round(
+							pickNumber.slot + pickNumber.bias + pickNumber.userTradeShift,
+						),
 						1,
 						getNumPicksPerRound(),
 					));
 		value = Math.max(MIN_PICK_VALUE, getPickValue(cache, season, estPick));
-	} else if (currentPickProbs) {
-		let tradeValue = 0;
-		let pick = 0;
-		for (const [i, prob] of currentPickProbs.entries()) {
-			if (prob > 0) {
-				tradeValue += prob * getPickTradeValue(cache, season, i + 1);
-				pick += prob * (i + 1);
-			}
-		}
-
-		estPick = Math.round(pick);
-		value = tradeValueToValue(tradeValue);
 	} else {
 		// We don't know where this pick will be, so consider all the possibilities
-		const slotProbs = await getSlotProbs(cache, dp, pickNumber);
-		const slotInfo = await getSlotInfo(cache, season, dp.round);
+		const pickProbs = shiftProbs(
+			currentPickProbs ?? (await getPickProbs(cache, dp, pickNumber)),
+			pickNumber.userTradeShift,
+		);
 
 		let tradeValue = 0;
 		let pick = 0;
-		for (const [prob, info] of Iterator.zip([slotProbs, slotInfo], {
-			mode: "strict",
-		})) {
+		for (const [i, prob] of pickProbs.entries()) {
 			if (prob > 0) {
-				tradeValue += prob * info.tradeValue;
-				pick += prob * info.pick;
+				tradeValue +=
+					prob * getPickTradeValue(cache, season, numPicksBeforeRound + i + 1);
+				pick += prob * (i + 1);
 			}
 		}
 
@@ -1011,14 +998,6 @@ type ValueChangeCache = PickEstimates & {
 	// Filled in only when needed
 	currentFirstRoundPickProbs?: ReturnType<typeof getCurrentFirstRoundPickProbs>;
 
-	// Filled in only when needed, keys are from getSlotInfo
-	slotInfo: Map<
-		string,
-		{
-			tradeValue: number;
-			pick: number;
-		}[]
-	>;
 	teamOvrs: {
 		tid: number;
 		ovr: number;
@@ -1102,16 +1081,12 @@ export class ValueChangeCalculator {
 				...(await getEstPicks(teamOvrs)),
 				currentFirstRoundPickProbs: undefined,
 				estValues,
-				slotInfo: new Map(),
 				teamOvrs,
 			};
 		} else {
 			return {
 				...this.cache,
 				estValues,
-
-				// Reset because it depends on estValues
-				slotInfo: new Map(),
 			};
 		}
 	}

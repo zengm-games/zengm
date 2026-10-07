@@ -163,7 +163,8 @@ const betweenAiTeams = async () => {
 	}
 
 	if (numAttempts > 0) {
-		const valueChangeCalculator = new ValueChangeCalculator();
+		// This runs every day when simulating games, so it needs to be fast
+		const valueChangeCalculator = new ValueChangeCalculator({ quick: true });
 
 		for (let i = 0; i < numAttempts; i++) {
 			const tradeTids = await attempt(valueChangeCalculator);

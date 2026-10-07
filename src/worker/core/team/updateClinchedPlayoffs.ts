@@ -10,7 +10,7 @@ import {
 	genPlayoffSeriesFromTeams,
 	getTidPlayIns,
 } from "../season/genPlayoffSeries.ts";
-import evaluatePointsFormula from "./evaluatePointsFormula.ts";
+import { getHypotheticalTeam } from "./getHypotheticalTeam.ts";
 import { season } from "../index.ts";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
@@ -56,59 +56,18 @@ const getClinchedPlayoffs = async (
 		const worstCases = teamSeasons.map((t2) => {
 			const gamesLeft = getGamesLeft(t2.tid);
 
-			const stats = teamStats.get(t2.tid);
-
-			const worstCase = {
-				tid: t2.tid,
-				seasonAttrs: {
-					won: t2.won,
-					lost: t2.lost,
-					otl: t2.otl,
-					tied: t2.tied,
-					winp: 0,
-					pts: 0,
-					cid: t2.cid,
-					did: t2.did,
-					wonDiv: t2.wonDiv,
-					lostDiv: t2.lostDiv,
-					otlDiv: t2.otlDiv ?? 0,
-					tiedDiv: t2.tiedDiv ?? 0,
-					wonConf: t2.wonConf,
-					lostConf: t2.lostConf,
-					otlConf: t2.otlConf ?? 0,
-					tiedConf: t2.tiedConf ?? 0,
-				},
-				stats: {
-					playoffs: false,
-					pts: stats ? stats.pts : 0,
-					oppPts: stats ? stats.oppPts : 0,
-					gp: stats ? stats.gp : 0,
-				},
-			};
-
 			// Even with gamesLeft 0, we still need this with skipTiebreakers because otherwise it will be overconfident despite knowing nothing about tiebreakers
-			if (gamesLeft > 0 || skipTiebreakers) {
-				if (t2.tid === t.tid) {
-					// 0.1 extra is to simulate team losing all tie breakers
-					worstCase.seasonAttrs.lost += gamesLeft + 0.1;
-					worstCase.seasonAttrs.lostDiv += gamesLeft + 0.1;
-					worstCase.seasonAttrs.lostConf += gamesLeft + 0.1;
-				} else {
-					worstCase.seasonAttrs.won += gamesLeft;
-					worstCase.seasonAttrs.wonDiv += gamesLeft;
-					worstCase.seasonAttrs.wonConf += gamesLeft;
-				}
-			}
+			const applyGamesLeft = gamesLeft > 0 || skipTiebreakers;
 
-			if (usePts) {
-				worstCase.seasonAttrs.pts = evaluatePointsFormula(
-					worstCase.seasonAttrs,
-				);
-			} else {
-				worstCase.seasonAttrs.winp = helpers.calcWinp(worstCase.seasonAttrs);
-			}
+			return getHypotheticalTeam({
+				teamSeason: t2,
+				teamStats: teamStats.get(t2.tid),
+				won: applyGamesLeft && t2.tid !== t.tid ? gamesLeft : 0,
 
-			return worstCase;
+				// 0.1 extra is to simulate team losing all tie breakers
+				lost: applyGamesLeft && t2.tid === t.tid ? gamesLeft + 0.1 : 0,
+				usePts,
+			});
 		});
 
 		// w - clinched play-in tournament
@@ -145,59 +104,17 @@ const getClinchedPlayoffs = async (
 		if (!clinchedPlayoffs) {
 			const bestCases = teamSeasons.map((t2) => {
 				const gamesLeft = getGamesLeft(t2.tid);
+				const applyGamesLeft = gamesLeft > 0 || skipTiebreakers;
 
-				const stats = teamStats.get(t2.tid);
+				return getHypotheticalTeam({
+					teamSeason: t2,
+					teamStats: teamStats.get(t2.tid),
 
-				const bestCase = {
-					tid: t2.tid,
-					seasonAttrs: {
-						won: t2.won,
-						lost: t2.lost,
-						otl: t2.otl,
-						tied: t2.tied,
-						winp: 0,
-						pts: 0,
-						cid: t2.cid,
-						did: t2.did,
-						wonDiv: t2.wonDiv,
-						lostDiv: t2.lostDiv,
-						otlDiv: t2.otlDiv ?? 0,
-						tiedDiv: t2.tiedDiv ?? 0,
-						wonConf: t2.wonConf,
-						lostConf: t2.lostConf,
-						otlConf: t2.otlConf ?? 0,
-						tiedConf: t2.tiedConf ?? 0,
-					},
-					stats: {
-						playoffs: false,
-						pts: stats ? stats.pts : 0,
-						oppPts: stats ? stats.oppPts : 0,
-						gp: stats ? stats.gp : 0,
-					},
-				};
-
-				if (gamesLeft > 0 || skipTiebreakers) {
-					if (t2.tid === t.tid) {
-						// 0.1 extra is to simulate team winning all tie breakers
-						bestCase.seasonAttrs.won += gamesLeft + 0.1;
-						bestCase.seasonAttrs.wonDiv += gamesLeft + 0.1;
-						bestCase.seasonAttrs.wonConf += gamesLeft + 0.1;
-					} else {
-						bestCase.seasonAttrs.lost += gamesLeft;
-						bestCase.seasonAttrs.lostDiv += gamesLeft;
-						bestCase.seasonAttrs.lostConf += gamesLeft;
-					}
-				}
-
-				if (usePts) {
-					bestCase.seasonAttrs.pts = evaluatePointsFormula(
-						bestCase.seasonAttrs,
-					);
-				} else {
-					bestCase.seasonAttrs.winp = helpers.calcWinp(bestCase.seasonAttrs);
-				}
-
-				return bestCase;
+					// 0.1 extra is to simulate team winning all tie breakers
+					won: applyGamesLeft && t2.tid === t.tid ? gamesLeft + 0.1 : 0,
+					lost: applyGamesLeft && t2.tid !== t.tid ? gamesLeft : 0,
+					usePts,
+				});
 			});
 
 			const result = await genPlayoffSeriesFromTeams(bestCases, {

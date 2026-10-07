@@ -4,13 +4,7 @@ import { rolldownConfig } from "../lib/rolldownConfig.ts";
 import type { Sport } from "../lib/getSport.ts";
 import type { JsonHashes } from "../lib/jsonUrls.ts";
 
-const LODASH_BLACKLIST = [
-	/^lodash$/,
-	/^lodash-es/,
-
-	// lodash/debounce and lodash/memoize are used by visx
-	/^lodash\/(?!debounce|memoize)/,
-];
+const LODASH_BLACKLIST = [/^lodash$/, /^lodash-es/, /^lodash\//];
 
 const BLACKLIST = {
 	ui: [...LODASH_BLACKLIST, /\/worker/],

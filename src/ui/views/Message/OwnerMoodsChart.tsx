@@ -1,71 +1,18 @@
-import { AxisBottom } from "@visx/axis";
-import { curveMonotoneX } from "@visx/curve";
-import { Group } from "@visx/group";
-import { useParentSize } from "@visx/responsive";
-import { LinePath } from "@visx/shape";
-import { scaleLinear, scalePoint } from "@visx/scale";
-import { Text } from "@visx/text";
+import { defineChart, dot, lineY, ruleY, text } from "@tanstack/charts";
+import { d3Curve } from "@tanstack/charts/d3/shape";
+import { decorative } from "@tanstack/charts/mark/decorative";
+import { Chart } from "@tanstack/charts/react/tooltip";
+import { scaleLinear } from "@tanstack/charts/scales/linear";
+import { scalePoint } from "@tanstack/charts/scales/point";
+import { tooltip } from "@tanstack/charts/tooltip";
+import { curveMonotoneX } from "d3-shape";
+import { useMemo } from "react";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import type { View } from "../../../common/types.ts";
-import { Fragment, type MouseEvent } from "react";
-import { TooltipWithBounds, useTooltip } from "@visx/tooltip";
 import { helpers } from "../../util/helpers.ts";
-import { localPoint } from "@visx/event";
 
-export const ReferenceLine = ({
-	x,
-	y,
-	color,
-	text,
-	textPosition,
-}: {
-	x: [number, number];
-	y: [number, number];
-	color: string;
-	text?: string;
-	textPosition?: "above" | "below" | "right";
-}) => {
-	let textX = x[1];
-	let textY = y[1];
-
-	if (textPosition === "below") {
-		textX -= 4;
-		textY += 17;
-	} else if (textPosition === "above") {
-		textX -= 4;
-		textY -= 7;
-	} else if (textPosition === "right") {
-		textX += 5;
-		textY += 14;
-	}
-
-	return (
-		<>
-			<LinePath
-				className="chart-line"
-				data={x}
-				x={(d) => d}
-				y={(d, i) => y[i]!}
-				stroke={color}
-				strokeDasharray="5 5"
-			/>
-			{text ? (
-				<Text
-					x={textX}
-					y={textY}
-					fill={color}
-					textAnchor={
-						textPosition === "below" || textPosition === "above"
-							? "end"
-							: undefined
-					}
-				>
-					{text}
-				</Text>
-			) : null}
-		</>
-	);
-};
+export const REFERENCE_LINE_DASHARRAY = "5 5";
+export const LINE_CURVE = d3Curve(curveMonotoneX);
 
 const OwnerMoodsChart = ({
 	ownerMoods,
@@ -75,107 +22,179 @@ const OwnerMoodsChart = ({
 	>;
 }) => {
 	const MAX_WIDTH = 400;
-	const HEIGHT = 400;
+	const HEIGHT = 420;
 	const STAR_SIZE = 40;
 
-	const data = ownerMoods.map((mood) => {
-		return {
-			...mood,
-			season: String(mood.season),
-		};
-	});
-	const allValues: number[] = [];
-	const seasons: string[] = [];
-
-	for (const row of data) {
-		allValues.push(row.money, row.playoffs, row.total, row.wins);
-		seasons.push(row.season);
-	}
-
-	// totals span -1 to 3, others -3 to 1
-	const yDomain = [Math.min(-1.3, ...allValues), Math.max(3.3, ...allValues)];
-
-	const margin = {
-		top: 0,
-		right: 15,
-		bottom: 30,
-		left: 15,
-	};
-
-	const lineInfos: {
-		key: "wins" | "playoffs" | "money" | "total";
-		color: string;
-		width?: number;
-	}[] = [
-		{
-			key: "wins",
-			color: "var(--bs-danger)",
-		},
-		{
-			key: "playoffs",
-			color: "var(--bs-info)",
-		},
-		{
-			key: "money",
-			color: "var(--bs-success)",
-		},
-		{
-			key: "total",
-			color: "var(--bs-dark)",
-			width: 4,
-		},
-	];
-
-	const yScale = scaleLinear({
-		domain: yDomain,
-		range: [HEIGHT, 0],
-	});
-
-	type TooltipData = (typeof data)[number];
-
-	const {
-		tooltipData,
-		tooltipLeft,
-		tooltipTop,
-		tooltipOpen,
-		showTooltip,
-		hideTooltip,
-	} = useTooltip<TooltipData>();
-
-	const handleMouseOver = (
-		event: MouseEvent<SVGElement>,
-		datum: TooltipData,
-	) => {
-		const coords = localPoint(event.currentTarget.ownerSVGElement!, event);
-		if (coords) {
-			showTooltip({
-				tooltipLeft: coords.x,
-				tooltipTop: coords.y,
-				tooltipData: datum,
-			});
+	const definition = useMemo(() => {
+		const data = ownerMoods.map((mood) => {
+			return {
+				...mood,
+				season: String(mood.season),
+			};
+		});
+		const allValues: number[] = [];
+		for (const row of data) {
+			allValues.push(row.money, row.playoffs, row.total, row.wins);
 		}
-	};
 
-	const { parentRef, ...parent } = useParentSize();
+		// totals span -1 to 3, others -3 to 1
+		const yDomain = [Math.min(-1.3, ...allValues), Math.max(3.3, ...allValues)];
 
-	const width = parent.width - margin.left - margin.right;
-	const xScale = scalePoint({
-		domain: seasons,
-		range: [0, width],
-	});
+		const lineInfos: {
+			key: "wins" | "playoffs" | "money";
+			color: string;
+		}[] = [
+			{
+				key: "wins",
+				color: "var(--bs-danger)",
+			},
+			{
+				key: "playoffs",
+				color: "var(--bs-info)",
+			},
+			{
+				key: "money",
+				color: "var(--bs-success)",
+			},
+		];
+		const totalColor = "var(--bs-dark)";
+		const totalWidth = 4;
+
+		const lastSeason = data.at(-1)?.season;
+		const referenceLabels =
+			lastSeason === undefined
+				? []
+				: [
+						{
+							season: lastSeason,
+							y: 3,
+							label: "Perfect",
+							color: "var(--bs-success)",
+							dy: -10,
+						},
+						{
+							season: lastSeason,
+							y: -1,
+							label: "You're fired!",
+							color: "var(--bs-danger)",
+							dy: 12,
+						},
+					];
+
+		return defineChart({
+			marks: [
+				ruleY([3], {
+					stroke: "var(--bs-success)",
+					strokeOpacity: 1,
+					strokeDasharray: REFERENCE_LINE_DASHARRAY,
+				}),
+				ruleY([-1], {
+					stroke: "var(--bs-danger)",
+					strokeOpacity: 1,
+					strokeDasharray: REFERENCE_LINE_DASHARRAY,
+				}),
+				ruleY([0], {
+					stroke: "var(--bs-secondary)",
+					strokeOpacity: 1,
+					strokeDasharray: REFERENCE_LINE_DASHARRAY,
+				}),
+				decorative(
+					text(referenceLabels, {
+						x: "season",
+						y: "y",
+						text: "label",
+						fill: (d) => d.color,
+						anchor: "end",
+						dx: -4,
+						dy: (d) => d.dy,
+					}),
+				),
+				...lineInfos.flatMap(({ key, color }) => [
+					decorative(
+						lineY(data, {
+							x: "season",
+							y: key,
+							stroke: color,
+							strokeWidth: 1,
+							curve: LINE_CURVE,
+						}),
+					),
+					decorative(
+						dot(data, {
+							x: "season",
+							y: key,
+							r: 3,
+							fill: "var(--bs-white)",
+							stroke: color,
+							strokeWidth: 1,
+						}),
+					),
+				]),
+
+				// Only the total line has tooltips
+				decorative(
+					lineY(data, {
+						x: "season",
+						y: "total",
+						stroke: totalColor,
+						strokeWidth: totalWidth,
+						curve: LINE_CURVE,
+					}),
+				),
+				dot(
+					data.filter((d) => !d.seasonInfo?.champ),
+					{
+						x: "season",
+						y: "total",
+						r: 3 * Math.sqrt(totalWidth),
+						fill: "var(--bs-white)",
+						stroke: totalColor,
+						strokeWidth: totalWidth,
+					},
+				),
+				text(
+					data.filter((d) => d.seasonInfo?.champ),
+					{
+						x: "season",
+						y: "total",
+						text: () => "★",
+						fill: "var(--bs-yellow)",
+						fontSize: STAR_SIZE,
+					},
+				),
+			],
+			scales: {
+				x: {
+					scale: scalePoint<string>().domain(data.map((row) => row.season)),
+					axis: {
+						ticks: {
+							size: 5,
+						},
+					},
+				},
+				y: {
+					scale: scaleLinear().domain(yDomain),
+					axis: false,
+				},
+			},
+			margin: {
+				top: 0,
+				right: 15,
+				left: 15,
+			},
+			tooltip,
+		});
+	}, [ownerMoods]);
 
 	return (
-		<div
-			className="position-relative mt-n1"
-			ref={parentRef}
-			style={{ maxWidth: MAX_WIDTH }}
-		>
+		<div className="position-relative mt-n1" style={{ maxWidth: MAX_WIDTH }}>
 			<HelpPopover
 				title="Owner Mood History"
 				style={{
 					position: "absolute",
 					left: 15,
 					top: 5,
+					zIndex: 1,
 				}}
 			>
 				<p>
@@ -194,109 +213,33 @@ const OwnerMoodsChart = ({
 				</p>
 				<p>The owner only starts judging you two years after you're hired.</p>
 			</HelpPopover>
-			<svg
-				width={width + margin.left + margin.right}
-				height={HEIGHT + margin.top + margin.bottom}
-			>
-				<Group transform={`translate(${margin.left},${margin.top})`}>
-					<ReferenceLine
-						x={xScale.range()}
-						y={[yScale(3), yScale(3)]}
-						color="var(--bs-success)"
-						text="Perfect"
-						textPosition="above"
-					/>
-					<ReferenceLine
-						x={xScale.range()}
-						y={[yScale(-1), yScale(-1)]}
-						color="var(--bs-danger)"
-						text="You're fired!"
-						textPosition="below"
-					/>
-					<ReferenceLine
-						x={xScale.range()}
-						y={[yScale(0), yScale(0)]}
-						color="var(--bs-secondary)"
-					/>
-					{lineInfos.map(({ key, color, width = 1 }) => {
-						const onMouseOver = (d: (typeof data)[number]) =>
-							key === "total"
-								? (event: MouseEvent<SVGElement>) => {
-										handleMouseOver(event, d);
-									}
-								: undefined;
-						const onMouseOut = key === "total" ? hideTooltip : undefined;
+			<Chart
+				definition={definition}
+				height={HEIGHT}
+				initialWidth={MAX_WIDTH}
+				ariaLabel="Owner mood history"
+				renderTooltipBody={({ points }) => {
+					const row = points[0]?.datum;
+					if (!row) {
+						return null;
+					}
 
-						return (
-							<Fragment key={key}>
-								<LinePath
-									className="chart-line"
-									curve={curveMonotoneX}
-									data={data}
-									x={(d) => xScale(d.season) ?? 0}
-									y={(d) => yScale(d[key]) ?? 0}
-									stroke={color}
-									strokeWidth={width}
-								/>
-								{data.map((d, j) => {
-									return d.seasonInfo?.champ && key === "total" ? (
-										<text
-											key={j}
-											className="user-select-none fill-yellow"
-											x={xScale(d.season)}
-											y={yScale(d[key])}
-											fontSize={STAR_SIZE}
-											textAnchor="middle"
-											alignmentBaseline="middle"
-											onMouseOver={onMouseOver(d)}
-											onMouseOut={onMouseOut}
-										>
-											★
-										</text>
-									) : (
-										<circle
-											key={j}
-											className="fill-white"
-											r={3 * Math.sqrt(width)}
-											cx={xScale(d.season)}
-											cy={yScale(d[key])}
-											stroke={color}
-											strokeWidth={width}
-											onMouseOver={onMouseOver(d)}
-											onMouseOut={onMouseOut}
-										/>
-									);
-								})}
-							</Fragment>
-						);
-					})}
-					<AxisBottom
-						axisClassName="chart-axis"
-						scale={xScale}
-						tickLength={5}
-						top={HEIGHT}
-					/>
-				</Group>
-			</svg>
-			{tooltipOpen && tooltipData ? (
-				<TooltipWithBounds
-					key={tooltipData.season}
-					top={tooltipTop}
-					left={tooltipLeft}
-				>
-					<b>{tooltipData.season}</b>
-					{tooltipData.seasonInfo ? (
+					return (
 						<>
-							<br />
-							{helpers.formatRecord(tooltipData.seasonInfo)},{" "}
-							{tooltipData.seasonInfo.roundsWonText}
-							<br />
-							Profit:{" "}
-							{helpers.formatCurrency(tooltipData.seasonInfo.profit, "M")}
+							<b>{row.season}</b>
+							{row.seasonInfo ? (
+								<>
+									<br />
+									{helpers.formatRecord(row.seasonInfo)},{" "}
+									{row.seasonInfo.roundsWonText}
+									<br />
+									Profit: {helpers.formatCurrency(row.seasonInfo.profit, "M")}
+								</>
+							) : null}
 						</>
-					) : null}
-				</TooltipWithBounds>
-			) : null}
+					);
+				}}
+			/>
 
 			<div className="chart-legend">
 				<ul className="list-unstyled mb-0">

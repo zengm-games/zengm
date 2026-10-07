@@ -946,14 +946,16 @@ tr.table-warning:hover > td {
 	top: 42px;
 	left: 20px;
 }
-.chart-line {
-	fill: none;
+
+// Text drawn inside charts (stars, labels, axes) is not selectable, which also stops the cursor from turning into a text cursor over it
+.ts-chart-host svg text {
+	-webkit-user-select: none;
+	user-select: none;
 }
-.fill-white {
-	fill: $white;
-}
-.fill-yellow {
-	fill: $yellow;
+
+// No focus outline when clicking a chart, only when reaching it with the keyboard
+.ts-chart-host svg:focus:not(:focus-visible) {
+	outline: none;
 }
 
 .cursor-default {

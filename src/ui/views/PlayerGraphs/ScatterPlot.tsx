@@ -1,10 +1,10 @@
-import { scaleLinear } from "@visx/scale";
-import { AxisBottom, AxisLeft } from "@visx/axis";
-import { Circle, LinePath } from "@visx/shape";
-import { Group } from "@visx/group";
-import { useParentSize } from "@visx/responsive";
-import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
-import type { ReactNode } from "react";
+import { defineChart, dot, lineY, text } from "@tanstack/charts";
+import { decorative } from "@tanstack/charts/mark/decorative";
+import { Chart } from "@tanstack/charts/react/tooltip";
+import { scaleLinear } from "@tanstack/charts/scales/linear";
+import { tooltip } from "@tanstack/charts/tooltip";
+import { useMemo, useState, type ReactNode } from "react";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 export type TooltipData<Row> = {
 	x: number;
@@ -82,7 +82,20 @@ const linearRegression = (
 	return { m, b, rSquared };
 };
 
-const ScatterPlot = <Row extends unknown>({
+const HEIGHT = 455;
+const IMAGE_SIZE = 24;
+
+const getDomain = (values: number[], reverse: boolean) => {
+	const domain: [number, number] =
+		values.length === 0 ? [0, 1] : [Math.min(...values), Math.max(...values)];
+
+	// Positions at the start of each axis, which depends on if it is reversed
+	const [start, end] = reverse ? [domain[1], domain[0]] : domain;
+
+	return { domain, start, end };
+};
+
+export const StatGraph = <Row extends unknown>({
 	data,
 	descLong,
 	descShort,
@@ -92,210 +105,190 @@ const ScatterPlot = <Row extends unknown>({
 	getTooltipTitle,
 	renderTooltip,
 	reverseAxis,
-	width: totalWidth,
-}: ScatterPlotProps<Row> & {
-	width: number;
-}) => {
-	const HEIGHT = 400;
+}: ScatterPlotProps<Row>) => {
+	// https://stackoverflow.com/a/4819886 so we detect tablets too, rather than using window.mobile just based on screen size
+	const touch = "ontouchstart" in window;
 
-	const xVals = data.map((point) => point.x);
-	const yVals = data.map((point) => point.y);
+	const [reverseX, reverseY] = reverseAxis;
+	const labelX = `${descShort[0]}${descLong[0] !== undefined ? ` (${descLong[0]})` : ""}`;
+	const labelY = `${descShort[1]}${descLong[1] !== undefined ? ` (${descLong[1]})` : ""}`;
 
-	const xDomain = [Math.min(...xVals), Math.max(...xVals)];
-	if (reverseAxis[0]) {
-		xDomain.reverse();
-	}
+	const definition = useMemo(() => {
+		const x = getDomain(
+			data.map((point) => point.x),
+			reverseX,
+		);
+		const y = getDomain(
+			data.map((point) => point.y),
+			reverseY,
+		);
 
-	const yDomain = [Math.min(...yVals), Math.max(...yVals)];
-	if (reverseAxis[1]) {
-		yDomain.reverse();
-	}
+		const { m, b, rSquared } = linearRegression(data);
+		const rSquaredRounded = Math.round(100 * rSquared) / 100;
 
-	// tooltip handler
-	const {
-		showTooltip,
-		hideTooltip,
-		tooltipData,
-		tooltipOpen,
-		tooltipTop,
-		tooltipLeft,
-	} = useTooltip<TooltipData<Row>>();
+		const withImage: TooltipData<Row>[] = [];
+		const withoutImage: TooltipData<Row>[] = [];
+		for (const point of data) {
+			if (getImageUrl?.(point.row)) {
+				withImage.push(point);
+			} else {
+				withoutImage.push(point);
+			}
+		}
 
-	const margin = { top: 10, left: 60, right: 10, bottom: 60 };
-	const width = totalWidth - margin.left - margin.right;
-	const xScale = scaleLinear({
-		domain: xDomain,
-		range: [0, width],
-	});
-	const yScale = scaleLinear({
-		domain: yDomain,
-		range: [HEIGHT, 0],
-	});
+		const fontSize = 13;
 
-	const { m, b, rSquared } = linearRegression(data);
+		return defineChart({
+			marks: [
+				decorative(
+					lineY(
+						x.domain.map((value) => ({ x: value, y: m * value + b })),
+						{
+							x: "x",
+							y: "y",
+							stroke: "var(--bs-red)",
+							strokeOpacity: 0.7,
+							strokeWidth: 4,
+						},
+					),
+				),
+				dot(withoutImage, {
+					x: (d) => d.x,
+					y: (d) => d.y,
+					key: (d) => getKey(d.row),
+					r: 6,
+					fill: "var(--bs-blue)",
+					fillOpacity: 0.8,
+				}),
 
-	const avg = (x: number) => {
-		return m * x + b;
-	};
+				// Invisible hover targets for the images, which are drawn on top of the chart
+				dot(withImage, {
+					x: (d) => d.x,
+					y: (d) => d.y,
+					key: (d) => getKey(d.row),
+					r: IMAGE_SIZE / 2,
+					fillOpacity: 0,
+				}),
+				decorative(
+					text([{ x: x.start, y: y.end }], {
+						x: "x",
+						y: "y",
+						text: () => `R² = ${rSquaredRounded}`,
+						fill: "var(--bs-black)",
+						anchor: "start",
+						dx: 10,
+						dy: 10,
+					}),
+				),
+			],
+			scales: {
+				x: {
+					scale: scaleLinear().domain(x.domain),
+					reverse: reverseX,
+					axis: {
+						label: {
+							text: labelX,
+							fontSize,
+						},
+						tickLabels: {
+							fontSize,
+						},
+					},
+				},
+				y: {
+					scale: scaleLinear().domain(y.domain),
+					reverse: reverseY,
+					axis: {
+						label: {
+							text: labelY,
+							fontSize,
+						},
+						tickLabels: {
+							fontSize,
+						},
+					},
+				},
+			},
+			tooltip: {
+				use: tooltip,
 
-	const handleMouseOver = (x: number, y: number, data: TooltipData<Row>) => {
-		showTooltip({
-			tooltipLeft: x + margin.left,
-			tooltipTop: y + margin.top,
-			tooltipData: data,
+				// On desktop, clicking a point is a link. On mobile, tapping a point shows the tooltip.
+				sticky: touch,
+			},
 		});
-	};
+	}, [data, getImageUrl, getKey, labelX, labelY, reverseX, reverseY, touch]);
 
-	const fontSizeProps = {
-		fontSize: "1em",
-	};
+	// Pixel coordinates of the points, for drawing images on top of the chart
+	const [renderedPoints, setRenderedPoints] = useState<
+		readonly { x: number; y: number; datum: TooltipData<Row> }[]
+	>([]);
 
-	const labels = ([0, 1] as const).map(
-		(i) =>
-			`${descShort[i]}${descLong[i] !== undefined ? ` (${descLong[i]})` : ""}`,
-	);
-
-	const rSquaredRounded = Math.round(100 * rSquared) / 100;
+	// Clicking navigates to the highlighted point's link, so show that with the cursor
+	const [pointHighlighted, setPointHighlighted] = useState(false);
 
 	return (
-		<div>
-			<svg width={totalWidth} height={HEIGHT + margin.top + margin.bottom}>
-				<Group transform={`translate(${margin.left},${margin.top})`}>
-					<AxisLeft
-						axisClassName="chart-axis"
-						scale={yScale}
-						label={labels[1]}
-						labelProps={{
-							...fontSizeProps,
+		<div className="position-relative">
+			<Chart
+				definition={definition}
+				height={HEIGHT}
+				ariaLabel={`${labelY} vs ${labelX}`}
+				style={{
+					cursor: pointHighlighted && !touch ? "pointer" : undefined,
+				}}
+				onFocusChange={(point) => {
+					setPointHighlighted(point !== null);
+				}}
+				onRender={({ scene }) => {
+					setRenderedPoints(scene.points);
+				}}
+				onSelect={(point) => {
+					if (point && !touch) {
+						realtimeUpdate([], getLink(point.datum.row));
+					}
+				}}
+				renderTooltipBody={({ points }) => {
+					const point = points[0]?.datum;
+					if (!point) {
+						return null;
+					}
 
-							// Weird that this is required to center label
-							textAnchor: "middle",
-						}}
-						tickLabelProps={fontSizeProps}
-					/>
-					<AxisBottom
-						axisClassName="chart-axis"
-						scale={xScale}
-						top={HEIGHT}
-						label={labels[0]}
-						labelProps={{
-							...fontSizeProps,
-							dy: "1.5em",
-
-							// Weird that this is required to center label
-							textAnchor: "middle",
-						}}
-						tickLabelProps={fontSizeProps}
-					/>
-					<LinePath
-						y={(d) => yScale(avg(d))}
-						x={(d) => xScale(d)}
-						stroke={"var(--bs-red)"}
-						data={xDomain}
-						opacity={0.7}
-						strokeWidth={4}
-					/>
-					{data.map((d, i) => {
-						const imageUrl = getImageUrl?.(d.row);
-
-						const cx = xScale(d.x);
-						const cy = yScale(d.y);
-
-						const hoverParams = {
-							onMouseOver: () => handleMouseOver(cx, cy, d),
-							onMouseOut: hideTooltip,
-						};
-
-						let point;
-						if (imageUrl) {
-							const size = 24;
-
-							// foreignObject is needed because an SVG <image> tag dosen't seem to support maintaining the aspect ratio of a .svg image, it only works with raster images
-							point = (
-								<foreignObject
-									key={getKey(d.row)}
-									x={cx - size / 2}
-									y={cy - size / 2}
-									width={size}
-									height={size}
-								>
-									<div className="d-flex align-items-center justify-content-center w-100 h-100">
-										<img
-											src={imageUrl}
-											className="mw-100 mh-100"
-											alt={getTooltipTitle(d.row)}
-											{...hoverParams}
-										/>
-									</div>
-								</foreignObject>
-							);
-						} else {
-							point = (
-								<Circle
-									key={getKey(d.row)}
-									cx={cx}
-									cy={cy}
-									fillOpacity={0.8}
-									r={6}
-									fill={"var(--bs-blue)"}
-									{...hoverParams}
-								/>
-							);
+					return (
+						<>
+							<h3>{getTooltipTitle(point.row)}</h3>
+							{([0, 1] as const).map((i) => {
+								return renderTooltip(point[i === 0 ? "x" : "y"], point.row, i);
+							})}
+						</>
+					);
+				}}
+			/>
+			{getImageUrl
+				? renderedPoints.map((point) => {
+						const imageUrl = getImageUrl(point.datum.row);
+						if (!imageUrl) {
+							return null;
 						}
 
-						// https://stackoverflow.com/a/4819886 so we detect tablets too, rather than using window.mobile just based on screen size
-						return "ontouchstart" in window ? (
-							point
-						) : (
-							<a key={i} href={getLink(d.row)}>
-								{point}
-							</a>
+						return (
+							<div
+								key={getKey(point.datum.row)}
+								className="position-absolute d-flex align-items-center justify-content-center pe-none"
+								style={{
+									left: point.x - IMAGE_SIZE / 2,
+									top: point.y - IMAGE_SIZE / 2,
+									width: IMAGE_SIZE,
+									height: IMAGE_SIZE,
+								}}
+							>
+								<img
+									src={imageUrl}
+									className="mw-100 mh-100"
+									alt={getTooltipTitle(point.datum.row)}
+								/>
+							</div>
 						);
-					})}
-					<text
-						x="10"
-						y="10"
-						style={{
-							fill: "var(--bs-black)",
-						}}
-					>
-						R
-						<tspan
-							baselineShift="super"
-							style={{
-								fontSize: 10,
-							}}
-						>
-							2
-						</tspan>{" "}
-						= {rSquaredRounded}
-					</text>
-				</Group>
-			</svg>
-			{tooltipOpen && tooltipData ? (
-				<TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
-					<h3>{getTooltipTitle(tooltipData.row)}</h3>
-					{([0, 1] as const).map((i) => {
-						return renderTooltip(
-							tooltipData[i === 0 ? "x" : "y"],
-							tooltipData.row,
-							i,
-						);
-					})}
-				</TooltipWithBounds>
-			) : null}
-		</div>
-	);
-};
-
-export const StatGraph = <Row extends unknown>(
-	props: ScatterPlotProps<Row>,
-) => {
-	const { parentRef, width } = useParentSize();
-
-	return (
-		<div className="position-relative" ref={parentRef}>
-			<ScatterPlot<Row> width={width} {...props} />
+					})
+				: null}
 		</div>
 	);
 };

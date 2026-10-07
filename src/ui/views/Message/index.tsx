@@ -31,12 +31,12 @@ const Message = ({ message }: View<"message">) => {
 				<OwnerMoodsChart ownerMoods={message.ownerMoods} />
 			) : null}
 
-			<p>
+			<div className="mt-3">
 				<a href="#" onClick={() => window.history.back()}>
-					Previous Page
+					Previous page
 				</a>{" "}
 				· <a href={helpers.leagueUrl(["inbox"])}>Inbox</a>
-			</p>
+			</div>
 		</>
 	);
 };

@@ -1,20 +1,23 @@
-import { Fragment, type MouseEvent } from "react";
-import type { ScaleLinear } from "d3-scale";
-import { AxisBottom, AxisLeft } from "@visx/axis";
-import { curveMonotoneX } from "@visx/curve";
-import { localPoint } from "@visx/event";
-import { Group } from "@visx/group";
-import { useParentSize } from "@visx/responsive";
-import { LinePath } from "@visx/shape";
-import { scaleLinear } from "@visx/scale";
-import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
+import { defineChart, dot, lineY, ruleX, ruleY, text } from "@tanstack/charts";
+import { decorative } from "@tanstack/charts/mark/decorative";
+import { Chart as TanStackChart } from "@tanstack/charts/react/tooltip";
+import { scaleLinear } from "@tanstack/charts/scales/linear";
+import { tooltip } from "@tanstack/charts/tooltip";
+import { useMemo } from "react";
 import type { View } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
 import { PHASE } from "../../../common/constants.ts";
-import { ReferenceLine } from "../Message/OwnerMoodsChart.tsx";
+import {
+	LINE_CURVE,
+	REFERENCE_LINE_DASHARRAY,
+} from "../Message/OwnerMoodsChart.tsx";
 import clsx from "clsx";
 
-const HEIGHT = 200;
+const HEIGHT = 230;
+const MAX_WIDTH = 400;
+const STROKE_WIDTH = 1;
+const STAR_SIZE = 20;
+const COLORS = ["var(--bs-blue)", "var(--bs-green)"];
 
 const Chart = ({
 	className,
@@ -26,7 +29,7 @@ const Chart = ({
 	title,
 	valueKey,
 	xDomain,
-	yScale,
+	yDomain,
 	yTickFormat,
 }: Pick<
 	View<"tradeSummary">,
@@ -37,63 +40,136 @@ const Chart = ({
 	title: string;
 	valueKey: "ptsPct" | "winp" | "stat" | "statTeam";
 	xDomain: [number, number];
-	yScale: ScaleLinear<number, number, never>;
+	yDomain: [number, number];
 	yTickFormat?: (x: number) => string;
 }) => {
-	const MAX_WIDTH = 400;
-	const STROKE_WIDTH = 1;
-	const STAR_SIZE = 20;
-	const colors = ["var(--bs-blue)", "var(--bs-green)"];
-	const colorChamp = "var(--bs-yellow)";
+	const [xMin, xMax] = xDomain;
+	const [yMin, yMax] = yDomain;
 
-	const margin = {
-		top: 15,
-		right: 15,
-		bottom: 30,
-		left: 30,
-	};
-
-	type TooltipData = (typeof seasonsToPlot)[number]["teams"][number];
-
-	const {
-		tooltipData,
-		tooltipLeft,
-		tooltipTop,
-		tooltipOpen,
-		showTooltip,
-		hideTooltip,
-	} = useTooltip<TooltipData>();
-
-	const handleMouseOver = (
-		event: MouseEvent<SVGElement>,
-		datum: TooltipData,
-	) => {
-		const coords = localPoint(event.currentTarget, event);
-		if (coords) {
-			showTooltip({
-				tooltipLeft: coords.x,
-				tooltipTop: coords.y,
-				tooltipData: datum,
-			});
+	const definition = useMemo(() => {
+		let xMarker: number;
+		if (phase < PHASE.REGULAR_SEASON) {
+			xMarker = season - 0.5;
+		} else if (phase === PHASE.REGULAR_SEASON) {
+			xMarker = season;
+		} else {
+			xMarker = season + 0.5;
 		}
-	};
 
-	const { parentRef, ...parent } = useParentSize();
+		return defineChart({
+			marks: [
+				ruleY([valueKey === "stat" || valueKey === "statTeam" ? 0 : 0.5], {
+					stroke: "var(--bs-secondary)",
+					strokeOpacity: 1,
+					strokeDasharray: REFERENCE_LINE_DASHARRAY,
+				}),
+				ruleX([xMarker], {
+					stroke: "var(--bs-danger)",
+					strokeOpacity: 1,
+					strokeDasharray: REFERENCE_LINE_DASHARRAY,
+				}),
+				decorative(
+					text([{ x: xMarker, y: yMax }], {
+						x: "x",
+						y: "y",
+						text: () => "Trade",
+						fill: "var(--bs-danger)",
+						anchor: "start",
+						dx: 5,
+						dy: 10,
+					}),
+				),
+				...([0, 1] as const).flatMap((i) => {
+					const rows = seasonsToPlot
+						.map((row) => row.teams[i])
+						.filter((t) => t[valueKey] !== undefined);
 
-	const width = parent.width - margin.left - margin.right;
-	const xScale = scaleLinear({
-		domain: xDomain,
-		range: [0, width],
-	});
+					return [
+						decorative(
+							lineY(rows, {
+								x: "season",
+								y: valueKey,
+								stroke: COLORS[i],
+								strokeWidth: STROKE_WIDTH,
+								curve: LINE_CURVE,
+							}),
+						),
+						dot(
+							rows.filter((t) => !t.champ),
+							{
+								x: "season",
+								y: valueKey,
+								z: () => i,
+								r: 5 * Math.sqrt(STROKE_WIDTH),
+								fill: "var(--bs-white)",
+								stroke: COLORS[i],
+								strokeWidth: STROKE_WIDTH,
+								states: [
+									{
+										when: { focus: "primary" },
+										style: { fill: COLORS[i] },
+									},
+								],
+							},
+						),
+						text(
+							rows.filter((t) => t.champ),
+							{
+								x: "season",
+								y: valueKey,
+								z: () => i,
+								text: () => "★",
+								fill: "var(--bs-yellow)",
+								fontSize: STAR_SIZE,
+								states: [
+									{
+										when: { focus: "primary" },
+										style: { fontSize: STAR_SIZE * 1.4 },
+									},
+								],
+							},
+						),
+					];
+				}),
+			],
+			scales: {
+				x: {
+					scale: scaleLinear().domain([xMin, xMax]),
+					axis: {
+						ticks: {
+							values: seasonsToPlot.map((row) => row.season),
+							size: 5,
+							format: String,
+						},
+					},
+				},
+				y: {
+					scale: scaleLinear().domain([yMin, yMax]),
+					axis: {
+						ticks: {
+							count: 5,
+							size: 5,
+							format: yTickFormat,
+						},
+					},
+				},
+			},
 
-	let xMarker: number;
-	if (phase < PHASE.REGULAR_SEASON) {
-		xMarker = xScale(season - 0.5);
-	} else if (phase === PHASE.REGULAR_SEASON) {
-		xMarker = xScale(season);
-	} else {
-		xMarker = xScale(season + 0.5);
-	}
+			// Hovered point is highlighted by filling it with the team color, see states above
+			focusRing: false,
+			tooltip,
+		});
+	}, [
+		phase,
+		season,
+		seasonsToPlot,
+		valueKey,
+		xMin,
+		xMax,
+		yMin,
+		yMax,
+		yTickFormat,
+	]);
 
 	return (
 		<div
@@ -101,118 +177,43 @@ const Chart = ({
 			style={{
 				maxWidth: MAX_WIDTH,
 			}}
-			ref={parentRef}
 		>
 			<div className="text-center">{title}</div>
-			<svg width={parent.width} height={HEIGHT + margin.top + margin.bottom}>
-				<Group transform={`translate(${margin.left},${margin.top})`}>
-					<ReferenceLine
-						x={xScale.range() as [number, number]}
-						y={
-							valueKey === "stat"
-								? [yScale(0), yScale(0)]
-								: [yScale(0.5), yScale(0.5)]
-						}
-						color="var(--bs-secondary)"
-					/>
-					<ReferenceLine
-						x={[xMarker, xMarker]}
-						y={yScale.range() as [number, number]}
-						color="var(--bs-danger)"
-						text="Trade"
-						textPosition="right"
-					/>
-					<AxisBottom
-						axisClassName="chart-axis"
-						numTicks={8}
-						scale={xScale}
-						tickFormat={String}
-						tickLength={5}
-						top={HEIGHT}
-					/>
-					<AxisLeft
-						axisClassName="chart-axis"
-						numTicks={5}
-						scale={yScale}
-						tickFormat={yTickFormat as any}
-						tickLength={5}
-					/>
-					{([0, 1] as const).map((i) => {
-						const filtered = seasonsToPlot.filter(
-							(row) => row.teams[i][valueKey] !== undefined,
-						);
+			<TanStackChart
+				className="mt-2 mb-4"
+				definition={definition}
+				height={HEIGHT}
+				initialWidth={MAX_WIDTH}
+				ariaLabel={title}
+				renderTooltipBody={({ points }) => {
+					const point = points[0];
+					if (!point) {
+						return null;
+					}
+					const t = point.datum;
 
-						return (
-							<Fragment key={i}>
-								<LinePath
-									className="chart-line"
-									curve={curveMonotoneX}
-									data={filtered}
-									x={(d) => xScale(d.season)}
-									y={(d) => yScale(d.teams[i][valueKey] ?? 0)}
-									stroke={colors[i]}
-									strokeWidth={STROKE_WIDTH}
-								/>
-								{filtered.map((d, j) =>
-									d.teams[i].champ ? (
-										<text
-											key={j}
-											className="user-select-none fill-yellow"
-											x={xScale(d.season)}
-											y={yScale(d.teams[i][valueKey] ?? 0)}
-											fontSize={STAR_SIZE}
-											textAnchor="middle"
-											alignmentBaseline="middle"
-											onMouseOver={(event) =>
-												handleMouseOver(event, d.teams[i])
-											}
-											onMouseOut={hideTooltip}
-										>
-											★
-										</text>
-									) : (
-										<circle
-											key={j}
-											className="fill-white"
-											r={5 * Math.sqrt(STROKE_WIDTH)}
-											cx={xScale(d.season)}
-											cy={yScale(d.teams[i][valueKey] ?? 0)}
-											stroke={d.teams[i].champ ? colorChamp : colors[i]}
-											strokeWidth={STROKE_WIDTH}
-											onMouseOver={(event) =>
-												handleMouseOver(event, d.teams[i])
-											}
-											onMouseOut={hideTooltip}
-										/>
-									),
-								)}
-							</Fragment>
-						);
-					})}
-				</Group>
-			</svg>
-			{tooltipOpen && tooltipData ? (
-				<TooltipWithBounds
-					key={`${tooltipData?.season}-${tooltipData?.abbrev}`}
-					top={tooltipTop}
-					left={tooltipLeft}
-				>
-					{tooltipData.season} {tooltipData.region} {tooltipData.name}
-					<br />
-					{helpers.formatRecord({
-						won: tooltipData.won ?? 0,
-						lost: tooltipData.lost ?? 0,
-						otl: tooltipData.otl,
-						tied: tooltipData.tied,
-					})}
-					{tooltipData.roundsWonText ? `, ${tooltipData.roundsWonText}` : null}
-					<br />
-					{helpers.roundStat(tooltipData.stat ?? 0, "ws")} {stat} (total)
-					<br />
-					{helpers.roundStat(tooltipData.statTeam ?? 0, "ws")} {stat} (with{" "}
-					{tooltipData.abbrev})
-				</TooltipWithBounds>
-			) : null}
+					return (
+						<>
+							<span style={{ color: COLORS[Number(point.group)] }}>
+								{t.season} {t.region} {t.name}
+							</span>
+							<br />
+							{helpers.formatRecord({
+								won: t.won ?? 0,
+								lost: t.lost ?? 0,
+								otl: t.otl,
+								tied: t.tied,
+							})}
+							{t.roundsWonText ? `, ${t.roundsWonText}` : null}
+							<br />
+							{helpers.roundStat(t.stat ?? 0, "ws")} {stat} (total)
+							<br />
+							{helpers.roundStat(t.statTeam ?? 0, "ws")} {stat} (with {t.abbrev}
+							)
+						</>
+					);
+				}}
+			/>
 			<div
 				className="chart-legend"
 				style={{
@@ -223,7 +224,7 @@ const Chart = ({
 			>
 				<ul className="list-unstyled mb-0">
 					{teams.map((t, i) => (
-						<li key={i} style={{ color: colors[i] }}>
+						<li key={i} style={{ color: COLORS[i] }}>
 							— {t.abbrev}
 						</li>
 					))}
@@ -265,17 +266,15 @@ const Charts = ({
 
 	const xDomain = [seasons[0], seasons.at(-1)] as [number, number];
 
-	const yDomainPct = [Math.min(0.25, ...allPcts), Math.max(0.75, ...allPcts)];
-	const yScale = scaleLinear({
-		domain: yDomainPct,
-		range: [HEIGHT, 0],
-	});
+	const yDomainPct: [number, number] = [
+		Math.min(0.25, ...allPcts),
+		Math.max(0.75, ...allPcts),
+	];
 
-	const yDomainStat = [Math.min(0, ...allStats), Math.max(1, ...allStats)];
-	const yScale2 = scaleLinear({
-		domain: yDomainStat,
-		range: [HEIGHT, 0],
-	});
+	const yDomainStat: [number, number] = [
+		Math.min(0, ...allStats),
+		Math.max(1, ...allStats),
+	];
 
 	return (
 		<>
@@ -291,7 +290,7 @@ const Charts = ({
 				trade`}
 				valueKey={pctKey}
 				xDomain={xDomain}
-				yScale={yScale}
+				yDomain={yDomainPct}
 				yTickFormat={helpers.roundWinp}
 			/>
 
@@ -305,7 +304,7 @@ const Charts = ({
 				title={`${stat} by assets received in trade (total)`}
 				valueKey={"stat"}
 				xDomain={xDomain}
-				yScale={yScale2}
+				yDomain={yDomainStat}
 			/>
 
 			<Chart
@@ -318,7 +317,7 @@ const Charts = ({
 				title={`${stat} by assets received in trade (with team)`}
 				valueKey={"statTeam"}
 				xDomain={xDomain}
-				yScale={yScale2}
+				yDomain={yDomainStat}
 			/>
 		</>
 	);

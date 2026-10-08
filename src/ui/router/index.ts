@@ -5,6 +5,10 @@ interface Params {
 export interface Context {
 	params: Params;
 	path: string;
+
+	// true/false means this navigation should/shouldn't scroll to the top of the page. undefined means it's up to whatever is handling the route.
+	scrollToTop: boolean | undefined;
+
 	state: {
 		[key: string]: any;
 	};
@@ -194,16 +198,19 @@ class Router {
 		{
 			refresh = false,
 			replace = false,
+			scrollToTop,
 			state = {},
 		}: {
 			refresh?: boolean;
 			replace?: boolean;
+			scrollToTop?: boolean;
 			state?: { [key: string]: unknown };
 		} = {},
 	) {
 		const context: Context = {
 			params: {},
 			path,
+			scrollToTop,
 			state,
 		};
 		let error: Error | null = null;
@@ -335,6 +342,9 @@ class Router {
 
 		await this.navigate(location.pathname + location.search + location.hash, {
 			replace: true,
+
+			// Leave the scroll position to the browser, like if it is restoring it after a reload
+			scrollToTop: false,
 		});
 	}
 
@@ -395,7 +405,10 @@ class Router {
 
 		e.preventDefault();
 
-		void this.navigate(path);
+		void this.navigate(path, {
+			// Clicking a link scrolls to the top, even if it's a link to the same type of page (like from one player to another). Links that are more like controls within a page (like tabs) can opt out.
+			scrollToTop: !anchor.hasAttribute("data-no-scroll-reset"),
+		});
 	}
 
 	private async _onpopstate(event: Event & { state: any }) {
@@ -430,7 +443,12 @@ class Router {
 			return;
 		}
 
-		const navigated = await this.navigate(path, { replace: true });
+		const navigated = await this.navigate(path, {
+			replace: true,
+
+			// Leave the scroll position to the browser for back/forward navigation
+			scrollToTop: false,
+		});
 		if (!navigated) {
 			// Navigation was blocked, but the browser already moved to a different history entry, so go back to the one for the page that is still being shown. That fires another popstate event, which is ignored by the lastNavigatedPath check above.
 			const index = getHistoryIndex(window.history.state);

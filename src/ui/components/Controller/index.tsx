@@ -78,7 +78,7 @@ export const Controller = () => {
 		idLoaded,
 		inLeague,
 		loading: updating,
-		scrollToTop,
+		scrollToTopCount,
 	} = state;
 
 	// Optimistically use idLoading before it renders, for UI responsiveness in the sidebar
@@ -87,12 +87,12 @@ export const Controller = () => {
 	const pathname =
 		__SPORT === "baseball" ? document.location.pathname : undefined;
 
-	// Scroll to top if this load came from user clicking a link to a new page
+	// Scroll to top each time a load says it should, see ViewManager.processUpdate
 	useEffect(() => {
-		if (scrollToTop) {
+		if (scrollToTopCount > 0) {
 			window.scrollTo(window.pageXOffset, 0);
 		}
-	}, [idLoaded, scrollToTop]);
+	}, [scrollToTopCount]);
 
 	return (
 		<LazyMotion strict features={loadFramerMotionFeatures}>

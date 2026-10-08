@@ -410,6 +410,7 @@ const Depth = ({
 									active: pos === pos2,
 								})}
 								href={helpers.leagueUrl(["depth", pos2, `${abbrev}_${tid}`])}
+								data-no-scroll-reset
 							>
 								{text}
 							</a>

@@ -1,7 +1,7 @@
 import { useCallback, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { toWorker } from "../util/toWorker.ts";
-import { realtimeUpdate } from "../util/realtimeUpdate.ts";
+import { router } from "../router/index.ts";
 import { local, useLocal } from "../util/local.ts";
 import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
@@ -56,9 +56,12 @@ const PlayMenu = ({
 				}
 
 				if (option.url) {
-					realtimeUpdate([], option.url);
+					// Same as clicking the link in the menu
+					void router.navigate(option.url, {
+						scrollToTop: true,
+					});
 				} else {
-					toWorker("playMenu", option.id as any, undefined);
+					void toWorker("playMenu", option.id as any, undefined);
 				}
 			},
 			[options],

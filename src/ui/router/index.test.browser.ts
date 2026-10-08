@@ -1,4 +1,4 @@
-import { assert, test } from "vitest";
+import { assert, describe, test } from "vitest";
 import { RouteNotFoundError, router } from "./index.ts";
 import type { Context } from "./index.ts";
 
@@ -112,6 +112,7 @@ test("fires routematched event", async () => {
 				context: {
 					params: {},
 					path: "/2",
+					scrollToTop: undefined,
 					state: {},
 				},
 			});
@@ -142,6 +143,7 @@ test("fires navigationend event", async () => {
 						foo: "bar",
 					},
 					path: "/3/bar",
+					scrollToTop: undefined,
 					state: {},
 				},
 				error: null,
@@ -287,4 +289,66 @@ test("tracks history entries created by hash links", async () => {
 	assert.strictEqual(window.location.pathname, "/2");
 
 	router.shouldBlock = undefined;
+});
+
+describe("scrollToTop", () => {
+	const getScrollToTop = (navigate: () => void) => {
+		const { promise, resolve } = Promise.withResolvers<boolean | undefined>();
+		callbacks.navigationEnd = ({ context }) => {
+			callbacks.navigationEnd = undefined;
+			resolve(context.scrollToTop);
+		};
+		navigate();
+		return promise;
+	};
+
+	const clickLink = (path: string, noScrollReset: boolean) => {
+		const a = document.createElement("a");
+		a.href = path;
+		if (noScrollReset) {
+			a.setAttribute("data-no-scroll-reset", "");
+		}
+		document.body.append(a);
+		a.click();
+		a.remove();
+	};
+
+	test("scrollToTop is passed through from navigate", async () => {
+		assert.strictEqual(
+			await getScrollToTop(() => {
+				void router.navigate("/1", { scrollToTop: true });
+			}),
+			true,
+		);
+	});
+
+	test("scrollToTop is true when clicking a link", async () => {
+		assert.strictEqual(
+			await getScrollToTop(() => {
+				clickLink("/2", false);
+			}),
+			true,
+		);
+		assert.strictEqual(window.location.pathname, "/2");
+	});
+
+	test("scrollToTop is false when clicking a link with data-no-scroll-reset", async () => {
+		assert.strictEqual(
+			await getScrollToTop(() => {
+				clickLink("/0", true);
+			}),
+			false,
+		);
+		assert.strictEqual(window.location.pathname, "/0");
+	});
+
+	test("scrollToTop is false for back/forward navigation", async () => {
+		assert.strictEqual(
+			await getScrollToTop(() => {
+				window.history.back();
+			}),
+			false,
+		);
+		assert.strictEqual(window.location.pathname, "/2");
+	});
 });

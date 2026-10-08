@@ -722,6 +722,7 @@ const NextButton = ({
 						boxScore.season,
 						nextGid,
 					])}
+					data-no-scroll-reset
 				>
 					Next
 				</a>
@@ -900,6 +901,7 @@ const DetailedScore = ({
 							boxScore.season,
 							prevGid,
 						])}
+						data-no-scroll-reset
 					>
 						Prev
 					</a>

@@ -30,7 +30,9 @@ type State = {
 	idLoading: string | undefined;
 	inLeague: boolean;
 	data: Record<string, unknown>;
-	scrollToTop: boolean;
+
+	// Incremented by each load that should scroll to the top of the page. It's a count rather than a boolean so that it still changes when two loads in a row should scroll.
+	scrollToTopCount: number;
 };
 
 type ViewInfo = {
@@ -63,7 +65,7 @@ export const useViewData = create<
 			set(state);
 		},
 	},
-	scrollToTop: false,
+	scrollToTopCount: 0,
 }));
 
 const actions = useViewData.getState().actions;
@@ -266,6 +268,9 @@ class ViewManager {
 		let prevData: Record<string, unknown>;
 		let prevInputs;
 
+		// If the navigation doesn't say if it should scroll to the top (like realtimeUpdate), only do it when switching to a different page
+		const scrollToTop = context.scrollToTop ?? this.idLoaded !== id;
+
 		// Worker views say which properties of their previous data they need, to avoid sending everything back every time
 		let keepPrevOutputKeys: string[] | undefined;
 		if (this.idLoaded !== id) {
@@ -360,7 +365,8 @@ class ViewManager {
 			idLoaded: id,
 			idLoading: undefined,
 			inLeague,
-			scrollToTop: updateEvents.length === 1 && updateEvents[0] === "firstRun",
+			scrollToTopCount:
+				useViewData.getState().scrollToTopCount + (scrollToTop ? 1 : 0),
 		};
 
 		if (vars.data && vars.data.redirectUrl !== undefined) {

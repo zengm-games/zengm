@@ -92,7 +92,9 @@ const genPicks = async ({
 	})[] = helpers.deepCopy(await idb.cache.draftPicks.getAll());
 
 	let numSeasons = g.get("numSeasonsFutureDraftPicks");
-	if (
+	if (g.get("draftType") === "freeAgents") {
+		numSeasons = 0;
+	} else if (
 		numSeasons <= 0 &&
 		g.get("phase") >= PHASE.DRAFT_LOTTERY &&
 		g.get("phase") <= PHASE.DRAFT &&

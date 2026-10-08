@@ -195,7 +195,8 @@ const setGameAttributes = async (
 			toUpdate.has("challengeNoDraftPicks") ||
 			toUpdate.has("numDraftRounds") ||
 			toUpdate.has("forceHistoricalRosters") ||
-			(toUpdate.has("userTids") && g.get("challengeNoDraftPicks")))
+			(toUpdate.has("userTids") && g.get("challengeNoDraftPicks")) ||
+			toUpdate.has("draftType"))
 	) {
 		await draft.genPicks();
 	}

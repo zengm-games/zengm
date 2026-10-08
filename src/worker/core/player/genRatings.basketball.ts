@@ -7,6 +7,7 @@ import type {
 	RatingKey,
 } from "../../../common/types.basketball.ts";
 import { heightDist, randInt, realGauss } from "../../../common/random.ts";
+import { assertDefined } from "../../../common/utils.ts";
 
 const typeFactors: Record<
 	"point" | "wing" | "big",
@@ -132,9 +133,7 @@ const genRatings = (
 
 		// For TypeScript
 		// https://github.com/microsoft/TypeScript/issues/21732
-		if (typeFactor === undefined) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(typeFactor);
 
 		rawRatings[key] = limitRating(
 			factor * typeFactor * realGauss(rawRatings[key], 3),

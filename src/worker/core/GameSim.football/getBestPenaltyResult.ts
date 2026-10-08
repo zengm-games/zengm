@@ -1,5 +1,5 @@
 import type { State } from "./Play.ts";
-import { orderBy, range } from "../../../common/utils.ts";
+import { orderBy, range, assertDefined } from "../../../common/utils.ts";
 import type { TeamNum } from "../../../common/types.ts";
 import { choice } from "../../../common/random.ts";
 
@@ -180,9 +180,7 @@ const getBestPenaltyResult = <
 	const bestIndex = scores.indexOf(bestScore);
 
 	const bestResult = results[bestIndex];
-	if (!bestResult) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(bestResult);
 	// console.log("bestResult", bestResult);
 
 	return bestResult;

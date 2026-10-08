@@ -9,7 +9,7 @@ import phase from "../phase/index.ts";
 import { getVoteResult } from "./relocateVote.ts";
 import geographicCoordinates from "../../../common/geographicCoordinates.ts";
 import { DEFAULT_COORDS, calcDistance } from "./cluster.ts";
-import { minBy } from "../../../common/utils.ts";
+import { minBy, assertDefined } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
 
 const getBestDid = (
@@ -111,9 +111,7 @@ const expandVote = async (
 	conditions: Conditions,
 ) => {
 	const autoExpand = g.get("autoExpand");
-	if (!autoExpand) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(autoExpand);
 
 	const result = getVoteResult(userVote, override);
 

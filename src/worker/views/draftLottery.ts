@@ -15,7 +15,7 @@ import {
 	NotEnoughTeamsError,
 	type GenOrderResult,
 } from "../core/draft/genOrder.ts";
-import { groupByUnique, orderBy } from "../../common/utils.ts";
+import { groupByUnique, orderBy, assertDefined } from "../../common/utils.ts";
 import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
@@ -321,9 +321,7 @@ export default defineView({
 			let colaOptOutStatus = false;
 			if (draftType === "cola" && draftLotteryResult) {
 				const t = await idb.cache.teams.get(userTid);
-				if (!t) {
-					throw new Error("Should never happen");
-				}
+				assertDefined(t);
 				colaOptOutStatus =
 					t.draftLottery?.type === "cola" ? !!t.draftLottery.optOut : false;
 

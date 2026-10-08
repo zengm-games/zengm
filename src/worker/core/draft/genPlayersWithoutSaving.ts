@@ -3,7 +3,7 @@ import { player } from "../index.ts";
 import { g } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { minBy } from "../../../common/utils.ts";
+import { minBy, assertDefined } from "../../../common/utils.ts";
 import { randInt, shuffle } from "../../../common/random.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
@@ -175,9 +175,7 @@ const genPlayersWithoutSaving = async (
 		for (let i = 0; i < numSpecialPlayerChances; i++) {
 			if (Math.random() < 1 / numSpecialPlayerChances) {
 				const p = enteringDraft[i];
-				if (!p) {
-					throw new Error("Should never happen");
-				}
+				assertDefined(p);
 				player.bonus(p);
 				await player.develop(p, 0); // Recalculate ovr/pot
 			}
@@ -190,9 +188,7 @@ const genPlayersWithoutSaving = async (
 			[...existingPlayers, ...enteringDraft],
 			(p) => p.ratings[0].ovr,
 		);
-		if (!worstPlayer) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(worstPlayer);
 
 		let numPlayersToNerf;
 		if (forceScrubs) {
@@ -212,9 +208,7 @@ const genPlayersWithoutSaving = async (
 		shuffle(enteringDraft);
 		for (let i = 0; i < numPlayersToNerf; i++) {
 			const p = enteringDraft[i];
-			if (!p) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(p);
 			const ovrDiff = p.ratings[0].ovr - worstPlayer.ratings[0].ovr;
 			if (ovrDiff > 0) {
 				player.bonus(p, -ovrDiff / 2);

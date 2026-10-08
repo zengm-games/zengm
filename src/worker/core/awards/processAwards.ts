@@ -9,6 +9,7 @@ import {
 	omit,
 	orderBy,
 	range,
+	assertDefined,
 } from "../../../common/utils.ts";
 import { pruneEmptyWinners, showStatsByType } from "../../../common/awards.ts";
 import type {
@@ -680,9 +681,7 @@ export const processAwards = async ({
 									}
 								}
 
-								if (tid === undefined) {
-									throw new Error("Should never happen");
-								}
+								assertDefined(tid);
 
 								return {
 									pid: p.pid,
@@ -806,9 +805,7 @@ export const processAwards = async ({
 										return { pos };
 									}
 									const tid = p.currentStats[statRange]?.tid;
-									if (tid === undefined) {
-										throw new Error("Should never happen");
-									}
+									assertDefined(tid);
 									return { pid: p.pid, pos, tid };
 								});
 							});
@@ -827,9 +824,7 @@ export const processAwards = async ({
 									.filter((p) => p.currentStats[statRange])
 									.map((p) => {
 										const tid = p.currentStats[statRange]?.tid;
-										if (tid === undefined) {
-											throw new Error("Should never happen");
-										}
+										assertDefined(tid);
 
 										return {
 											pid: p.pid,

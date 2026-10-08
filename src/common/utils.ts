@@ -179,3 +179,9 @@ export const chunk = <T>(array: T[], chunkSize: number): T[][] => {
 export const last = <T>(array: NonEmptyArray<T>) => {
 	return array.at(-1)!;
 };
+
+export function assertDefined<T>(value: T): asserts value is NonNullable<T> {
+	if (value === undefined || value === null) {
+		throw new Error("Should never happen");
+	}
+}

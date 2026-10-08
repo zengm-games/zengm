@@ -12,6 +12,7 @@ import {
 } from "../season/genPlayoffSeries.ts";
 import { getHypotheticalTeam } from "./getHypotheticalTeam.ts";
 import { season } from "../index.ts";
+import { assertDefined } from "../../../common/utils.ts";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 
@@ -41,9 +42,7 @@ const getClinchedPlayoffs = async (
 
 	const getGamesLeft = (tid: number) => {
 		const gamesLeft = gamesLeftByTid[tid];
-		if (gamesLeft === undefined) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(gamesLeft);
 		return gamesLeft;
 	};
 

@@ -9,6 +9,7 @@ import {
 	helpers,
 } from "../../util/index.ts";
 import league from "../league/index.ts";
+import { assertDefined } from "../../../common/utils.ts";
 
 export const getVoteResult = (userVote: boolean, override: boolean) => {
 	const numActiveTeams = g.get("numActiveTeams");
@@ -54,9 +55,7 @@ const relocateVote = async ({
 	userVote: boolean;
 }) => {
 	const autoRelocate = g.get("autoRelocate");
-	if (!autoRelocate) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(autoRelocate);
 
 	const result = getVoteResult(userVote, override);
 

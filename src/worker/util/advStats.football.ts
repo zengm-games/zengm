@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
-import { groupByUnique, last } from "../../common/utils.ts";
+import { groupByUnique, last, assertDefined } from "../../common/utils.ts";
 import {
 	defaultAwards,
 	defaultGameAttributes,
@@ -147,9 +147,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		const t = teamsByTid[p.tid];
 
-		if (t === undefined) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(t);
 
 		// Need to add this up, otherwise it doesn't get computed right at the team level
 		t.stats.olScore += olScore(p.stats, league, p.ratings.pos);
@@ -192,9 +190,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		const t = teamsByTid[p.tid];
 
-		if (t === undefined) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(t);
 
 		const pInidivudalPoints = individualPts[i]!;
 

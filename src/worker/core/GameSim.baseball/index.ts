@@ -13,7 +13,7 @@ import { fatigueFactor } from "./fatigueFactor.ts";
 import { infoDefense } from "../player/ovr.baseball.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
 import getWinner from "../../../common/getWinner.ts";
-import { maxBy } from "../../../common/utils.ts";
+import { maxBy, assertDefined } from "../../../common/utils.ts";
 import { PHASE } from "../../../common/constants.ts";
 import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 import { choice, gauss } from "../../../common/random.ts";
@@ -1914,9 +1914,7 @@ class GameSim extends GameSimBase {
 					let numBasesAdjusted: typeof numBases;
 					if (gameWinningRunScoredWithLiveBall) {
 						const lastScoringRunner = runners.find((runner) => runner?.scored);
-						if (!lastScoringRunner) {
-							throw new Error("Should never happen");
-						}
+						assertDefined(lastScoringRunner);
 						const numBasesAdvancedByWinningRun =
 							lastScoringRunner.to - lastScoringRunner.from;
 						if (numBasesAdvancedByWinningRun <= 2) {

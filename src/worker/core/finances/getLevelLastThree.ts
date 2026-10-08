@@ -3,6 +3,7 @@ import type { Team, TeamSeasonWithoutKey } from "../../../common/types.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
+import { assertDefined } from "../../../common/utils.ts";
 
 const getLevelLastThree = async (
 	key: keyof TeamSeasonWithoutKey["expenseLevels"],
@@ -29,9 +30,7 @@ const getLevelLastThree = async (
 				[(extra as any).tid, g.get("season")],
 			]));
 		const t = extra.t ?? (await idb.cache.teams.get((extra as any).tid));
-		if (!t) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(t);
 
 		// Ideally up to 3 seasons would be passed to this form, but in case there's more, this handles it
 		const upToLastThreeTeamSeasons = teamSeasons.slice(-NUM_SEASONS);

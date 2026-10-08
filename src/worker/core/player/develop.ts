@@ -21,7 +21,7 @@ import potEstimator from "./potEstimator.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { last } from "../../../common/utils.ts";
+import { last, assertDefined } from "../../../common/utils.ts";
 
 // ovrs and pots only exist in sports with position-specific ratings, and there they have a value for every position
 const getRatingByPos = (
@@ -205,9 +205,7 @@ const develop = async (
 				}
 			}
 
-			if (pos === undefined) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(pos);
 
 			if (typeof p.pos === "string") {
 				pos = p.pos;

@@ -8,7 +8,7 @@ import type {
 import { PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
-import { last, orderBy, range } from "../../../common/utils.ts";
+import { last, orderBy, range, assertDefined } from "../../../common/utils.ts";
 import { getPosByGpF } from "../player/getPosByGpF.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
@@ -463,9 +463,7 @@ const create = async (conditions: Conditions) => {
 		const getTeamName = (teamPlayers: (typeof allStars)["teams"][number]) => {
 			const captainPID = teamPlayers[0]?.pid;
 			const p = players.find((p2) => p2.pid === captainPID);
-			if (!p) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(p);
 			return `Team ${p.firstName}`;
 		};
 		allStars.teamNames = [

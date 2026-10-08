@@ -11,6 +11,7 @@ import { formatClock } from "../../common/formatClock.ts";
 import type { PlayerInjury } from "../../common/types.ts";
 import { formatLiveGameStat } from "./formatLiveGameStat.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
+import { assertDefined } from "../../common/utils.ts";
 type BoxScorePlayer = {
 	name: string;
 	pid: number;
@@ -656,9 +657,7 @@ const processLiveGameEvents = ({
 			tOverride?: 0 | 1;
 		}) => {
 			const t = tOverride ?? eventT;
-			if (t === undefined) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(t);
 			sportState.plays.push({
 				t,
 				down,
@@ -863,9 +862,7 @@ const processLiveGameEvents = ({
 			boxScore.teams[1].timeouts = e.timeouts[1];
 		} else if (e.type !== "init") {
 			let play = sportState.plays.at(-1);
-			if (!play) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(play);
 
 			if (e.type === "interception") {
 				// Interceptions are always turnovers, so set it here. But for fumbles we need to wait for the recovery, done elsewhere
@@ -945,9 +942,7 @@ const processLiveGameEvents = ({
 
 					// play might have been removed by removeLastScoreOrTurnoversIfNecessary
 					play = sportState.plays.at(-1);
-					if (!play) {
-						throw new Error("Should never happen");
-					}
+					assertDefined(play);
 
 					// For penalties before the snap, still count them (except awaitingAfterTouchdown, where these should never be true)
 					if (!sportState.awaitingAfterTouchdown) {
@@ -993,9 +988,7 @@ const processLiveGameEvents = ({
 
 				// play might have been removed by removeLastScoreOrTurnoversIfNecessary
 				play = sportState.plays.at(-1);
-				if (!play) {
-					throw new Error("Should never happen");
-				}
+				assertDefined(play);
 
 				// Offsetting penalties don't make it this far in the penalty event, because they have are filtered out above. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
 				// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly

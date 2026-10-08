@@ -10,6 +10,7 @@ import type { View } from "../../common/types.ts";
 import { shuffle } from "../../common/random.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { useLocal } from "../util/local.ts";
+import { assertDefined } from "../../common/utils.ts";
 
 const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 	const [sortedTids, setSortedTids] = useState(() => teams.map((t) => t.tid));
@@ -44,9 +45,7 @@ const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
 	const teamsSorted = sortedTids.map((tid) => {
 		const found = teams.find((t) => t.tid === tid);
-		if (!found) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(found);
 		return found;
 	});
 

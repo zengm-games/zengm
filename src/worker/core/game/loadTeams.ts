@@ -9,7 +9,7 @@ import {
 } from "../../../common/constants.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { last } from "../../../common/utils.ts";
+import { last, assertDefined } from "../../../common/utils.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
@@ -414,9 +414,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 	if (tids.length === 2 && tids.includes(-1) && tids.includes(-2)) {
 		// All-Star Game
 		const allStars = await allStar.getOrCreate(g.get("season"));
-		if (!allStars) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(allStars);
 		if (!allStars.finalized) {
 			await allStar.draftAll();
 		}

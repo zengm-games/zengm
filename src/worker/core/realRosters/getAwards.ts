@@ -1,5 +1,10 @@
 import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
-import { groupByUnique, omit, orderBy } from "../../../common/utils.ts";
+import {
+	groupByUnique,
+	omit,
+	orderBy,
+	assertDefined,
+} from "../../../common/utils.ts";
 import type {
 	AwardInfoIndividual,
 	AwardInfoTeam,
@@ -152,9 +157,7 @@ const getAwards = (
 	for (let season = seasonsRange[0]; season <= seasonsRange[1]; season++) {
 		const seasonAwards = awardsBySeason[season] ?? [];
 
-		if (!playersBySlug) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(playersBySlug);
 
 		const individualAwardsByShortName: Record<string, AwardInfoIndividual> = {};
 		const teamAwardsByShortName: Record<string, AwardInfoTeam> = {};

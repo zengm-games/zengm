@@ -1,7 +1,7 @@
 import loadDataBasketball, { type Basketball } from "./loadData.basketball.ts";
 import loadStatsBasketball from "./loadStats.basketball.ts";
 import formatScheduledEvents from "./formatScheduledEvents.ts";
-import { orderBy, range } from "../../../common/utils.ts";
+import { orderBy, range, assertDefined } from "../../../common/utils.ts";
 import type {
 	GetLeagueOptions,
 	DraftPickWithoutKey,
@@ -784,9 +784,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 						(row) => row.start <= options.season + 1,
 					);
 					if (salaryRow) {
-						if (p.draft.round === undefined) {
-							throw new Error("Should never happen");
-						}
+						assertDefined(p.draft.round);
 						let minYears =
 							defaultGameAttributes.rookieContractLengths[p.draft.round - 1] ??
 							defaultGameAttributes.rookieContractLengths.at(-1)!;

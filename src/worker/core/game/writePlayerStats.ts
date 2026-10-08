@@ -5,7 +5,7 @@ import { g, helpers, local, lock, logEvent } from "../../util/index.ts";
 import type { Conditions, GameResults, Player } from "../../../common/types.ts";
 import stats from "../player/stats.ts";
 import { statsRowIsCurrent } from "../player/statsRowIsCurrent.ts";
-import { last, maxBy } from "../../../common/utils.ts";
+import { last, maxBy, assertDefined } from "../../../common/utils.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
@@ -412,9 +412,7 @@ const writePlayerStats = async (
 
 				if (!allStarGame) {
 					// Row always exists here, because of addStatsRow above
-					if (!psLatest) {
-						throw new Error("Should never happen");
-					}
+					assertDefined(psLatest);
 
 					// Stats are accumulated by dynamic keys from the box score, so treat the row as a generic record
 					const ps: Record<string, any> = psLatest;

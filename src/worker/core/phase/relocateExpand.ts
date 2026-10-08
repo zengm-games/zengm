@@ -7,6 +7,7 @@ import { g } from "../../util/index.ts";
 import league from "../league/index.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { choice, shuffle } from "../../../common/random.ts";
+import { assertDefined } from "../../../common/utils.ts";
 
 const upcomingScheduledEventBlocksRelocateExpand = async () => {
 	const scheduledEvents = await idb.getCopies.scheduledEvents(
@@ -79,9 +80,7 @@ const getNorthAmericaOnly = ({
 	let numNorthAmericanTeamsAvailable = 0;
 	for (const t of allCandidateTeams) {
 		const coordinates = geographicCoordinates[t.region];
-		if (!coordinates) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(coordinates);
 		if (coordinates.continent === "North America") {
 			numNorthAmericanTeamsAvailable += 1;
 			if (numNorthAmericanTeamsAvailable >= numTeams) {
@@ -219,9 +218,7 @@ export const doRelocate = async () => {
 					}
 				}
 
-				if (bestDid === undefined) {
-					throw new Error("Should never happen");
-				}
+				assertDefined(bestDid);
 
 				return {
 					did: bestDid,
@@ -255,9 +252,7 @@ export const doRelocate = async () => {
 				}
 			}
 
-			if (bestRealigned === undefined) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(bestRealigned);
 
 			realigned = bestRealigned;
 		}

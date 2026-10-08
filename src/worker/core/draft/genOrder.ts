@@ -22,7 +22,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 import { simLottery } from "./draftLottery.ts";
 import { RESTRICTED_5_PICK, updateNba2027AfterLottery } from "./nba2027.ts";
-import { orderBy, range } from "../../../common/utils.ts";
+import { orderBy, range, assertDefined } from "../../../common/utils.ts";
 
 type MyDraftLotteryResult<Completed extends boolean> =
 	DraftLotteryResult<Completed> & {
@@ -553,9 +553,7 @@ const genOrder = async (
 				})
 				.filter((dp) => dp !== undefined) // Keep only lottery picks
 				.map((dp) => {
-					if (dp === undefined) {
-						throw new Error("Should never happen");
-					}
+					assertDefined(dp);
 
 					// For the original team
 					const i = firstRoundTeams.findIndex(
@@ -573,9 +571,7 @@ const genOrder = async (
 		};
 
 		if (draftType === "nba2027") {
-			if (!nba2027Restrictions) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(nba2027Restrictions);
 			draftLotteryResult = {
 				...common,
 				draftType,

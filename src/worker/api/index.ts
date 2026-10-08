@@ -114,6 +114,7 @@ import {
 	omit,
 	orderBy,
 	range,
+	assertDefined,
 } from "../../common/utils.ts";
 import {
 	finalizePlayersRelativesList,
@@ -2001,9 +2002,7 @@ const getNegotiationProps = async (pid: number) => {
 		tid: g.get("userTid"),
 		attrs: ["colors", "jersey"],
 	});
-	if (!t) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(t);
 
 	return {
 		capSpace: (g.get("salaryCap") - payroll) / 1000,
@@ -2301,9 +2300,7 @@ const getRandomRatings = async ({
 			break;
 		}
 	}
-	if (!p) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(p);
 
 	await player.develop(p, age - 19);
 
@@ -5208,9 +5205,7 @@ const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 
 const toggleColaOptOut = async () => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
-	if (!t) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(t);
 
 	if (t.draftLottery?.type === "cola") {
 		if (t.draftLottery.optOut) {

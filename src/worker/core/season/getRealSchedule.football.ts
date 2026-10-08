@@ -1,6 +1,7 @@
 import { choice, shuffle } from "../../../common/random.ts";
 import g from "../../util/g.ts";
 import realSchedules from "./realSchedules.football.json";
+import { assertDefined } from "../../../common/utils.ts";
 
 const NUM_CONFS = 2;
 const NUM_DIVS_PER_CONF = 4;
@@ -118,9 +119,7 @@ export const getRealSchedule = (
 		for (const matchup of matchups) {
 			const actualMatcup = matchup.map((teamInfosIndex) => {
 				const teamInfo = teamInfos[teamInfosIndex];
-				if (!teamInfo) {
-					throw new Error("Should never happen");
-				}
+				assertDefined(teamInfo);
 				const [indexConf, indexWithinConf, indexWithinDiv] = teamInfo;
 				const cid = cids[indexConf]!;
 				const did = didsByCid[cid]![indexWithinConf]!;

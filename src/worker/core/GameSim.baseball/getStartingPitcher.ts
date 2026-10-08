@@ -2,6 +2,7 @@ import { PHASE } from "../../../common/constants.ts";
 import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball.ts";
 import { g } from "../../util/index.ts";
 import { choice } from "../../../common/random.ts";
+import { assertDefined } from "../../../common/utils.ts";
 
 export const CLOSER_INDEX = NUM_STARTING_PITCHERS;
 
@@ -68,9 +69,7 @@ export const getStartingPitcher = <
 		p = choice(pitchers);
 	}
 
-	if (!p) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(p);
 
 	return p;
 };

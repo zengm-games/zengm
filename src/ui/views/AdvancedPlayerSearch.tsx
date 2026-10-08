@@ -33,6 +33,7 @@ import { ActionButton } from "../components/ActionButton.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { useLocal } from "../util/local.ts";
 import type { advancedPlayerSearch } from "../../worker/api/advancedPlayerSearch.ts";
+import { assertDefined } from "../../common/utils.ts";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -68,9 +69,7 @@ type AdvancedPlayerSearchFilterEditing = Omit<
 
 const getFilterInfo = (category: string, key: string) => {
 	const info = allFilters[category]!.options[key];
-	if (!info) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(info);
 	return info;
 };
 

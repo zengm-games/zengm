@@ -3,7 +3,7 @@ import type {
 	GameAttributesLeague,
 	PlayerAwardBuiltIn,
 } from "../../../common/types.ts";
-import { groupByUnique } from "../../../common/utils.ts";
+import { groupByUnique, assertDefined } from "../../../common/utils.ts";
 
 export const getDefaultAwardsByShortName = () => {
 	return groupByUnique(
@@ -32,9 +32,7 @@ export const formatPlayerAward = (
 	>,
 ): PlayerAwardBuiltIn => {
 	const infoTemp = defaultAwardsByShortName[rawAward.shortName];
-	if (!infoTemp) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(infoTemp);
 
 	const info = infoTemp.award;
 	const index = infoTemp.index;

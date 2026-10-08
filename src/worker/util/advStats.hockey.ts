@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
-import { groupByUnique } from "../../common/utils.ts";
+import { groupByUnique, assertDefined } from "../../common/utils.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -49,9 +49,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 	// Goals created
 	const gc = players.map((p) => {
 		const t = teamsByTid[p.tid];
-		if (t === undefined) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(t);
 
 		const gcDenominator = t.stats.g + 0.5 * t.stats.a;
 		const gcPlayer =
@@ -85,9 +83,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 
 	for (const [i, p] of players.entries()) {
 		const t = teamsByTid[p.tid];
-		if (t === undefined) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(t);
 
 		const marginalGoalsPerPoint = league.g / league.ptsDefault;
 

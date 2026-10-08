@@ -11,7 +11,7 @@ import type {
 	PlayerStatType,
 } from "../../common/types.ts";
 import type { ViewInput } from "../util/defineView.ts";
-import { last, maxBy } from "../../common/utils.ts";
+import { last, maxBy, assertDefined } from "../../common/utils.ts";
 import { normalizeIntl } from "../../common/normalizeIntl.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
@@ -93,9 +93,7 @@ const getPlayers = async (
 						: playoffs === "combined"
 							? careerStatsCombined
 							: careerStats;
-				if (!totals) {
-					throw new Error("Should never happen");
-				}
+				assertDefined(totals);
 
 				// Copy some over from first/last stats entry
 				const firstStats = stats[0];

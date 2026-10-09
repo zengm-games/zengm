@@ -1,8 +1,5 @@
 import { useRef, useState } from "react";
-import {
-	DEFAULT_JERSEY,
-	DEFAULT_TEAM_COLORS,
-} from "../../../common/constants.ts";
+
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs.ts";
 import type { ScheduledEventsTeam } from "../../../common/scheduledEvents.ts";
@@ -12,25 +9,16 @@ import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAme
 import { helpers } from "../../util/helpers.ts";
 import TeamForm from "../ManageTeams/TeamForm.tsx";
 import { type EditProps, FormButtons } from "./common.tsx";
+import {
+	getTeamFormValues,
+	setTeamFormValue,
+	type TeamFormValues,
+} from "./teamFormValues.ts";
 
 type ExpansionTeam = Extract<
 	ScheduledEvent,
 	{ type: "expansionDraft" }
 >["info"]["teams"][number];
-
-// Same format that TeamForm uses
-type TeamFormValues = {
-	abbrev: string;
-	colors: [string, string, string];
-	did: string;
-	imgURL: string;
-	imgURLSmall: string;
-	jersey: string;
-	name: string;
-	pop: string;
-	region: string;
-	stadiumCapacity: string;
-};
 
 type FormTeam = {
 	// Only used by React
@@ -71,21 +59,11 @@ const EditExpansionDraft = ({
 
 	const defaultDid = String(last(divs).did);
 
-	const toValues = (
-		t: Partial<Record<keyof TeamFormValues, unknown>>,
-	): TeamFormValues => {
-		return {
-			abbrev: String(t.abbrev ?? ""),
-			colors: (t.colors as TeamFormValues["colors"]) ?? DEFAULT_TEAM_COLORS,
-			did: String(t.did ?? defaultDid),
-			imgURL: String(t.imgURL ?? ""),
-			imgURLSmall: String(t.imgURLSmall ?? ""),
-			jersey: String(t.jersey ?? DEFAULT_JERSEY),
-			name: String(t.name ?? ""),
-			pop: String(t.pop ?? 1),
-			region: String(t.region ?? ""),
-			stadiumCapacity: String(t.stadiumCapacity ?? defaultStadiumCapacity),
-		};
+	const toValues = (t: Parameters<typeof getTeamFormValues>[0]) => {
+		return getTeamFormValues(t, {
+			did: defaultDid,
+			stadiumCapacity: defaultStadiumCapacity,
+		});
 	};
 
 	const [formTeams, setFormTeams] = useState<FormTeam[]>(() => {
@@ -185,19 +163,9 @@ const EditExpansionDraft = ({
 						return t;
 					}
 
-					const values = { ...t.values };
-					if (field.startsWith("colors")) {
-						const i = Number.parseInt(field.replace("colors", ""));
-						const colors: TeamFormValues["colors"] = [...values.colors];
-						colors[i] = value;
-						values.colors = colors;
-					} else {
-						(values as any)[field] = value;
-					}
-
 					return {
 						...t,
-						values,
+						values: setTeamFormValue(t.values, field, value),
 					};
 				}),
 			);

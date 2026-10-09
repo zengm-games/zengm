@@ -1,31 +1,16 @@
 import { useState } from "react";
-import {
-	DEFAULT_JERSEY,
-	DEFAULT_TEAM_COLORS,
-	JERSEYS,
-} from "../../../common/constants.ts";
-import type { ScheduledEventsTeam } from "../../../common/scheduledEvents.ts";
 import type { ScheduledEventTeamInfo } from "../../../common/types.ts";
-import { orderBy } from "../../../common/utils.ts";
-import { ColorPicker } from "../../components/ColorPicker/index.tsx";
+import { last, orderBy } from "../../../common/utils.ts";
 import { helpers } from "../../util/helpers.ts";
+import TeamForm from "../ManageTeams/TeamForm.tsx";
 import { type EditProps, FormButtons, formatTeamOption } from "./common.tsx";
+import {
+	getTeamFormValues,
+	setTeamFormValue,
+	type TeamFormValues,
+} from "./teamFormValues.ts";
 
-// Only fields that are in `values` are changed by the event
-type Values = {
-	abbrev?: string;
-	colors?: [string, string, string];
-	did?: string;
-	imgURL?: string;
-	imgURLSmall?: string;
-	jersey?: string;
-	name?: string;
-	pop?: string;
-	region?: string;
-	stadiumCapacity?: string;
-};
-
-type Key = keyof Values;
+type Key = keyof TeamFormValues;
 
 const FIELDS: {
 	key: Key;
@@ -35,49 +20,26 @@ const FIELDS: {
 	{ key: "name", label: "Name" },
 	{ key: "abbrev", label: "Abbrev" },
 	{ key: "did", label: "Division" },
-	{ key: "pop", label: "Population (millions)" },
+	{ key: "pop", label: "Population" },
 	{ key: "stadiumCapacity", label: "Stadium Capacity" },
 	{ key: "imgURL", label: "Logo URL" },
-	{ key: "imgURLSmall", label: "Small Logo URL" },
+	{ key: "imgURLSmall", label: "Small Logo" },
 	{ key: "colors", label: "Colors" },
 	{ key: "jersey", label: "Jersey" },
 ];
 
-// Same height as the other inputs
-const COLORS_HEIGHT = 33;
-
-// Convert from the format in the event or team object to the format used in the form
-const getValue = <K extends Key>(
-	key: K,
-	object: Pick<ScheduledEventsTeam, K>,
-): Values[Key] => {
-	const value = object[key];
-
-	if (key === "colors") {
-		return (value as Values["colors"]) ?? DEFAULT_TEAM_COLORS;
+const isSameValue = (a: TeamFormValues[Key], b: TeamFormValues[Key]) => {
+	// Colors
+	if (Array.isArray(a) && Array.isArray(b)) {
+		return a.every((color, i) => color === b[i]);
 	}
 
-	if (key === "jersey") {
-		return (value as string | undefined) ?? DEFAULT_JERSEY;
-	}
-
-	return value === undefined ? "" : String(value);
-};
-
-const getInitialValues = (info: ScheduledEventTeamInfo["info"] | undefined) => {
-	const values: Values = {};
-	if (info) {
-		for (const { key } of FIELDS) {
-			if (info[key] !== undefined) {
-				(values as any)[key] = getValue(key, info);
-			}
-		}
-	}
-	return values;
+	return a === b;
 };
 
 const EditTeamInfo = ({
 	confs,
+	defaultStadiumCapacity,
 	divs,
 	event,
 	onCancel,
@@ -85,39 +47,61 @@ const EditTeamInfo = ({
 	saving,
 	setError,
 	teams,
-}: EditProps<"teamInfo">) => {
+}: EditProps<"teamInfo"> & {
+	defaultStadiumCapacity: number;
+}) => {
 	const [tid, setTid] = useState(event?.info.tid);
-	const [values, setValues] = useState(() => getInitialValues(event?.info));
+
+	// Only the fields changed by the event are here. The rest come from the team.
+	const [changes, setChanges] = useState<Partial<TeamFormValues>>(() => {
+		const changes: Partial<TeamFormValues> = {};
+		if (event) {
+			const eventValues = getTeamFormValues(event.info, {
+				did: "",
+				stadiumCapacity: defaultStadiumCapacity,
+			});
+			for (const { key } of FIELDS) {
+				if (event.info[key] !== undefined) {
+					(changes as any)[key] = eventValues[key];
+				}
+			}
+		}
+		return changes;
+	});
 
 	const teamsSorted = orderBy(teams, ["region", "name", "tid"]);
 
 	// Selected team may not exist anymore, if the season/phase changed
 	const selectedTeam = teamsSorted.find((t) => t.tid === tid);
 
-	const setValue = <K extends Key>(key: K, value: Values[K]) => {
-		setValues((prev) => ({
-			...prev,
-			[key]: value,
-		}));
-	};
+	// The team right before this event happens
+	const before = selectedTeam
+		? getTeamFormValues(selectedTeam, {
+				did: String(last(divs).did),
+				stadiumCapacity: defaultStadiumCapacity,
+			})
+		: undefined;
 
-	const toggleField = (key: Key) => {
-		setValues((prev) => {
-			if (prev[key] !== undefined) {
-				const { [key]: _removed, ...rest } = prev;
-				return rest;
+	// The team right after this event happens
+	const after = before
+		? {
+				...before,
+				...changes,
 			}
+		: undefined;
 
-			// Start with the current value for this team
-			return {
-				...prev,
-				[key]: getValue(key, selectedTeam ?? {}),
-			};
-		});
-	};
+	const changedFields =
+		before && after
+			? FIELDS.filter(({ key }) => !isSameValue(before[key], after[key]))
+			: [];
 
 	const save = () => {
-		if (!selectedTeam) {
+		if (!selectedTeam || !after) {
+			return;
+		}
+
+		if (changedFields.length === 0) {
+			setError("Change at least one thing about this team.");
 			return;
 		}
 
@@ -129,134 +113,39 @@ const EditTeamInfo = ({
 			info.srID = event.info.srID;
 		}
 
-		for (const key of ["region", "name", "abbrev"] as const) {
-			const value = values[key];
-			if (value !== undefined) {
-				if (value.trim() === "") {
+		for (const { key } of changedFields) {
+			if (key === "region" || key === "name" || key === "abbrev") {
+				if (after[key].trim() === "") {
 					setError(`${helpers.upperCaseFirstLetter(key)} cannot be blank.`);
 					return;
 				}
-				info[key] = value;
+				info[key] = after[key];
+			} else if (key === "did") {
+				info.did = Number.parseInt(after.did);
+				if (Number.isNaN(info.did)) {
+					setError("Invalid division.");
+					return;
+				}
+			} else if (key === "pop") {
+				info.pop = helpers.localeParseFloat(after.pop);
+				if (Number.isNaN(info.pop) || info.pop < 0) {
+					setError("Invalid population.");
+					return;
+				}
+			} else if (key === "stadiumCapacity") {
+				info.stadiumCapacity = Number.parseInt(after.stadiumCapacity);
+				if (Number.isNaN(info.stadiumCapacity) || info.stadiumCapacity < 0) {
+					setError("Invalid stadium capacity.");
+					return;
+				}
+			} else if (key === "colors") {
+				info.colors = after.colors;
+			} else {
+				info[key] = after[key];
 			}
-		}
-
-		if (values.did !== undefined) {
-			info.did = Number.parseInt(values.did);
-			if (Number.isNaN(info.did)) {
-				setError("Invalid division.");
-				return;
-			}
-		}
-
-		if (values.pop !== undefined) {
-			info.pop = helpers.localeParseFloat(values.pop);
-			if (Number.isNaN(info.pop) || info.pop < 0) {
-				setError("Invalid population.");
-				return;
-			}
-		}
-
-		if (values.stadiumCapacity !== undefined) {
-			info.stadiumCapacity = Number.parseInt(values.stadiumCapacity);
-			if (Number.isNaN(info.stadiumCapacity) || info.stadiumCapacity < 0) {
-				setError("Invalid stadium capacity.");
-				return;
-			}
-		}
-
-		for (const key of ["imgURL", "imgURLSmall", "jersey"] as const) {
-			if (values[key] !== undefined) {
-				info[key] = values[key];
-			}
-		}
-
-		if (values.colors !== undefined) {
-			info.colors = values.colors;
-		}
-
-		if (Object.keys(values).length === 0) {
-			setError("Select at least one thing to change.");
-			return;
 		}
 
 		onSave(info);
-	};
-
-	const renderInput = (key: Key) => {
-		const enabled = values[key] !== undefined;
-		const id = `scheduled-event-team-info-${key}`;
-
-		// When not enabled, show the value the team will have at this time
-		const value = values[key] ?? getValue(key, selectedTeam ?? {});
-
-		if (key === "colors") {
-			const colors = value as [string, string, string];
-
-			return (
-				<div className="input-group">
-					{([0, 1, 2] as const).map((i) => (
-						<ColorPicker
-							key={i}
-							disabled={!enabled}
-							onChange={(color) => {
-								const newColors: [string, string, string] = [...colors];
-								newColors[i] = color;
-								setValue("colors", newColors);
-							}}
-							value={colors[i]}
-							style={{ minWidth: "33%", height: COLORS_HEIGHT }}
-						/>
-					))}
-				</div>
-			);
-		}
-
-		if (key === "did" || key === "jersey") {
-			const options =
-				key === "did"
-					? divs.map((div) => {
-							const conf = confs.find((conf) => conf.cid === div.cid);
-							return {
-								key: String(div.did),
-								text: conf ? `${div.name} (${conf.name})` : div.name,
-							};
-						})
-					: helpers.entries(JERSEYS).map(([jersey, text]) => ({
-							key: jersey,
-							text,
-						}));
-
-			return (
-				<select
-					id={id}
-					className="form-select"
-					disabled={!enabled}
-					value={value as string}
-					onChange={(event) => {
-						setValue(key, event.target.value);
-					}}
-				>
-					{options.map((option) => (
-						<option key={option.key} value={option.key}>
-							{option.text}
-						</option>
-					))}
-				</select>
-			);
-		}
-
-		return (
-			<input
-				id={id}
-				type="text"
-				className="form-control"
-				disabled={!enabled}
-				value={value as string}
-				onChange={(event) => {
-					setValue(key, event.target.value);
-				}}
-			/>
-		);
 	};
 
 	return (
@@ -276,6 +165,9 @@ const EditTeamInfo = ({
 				value={selectedTeam?.tid ?? ""}
 				onChange={(event) => {
 					setTid(Number.parseInt(event.target.value));
+
+					// Changes are for a specific team
+					setChanges({});
 				}}
 			>
 				<option value="" disabled>
@@ -288,31 +180,74 @@ const EditTeamInfo = ({
 				))}
 			</select>
 
-			<div className="row mt-3">
-				{FIELDS.map(({ key, label }) => {
-					const checkboxId = `scheduled-event-team-info-check-${key}`;
-					return (
-						<div key={key} className="col-sm-6 mb-3">
-							<div className="form-check mb-1">
-								<input
-									id={checkboxId}
-									className="form-check-input"
-									type="checkbox"
-									checked={values[key] !== undefined}
-									disabled={!selectedTeam}
-									onChange={() => {
-										toggleField(key);
-									}}
-								/>
-								<label className="form-check-label" htmlFor={checkboxId}>
-									{label}
-								</label>
-							</div>
-							{renderInput(key)}
-						</div>
-					);
-				})}
-			</div>
+			{after ? (
+				<>
+					<div className="form-text mb-3">
+						Edit the team to how it should be after this event. Only the things
+						you change are saved in the event.
+					</div>
+					<div className="row">
+						<TeamForm
+							classNamesCol={[
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"d-none",
+							]}
+							confs={confs}
+							divs={divs}
+							handleInputChange={(field, event) => {
+								// In case the error was about nothing being changed
+								setError(undefined);
+
+								setChanges((prev) => {
+									if (!before) {
+										return prev;
+									}
+
+									// Apply to the full team, since changing one color requires the other two
+									const newValues = setTeamFormValue(
+										{
+											...before,
+											...prev,
+										},
+										field,
+										event.target.value,
+									);
+
+									const key = field.startsWith("colors") ? "colors" : field;
+									return {
+										...prev,
+										[key]: newValues[key as Key],
+									};
+								});
+							}}
+							hideStatus
+							moveButton
+							t={after}
+						/>
+					</div>
+					<div>
+						{changedFields.length > 0 ? (
+							<>
+								This event changes:{" "}
+								{changedFields.map((field) => field.label).join(", ")}
+							</>
+						) : (
+							<span className="text-body-secondary">
+								Nothing is changed yet.
+							</span>
+						)}
+					</div>
+				</>
+			) : null}
 			<FormButtons
 				disabled={!selectedTeam}
 				onCancel={onCancel}

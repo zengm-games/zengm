@@ -302,6 +302,7 @@ const ScheduledEventEditor = ({
 					{type === "teamInfo" ? (
 						<EditTeamInfo
 							{...commonProps}
+							defaultStadiumCapacity={defaultStadiumCapacity}
 							event={getEvent(editing, "teamInfo")}
 						/>
 					) : null}

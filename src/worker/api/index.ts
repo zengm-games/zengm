@@ -104,6 +104,12 @@ import {
 import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
 import eightyTwoZeroDraft from "./eightyTwoZeroDraft.ts";
+import {
+	deleteScheduledEvent,
+	getRetiredPlayersForScheduledEvents,
+	normalizeScheduledEventsAfterChange,
+	upsertScheduledEvent,
+} from "./scheduledEvents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
@@ -1145,7 +1151,8 @@ const deleteScheduledEvents = async (type: string) => {
 		}
 	}
 
-	await toUI("realtimeUpdate", [["scheduledEvents"]]);
+	// Deleting some events can make others invalid. This also updates the UI.
+	await normalizeScheduledEventsAfterChange();
 };
 
 const discardUnsavedProgress = async () => {
@@ -5428,6 +5435,7 @@ const api = {
 		createLeague: whileWorkerBusy(createLeague),
 		createTrade,
 		deleteOldData: whileWorkerBusy(deleteOldData),
+		deleteScheduledEvent,
 		deleteScheduledEvents,
 		discardUnsavedProgress,
 		draftLottery,
@@ -5469,6 +5477,7 @@ const api = {
 		getRandomName,
 		getRandomRatings,
 		getRandomTeams,
+		getRetiredPlayersForScheduledEvents,
 		getSavedTrade,
 		getTeamGraphStat,
 		getTradingBlockOffers,
@@ -5545,6 +5554,7 @@ const api = {
 		upgrade65,
 		upgrade65Estimate,
 		upsertCustomizedPlayer,
+		upsertScheduledEvent,
 		validatePointsFormula,
 		validatePlayoffSettings,
 	},

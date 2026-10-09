@@ -1,6 +1,10 @@
 import { last } from "../../common/utils.ts";
+import { sortScheduledEvents } from "../../common/scheduledEvents.ts";
+import { getScheduledEventsCurrent } from "../api/scheduledEvents.ts";
 import { idb } from "../db/index.ts";
 import { defineView } from "../util/defineView.ts";
+import { g } from "../util/index.ts";
+import { getInitialSettings } from "./settings.ts";
 
 export default defineView({
 	id: "scheduledEvents",
@@ -8,11 +12,12 @@ export default defineView({
 		if (
 			updateEvents.has("firstRun") ||
 			updateEvents.has("newPhase") ||
-			updateEvents.has("scheduledEvents")
+			updateEvents.has("scheduledEvents") ||
+			updateEvents.has("gameAttributes") ||
+			updateEvents.has("team")
 		) {
-			const scheduledEvents = await idb.getCopies.scheduledEvents(
-				undefined,
-				"noCopyCache",
+			const scheduledEvents = sortScheduledEvents(
+				await idb.getCopies.scheduledEvents(undefined, "noCopyCache"),
 			);
 
 			const augmented = [];
@@ -37,8 +42,29 @@ export default defineView({
 				}
 			}
 
+			const teams = (await idb.cache.teams.getAll()).map((t) => ({
+				tid: t.tid,
+				disabled: t.disabled,
+				abbrev: t.abbrev,
+				colors: t.colors,
+				did: t.did,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+				jersey: t.jersey,
+				name: t.name,
+				pop: t.pop,
+				region: t.region,
+				stadiumCapacity: t.stadiumCapacity,
+			}));
+
 			return {
+				confs: g.get("confs"),
+				current: getScheduledEventsCurrent(),
+				defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
+				divs: g.get("divs"),
+				initialSettings: getInitialSettings(),
 				scheduledEvents: augmented,
+				teams,
 			};
 		}
 	},

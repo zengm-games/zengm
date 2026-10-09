@@ -1,3 +1,25 @@
+scheduled events editor
+- see "scheduled-events-editor" branch, shit's complicated
+- undo for any deletes (bulk or individual)
+- edit team
+  - team jersey - why not show preview like expansion draft?
+  - ColorPicker can't be disabled - make it possible?
+  - use TeamForm somehow?
+- unretire player should be able to pick any player, even if not retired yet
+- "This event also changes these, which can't be edited here but you can remove them:"
+  - awards
+  - confs/divs
+- add more scheduled events
+  - force retire
+    - reason?
+- getRetiredPlayersForScheduledEvents
+  - use getCopies directly
+- blog
+  - force retire
+
+put map/filter functions in all getCopies
+- getRetiredPlayersForScheduledEvents
+
 hockey auto sort should play C/W out of position if that is the difference between being on the bench or not https://discord.com/channels/290013534023057409/1553484440796397708/1553484440796397708 - currently there is a bonus in `score` but maybe we should ignore that for players who are not in the starting lines
 
 seasonFraction maybe doesn't make much sense in basketball awards like MVP. gp/teamGp or gp/82 might be better - the former would max at 1 regardles of numGames, but the latter would give more or less weight to winp based on how long the season is, which would also scale them with EWA+VORP. fracWS should maybe also get multiplied by gp/82.
@@ -752,9 +774,6 @@ FBGM end of game penalties
 condense develop0 and updateValues into a single function, mainly for worker console
 
 Injury "games missed" has some counting bug. I can't send league (on phone, hundreds of years, etc.) but with standard 82 game seasons... guy plays 6/82 in '65 and 74/82 in '66. But under injuries is listed as "2065: Torn ACL, 148 games" and "2066: Torn ACL, 122 games". So under most injured frivolity, says he missed 400 career games but that's definitely not right. Could at least cap with (team games played  - player games played) per season somewhere if the cross-day accounting is needed for playoffs or FA or something https://discord.com/channels/290013534023057409/290015591216054273/1310287379457900564
-
-scheduled events editor
-- see "scheduled-events-editor" branch, shit's complicated
 
 players just drafted should not count towards mood when traded away https://old.reddit.com/r/BasketballGM/comments/1gtj4dj/suggestion_for_core_updates_in_newsletter/
 

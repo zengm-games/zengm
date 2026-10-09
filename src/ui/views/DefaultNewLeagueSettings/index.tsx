@@ -10,6 +10,7 @@ import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { settings } from "../Settings/settings.tsx";
+import { getSettingsShown } from "../Settings/getSettingsShown.ts";
 import SettingsForm from "../Settings/SettingsForm.tsx";
 import type { Key } from "../Settings/types.ts";
 import { ExportButton } from "./ExportButton.tsx";
@@ -41,28 +42,7 @@ const DefaultNewLeagueSettings = ({
 			return [];
 		}
 
-		const keys = helpers.keys(newOverrides);
-
-		// Handle adding parent of hidden key
-		return keys.flatMap((key) => {
-			const setting = settingsByKey.get(key as Key)?.[0];
-
-			if (!setting) {
-				// Remove any non-Key elements
-				return [];
-			}
-
-			if (setting.hidden) {
-				const partner = settings.find((setting) =>
-					setting?.partners?.includes(key as Key),
-				);
-				if (partner) {
-					return [key, partner.key];
-				}
-			}
-
-			return key;
-		}) as Key[];
+		return getSettingsShown(helpers.keys(newOverrides));
 	};
 
 	const [settingsShown, setSettingsShown] = useState<Key[]>(() =>

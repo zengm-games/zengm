@@ -97,7 +97,7 @@ export { default as RosterContinuity } from "./RosterContinuity.tsx";
 export { default as SavedTrades } from "./SavedTrades.tsx";
 export { default as Schedule } from "./Schedule.tsx";
 export { default as ScheduleEditor } from "./ScheduleEditor/index.tsx";
-export { default as ScheduledEvents } from "./ScheduledEvents.tsx";
+export { default as ScheduledEvents } from "./ScheduledEvents/index.tsx";
 export { default as SeasonPreview } from "./SeasonPreview.tsx";
 export { default as Settings } from "./Settings/index.tsx";
 export { default as Standings } from "./Standings.tsx";

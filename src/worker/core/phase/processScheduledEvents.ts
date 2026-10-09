@@ -18,7 +18,8 @@ import type {
 } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 import local from "../../util/local.ts";
-import { last, orderBy } from "../../../common/utils.ts";
+import { last } from "../../../common/utils.ts";
+import { sortScheduledEvents } from "../../../common/scheduledEvents.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { formatList } from "../../../common/formatList.ts";
@@ -73,18 +74,20 @@ const processTeamInfo = async (
 		"teamSeasonsByTidSeason",
 		[info.tid, season],
 	);
-	if (!teamSeason) {
+	if (teamSeason) {
+		Object.assign(teamSeason, info);
+		if (deleteImgURLSmall) {
+			delete teamSeason.imgURLSmall;
+		}
+		teamSeason.did = div.did;
+		teamSeason.cid = div.cid;
+		await idb.cache.teamSeasons.put(teamSeason);
+	} else if (!t.disabled) {
+		// Disabled teams have no team season
 		throw new Error(
 			`No team season found in scheduled event: ${info.tid}, ${season}`,
 		);
 	}
-	Object.assign(teamSeason, info);
-	if (deleteImgURLSmall) {
-		delete teamSeason.imgURLSmall;
-	}
-	teamSeason.did = div.did;
-	teamSeason.cid = div.cid;
-	await idb.cache.teamSeasons.put(teamSeason);
 
 	let updatedRegionName;
 	if (info.region && info.region !== old.region) {
@@ -426,6 +429,15 @@ const processExpansionDraft = async (
 		}
 	}
 
+	// Divisions could have changed since this event was created, and an expansion draft can't start with a team in an invalid division
+	const divs = g.get("divs");
+	for (const t of expansionTeams) {
+		const did = Number.parseInt(t.did);
+		if (!divs.some((div) => div.did === did)) {
+			t.did = String(last(divs).did);
+		}
+	}
+
 	if (expansionTeams.length === 0) {
 		return [];
 	}
@@ -532,14 +544,7 @@ export const processScheduledEvents = async (
 
 	const unretiredPids = [];
 
-	const scheduledEventsOrdered = orderBy(scheduledEvents, [
-		"season",
-		"phase",
-		(scheduledEvent) => {
-			// When running the expansionDraft event, it calls newPhase again which calls other scheduled events and other things. So this should be the last scheduled event of this season/phase, so any prior ones happen before all that other stuff. Previously this was causing bugs in auto play, where unretirePlayer for forceHistoricalRosters was being called after expansionDraft and then those players would not be unretired in time.
-			return scheduledEvent.type === "expansionDraft" ? 1 : 0;
-		},
-	]);
+	const scheduledEventsOrdered = sortScheduledEvents(scheduledEvents);
 
 	for (const scheduledEvent of scheduledEventsOrdered) {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {

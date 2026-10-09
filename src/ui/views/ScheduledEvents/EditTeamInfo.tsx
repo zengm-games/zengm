@@ -192,26 +192,12 @@ const EditTeamInfo = ({
 		if (key === "colors") {
 			const colors = value as [string, string, string];
 
-			// ColorPicker can't be disabled, so only show it when it can be used
-			if (!enabled) {
-				return (
-					<div className="d-flex" style={{ height: COLORS_HEIGHT }}>
-						{colors.map((color, i) => (
-							<div
-								key={i}
-								className="flex-grow-1 opacity-50"
-								style={{ backgroundColor: color }}
-							/>
-						))}
-					</div>
-				);
-			}
-
 			return (
 				<div className="input-group">
 					{([0, 1, 2] as const).map((i) => (
 						<ColorPicker
 							key={i}
+							disabled={!enabled}
 							onChange={(color) => {
 								const newColors: [string, string, string] = [...colors];
 								newColors[i] = color;

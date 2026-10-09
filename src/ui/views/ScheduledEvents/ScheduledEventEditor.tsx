@@ -18,8 +18,8 @@ import {
 import EditContraction from "./EditContraction.tsx";
 import EditExpansionDraft from "./EditExpansionDraft.tsx";
 import EditGameAttributes from "./EditGameAttributes.tsx";
+import EditPlayer from "./EditPlayer.tsx";
 import EditTeamInfo from "./EditTeamInfo.tsx";
-import EditUnretirePlayer from "./EditUnretirePlayer.tsx";
 
 export type Editing = {
 	type: ScheduledEvent["type"];
@@ -305,10 +305,11 @@ const ScheduledEventEditor = ({
 							event={getEvent(editing, "teamInfo")}
 						/>
 					) : null}
-					{type === "unretirePlayer" ? (
-						<EditUnretirePlayer
+					{type === "retirePlayer" || type === "unretirePlayer" ? (
+						<EditPlayer
 							{...commonProps}
-							event={getEvent(editing, "unretirePlayer")}
+							event={getEvent(editing, type)}
+							type={type}
 						/>
 					) : null}
 				</div>

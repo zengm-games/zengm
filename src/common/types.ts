@@ -489,6 +489,14 @@ export type ScheduledEventWithoutKey =
 			};
 	  }
 	| {
+			type: "retirePlayer";
+			season: number;
+			phase: Phase;
+			info: {
+				pid: number;
+			};
+	  }
+	| {
 			type: "unretirePlayer";
 			season: number;
 			phase: Phase;

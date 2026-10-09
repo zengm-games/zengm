@@ -1,5 +1,4 @@
 import { PHASE_TEXT, PLAYER } from "../../common/constants.ts";
-import getAll from "../../common/getAll.ts";
 import {
 	getScheduledEventPhases,
 	isFutureScheduledEvent,
@@ -9,7 +8,6 @@ import {
 } from "../../common/scheduledEvents.ts";
 import type { Phase, ScheduledEvent } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
-import { mergeByPk } from "../db/getCopies/helpers.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { g, helpers, toUI } from "../util/index.ts";
 
@@ -222,22 +220,28 @@ const validate = async (
 		if (Object.keys(event.info).length === 0) {
 			return "Nothing is changed by this event.";
 		}
-	} else if (event.type === "unretirePlayer") {
+	} else if (event.type === "retirePlayer" || event.type === "unretirePlayer") {
 		const { pid } = event.info;
 
+		// No check for if the player is currently retired, because that could change before this event happens
 		const p = await idb.getCopy.players({ pid }, "noCopyCache");
-		if (p?.tid !== PLAYER.RETIRED) {
-			return "Only a retired player can be unretired.";
+		if (!p) {
+			return "Player not found.";
+		}
+		if (p.diedYear !== undefined) {
+			return "That player is dead.";
 		}
 
-		const otherUnretire = stored.some(
+		const duplicate = stored.some(
 			(event2) =>
-				event2.type === "unretirePlayer" &&
+				event2.type === event.type &&
 				event2.id !== event.id &&
-				event2.info.pid === pid,
+				event2.info.pid === pid &&
+				event2.season === event.season &&
+				event2.phase === event.phase,
 		);
-		if (otherUnretire) {
-			return "That player is already scheduled to be unretired.";
+		if (duplicate) {
+			return "That player already has the same event scheduled at the same time.";
 		}
 	} else {
 		return "Invalid scheduled event type.";
@@ -367,22 +371,34 @@ export const upsertScheduledEvent = async ({
 };
 
 // Too many to send to the UI every time the scheduled events page loads
-export const getRetiredPlayersForScheduledEvents = async () => {
-	const players = mergeByPk(
-		await getAll(
-			idb.league.transaction("players").store.index("tid"),
-			PLAYER.RETIRED,
-		),
-		await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
-		"players",
-		"noCopyCache",
-	);
+export const getPlayersForScheduledEvents = async () => {
+	const players = await idb.getCopies.players(undefined, "noCopyCache");
+
+	const teamInfoCache = g.get("teamInfoCache");
 
 	return players
 		.filter((p) => p.diedYear === undefined)
-		.map((p) => ({
-			pid: p.pid,
-			name: `${p.firstName} ${p.lastName}`,
-			retiredYear: p.retiredYear,
-		}));
+		.sort(
+			(a, b) =>
+				a.lastName.localeCompare(b.lastName) ||
+				a.firstName.localeCompare(b.firstName),
+		)
+		.map((p) => {
+			let info;
+			if (p.tid === PLAYER.RETIRED) {
+				info = `retired ${p.retiredYear}`;
+			} else if (p.tid === PLAYER.FREE_AGENT) {
+				info = "free agent";
+			} else if (p.tid >= 0) {
+				info = teamInfoCache[p.tid]?.abbrev ?? "???";
+			} else {
+				info = `${p.draft.year} draft`;
+			}
+
+			return {
+				pid: p.pid,
+				name: `${p.firstName} ${p.lastName}`,
+				info,
+			};
+		});
 };

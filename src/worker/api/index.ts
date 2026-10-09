@@ -106,7 +106,7 @@ import toolsMenu from "./toolsMenu.ts";
 import eightyTwoZeroDraft from "./eightyTwoZeroDraft.ts";
 import {
 	deleteScheduledEvent,
-	getRetiredPlayersForScheduledEvents,
+	getPlayersForScheduledEvents,
 	normalizeScheduledEventsAfterChange,
 	upsertScheduledEvent,
 } from "./scheduledEvents.ts";
@@ -1072,6 +1072,10 @@ const deleteScheduledEvents = async (type: string) => {
 			}
 		} else if (type === "contraction") {
 			if (event.type === "contraction") {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
+		} else if (type === "retirePlayer") {
+			if (event.type === "retirePlayer") {
 				await idb.cache.scheduledEvents.delete(event.id);
 			}
 		} else if (type === "unretirePlayer") {
@@ -5477,7 +5481,7 @@ const api = {
 		getRandomName,
 		getRandomRatings,
 		getRandomTeams,
-		getRetiredPlayersForScheduledEvents,
+		getPlayersForScheduledEvents,
 		getSavedTrade,
 		getTeamGraphStat,
 		getTradingBlockOffers,

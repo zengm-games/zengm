@@ -3,20 +3,24 @@ import SelectMultiple from "../../components/SelectMultiple/index.tsx";
 import { toWorker } from "../../util/toWorker.ts";
 import { type EditProps, FormButtons } from "./common.tsx";
 
-type RetiredPlayer = {
+type PlayerOption = {
 	pid: number;
 	name: string;
-	retiredYear: number;
+	// Team, retired year, or draft year
+	info: string;
 };
 
-const EditUnretirePlayer = ({
+const EditPlayer = ({
 	event,
 	onCancel,
 	onSave,
 	saving,
-}: EditProps<"unretirePlayer">) => {
-	const [players, setPlayers] = useState<RetiredPlayer[] | undefined>();
-	const [player, setPlayer] = useState<RetiredPlayer | null>(null);
+	type,
+}: EditProps<"retirePlayer" | "unretirePlayer"> & {
+	type: "retirePlayer" | "unretirePlayer";
+}) => {
+	const [players, setPlayers] = useState<PlayerOption[] | undefined>();
+	const [player, setPlayer] = useState<PlayerOption | null>(null);
 
 	// The player can't be changed when editing an existing event, so no need to load players
 	const existingEvent = !!event;
@@ -30,7 +34,7 @@ const EditUnretirePlayer = ({
 		(async () => {
 			const players = await toWorker(
 				"main",
-				"getRetiredPlayersForScheduledEvents",
+				"getPlayersForScheduledEvents",
 				undefined,
 			);
 			if (active) {
@@ -62,18 +66,13 @@ const EditUnretirePlayer = ({
 					<SelectMultiple
 						options={players ?? []}
 						value={player}
-						getOptionLabel={(p) => `${p.name} (retired ${p.retiredYear})`}
+						getOptionLabel={(p) => `${p.name} (${p.info})`}
 						getOptionValue={(p) => String(p.pid)}
 						onChange={setPlayer}
 						loading={!players}
 					/>
 				</div>
 			)}
-			<div className="form-text">
-				{players?.length === 0
-					? "There are no retired players in this league."
-					: "The player will come out of retirement and become a free agent."}
-			</div>
 			<FormButtons
 				disabled={pid === undefined}
 				onCancel={onCancel}
@@ -83,4 +82,4 @@ const EditUnretirePlayer = ({
 	);
 };
 
-export default EditUnretirePlayer;
+export default EditPlayer;

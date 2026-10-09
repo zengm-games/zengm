@@ -22,14 +22,17 @@ export default defineView({
 
 			const augmented = [];
 			for (const event of scheduledEvents) {
-				if (event.type === "unretirePlayer") {
+				if (event.type === "retirePlayer" || event.type === "unretirePlayer") {
 					const p = await idb.getCopy.players(
 						{ pid: event.info.pid },
 						"noCopyCache",
 					);
 					if (p) {
 						augmented.push({
-							...event,
+							id: event.id,
+							type: event.type,
+							season: event.season,
+							phase: event.phase,
 							info: {
 								pid: event.info.pid,
 								name: `${p.firstName} ${p.lastName}`,

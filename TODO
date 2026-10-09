@@ -5,20 +5,15 @@ scheduled events editor
   - team jersey - why not show preview like expansion draft?
   - ColorPicker can't be disabled - make it possible?
   - use TeamForm somehow?
-- unretire player should be able to pick any player, even if not retired yet
 - "This event also changes these, which can't be edited here but you can remove them:"
   - awards
   - confs/divs
-- add more scheduled events
-  - force retire
-    - reason?
-- getRetiredPlayersForScheduledEvents
-  - use getCopies directly
 - blog
   - force retire
 
 put map/filter functions in all getCopies
-- getRetiredPlayersForScheduledEvents
+- getPlayersForScheduledEvents
+  - how does this work for relatives now?
 
 hockey auto sort should play C/W out of position if that is the difference between being on the bench or not https://discord.com/channels/290013534023057409/1553484440796397708/1553484440796397708 - currently there is a bonus in `score` but maybe we should ignore that for players who are not in the starting lines
 

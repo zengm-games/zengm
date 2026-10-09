@@ -232,7 +232,7 @@ const ViewEvent = ({
 		);
 	}
 
-	if (current.type === "unretirePlayer") {
+	if (current.type === "retirePlayer" || current.type === "unretirePlayer") {
 		return (
 			<PlayerNameLabels
 				pid={current.info.pid}
@@ -254,6 +254,7 @@ const EVENT_TYPES = [
 	"expansionDraft",
 	"gameAttributes",
 	"teamInfo",
+	"retirePlayer",
 	"unretirePlayer",
 ] satisfies ScheduledEvent["type"][];
 
@@ -422,6 +423,9 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 							</Dropdown.Item>
 							<Dropdown.Item onClick={bulkDelete("awards")}>
 								Award settings changes
+							</Dropdown.Item>
+							<Dropdown.Item onClick={bulkDelete("retirePlayer")}>
+								Retire players
 							</Dropdown.Item>
 							<Dropdown.Item onClick={bulkDelete("unretirePlayer")}>
 								Unretire players

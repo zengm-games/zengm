@@ -80,6 +80,10 @@ export const formatType = (type: ScheduledEvent["type"]) => {
 		return "Team info";
 	}
 
+	if (type === "retirePlayer") {
+		return "Retire player";
+	}
+
 	if (type === "unretirePlayer") {
 		return "Unretire player";
 	}

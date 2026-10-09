@@ -16,7 +16,7 @@ import type {
 	Conditions,
 	RealTeamInfo,
 } from "../../../common/types.ts";
-import { PHASE } from "../../../common/constants.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import local from "../../util/local.ts";
 import { last } from "../../../common/utils.ts";
 import { sortScheduledEvents } from "../../../common/scheduledEvents.ts";
@@ -482,10 +482,40 @@ const processContraction = async (
 	return [text];
 };
 
+const processRetirePlayer = async (pid: number, conditions: Conditions) => {
+	const p = await idb.getCopy.players({ pid }, "noCopyCache");
+
+	// Player might be deleted or already retired
+	if (!p || p.tid === PLAYER.RETIRED) {
+		return [];
+	}
+
+	const ratings = last(p.ratings);
+	const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+	const userTeam = p.tid === g.get("userTid");
+
+	await player.retire(p, conditions);
+	await idb.cache.players.put(p);
+
+	// Only show notification if it's an above average player or a player on the user's team
+	if (ovr > local.playerOvrMean || userTeam) {
+		const text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+			p.firstName
+		} ${p.lastName}</a> has retired.`;
+
+		return [text];
+	}
+
+	return [];
+};
+
+// Returns undefined when nothing happened
 const processUnretirePlayer = async (pid: number) => {
 	const p = await idb.getCopy.players({ pid }, "noCopyCache");
-	if (!p) {
-		throw new Error(`No player found for scheduled event: ${pid}`);
+
+	// Player might have been deleted or might not be retired. In both of those cases, there is nothing to do.
+	if (p?.tid !== PLAYER.RETIRED) {
+		return;
 	}
 
 	// Player might need some new ratings rows added
@@ -574,11 +604,16 @@ export const processScheduledEvents = async (
 			);
 		} else if (scheduledEvent.type === "contraction") {
 			eventLogTexts.push(...(await processContraction(scheduledEvent.info)));
-		} else if (scheduledEvent.type === "unretirePlayer") {
-			unretiredPids.push(scheduledEvent.info.pid);
+		} else if (scheduledEvent.type === "retirePlayer") {
 			eventLogTexts.push(
-				...(await processUnretirePlayer(scheduledEvent.info.pid)),
+				...(await processRetirePlayer(scheduledEvent.info.pid, conditions)),
 			);
+		} else if (scheduledEvent.type === "unretirePlayer") {
+			const texts = await processUnretirePlayer(scheduledEvent.info.pid);
+			if (texts) {
+				unretiredPids.push(scheduledEvent.info.pid);
+				eventLogTexts.push(...texts);
+			}
 		} else {
 			throw new Error(
 				`Unknown scheduled event type: ${(scheduledEvent as any).type}`,

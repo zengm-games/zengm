@@ -92,6 +92,7 @@ describe("normalizeScheduledEvents", () => {
 			}),
 			event("contraction", 2028, { tid: 3 }),
 			event("contraction", 2028, { tid: 4 }),
+			event("retirePlayer", 2029, { pid: 0 }),
 			event("unretirePlayer", 2029, { pid: 0 }),
 			event("expansionDraft", 2029, { teams: [expansionTeam("d", 3)] }),
 		];

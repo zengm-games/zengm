@@ -1,9 +1,6 @@
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
 - undo for any deletes (bulk or individual)
-- edit team
-  - team jersey - why not show preview like expansion draft?
-  - use TeamForm somehow?
 - "This event also changes these, which can't be edited here but you can remove them:"
   - awards
   - confs/divs

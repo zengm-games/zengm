@@ -2,7 +2,9 @@ import { useState } from "react";
 import type { ScheduledEventTeamInfo } from "../../../common/types.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { helpers } from "../../util/helpers.ts";
-import TeamForm from "../ManageTeams/TeamForm.tsx";
+import TeamForm, {
+	type TeamFormToggleField,
+} from "../ManageTeams/TeamForm.tsx";
 import { type EditProps, FormButtons, formatTeamOption } from "./common.tsx";
 import {
 	getTeamFormValues,
@@ -10,32 +12,18 @@ import {
 	type TeamFormValues,
 } from "./teamFormValues.ts";
 
-type Key = keyof TeamFormValues;
-
-const FIELDS: {
-	key: Key;
-	label: string;
-}[] = [
-	{ key: "region", label: "Region" },
-	{ key: "name", label: "Name" },
-	{ key: "abbrev", label: "Abbrev" },
-	{ key: "did", label: "Division" },
-	{ key: "pop", label: "Population" },
-	{ key: "stadiumCapacity", label: "Stadium Capacity" },
-	{ key: "imgURL", label: "Logo URL" },
-	{ key: "imgURLSmall", label: "Small Logo" },
-	{ key: "colors", label: "Colors" },
-	{ key: "jersey", label: "Jersey" },
-];
-
-const isSameValue = (a: TeamFormValues[Key], b: TeamFormValues[Key]) => {
-	// Colors
-	if (Array.isArray(a) && Array.isArray(b)) {
-		return a.every((color, i) => color === b[i]);
-	}
-
-	return a === b;
-};
+const KEYS = [
+	"region",
+	"name",
+	"abbrev",
+	"did",
+	"pop",
+	"stadiumCapacity",
+	"imgURL",
+	"imgURLSmall",
+	"colors",
+	"jersey",
+] satisfies TeamFormToggleField[];
 
 const EditTeamInfo = ({
 	confs,
@@ -52,7 +40,7 @@ const EditTeamInfo = ({
 }) => {
 	const [tid, setTid] = useState(event?.info.tid);
 
-	// Only the fields changed by the event are here. The rest come from the team.
+	// Only the fields that are checked are here, and those are the fields changed by the event. The rest come from the team.
 	const [changes, setChanges] = useState<Partial<TeamFormValues>>(() => {
 		const changes: Partial<TeamFormValues> = {};
 		if (event) {
@@ -60,7 +48,7 @@ const EditTeamInfo = ({
 				did: "",
 				stadiumCapacity: defaultStadiumCapacity,
 			});
-			for (const { key } of FIELDS) {
+			for (const key of KEYS) {
 				if (event.info[key] !== undefined) {
 					(changes as any)[key] = eventValues[key];
 				}
@@ -90,18 +78,15 @@ const EditTeamInfo = ({
 			}
 		: undefined;
 
-	const changedFields =
-		before && after
-			? FIELDS.filter(({ key }) => !isSameValue(before[key], after[key]))
-			: [];
+	const enabledKeys = KEYS.filter((key) => changes[key] !== undefined);
 
 	const save = () => {
 		if (!selectedTeam || !after) {
 			return;
 		}
 
-		if (changedFields.length === 0) {
-			setError("Change at least one thing about this team.");
+		if (enabledKeys.length === 0) {
+			setError("Select at least one thing to change.");
 			return;
 		}
 
@@ -113,7 +98,7 @@ const EditTeamInfo = ({
 			info.srID = event.info.srID;
 		}
 
-		for (const { key } of changedFields) {
+		for (const key of enabledKeys) {
 			if (key === "region" || key === "name" || key === "abbrev") {
 				if (after[key].trim() === "") {
 					setError(`${helpers.upperCaseFirstLetter(key)} cannot be blank.`);
@@ -182,11 +167,7 @@ const EditTeamInfo = ({
 
 			{after ? (
 				<>
-					<div className="form-text mb-3">
-						Edit the team to how it should be after this event. Only the things
-						you change are saved in the event.
-					</div>
-					<div className="row">
+					<div className="row mt-3">
 						<TeamForm
 							classNamesCol={[
 								"col-6",
@@ -203,8 +184,28 @@ const EditTeamInfo = ({
 							]}
 							confs={confs}
 							divs={divs}
+							fieldToggles={{
+								enabled: new Set(enabledKeys),
+								onToggle: (key) => {
+									// In case the error was about nothing being selected
+									setError(undefined);
+
+									setChanges((prev) => {
+										if (prev[key] !== undefined) {
+											const { [key]: _removed, ...rest } = prev;
+											return rest;
+										}
+
+										// Start with the value the team has before this event
+										return {
+											...prev,
+											[key]: before?.[key],
+										};
+									});
+								},
+							}}
 							handleInputChange={(field, event) => {
-								// In case the error was about nothing being changed
+								// In case the error was about nothing being selected
 								setError(undefined);
 
 								setChanges((prev) => {
@@ -212,7 +213,7 @@ const EditTeamInfo = ({
 										return prev;
 									}
 
-									// Apply to the full team, since changing one color requires the other two
+									// Apply to the full team, since changing one color requires the other two. This also selects the field if it was not selected already, which happens when moving a team.
 									const newValues = setTeamFormValue(
 										{
 											...before,
@@ -225,7 +226,7 @@ const EditTeamInfo = ({
 									const key = field.startsWith("colors") ? "colors" : field;
 									return {
 										...prev,
-										[key]: newValues[key as Key],
+										[key]: newValues[key as keyof TeamFormValues],
 									};
 								});
 							}}
@@ -233,18 +234,6 @@ const EditTeamInfo = ({
 							moveButton
 							t={after}
 						/>
-					</div>
-					<div>
-						{changedFields.length > 0 ? (
-							<>
-								This event changes:{" "}
-								{changedFields.map((field) => field.label).join(", ")}
-							</>
-						) : (
-							<span className="text-body-secondary">
-								Nothing is changed yet.
-							</span>
-						)}
 					</div>
 				</>
 			) : null}

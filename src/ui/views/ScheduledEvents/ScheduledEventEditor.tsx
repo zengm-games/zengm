@@ -311,7 +311,7 @@ const ScheduledEventEditor = ({
 							{type === "awards"
 								? "award settings"
 								: "conferences and divisions"}
-							, so anything you change here will only last until then.
+							, so anything you change here will only persist until then.
 						</div>
 					) : null}
 

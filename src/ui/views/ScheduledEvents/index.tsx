@@ -159,6 +159,27 @@ const ViewEvent = ({
 		);
 	}
 
+	if (current.type === "awards") {
+		return current.info.awards.map((award) => award.shortName).join(", ");
+	}
+
+	if (current.type === "confsDivs") {
+		const { confs, divs } = current.info;
+		return (
+			<ul className="list-unstyled mb-0">
+				{confs.map((conf) => (
+					<li key={conf.cid}>
+						{conf.name}:{" "}
+						{divs
+							.filter((div) => div.cid === conf.cid)
+							.map((div) => div.name)
+							.join(", ")}
+					</li>
+				))}
+			</ul>
+		);
+	}
+
 	if (current.type === "expansionDraft") {
 		return (
 			<ul className="list-unstyled mb-0">
@@ -186,15 +207,7 @@ const ViewEvent = ({
 							<tr key={key}>
 								<td>{gameAttributeName(key)}</td>
 								<td>
-									{key === "confs" || key === "divs"
-										? (value as any[]).map((x, i) => (
-												<div key={i}>{x.name}</div>
-											))
-										: key === "awards"
-											? (value as any[]).map((row) => row.shortName).join(", ")
-											: Array.isArray(value)
-												? JSON.stringify(value)
-												: String(value)}
+									{Array.isArray(value) ? JSON.stringify(value) : String(value)}
 								</td>
 							</tr>
 						);
@@ -250,6 +263,8 @@ const bulkDelete = (type: string) => async () => {
 };
 
 const EVENT_TYPES = [
+	"awards",
+	"confsDivs",
 	"contraction",
 	"expansionDraft",
 	"gameAttributes",
@@ -422,7 +437,7 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 								Style of play changes
 							</Dropdown.Item>
 							<Dropdown.Item onClick={bulkDelete("awards")}>
-								Award settings changes
+								Awards changes
 							</Dropdown.Item>
 							<Dropdown.Item onClick={bulkDelete("retirePlayer")}>
 								Retire players

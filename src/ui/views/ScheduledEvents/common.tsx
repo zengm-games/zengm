@@ -43,18 +43,6 @@ export const gameAttributeName = (key: string) => {
 		return (godModeOptions as any)[key].name;
 	}
 
-	if (key === "confs") {
-		return "Conferences";
-	}
-
-	if (key === "divs") {
-		return "Divisions";
-	}
-
-	if (key === "awards") {
-		return "Awards";
-	}
-
 	return key;
 };
 
@@ -64,6 +52,14 @@ export const formatPhase = (phase: number) => {
 };
 
 export const formatType = (type: ScheduledEvent["type"]) => {
+	if (type === "awards") {
+		return "Awards";
+	}
+
+	if (type === "confsDivs") {
+		return "Conferences and divisions";
+	}
+
 	if (type === "contraction") {
 		return "Contraction";
 	}
@@ -100,6 +96,31 @@ export const formatTeamOption = (t: ScheduledEventsTeam) => {
 		text += " (inactive)";
 	}
 	return text;
+};
+
+// For awards and confsDivs events, the form starts with the settings from right before the event. Those change when the season/phase of the event changes, so then the form should start over. That happens automatically for a new event with no edits yet, otherwise it is up to the user, because it deletes whatever was entered.
+export const ReloadSettingsBefore = ({
+	onReload,
+	saving,
+	text,
+}: {
+	onReload: () => void;
+	saving: boolean;
+	text: string;
+}) => {
+	return (
+		<div className="d-flex align-items-center gap-2 mb-3">
+			<div className="text-warning">{text}</div>
+			<button
+				className="btn btn-secondary flex-shrink-0"
+				type="button"
+				disabled={saving}
+				onClick={onReload}
+			>
+				Start over from then
+			</button>
+		</div>
+	);
 };
 
 export const FormButtons = ({

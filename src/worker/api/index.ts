@@ -1095,6 +1095,10 @@ const deleteScheduledEvents = async (type: string) => {
 			if (event.type === "gameAttributes") {
 				await deleteFromGameAttributesScheduledEvent(["confs", "divs"], event);
 			}
+
+			if (event.type === "confsDivs") {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
 		} else if (type === "finance") {
 			if (event.type === "gameAttributes") {
 				await deleteFromGameAttributesScheduledEvent(
@@ -1151,6 +1155,10 @@ const deleteScheduledEvents = async (type: string) => {
 		} else if (type === "awards") {
 			if (event.type === "gameAttributes") {
 				await deleteFromGameAttributesScheduledEvent(["awards"], event);
+			}
+
+			if (event.type === "awards") {
+				await idb.cache.scheduledEvents.delete(event.id);
 			}
 		}
 	}
@@ -3473,6 +3481,28 @@ const removeLastTeam = async () => {
 				await idb.cache.scheduledEvents.delete(scheduledEvent.id);
 			} else if (tid < scheduledEvent.info.tid) {
 				scheduledEvent.info.tid -= 1;
+				await idb.cache.scheduledEvents.put(scheduledEvent);
+			}
+		} else if (scheduledEvent.type === "confsDivs") {
+			let updated;
+			let hasTid;
+			for (const t2 of scheduledEvent.info.teams) {
+				if (tid < t2.tid) {
+					t2.tid -= 1;
+					updated = true;
+				} else if (tid === t2.tid) {
+					hasTid = true;
+				}
+			}
+
+			if (hasTid) {
+				scheduledEvent.info.teams = scheduledEvent.info.teams.filter(
+					(t2) => t2.tid !== tid,
+				);
+				updated = true;
+			}
+
+			if (updated) {
 				await idb.cache.scheduledEvents.put(scheduledEvent);
 			}
 		}

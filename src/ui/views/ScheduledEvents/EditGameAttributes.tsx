@@ -114,8 +114,7 @@ const EditGameAttributes = ({
 			{otherKeys.length > 0 ? (
 				<div className="mb-3">
 					<div>
-						This event also changes these, which can't be edited here but you
-						can remove them:
+						Unknown fields which cannot be edited here but can be deleted:
 					</div>
 					<ul className="list-unstyled mb-0">
 						{otherKeys.map((key) => (

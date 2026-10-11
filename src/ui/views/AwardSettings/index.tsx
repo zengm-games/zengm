@@ -6,8 +6,10 @@ import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
 	awardsToEditingState,
 	awardToEditingState,
-	editingStateToAward,
+	editingStatesToAwards,
 	EditSettings,
+	getUniqueErrorMessages,
+	zodErrorsToErrorMessages,
 } from "./EditSettings.tsx";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
@@ -23,10 +25,8 @@ import {
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/constants.ts";
 import { IMPORT_FILE_STYLE } from "../../components/ImportFileButton.tsx";
-import { orderBy } from "../../../common/utils.ts";
 import { Dropdown } from "react-bootstrap";
 import { resetFileInput } from "../../util/resetFileInput.ts";
-import type { ZodError } from "zod";
 import { Documentation } from "./Documentation.tsx";
 
 const MARGIN = 14;
@@ -46,66 +46,16 @@ const showErrorMessages = (errorMessages: string[]) => {
 	});
 };
 
-const zodErrorsToErrorMessages = (error: ZodError<unknown>) => {
-	return error.issues.map((error) => {
-		const index = error.path[0] as any;
-		return {
-			index,
-			message: error.message,
-		};
-	});
-};
-
-const getUniqueErrorMessages = (
-	errorMessages: { index: number; message: string }[],
-	awards: ReturnType<typeof editingStateToAward>["award"][],
-) => {
-	return Array.from(
-		new Set(
-			orderBy(errorMessages, "index", "asc").map(({ index, message }) => {
-				const shortName = awards?.[index]?.shortName;
-				let output = shortName !== undefined ? `${shortName}: ` : "";
-				output += message;
-				return output;
-			}),
-		),
-	);
-};
-
 const awardsStateToAwards = (
 	awardsState: ReturnType<typeof awardsToEditingState>,
 ) => {
-	// Combine error messages from editingStateToAward and awardSettingsSchema
-	const errorMessages: {
-		index: number;
-		message: string;
-	}[] = [];
-	const awards: ReturnType<typeof editingStateToAward>["award"][] = [];
-	for (const [index, { editing }] of awardsState.entries()) {
-		const { award, errorMessages: errorMessagesTemp } = editingStateToAward(
-			editing,
-			index,
-		);
-		awards.push(award);
-		if (errorMessagesTemp) {
-			errorMessages.push(...errorMessagesTemp);
-		}
+	const result = editingStatesToAwards(awardsState.map((row) => row.editing));
+	if (result.errorMessages) {
+		showErrorMessages(result.errorMessages);
+		return;
 	}
 
-	const result = awardSettingsSchema.safeParse(awards);
-	if (result.success) {
-		if (errorMessages.length === 0) {
-			return result.data;
-		}
-	} else {
-		errorMessages.push(...zodErrorsToErrorMessages(result.error));
-	}
-
-	// Some error messages can be repeated, like if there are multiple duplicate abbrevs
-	// Also sort in order of index (how they are displayed in UI)
-	const uniqueErrorMessages = getUniqueErrorMessages(errorMessages, awards);
-
-	showErrorMessages(uniqueErrorMessages);
+	return result.awards;
 };
 
 const AwardSettings = ({

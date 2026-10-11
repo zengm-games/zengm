@@ -8,22 +8,24 @@ import {
 } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import type { InputAward } from "../AwardRaces.tsx";
-import type {
-	AwardInfoCommon,
-	AwardSettingIndividual,
-	AwardSettingTeam,
+import {
+	awardSettingsSchema,
+	type AwardInfoCommon,
+	type AwardSettingIndividual,
+	type AwardSettingTeam,
 } from "../../../common/types.ts";
+import { orderBy } from "../../../common/utils.ts";
+import type { ZodError } from "zod";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import { POS_NUMBERS } from "../../../common/constants.baseball.ts";
 
 const SUPPORT_OPOY_STUFF = __SPORT === "football";
 const OPOY_FORMULA_NAME = "OPOY (including QB)";
 
-export const awardToEditingState = (award: InputAward) => {
-	const group =
-		!award.group || award.group?.type === "playoffSeries"
-			? "league"
-			: award.group?.type;
+type AwardSetting = AwardSettingIndividual | AwardSettingTeam;
+
+export const awardSettingToEditingState = (award: AwardSetting) => {
+	const group = award.group ?? "league";
 
 	const common = {
 		shortName: award.shortName,
@@ -62,6 +64,19 @@ export const awardToEditingState = (award: InputAward) => {
 	};
 };
 
+// InputAward is an award setting plus the candidates for the award
+export const awardToEditingState = (award: InputAward) => {
+	const group =
+		!award.group || award.group.type === "playoffSeries"
+			? undefined
+			: award.group.type;
+
+	return awardSettingToEditingState({
+		...award,
+		group,
+	});
+};
+
 export const awardsToEditingState = (groups: InputAward[][]) => {
 	return groups
 		.filter((awards) => awards.length > 0)
@@ -73,7 +88,7 @@ export const awardsToEditingState = (groups: InputAward[][]) => {
 		});
 };
 
-export type EditingState = ReturnType<typeof awardToEditingState>;
+export type EditingState = ReturnType<typeof awardSettingToEditingState>;
 
 export const editingStateToAward = (state: EditingState, index: number) => {
 	const common: Omit<AwardInfoCommon, "group"> = {
@@ -145,6 +160,69 @@ export const editingStateToAward = (state: EditingState, index: number) => {
 	return {
 		award,
 		errorMessages: errorMessages.length > 0 ? errorMessages : undefined,
+	};
+};
+
+export const zodErrorsToErrorMessages = (error: ZodError<unknown>) => {
+	return error.issues.map((error) => {
+		const index = error.path[0] as any;
+		return {
+			index,
+			message: error.message,
+		};
+	});
+};
+
+export const getUniqueErrorMessages = (
+	errorMessages: { index: number; message: string }[],
+	awards: { shortName: string }[],
+) => {
+	return Array.from(
+		new Set(
+			orderBy(errorMessages, "index", "asc").map(({ index, message }) => {
+				const shortName = awards?.[index]?.shortName;
+				let output = shortName !== undefined ? `${shortName}: ` : "";
+				output += message;
+				return output;
+			}),
+		),
+	);
+};
+
+// Returns either the award settings, or error messages if they are not valid
+export const editingStatesToAwards = (editingStates: EditingState[]) => {
+	// Combine error messages from editingStateToAward and awardSettingsSchema
+	const errorMessages: {
+		index: number;
+		message: string;
+	}[] = [];
+	const awards: AwardSetting[] = [];
+	for (const [index, editing] of editingStates.entries()) {
+		const { award, errorMessages: errorMessagesTemp } = editingStateToAward(
+			editing,
+			index,
+		);
+		awards.push(award);
+		if (errorMessagesTemp) {
+			errorMessages.push(...errorMessagesTemp);
+		}
+	}
+
+	const result = awardSettingsSchema.safeParse(awards);
+	if (result.success) {
+		if (errorMessages.length === 0) {
+			return {
+				awards: result.data,
+			};
+		}
+	} else {
+		errorMessages.push(...zodErrorsToErrorMessages(result.error));
+	}
+
+	return {
+		// Some error messages can be repeated, like if there are multiple duplicate abbrevs
+		// Also sort in order of index (how they are displayed in UI)
+		errorMessages: getUniqueErrorMessages(errorMessages, awards),
 	};
 };
 

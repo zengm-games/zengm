@@ -15,7 +15,11 @@ const upcomingScheduledEventBlocksRelocateExpand = async () => {
 		"noCopyCache",
 	);
 	return scheduledEvents.some((event) => {
-		return event.type === "teamInfo" || event.type === "expansionDraft";
+		return (
+			event.type === "teamInfo" ||
+			event.type === "expansionDraft" ||
+			event.type === "confsDivs"
+		);
 	});
 };
 

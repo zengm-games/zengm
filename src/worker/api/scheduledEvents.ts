@@ -1,12 +1,18 @@
 import { PHASE_TEXT, PLAYER } from "../../common/constants.ts";
 import {
 	getScheduledEventPhases,
+	getTeamsBeforeScheduledEvent,
 	isFutureScheduledEvent,
 	normalizeScheduledEvents,
 	type ScheduledEventMaybeId,
 	type ScheduledEventsChange,
 } from "../../common/scheduledEvents.ts";
-import type { Phase, ScheduledEvent } from "../../common/types.ts";
+import {
+	awardSettingsSchema,
+	type Phase,
+	type ScheduledEvent,
+} from "../../common/types.ts";
+import { FormulaEvaluators } from "../core/awards/processAwards.ts";
 import { idb } from "../db/index.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { g, helpers, toUI } from "../util/index.ts";
@@ -219,6 +225,81 @@ const validate = async (
 	} else if (event.type === "gameAttributes") {
 		if (Object.keys(event.info).length === 0) {
 			return "Nothing is changed by this event.";
+		}
+	} else if (event.type === "confsDivs") {
+		const { confs, divs, teams } = event.info;
+
+		if (confs.length === 0) {
+			return "There must be at least one conference.";
+		}
+		if (divs.length === 0) {
+			return "There must be at least one division.";
+		}
+
+		// Other parts of the game assume that cid and did are the same as the index in the array
+		for (const [i, conf] of confs.entries()) {
+			if (conf.cid !== i) {
+				return "Invalid conference.";
+			}
+		}
+		for (const [i, div] of divs.entries()) {
+			if (div.did !== i || !confs.some((conf) => conf.cid === div.cid)) {
+				return "Invalid division.";
+			}
+		}
+
+		const tids = teams.map((t) => t.tid);
+		if (new Set(tids).size !== tids.length) {
+			return "The same team can't be assigned to a division twice.";
+		}
+		for (const t of teams) {
+			if (!Number.isInteger(t.tid)) {
+				return "Invalid team.";
+			}
+			if (!divs.some((div) => div.did === t.did)) {
+				return `Invalid division for ${getTeamName(t.tid, stored)}.`;
+			}
+		}
+
+		// Every team that will be active at that time needs to wind up in a division that exists
+		const teamsBefore = getTeamsBeforeScheduledEvent({
+			current: getScheduledEventsCurrent(),
+			events: stored,
+			target: event,
+			teams: await idb.cache.teams.getAll(),
+		});
+		for (const t of teamsBefore) {
+			if (!t.active) {
+				continue;
+			}
+
+			const did = teams.find((t2) => t2.tid === t.tid)?.did ?? Number(t.did);
+			if (!divs.some((div) => div.did === did)) {
+				return `${t.region} ${t.name} would be in a division that does not exist.`;
+			}
+		}
+	} else if (event.type === "awards") {
+		const result = awardSettingsSchema.safeParse(event.info.awards);
+		if (!result.success) {
+			const issue = result.error.issues[0];
+			if (!issue) {
+				return "Invalid award settings.";
+			}
+
+			const index = issue.path[0];
+			const shortName =
+				typeof index === "number"
+					? event.info.awards[index]?.shortName
+					: undefined;
+			return shortName === undefined
+				? issue.message
+				: `${shortName}: ${issue.message}`;
+		}
+
+		const errorMessages = new FormulaEvaluators(event.info.awards, [])
+			.errorMessages;
+		if (errorMessages) {
+			return errorMessages.join(" ");
 		}
 	} else if (event.type === "retirePlayer" || event.type === "unretirePlayer") {
 		const { pid } = event.info;

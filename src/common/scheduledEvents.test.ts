@@ -1,12 +1,15 @@
 import { assert, describe, test } from "vitest";
 import { PHASE } from "./constants.ts";
 import {
+	getNextScheduledEventReplacing,
+	getSettingsBeforeScheduledEvent,
 	getTeamsBeforeScheduledEvent,
 	normalizeScheduledEvents,
 	type ScheduledEventMaybeId,
 } from "./scheduledEvents.ts";
 import loadDataBasketball from "../worker/core/realRosters/loadData.basketball.ts";
 import formatScheduledEvents from "../worker/core/realRosters/formatScheduledEvents.ts";
+import type { Conf, Div, NonEmptyArray } from "./types.ts";
 import { range } from "./utils.ts";
 
 const current = {
@@ -284,6 +287,94 @@ describe("normalizeScheduledEvents", () => {
 		]);
 	});
 
+	test("renumbers teams in a confsDivs event, and removes teams that will not exist", () => {
+		const confs: NonEmptyArray<Conf> = [{ cid: 0, name: "Conf" }];
+		const divs: NonEmptyArray<Div> = [
+			{ cid: 0, did: 0, name: "Div 0" },
+			{ cid: 0, did: 1, name: "Div 1" },
+		];
+
+		// The expansion draft creating tid 3 was deleted
+		const events = [
+			event("expansionDraft", 2027, { teams: [expansionTeam("e", 4)] }),
+			event("confsDivs", 2028, {
+				confs,
+				divs,
+				teams: [
+					{ tid: 0, did: 1 },
+					{ tid: 3, did: 1 },
+					{ tid: 4, did: 1 },
+				],
+			}),
+		];
+
+		const {
+			changes,
+			events: normalized,
+			teams: teamsAfter,
+		} = normalize(events);
+		assert.deepStrictEqual(changes, []);
+		assert.strictEqual(normalized[0]!.type, "expansionDraft");
+		assert.deepStrictEqual(normalized[1]!.info, {
+			confs,
+			divs,
+			teams: [
+				{ tid: 0, did: 1 },
+				{ tid: 3, did: 1 },
+			],
+		});
+		assert.deepStrictEqual(
+			teamsAfter.map((t) => [t.tid, t.did]),
+			[
+				[0, 1],
+				[1, undefined],
+				[2, undefined],
+				[3, 1],
+			],
+		);
+	});
+
+	test("keeps teams in a confsDivs event that are from an expansion draft in the same season and phase", () => {
+		const confs: NonEmptyArray<Conf> = [{ cid: 0, name: "Conf" }];
+		const divs: NonEmptyArray<Div> = [
+			{ cid: 0, did: 0, name: "Div 0" },
+			{ cid: 0, did: 1, name: "Div 1" },
+		];
+
+		// confsDivs has a lower id, so it is processed before the other two events
+		const events = [
+			event("confsDivs", 2027, {
+				confs,
+				divs,
+				teams: [
+					{ tid: 0, did: 1 },
+					{ tid: 3, did: 1 },
+				],
+			}),
+			event("contraction", 2027, { tid: 1 }),
+			event("expansionDraft", 2027, { teams: [expansionTeam("d", 3)] }),
+		];
+
+		const {
+			changes,
+			events: normalized,
+			teams: teamsAfter,
+		} = normalize(events);
+		assert.deepStrictEqual(changes, []);
+		assert.deepStrictEqual(normalized, events);
+
+		// For the expansion team, the division in the confsDivs event overrides the one in the expansion draft
+		assert.deepStrictEqual(
+			teamsAfter.map((t) => [t.tid, t.did]),
+			[
+				[0, 1],
+				[1, undefined],
+				[2, undefined],
+				[3, 1],
+			],
+		);
+	});
+
 	test("assigns tids to new teams with no tid", () => {
 		const events: ScheduledEventMaybeId[] = [
 			event("expansionDraft", 2027, { teams: [expansionTeam("d", 3)] }),
@@ -346,6 +437,13 @@ describe("getTeamsBeforeScheduledEvent", () => {
 		}).map((t) => `${t.tid} ${t.region} ${t.active ? "active" : "inactive"}`);
 	};
 
+	test("confsDivs event is after everything else in the same season and phase", () => {
+		assert.deepStrictEqual(
+			getTeams({ type: "confsDivs", season: 2026, phase: PHASE.PRESEASON }),
+			["0 A active", "1 B inactive", "2 C inactive", "3 d active"],
+		);
+	});
+
 	test("new event", () => {
 		// expansionDraft is processed last, so a new teamInfo event is before it and a new expansionDraft event is after it
 		assert.deepStrictEqual(
@@ -375,6 +473,122 @@ describe("getTeamsBeforeScheduledEvent", () => {
 			}),
 			["0 A active", "1 B active", "2 C inactive", "3 d active"],
 		);
+	});
+});
+
+describe("getSettingsBeforeScheduledEvent", () => {
+	const settings = {
+		awards: [],
+		confs: [{ cid: 0, name: "Current conf" }],
+		divs: [{ cid: 0, did: 0, name: "Current div" }],
+		numGamesPlayoffSeries: [7],
+	} satisfies Parameters<typeof getSettingsBeforeScheduledEvent>[0]["settings"];
+
+	const award = (shortName: string) => ({
+		shortName,
+		name: shortName,
+		formula: "pts",
+		showStats: "offense",
+	});
+
+	// Both the old way (gameAttributes) and the new way (confsDivs and awards)
+	const events = [
+		event("gameAttributes", 2026, {
+			awards: [award("A")],
+			divs: [{ cid: 0, did: 0, name: "2026 div" }],
+			numGamesPlayoffSeries: [5, 7],
+		}),
+		event("confsDivs", 2027, {
+			confs: [{ cid: 0, name: "2027 conf" }],
+			divs: [{ cid: 0, did: 0, name: "2027 div" }],
+			teams: [],
+		}),
+		event("awards", 2028, { awards: [award("B")] }),
+	];
+
+	const get = (
+		target: Parameters<typeof getSettingsBeforeScheduledEvent>[0]["target"],
+	) => {
+		const output = getSettingsBeforeScheduledEvent({
+			current,
+			events,
+			settings,
+			target,
+		});
+
+		return [
+			output.confs[0].name,
+			output.divs[0].name,
+			output.awards.map((award) => award.shortName).join(","),
+			output.numGamesPlayoffSeries.join(","),
+		];
+	};
+
+	test("applies events before the target", () => {
+		const target = {
+			id: undefined,
+			type: "awards",
+			phase: PHASE.PRESEASON,
+		} as const;
+
+		assert.deepStrictEqual(get({ ...target, season: 2026 }), [
+			"Current conf",
+			"2026 div",
+			"A",
+			"5,7",
+		]);
+		assert.deepStrictEqual(get({ ...target, season: 2027 }), [
+			"2027 conf",
+			"2027 div",
+			"A",
+			"5,7",
+		]);
+		assert.deepStrictEqual(get({ ...target, season: 2029 }), [
+			"2027 conf",
+			"2027 div",
+			"B",
+			"5,7",
+		]);
+	});
+
+	test("getNextScheduledEventReplacing finds the next event of either kind", () => {
+		const getNext = (type: "awards" | "confsDivs", season: number) => {
+			return getNextScheduledEventReplacing({
+				events,
+				target: {
+					id: undefined,
+					type,
+					season,
+					phase: PHASE.PRESEASON,
+				},
+			})?.season;
+		};
+
+		// A new event is processed after the existing ones in the same season/phase
+		assert.strictEqual(getNext("awards", 2025), 2026);
+		assert.strictEqual(getNext("awards", 2026), 2028);
+		assert.strictEqual(getNext("awards", 2028), undefined);
+		assert.strictEqual(getNext("confsDivs", 2025), 2026);
+		assert.strictEqual(getNext("confsDivs", 2026), 2027);
+		assert.strictEqual(getNext("confsDivs", 2027), undefined);
+
+		// Not itself
+		assert.strictEqual(
+			getNextScheduledEventReplacing({
+				events,
+				target: events[2] as (typeof events)[number] & { type: "awards" },
+			}),
+			undefined,
+		);
+	});
+
+	test("existing event is not applied to itself", () => {
+		assert.deepStrictEqual(get(events[1]!), [
+			"Current conf",
+			"2026 div",
+			"A",
+			"5,7",
+		]);
 	});
 });
 

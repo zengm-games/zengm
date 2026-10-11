@@ -4,6 +4,7 @@ import { getScheduledEventsCurrent } from "../api/scheduledEvents.ts";
 import { idb } from "../db/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { g } from "../util/index.ts";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { getInitialSettings } from "./settings.ts";
 
 export default defineView({
@@ -61,11 +62,16 @@ export default defineView({
 			}));
 
 			return {
+				awards: g.get("awards"),
 				confs: g.get("confs"),
 				current: getScheduledEventsCurrent(),
 				defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
 				divs: g.get("divs"),
 				initialSettings: getInitialSettings(),
+				numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", "current"),
+
+				// This is the current value. It could change before a scheduled event happens, but it is only used for the names of playoff rounds.
+				playoffsByConf: await getPlayoffsByConf(g.get("season")),
 				scheduledEvents: augmented,
 				teams,
 			};

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { PHASE } from "../../../common/constants.ts";
 import {
-	getConfsDivsBeforeScheduledEvent,
+	getNextScheduledEventReplacing,
 	getScheduledEventPhases,
+	getSettingsBeforeScheduledEvent,
 	getTeamsBeforeScheduledEvent,
 	isFutureScheduledEvent,
 	type ScheduledEventMaybeId,
@@ -15,6 +16,8 @@ import {
 	formatPhase,
 	formatType,
 } from "./common.tsx";
+import EditAwards from "./EditAwards.tsx";
+import EditConfsDivs from "./EditConfsDivs.tsx";
 import EditContraction from "./EditContraction.tsx";
 import EditExpansionDraft from "./EditExpansionDraft.tsx";
 import EditGameAttributes from "./EditGameAttributes.tsx";
@@ -42,13 +45,16 @@ const getEvent = <Type extends ScheduledEvent["type"]>(
 };
 
 const ScheduledEventEditor = ({
+	awards,
 	confs,
 	current,
 	defaultStadiumCapacity,
 	divs,
 	editing,
 	initialSettings,
+	numGamesPlayoffSeries,
 	onClose,
+	playoffsByConf,
 	scheduledEvents,
 	teams,
 }: View<"scheduledEvents"> & {
@@ -99,13 +105,28 @@ const ScheduledEventEditor = ({
 		target,
 		teams,
 	});
-	const confsDivsBefore = getConfsDivsBeforeScheduledEvent({
-		confs,
+	const settingsBefore = getSettingsBeforeScheduledEvent({
 		current,
-		divs,
 		events: scheduledEvents,
+		settings: {
+			awards,
+			confs,
+			divs,
+			numGamesPlayoffSeries,
+		},
 		target,
 	});
+
+	const replacedBy =
+		type === "awards" || type === "confsDivs"
+			? getNextScheduledEventReplacing({
+					events: scheduledEvents,
+					target: {
+						...target,
+						type,
+					},
+				})
+			: undefined;
 
 	const save = async (
 		eventToSave: ScheduledEventMaybeId,
@@ -172,8 +193,8 @@ const ScheduledEventEditor = ({
 	};
 
 	const commonProps = {
-		confs: confsDivsBefore.confs,
-		divs: confsDivsBefore.divs,
+		confs: settingsBefore.confs,
+		divs: settingsBefore.divs,
 		onCancel: onClose,
 		onSave,
 		saving,
@@ -181,7 +202,11 @@ const ScheduledEventEditor = ({
 		teams: teamsBefore,
 	};
 
-	const large = type === "expansionDraft" || type === "gameAttributes";
+	const large =
+		type === "awards" ||
+		type === "confsDivs" ||
+		type === "expansionDraft" ||
+		type === "gameAttributes";
 
 	return (
 		<Modal
@@ -278,7 +303,32 @@ const ScheduledEventEditor = ({
 					{error !== undefined ? (
 						<div className="alert alert-danger">{error}</div>
 					) : null}
+					{replacedBy ? (
+						<div className="text-warning mb-3">
+							Another scheduled event in the {replacedBy.season}{" "}
+							{formatPhase(replacedBy.phase).toLowerCase()} replaces all{" "}
+							{type === "awards"
+								? "award settings"
+								: "conferences and divisions"}
+							, so anything you change here will only last until then.
+						</div>
+					) : null}
 
+					{type === "awards" ? (
+						<EditAwards
+							{...commonProps}
+							awards={settingsBefore.awards}
+							event={getEvent(editing, "awards")}
+							numGamesPlayoffSeries={settingsBefore.numGamesPlayoffSeries}
+							playoffsByConf={playoffsByConf}
+						/>
+					) : null}
+					{type === "confsDivs" ? (
+						<EditConfsDivs
+							{...commonProps}
+							event={getEvent(editing, "confsDivs")}
+						/>
+					) : null}
 					{type === "contraction" ? (
 						<EditContraction
 							{...commonProps}

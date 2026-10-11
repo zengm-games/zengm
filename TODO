@@ -1,9 +1,19 @@
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
 - undo for any deletes (bulk or individual)
+- error handling
+  - "Scheduled events must be in the future" or "Invalid season" - disable save button
 - "This event also changes these, which can't be edited here but you can remove them:"
   - awards
+    - changing season should update to current
   - confs/divs
+    - changing season should update to current
+    - "Teams not listed here keep the did they had before" is this good?
+    - move to preseason
+  - migration
+    - upload
+    - indexeddb
+    - real player data
 - blog
   - force retire
 

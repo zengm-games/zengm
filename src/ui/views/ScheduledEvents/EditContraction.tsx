@@ -50,8 +50,7 @@ const EditContraction = ({
 				))}
 			</select>
 			<div className="form-text">
-				Only teams that will be active at this time can be contracted. All
-				players on the team will become free agents.
+				All players on this team will become free agents.
 			</div>
 			<FormButtons
 				disabled={!selectedTeam}

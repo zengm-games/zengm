@@ -395,11 +395,48 @@ const processGameAttributes = async (
 	return eventLogTexts;
 };
 
+const processConfsDivs = async (
+	info: Extract<ScheduledEvent, { type: "confsDivs" }>["info"],
+	season: number,
+) => {
+	await league.setGameAttributes({
+		confs: info.confs,
+		divs: info.divs,
+	});
+
+	const teams = await idb.cache.teams.getAll();
+	for (const { tid, did } of info.teams) {
+		const t = teams.find((t2) => t2.tid === tid);
+		const div = info.divs.find((div) => div.did === did);
+
+		// If the team or division does not exist, there is nothing to do here. ensureValidDivsConfs will make sure every team winds up in a valid division.
+		if (!t || !div) {
+			continue;
+		}
+
+		t.did = div.did;
+		t.cid = div.cid;
+		await idb.cache.teams.put(t);
+
+		// Disabled teams have no team season
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[tid, season],
+		);
+		if (teamSeason) {
+			teamSeason.did = div.did;
+			teamSeason.cid = div.cid;
+			await idb.cache.teamSeasons.put(teamSeason);
+		}
+	}
+};
+
 const processExpansionDraft = async (
 	info: Extract<ScheduledEvent, { type: "expansionDraft" }>["info"],
 	season: number,
 	realTeamInfo: RealTeamInfo | undefined,
 	conditions: Conditions,
+	confsDivsDids: Map<number, number>,
 ) => {
 	const numProtectedPlayers =
 		info.numProtectedPlayers !== undefined
@@ -426,6 +463,14 @@ const processExpansionDraft = async (
 	if (realTeamInfo) {
 		for (const t of expansionTeams) {
 			applyRealTeamInfo(t as any, realTeamInfo, season);
+		}
+	}
+
+	// A confsDivs event in the same season/phase includes the teams from this expansion draft, but they did not exist yet when it was processed
+	for (const t of expansionTeams) {
+		const did = t.tid === undefined ? undefined : confsDivsDids.get(t.tid);
+		if (did !== undefined) {
+			t.did = String(did);
 		}
 	}
 
@@ -576,6 +621,20 @@ export const processScheduledEvents = async (
 
 	const scheduledEventsOrdered = sortScheduledEvents(scheduledEvents);
 
+	// For expansion drafts, see processExpansionDraft
+	const confsDivsDids = new Map<number, number>();
+	for (const scheduledEvent of scheduledEventsOrdered) {
+		if (
+			scheduledEvent.type === "confsDivs" &&
+			scheduledEvent.season === season &&
+			scheduledEvent.phase === phase
+		) {
+			for (const { tid, did } of scheduledEvent.info.teams) {
+				confsDivsDids.set(tid, did);
+			}
+		}
+	}
+
 	for (const scheduledEvent of scheduledEventsOrdered) {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
 			if (
@@ -593,6 +652,15 @@ export const processScheduledEvents = async (
 			);
 		} else if (scheduledEvent.type === "gameAttributes") {
 			eventLogTexts.push(...(await processGameAttributes(scheduledEvent.info)));
+		} else if (scheduledEvent.type === "awards") {
+			// Same as the old way of doing this, with awards in a gameAttributes event
+			eventLogTexts.push(
+				...(await processGameAttributes({
+					awards: scheduledEvent.info.awards,
+				})),
+			);
+		} else if (scheduledEvent.type === "confsDivs") {
+			await processConfsDivs(scheduledEvent.info, season);
 		} else if (scheduledEvent.type === "expansionDraft") {
 			eventLogTexts.push(
 				...(await processExpansionDraft(
@@ -600,6 +668,7 @@ export const processScheduledEvents = async (
 					season,
 					realTeamInfo,
 					conditions,
+					confsDivsDids,
 				)),
 			);
 		} else if (scheduledEvent.type === "contraction") {

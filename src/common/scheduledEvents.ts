@@ -69,21 +69,39 @@ export const sortScheduledEvents = <T extends ScheduledEventMaybeId>(
 	]);
 };
 
-// Is `a` processed before `b`? Same ordering as sortScheduledEvents
-const isProcessedBefore = (
+// A confsDivs event lists the division of every team that is active after all the other events in the same season/phase, including teams from an expansion draft, and not including contracted teams. So when keeping track of teams, it comes after all those other events. It is not actually processed last (see getTypeSortValue for why that has to be the expansion draft), so processScheduledEvents applies it to the expansion teams.
+const getTeamsTypeSortValue = (type: ScheduledEvent["type"]) => {
+	return type === "confsDivs" ? 2 : getTypeSortValue(type);
+};
+
+// Same as sortScheduledEvents, except for where confsDivs events are
+const sortScheduledEventsForTeams = <T extends ScheduledEventMaybeId>(
+	events: T[],
+) => {
+	return orderBy(events, [
+		"season",
+		"phase",
+		(event) => getTeamsTypeSortValue(event.type),
+		(event) => getIdSortValue(event.id),
+	]);
+};
+
+// Is `a` before `b`? With getTypeSortValue this is the same ordering as sortScheduledEvents, and with getTeamsTypeSortValue it is the same as sortScheduledEventsForTeams.
+const isSortedBefore = (
 	a: Pick<ScheduledEventMaybeId, "season" | "phase" | "type" | "id">,
 	b: Pick<ScheduledEventMaybeId, "season" | "phase" | "type" | "id">,
+	typeSortValue: (type: ScheduledEvent["type"]) => number,
 ) => {
 	const valuesA = [
 		a.season,
 		a.phase,
-		getTypeSortValue(a.type),
+		typeSortValue(a.type),
 		getIdSortValue(a.id),
 	];
 	const valuesB = [
 		b.season,
 		b.phase,
-		getTypeSortValue(b.type),
+		typeSortValue(b.type),
 		getIdSortValue(b.id),
 	];
 
@@ -214,7 +232,7 @@ export const normalizeScheduledEvents = <T extends ScheduledEventMaybeId>({
 
 	let nextTid = teams.length;
 
-	for (const event of sortScheduledEvents(events)) {
+	for (const event of sortScheduledEventsForTeams(events)) {
 		if (!isFutureScheduledEvent(event, current)) {
 			output.push(event);
 			continue;
@@ -268,6 +286,42 @@ export const normalizeScheduledEvents = <T extends ScheduledEventMaybeId>({
 						tid: t.tid,
 					},
 				});
+			}
+		} else if (event.type === "confsDivs") {
+			const keptTeams = [];
+			let changed = false;
+
+			for (const row of event.info.teams) {
+				const t = teamsByKey.get(row.tid);
+				if (!t) {
+					// Team will not exist, so there is nothing to assign to a division
+					changed = true;
+					continue;
+				}
+
+				t.did = row.did;
+
+				if (t.tid === row.tid) {
+					keptTeams.push(row);
+				} else {
+					changed = true;
+					keptTeams.push({
+						...row,
+						tid: t.tid,
+					});
+				}
+			}
+
+			if (changed) {
+				output.push({
+					...event,
+					info: {
+						...event.info,
+						teams: keptTeams,
+					},
+				});
+			} else {
+				output.push(event);
 			}
 		} else if (event.type === "expansionDraft") {
 			const keptTeams = [];
@@ -355,14 +409,14 @@ export const normalizeScheduledEvents = <T extends ScheduledEventMaybeId>({
 
 	return {
 		changes,
-		events: output,
+		events: sortScheduledEvents(output),
 
 		// State of all teams, after all events are processed
 		teams: orderBy([...teamsByKey.values(), ...teamsWithNoKey], "tid"),
 	};
 };
 
-// Get the state of all teams right before `target` is processed. `target` can be a new event that is not in `events` yet, or it could be an existing event with a different season/phase than it has in `events`.
+// Get the state of all teams right before `target` is processed. For a confsDivs event that includes all the other events in the same season/phase, see getTeamsTypeSortValue. `target` can be a new event that is not in `events` yet, or it could be an existing event with a different season/phase than it has in `events`.
 export const getTeamsBeforeScheduledEvent = ({
 	current,
 	events,
@@ -376,7 +430,7 @@ export const getTeamsBeforeScheduledEvent = ({
 }) => {
 	const eventsBefore = events.filter((event) => {
 		const isTarget = event.id !== undefined && event.id === target.id;
-		return !isTarget && isProcessedBefore(event, target);
+		return !isTarget && isSortedBefore(event, target, getTeamsTypeSortValue);
 	});
 
 	return normalizeScheduledEvents({
@@ -386,41 +440,84 @@ export const getTeamsBeforeScheduledEvent = ({
 	}).teams;
 };
 
-// Get the conferences and divisions right before `target` is processed, same as getTeamsBeforeScheduledEvent
-export const getConfsDivsBeforeScheduledEvent = ({
-	confs,
-	current,
-	divs,
+// awards and confsDivs events contain all the award settings or all the conferences and divisions, not just what changed. So the next one after `target` replaces everything from `target`. Same for the old way of doing this, in a gameAttributes event.
+export const getNextScheduledEventReplacing = ({
 	events,
 	target,
 }: {
-	confs: GameAttributesLeague["confs"];
-	current: SeasonPhase;
-	divs: GameAttributesLeague["divs"];
 	events: ScheduledEventMaybeId[];
+	target: Pick<ScheduledEventMaybeId, "season" | "phase" | "id"> & {
+		type: "awards" | "confsDivs";
+	};
+}) => {
+	return sortScheduledEvents(events).find((event) => {
+		const isTarget = event.id !== undefined && event.id === target.id;
+		if (isTarget || !isSortedBefore(target, event, getTypeSortValue)) {
+			return false;
+		}
+
+		if (event.type === "gameAttributes") {
+			return target.type === "awards"
+				? event.info.awards !== undefined
+				: event.info.confs !== undefined || event.info.divs !== undefined;
+		}
+
+		return event.type === target.type;
+	});
+};
+
+const SETTINGS_BEFORE_KEYS = [
+	"awards",
+	"confs",
+	"divs",
+	"numGamesPlayoffSeries",
+] as const satisfies (keyof GameAttributesLeague)[];
+
+type SettingsBefore = Pick<
+	GameAttributesLeague,
+	(typeof SETTINGS_BEFORE_KEYS)[number]
+>;
+
+// Get some settings right before `target` is processed, same as getTeamsBeforeScheduledEvent. These are the settings that are needed for editing scheduled events.
+export const getSettingsBeforeScheduledEvent = ({
+	current,
+	events,
+	settings,
+	target,
+}: {
+	current: SeasonPhase;
+	events: ScheduledEventMaybeId[];
+
+	// Current values of these settings
+	settings: SettingsBefore;
+
 	target: Pick<ScheduledEventMaybeId, "season" | "phase" | "type" | "id">;
 }) => {
 	const output = {
-		confs,
-		divs,
+		...settings,
 	};
 
 	for (const event of sortScheduledEvents(events)) {
 		const isTarget = event.id !== undefined && event.id === target.id;
 		if (
-			event.type !== "gameAttributes" ||
 			isTarget ||
 			!isFutureScheduledEvent(event, current) ||
-			!isProcessedBefore(event, target)
+			!isSortedBefore(event, target, getTypeSortValue)
 		) {
 			continue;
 		}
 
-		if (event.info.confs) {
+		if (event.type === "gameAttributes") {
+			for (const key of SETTINGS_BEFORE_KEYS) {
+				if (event.info[key] !== undefined) {
+					(output as any)[key] = event.info[key];
+				}
+			}
+		} else if (event.type === "confsDivs") {
 			output.confs = event.info.confs;
-		}
-		if (event.info.divs) {
 			output.divs = event.info.divs;
+		} else if (event.type === "awards") {
+			output.awards = event.info.awards;
 		}
 	}
 

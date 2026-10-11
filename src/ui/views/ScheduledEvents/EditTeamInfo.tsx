@@ -33,6 +33,7 @@ const EditTeamInfo = ({
 	onCancel,
 	onSave,
 	saving,
+	seasonPhaseInvalid,
 	setError,
 	teams,
 }: EditProps<"teamInfo"> & {
@@ -238,7 +239,7 @@ const EditTeamInfo = ({
 				</>
 			) : null}
 			<FormButtons
-				disabled={!selectedTeam}
+				disabled={!selectedTeam || seasonPhaseInvalid}
 				onCancel={onCancel}
 				saving={saving}
 			/>

@@ -7,6 +7,7 @@ const EditContraction = ({
 	onCancel,
 	onSave,
 	saving,
+	seasonPhaseInvalid,
 	teams,
 }: EditProps<"contraction">) => {
 	const [tid, setTid] = useState(event?.info.tid);
@@ -53,7 +54,7 @@ const EditContraction = ({
 				All players on this team will become free agents.
 			</div>
 			<FormButtons
-				disabled={!selectedTeam}
+				disabled={!selectedTeam || seasonPhaseInvalid}
 				onCancel={onCancel}
 				saving={saving}
 			/>

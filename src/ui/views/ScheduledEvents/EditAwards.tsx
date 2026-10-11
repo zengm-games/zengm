@@ -32,6 +32,7 @@ const EditAwards = ({
 	onSave,
 	playoffsByConf,
 	saving,
+	seasonPhaseInvalid,
 	setError,
 }: EditProps<"awards"> & {
 	// Award settings right before this event
@@ -156,7 +157,11 @@ const EditAwards = ({
 						</div>
 					))}
 				</div>
-				<FormButtons onCancel={onCancel} saving={saving}>
+				<FormButtons
+					onCancel={onCancel}
+					saving={saving}
+					disabled={seasonPhaseInvalid}
+				>
 					<button
 						className="btn btn-secondary"
 						disabled={saving}

@@ -34,6 +34,7 @@ const EditGameAttributes = ({
 	event,
 	initialSettings,
 	onCancel,
+	seasonPhaseInvalid,
 	onSave,
 	setError,
 }: EditProps<"gameAttributes"> & {
@@ -164,6 +165,7 @@ const EditGameAttributes = ({
 				onCancelDefaultSetting={(key) => {
 					setSettingsShown((shown) => shown.filter((key2) => key2 !== key));
 				}}
+				saveDisabled={seasonPhaseInvalid}
 				saveText="Save"
 				initialSettings={initialSettingsWithEvent}
 				settingsShown={settingsShown}

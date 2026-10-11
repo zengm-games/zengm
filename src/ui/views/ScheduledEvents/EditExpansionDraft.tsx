@@ -45,6 +45,7 @@ const EditExpansionDraft = ({
 	onCancel,
 	onSave,
 	saving,
+	seasonPhaseInvalid,
 	setError,
 	teams,
 }: EditProps<"expansionDraft"> & {
@@ -345,7 +346,11 @@ const EditExpansionDraft = ({
 				</div>
 			</div>
 
-			<FormButtons onCancel={onCancel} saving={saving} />
+			<FormButtons
+				onCancel={onCancel}
+				saving={saving}
+				disabled={seasonPhaseInvalid}
+			/>
 		</form>
 	);
 };

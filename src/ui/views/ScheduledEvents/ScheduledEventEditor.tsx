@@ -198,6 +198,7 @@ const ScheduledEventEditor = ({
 		onCancel: onClose,
 		onSave,
 		saving,
+		seasonPhaseInvalid: seasonPhaseError !== undefined,
 		setError,
 		teams: teamsBefore,
 	};

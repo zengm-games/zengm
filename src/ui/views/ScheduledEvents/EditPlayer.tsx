@@ -15,6 +15,7 @@ const EditPlayer = ({
 	onCancel,
 	onSave,
 	saving,
+	seasonPhaseInvalid,
 	type,
 }: EditProps<"retirePlayer" | "unretirePlayer"> & {
 	type: "retirePlayer" | "unretirePlayer";
@@ -74,7 +75,7 @@ const EditPlayer = ({
 				</div>
 			)}
 			<FormButtons
-				disabled={pid === undefined}
+				disabled={pid === undefined || seasonPhaseInvalid}
 				onCancel={onCancel}
 				saving={saving}
 			/>

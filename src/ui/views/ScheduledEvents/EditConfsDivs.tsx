@@ -99,6 +99,7 @@ const EditConfsDivs = ({
 	onCancel,
 	onSave,
 	saving,
+	seasonPhaseInvalid,
 	setError,
 	teams: teamsBefore,
 }: EditProps<"confsDivs">) => {
@@ -243,7 +244,9 @@ const EditConfsDivs = ({
 				}}
 			>
 				<FormButtons
-					disabled={confs.length === 0 || divs.length === 0}
+					disabled={
+						confs.length === 0 || divs.length === 0 || seasonPhaseInvalid
+					}
 					onCancel={onCancel}
 					saving={saving}
 				/>

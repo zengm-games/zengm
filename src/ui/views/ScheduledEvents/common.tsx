@@ -25,6 +25,10 @@ export type EditProps<Type extends ScheduledEvent["type"]> = {
 		info: Extract<ScheduledEvent, { type: Type }>["info"],
 	) => Promise<void>;
 	saving: boolean;
+
+	// When the season/phase of the event is not valid, it can't be saved
+	seasonPhaseInvalid: boolean;
+
 	setError: (error: string | undefined) => void;
 
 	// State of the teams right before this event will be processed

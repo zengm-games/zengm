@@ -789,20 +789,10 @@ class GameSim extends GameSimBase {
 		return dt;
 	}
 
-	doSubstitutionsIfDeadBall(
-		info:
-			| {
-					type: "afterPossession";
-					injuries: boolean;
-			  }
-			| {
-					type: "newPeriod";
-			  },
-	) {
+	doSubstitutionsIfDeadBall(info: { type: "afterPossession" | "newPeriod" }) {
 		const outcome = this.prevPossessionOutcome;
 		const deadBall =
 			info.type === "newPeriod" ||
-			(info.type === "afterPossession" && info.injuries) ||
 			outcome === "timeout" ||
 			outcome === "outOfBoundsDefense" ||
 			outcome === "outOfBoundsOffense" ||
@@ -843,7 +833,9 @@ class GameSim extends GameSimBase {
 		}
 
 		this.updatePlayingTime(dtInbound + this.possessionLength);
-		const injuries = this.injuries();
+		// An injury alone does not stop play. The injured player stays on court
+		// until a timeout, foul, out-of-bounds play, or period break allows a sub.
+		this.injuries();
 
 		this.prevPossessionOutcome = outcome;
 
@@ -851,7 +843,6 @@ class GameSim extends GameSimBase {
 		if (this.t > 0 && !this.elamDone) {
 			this.doSubstitutionsIfDeadBall({
 				type: "afterPossession",
-				injuries,
 			});
 		}
 	}
@@ -1378,8 +1369,8 @@ class GameSim extends GameSimBase {
 
 		for (const t of teamNums) {
 			for (const p of this.team[t].player) {
-				// Only players on the court can be injured
-				if (this.playersOnCourt[t].includes(p)) {
+				// An injured player may still be waiting for a legal substitution.
+				if (!p.injured && this.playersOnCourt[t].includes(p)) {
 					const injuryRate = getInjuryRate(
 						baseRate,
 						p.age,
@@ -2683,15 +2674,26 @@ class GameSim extends GameSimBase {
 
 		// Foul out
 		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
-		if (foulsNeededToFoulOut > 0 && p.stat.pf >= foulsNeededToFoulOut) {
+		const fouledOut =
+			foulsNeededToFoulOut > 0 && p.stat.pf >= foulsNeededToFoulOut;
+		if (fouledOut) {
 			this.playByPlay.logEvent({
 				type: "foulOut",
 				t,
 				pid: p.id,
 				clock: this.t,
 			});
+		}
 
-			// Force substitutions now
+		// A foul is also a chance to replace players injured on an earlier play.
+		// Do this before free throws, since a missed final FT may lead to a rebound.
+		if (
+			fouledOut ||
+			this.playersOnCourt.some((players) =>
+				players.some((player) => player.injured),
+			)
+		) {
+			// Preserve the free-throw shooter until their attempts are complete.
 			this.updatePlayersOnCourt({
 				shooter: info.shooter,
 			});

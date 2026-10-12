@@ -2,9 +2,7 @@ scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
 - undo for any deletes (bulk or individual)
 - "This event also changes these, which can't be edited here but you can remove them:"
-  - "before this event are different now than when you started editing" - make clearer
   - confs/divs
-    - "Teams not listed here keep the did they had before" is this good?
     - move to preseason
   - migration
     - upload

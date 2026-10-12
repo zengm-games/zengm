@@ -24,12 +24,18 @@ import { getNumPlayersTradedAwayNormalizedAll } from "../../core/player/getNumPl
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { formatList } from "../../../common/formatList.ts";
 
+// After the playoffs, the TeamSeason row of the current season is for a season that is already completed, so scheduled events should not change it. The TeamSeason row for the next season is created from the Team in the preseason, before scheduled events are processed.
+const isSeasonCompleted = (phase: number) => {
+	return phase > PHASE.PLAYOFFS;
+};
+
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
 	season: number,
+	phase: number,
 	realTeamInfo: RealTeamInfo | undefined,
 ) => {
-	// This happens in preseason, but after a new TeamSeason row is created, so update Team and TeamSeason
+	// Update Team, and also TeamSeason unless isSeasonCompleted
 
 	const eventLogTexts: string[] = [];
 
@@ -70,10 +76,12 @@ const processTeamInfo = async (
 
 	await idb.cache.teams.put(t);
 
-	const teamSeason = await idb.cache.teamSeasons.indexGet(
-		"teamSeasonsByTidSeason",
-		[info.tid, season],
-	);
+	const teamSeason = isSeasonCompleted(phase)
+		? undefined
+		: await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
+				info.tid,
+				season,
+			]);
 	if (teamSeason) {
 		Object.assign(teamSeason, info);
 		if (deleteImgURLSmall) {
@@ -82,7 +90,7 @@ const processTeamInfo = async (
 		teamSeason.did = div.did;
 		teamSeason.cid = div.cid;
 		await idb.cache.teamSeasons.put(teamSeason);
-	} else if (!t.disabled) {
+	} else if (!t.disabled && !isSeasonCompleted(phase)) {
 		// Disabled teams have no team season
 		throw new Error(
 			`No team season found in scheduled event: ${info.tid}, ${season}`,
@@ -398,6 +406,7 @@ const processGameAttributes = async (
 const processConfsDivs = async (
 	info: Extract<ScheduledEvent, { type: "confsDivs" }>["info"],
 	season: number,
+	phase: number,
 ) => {
 	await league.setGameAttributes({
 		confs: info.confs,
@@ -417,6 +426,10 @@ const processConfsDivs = async (
 		t.did = div.did;
 		t.cid = div.cid;
 		await idb.cache.teams.put(t);
+
+		if (isSeasonCompleted(phase)) {
+			continue;
+		}
 
 		// Disabled teams have no team season
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
@@ -648,7 +661,12 @@ export const processScheduledEvents = async (
 
 		if (scheduledEvent.type === "teamInfo") {
 			eventLogTexts.push(
-				...(await processTeamInfo(scheduledEvent.info, season, realTeamInfo)),
+				...(await processTeamInfo(
+					scheduledEvent.info,
+					season,
+					phase,
+					realTeamInfo,
+				)),
 			);
 		} else if (scheduledEvent.type === "gameAttributes") {
 			eventLogTexts.push(...(await processGameAttributes(scheduledEvent.info)));
@@ -660,7 +678,7 @@ export const processScheduledEvents = async (
 				})),
 			);
 		} else if (scheduledEvent.type === "confsDivs") {
-			await processConfsDivs(scheduledEvent.info, season);
+			await processConfsDivs(scheduledEvent.info, season, phase);
 		} else if (scheduledEvent.type === "expansionDraft") {
 			eventLogTexts.push(
 				...(await processExpansionDraft(

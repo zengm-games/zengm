@@ -68,7 +68,7 @@ export default defineView({
 				defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
 				divs: g.get("divs"),
 				initialSettings: getInitialSettings(),
-				numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", "current"),
+				numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"),
 
 				// This is the current value. It could change before a scheduled event happens, but it is only used for the names of playoff rounds.
 				playoffsByConf: await getPlayoffsByConf(g.get("season")),

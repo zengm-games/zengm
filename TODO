@@ -2,8 +2,6 @@ scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
 - undo for any deletes (bulk or individual)
 - "This event also changes these, which can't be edited here but you can remove them:"
-  - confs/divs
-    - move to preseason
   - migration
     - upload
     - indexeddb

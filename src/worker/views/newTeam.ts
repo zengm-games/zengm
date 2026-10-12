@@ -217,7 +217,7 @@ export default defineView({
 			const finalTeams = await addHistoryAndPicksAndPlayers(teamsWithOvr);
 
 			return {
-				confs: g.get("confs", "current"),
+				confs: g.get("confs"),
 				disabled,
 				expansion,
 				numActiveTeams,

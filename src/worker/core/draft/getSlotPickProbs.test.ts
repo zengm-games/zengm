@@ -42,6 +42,7 @@ describe("no lottery", () => {
 	for (const round of [1, 2]) {
 		test(`noLottery, round ${round}`, async () => {
 			const probs = await getSlotPickProbs({
+				season: g.get("season"),
 				draftType: "noLottery",
 				round,
 				numTeams: NUM_TEAMS,
@@ -52,6 +53,7 @@ describe("no lottery", () => {
 
 		test(`noLotteryReverse, round ${round}`, async () => {
 			const probs = await getSlotPickProbs({
+				season: g.get("season"),
 				draftType: "noLotteryReverse",
 				round,
 				numTeams: NUM_TEAMS,
@@ -62,6 +64,7 @@ describe("no lottery", () => {
 
 		test(`random, round ${round}`, async () => {
 			const probs = await getSlotPickProbs({
+				season: g.get("season"),
 				draftType: "random",
 				round,
 				numTeams: NUM_TEAMS,
@@ -79,6 +82,7 @@ describe("no lottery", () => {
 describe("nba2019", () => {
 	test("round 1", async () => {
 		const probs = await getSlotPickProbs({
+			season: g.get("season"),
 			draftType: "nba2019",
 			round: 1,
 			numTeams: NUM_TEAMS,
@@ -103,6 +107,7 @@ describe("nba2019", () => {
 
 	test("round 2", async () => {
 		const probs = await getSlotPickProbs({
+			season: g.get("season"),
 			draftType: "nba2019",
 			round: 2,
 			numTeams: NUM_TEAMS,
@@ -115,6 +120,7 @@ describe("nba2019", () => {
 describe("nba2027", () => {
 	test("round 1", async () => {
 		const probs = await getSlotPickProbs({
+			season: g.get("season"),
 			draftType: "nba2027",
 			round: 1,
 			numTeams: NUM_TEAMS,
@@ -143,6 +149,7 @@ describe("nba2027", () => {
 
 	test("round 2", async () => {
 		const probs = await getSlotPickProbs({
+			season: g.get("season"),
 			draftType: "nba2027",
 			round: 2,
 			numTeams: NUM_TEAMS,

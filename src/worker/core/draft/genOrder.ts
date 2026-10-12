@@ -256,12 +256,16 @@ export const getLotteryChances = async ({
 	draftType,
 	firstRoundTeams,
 	draftPicksIndexed,
+	season = g.get("season"),
 }: {
 	draftType: (typeof LOTTERY_DRAFT_TYPES)[number];
 	firstRoundTeams: Pick<Team, "tid" | "draftLottery">[];
 	draftPicksIndexed: DraftPickWithoutKey[][];
+
+	// The number of lottery teams depends on the playoff settings, which are from this season. Only needed for a hypothetical future draft.
+	season?: number;
 }) => {
-	const numPlayoffTeamsInfo = await getNumPlayoffTeams(g.get("season"));
+	const numPlayoffTeamsInfo = await getNumPlayoffTeams(season);
 	const numPlayoffTeams = numPlayoffTeamsInfo.numPlayoffTeams;
 
 	const info = getLotteryInfo(

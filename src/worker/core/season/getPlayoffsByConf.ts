@@ -18,7 +18,10 @@ const getPlayoffsByConf = async (
 		skipPlayoffSeries: boolean;
 	},
 ): Promise<number | false> => {
-	if (!overrides?.skipPlayoffSeries) {
+	// A future season has no playoff series yet
+	const isFutureSeason = season > g.get("season");
+
+	if (!overrides?.skipPlayoffSeries && !isFutureSeason) {
 		const playoffSeries =
 			overrides?.playoffSeries ??
 			(await idb.getCopy.playoffSeries({ season }, "noCopyCache"));

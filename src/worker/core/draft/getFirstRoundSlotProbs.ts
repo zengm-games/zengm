@@ -1,7 +1,10 @@
 import { makeSeededRandom, realGauss } from "../../../common/random.ts";
 import type { DraftType, PlayInTournament } from "../../../common/types.ts";
 import { g, helpers } from "../../util/index.ts";
-import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
+import {
+	genPlayoffSeriesFromTeams,
+	InvalidPlayoffSettingsError,
+} from "../season/genPlayoffSeries.ts";
 import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
 import { getFirstRoundTeams, getNba2027PlayIn } from "./getTeamsByRound.ts";
 import { getDivisionRanks } from "../../util/orderTeams.ts";
@@ -78,11 +81,14 @@ const simPlayIn = (playIn: PlayInTournament, getUniform: () => number) => {
  * Before the regular season is over, we don't know the order of teams going into the draft lottery. This estimates it by simulating the rest of the season many times, using the real rules for playoff qualification and draft order.
  *
  * Returns the probability of each team being in each slot of the first round order before the lottery (so index 0 is the team with the best lottery odds). Teams with no draft pick are not included.
+ *
+ * If the playoff settings are not valid for these teams, this assumes there are no playoffs, so the order is just based on record. That can happen because `teams` are not always the teams that those settings were made for. Like in the offseason, the playoff settings for `season` are still in effect, but teams could have already been added or removed for the next season. Or in God Mode, teams can be removed before the playoff settings are fixed.
  */
 export const getFirstRoundSlotProbs = async ({
 	teams,
 	draftType,
 	numSims = DEFAULT_NUM_SIMS,
+	season,
 }: {
 	teams: {
 		// Results of games already played this season. If this is for a future season, everything should be 0.
@@ -100,13 +106,16 @@ export const getFirstRoundSlotProbs = async ({
 	}[];
 	draftType: DraftType;
 	numSims?: number;
+
+	// The season `teams` are for, which determines which settings are used. For a future season, the playoffs are based on the settings for that season, not whatever was used in the past.
+	season: number;
 }) => {
 	const numTeams = teams.length;
-	const usePts = g.get("pointsFormula", "current") !== "";
+	const usePts = g.get("pointsFormula", season) !== "";
 
 	// Division ranks only matter if division leaders get a seeding boost in the playoffs
-	const needDivisionRanks = g.get("playoffsNumTeamsDiv", "current") > 0;
-	const byConf = await getPlayoffsByConf(g.get("season"));
+	const needDivisionRanks = g.get("playoffsNumTeamsDiv", season) > 0;
+	const byConf = await getPlayoffsByConf(season);
 	const { normals, uniforms } = getRandomNumbers(numSims, numTeams);
 
 	const numSlots = teams.filter((t) => !t.noDraftPick).length;
@@ -116,6 +125,33 @@ export const getFirstRoundSlotProbs = async ({
 	for (const [i, t] of teams.entries()) {
 		indexesByTid.set(t.teamSeason.tid, i);
 		counts.push(new Array(numSlots).fill(0));
+	}
+
+	// Whether the playoff settings are valid only depends on which teams there are, not on their records. So this only needs to be checked once, and then it will never be a problem in the loop below.
+	let validPlayoffSettings = true;
+	try {
+		await genPlayoffSeriesFromTeams(
+			teams.map((t) =>
+				getHypotheticalTeam({
+					teamSeason: t.teamSeason,
+					won: 0,
+					lost: 0,
+					usePts,
+				}),
+			),
+			{
+				byConf,
+				logError: false,
+				season,
+				skipTiebreakers: true,
+			},
+		);
+	} catch (error) {
+		if (error instanceof InvalidPlayoffSettingsError) {
+			validPlayoffSettings = false;
+		} else {
+			throw error;
+		}
 	}
 
 	for (let sim = 0; sim < numSims; sim++) {
@@ -149,15 +185,23 @@ export const getFirstRoundSlotProbs = async ({
 		// Many things below need this, so only compute it once
 		const divisionRanks = needDivisionRanks
 			? await getDivisionRanks(simTeams, simTeams, {
+					season,
 					skipTiebreakers: true,
 				})
 			: undefined;
 
-		const { playIns, tidPlayoffs } = await genPlayoffSeriesFromTeams(simTeams, {
-			byConf,
-			divisionRanks,
-			skipTiebreakers: true,
-		});
+		let playIns;
+		let tidPlayoffs: number[] = [];
+		if (validPlayoffSettings) {
+			const playoffSeries = await genPlayoffSeriesFromTeams(simTeams, {
+				byConf,
+				divisionRanks,
+				season,
+				skipTiebreakers: true,
+			});
+			playIns = playoffSeries.playIns;
+			tidPlayoffs = playoffSeries.tidPlayoffs;
+		}
 
 		if (playIns) {
 			let uniformIndex = sim * MAX_PLAY_IN_GAMES;
@@ -180,6 +224,7 @@ export const getFirstRoundSlotProbs = async ({
 				draftType === "nba2027" ? getNba2027PlayIn(playIns) : undefined,
 			orderTeamsSettings: {
 				divisionRanks,
+				season,
 				skipTiebreakers: true,
 			},
 		});

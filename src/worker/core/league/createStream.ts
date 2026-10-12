@@ -79,6 +79,8 @@ import {
 import { oldAwardsToNewAwards } from "../../db/migrations/73/oldAwardsToNewAwards.ts";
 import { getOldAwardsByPlayer } from "../../db/migrations/73/getOldAwardsByPlayer.ts";
 import { getNewAwardsByPlayer } from "../../db/migrations/73/getNewAwardsByPlayer.ts";
+import { migrateScheduledEvents74 } from "../../db/migrations/74/migrate.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -1667,6 +1669,19 @@ const afterDBStream = async ({
 		teamStats,
 		teams,
 	});
+
+	// Version 74 upgrade
+	// Needs to be done after all the scheduled events are in the database, because it depends on the order of them (okay could stream it but that'd be more complex)
+	if (fromFile.version !== undefined && fromFile.version < 74) {
+		await migrateScheduledEvents74({
+			confs: unwrapGameAttribute(gameAttributes, "confs"),
+			divs: unwrapGameAttribute(gameAttributes, "divs"),
+			scheduledEventsStore: idb.league.transaction(
+				"scheduledEvents",
+				"readwrite",
+			).store,
+		});
+	}
 
 	// Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
 	helpers.resetG();

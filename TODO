@@ -1,10 +1,6 @@
 scheduled events editor
-- see "scheduled-events-editor" branch, shit's complicated
 - undo for any deletes (bulk or individual)
-- "This event also changes these, which can't be edited here but you can remove them:"
-  - migration
-    - upload
-    - indexeddb
+- http://localhost:3000/l/26/scheduled_events why all the team info ones still there? should be pruned with no div
 - blog
   - force retire
 

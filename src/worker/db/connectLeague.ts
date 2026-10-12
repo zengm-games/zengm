@@ -54,6 +54,7 @@ import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToO
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { migrate73 } from "./migrations/73/migrate.ts";
+import { migrate74 } from "./migrations/74/migrate.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -1740,6 +1741,10 @@ const migrate = async ({
 	if (oldVersion < 73) {
 		slowUpgrade();
 		await migrate73(transaction);
+	}
+
+	if (oldVersion < 74) {
+		await migrate74(transaction);
 	}
 
 	// Next update - do similar to `oldVersion < 71` above for numPlayoffRounds and draftType, from loadGameAttributes

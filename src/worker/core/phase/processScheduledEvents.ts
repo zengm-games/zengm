@@ -375,7 +375,7 @@ const processGameAttributes = async (
 			texts.push(`Added ${addedText} and removed ${removedText}`);
 		} else if (addedText !== undefined) {
 			texts.push(`Added ${addedText}`);
-		} else if (removed !== undefined) {
+		} else if (removedText !== undefined) {
 			texts.push(`Removed ${removedText}`);
 		}
 	}
@@ -573,6 +573,11 @@ const processUnretirePlayer = async (pid: number) => {
 
 	// Player might have been deleted or might not be retired. In both of those cases, there is nothing to do.
 	if (p?.tid !== PLAYER.RETIRED) {
+		return;
+	}
+
+	// Player might have died after this event was scheduled
+	if (p.diedYear !== undefined) {
 		return;
 	}
 

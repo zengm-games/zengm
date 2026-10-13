@@ -12,6 +12,7 @@ import { Dropdown } from "react-bootstrap";
 import { useState } from "react";
 import { isFutureScheduledEvent } from "../../../common/scheduledEvents.ts";
 import { Modal } from "../../components/Modal.tsx";
+import { showUndoNotification } from "../../components/UndoNotification.tsx";
 import {
 	type AugmentedScheduledEvent,
 	formatPhase,
@@ -258,8 +259,31 @@ const ViewEvent = ({
 	throw new Error("Invalid type");
 };
 
+const showDeleteUndoNotification = (undoKey: number, title: string) => {
+	showUndoNotification({
+		actionName: "delete",
+		undoKey,
+		title,
+	});
+};
+
 const bulkDelete = (type: string) => async () => {
-	await toWorker("main", "deleteScheduledEvents", type);
+	const undoKey = await toWorker("main", "deleteScheduledEvents", type);
+
+	if (undoKey !== undefined) {
+		showDeleteUndoNotification(undoKey, "Deleted scheduled events");
+	}
+};
+
+const deleteScheduledEvent = async (id: number) => {
+	const { undoKey } = await toWorker("main", "deleteScheduledEvent", {
+		dryRun: false,
+		id,
+	});
+
+	if (undoKey !== undefined) {
+		showDeleteUndoNotification(undoKey, "Deleted scheduled event");
+	}
 };
 
 const EVENT_TYPES = [
@@ -295,23 +319,20 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 	const [deletingProcessing, setDeletingProcessing] = useState(false);
 
 	const deleteEvent = async (id: number) => {
-		const result = await toWorker("main", "deleteScheduledEvent", {
+		const { changes } = await toWorker("main", "deleteScheduledEvent", {
 			dryRun: true,
 			id,
 		});
 
-		if (result.changes.length > 0) {
+		if (changes.length > 0) {
 			setDeleting({
 				id,
-				changes: result.changes,
+				changes,
 			});
 			return;
 		}
 
-		await toWorker("main", "deleteScheduledEvent", {
-			dryRun: false,
-			id,
-		});
+		await deleteScheduledEvent(id);
 	};
 
 	const cols = getCols(["Season", "Type", "", "Actions"], {
@@ -512,10 +533,7 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 						onClick={async () => {
 							if (deleting) {
 								setDeletingProcessing(true);
-								await toWorker("main", "deleteScheduledEvent", {
-									dryRun: false,
-									id: deleting.id,
-								});
+								await deleteScheduledEvent(deleting.id);
 								setDeletingProcessing(false);
 								setDeleting(undefined);
 							}

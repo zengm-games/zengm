@@ -105,6 +105,7 @@ import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
 import eightyTwoZeroDraft from "./eightyTwoZeroDraft.ts";
 import {
+	addScheduledEventsUndo,
 	deleteScheduledEvent,
 	getPlayersForScheduledEvents,
 	normalizeScheduledEventsAfterChange,
@@ -1053,6 +1054,9 @@ const deleteScheduledEvents = async (type: string) => {
 		"noCopyCache",
 	);
 
+	// Copy because some events are edited in place below
+	const before = helpers.deepCopy(scheduledEvents);
+
 	const deletedExpansionTIDs: number[] = [];
 
 	for (const event of scheduledEvents) {
@@ -1165,6 +1169,8 @@ const deleteScheduledEvents = async (type: string) => {
 
 	// Deleting some events can make others invalid. This also updates the UI.
 	await normalizeScheduledEventsAfterChange();
+
+	return addScheduledEventsUndo(before);
 };
 
 const discardUnsavedProgress = async () => {

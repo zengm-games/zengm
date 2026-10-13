@@ -1,4 +1,6 @@
+import fastDeepEqual from "fast-deep-equal";
 import { PHASE_TEXT, PLAYER } from "../../common/constants.ts";
+import { groupByUnique } from "../../common/utils.ts";
 import {
 	getScheduledEventPhases,
 	getTeamsBeforeScheduledEvent,
@@ -15,7 +17,7 @@ import {
 import { FormulaEvaluators } from "../core/awards/processAwards.ts";
 import { idb } from "../db/index.ts";
 import { actualPhase } from "../util/actualPhase.ts";
-import { g, helpers, toUI } from "../util/index.ts";
+import { g, helpers, local, toUI } from "../util/index.ts";
 
 // During an expansion draft or fantasy draft, scheduled events for the phase it will return to have already been processed
 export const getScheduledEventsCurrent = () => {
@@ -352,7 +354,7 @@ const save = async (
 	normalized: ScheduledEventMaybeId[],
 	stored: ScheduledEvent[],
 ) => {
-	const storedById = new Map(stored.map((event) => [event.id, event]));
+	const storedById = groupByUnique(stored, "id");
 	const normalizedIds = new Set<number>();
 
 	for (const event of normalized) {
@@ -362,7 +364,7 @@ const save = async (
 			normalizedIds.add(event.id);
 
 			// normalizeScheduledEvents returns the same object if nothing changed
-			if (storedById.get(event.id) !== event) {
+			if (storedById[event.id] !== event) {
 				await idb.cache.scheduledEvents.put(event);
 			}
 		}
@@ -384,6 +386,62 @@ export const normalizeScheduledEventsAfterChange = async () => {
 	await save(normalized, stored);
 };
 
+// Call this after deleting scheduled events. `before` is a copy of all the scheduled events from before anything was deleted. Returns the key for undoing it, or undefined if nothing changed.
+export const addScheduledEventsUndo = async (before: ScheduledEvent[]) => {
+	const after = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const afterById = groupByUnique(after, "id");
+
+	// Events that were deleted or changed, including ones changed as a side effect. `after` is undefined for a deleted event.
+	const toRestore: {
+		before: ScheduledEvent;
+		after: ScheduledEvent | undefined;
+	}[] = [];
+	for (const event of before) {
+		const eventAfter = afterById[event.id];
+		if (!fastDeepEqual(event, eventAfter)) {
+			toRestore.push({
+				before: event,
+				after: helpers.deepCopy(eventAfter),
+			});
+		}
+	}
+
+	if (toRestore.length === 0) {
+		return;
+	}
+
+	return local.undoLog.add(async () => {
+		const stored = await idb.getCopies.scheduledEvents(
+			undefined,
+			"noCopyCache",
+		);
+		const storedById = groupByUnique(stored, "id");
+
+		// If something else changed one of these events since then, restoring it would overwrite that change
+		for (const { before, after } of toRestore) {
+			if (!fastDeepEqual(storedById[before.id], after)) {
+				return false;
+			}
+		}
+
+		const restoredIds = new Set(toRestore.map(({ before }) => before.id));
+		const events = [
+			...stored.filter((event) => !restoredIds.has(event.id)),
+			...toRestore.map(({ before }) => before),
+		];
+
+		// Other scheduled events could have been added or deleted since then. If the restored events are not valid along with them, don't undo.
+		const { changes, events: normalized } = await normalize(events);
+		if (changes.length > 0) {
+			return false;
+		}
+
+		await save(normalized, stored);
+
+		return true;
+	}, ["leagueChange", "newPhase"]);
+};
+
 // With dryRun, nothing is saved, it just returns what would happen
 export const deleteScheduledEvent = async ({
 	dryRun,
@@ -397,12 +455,16 @@ export const deleteScheduledEvent = async ({
 
 	const { changes, events: normalized } = await normalize(events);
 
+	let undoKey;
 	if (!dryRun) {
+		const before = helpers.deepCopy(stored);
 		await save(normalized, stored);
+		undoKey = await addScheduledEventsUndo(before);
 	}
 
 	return {
 		changes: formatChanges(changes, stored),
+		undoKey,
 	};
 };
 

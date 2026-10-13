@@ -837911,9 +837911,6 @@
   "scheduledEventsGameAttributes": [
     {
       "info": {
-        "allStarDunk": false,
-        "allStarThree": false,
-        "allStarType": "byConf",
         "confs": [
           {
             "cid": 0,
@@ -837936,6 +837933,62 @@
             "name": "Western Division"
           }
         ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 0
+          },
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 3
+          },
+          {
+            "did": 0,
+            "tid": 4
+          },
+          {
+            "did": 0,
+            "tid": 5
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 7
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 10
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1946,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
+        "allStarDunk": false,
+        "allStarThree": false,
+        "allStarType": "byConf",
         "elamASG": false,
         "luxuryPayroll": 950,
         "luxuryTax": 0,
@@ -837965,7 +838018,14 @@
             "shortName": "ALL",
             "showStats": "offense"
           }
-        ],
+        ]
+      },
+      "phase": 0,
+      "season": 1947,
+      "type": "awards"
+    },
+    {
+      "info": {
         "blockFactor": 1,
         "draftType": "noLottery",
         "foulsUntilBonus": [
@@ -838009,7 +838069,14 @@
             "shortName": "ALL",
             "showStats": "offense"
           }
-        ],
+        ]
+      },
+      "phase": 0,
+      "season": 1948,
+      "type": "awards"
+    },
+    {
+      "info": {
         "ftAccuracyFactor": 0.9,
         "numGames": 48,
         "pace": 108,
@@ -838076,6 +838143,83 @@
             "name": "Central Division"
           }
         ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 3
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 0,
+            "tid": 4
+          },
+          {
+            "did": 1,
+            "tid": 14
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 17
+          },
+          {
+            "did": 1,
+            "tid": 18
+          },
+          {
+            "did": 1,
+            "tid": 19
+          },
+          {
+            "did": 1,
+            "tid": 20
+          },
+          {
+            "did": 2,
+            "tid": 12
+          },
+          {
+            "did": 2,
+            "tid": 13
+          },
+          {
+            "did": 2,
+            "tid": 9
+          },
+          {
+            "did": 2,
+            "tid": 6
+          },
+          {
+            "did": 2,
+            "tid": 7
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1949,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "numGamesPlayoffSeries": [
           3,
           3,
@@ -838122,6 +838266,59 @@
             "name": "Western Division"
           }
         ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 3
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 0,
+            "tid": 4
+          },
+          {
+            "did": 1,
+            "tid": 12
+          },
+          {
+            "did": 1,
+            "tid": 13
+          },
+          {
+            "did": 1,
+            "tid": 14
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 16
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1950,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "numGamesPlayoffSeries": [
           3,
           5,
@@ -838261,7 +838458,14 @@
             "shortName": "ALL",
             "showStats": "offense"
           }
-        ],
+        ]
+      },
+      "phase": 0,
+      "season": 1956,
+      "type": "awards"
+    },
+    {
+      "info": {
         "ftAccuracyFactor": 0.99,
         "pace": 106.17,
         "twoPointAccuracyFactor": 0.85805
@@ -838441,7 +838645,14 @@
             "shortName": "ALR",
             "showStats": "offense"
           }
-        ],
+        ]
+      },
+      "phase": 0,
+      "season": 1963,
+      "type": "awards"
+    },
+    {
+      "info": {
         "pace": 117.316,
         "twoPointAccuracyFactor": 0.9439
       },
@@ -838617,7 +838828,14 @@
             "shortName": "ALR",
             "showStats": "offense"
           }
-        ],
+        ]
+      },
+      "phase": 0,
+      "season": 1969,
+      "type": "awards"
+    },
+    {
+      "info": {
         "pace": 114.571,
         "twoPointAccuracyFactor": 0.9439
       },
@@ -838647,6 +838865,16 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
         "divs": [
           {
             "cid": 0,
@@ -838669,6 +838897,83 @@
             "name": "Pacific Division"
           }
         ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 24
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 12
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 2,
+            "tid": 6
+          },
+          {
+            "did": 2,
+            "tid": 9
+          },
+          {
+            "did": 2,
+            "tid": 18
+          },
+          {
+            "did": 2,
+            "tid": 23
+          },
+          {
+            "did": 3,
+            "tid": 13
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 22
+          },
+          {
+            "did": 3,
+            "tid": 21
+          },
+          {
+            "did": 3,
+            "tid": 3
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1970,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "luxuryPayroll": 2350,
         "minPayroll": 1200,
         "salaryCap": 1800
@@ -839008,7 +839313,14 @@
             "shortName": "ALR",
             "showStats": "offense"
           }
-        ],
+        ]
+      },
+      "phase": 0,
+      "season": 1983,
+      "type": "awards"
+    },
+    {
+      "info": {
         "orbFactor": 1.1215,
         "pace": 103.1,
         "stealFactor": 1.01,
@@ -839152,7 +839464,14 @@
             "shortName": "ALR",
             "showStats": "offense"
           }
-        ],
+        ]
+      },
+      "phase": 0,
+      "season": 1986,
+      "type": "awards"
+    },
+    {
+      "info": {
         "orbFactor": 1.10425,
         "stealFactor": 1.06,
         "threePointTendencyFactor": 0.095,
@@ -839288,7 +839607,14 @@
             "shortName": "ALR",
             "showStats": "offense"
           }
-        ],
+        ]
+      },
+      "phase": 0,
+      "season": 1989,
+      "type": "awards"
+    },
+    {
+      "info": {
         "orbFactor": 1.1215,
         "pace": 100.6,
         "stealFactor": 1.2,
@@ -839668,6 +839994,16 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
         "divs": [
           {
             "cid": 0,
@@ -839699,11 +840035,133 @@
             "did": 5,
             "name": "Southwest Division"
           }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 27
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 5
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 14
+          },
+          {
+            "did": 1,
+            "tid": 18
+          },
+          {
+            "did": 2,
+            "tid": 16
+          },
+          {
+            "did": 2,
+            "tid": 35
+          },
+          {
+            "did": 2,
+            "tid": 31
+          },
+          {
+            "did": 2,
+            "tid": 32
+          },
+          {
+            "did": 2,
+            "tid": 11
+          },
+          {
+            "did": 3,
+            "tid": 20
+          },
+          {
+            "did": 3,
+            "tid": 33
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 21
+          },
+          {
+            "did": 3,
+            "tid": 26
+          },
+          {
+            "did": 4,
+            "tid": 24
+          },
+          {
+            "did": 4,
+            "tid": 13
+          },
+          {
+            "did": 4,
+            "tid": 3
+          },
+          {
+            "did": 4,
+            "tid": 23
+          },
+          {
+            "did": 4,
+            "tid": 12
+          },
+          {
+            "did": 5,
+            "tid": 29
+          },
+          {
+            "did": 5,
+            "tid": 22
+          },
+          {
+            "did": 5,
+            "tid": 34
+          },
+          {
+            "did": 5,
+            "tid": 30
+          },
+          {
+            "did": 5,
+            "tid": 28
+          }
         ]
       },
       "phase": 4,
       "season": 2004,
-      "type": "gameAttributes"
+      "type": "confsDivs"
     },
     {
       "info": {
@@ -840138,7 +840596,7 @@
       },
       "phase": 0,
       "season": 2022,
-      "type": "gameAttributes"
+      "type": "awards"
     },
     {
       "info": {
@@ -840211,6 +840669,16 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
         "divs": [
           {
             "cid": 0,
@@ -840252,11 +840720,141 @@
             "did": 7,
             "name": "Central Division"
           }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 27
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 18
+          },
+          {
+            "did": 1,
+            "tid": 33
+          },
+          {
+            "did": 2,
+            "tid": 5
+          },
+          {
+            "did": 2,
+            "tid": 8
+          },
+          {
+            "did": 2,
+            "tid": 14
+          },
+          {
+            "did": 2,
+            "tid": 11
+          },
+          {
+            "did": 3,
+            "tid": 16
+          },
+          {
+            "did": 3,
+            "tid": 35
+          },
+          {
+            "did": 3,
+            "tid": 31
+          },
+          {
+            "did": 3,
+            "tid": 32
+          },
+          {
+            "did": 4,
+            "tid": 36
+          },
+          {
+            "did": 4,
+            "tid": 25
+          },
+          {
+            "did": 4,
+            "tid": 12
+          },
+          {
+            "did": 4,
+            "tid": 3
+          },
+          {
+            "did": 5,
+            "tid": 24
+          },
+          {
+            "did": 5,
+            "tid": 13
+          },
+          {
+            "did": 5,
+            "tid": 37
+          },
+          {
+            "did": 5,
+            "tid": 23
+          },
+          {
+            "did": 6,
+            "tid": 29
+          },
+          {
+            "did": 6,
+            "tid": 22
+          },
+          {
+            "did": 6,
+            "tid": 28
+          },
+          {
+            "did": 6,
+            "tid": 30
+          },
+          {
+            "did": 7,
+            "tid": 20
+          },
+          {
+            "did": 7,
+            "tid": 26
+          },
+          {
+            "did": 7,
+            "tid": 21
+          },
+          {
+            "did": 7,
+            "tid": 34
+          }
         ]
       },
       "phase": 4,
       "season": 2028,
-      "type": "gameAttributes"
+      "type": "confsDivs"
     }
   ],
   "scheduledEventsTeams": [
@@ -840265,7 +840863,6 @@
         "teams": [
           {
             "abbrev": "PRO",
-            "cid": 0,
             "colors": [
               "#303443",
               "#ffff00",
@@ -840283,7 +840880,6 @@
           },
           {
             "abbrev": "BOS",
-            "cid": 0,
             "colors": [
               "#ffffff",
               "#e70000",
@@ -840301,7 +840897,6 @@
           },
           {
             "abbrev": "NYC",
-            "cid": 0,
             "colors": [
               "#1e73ba",
               "#ff8500",
@@ -840319,7 +840914,6 @@
           },
           {
             "abbrev": "PHV",
-            "cid": 0,
             "colors": [
               "#676ee7",
               "#48edfe",
@@ -840337,7 +840931,6 @@
           },
           {
             "abbrev": "WSC",
-            "cid": 0,
             "colors": [
               "#89bfd3",
               "#7a1319",
@@ -840355,7 +840948,6 @@
           },
           {
             "abbrev": "TOR",
-            "cid": 0,
             "colors": [
               "#841222",
               "#ffffff",
@@ -840373,7 +840965,6 @@
           },
           {
             "abbrev": "CHI",
-            "cid": 1,
             "colors": [
               "#33607a",
               "#271919",
@@ -840391,7 +840982,6 @@
           },
           {
             "abbrev": "STB",
-            "cid": 1,
             "colors": [
               "#5385ed",
               "#363736",
@@ -840409,7 +840999,6 @@
           },
           {
             "abbrev": "CLE",
-            "cid": 1,
             "colors": [
               "#211e1e",
               "#f8e3cc",
@@ -840427,7 +841016,6 @@
           },
           {
             "abbrev": "DET",
-            "cid": 1,
             "colors": [
               "#007681",
               "#d6d6d6",
@@ -840445,7 +841033,6 @@
           },
           {
             "abbrev": "PIT",
-            "cid": 1,
             "colors": [
               "#231f20",
               "#fbee28",
@@ -840504,7 +841091,6 @@
         "teams": [
           {
             "abbrev": "BLB",
-            "cid": 1,
             "colors": [
               "#213063",
               "#c5ae6e",
@@ -840528,21 +841114,9 @@
     },
     {
       "info": {
-        "cid": 1,
-        "did": 1,
-        "srID": "WSC",
-        "tid": 4
-      },
-      "phase": 0,
-      "season": 1948,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "teams": [
           {
             "abbrev": "ROC",
-            "cid": 1,
             "colors": [
               "#735823",
               "#e4c649",
@@ -840560,7 +841134,6 @@
           },
           {
             "abbrev": "MNL",
-            "cid": 1,
             "colors": [
               "#00008b",
               "#ffaf28",
@@ -840578,7 +841151,6 @@
           },
           {
             "abbrev": "FTW",
-            "cid": 1,
             "colors": [
               "#007681",
               "#d6d6d6",
@@ -840596,7 +841168,6 @@
           },
           {
             "abbrev": "IND",
-            "cid": 1,
             "colors": [
               "#e79f02",
               "#00246d",
@@ -840620,28 +841191,6 @@
     },
     {
       "info": {
-        "cid": 0,
-        "did": 0,
-        "srID": "BLB",
-        "tid": 11
-      },
-      "phase": 0,
-      "season": 1949,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 0,
-        "did": 0,
-        "srID": "WSC",
-        "tid": 4
-      },
-      "phase": 0,
-      "season": 1949,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "tid": 0
       },
       "phase": 4,
@@ -840653,7 +841202,6 @@
         "teams": [
           {
             "abbrev": "SYR",
-            "cid": 0,
             "colors": [
               "#46bae6",
               "#ffdb33",
@@ -840671,7 +841219,6 @@
           },
           {
             "abbrev": "TRI",
-            "cid": 1,
             "colors": [
               "#291091",
               "#ae7c00",
@@ -840689,7 +841236,6 @@
           },
           {
             "abbrev": "AND",
-            "cid": 1,
             "colors": [
               "#1a9190",
               "#510f0f",
@@ -840707,7 +841253,6 @@
           },
           {
             "abbrev": "SHE",
-            "cid": 1,
             "colors": [
               "#003600",
               "#fdc05f",
@@ -840725,7 +841270,6 @@
           },
           {
             "abbrev": "WAT",
-            "cid": 1,
             "colors": [
               "#8f2100",
               "#ffb500",
@@ -840743,7 +841287,6 @@
           },
           {
             "abbrev": "DEN",
-            "cid": 1,
             "colors": [
               "#2b8643",
               "#163a1c",
@@ -840769,61 +841312,6 @@
       "info": {
         "srID": "INO",
         "tid": 14
-      },
-      "phase": 0,
-      "season": 1950,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 2,
-        "did": 2,
-        "srID": "ROC",
-        "tid": 12
-      },
-      "phase": 0,
-      "season": 1950,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 2,
-        "did": 2,
-        "srID": "MNL",
-        "tid": 13
-      },
-      "phase": 0,
-      "season": 1950,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 2,
-        "did": 2,
-        "srID": "FTW",
-        "tid": 9
-      },
-      "phase": 0,
-      "season": 1950,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 2,
-        "did": 2,
-        "srID": "CHS",
-        "tid": 6
-      },
-      "phase": 0,
-      "season": 1950,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 2,
-        "did": 2,
-        "srID": "STB",
-        "tid": 7
       },
       "phase": 0,
       "season": 1950,
@@ -840876,39 +841364,6 @@
       "phase": 4,
       "season": 1950,
       "type": "contraction"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 1,
-        "srID": "ROC",
-        "tid": 12
-      },
-      "phase": 0,
-      "season": 1951,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 1,
-        "srID": "MNL",
-        "tid": 13
-      },
-      "phase": 0,
-      "season": 1951,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 1,
-        "srID": "FTW",
-        "tid": 9
-      },
-      "phase": 0,
-      "season": 1951,
-      "type": "teamInfo"
     },
     {
       "info": {
@@ -841007,7 +841462,6 @@
         "teams": [
           {
             "abbrev": "CHP",
-            "cid": 1,
             "colors": [
               "#213063",
               "#c5ae6e",
@@ -841031,17 +841485,6 @@
     },
     {
       "info": {
-        "cid": 0,
-        "did": 0,
-        "srID": "CIN",
-        "tid": 12
-      },
-      "phase": 0,
-      "season": 1963,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "abbrev": "CHZ",
         "srID": "CHZ",
         "tid": 11
@@ -841053,8 +841496,6 @@
     {
       "info": {
         "abbrev": "GS",
-        "cid": 1,
-        "did": 1,
         "pop": 6.5,
         "region": "Golden State",
         "srID": "SFW",
@@ -841093,7 +841534,6 @@
         "teams": [
           {
             "abbrev": "CHI",
-            "cid": 1,
             "colors": [
               "#33607a",
               "#271919",
@@ -841117,21 +841557,9 @@
     },
     {
       "info": {
-        "cid": 0,
-        "did": 0,
-        "srID": "BAL",
-        "tid": 11
-      },
-      "phase": 0,
-      "season": 1967,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "teams": [
           {
             "abbrev": "SEA",
-            "cid": 1,
             "colors": [
               "#47ff47",
               "#112e5b",
@@ -841149,7 +841577,6 @@
           },
           {
             "abbrev": "SDR",
-            "cid": 1,
             "colors": [
               "#231f20",
               "#ffffff",
@@ -841173,21 +841600,9 @@
     },
     {
       "info": {
-        "cid": 0,
-        "did": 0,
-        "srID": "DET",
-        "tid": 9
-      },
-      "phase": 0,
-      "season": 1968,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "teams": [
           {
             "abbrev": "MIL",
-            "cid": 0,
             "colors": [
               "#003600",
               "#fdc05f",
@@ -841205,7 +841620,6 @@
           },
           {
             "abbrev": "PHO",
-            "cid": 1,
             "colors": [
               "#d17d2a",
               "#231f20",
@@ -841244,7 +841658,6 @@
         "teams": [
           {
             "abbrev": "BUF",
-            "cid": 0,
             "colors": [
               "#07295c",
               "#f16229",
@@ -841262,7 +841675,6 @@
           },
           {
             "abbrev": "CLE",
-            "cid": 0,
             "colors": [
               "#211e1e",
               "#f8e3cc",
@@ -841280,7 +841692,6 @@
           },
           {
             "abbrev": "POR",
-            "cid": 1,
             "colors": [
               "#e41d34",
               "#1e1e1e",
@@ -841301,118 +841712,6 @@
       "phase": 4,
       "season": 1970,
       "type": "expansionDraft"
-    },
-    {
-      "info": {
-        "cid": 0,
-        "srID": "ATL",
-        "tid": 16
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 1,
-        "srID": "BAL",
-        "tid": 11
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 1,
-        "srID": "CIN",
-        "tid": 12
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "CHI",
-        "tid": 6
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 2,
-        "srID": "DET",
-        "tid": 9
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 2,
-        "srID": "MIL",
-        "tid": 18
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "PHO",
-        "tid": 23
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "LAL",
-        "tid": 13
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "SDR",
-        "tid": 22
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "SEA",
-        "tid": 21
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "SFW",
-        "tid": 3
-      },
-      "phase": 0,
-      "season": 1971,
-      "type": "teamInfo"
     },
     {
       "info": {
@@ -841446,25 +841745,12 @@
     },
     {
       "info": {
-        "cid": 0,
-        "did": 1,
-        "srID": "HOU",
-        "tid": 22
-      },
-      "phase": 0,
-      "season": 1973,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "abbrev": "KC",
-        "cid": 1,
         "colors": [
           "#8f2100",
           "#ffb500",
           "#d4731c"
         ],
-        "did": 2,
         "imgURL": "/img/logos-primary/KC.svg",
         "imgURLSmall": "/img/logos-secondary/KC.svg",
         "jersey": "jersey4",
@@ -841472,16 +841758,6 @@
         "region": "Kansas City",
         "srID": "KCO",
         "tid": 12
-      },
-      "phase": 0,
-      "season": 1973,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "PHO",
-        "tid": 23
       },
       "phase": 0,
       "season": 1973,
@@ -841504,7 +841780,6 @@
         "teams": [
           {
             "abbrev": "NOM",
-            "cid": 0,
             "colors": [
               "#7c7c7c",
               "#000000",
@@ -841549,7 +841824,6 @@
         "teams": [
           {
             "abbrev": "NYB",
-            "cid": 0,
             "colors": [
               "#034757",
               "#67c7e9",
@@ -841567,7 +841841,6 @@
           },
           {
             "abbrev": "SA",
-            "cid": 0,
             "colors": [
               "#4a2b14",
               "#30d9ff",
@@ -841585,7 +841858,6 @@
           },
           {
             "abbrev": "DEN",
-            "cid": 1,
             "colors": [
               "#2b8643",
               "#163a1c",
@@ -841603,7 +841875,6 @@
           },
           {
             "abbrev": "IND",
-            "cid": 1,
             "colors": [
               "#e79f02",
               "#00246d",
@@ -841648,35 +841919,12 @@
     },
     {
       "info": {
-        "did": 0,
-        "srID": "WSB",
-        "tid": 11
-      },
-      "phase": 0,
-      "season": 1979,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 0,
-        "did": 1,
-        "srID": "DET",
-        "tid": 9
-      },
-      "phase": 0,
-      "season": 1979,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "abbrev": "SDC",
-        "cid": 1,
         "colors": [
           "#aeaeae",
           "#ea4b0f",
           "#dedddd"
         ],
-        "did": 3,
         "imgURL": "/img/logos-primary/LAE.svg",
         "jersey": "jersey3",
         "name": "Earthquakes",
@@ -841691,20 +841939,7 @@
     },
     {
       "info": {
-        "cid": 0,
-        "did": 1,
-        "srID": "IND",
-        "tid": 14
-      },
-      "phase": 0,
-      "season": 1980,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "abbrev": "UTA",
-        "cid": 1,
-        "did": 2,
         "pop": 2.3,
         "region": "Utah",
         "srID": "UTA",
@@ -841719,7 +841954,6 @@
         "teams": [
           {
             "abbrev": "DAL",
-            "cid": 1,
             "colors": [
               "#000000",
               "#e08200",
@@ -841740,50 +841974,6 @@
       "phase": 4,
       "season": 1980,
       "type": "expansionDraft"
-    },
-    {
-      "info": {
-        "cid": 0,
-        "did": 1,
-        "srID": "CHI",
-        "tid": 6
-      },
-      "phase": 0,
-      "season": 1981,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 0,
-        "did": 1,
-        "srID": "MIL",
-        "tid": 18
-      },
-      "phase": 0,
-      "season": 1981,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 2,
-        "srID": "HOU",
-        "tid": 22
-      },
-      "phase": 0,
-      "season": 1981,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 2,
-        "srID": "SAS",
-        "tid": 28
-      },
-      "phase": 0,
-      "season": 1981,
-      "type": "teamInfo"
     },
     {
       "info": {
@@ -841823,7 +842013,6 @@
         "teams": [
           {
             "abbrev": "CHQ",
-            "cid": 0,
             "colors": [
               "#009e87",
               "#541f3e",
@@ -841841,7 +842030,6 @@
           },
           {
             "abbrev": "MIA",
-            "cid": 1,
             "colors": [
               "#4ac1c0",
               "#d8519d",
@@ -841865,20 +842053,9 @@
     },
     {
       "info": {
-        "did": 3,
-        "srID": "SAC",
-        "tid": 12
-      },
-      "phase": 0,
-      "season": 1989,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "teams": [
           {
             "abbrev": "ORL",
-            "cid": 0,
             "colors": [
               "#dc5000",
               "#ffffff",
@@ -841896,7 +842073,6 @@
           },
           {
             "abbrev": "MIN",
-            "cid": 1,
             "colors": [
               "#8accdc",
               "#3d2971",
@@ -841920,53 +842096,9 @@
     },
     {
       "info": {
-        "cid": 0,
-        "did": 0,
-        "srID": "MIA",
-        "tid": 31
-      },
-      "phase": 0,
-      "season": 1990,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 2,
-        "srID": "CHH",
-        "tid": 30
-      },
-      "phase": 0,
-      "season": 1990,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 0,
-        "srID": "ORL",
-        "tid": 32
-      },
-      "phase": 0,
-      "season": 1992,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 0,
-        "did": 1,
-        "srID": "CHH",
-        "tid": 30
-      },
-      "phase": 0,
-      "season": 1992,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
         "teams": [
           {
             "abbrev": "TOR",
-            "cid": 0,
             "colors": [
               "#841222",
               "#ffffff",
@@ -841984,7 +842116,6 @@
           },
           {
             "abbrev": "VAN",
-            "cid": 1,
             "colors": [
               "#213063",
               "#1ea194",
@@ -842061,7 +842192,6 @@
         "teams": [
           {
             "abbrev": "CHA",
-            "cid": 0,
             "colors": [
               "#009e87",
               "#541f3e",
@@ -842082,187 +842212,6 @@
       "phase": 4,
       "season": 2004,
       "type": "expansionDraft"
-    },
-    {
-      "info": {
-        "did": 0,
-        "srID": "TOR",
-        "tid": 5
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "ATL",
-        "tid": 16
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "MIA",
-        "tid": 31
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "ORL",
-        "tid": 32
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "WAS",
-        "tid": 11
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "DEN",
-        "tid": 20
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "MIN",
-        "tid": 33
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "UTA",
-        "tid": 26
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 4,
-        "srID": "LAC",
-        "tid": 24
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 4,
-        "srID": "LAL",
-        "tid": 13
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 4,
-        "srID": "GSW",
-        "tid": 3
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 4,
-        "srID": "PHO",
-        "tid": 23
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 4,
-        "srID": "SAC",
-        "tid": 12
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 5,
-        "srID": "DAL",
-        "tid": 29
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 5,
-        "srID": "HOU",
-        "tid": 22
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 5,
-        "srID": "MEM",
-        "tid": 34
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "cid": 1,
-        "did": 5,
-        "srID": "NOH",
-        "tid": 30
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 5,
-        "srID": "SAS",
-        "tid": 28
-      },
-      "phase": 0,
-      "season": 2005,
-      "type": "teamInfo"
     },
     {
       "info": {
@@ -842329,7 +842278,6 @@
         "teams": [
           {
             "abbrev": "SET",
-            "cid": 1,
             "colors": [
               "#47ff47",
               "#112e5b",
@@ -842347,7 +842295,6 @@
           },
           {
             "abbrev": "LV",
-            "cid": 1,
             "colors": [
               "#1c73bb",
               "#ffd600",
@@ -842368,207 +842315,6 @@
       "phase": 4,
       "season": 2028,
       "type": "expansionDraft"
-    },
-    {
-      "info": {
-        "cid": 0,
-        "did": 1,
-        "srID": "MIN",
-        "tid": 33
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "TOR",
-        "tid": 5
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "CLE",
-        "tid": 8
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 2,
-        "srID": "IND",
-        "tid": 14
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "ATL",
-        "tid": 16
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "CHO",
-        "tid": 35
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "MIA",
-        "tid": 31
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 3,
-        "srID": "ORL",
-        "tid": 32
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 4,
-        "srID": "POR",
-        "tid": 25
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 5,
-        "srID": "LAC",
-        "tid": 24
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 5,
-        "srID": "LAL",
-        "tid": 13
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 5,
-        "srID": "PHO",
-        "tid": 23
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 6,
-        "srID": "DAL",
-        "tid": 29
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 6,
-        "srID": "HOU",
-        "tid": 22
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 6,
-        "srID": "SAS",
-        "tid": 28
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 6,
-        "srID": "NOP",
-        "tid": 30
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 7,
-        "srID": "DEN",
-        "tid": 20
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 7,
-        "srID": "UTA",
-        "tid": 26
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 7,
-        "srID": "OKC",
-        "tid": 21
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
-    },
-    {
-      "info": {
-        "did": 7,
-        "srID": "MEM",
-        "tid": 34
-      },
-      "phase": 0,
-      "season": 2029,
-      "type": "teamInfo"
     }
   ],
   "teamSeasons": {

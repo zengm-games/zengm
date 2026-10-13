@@ -103,6 +103,7 @@ const TEAM_QUALITY_STD_FUTURE_SEASON = 0.1;
 const getProjectedTeam = ({
 	futureDraft,
 	noDraftPick,
+	season,
 	t,
 	teamOvrWinp,
 	teamSeason,
@@ -110,6 +111,10 @@ const getProjectedTeam = ({
 }: {
 	futureDraft: boolean;
 	noDraftPick: boolean;
+
+	// See PickEstimates
+	season: number;
+
 	t: Pick<Team, "tid" | "cid" | "did">;
 	teamOvrWinp: number;
 	teamSeason: TeamSeasonRecord | undefined;
@@ -118,7 +123,7 @@ const getProjectedTeam = ({
 	// For a future draft, the whole season is left to play
 	const currentTeamSeason = futureDraft ? undefined : teamSeason;
 	const gp = currentTeamSeason ? helpers.getTeamSeasonGp(currentTeamSeason) : 0;
-	const gamesLeft = Math.max(g.get("numGames") - gp, 0);
+	const gamesLeft = Math.max(g.get("numGames", season) - gp, 0);
 
 	// For this season, what happened so far is in currentTeamSeason, so this is just about the rest of the season. For a future season, wp already includes everything we know.
 	const winp = futureDraft ? wp : teamOvrWinp;
@@ -531,6 +536,7 @@ const getSimulatedSlotProbs = (
 	pickEstimates.firstRoundSlotProbs ??= getFirstRoundSlotProbsCached(
 		pickEstimates.wps.map((row) => row.projectedTeam),
 		quick,
+		pickEstimates.season,
 	);
 
 	return pickEstimates.firstRoundSlotProbs;
@@ -599,9 +605,11 @@ const getPickProbs = async (
 	const slotProbs = await getSlotProbs(cache, dp, pickNumber);
 
 	// Because of the draft lottery or other draft types where the worst team doesn't necessarily pick first, a team's pick is not always the same as its slot
+	const pickEstimates = pickNumber.futureDraft ? cache.future : cache;
 	const slotPickProbs = await getSlotPickProbsCached(
 		dp.round,
 		slotProbs.length,
+		pickEstimates.season,
 	);
 
 	const pickProbs = new Array<number>(slotProbs.length).fill(0);
@@ -959,6 +967,8 @@ export const getEstPicks = async (
 
 	// Estimate the order of the picks by team
 	const getPickEstimates = (futureDraft: boolean): PickEstimates => {
+		const season = futureDraft ? g.get("season") + 1 : g.get("season");
+
 		const wps = teamInfos.map(({ t, noDraftPick, teamOvrWinp, teamSeason }) => {
 			const wp = getEstWinPercent({ futureDraft, teamOvrWinp, teamSeason });
 			return {
@@ -967,6 +977,7 @@ export const getEstPicks = async (
 				projectedTeam: getProjectedTeam({
 					futureDraft,
 					noDraftPick,
+					season,
 					t,
 					teamOvrWinp,
 					teamSeason,
@@ -986,6 +997,7 @@ export const getEstPicks = async (
 
 		return {
 			estPicks,
+			season,
 			wps,
 		};
 	};
@@ -1000,6 +1012,9 @@ export const getEstPicks = async (
 
 type PickEstimates = {
 	estPicks: Record<number, number>;
+
+	// The season whose settings are used to project the draft order. For a future draft that is next season, because settings for next season can already be different than this season (like in the offseason after teams are added or removed, and the playoffs change to match). There is no way to know about settings after that.
+	season: number;
 	wps: {
 		tid: number;
 		wp: number;

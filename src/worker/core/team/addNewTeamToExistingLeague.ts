@@ -141,6 +141,17 @@ const addNewTeamToExistingLeague = async (
 					scheduledEvent.info.tid += 1;
 					await idb.cache.scheduledEvents.put(scheduledEvent);
 				}
+			} else if (scheduledEvent.type === "confsDivs") {
+				let updated;
+				for (const t2 of scheduledEvent.info.teams) {
+					if (t.tid <= t2.tid) {
+						t2.tid += 1;
+						updated = true;
+					}
+				}
+				if (updated) {
+					await idb.cache.scheduledEvents.put(scheduledEvent);
+				}
 			}
 		}
 	}

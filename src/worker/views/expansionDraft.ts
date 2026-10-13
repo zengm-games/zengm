@@ -30,7 +30,7 @@ export default defineView({
 		const currentTeams = g.get("teamInfoCache");
 		const allAbbrevs = getUnusedAbbrevs(currentTeams);
 
-		const divs = g.get("divs", "current");
+		const divs = g.get("divs");
 		const div = last(divs);
 		const param = allAbbrevs.map((abbrev) => ({
 			tid: -1,

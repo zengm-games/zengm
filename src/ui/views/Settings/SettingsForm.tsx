@@ -254,6 +254,7 @@ const SettingsForm = ({
 	hasPlayers,
 	newLeague,
 	realPlayers,
+	saveDisabled,
 	saveText = "Save settings",
 	initialSettings,
 	settingsShown,
@@ -270,6 +271,7 @@ const SettingsForm = ({
 	hasPlayers?: boolean;
 	newLeague?: boolean;
 	realPlayers?: boolean;
+	saveDisabled?: boolean;
 	saveText?: string;
 	initialSettings: Settings;
 	hideShortcuts?: boolean;
@@ -658,7 +660,7 @@ const SettingsForm = ({
 							<ActionButton
 								className="text-nowrap"
 								type="submit"
-								disabled={submitting}
+								disabled={submitting || saveDisabled}
 								processing={!!newLeague && submitting}
 							>
 								{saveText}

@@ -1,5 +1,5 @@
 import type { FaceConfig } from "facesjs";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { JERSEYS } from "../../../common/constants.ts";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types.ts";
 import { JerseyNumber } from "../../components/JerseyNumber.tsx";
@@ -9,6 +9,59 @@ import { ColorPicker } from "../../components/ColorPicker/index.tsx";
 import { MyFace } from "../../components/MyFace.tsx";
 import { helpers } from "../../util/helpers.ts";
 
+export type TeamFormToggleField =
+	| "abbrev"
+	| "colors"
+	| "did"
+	| "imgURL"
+	| "imgURLSmall"
+	| "jersey"
+	| "name"
+	| "pop"
+	| "region"
+	| "stadiumCapacity";
+
+type FieldToggles = {
+	enabled: ReadonlySet<TeamFormToggleField>;
+	onToggle: (field: TeamFormToggleField) => void;
+};
+
+// Normally just a label. With fieldToggles, it also has a checkbox to enable/disable the field.
+const FieldLabel = ({
+	className,
+	field,
+	fieldToggles,
+	text,
+}: {
+	className: string | undefined;
+	field: TeamFormToggleField;
+	fieldToggles: FieldToggles | undefined;
+	text: string;
+}) => {
+	const id = useId();
+
+	if (!fieldToggles) {
+		return <label className={className}>{text}</label>;
+	}
+
+	return (
+		<div className="form-check form-check-inline">
+			<input
+				id={id}
+				className="form-check-input"
+				type="checkbox"
+				checked={fieldToggles.enabled.has(field)}
+				onChange={() => {
+					fieldToggles.onToggle(field);
+				}}
+			/>
+			<label className="form-check-label" htmlFor={id}>
+				{text}
+			</label>
+		</div>
+	);
+};
+
 const TeamForm = ({
 	classNamesCol,
 	classNameLabel,
@@ -17,6 +70,7 @@ const TeamForm = ({
 	disableStadiumCapacity,
 	disableStatus,
 	divs,
+	fieldToggles,
 	handleInputChange,
 	hideStatus,
 	showPlayers,
@@ -42,6 +96,10 @@ const TeamForm = ({
 	disableStatus?: boolean;
 	disableStadiumCapacity?: boolean;
 	divs: View<"manageTeams">["divs"];
+
+	// When defined, each field has a checkbox and only the enabled fields can be edited
+	fieldToggles?: FieldToggles;
+
 	handleInputChange: (
 		field: string,
 		event: { target: { value: string } },
@@ -61,6 +119,10 @@ const TeamForm = ({
 	};
 }) => {
 	const [face, setFace] = useState<FaceConfig | undefined>();
+
+	const isDisabled = (field: TeamFormToggleField) => {
+		return fieldToggles !== undefined && !fieldToggles.enabled.has(field);
+	};
 
 	const divisions = divs.map((div) => {
 		const conf = confs.find((c) => c.cid === div.cid);
@@ -113,11 +175,17 @@ const TeamForm = ({
 		<>
 			<div className={classNamesCol[0]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Region</label>
+					<FieldLabel
+						className={classNameLabel}
+						field="region"
+						fieldToggles={fieldToggles}
+						text="Region"
+					/>
 					<div className="input-group">
 						<input
 							type="text"
 							className="form-control"
+							disabled={isDisabled("region")}
 							onChange={(e) => handleInputChange("region", e)}
 							value={t.region}
 						/>
@@ -137,10 +205,16 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[1]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Name</label>
+					<FieldLabel
+						className={classNameLabel}
+						field="name"
+						fieldToggles={fieldToggles}
+						text="Name"
+					/>
 					<input
 						type="text"
 						className="form-control"
+						disabled={isDisabled("name")}
 						onChange={(e) => handleInputChange("name", e)}
 						value={t.name}
 					/>
@@ -148,10 +222,16 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[2]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Abbrev</label>
+					<FieldLabel
+						className={classNameLabel}
+						field="abbrev"
+						fieldToggles={fieldToggles}
+						text="Abbrev"
+					/>
 					<input
 						type="text"
 						className="form-control"
+						disabled={isDisabled("abbrev")}
 						onChange={(e) => handleInputChange("abbrev", e)}
 						value={t.abbrev}
 					/>
@@ -159,9 +239,15 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[3]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Division</label>
+					<FieldLabel
+						className={classNameLabel}
+						field="did"
+						fieldToggles={fieldToggles}
+						text="Division"
+					/>
 					<select
 						className="form-select"
+						disabled={isDisabled("did")}
 						onChange={(e) => handleInputChange("did", e)}
 						value={t.did}
 					>
@@ -175,11 +261,16 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[4]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Population (millions)</label>
+					<FieldLabel
+						className={classNameLabel}
+						field="pop"
+						fieldToggles={fieldToggles}
+						text="Population (millions)"
+					/>
 					<input
 						type="text"
 						className="form-control"
-						disabled={disablePop}
+						disabled={disablePop || isDisabled("pop")}
 						onChange={(e) => handleInputChange("pop", e)}
 						value={t.pop}
 					/>
@@ -187,11 +278,16 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[5]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Stadium Capacity</label>
+					<FieldLabel
+						className={classNameLabel}
+						field="stadiumCapacity"
+						fieldToggles={fieldToggles}
+						text="Stadium Capacity"
+					/>
 					<input
 						type="text"
 						className="form-control"
-						disabled={disableStadiumCapacity}
+						disabled={disableStadiumCapacity || isDisabled("stadiumCapacity")}
 						onChange={(e) => handleInputChange("stadiumCapacity", e)}
 						value={t.stadiumCapacity}
 					/>
@@ -199,10 +295,16 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[6]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Logo URL</label>
+					<FieldLabel
+						className={classNameLabel}
+						field="imgURL"
+						fieldToggles={fieldToggles}
+						text="Logo URL"
+					/>
 					<input
 						type="text"
 						className="form-control"
+						disabled={isDisabled("imgURL")}
 						onChange={(e) => handleInputChange("imgURL", e)}
 						value={t.imgURL}
 					/>
@@ -210,10 +312,16 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[7]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Small Logo</label>
+					<FieldLabel
+						className={classNameLabel}
+						field="imgURLSmall"
+						fieldToggles={fieldToggles}
+						text="Small Logo"
+					/>
 					<input
 						type="text"
 						className="form-control"
+						disabled={isDisabled("imgURLSmall")}
 						onChange={(e) => handleInputChange("imgURLSmall", e)}
 						value={t.imgURLSmall}
 					/>
@@ -221,11 +329,29 @@ const TeamForm = ({
 			</div>
 			<div className={classNamesCol[8]}>
 				<div className="mb-3">
-					<label className={classNameLabel}>Jersey</label>
+					{fieldToggles ? (
+						<>
+							<FieldLabel
+								className={classNameLabel}
+								field="colors"
+								fieldToggles={fieldToggles}
+								text="Colors"
+							/>
+							<FieldLabel
+								className={classNameLabel}
+								field="jersey"
+								fieldToggles={fieldToggles}
+								text="Jersey"
+							/>
+						</>
+					) : (
+						<label className={classNameLabel}>Jersey</label>
+					)}
 					<div className="input-group">
 						{([0, 1, 2] as const).map((j) => (
 							<ColorPicker
 								key={j}
+								disabled={isDisabled("colors")}
 								onClick={async () => {
 									await ensureFace();
 								}}
@@ -246,6 +372,7 @@ const TeamForm = ({
 						))}
 						<select
 							className="form-select"
+							disabled={isDisabled("jersey")}
 							onMouseDown={async () => {
 								// Runs when select is opened
 								await ensureFace();

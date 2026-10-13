@@ -39,21 +39,22 @@ const makeCache = <T>(maxSize: number) => {
 	};
 };
 
-// Settings that affect who makes the playoffs and the draft order
-const getSettingsKey = () => {
+// Settings that affect who makes the playoffs and the draft order. `season` is the season those settings are for, see getFirstRoundSlotProbs.
+const getSettingsKey = (season: number) => {
 	return [
 		g.get("lid"),
 		g.get("season"),
 		g.get("phase"),
+		season,
 		g.get("draftType"),
-		g.get("numGames"),
-		g.get("numGamesPlayoffSeries", "current"),
-		g.get("numPlayoffByes", "current"),
+		g.get("numGames", season),
+		g.get("numGamesPlayoffSeries", season),
+		g.get("numPlayoffByes", season),
 		g.get("playIn"),
 		g.get("playoffsByConf"),
-		g.get("playoffsNumTeamsDiv", "current"),
-		g.get("pointsFormula", "current"),
-		g.get("confs", "current").length,
+		g.get("playoffsNumTeamsDiv", season),
+		g.get("pointsFormula", season),
+		g.get("confs", season).length,
 		g.get("draftLotteryCustomChances"),
 		g.get("draftLotteryCustomNumPicks"),
 	];
@@ -69,15 +70,17 @@ const firstRoundSlotProbsCache =
 export const getFirstRoundSlotProbsCached = (
 	teams: ProjectedTeam[],
 	quick: boolean,
+	season: number,
 ) => {
 	const numSims = quick ? NUM_SIMS_QUICK : NUM_SIMS;
-	const key = JSON.stringify([getSettingsKey(), numSims, teams]);
+	const key = JSON.stringify([getSettingsKey(season), numSims, teams]);
 
 	return firstRoundSlotProbsCache(key, () => {
 		return getFirstRoundSlotProbs({
 			teams,
 			draftType: g.get("draftType"),
 			numSims,
+			season,
 		});
 	});
 };
@@ -85,14 +88,19 @@ export const getFirstRoundSlotProbsCached = (
 const slotPickProbsCache =
 	makeCache<Awaited<ReturnType<typeof getSlotPickProbs>>>(20);
 
-export const getSlotPickProbsCached = (round: number, numTeams: number) => {
-	const key = JSON.stringify([getSettingsKey(), round, numTeams]);
+export const getSlotPickProbsCached = (
+	round: number,
+	numTeams: number,
+	season: number,
+) => {
+	const key = JSON.stringify([getSettingsKey(season), round, numTeams]);
 
 	return slotPickProbsCache(key, () => {
 		return getSlotPickProbs({
 			draftType: g.get("draftType"),
 			round,
 			numTeams,
+			season,
 		});
 	});
 };

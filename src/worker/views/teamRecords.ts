@@ -448,7 +448,7 @@ export default defineView({
 			}
 
 			if (byType === "by_conf") {
-				teams = g.get("confs", "current").map((conf) =>
+				teams = g.get("confs").map((conf) =>
 					sumRecordsFor(
 						conf.name,
 						teams.filter((t) => {
@@ -462,11 +462,9 @@ export default defineView({
 					),
 				);
 			} else if (byType === "by_div") {
-				teams = g.get("divs", "current").map((div) => {
+				teams = g.get("divs").map((div) => {
 					let confName;
-					const conf = g
-						.get("confs", "current")
-						.find((conf) => conf.cid === div.cid);
+					const conf = g.get("confs").find((conf) => conf.cid === div.cid);
 					if (conf) {
 						confName = conf.name;
 					}

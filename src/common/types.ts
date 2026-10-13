@@ -464,9 +464,38 @@ export type ScheduledEventTeamInfo = {
 	};
 };
 
+// Changing conferences and divisions requires also specifying which division each team is in. Also there is no way to edit confs/divs from SettingsForm
+export type ScheduledEventConfsDivs = {
+	type: "confsDivs";
+	season: number;
+	phase: Phase;
+	info: {
+		confs: GameAttributesLeague["confs"];
+		divs: GameAttributesLeague["divs"];
+
+		// Teams not listed here keep the did they had before
+		teams: {
+			tid: number;
+			did: number;
+		}[];
+	};
+};
+
+// No way to edit awards from SettingsForm
+export type ScheduledEventAwards = {
+	type: "awards";
+	season: number;
+	phase: Phase;
+	info: {
+		awards: GameAttributesLeague["awards"];
+	};
+};
+
 export type ScheduledEventWithoutKey =
 	| ScheduledEventTeamInfo
 	| ScheduledEventGameAttributes
+	| ScheduledEventConfsDivs
+	| ScheduledEventAwards
 	| {
 			type: "expansionDraft";
 			season: number;
@@ -486,6 +515,14 @@ export type ScheduledEventWithoutKey =
 			phase: Phase;
 			info: {
 				tid: number;
+			};
+	  }
+	| {
+			type: "retirePlayer";
+			season: number;
+			phase: Phase;
+			info: {
+				pid: number;
 			};
 	  }
 	| {

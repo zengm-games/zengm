@@ -38,6 +38,14 @@ type MyTeam = TeamFiltered<
 	number
 >;
 
+// The playoff settings don't work for the teams. This should never happen for the real playoffs, because settings are validated when they change. But it can happen for hypothetical playoffs, see getFirstRoundSlotProbs.
+export class InvalidPlayoffSettingsError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = "InvalidPlayoffSettingsError";
+	}
+}
+
 type MinimalTeam = TeamFiltered<["tid"], ["cid", "winp"], any, number>;
 
 const genTeam = (t: MinimalTeam, seed: number): PlayoffSeriesTeam => {
@@ -76,7 +84,9 @@ export const makeMatchups = (
 		const playInTeams = teams.slice(numPlayoffTeams - 2, numPlayoffTeams + 2);
 
 		if (playInTeams.length < 4) {
-			throw new Error("Not enough teams found for play-in tournament");
+			throw new InvalidPlayoffSettingsError(
+				"Not enough teams found for play-in tournament",
+			);
 		}
 
 		playIn = [
@@ -126,28 +136,35 @@ const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
 const myValidatePlayoffSettings = ({
 	numRounds,
 	numPlayoffByes,
+	numTeams,
 	byConf,
+	logError,
 }: Pick<
 	Parameters<typeof validatePlayoffSettings>[0],
 	"numRounds" | "numPlayoffByes" | "byConf"
->) => {
+> & {
+	numTeams: number;
+	logError: boolean;
+}) => {
 	try {
 		validatePlayoffSettings({
 			numRounds,
 			numPlayoffByes,
-			numActiveTeams: g.get("numActiveTeams"),
+			numActiveTeams: numTeams,
 			playIn: g.get("playIn"),
 			byConf,
 		});
 	} catch (error) {
-		logEvent({
-			type: "error",
-			text: error.message,
-			saveToDb: false,
-		});
+		if (logError) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+			});
+		}
 
 		// We need to stop executing because otherwise it will somehow have some other error due to invalid settings
-		throw error;
+		throw new InvalidPlayoffSettingsError(error.message);
 	}
 };
 
@@ -156,6 +173,8 @@ export const genPlayoffSeriesFromTeams = async (
 	{
 		byConf: byConfOverride,
 		divisionRanks,
+		logError = true,
+		season = g.get("season"),
 		skipTiebreakers,
 	}: {
 		// Pass this to skip looking it up, for when this is called many times
@@ -163,6 +182,13 @@ export const genPlayoffSeriesFromTeams = async (
 
 		// See orderTeams
 		divisionRanks?: Map<number, number>;
+
+		// If the playoff settings are not valid for these teams, an InvalidPlayoffSettingsError is always thrown. This is for if the user is also shown an error message.
+		logError?: boolean;
+
+		// Use the playoff settings from this season. Teams are whatever is in `teams`, so they need to be the teams for this season too.
+		season?: number;
+
 		skipTiebreakers?: boolean;
 	} = {},
 ): Promise<{
@@ -172,7 +198,9 @@ export const genPlayoffSeriesFromTeams = async (
 	tidPlayIn: number[];
 	tidPlayoffs: number[];
 }> => {
-	const numRounds = g.get("numGamesPlayoffSeries", "current").length;
+	const numRounds = g.get("numGamesPlayoffSeries", season).length;
+	const confs = g.get("confs", season);
+	const numTeams = teams.length;
 
 	if (numRounds === 0) {
 		return {
@@ -183,10 +211,9 @@ export const genPlayoffSeriesFromTeams = async (
 		};
 	}
 
-	let playoffsByConf =
-		byConfOverride ?? (await getPlayoffsByConf(g.get("season")));
+	let playoffsByConf = byConfOverride ?? (await getPlayoffsByConf(season));
 
-	const orderTeamsOptions = { divisionRanks, skipTiebreakers };
+	const orderTeamsOptions = { divisionRanks, season, skipTiebreakers };
 
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
@@ -195,7 +222,7 @@ export const genPlayoffSeriesFromTeams = async (
 	// We need enough playoff teams to have at least one per conference
 	if (playoffsByConf !== false) {
 		const numPlayoffByes = getNumPlayoffByes({
-			numPlayoffByes: g.get("numPlayoffByes", "current"),
+			numPlayoffByes: g.get("numPlayoffByes", season),
 			byConf: playoffsByConf,
 		});
 
@@ -205,7 +232,9 @@ export const genPlayoffSeriesFromTeams = async (
 		myValidatePlayoffSettings({
 			numRounds,
 			numPlayoffByes,
+			numTeams,
 			byConf,
+			logError,
 		});
 
 		const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
@@ -219,7 +248,7 @@ export const genPlayoffSeriesFromTeams = async (
 		if (numRounds === numRoundsNeeded) {
 			// Special case - we have just enough teams, meaning every team in the playoffs is a 1 seed from their conference (like 2 conferences with 1 round, or 4 conferences and 2 rounds, or 8 and 3, etc.)
 			let teamsMatchup = [];
-			for (const conf of g.get("confs", "current")) {
+			for (const conf of confs) {
 				const teamsConf = teamsByCid.get(conf.cid);
 
 				if (teamsConf && teamsConf.length >= 1) {
@@ -243,7 +272,7 @@ export const genPlayoffSeriesFromTeams = async (
 				}
 			}
 		} else if (numRounds > numRoundsNeeded) {
-			for (const conf of g.get("confs", "current")) {
+			for (const conf of confs) {
 				const teamsConf = teamsByCid.get(conf.cid);
 
 				if (
@@ -274,14 +303,16 @@ export const genPlayoffSeriesFromTeams = async (
 	// Not an "else" because if the (playoffsByConf) branch fails it sets it to false and runs this as backup
 	if (playoffsByConf === false) {
 		const numPlayoffByes = getNumPlayoffByes({
-			numPlayoffByes: g.get("numPlayoffByes", "current"),
+			numPlayoffByes: g.get("numPlayoffByes", season),
 			byConf: playoffsByConf,
 		});
 
 		myValidatePlayoffSettings({
 			numRounds,
 			numPlayoffByes,
+			numTeams,
 			byConf: playoffsByConf,
+			logError,
 		});
 
 		const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;

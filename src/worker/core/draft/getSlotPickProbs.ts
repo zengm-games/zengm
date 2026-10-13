@@ -1,6 +1,5 @@
 import type { DraftLotteryResult, DraftType } from "../../../common/types.ts";
 import { range } from "../../../common/utils.ts";
-import { g } from "../../util/index.ts";
 import { getDraftLotteryProbs } from "./draftLottery.ts";
 import {
 	draftHasLottery,
@@ -13,6 +12,7 @@ import {
 const getGenericLotteryChances = async (
 	draftType: DraftType,
 	numTeams: number,
+	season: number,
 ) => {
 	// For cola, chances depend entirely on which teams are in the lottery, so there is nothing generic we can say
 	if (!draftHasLottery(draftType) || draftType === "cola") {
@@ -30,6 +30,7 @@ const getGenericLotteryChances = async (
 					};
 				}),
 				draftPicksIndexed: [],
+				season,
 			})),
 		};
 	} catch (error) {
@@ -56,10 +57,14 @@ export const getSlotPickProbs = async ({
 	draftType,
 	round,
 	numTeams,
+	season,
 }: {
 	draftType: DraftType;
 	round: number;
 	numTeams: number;
+
+	// The season the draft is in, which determines which playoff settings are used, like getFirstRoundSlotProbs
+	season: number;
 }) => {
 	const probs = range(numTeams).map(() => {
 		return new Array<number>(numTeams).fill(0);
@@ -84,13 +89,13 @@ export const getSlotPickProbs = async ({
 			setSameOrder(slot);
 		}
 	} else {
-		const lottery = await getGenericLotteryChances(draftType, numTeams);
+		const lottery = await getGenericLotteryChances(draftType, numTeams, season);
 		const numLotteryTeams = lottery?.numLotteryTeams ?? 0;
 
 		let lotteryProbs;
 		if (lottery && roundOrderRule === "lottery") {
 			const draftLotteryResult = {
-				season: g.get("season"),
+				season,
 				draftType: lottery.draftType,
 				result: lottery.chances.map((chances, i) => {
 					return {

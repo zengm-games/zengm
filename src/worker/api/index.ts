@@ -104,6 +104,13 @@ import {
 import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
 import eightyTwoZeroDraft from "./eightyTwoZeroDraft.ts";
+import {
+	addScheduledEventsUndo,
+	deleteScheduledEvent,
+	getPlayersForScheduledEvents,
+	normalizeScheduledEventsAfterChange,
+	upsertScheduledEvent,
+} from "./scheduledEvents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
@@ -1047,6 +1054,9 @@ const deleteScheduledEvents = async (type: string) => {
 		"noCopyCache",
 	);
 
+	// Copy because some events are edited in place below
+	const before = helpers.deepCopy(scheduledEvents);
+
 	const deletedExpansionTIDs: number[] = [];
 
 	for (const event of scheduledEvents) {
@@ -1068,6 +1078,10 @@ const deleteScheduledEvents = async (type: string) => {
 			if (event.type === "contraction") {
 				await idb.cache.scheduledEvents.delete(event.id);
 			}
+		} else if (type === "retirePlayer") {
+			if (event.type === "retirePlayer") {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
 		} else if (type === "unretirePlayer") {
 			if (event.type === "unretirePlayer") {
 				await idb.cache.scheduledEvents.delete(event.id);
@@ -1084,6 +1098,10 @@ const deleteScheduledEvents = async (type: string) => {
 
 			if (event.type === "gameAttributes") {
 				await deleteFromGameAttributesScheduledEvent(["confs", "divs"], event);
+			}
+
+			if (event.type === "confsDivs") {
+				await idb.cache.scheduledEvents.delete(event.id);
 			}
 		} else if (type === "finance") {
 			if (event.type === "gameAttributes") {
@@ -1142,10 +1160,17 @@ const deleteScheduledEvents = async (type: string) => {
 			if (event.type === "gameAttributes") {
 				await deleteFromGameAttributesScheduledEvent(["awards"], event);
 			}
+
+			if (event.type === "awards") {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
 		}
 	}
 
-	await toUI("realtimeUpdate", [["scheduledEvents"]]);
+	// Deleting some events can make others invalid. This also updates the UI.
+	await normalizeScheduledEventsAfterChange();
+
+	return addScheduledEventsUndo(before);
 };
 
 const discardUnsavedProgress = async () => {
@@ -3464,6 +3489,28 @@ const removeLastTeam = async () => {
 				scheduledEvent.info.tid -= 1;
 				await idb.cache.scheduledEvents.put(scheduledEvent);
 			}
+		} else if (scheduledEvent.type === "confsDivs") {
+			let updated;
+			let hasTid;
+			for (const t2 of scheduledEvent.info.teams) {
+				if (tid < t2.tid) {
+					t2.tid -= 1;
+					updated = true;
+				} else if (tid === t2.tid) {
+					hasTid = true;
+				}
+			}
+
+			if (hasTid) {
+				scheduledEvent.info.teams = scheduledEvent.info.teams.filter(
+					(t2) => t2.tid !== tid,
+				);
+				updated = true;
+			}
+
+			if (updated) {
+				await idb.cache.scheduledEvents.put(scheduledEvent);
+			}
 		}
 	}
 
@@ -5428,6 +5475,7 @@ const api = {
 		createLeague: whileWorkerBusy(createLeague),
 		createTrade,
 		deleteOldData: whileWorkerBusy(deleteOldData),
+		deleteScheduledEvent,
 		deleteScheduledEvents,
 		discardUnsavedProgress,
 		draftLottery,
@@ -5469,6 +5517,7 @@ const api = {
 		getRandomName,
 		getRandomRatings,
 		getRandomTeams,
+		getPlayersForScheduledEvents,
 		getSavedTrade,
 		getTeamGraphStat,
 		getTradingBlockOffers,
@@ -5545,6 +5594,7 @@ const api = {
 		upgrade65,
 		upgrade65Estimate,
 		upsertCustomizedPlayer,
+		upsertScheduledEvent,
 		validatePointsFormula,
 		validatePlayoffSettings,
 	},

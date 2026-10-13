@@ -19,14 +19,19 @@ const getPlayoffsByConf = async (
 	},
 ): Promise<number | false> => {
 	if (!overrides?.skipPlayoffSeries) {
-		const playoffSeries =
-			overrides?.playoffSeries ??
-			(await idb.getCopy.playoffSeries({ season }, "noCopyCache"));
-		const byConf = playoffSeries?.byConf;
+		// A future season has no playoff series yet. This is inside the skipPlayoffSeries check because that is used when creating a new league, before g.get("season") is available.
+		const isFutureSeason = season > g.get("season");
 
-		if (byConf !== undefined) {
-			// This is the most authoritative source, because it also handles the case where the setting is enabled but a conference doesn't have enough teams
-			return byConf;
+		if (!isFutureSeason) {
+			const playoffSeries =
+				overrides?.playoffSeries ??
+				(await idb.getCopy.playoffSeries({ season }, "noCopyCache"));
+			const byConf = playoffSeries?.byConf;
+
+			if (byConf !== undefined) {
+				// This is the most authoritative source, because it also handles the case where the setting is enabled but a conference doesn't have enough teams
+				return byConf;
+			}
 		}
 	}
 

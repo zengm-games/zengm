@@ -30,12 +30,20 @@ const isSeasonCompleted = (phase: number) => {
 };
 
 const processTeamInfo = async (
-	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
+	eventInfo: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
 	season: number,
 	phase: number,
 	realTeamInfo: RealTeamInfo | undefined,
+	confsDivsDids: Map<number, number>,
 ) => {
 	// Update Team, and also TeamSeason unless isSeasonCompleted
+
+	// A confsDivs event in the same season/phase has the division of this team after everything else in that season/phase, so it overrides the division here no matter which event is processed first. This is the same as what happens in normalizeScheduledEvents.
+	let info = eventInfo;
+	if (eventInfo.did !== undefined && confsDivsDids.has(eventInfo.tid)) {
+		const { did: _ignored, ...rest } = eventInfo;
+		info = rest;
+	}
 
 	const eventLogTexts: string[] = [];
 
@@ -639,7 +647,7 @@ export const processScheduledEvents = async (
 
 	const scheduledEventsOrdered = sortScheduledEvents(scheduledEvents);
 
-	// For expansion drafts, see processExpansionDraft
+	// Division of each team in a confsDivs event in this season/phase, see processTeamInfo and processExpansionDraft
 	const confsDivsDids = new Map<number, number>();
 	for (const scheduledEvent of scheduledEventsOrdered) {
 		if (
@@ -671,6 +679,7 @@ export const processScheduledEvents = async (
 					season,
 					phase,
 					realTeamInfo,
+					confsDivsDids,
 				)),
 			);
 		} else if (scheduledEvent.type === "gameAttributes") {

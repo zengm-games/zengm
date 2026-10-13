@@ -52,71 +52,55 @@ const getTypeSortValue = (type: ScheduledEvent["type"]) => {
 	return type === "expansionDraft" ? 1 : 0;
 };
 
-// Events that are not saved yet have no id, and they will get a higher id than any existing event when they are saved
-const getIdSortValue = (id: number | undefined) => {
-	return id ?? Infinity;
-};
-
-// This is the order that scheduled events are processed in
-export const sortScheduledEvents = <T extends ScheduledEventMaybeId>(
-	events: T[],
-) => {
-	return orderBy(events, [
-		"season",
-		"phase",
-		(event) => getTypeSortValue(event.type),
-		(event) => getIdSortValue(event.id),
-	]);
-};
-
-// A confsDivs event lists the division of every team that is active after all the other events in the same season/phase, including teams from an expansion draft, and not including contracted teams. So when keeping track of teams, it comes after all those other events. It is not actually processed last (see getTypeSortValue for why that has to be the expansion draft), so processScheduledEvents applies it to the expansion teams.
+// A confsDivs event lists the division of every team that is active after all the other events in the same season/phase, including teams from an expansion draft, and not including contracted teams. So when keeping track of teams, it comes after all those other events. It is not actually processed last (see getTypeSortValue for why that has to be the expansion draft), so processScheduledEvents applies it to the expansion teams, and ignores the division in a teamInfo event for a team that is in a confsDivs event.
 const getTeamsTypeSortValue = (type: ScheduledEvent["type"]) => {
 	return type === "confsDivs" ? 2 : getTypeSortValue(type);
 };
 
-// Same as sortScheduledEvents, except for where confsDivs events are
-const sortScheduledEventsForTeams = <T extends ScheduledEventMaybeId>(
-	events: T[],
-) => {
-	return orderBy(events, [
-		"season",
-		"phase",
-		(event) => getTeamsTypeSortValue(event.type),
-		(event) => getIdSortValue(event.id),
-	]);
+// Events that are not saved yet have no id, and they will get a higher id than any existing event when they are saved
+const compareIds = (a: number | undefined, b: number | undefined) => {
+	if (a === b) {
+		return 0;
+	}
+	if (a === undefined) {
+		return 1;
+	}
+	if (b === undefined) {
+		return -1;
+	}
+	return a - b;
 };
 
-// Is `a` before `b`? With getTypeSortValue this is the same ordering as sortScheduledEvents, and with getTeamsTypeSortValue it is the same as sortScheduledEventsForTeams.
-const isSortedBefore = (
-	a: Pick<ScheduledEventMaybeId, "season" | "phase" | "type" | "id">,
-	b: Pick<ScheduledEventMaybeId, "season" | "phase" | "type" | "id">,
+// Enough of an event to know where it is sorted, for an event that is still being edited
+type SortableEvent = Pick<
+	ScheduledEventMaybeId,
+	"season" | "phase" | "type" | "id"
+>;
+
+// Returns a function that is negative if `a` is before `b`, and positive if `a` is after `b`
+const makeCompare = (
 	typeSortValue: (type: ScheduledEvent["type"]) => number,
 ) => {
-	const valuesA = [
-		a.season,
-		a.phase,
-		typeSortValue(a.type),
-		getIdSortValue(a.id),
-	];
-	const valuesB = [
-		b.season,
-		b.phase,
-		typeSortValue(b.type),
-		getIdSortValue(b.id),
-	];
+	return (a: SortableEvent, b: SortableEvent) => {
+		return (
+			a.season - b.season ||
+			a.phase - b.phase ||
+			typeSortValue(a.type) - typeSortValue(b.type) ||
+			compareIds(a.id, b.id)
+		);
+	};
+};
 
-	for (const [valueA, valueB] of Iterator.zip([valuesA, valuesB], {
-		mode: "strict",
-	})) {
-		if (valueA < valueB) {
-			return true;
-		}
-		if (valueA > valueB) {
-			return false;
-		}
-	}
+// This is the order that scheduled events are processed in
+const compareScheduledEvents = makeCompare(getTypeSortValue);
 
-	return false;
+// Same, except for where confsDivs events are. This is for keeping track of teams, see getTeamsTypeSortValue.
+const compareScheduledEventsForTeams = makeCompare(getTeamsTypeSortValue);
+
+export const sortScheduledEvents = <T extends ScheduledEventMaybeId>(
+	events: T[],
+) => {
+	return events.toSorted(compareScheduledEvents);
 };
 
 // Team info that can be changed by scheduled events. Types are loose because expansionDraft events store some numbers as strings, and teamInfo events don't
@@ -232,7 +216,7 @@ export const normalizeScheduledEvents = <T extends ScheduledEventMaybeId>({
 
 	let nextTid = teams.length;
 
-	for (const event of sortScheduledEventsForTeams(events)) {
+	for (const event of events.toSorted(compareScheduledEventsForTeams)) {
 		if (!isFutureScheduledEvent(event, current)) {
 			output.push(event);
 			continue;
@@ -425,12 +409,12 @@ export const getTeamsBeforeScheduledEvent = ({
 }: {
 	current: SeasonPhase;
 	events: ScheduledEventMaybeId[];
-	target: Pick<ScheduledEventMaybeId, "season" | "phase" | "type" | "id">;
+	target: SortableEvent;
 	teams: ScheduledEventsCurrentTeam[];
 }) => {
 	const eventsBefore = events.filter((event) => {
 		const isTarget = event.id !== undefined && event.id === target.id;
-		return !isTarget && isSortedBefore(event, target, getTeamsTypeSortValue);
+		return !isTarget && compareScheduledEventsForTeams(event, target) < 0;
 	});
 
 	return normalizeScheduledEvents({
@@ -452,7 +436,7 @@ export const getNextScheduledEventReplacing = ({
 }) => {
 	return sortScheduledEvents(events).find((event) => {
 		const isTarget = event.id !== undefined && event.id === target.id;
-		if (isTarget || !isSortedBefore(target, event, getTypeSortValue)) {
+		if (isTarget || compareScheduledEvents(target, event) >= 0) {
 			return false;
 		}
 
@@ -491,7 +475,7 @@ export const getSettingsBeforeScheduledEvent = ({
 	// Current values of these settings
 	settings: SettingsBefore;
 
-	target: Pick<ScheduledEventMaybeId, "season" | "phase" | "type" | "id">;
+	target: SortableEvent;
 }) => {
 	const output = {
 		...settings,
@@ -502,7 +486,7 @@ export const getSettingsBeforeScheduledEvent = ({
 		if (
 			isTarget ||
 			!isFutureScheduledEvent(event, current) ||
-			!isSortedBefore(event, target, getTypeSortValue)
+			compareScheduledEvents(event, target) >= 0
 		) {
 			continue;
 		}

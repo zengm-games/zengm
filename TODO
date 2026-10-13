@@ -1,16 +1,15 @@
 scheduled events editor
-- review text at top of page
 - blog
   - force retire
+
+put map/filter functions in all getCopies
+- getPlayersForScheduledEvents
+  - how does this work for relatives now?
 
 store contract info somewhere, so we can know when a player was on a roster definitively
 - export rosters at season
 - go back in time (maybe as cloned league)
 - show team associated with ratings row, now that a player with no stats has no stats row https://app.fastmail.com/mail/Inbox/A6e_9rV_V5As.Stm7mInBhp0g?u=433e4054
-
-put map/filter functions in all getCopies
-- getPlayersForScheduledEvents
-  - how does this work for relatives now?
 
 hockey auto sort should play C/W out of position if that is the difference between being on the bench or not https://discord.com/channels/290013534023057409/1553484440796397708/1553484440796397708 - currently there is a bonus in `score` but maybe we should ignore that for players who are not in the starting lines
 

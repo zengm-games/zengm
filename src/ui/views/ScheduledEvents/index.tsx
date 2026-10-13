@@ -391,17 +391,12 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 
 	return (
 		<>
-			<p>
-				Scheduled events happen automatically when the league reaches a future
-				season and phase. In historical "real players" leagues, they are created
-				by default to match what happened in real life.
-			</p>
-			<p>
-				Some scheduled events depend on others. For example, you can't contract
-				a team before the expansion draft that creates it. If a change you make
-				here would make other events impossible, you'll be asked to confirm
-				before they are deleted.
-			</p>
+			{!godMode ? (
+				<p className="text-warning">
+					You can delete scheduled events, but adding or editing them requires{" "}
+					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+				</p>
+			) : null}
 			<div className="d-flex gap-2 mb-3">
 				<Dropdown>
 					<Dropdown.Toggle
@@ -470,12 +465,6 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 					</Dropdown>
 				) : null}
 			</div>
-			{!godMode ? (
-				<p className="text-warning">
-					You can delete scheduled events, but adding or editing them requires{" "}
-					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
-				</p>
-			) : null}
 
 			{scheduledEvents.length === 0 ? (
 				<p>No scheduled events found!</p>

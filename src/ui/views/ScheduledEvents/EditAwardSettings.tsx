@@ -24,7 +24,7 @@ type Row = {
 	editing: EditingState;
 };
 
-const EditAwards = ({
+const EditAwardSettings = ({
 	awards,
 	event,
 	numGamesPlayoffSeries,
@@ -211,4 +211,4 @@ const EditAwards = ({
 	);
 };
 
-export default EditAwards;
+export default EditAwardSettings;

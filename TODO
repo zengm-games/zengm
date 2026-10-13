@@ -2,7 +2,7 @@ scheduled events editor
 - blog
   - force retire
 
-put map/filter functions in all getCopies
+put map/filter functions in all
 - getPlayersForScheduledEvents
   - how does this work for relatives now?
 

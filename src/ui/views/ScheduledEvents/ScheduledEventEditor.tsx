@@ -16,7 +16,7 @@ import {
 	formatPhase,
 	formatType,
 } from "./common.tsx";
-import EditAwards from "./EditAwards.tsx";
+import EditAwardSettings from "./EditAwardSettings.tsx";
 import EditConfsDivs from "./EditConfsDivs.tsx";
 import EditContraction from "./EditContraction.tsx";
 import EditExpansionDraft from "./EditExpansionDraft.tsx";
@@ -316,7 +316,7 @@ const ScheduledEventEditor = ({
 					) : null}
 
 					{type === "awards" ? (
-						<EditAwards
+						<EditAwardSettings
 							{...commonProps}
 							awards={settingsBefore.awards}
 							event={getEvent(editing, "awards")}

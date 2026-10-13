@@ -57,7 +57,7 @@ export const formatPhase = (phase: number) => {
 
 export const formatType = (type: ScheduledEvent["type"]) => {
 	if (type === "awards") {
-		return "Awards";
+		return "Award settings";
 	}
 
 	if (type === "confsDivs") {

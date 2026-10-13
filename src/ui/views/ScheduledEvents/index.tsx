@@ -287,12 +287,12 @@ const deleteScheduledEvent = async (id: number) => {
 };
 
 const EVENT_TYPES = [
-	"awards",
 	"confsDivs",
+	"teamInfo",
 	"contraction",
 	"expansionDraft",
 	"gameAttributes",
-	"teamInfo",
+	"awards",
 	"retirePlayer",
 	"unretirePlayer",
 ] satisfies ScheduledEvent["type"][];
@@ -363,7 +363,7 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 				/>,
 				<div className="d-flex gap-2">
 					<button
-						className="btn btn-secondary"
+						className="btn btn-god-mode"
 						disabled={!canEdit}
 						onClick={() => {
 							setEditing({
@@ -400,7 +400,7 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 			<div className="d-flex gap-2 mb-3">
 				<Dropdown>
 					<Dropdown.Toggle
-						variant="primary"
+						variant="god-mode"
 						id="scheduled-events-add"
 						disabled={!godMode}
 					>
@@ -453,7 +453,7 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 								Style of play changes
 							</Dropdown.Item>
 							<Dropdown.Item onClick={bulkDelete("awards")}>
-								Awards changes
+								Award settings changes
 							</Dropdown.Item>
 							<Dropdown.Item onClick={bulkDelete("retirePlayer")}>
 								Retire players

@@ -65,7 +65,7 @@ const makeToOutput = <MyRow, Output>({ map }: GetAllOptions<MyRow, Output>) => {
 };
 
 // Rows with these primary keys, skipping over the rows in between them - https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-async function* rowsWithKeysFromDb<MyStore extends Store>(
+async function* rowsByKeysFromDb<MyStore extends Store>(
 	storeName: MyStore,
 	keys: number[],
 ) {
@@ -104,7 +104,7 @@ async function* rowsWithKeysFromDb<MyStore extends Store>(
 	}
 }
 
-const getAllWithKeys = async <MyStore extends Store, Output>(
+const getAllByKeys = async <MyStore extends Store, Output>(
 	storeName: MyStore,
 	keys: readonly number[],
 	options: GetAllOptions<Row<MyStore>, Output>,
@@ -126,7 +126,7 @@ const getAllWithKeys = async <MyStore extends Store, Output>(
 		}
 	}
 
-	for await (const { value } of rowsWithKeysFromDb(storeName, keysForDb)) {
+	for await (const { value } of rowsByKeysFromDb(storeName, keysForDb)) {
 		rows.set((value as any)[pk], value);
 	}
 
@@ -168,7 +168,7 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 	options: GetAllOptions<Row<MyStore>, Output> = {},
 ): Promise<Output[]> => {
 	if ("keys" in query) {
-		return getAllWithKeys(storeName, query.keys, options);
+		return getAllByKeys(storeName, query.keys, options);
 	}
 
 	const { fromDb, fromCache, matches } = query;

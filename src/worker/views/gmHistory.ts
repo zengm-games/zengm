@@ -65,44 +65,40 @@ export default defineView({
 
 			const tids = new Set(allTeamSeasons.map((ts) => ts.tid));
 
-			const players: Player[] = [];
-			const addPlayer = (p: Player) => {
-				p.stats = p.stats.filter((row) =>
-					seasonsByTid[row.tid]?.has(row.season),
-				);
-				players.push(p);
+			// Only keep stats from the user's seasons. This makes a new object, so the player in the cache is not changed.
+			const filterStats = (p: Player): Player => {
+				return {
+					...p,
+					stats: p.stats.filter((row) =>
+						seasonsByTid[row.tid]?.has(row.season),
+					),
+				};
 			};
+
+			let players: Player[];
 
 			// Use statsTids to search for players, unless there are so many teams that it's maybe not worth it
 			if (tids.size <= g.get("numTeams") / 2) {
+				players = [];
 				const pids = new Set<number>();
 				for (const tid of tids) {
-					for await (const { value: p } of idb.league
-						.transaction("players")
-						.store.index("statsTids")
-						.iterate(tid)) {
-						if (pids.has(p.pid)) {
-							continue;
-						}
-
-						addPlayer(p);
+					const playersTid = await idb.merged.players.getAll(
+						{ statsTid: tid },
+						{
+							filter: (p) => !pids.has(p.pid),
+							map: filterStats,
+						},
+					);
+					for (const p of playersTid) {
+						players.push(p);
 						pids.add(p.pid);
 					}
 				}
 			} else {
-				for await (const { value: p } of idb.league.transaction("players")
-					.store) {
-					let hasTid = false;
-					for (const tid of p.statsTids) {
-						if (tids.has(tid)) {
-							hasTid = true;
-							break;
-						}
-					}
-					if (hasTid) {
-						addPlayer(p);
-					}
-				}
+				players = await idb.merged.players.getAll(undefined, {
+					filter: (p) => p.statsTids.some((tid) => tids.has(tid)),
+					map: filterStats,
+				});
 			}
 
 			return {

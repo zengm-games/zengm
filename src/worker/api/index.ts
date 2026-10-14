@@ -2995,23 +2995,9 @@ const initGold = async () => {
 };
 
 const loadRetiredPlayers = async () => {
-	const playersByPid = await idb.cache.players.getAllByKey();
-
-	const playerNames: {
-		pid: number;
-		firstName: string;
-		lastName: string;
-		firstSeason: number;
-		lastSeason: number;
-	}[] = [];
-
-	for await (const { value: pTemp } of idb.league.transaction("players")
-		.store) {
-		// Make sure we have latest version of this player
-		const p = playersByPid[pTemp.pid] ?? pTemp;
-
-		playerNames.push(formatPlayerRelativesList(p));
-	}
+	const playerNames = await idb.merged.players.getAll(undefined, {
+		map: formatPlayerRelativesList,
+	});
 
 	return finalizePlayersRelativesList(playerNames);
 };

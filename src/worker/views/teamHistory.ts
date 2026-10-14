@@ -306,30 +306,33 @@ export default defineView({
 				number,
 				Record<string, number[]>
 			>();
-			const players = (
-				await idb.merged.players.getAll({ statsTid: inputs.tid })
-			).map((p) => {
-				const stats = p.stats.filter((row) => row.tid === inputs.tid);
-				const retirableJerseyNumbers: Record<string, number[]> = {};
-				for (const { gp, jerseyNumber, playoffs, season } of stats) {
-					if (
-						!playoffs &&
-						(gp ?? 0) > 0 &&
-						jerseyNumber !== undefined &&
-						!retiredByPid[p.pid]?.has(jerseyNumber)
-					) {
-						retirableJerseyNumbers[jerseyNumber] ??= [];
-						retirableJerseyNumbers[jerseyNumber].push(season);
-					}
-				}
+			const players = await idb.merged.players.getAll(
+				{ statsTid: inputs.tid },
+				{
+					map: (p) => {
+						const stats = p.stats.filter((row) => row.tid === inputs.tid);
+						const retirableJerseyNumbers: Record<string, number[]> = {};
+						for (const { gp, jerseyNumber, playoffs, season } of stats) {
+							if (
+								!playoffs &&
+								(gp ?? 0) > 0 &&
+								jerseyNumber !== undefined &&
+								!retiredByPid[p.pid]?.has(jerseyNumber)
+							) {
+								retirableJerseyNumbers[jerseyNumber] ??= [];
+								retirableJerseyNumbers[jerseyNumber].push(season);
+							}
+						}
 
-				retirableJerseyNumbersByPid.set(p.pid, retirableJerseyNumbers);
+						retirableJerseyNumbersByPid.set(p.pid, retirableJerseyNumbers);
 
-				return {
-					...p,
-					stats,
-				};
-			});
+						return {
+							...p,
+							stats,
+						};
+					},
+				},
+			);
 
 			const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
 			const historyTemp = await getHistory(

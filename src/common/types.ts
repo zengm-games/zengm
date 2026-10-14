@@ -2469,8 +2469,6 @@ export type HeadToHead = {
 	>;
 };
 
-export type GetCopyType = "noCopyCache";
-
 export type SeasonLeaders = {
 	season: number;
 	age: number;

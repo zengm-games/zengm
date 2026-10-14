@@ -19,28 +19,25 @@ export default defineView({
 			]);
 
 			const teams = (
-				await idb.getCopies.teamsPlus(
-					{
-						attrs: ["tid", "budget", "strategy"],
-						seasonAttrs: [
-							"att",
-							"revenue",
-							"profit",
-							"cash",
-							"payrollOrSalaryPaid",
-							"pop",
-							"abbrev",
-							"tid",
-							"region",
-							"name",
-							"imgURL",
-							"imgURLSmall",
-							"expenseLevels",
-						],
-						season: inputs.season,
-					},
-					"noCopyCache",
-				)
+				await idb.getCopies.teamsPlus({
+					attrs: ["tid", "budget", "strategy"],
+					seasonAttrs: [
+						"att",
+						"revenue",
+						"profit",
+						"cash",
+						"payrollOrSalaryPaid",
+						"pop",
+						"abbrev",
+						"tid",
+						"region",
+						"name",
+						"imgURL",
+						"imgURLSmall",
+						"expenseLevels",
+					],
+					season: inputs.season,
+				})
 			).map((t) => {
 				const rosterSpots =
 					g.get("maxRosterSize") -

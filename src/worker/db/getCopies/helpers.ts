@@ -1,13 +1,7 @@
-import { helpers } from "../../util/index.ts";
 import { storeInfos, type Store } from "../Cache.ts";
 import { cacheStore } from "../merged/engine.ts";
-import type { GetCopyType } from "../../../common/types.ts";
 
-// When "noCopyCache" is passed, that means we promise not to mutate any of these records, so we don't need to deepCopy
-export const maybeDeepCopy = <T>(row: T, type: GetCopyType | undefined) =>
-	type === "noCopyCache" ? row : helpers.deepCopy(row);
-
-// Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Return value is cloned.
+// Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Records from the cache are not copied, so don't mutate them.
 export const mergeByPk = <
 	MyStore extends Store,
 	PrimaryKey extends (typeof storeInfos)[MyStore]["pk"],
@@ -16,7 +10,6 @@ export const mergeByPk = <
 	fromDb: T[],
 	fromCache: T[],
 	storeName: MyStore,
-	type: GetCopyType | undefined,
 ): T[] => {
 	const cacheKeys: {
 		[key: string]: number;
@@ -42,7 +35,7 @@ export const mergeByPk = <
 
 			if (cacheKeys[key] !== undefined) {
 				cacheKeysUsed[key] = true;
-				return maybeDeepCopy(fromCache[cacheKeys[key]]!, type);
+				return fromCache[cacheKeys[key]]!;
 			}
 
 			return row;
@@ -51,7 +44,7 @@ export const mergeByPk = <
 	for (const key of Object.keys(cacheKeys)) {
 		if (!cacheKeysUsed[key]) {
 			const i = cacheKeys[key]!;
-			output.push(maybeDeepCopy(fromCache[i]!, type));
+			output.push(fromCache[i]!);
 		}
 	}
 

@@ -71,14 +71,11 @@ export default defineView({
 
 			const actualAwards = awards.awards;
 
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid"],
-					seasonAttrs: ["abbrev"],
-					season,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: ["abbrev"],
+				season,
+			});
 			const abbrevsByTid: Record<number, string> = {};
 			for (const t of teams) {
 				abbrevsByTid[t.tid] = t.seasonAttrs.abbrev;

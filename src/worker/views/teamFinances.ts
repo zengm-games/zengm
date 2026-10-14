@@ -166,16 +166,13 @@ export default defineView({
 			}
 
 			// Get stuff for the finances form
-			const tTemp = await idb.getCopy.teamsPlus(
-				{
-					attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
-					seasonAttrs: ["expenses"],
-					season: g.get("season"),
-					tid: inputs.tid,
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			);
+			const tTemp = await idb.getCopy.teamsPlus({
+				attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
+				seasonAttrs: ["expenses"],
+				season: g.get("season"),
+				tid: inputs.tid,
+				addDummySeason: true,
+			});
 
 			if (!tTemp) {
 				throw new Error("Team not found");

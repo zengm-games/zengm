@@ -63,18 +63,15 @@ export const getStats = async ({
 		seasonAttrs.push("winp");
 	}
 	const teams = (
-		await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs,
-				stats: ["gp", ...stats] as TeamStatAttr[],
-				season,
-				tid,
-				playoffs,
-				regularSeason: !playoffs,
-			},
-			"noCopyCache",
-		)
+		await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs,
+			stats: ["gp", ...stats] as TeamStatAttr[],
+			season,
+			tid,
+			playoffs,
+			regularSeason: !playoffs,
+		})
 	).filter((t) => {
 		// For playoffs, only show teams who actually made playoffs (gp > 0)
 		return !playoffs || t.stats.gp > 0;

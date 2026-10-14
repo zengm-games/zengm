@@ -337,35 +337,32 @@ export default defineView({
 			}
 
 			const teamsAll = orderBy(
-				await idb.getCopies.teamsPlus(
-					{
-						attrs: [
-							"tid",
-							"abbrev",
-							"region",
-							"name",
-							"cid",
-							"did",
-							"disabled",
-							"imgURL",
-							"imgURLSmall",
-						],
-						seasonAttrs: [
-							"abbrev",
-							"region",
-							"name",
-							"season",
-							"won",
-							"lost",
-							"tied",
-							"otl",
-							"pts",
-							"ptsMax",
-							"playoffRoundsWon",
-						],
-					},
-					"noCopyCache",
-				),
+				await idb.getCopies.teamsPlus({
+					attrs: [
+						"tid",
+						"abbrev",
+						"region",
+						"name",
+						"cid",
+						"did",
+						"disabled",
+						"imgURL",
+						"imgURLSmall",
+					],
+					seasonAttrs: [
+						"abbrev",
+						"region",
+						"name",
+						"season",
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"pts",
+						"ptsMax",
+						"playoffRoundsWon",
+					],
+				}),
 				["region", "name", "tid"],
 			);
 

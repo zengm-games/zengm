@@ -19,14 +19,11 @@ export default defineView({
 				await getAwardCandidates(inputs.season)
 			).awardCandidates.flat();
 
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid"],
-					seasonAttrs: ["won", "lost", "tied", "otl"],
-					season: inputs.season,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: ["won", "lost", "tied", "otl"],
+				season: inputs.season,
+			});
 
 			return {
 				awardCandidates,

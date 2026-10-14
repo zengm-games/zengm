@@ -109,34 +109,31 @@ export default defineView({
 	load: async ({ updateEvents }) => {
 		// When switching teams, the "leagues" update event is sent out, so we want to ignore that because otherwise the UI flickers before redirecting
 		if (!updateEvents.has("leagues")) {
-			const rawTeams = await idb.getCopies.teamsPlus(
-				{
-					attrs: [
-						"tid",
-						"region",
-						"name",
-						"pop",
-						"imgURL",
-						"imgURLSmall",
-						"cid",
-						"abbrev",
-					],
-					seasonAttrs: [
-						"winp",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"season",
-						"playoffRoundsWon",
-						"revenue",
-					],
-					season: g.get("season"),
-					active: true,
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			);
+			const rawTeams = await idb.getCopies.teamsPlus({
+				attrs: [
+					"tid",
+					"region",
+					"name",
+					"pop",
+					"imgURL",
+					"imgURLSmall",
+					"cid",
+					"abbrev",
+				],
+				seasonAttrs: [
+					"winp",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"season",
+					"playoffRoundsWon",
+					"revenue",
+				],
+				season: g.get("season"),
+				active: true,
+				addDummySeason: true,
+			});
 
 			const teamsAll = helpers.addPopRank(rawTeams);
 

@@ -60,33 +60,30 @@ const sortByPos = (p: {
 };
 
 const getStandingsInfo = async (info: { season: number; tid: number }) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-				"winp",
-				"pts",
-				"cid",
-				"did",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: info.season,
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+			"winp",
+			"pts",
+			"cid",
+			"did",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: info.season,
+		showNoStats: true,
+	});
 
 	const cid = teams.find((t) => t.tid === info.tid)?.seasonAttrs.cid;
 
@@ -192,24 +189,21 @@ export default defineView({
 				"avgAge",
 				"note",
 			];
-			const t = await idb.getCopy.teamsPlus(
-				{
-					season: inputs.season,
-					tid: inputs.tid,
-					attrs: [
-						"tid",
-						"strategy",
-						"region",
-						"name",
-						"keepRosterSorted",
-						"playThroughInjuries",
-					],
-					seasonAttrs,
-					stats: ["pts", "oppPts", "gp"],
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			);
+			const t = await idb.getCopy.teamsPlus({
+				season: inputs.season,
+				tid: inputs.tid,
+				attrs: [
+					"tid",
+					"strategy",
+					"region",
+					"name",
+					"keepRosterSorted",
+					"playThroughInjuries",
+				],
+				seasonAttrs,
+				stats: ["pts", "oppPts", "gp"],
+				addDummySeason: true,
+			});
 
 			if (!t) {
 				const returnValue = {

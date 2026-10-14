@@ -8,28 +8,25 @@ export default defineView({
 	id: "manageTeams",
 	load: async () => {
 		const teams = (
-			await idb.getCopies.teamsPlus(
-				{
-					attrs: [
-						"tid",
-						"abbrev",
-						"region",
-						"name",
-						"imgURL",
-						"imgURLSmall",
-						"colors",
-						"jersey",
-						"did",
-						"pop",
-						"stadiumCapacity",
-						"disabled",
-					],
-					seasonAttrs: ["pop", "stadiumCapacity"],
-					season: g.get("season"),
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			)
+			await idb.getCopies.teamsPlus({
+				attrs: [
+					"tid",
+					"abbrev",
+					"region",
+					"name",
+					"imgURL",
+					"imgURLSmall",
+					"colors",
+					"jersey",
+					"did",
+					"pop",
+					"stadiumCapacity",
+					"disabled",
+				],
+				seasonAttrs: ["pop", "stadiumCapacity"],
+				season: g.get("season"),
+				addDummySeason: true,
+			})
 		).map((t) => {
 			const pop = t.pop ?? t.seasonAttrs.pop;
 

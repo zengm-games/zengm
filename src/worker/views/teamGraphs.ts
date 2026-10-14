@@ -209,17 +209,14 @@ const getTeamStats = async (
 	const teamsPlayoffs =
 		playoffs === "playoffs" && statTypePlus !== "powerRankings";
 
-	let teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid", "playThroughInjuries", "abbrev"],
-			seasonAttrs,
-			stats: statKeys as TeamStatAttr[],
-			season,
-			playoffs: teamsPlayoffs,
-			regularSeason: !teamsPlayoffs,
-		},
-		"noCopyCache",
-	);
+	let teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid", "playThroughInjuries", "abbrev"],
+		seasonAttrs,
+		stats: statKeys as TeamStatAttr[],
+		season,
+		playoffs: teamsPlayoffs,
+		regularSeason: !teamsPlayoffs,
+	});
 
 	if (statTypePlus === "powerRankings") {
 		teams = await addPowerRankingsStuffToTeams(

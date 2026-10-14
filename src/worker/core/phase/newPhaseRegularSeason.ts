@@ -138,15 +138,12 @@ const deleteOldBoxScores = async () => {
 const newPhaseRegularSeason = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["cid", "did"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did"],
+		season: g.get("season"),
+		active: true,
+	});
 
 	await season.setSchedule(season.newSchedule(teams));
 

@@ -42,26 +42,23 @@ export default defineView({
 			updateEvents.has("firstRun") ||
 			(updateEvents.has("newPhase") && g.get("phase") === PHASE.DRAFT_LOTTERY)
 		) {
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
-					seasonAttrs: [
-						"season",
-						"playoffRoundsWon",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"abbrev",
-						"region",
-						"name",
-						"imgURL",
-						"imgURLSmall",
-					],
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
+				seasonAttrs: [
+					"season",
+					"playoffRoundsWon",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"abbrev",
+					"region",
+					"name",
+					"imgURL",
+					"imgURLSmall",
+				],
+				addDummySeason: true,
+			});
 			const teamsByTid = groupByUnique(teams, "tid");
 
 			type MyTeam = (typeof teams)[number];

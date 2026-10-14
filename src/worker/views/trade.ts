@@ -153,16 +153,13 @@ export default defineView({
 			otherTid,
 		);
 		const otherPicks = await idb.merged.draftPicks.getAll({ tid: otherTid });
-		const t = await idb.getCopy.teamsPlus(
-			{
-				tid: otherTid,
-				season: g.get("season"),
-				attrs: ["strategy"],
-				seasonAttrs: ["won", "lost", "tied", "otl"],
-				addDummySeason: true,
-			},
-			"noCopyCache",
-		);
+		const t = await idb.getCopy.teamsPlus({
+			tid: otherTid,
+			season: g.get("season"),
+			attrs: ["strategy"],
+			seasonAttrs: ["won", "lost", "tied", "otl"],
+			addDummySeason: true,
+		});
 
 		if (t === undefined) {
 			// https://stackoverflow.com/a/59923262/786644

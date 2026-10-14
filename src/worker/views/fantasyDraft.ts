@@ -18,13 +18,10 @@ export default defineView({
 	processInputs,
 	load: async ({ updateEvents }) => {
 		if (updateEvents.has("firstRun")) {
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid", "abbrev", "region", "name"],
-					active: true,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "abbrev", "region", "name"],
+				active: true,
+			});
 			shuffle(teams);
 			return {
 				teams,

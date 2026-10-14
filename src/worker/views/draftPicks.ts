@@ -51,16 +51,13 @@ const adjustProjectedPick = ({
 export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 	const draftPicks = [];
 
-	const teamsRaw = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid", "abbrev", "playThroughInjuries"],
-			seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
-			stats: ["gp", "mov"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teamsRaw = await idb.getCopies.teamsPlus({
+		attrs: ["tid", "abbrev", "playThroughInjuries"],
+		seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
+		stats: ["gp", "mov"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 
 	const teamsWithRankings = await addPowerRankingsStuffToTeams(
 		teamsRaw,

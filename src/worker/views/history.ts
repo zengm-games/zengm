@@ -61,23 +61,20 @@ export default defineView({
 				return returnValue;
 			}
 
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid"],
-					seasonAttrs: [
-						"playoffRoundsWon",
-						"abbrev",
-						"region",
-						"name",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-					],
-					season,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: [
+					"playoffRoundsWon",
+					"abbrev",
+					"region",
+					"name",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+				],
+				season,
+			});
 			const teamsByTid = groupByUnique(teams, "tid");
 
 			const augmentTeams = (bestRecords: Record<number, number>) => {

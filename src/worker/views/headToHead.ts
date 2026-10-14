@@ -86,15 +86,12 @@ export default defineView({
 				},
 			);
 
-			const teamInfos = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid"],
-					seasonAttrs: ["region", "name", "abbrev", "imgURL", "imgURLSmall"],
-					season: season === "all" ? g.get("season") : season,
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			);
+			const teamInfos = await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: ["region", "name", "abbrev", "imgURL", "imgURLSmall"],
+				season: season === "all" ? g.get("season") : season,
+				addDummySeason: true,
+			});
 
 			const teams = Array.from(infoByTid.values()).map((info) => {
 				const t = teamInfos.find((t) => t.tid === info.tid);

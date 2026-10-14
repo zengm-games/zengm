@@ -33,33 +33,30 @@ const seriesIsNotOver = (
 	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
 
 const getTeamsForOrderTeams = () => {
-	return idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"winp",
-				"pts",
-				"won",
-				"lost",
-				"otl",
-				"tied",
-				"did",
-				"cid",
-				"wonDiv",
-				"lostDiv",
-				"otlDiv",
-				"tiedDiv",
-				"wonConf",
-				"lostConf",
-				"otlConf",
-				"tiedConf",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	return idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"winp",
+			"pts",
+			"won",
+			"lost",
+			"otl",
+			"tied",
+			"did",
+			"cid",
+			"wonDiv",
+			"lostDiv",
+			"otlDiv",
+			"tiedDiv",
+			"wonConf",
+			"lostConf",
+			"otlConf",
+			"tiedConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 };
 
 /**

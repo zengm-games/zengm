@@ -334,18 +334,15 @@ const advStats = async () => {
 		"rbw",
 		"rba",
 	] as const;
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			stats: teamStats,
-			season: g.get("season"),
-			playoffs,
-			regularSeason: !playoffs,
-			addDummySeason: true,
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		stats: teamStats,
+		season: g.get("season"),
+		playoffs,
+		regularSeason: !playoffs,
+		addDummySeason: true,
+		active: true,
+	});
 	const league: any = teams.reduce((memo: any, t) => {
 		for (const key of teamStats) {
 			if (Object.hasOwn(memo, key)) {

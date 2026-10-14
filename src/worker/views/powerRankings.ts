@@ -208,29 +208,26 @@ export default defineView({
 			season !== prevInputs?.season ||
 			playoffs !== prevInputs?.playoffs
 		) {
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid", "depth", "playThroughInjuries"],
-					seasonAttrs: [
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"lastTen",
-						"abbrev",
-						"region",
-						"name",
-						"cid",
-						"did",
-						"imgURL",
-						"imgURLSmall",
-					],
-					stats: ["gp", "mov", "pts", "oppPts"],
-					season,
-					showNoStats: true,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "depth", "playThroughInjuries"],
+				seasonAttrs: [
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"lastTen",
+					"abbrev",
+					"region",
+					"name",
+					"cid",
+					"did",
+					"imgURL",
+					"imgURLSmall",
+				],
+				stats: ["gp", "mov", "pts", "oppPts"],
+				season,
+				showNoStats: true,
+			});
 
 			const teamsWithRankings = await addPowerRankingsStuffToTeams(
 				teams,

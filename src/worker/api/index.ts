@@ -3284,15 +3284,12 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 };
 
 const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["cid", "did", "abbrev"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did", "abbrev"],
+		season: g.get("season"),
+		active: true,
+	});
 
 	const tids = season.newSchedule(teams, conditions);
 

@@ -200,14 +200,11 @@ export default defineView({
 					"oppRbs",
 				],
 			});
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					seasonAttrs: ["won", "lost"],
-					stats,
-					season: inputs.season,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				seasonAttrs: ["won", "lost"],
+				stats,
+				season: inputs.season,
+			});
 
 			type Keys =
 				| keyof (typeof teams)[number]["seasonAttrs"]

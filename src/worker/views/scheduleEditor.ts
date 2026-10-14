@@ -85,26 +85,20 @@ export default defineView({
 		) {
 			const scheduleRaw = await season.getSchedule();
 
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid"],
-					seasonAttrs: ["abbrev", "region", "name", "tid", "cid", "did"],
-					season: g.get("season"),
-					active: true,
-				},
-				"noCopyCache",
-			);
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: ["abbrev", "region", "name", "tid", "cid", "did"],
+				season: g.get("season"),
+				active: true,
+			});
 
 			let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;
 			if (canRegenerateSchedule) {
-				const teams = await idb.getCopies.teamsPlus(
-					{
-						attrs: ["tid"],
-						stats: ["gp"],
-						season: g.get("season"),
-					},
-					"noCopyCache",
-				);
+				const teams = await idb.getCopies.teamsPlus({
+					attrs: ["tid"],
+					stats: ["gp"],
+					season: g.get("season"),
+				});
 
 				for (const t of teams) {
 					if (t.stats.gp !== 0) {

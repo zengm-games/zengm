@@ -212,21 +212,18 @@ export default defineView({
 			});
 
 			const teams = (
-				await idb.getCopies.teamsPlus(
-					{
-						seasonAttrs: [
-							"abbrev",
-							"colors",
-							"jersey",
-							"imgURL",
-							"imgURLSmall",
-							"region",
-						],
-						season,
-						addDummySeason: true,
-					},
-					"noCopyCache",
-				)
+				await idb.getCopies.teamsPlus({
+					seasonAttrs: [
+						"abbrev",
+						"colors",
+						"jersey",
+						"imgURL",
+						"imgURLSmall",
+						"region",
+					],
+					season,
+					addDummySeason: true,
+				})
 			).map((t) => t.seasonAttrs);
 
 			return {

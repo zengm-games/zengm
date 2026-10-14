@@ -9,14 +9,11 @@ import { defaultAwards } from "../../common/defaultGameAttributes.ts";
 import { defineView } from "../util/defineView.ts";
 
 const getTeams = async (season: number) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["won", "lost", "tied", "otl"],
-			season,
-		},
-		"noCopyCache",
-	);
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
+		season,
+	});
 
 	return teams;
 };

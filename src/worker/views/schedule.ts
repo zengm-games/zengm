@@ -89,15 +89,12 @@ export const getUpcoming = async ({
 		return [];
 	}
 
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["playThroughInjuries", "tid"],
-			seasonAttrs: ["won", "lost", "tied", "otl"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["playThroughInjuries", "tid"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
+		season: g.get("season"),
+		active: true,
+	});
 	const teamsByTid = groupByUnique(teams, "tid");
 
 	// Only load players on teams that are actually needed, since often this is just for one game (such as updating the user's next game after every day of the regular season). Active players have tid >= 0

@@ -179,34 +179,31 @@ export default defineView({
 
 			let teamsToEdit: TeamToEdit[] = [];
 			if (canEdit) {
-				const teamsUnsorted = await idb.getCopies.teamsPlus(
-					{
-						attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
-						seasonAttrs: [
-							"cid",
-							"did",
-							"won",
-							"lost",
-							"tied",
-							"otl",
-							"winp",
-							"pts",
-							"wonDiv",
-							"lostDiv",
-							"tiedDiv",
-							"otlDiv",
-							"wonConf",
-							"lostConf",
-							"tiedConf",
-							"otlConf",
-						],
-						stats: ["pts", "oppPts", "gp"],
-						season: g.get("season"),
-						active: true,
-						showNoStats: true,
-					},
-					"noCopyCache",
-				);
+				const teamsUnsorted = await idb.getCopies.teamsPlus({
+					attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
+					seasonAttrs: [
+						"cid",
+						"did",
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"winp",
+						"pts",
+						"wonDiv",
+						"lostDiv",
+						"tiedDiv",
+						"otlDiv",
+						"wonConf",
+						"lostConf",
+						"tiedConf",
+						"otlConf",
+					],
+					stats: ["pts", "oppPts", "gp"],
+					season: g.get("season"),
+					active: true,
+					showNoStats: true,
+				});
 
 				// Sort teams by normal playoff order
 				let teams: typeof teamsUnsorted;

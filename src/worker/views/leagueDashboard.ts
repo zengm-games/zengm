@@ -97,36 +97,33 @@ const updateTeams = async ({ updateEvents }: ViewArgs) => {
 			football: ["Points", "Allowed", "PssYds", "RusYds"],
 			hockey: ["Goals", "Allowed"],
 		});
-		const teams = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"otl",
-					"tied",
-					"winp",
-					"pts",
-					"att",
-					"revenue",
-					"profit",
-					"cid",
-					"did",
-					"wonDiv",
-					"lostDiv",
-					"tiedDiv",
-					"otlDiv",
-					"wonConf",
-					"lostConf",
-					"tiedConf",
-					"otlConf",
-				],
-				stats: ["pts", "oppPts", "gp", ...stats] as const,
-				season: g.get("season"),
-				showNoStats: true,
-			},
-			"noCopyCache",
-		);
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"otl",
+				"tied",
+				"winp",
+				"pts",
+				"att",
+				"revenue",
+				"profit",
+				"cid",
+				"did",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+			],
+			stats: ["pts", "oppPts", "gp", ...stats] as const,
+			season: g.get("season"),
+			showNoStats: true,
+		});
 		const t = teams.find((t2) => t2.tid === g.get("userTid"));
 		const cid = t !== undefined ? t.seasonAttrs.cid : undefined;
 		let att = 0;
@@ -481,38 +478,35 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 
 const updateStandings = async ({ updateEvents }: ViewArgs) => {
 	if (updateEvents.has("firstRun") || updateEvents.has("gameSim")) {
-		const teams = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"wonDiv",
-					"lostDiv",
-					"tiedDiv",
-					"otlDiv",
-					"wonConf",
-					"lostConf",
-					"tiedConf",
-					"otlConf",
-					"winp",
-					"pts",
-					"cid",
-					"did",
-					"abbrev",
-					"region",
-					"clinchedPlayoffs",
-					"imgURL",
-					"imgURLSmall",
-				],
-				stats: ["pts", "oppPts", "gp"],
-				season: g.get("season"),
-				showNoStats: true,
-			},
-			"noCopyCache",
-		);
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+				"winp",
+				"pts",
+				"cid",
+				"did",
+				"abbrev",
+				"region",
+				"clinchedPlayoffs",
+				"imgURL",
+				"imgURLSmall",
+			],
+			stats: ["pts", "oppPts", "gp"],
+			season: g.get("season"),
+			showNoStats: true,
+		});
 
 		// Find user's conference
 		const userTid = g.get("userTid");
@@ -611,21 +605,18 @@ const updateNewsFeed = async ({ updateEvents }: ViewArgs) => {
 		}
 
 		const teams = (
-			await idb.getCopies.teamsPlus(
-				{
-					seasonAttrs: [
-						"abbrev",
-						"colors",
-						"jersey",
-						"imgURL",
-						"imgURLSmall",
-						"region",
-					],
-					season: g.get("season"),
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			)
+			await idb.getCopies.teamsPlus({
+				seasonAttrs: [
+					"abbrev",
+					"colors",
+					"jersey",
+					"imgURL",
+					"imgURLSmall",
+					"region",
+				],
+				season: g.get("season"),
+				addDummySeason: true,
+			})
 		).map((t) => t.seasonAttrs);
 
 		return {

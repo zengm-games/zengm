@@ -55,7 +55,6 @@ export const initializeNba2027 = async () => {
 	// Check existence of draftLotteryResults first, to handle any edge case where that is prespecified like in real player leagues during the playoffs
 	let lastDraftLotteryResults = await idb.merged.draftLotteryResults.get(
 		lastDraftLotterySeason,
-		{ copy: true },
 	);
 	if (!lastDraftLotteryResults) {
 		// Lottery must not have happened yet
@@ -64,7 +63,6 @@ export const initializeNba2027 = async () => {
 
 			lastDraftLotteryResults = await idb.merged.draftLotteryResults.get(
 				lastDraftLotterySeason,
-				{ copy: true },
 			);
 		}
 	}
@@ -107,7 +105,6 @@ export const initializeNba2027 = async () => {
 	const olderDraftLotterySeason = lastDraftLotterySeason - 1;
 	const olderDraftLotteryResults = await idb.merged.draftLotteryResults.get(
 		olderDraftLotterySeason,
-		{ copy: true },
 	);
 	if (
 		olderDraftLotteryResults &&

@@ -48,7 +48,7 @@ export default defineView({
 		}
 
 		if (updateEvents.has("firstRun") || prevInputs?.season !== season) {
-			const awards = await idb.merged.awards.get(season, { copy: true });
+			const awards = await idb.merged.awards.get(season);
 
 			if (!awards) {
 				viewedSeasonSummary(); // Should never happen, but just in case

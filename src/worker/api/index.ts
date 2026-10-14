@@ -567,11 +567,11 @@ const clearNotes = async (type: NoteInfo["type"]) => {
 			if (storeName === "draftPicks") {
 				row = await idb.cache[storeName].get(key);
 			} else if (storeName === "games") {
-				row = await idb.merged.games.get(key, { copy: true });
+				row = await idb.merged.games.get(key);
 			} else if (storeName === "players") {
-				row = await idb.merged.players.get(key, { copy: true });
+				row = await idb.merged.players.get(key);
 			} else {
-				row = await idb.merged.teamSeasons.get(key, { copy: true });
+				row = await idb.merged.teamSeasons.get(key);
 			}
 			if (row) {
 				row.note = note;
@@ -1805,7 +1805,7 @@ const getAutoPos = (ratings: any) => {
 };
 
 const getBornLoc = async (pid: number) => {
-	const p = await idb.merged.players.get(pid, { copy: true });
+	const p = await idb.merged.players.get(pid);
 	if (p) {
 		return p.born.loc;
 	}
@@ -3311,7 +3311,7 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		return;
 	}
 
-	const players = await idb.merged.players.getAll({ pids }, { copy: true });
+	const players = await idb.merged.players.getAll({ pids });
 	if (players.length !== pids.length) {
 		return "Player not found";
 	}

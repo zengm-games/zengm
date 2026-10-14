@@ -84,7 +84,6 @@ export default defineView({
 							// Old messages don't include tid
 							message.tid ?? g.get("userTid"),
 							season,
-							{ copy: true },
 						);
 
 						let seasonInfo;

@@ -358,7 +358,6 @@ export default defineView({
 				const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
 					inputs.tid,
 					inputs.season,
-					{ copy: true },
 				);
 
 				// >0 check handles old leagues that might have it undefined, and real players leagues that have a dummy negative value

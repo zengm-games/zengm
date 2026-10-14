@@ -207,7 +207,6 @@ export default defineView({
 							const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
 								t.tid,
 								game.season,
-								{ copy: true },
 							);
 
 							if (teamSeason) {

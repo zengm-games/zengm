@@ -264,10 +264,7 @@ export const loadAbbrevs = async (season: number) => {
 
 	// For historical seasons, look up old abbrevs
 	if (g.get("season") !== season || g.get("phase") >= PHASE.PLAYOFFS) {
-		const teamSeasons = await idb.merged.teamSeasons.getAll(
-			{ season },
-			{ copy: true },
-		);
+		const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 		if (teamSeasons.length > 0) {
 			for (const row of teamSeasons) {
 				abbrevs[row.tid] = row.abbrev;

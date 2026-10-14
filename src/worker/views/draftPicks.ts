@@ -103,7 +103,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 		const events = (
 			await idb.merged.events.getAll(
 				{ dpid: dp.dpid },
-				{ copy: true, filter: (event) => event.type === "trade" },
+				{ filter: (event) => event.type === "trade" },
 			)
 		).filter((row) => row.type === "trade");
 

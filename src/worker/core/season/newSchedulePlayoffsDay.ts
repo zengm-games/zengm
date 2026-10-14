@@ -181,9 +181,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			series[rnd]![0]!.away?.won === 0
 		) {
 			// Make sure we didn't just play the All-Star Game - only schedule once
-			const allStar = await idb.merged.allStars.get(g.get("season"), {
-				copy: true,
-			});
+			const allStar = await idb.merged.allStars.get(g.get("season"));
 			if (!allStar?.score) {
 				tids.unshift([-1, -2]);
 			}

@@ -1,7 +1,12 @@
 import type { Message } from "../../../common/types.ts";
 import { helpers } from "../../util/index.ts";
 import { idb } from "../index.ts";
-import { get, getAll, type GetAllOptions, type GetOptions } from "./engine.ts";
+import {
+	getAll,
+	MergedStore,
+	type GetAllOptions,
+	type GetOptions,
+} from "./engine.ts";
 
 export type MessagesSelector = {
 	// Only the most recent messages
@@ -32,52 +37,51 @@ type LimitOptions<Output> = GetOptions & {
 	map?: (message: Message) => Output;
 };
 
-function getAllMessages<Output = Message>(
-	selector?: undefined,
-	options?: GetAllOptions<Message, Output>,
-): Promise<Output[]>;
-function getAllMessages<Output = Message>(
-	selector: MessagesSelector,
-	options?: LimitOptions<Output>,
-): Promise<Output[]>;
-async function getAllMessages<Output>(
-	selector?: MessagesSelector,
-	options: GetAllOptions<Message, Output> = {},
-): Promise<Output[]> {
-	if (selector === undefined) {
-		return getAll("messages", undefined, options);
-	}
+class MessagesStore extends MergedStore<"messages", MessagesSelector> {
+	override getAll<Output = Message>(
+		selector?: undefined,
+		options?: GetAllOptions<Message, Output>,
+	): Promise<Output[]>;
+	override getAll<Output = Message>(
+		selector: MessagesSelector,
+		options?: LimitOptions<Output>,
+	): Promise<Output[]>;
+	override async getAll<Output>(
+		selector?: MessagesSelector,
+		options: GetAllOptions<Message, Output> = {},
+	): Promise<Output[]> {
+		if (selector === undefined) {
+			return super.getAll(undefined, options);
+		}
 
-	const { copy, filter, map } = options;
-	if (filter) {
-		throw new Error("filter is not allowed with limit");
-	}
+		const { copy, filter, map } = options;
+		if (filter) {
+			throw new Error("filter is not allowed with limit");
+		}
 
-	const { limit } = selector;
+		const { limit } = selector;
 
-	// Otherwise slice(-0) below would return every message
-	if (limit <= 0) {
-		return [];
-	}
+		// Otherwise slice(-0) below would return every message
+		if (limit <= 0) {
+			return [];
+		}
 
-	const messages = await getAll("messages", {
-		fromDb: () => newestFromDb(limit),
-	});
-
-	// Sorted from oldest to newest
-	return messages
-		.sort((a, b) => a.mid - b.mid)
-		.slice(-limit)
-		.map((message) => {
-			// Rows from IndexedDB don't need to be copied, but it doesn't hurt to copy them too, since there are only a few
-			const message2 = copy ? helpers.deepCopy(message) : message;
-
-			// With no map function, Output is Message
-			return map ? map(message2) : (message2 as unknown as Output);
+		const messages = await getAll("messages", {
+			fromDb: () => newestFromDb(limit),
 		});
+
+		// Sorted from oldest to newest
+		return messages
+			.sort((a, b) => a.mid - b.mid)
+			.slice(-limit)
+			.map((message) => {
+				// Rows from IndexedDB don't need to be copied, but it doesn't hurt to copy them too, since there are only a few
+				const message2 = copy ? helpers.deepCopy(message) : message;
+
+				// With no map function, Output is Message
+				return map ? map(message2) : (message2 as unknown as Output);
+			});
+	}
 }
 
-export default {
-	get: (mid: number, options?: GetOptions) => get("messages", mid, options),
-	getAll: getAllMessages,
-};
+export default new MessagesStore("messages");

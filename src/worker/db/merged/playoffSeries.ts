@@ -1,19 +1,17 @@
 import { g, helpers } from "../../util/index.ts";
 import { idb } from "../index.ts";
-import { makeStore, type GetOptions } from "./engine.ts";
+import { MergedStore, type GetOptions } from "./engine.ts";
 
-const store = makeStore("playoffSeries");
-
-export default {
-	get: async (season: number, options: GetOptions = {}) => {
+class PlayoffSeriesStore extends MergedStore<"playoffSeries"> {
+	override async get(season: number, options: GetOptions = {}) {
 		if (season === g.get("season")) {
 			// If the current season exists it's always in the cache, so there is no need to check IndexedDB
 			const row = await idb.cache.playoffSeries.get(season);
 			return options.copy ? helpers.deepCopy(row) : row;
 		}
 
-		return store.get(season, options);
-	},
+		return super.get(season, options);
+	}
+}
 
-	getAll: store.getAll,
-};
+export default new PlayoffSeriesStore("playoffSeries");

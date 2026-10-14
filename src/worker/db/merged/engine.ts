@@ -240,23 +240,34 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 	return output;
 };
 
-// For stores where get and getAll are the same as every other store, except for how a selector is turned into a query
-export const makeStore = <MyStore extends Store, Selector = undefined>(
-	storeName: MyStore,
-	toQuery?: (selector: Selector) => Query<Row<MyStore>>,
-) => {
-	return {
-		get: (key: LeagueDB[MyStore]["key"], options?: GetOptions) =>
-			get(storeName, key, options),
+// Like the same store in idb.cache or idb.league, except it merges the data in both. Subclasses can support selectors by overriding toQuery, or override get and getAll if something else is different about a store.
+export class MergedStore<MyStore extends Store, Selector = undefined> {
+	readonly storeName: MyStore;
 
-		// async so an error from toQuery is a rejected promise, like any other error in getAll
-		getAll: async <Output = Row<MyStore>>(
-			selector?: Selector,
-			options?: GetAllOptions<Row<MyStore>, Output>,
-		) => {
-			const query =
-				selector === undefined || !toQuery ? undefined : toQuery(selector);
-			return await getAll(storeName, query, options);
-		},
-	};
-};
+	constructor(storeName: MyStore) {
+		this.storeName = storeName;
+	}
+
+	// Returning undefined means the whole store
+	protected toQuery(
+		selector: Selector | undefined,
+	): Query<Row<MyStore>> | undefined {
+		if (selector === undefined) {
+			return undefined;
+		}
+
+		throw new Error("Invalid selector");
+	}
+
+	get(key: LeagueDB[MyStore]["key"], options?: GetOptions) {
+		return get(this.storeName, key, options);
+	}
+
+	// async so an error from toQuery is a rejected promise, like any other error in getAll
+	async getAll<Output = Row<MyStore>>(
+		selector?: Selector,
+		options?: GetAllOptions<Row<MyStore>, Output>,
+	) {
+		return await getAll(this.storeName, this.toQuery(selector), options);
+	}
+}

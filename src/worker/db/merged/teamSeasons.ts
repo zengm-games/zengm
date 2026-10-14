@@ -3,7 +3,7 @@ import { g } from "../../util/index.ts";
 import { NUM_PRIOR_SEASONS_TEAM_SEASONS } from "../Cache.ts";
 import { idb } from "../index.ts";
 import {
-	makeStore,
+	MergedStore,
 	type Exclusive,
 	type GetOptions,
 	type Query,
@@ -21,100 +21,107 @@ const isSeasonInCache = (season: number) => {
 	return season >= g.get("season") - NUM_PRIOR_SEASONS_TEAM_SEASONS;
 };
 
-const toQuery = (selector: TeamSeasonsSelector): Query<TeamSeason> => {
-	if (selector.note) {
-		return {
-			// undefined for key returns all of the team seasons with noteBool, since the ones without noteBool are not included in this index
-			fromDb: () =>
-				idb.league.transaction("teamSeasons").store.index("noteBool").iterate(),
-			matches: (ts) => ts.noteBool === 1,
-		};
-	}
+class TeamSeasonsStore extends MergedStore<"teamSeasons", TeamSeasonsSelector> {
+	protected override toQuery(
+		selector: TeamSeasonsSelector | undefined,
+	): Query<TeamSeason> | undefined {
+		if (selector === undefined) {
+			return undefined;
+		}
 
-	if (selector.tid === undefined) {
-		// All teams, single season
-		const season = selector.season;
-		return {
-			fromDb: isSeasonInCache(season)
-				? undefined
-				: () =>
-						idb.league
-							.transaction("teamSeasons")
-							.store.index("season, tid")
-							.iterate(IDBKeyRange.bound([season], [season, ""])),
-			fromCache: () =>
-				idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [
-					[season],
-					[season, "Z"],
-				]),
-			matches: (ts) => ts.season === season,
-		};
-	}
+		if (selector.note) {
+			return {
+				// undefined for key returns all of the team seasons with noteBool, since the ones without noteBool are not included in this index
+				fromDb: () =>
+					idb.league
+						.transaction("teamSeasons")
+						.store.index("noteBool")
+						.iterate(),
+				matches: (ts) => ts.noteBool === 1,
+			};
+		}
 
-	const { tid, season, seasons } = selector;
+		if (selector.tid === undefined) {
+			// All teams, single season
+			const season = selector.season;
+			return {
+				fromDb: isSeasonInCache(season)
+					? undefined
+					: () =>
+							idb.league
+								.transaction("teamSeasons")
+								.store.index("season, tid")
+								.iterate(IDBKeyRange.bound([season], [season, ""])),
+				fromCache: () =>
+					idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [
+						[season],
+						[season, "Z"],
+					]),
+				matches: (ts) => ts.season === season,
+			};
+		}
 
-	if (season !== undefined) {
-		// Single team, single season
-		return {
-			fromDb: isSeasonInCache(season)
-				? undefined
-				: () =>
-						idb.league
-							.transaction("teamSeasons")
-							.store.index("season, tid")
-							.iterate([season, tid]),
-			fromCache: () =>
-				idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [
-					[season, tid],
-					[season, tid],
-				]),
-			matches: (ts) => ts.tid === tid && ts.season === season,
-		};
-	}
+		const { tid, season, seasons } = selector;
 
-	if (seasons !== undefined) {
-		// Single team, range of seasons
-		const [minSeason, maxSeason] = seasons;
+		if (season !== undefined) {
+			// Single team, single season
+			return {
+				fromDb: isSeasonInCache(season)
+					? undefined
+					: () =>
+							idb.league
+								.transaction("teamSeasons")
+								.store.index("season, tid")
+								.iterate([season, tid]),
+				fromCache: () =>
+					idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [
+						[season, tid],
+						[season, tid],
+					]),
+				matches: (ts) => ts.tid === tid && ts.season === season,
+			};
+		}
+
+		if (seasons !== undefined) {
+			// Single team, range of seasons
+			const [minSeason, maxSeason] = seasons;
+			return {
+				fromDb: () =>
+					idb.league
+						.transaction("teamSeasons")
+						.store.index("tid, season")
+						.iterate(IDBKeyRange.bound([tid, minSeason], [tid, maxSeason])),
+				fromCache: () =>
+					idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
+						[tid, minSeason],
+						[tid, maxSeason],
+					]),
+				matches: (ts) =>
+					ts.tid === tid && ts.season >= minSeason && ts.season <= maxSeason,
+			};
+		}
+
+		// Single team, all seasons
 		return {
 			fromDb: () =>
 				idb.league
 					.transaction("teamSeasons")
 					.store.index("tid, season")
-					.iterate(IDBKeyRange.bound([tid, minSeason], [tid, maxSeason])),
+					.iterate(IDBKeyRange.bound([tid], [tid, ""])),
 			fromCache: () =>
 				idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
-					[tid, minSeason],
-					[tid, maxSeason],
+					[tid],
+					[tid, "Z"],
 				]),
-			matches: (ts) =>
-				ts.tid === tid && ts.season >= minSeason && ts.season <= maxSeason,
+			matches: (ts) => ts.tid === tid,
 		};
 	}
 
-	// Single team, all seasons
-	return {
-		fromDb: () =>
-			idb.league
-				.transaction("teamSeasons")
-				.store.index("tid, season")
-				.iterate(IDBKeyRange.bound([tid], [tid, ""])),
-		fromCache: () =>
-			idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
-				[tid],
-				[tid, "Z"],
-			]),
-		matches: (ts) => ts.tid === tid,
-	};
-};
-
-const store = makeStore("teamSeasons", toQuery);
-
-export default {
-	...store,
-
 	// There is at most one team season for a tid and season
-	getByTidSeason: async (tid: number, season: number, options?: GetOptions) => {
-		const rows = await store.getAll({ tid, season }, options);
+	async getByTidSeason(tid: number, season: number, options?: GetOptions) {
+		const rows = await this.getAll({ tid, season }, options);
 		return rows[0];
-	},
-};
+	}
+}
+
+export default new TeamSeasonsStore("teamSeasons");

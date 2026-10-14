@@ -4,7 +4,7 @@ import type { Player } from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 import type { LeagueDB } from "../connectLeague.ts";
 import { idb } from "../index.ts";
-import { makeStore, type Exclusive, type Query } from "./engine.ts";
+import { MergedStore, type Exclusive, type Query } from "./engine.ts";
 
 export type PlayersSelector = Exclusive<
 	| { pids: readonly number[] }
@@ -87,117 +87,125 @@ const shouldUseActiveSeasonIndex = (statsTid: number | undefined) => {
 	return 5 * numTeams <= numSeasons;
 };
 
-const toQuery = (selector: PlayersSelector): Query<Player> => {
-	if (selector.pids !== undefined) {
-		return {
-			keys: selector.pids,
-		};
-	}
+class PlayersStore extends MergedStore<"players", PlayersSelector> {
+	protected override toQuery(
+		selector: PlayersSelector | undefined,
+	): Query<Player> | undefined {
+		if (selector === undefined) {
+			return undefined;
+		}
 
-	if (selector.tid !== undefined) {
-		const tid = selector.tid;
+		if (selector.pids !== undefined) {
+			return {
+				keys: selector.pids,
+			};
+		}
 
-		if (Array.isArray(tid)) {
-			const [minTid, maxTid] = tid;
+		if (selector.tid !== undefined) {
+			const tid = selector.tid;
 
-			// Retired players aren't all in the cache
-			if (minTid <= PLAYER.RETIRED && maxTid >= PLAYER.RETIRED) {
-				throw new Error("Not implemented");
+			if (Array.isArray(tid)) {
+				const [minTid, maxTid] = tid;
+
+				// Retired players aren't all in the cache
+				if (minTid <= PLAYER.RETIRED && maxTid >= PLAYER.RETIRED) {
+					throw new Error("Not implemented");
+				}
+			}
+
+			return {
+				fromCache: () => idb.cache.players.indexGetAll("playersByTid", tid),
+			};
+		}
+
+		if (selector.retiredYear !== undefined) {
+			const retiredYear = selector.retiredYear;
+			return {
+				fromDb: () => retiredYearFromDb(retiredYear),
+				matches: (p) => p.retiredYear === retiredYear,
+			};
+		}
+
+		if (selector.activeAndRetired) {
+			return {
+				// Non-retired players are all in the cache, so only retired players need to be read from IndexedDB
+				fromDb: () =>
+					idb.league
+						.transaction("players")
+						.store.index("tid")
+						.iterate(PLAYER.RETIRED),
+				matches: (p) => p.tid === PLAYER.RETIRED || p.tid >= PLAYER.FREE_AGENT,
+			};
+		}
+
+		if (selector.activeSeason !== undefined) {
+			const { activeSeason, statsTid } = selector;
+
+			if (shouldUseActiveSeasonIndex(statsTid)) {
+				return {
+					fromDb: () => activeSeasonFromDb(idb.league, activeSeason),
+					matches: (p) =>
+						p.draft.year < activeSeason &&
+						p.retiredYear >= activeSeason &&
+						(statsTid === undefined || p.statsTids.includes(statsTid)),
+				};
 			}
 		}
 
-		return {
-			fromCache: () => idb.cache.players.indexGetAll("playersByTid", tid),
-		};
-	}
-
-	if (selector.retiredYear !== undefined) {
-		const retiredYear = selector.retiredYear;
-		return {
-			fromDb: () => retiredYearFromDb(retiredYear),
-			matches: (p) => p.retiredYear === retiredYear,
-		};
-	}
-
-	if (selector.activeAndRetired) {
-		return {
-			// Non-retired players are all in the cache, so only retired players need to be read from IndexedDB
-			fromDb: () =>
-				idb.league
-					.transaction("players")
-					.store.index("tid")
-					.iterate(PLAYER.RETIRED),
-			matches: (p) => p.tid === PLAYER.RETIRED || p.tid >= PLAYER.FREE_AGENT,
-		};
-	}
-
-	if (selector.activeSeason !== undefined) {
-		const { activeSeason, statsTid } = selector;
-
-		if (shouldUseActiveSeasonIndex(statsTid)) {
+		if (selector.statsTid !== undefined) {
+			const statsTid = selector.statsTid;
 			return {
-				fromDb: () => activeSeasonFromDb(idb.league, activeSeason),
-				matches: (p) =>
-					p.draft.year < activeSeason &&
-					p.retiredYear >= activeSeason &&
-					(statsTid === undefined || p.statsTids.includes(statsTid)),
+				fromDb: () =>
+					idb.league
+						.transaction("players")
+						.store.index("statsTids")
+						.iterate(statsTid),
+				matches: (p) => p.statsTids.includes(statsTid),
 			};
 		}
+
+		if (selector.draftYear !== undefined) {
+			const draftYear = selector.draftYear;
+			return {
+				fromDb: () =>
+					idb.league
+						.transaction("players")
+						.store.index("draft.year, retiredYear")
+						.iterate(
+							IDBKeyRange.bound([draftYear, -Infinity], [draftYear, Infinity]),
+						),
+				matches: (p) => p.draft.year === draftYear,
+			};
+		}
+
+		if (selector.hof) {
+			return {
+				fromDb: () =>
+					idb.league.transaction("players").store.index("hof").iterate(1),
+				matches: (p) => p.hof === 1,
+			};
+		}
+
+		if (selector.note) {
+			return {
+				// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
+				fromDb: () =>
+					idb.league.transaction("players").store.index("noteBool").iterate(),
+				matches: (p) => p.noteBool === 1,
+			};
+		}
+
+		if (selector.watch) {
+			return {
+				// undefined for key returns all of the players with watch, since the ones without watch are not included in this index
+				fromDb: () =>
+					idb.league.transaction("players").store.index("watch").iterate(),
+				matches: (p) => p.watch !== undefined,
+			};
+		}
+
+		throw new Error("Invalid selector");
 	}
+}
 
-	if (selector.statsTid !== undefined) {
-		const statsTid = selector.statsTid;
-		return {
-			fromDb: () =>
-				idb.league
-					.transaction("players")
-					.store.index("statsTids")
-					.iterate(statsTid),
-			matches: (p) => p.statsTids.includes(statsTid),
-		};
-	}
-
-	if (selector.draftYear !== undefined) {
-		const draftYear = selector.draftYear;
-		return {
-			fromDb: () =>
-				idb.league
-					.transaction("players")
-					.store.index("draft.year, retiredYear")
-					.iterate(
-						IDBKeyRange.bound([draftYear, -Infinity], [draftYear, Infinity]),
-					),
-			matches: (p) => p.draft.year === draftYear,
-		};
-	}
-
-	if (selector.hof) {
-		return {
-			fromDb: () =>
-				idb.league.transaction("players").store.index("hof").iterate(1),
-			matches: (p) => p.hof === 1,
-		};
-	}
-
-	if (selector.note) {
-		return {
-			// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
-			fromDb: () =>
-				idb.league.transaction("players").store.index("noteBool").iterate(),
-			matches: (p) => p.noteBool === 1,
-		};
-	}
-
-	if (selector.watch) {
-		return {
-			// undefined for key returns all of the players with watch, since the ones without watch are not included in this index
-			fromDb: () =>
-				idb.league.transaction("players").store.index("watch").iterate(),
-			matches: (p) => p.watch !== undefined,
-		};
-	}
-
-	throw new Error("Invalid selector");
-};
-
-export default makeStore("players", toQuery);
+export default new PlayersStore("players");

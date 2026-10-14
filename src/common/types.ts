@@ -1911,6 +1911,14 @@ export type PlayoffSeriesTeam = {
 	sPts?: number; // undefined means game hasn't happened yet or there was no shootout
 };
 
+// From augmentSeries, with team info and regular season record added
+export type PlayoffSeriesTeamAugmented = PlayoffSeriesTeam & {
+	abbrev: string;
+	colors: [string, string, string];
+	region: string;
+	regularSeason: NonNullable<PlayoffSeriesTeam["regularSeason"]>;
+};
+
 type PlayInMatchup = {
 	home: PlayoffSeriesTeam;
 	away: PlayoffSeriesTeam;

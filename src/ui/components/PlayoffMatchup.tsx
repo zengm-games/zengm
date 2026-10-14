@@ -1,30 +1,14 @@
 import clsx from "clsx";
-import type { ByConf, View } from "../../common/types.ts";
+import type {
+	ByConf,
+	PlayoffSeriesTeamAugmented,
+	View,
+} from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import type { ReactNode } from "react";
 import { ChampionshipBanner } from "./ChampionshipBanner.tsx";
 
-type SeriesTeam = {
-	abbrev: string;
-	cid: number;
-	colors: [string, string, string];
-	imgURL?: string;
-	imgURLSmall?: string;
-	pendingPlayIn?: true;
-	pts?: number;
-	sPts?: number;
-	regularSeason: {
-		won: number;
-		lost: number;
-		tied?: number;
-		otl?: number;
-	};
-	region: string;
-	seed: number;
-	tid: number;
-	winp: number;
-	won?: number;
-};
+type SeriesTeam = PlayoffSeriesTeamAugmented;
 
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 

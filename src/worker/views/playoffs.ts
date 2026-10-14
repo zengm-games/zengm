@@ -6,40 +6,6 @@ import { defineView } from "../util/defineView.ts";
 import { orderTeams } from "../util/orderTeams.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
 
-type SeriesTeam = {
-	abbrev: string;
-	cid: number;
-	colors: [string, string, string];
-	imgURL?: string;
-	imgURLSmall?: string;
-	pendingPlayIn?: true;
-	pts?: number;
-	sPts?: number;
-	region: string;
-	regularSeason: {
-		won: number;
-		lost: number;
-		tied?: number;
-		otl?: number;
-	};
-	seed: number;
-	tid: number;
-	winp: number;
-	won?: number;
-};
-
-type PlayInMatchup = {
-	home: SeriesTeam;
-	away: SeriesTeam;
-};
-
-type PlayIns =
-	| (
-			| [PlayInMatchup, PlayInMatchup]
-			| [PlayInMatchup, PlayInMatchup, PlayInMatchup]
-	  )[]
-	| undefined;
-
 type TeamToEdit = {
 	tid: number;
 	cid: number;
@@ -69,13 +35,10 @@ export default defineView({
 				}[][];
 				numGamesPlayoffSeries: number[];
 				numGamesToWinSeries: number[];
-				playIns: PlayIns;
+				playIns: Awaited<ReturnType<typeof helpers.augmentPlayIns>> | undefined;
 				playoffsByConf: number | false;
 				season: number;
-				series: {
-					home: SeriesTeam;
-					away?: SeriesTeam;
-				}[][];
+				series: Awaited<ReturnType<typeof helpers.augmentSeries>>;
 				teamsToEdit: TeamToEdit[];
 		  }
 		| undefined
@@ -102,16 +65,10 @@ export default defineView({
 				playIns = result.playIns;
 			}
 
-			// augmentSeries adds all the properties in SeriesTeam, but its return type doesn't say so
-			const series2 = (await helpers.augmentSeries(series, inputs.season)) as {
-				home: SeriesTeam;
-				away?: SeriesTeam;
-			}[][];
-			const playIns2 = (
-				playIns
-					? await helpers.augmentSeries(playIns, inputs.season)
-					: undefined
-			) as PlayIns;
+			const series2 = await helpers.augmentSeries(series, inputs.season);
+			const playIns2 = playIns
+				? await helpers.augmentPlayIns(playIns, inputs.season)
+				: undefined;
 
 			// Formatting for the table in playoffs.html
 			const matchups: {

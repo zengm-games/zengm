@@ -441,7 +441,7 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 			}
 
 			if (!found && playoffSeries.playIns) {
-				const playIns = await helpers.augmentSeries(playoffSeries.playIns);
+				const playIns = await helpers.augmentPlayIns(playoffSeries.playIns);
 				for (const playIn of playIns) {
 					for (let i = playIn.length - 1; i >= 0; i--) {
 						const { away, home } = playIn[i]!;

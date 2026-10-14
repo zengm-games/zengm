@@ -25,22 +25,8 @@ async function* newestFromDb(limit: number) {
 	}
 }
 
-// With limit, filter is not allowed, because it would be unclear if it applies before or after finding the most recent messages
-type LimitOptions<Output> = {
-	filter?: never;
-	map?: (message: Message) => Output;
-};
-
 class MessagesStore extends MergedStore<"messages", MessagesSelector> {
-	override getAll<Output = Message>(
-		selector?: undefined,
-		options?: GetAllOptions<Message, Output>,
-	): Promise<Output[]>;
-	override getAll<Output = Message>(
-		selector: MessagesSelector,
-		options?: LimitOptions<Output>,
-	): Promise<Output[]>;
-	override async getAll<Output>(
+	override async getAll<Output = Message>(
 		selector?: MessagesSelector,
 		options: GetAllOptions<Message, Output> = {},
 	): Promise<Output[]> {
@@ -48,6 +34,7 @@ class MessagesStore extends MergedStore<"messages", MessagesSelector> {
 			return super.getAll(undefined, options);
 		}
 
+		// With limit, filter is not allowed, because it would be unclear if it applies before or after finding the most recent messages
 		const { filter, map } = options;
 		if (filter) {
 			throw new Error("filter is not allowed with limit");

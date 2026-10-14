@@ -517,11 +517,7 @@ describe("messages", () => {
 
 		// With limit, filter is not allowed
 		await expect(
-			idb.merged.messages.getAll(
-				{ limit: 10 },
-				// @ts-expect-error
-				{ filter: (m) => !m.read },
-			),
+			idb.merged.messages.getAll({ limit: 10 }, { filter: (m) => !m.read }),
 		).rejects.toThrow("filter is not allowed with limit");
 	});
 

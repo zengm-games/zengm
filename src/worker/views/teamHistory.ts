@@ -307,10 +307,7 @@ export default defineView({
 				Record<string, number[]>
 			>();
 			const players = (
-				await idb.merged.players.getAll(
-					{ statsTid: inputs.tid },
-					{ copy: true },
-				)
+				await idb.merged.players.getAll({ statsTid: inputs.tid })
 			).map((p) => {
 				const stats = p.stats.filter((row) => row.tid === inputs.tid);
 				const retirableJerseyNumbers: Record<string, number[]> = {};

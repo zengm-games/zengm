@@ -1,6 +1,6 @@
 import type { Game } from "../../../common/types.ts";
 import { idb } from "../index.ts";
-import { emitEach, makeStore, type Exclusive, type Query } from "./engine.ts";
+import { makeStore, type Exclusive, type Query } from "./engine.ts";
 
 export type GamesSelector = Exclusive<
 	{ gids: readonly number[] } | { season: number } | { note: true }
@@ -16,11 +16,8 @@ const toQuery = (selector: GamesSelector): Query<Game> => {
 	if (selector.season !== undefined) {
 		const season = selector.season;
 		return {
-			fromDb: (emit) =>
-				emitEach(
-					idb.league.transaction("games").store.index("season").iterate(season),
-					emit,
-				),
+			fromDb: () =>
+				idb.league.transaction("games").store.index("season").iterate(season),
 			matches: (game) => game.season === season,
 		};
 	}
@@ -28,11 +25,8 @@ const toQuery = (selector: GamesSelector): Query<Game> => {
 	if (selector.note) {
 		return {
 			// undefined for key returns all of the games with noteBool, since the ones without noteBool are not included in this index
-			fromDb: (emit) =>
-				emitEach(
-					idb.league.transaction("games").store.index("noteBool").iterate(),
-					emit,
-				),
+			fromDb: () =>
+				idb.league.transaction("games").store.index("noteBool").iterate(),
 			matches: (game) => game.noteBool === 1,
 		};
 	}

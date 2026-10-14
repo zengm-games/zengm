@@ -7,8 +7,12 @@ export type Row<MyStore extends Store> = LeagueDB[MyStore]["value"];
 
 type Key = number | string;
 
-// Returns true if the row will be part of the output, which is false if it has been deleted or does not match the query or filter
-type Emit<MyRow> = (row: MyRow) => boolean;
+// Rows read from IndexedDB, either one at a time from a cursor (like from iterate) or all at once (like from getAll).
+//
+// Use a cursor by default, so rows that are not kept don't stay in memory. This is also needed for large results, because Chrome will error with "Maximum IPC message size exceeded" if too much data is requested with getAll.
+//
+// getAll is faster, so it's better for queries that return a moderate amount of data and are run often.
+export type DbRows<MyRow> = AsyncIterable<{ value: MyRow }> | Promise<MyRow[]>;
 
 export type GetOptions = {
 	// Rows from the cache are the same objects that are stored in the cache, so they must not be mutated unless copy is true
@@ -28,8 +32,8 @@ export type Query<MyRow> =
 			keys: readonly number[];
 	  }
 	| {
-			// Must emit every row in IndexedDB that matches the query. It's fine to emit extra rows, because matches is applied after. Leave this undefined if every matching row is guaranteed to be in the cache.
-			fromDb?: (emit: Emit<MyRow>) => Promise<void>;
+			// Must return every row in IndexedDB that matches the query. It's fine to return extra rows, because matches is applied after. Leave this undefined if every matching row is guaranteed to be in the cache.
+			fromDb?: () => DbRows<MyRow>;
 
 			// Must return every row in the cache that matches the query, default is the whole store
 			fromCache?: () => Promise<MyRow[]>;
@@ -44,26 +48,6 @@ type AllKeys<T> = T extends unknown ? keyof T : never;
 export type Exclusive<T, All = T> = T extends unknown
 	? T & Partial<Record<Exclude<AllKeys<All>, keyof T>, never>>
 	: never;
-
-// Emit rows one at a time, so rows that are not kept don't stay in memory. This is also needed for large results, because Chrome will error with "Maximum IPC message size exceeded" if too much data is requested with getAll.
-export const emitEach = async <MyRow>(
-	cursors: AsyncIterable<{ value: MyRow }>,
-	emit: Emit<MyRow>,
-) => {
-	for await (const { value } of cursors) {
-		emit(value);
-	}
-};
-
-// Faster than emitEach because all rows come back from IndexedDB in one request, but they are all in memory at once and too much data will hit the Chrome error mentioned above. So only use this for queries that return a moderate amount of data and are run often.
-export const emitAll = async <MyRow>(
-	rows: Promise<MyRow[]>,
-	emit: Emit<MyRow>,
-) => {
-	for (const row of await rows) {
-		emit(row);
-	}
-};
 
 const makeToOutput = <MyRow, Output>({
 	copy,
@@ -82,12 +66,11 @@ const makeToOutput = <MyRow, Output>({
 	};
 };
 
-// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-const emitKeysFromDb = async <MyStore extends Store>(
+// Rows with these primary keys, skipping over the rows in between them - https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+async function* rowsWithKeysFromDb<MyStore extends Store>(
 	storeName: MyStore,
 	keys: number[],
-	emit: (row: Row<MyStore>) => void,
-) => {
+) {
 	const sortedKeys = keys.toSorted((a, b) => a - b);
 	const min = sortedKeys[0];
 	const max = sortedKeys.at(-1);
@@ -109,7 +92,7 @@ const emitKeysFromDb = async <MyStore extends Store>(
 		}
 
 		if (nextKey === currentKey) {
-			emit(cursor.value);
+			yield cursor;
 			i += 1;
 			nextKey = sortedKeys[i];
 		}
@@ -121,9 +104,9 @@ const emitKeysFromDb = async <MyStore extends Store>(
 		// nextKey is always greater than currentKey, which is required by cursor.continue
 		cursor.continue(nextKey as any);
 	}
-};
+}
 
-const getAllKeys = async <MyStore extends Store, Output>(
+const getAllWithKeys = async <MyStore extends Store, Output>(
 	storeName: MyStore,
 	keys: readonly number[],
 	options: GetAllOptions<Row<MyStore>, Output>,
@@ -144,9 +127,9 @@ const getAllKeys = async <MyStore extends Store, Output>(
 		}
 	}
 
-	await emitKeysFromDb(storeName, keysForDb, (row: any) => {
-		rows.set(row[pk], { row, fromCache: false });
-	});
+	for await (const { value } of rowsWithKeysFromDb(storeName, keysForDb)) {
+		rows.set((value as any)[pk], { row: value, fromCache: false });
+	}
 
 	const output = [];
 	for (const key of keys) {
@@ -182,13 +165,12 @@ export const get = async <MyStore extends Store>(
 export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 	storeName: MyStore,
 	query: Query<Row<MyStore>> = {
-		fromDb: (emit) =>
-			emitEach(idb.league.transaction(storeName).store.iterate(), emit),
+		fromDb: () => idb.league.transaction(storeName).store.iterate(),
 	},
 	options: GetAllOptions<Row<MyStore>, Output> = {},
 ): Promise<Output[]> => {
 	if ("keys" in query) {
-		return getAllKeys(storeName, query.keys, options);
+		return getAllWithKeys(storeName, query.keys, options);
 	}
 
 	const { fromDb, fromCache, matches } = query;
@@ -201,37 +183,47 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 
 	const add = (row: Row<MyStore>, rowFromCache: boolean) => {
 		if ((matches && !matches(row)) || (filter && !filter(row))) {
-			return false;
+			return;
 		}
 
 		output.push(toOutput(row, rowFromCache));
-		return true;
 	};
 
 	// Wait for the cache to be ready before reading _data and _deletes below
 	await idb.cache._waitForStatus("full");
 
+	const addFromDb = (row: any) => {
+		const key: Key = row[pk];
+		if (seen.has(key)) {
+			return;
+		}
+		seen.add(key);
+
+		// Deleted from the cache, but not yet deleted from IndexedDB
+		if (idb.cache._deletes[storeName].has(key)) {
+			return;
+		}
+
+		// Read from the cache here rather than once at the start, because it could change while waiting on IndexedDB
+		const rowCache = idb.cache._data[storeName][key];
+		if (rowCache !== undefined) {
+			add(rowCache, true);
+		} else {
+			add(row, false);
+		}
+	};
+
 	if (fromDb) {
-		await fromDb((row: any) => {
-			const key: Key = row[pk];
-			if (seen.has(key)) {
-				return false;
+		const rows = fromDb();
+		if (rows instanceof Promise) {
+			for (const row of await rows) {
+				addFromDb(row);
 			}
-			seen.add(key);
-
-			// Deleted from the cache, but not yet deleted from IndexedDB
-			if (idb.cache._deletes[storeName].has(key)) {
-				return false;
+		} else {
+			for await (const { value } of rows) {
+				addFromDb(value);
 			}
-
-			// Read from the cache here rather than once at the start, because it could change while waiting on IndexedDB
-			const rowCache = idb.cache._data[storeName][key];
-			if (rowCache !== undefined) {
-				return add(rowCache, true);
-			}
-
-			return add(row, false);
-		});
+		}
 	}
 
 	const rowsCache: any[] = fromCache

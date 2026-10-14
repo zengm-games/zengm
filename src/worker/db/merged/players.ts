@@ -4,7 +4,7 @@ import type { Player } from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 import type { LeagueDB } from "../connectLeague.ts";
 import { idb } from "../index.ts";
-import { emitEach, makeStore, type Exclusive, type Query } from "./engine.ts";
+import { makeStore, type Exclusive, type Query } from "./engine.ts";
 
 export type PlayersSelector = Exclusive<
 	| { pids: readonly number[] }
@@ -22,11 +22,10 @@ export type PlayersSelector = Exclusive<
 	| { watch: true }
 >;
 
-const emitActiveSeason = async (
+async function* activeSeasonFromDb(
 	league: IDBPDatabase<LeagueDB>,
 	season: number,
-	emit: (p: Player) => void,
-) => {
+) {
 	const index = league
 		.transaction("players")
 		.store.index("draft.year, retiredYear");
@@ -40,10 +39,10 @@ const emitActiveSeason = async (
 		if (retiredYear < season) {
 			cursor.continue([draftYear, season]);
 		} else {
-			emit(cursor.value);
+			yield cursor;
 		}
 	}
-};
+}
 
 // This reads from IndexedDB only, ignoring the cache. It's exported for exhibition games, which read from some other league.
 export const getPlayersActiveSeason = async (
@@ -51,16 +50,13 @@ export const getPlayersActiveSeason = async (
 	season: number,
 ) => {
 	const players: Player[] = [];
-	await emitActiveSeason(league, season, (p) => {
-		players.push(p);
-	});
+	for await (const { value } of activeSeasonFromDb(league, season)) {
+		players.push(value);
+	}
 	return players;
 };
 
-const emitRetiredYear = async (
-	retiredYear: number,
-	emit: (p: Player) => void,
-) => {
+async function* retiredYearFromDb(retiredYear: number) {
 	const index = idb.league
 		.transaction("players")
 		.store.index("draft.year, retiredYear");
@@ -73,10 +69,10 @@ const emitRetiredYear = async (
 		} else if (currentRetiredYear > retiredYear) {
 			cursor.continue([draftYear + 1, retiredYear]);
 		} else {
-			emit(cursor.value);
+			yield cursor;
 		}
 	}
-};
+}
 
 // If statsTid and activeSeason are both defined, which index is faster depends on the number of seasons and teams
 const shouldUseActiveSeasonIndex = (statsTid: number | undefined) => {
@@ -118,7 +114,7 @@ const toQuery = (selector: PlayersSelector): Query<Player> => {
 	if (selector.retiredYear !== undefined) {
 		const retiredYear = selector.retiredYear;
 		return {
-			fromDb: (emit) => emitRetiredYear(retiredYear, emit),
+			fromDb: () => retiredYearFromDb(retiredYear),
 			matches: (p) => p.retiredYear === retiredYear,
 		};
 	}
@@ -126,14 +122,11 @@ const toQuery = (selector: PlayersSelector): Query<Player> => {
 	if (selector.activeAndRetired) {
 		return {
 			// Non-retired players are all in the cache, so only retired players need to be read from IndexedDB
-			fromDb: (emit) =>
-				emitEach(
-					idb.league
-						.transaction("players")
-						.store.index("tid")
-						.iterate(PLAYER.RETIRED),
-					emit,
-				),
+			fromDb: () =>
+				idb.league
+					.transaction("players")
+					.store.index("tid")
+					.iterate(PLAYER.RETIRED),
 			matches: (p) => p.tid === PLAYER.RETIRED || p.tid >= PLAYER.FREE_AGENT,
 		};
 	}
@@ -143,7 +136,7 @@ const toQuery = (selector: PlayersSelector): Query<Player> => {
 
 		if (shouldUseActiveSeasonIndex(statsTid)) {
 			return {
-				fromDb: (emit) => emitActiveSeason(idb.league, activeSeason, emit),
+				fromDb: () => activeSeasonFromDb(idb.league, activeSeason),
 				matches: (p) =>
 					p.draft.year < activeSeason &&
 					p.retiredYear >= activeSeason &&
@@ -155,14 +148,11 @@ const toQuery = (selector: PlayersSelector): Query<Player> => {
 	if (selector.statsTid !== undefined) {
 		const statsTid = selector.statsTid;
 		return {
-			fromDb: (emit) =>
-				emitEach(
-					idb.league
-						.transaction("players")
-						.store.index("statsTids")
-						.iterate(statsTid),
-					emit,
-				),
+			fromDb: () =>
+				idb.league
+					.transaction("players")
+					.store.index("statsTids")
+					.iterate(statsTid),
 			matches: (p) => p.statsTids.includes(statsTid),
 		};
 	}
@@ -170,27 +160,21 @@ const toQuery = (selector: PlayersSelector): Query<Player> => {
 	if (selector.draftYear !== undefined) {
 		const draftYear = selector.draftYear;
 		return {
-			fromDb: (emit) =>
-				emitEach(
-					idb.league
-						.transaction("players")
-						.store.index("draft.year, retiredYear")
-						.iterate(
-							IDBKeyRange.bound([draftYear, -Infinity], [draftYear, Infinity]),
-						),
-					emit,
-				),
+			fromDb: () =>
+				idb.league
+					.transaction("players")
+					.store.index("draft.year, retiredYear")
+					.iterate(
+						IDBKeyRange.bound([draftYear, -Infinity], [draftYear, Infinity]),
+					),
 			matches: (p) => p.draft.year === draftYear,
 		};
 	}
 
 	if (selector.hof) {
 		return {
-			fromDb: (emit) =>
-				emitEach(
-					idb.league.transaction("players").store.index("hof").iterate(1),
-					emit,
-				),
+			fromDb: () =>
+				idb.league.transaction("players").store.index("hof").iterate(1),
 			matches: (p) => p.hof === 1,
 		};
 	}
@@ -198,11 +182,8 @@ const toQuery = (selector: PlayersSelector): Query<Player> => {
 	if (selector.note) {
 		return {
 			// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
-			fromDb: (emit) =>
-				emitEach(
-					idb.league.transaction("players").store.index("noteBool").iterate(),
-					emit,
-				),
+			fromDb: () =>
+				idb.league.transaction("players").store.index("noteBool").iterate(),
 			matches: (p) => p.noteBool === 1,
 		};
 	}
@@ -210,11 +191,8 @@ const toQuery = (selector: PlayersSelector): Query<Player> => {
 	if (selector.watch) {
 		return {
 			// undefined for key returns all of the players with watch, since the ones without watch are not included in this index
-			fromDb: (emit) =>
-				emitEach(
-					idb.league.transaction("players").store.index("watch").iterate(),
-					emit,
-				),
+			fromDb: () =>
+				idb.league.transaction("players").store.index("watch").iterate(),
 			matches: (p) => p.watch !== undefined,
 		};
 	}

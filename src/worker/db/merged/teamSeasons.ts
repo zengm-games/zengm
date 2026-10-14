@@ -3,7 +3,6 @@ import { g } from "../../util/index.ts";
 import { NUM_PRIOR_SEASONS_TEAM_SEASONS } from "../Cache.ts";
 import { idb } from "../index.ts";
 import {
-	emitEach,
 	makeStore,
 	type Exclusive,
 	type GetOptions,
@@ -26,14 +25,8 @@ const toQuery = (selector: TeamSeasonsSelector): Query<TeamSeason> => {
 	if (selector.note) {
 		return {
 			// undefined for key returns all of the team seasons with noteBool, since the ones without noteBool are not included in this index
-			fromDb: (emit) =>
-				emitEach(
-					idb.league
-						.transaction("teamSeasons")
-						.store.index("noteBool")
-						.iterate(),
-					emit,
-				),
+			fromDb: () =>
+				idb.league.transaction("teamSeasons").store.index("noteBool").iterate(),
 			matches: (ts) => ts.noteBool === 1,
 		};
 	}
@@ -44,14 +37,11 @@ const toQuery = (selector: TeamSeasonsSelector): Query<TeamSeason> => {
 		return {
 			fromDb: isSeasonInCache(season)
 				? undefined
-				: (emit) =>
-						emitEach(
-							idb.league
-								.transaction("teamSeasons")
-								.store.index("season, tid")
-								.iterate(IDBKeyRange.bound([season], [season, ""])),
-							emit,
-						),
+				: () =>
+						idb.league
+							.transaction("teamSeasons")
+							.store.index("season, tid")
+							.iterate(IDBKeyRange.bound([season], [season, ""])),
 			fromCache: () =>
 				idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [
 					[season],
@@ -68,14 +58,11 @@ const toQuery = (selector: TeamSeasonsSelector): Query<TeamSeason> => {
 		return {
 			fromDb: isSeasonInCache(season)
 				? undefined
-				: (emit) =>
-						emitEach(
-							idb.league
-								.transaction("teamSeasons")
-								.store.index("season, tid")
-								.iterate([season, tid]),
-							emit,
-						),
+				: () =>
+						idb.league
+							.transaction("teamSeasons")
+							.store.index("season, tid")
+							.iterate([season, tid]),
 			fromCache: () =>
 				idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [
 					[season, tid],
@@ -89,14 +76,11 @@ const toQuery = (selector: TeamSeasonsSelector): Query<TeamSeason> => {
 		// Single team, range of seasons
 		const [minSeason, maxSeason] = seasons;
 		return {
-			fromDb: (emit) =>
-				emitEach(
-					idb.league
-						.transaction("teamSeasons")
-						.store.index("tid, season")
-						.iterate(IDBKeyRange.bound([tid, minSeason], [tid, maxSeason])),
-					emit,
-				),
+			fromDb: () =>
+				idb.league
+					.transaction("teamSeasons")
+					.store.index("tid, season")
+					.iterate(IDBKeyRange.bound([tid, minSeason], [tid, maxSeason])),
 			fromCache: () =>
 				idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 					[tid, minSeason],
@@ -109,14 +93,11 @@ const toQuery = (selector: TeamSeasonsSelector): Query<TeamSeason> => {
 
 	// Single team, all seasons
 	return {
-		fromDb: (emit) =>
-			emitEach(
-				idb.league
-					.transaction("teamSeasons")
-					.store.index("tid, season")
-					.iterate(IDBKeyRange.bound([tid], [tid, ""])),
-				emit,
-			),
+		fromDb: () =>
+			idb.league
+				.transaction("teamSeasons")
+				.store.index("tid, season")
+				.iterate(IDBKeyRange.bound([tid], [tid, ""])),
 		fromCache: () =>
 			idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 				[tid],

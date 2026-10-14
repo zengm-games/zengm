@@ -5,6 +5,7 @@ import {
 	beforeAll,
 	beforeEach,
 	describe,
+	expect,
 	test,
 } from "vitest";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
@@ -487,13 +488,25 @@ describe("messages", () => {
 			[0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11],
 		);
 
-		const unread = await idb.merged.messages.getAll(
-			{ limit: 10 },
-			{ filter: (m) => !m.read },
-		);
+		// With limit, filter is not allowed
+		await expect(
+			idb.merged.messages.getAll(
+				{ limit: 10 },
+				// @ts-expect-error
+				{ filter: (m) => !m.read },
+			),
+		).rejects.toThrow("filter is not allowed with limit");
+	});
+
+	test("limit reads extra messages from IndexedDB to make up for ones deleted from the cache", async () => {
+		for (let mid = 0; mid < 5; mid++) {
+			await idb.league.put("messages", makeMessage(mid));
+		}
+		await idb.cache.messages.delete(4);
+
 		assert.deepStrictEqual(
-			unread.map((m) => m.mid),
-			[0, 1, 3, 4, 5, 6, 7, 9, 10, 11],
+			await idb.merged.messages.getAll({ limit: 2 }, { map: (m) => m.mid }),
+			[2, 3],
 		);
 	});
 });

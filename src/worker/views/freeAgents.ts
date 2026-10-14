@@ -130,10 +130,7 @@ const getPlayers = async (
 		}
 	} else {
 		if (type !== "available") {
-			signed = await idb.getCopies.players(
-				{ activeSeason: season },
-				"noCopyCache",
-			);
+			signed = await idb.merged.players.getAll({ activeSeason: season });
 		}
 	}
 
@@ -261,10 +258,7 @@ export default defineView({
 				} else {
 					let event;
 					if (p.freeAgentTransaction.eid !== undefined) {
-						event = await idb.getCopy.events(
-							{ eid: p.freeAgentTransaction.eid },
-							"noCopyCache",
-						);
+						event = await idb.merged.events.get(p.freeAgentTransaction.eid);
 					}
 					if (event && event.type === "freeAgent" && event.contract) {
 						p.contract = {

@@ -1,7 +1,7 @@
 import { idb } from "../../db/index.ts";
 
 const recomputeAwards = async () => {
-	const allAwards = await idb.getCopies.awards();
+	const allAwards = await idb.merged.awards.getAll();
 	for (const awards of allAwards) {
 		console.log(awards.season);
 		throw new Error("Not implemented");

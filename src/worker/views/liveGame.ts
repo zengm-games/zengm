@@ -206,7 +206,7 @@ export default defineView({
 			inputs.playByPlay !== undefined &&
 			inputs.playByPlay.length > 0
 		) {
-			const boxScore = await idb.getCopy.games({ gid: inputs.gid });
+			const boxScore = await idb.merged.games.get(inputs.gid, { copy: true });
 
 			if (!boxScore) {
 				throw new Error("Invalid gid");

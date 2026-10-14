@@ -125,7 +125,7 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 				);
 
 				for (const pid of missingPids) {
-					const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
+					const pRaw = await idb.merged.players.get(pid);
 					if (pRaw) {
 						const p = {
 							pid: pRaw.pid,

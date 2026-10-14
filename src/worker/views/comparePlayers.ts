@@ -488,7 +488,7 @@ export default defineView({
 
 			const players = [];
 			for (const { pid, season, playoffs } of playersToShow) {
-				const pRaw = await idb.getCopy.players({ pid }, "noCopyCache");
+				const pRaw = await idb.merged.players.get(pid);
 				if (!pRaw) {
 					continue;
 				}

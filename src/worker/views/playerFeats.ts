@@ -46,7 +46,9 @@ export default defineView({
 			inputs.abbrev !== prevInputs?.abbrev ||
 			inputs.season !== prevInputs?.season
 		) {
-			let feats = await idb.getCopies.playerFeats();
+			let feats = await idb.merged.playerFeats.getAll(undefined, {
+				copy: true,
+			});
 
 			// Put fake fid on cached feats
 			let maxFid = 0;

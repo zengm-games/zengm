@@ -36,7 +36,7 @@ const getPlayerInfo = async (
 	{ pid, tid, name }: AllStarPlayer,
 	season: number,
 ) => {
-	const p = await idb.getCopy.players({ pid }, "noCopyCache");
+	const p = await idb.merged.players.get(pid);
 	if (!p) {
 		// Can happen if player was deleted before starting sim
 		return;

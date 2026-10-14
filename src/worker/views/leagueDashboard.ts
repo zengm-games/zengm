@@ -13,12 +13,7 @@ import { getNumericStat } from "../../common/statValue.ts";
 
 const updateInbox = async ({ updateEvents }: ViewArgs) => {
 	if (updateEvents.has("firstRun") || updateEvents.has("newPhase")) {
-		const messages = await idb.getCopies.messages(
-			{
-				limit: 2,
-			},
-			"noCopyCache",
-		);
+		const messages = await idb.merged.messages.getAll({ limit: 2 });
 		messages.reverse();
 		return {
 			messages: messages.map((message) => ({
@@ -400,8 +395,8 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 		(updateEvents.has("newPhase") &&
 			(g.get("phase") === PHASE.PLAYOFFS || g.get("phase") === PHASE.PRESEASON))
 	) {
-		const playoffSeries = await idb.getCopy.playoffSeries({
-			season: g.get("season"),
+		const playoffSeries = await idb.merged.playoffSeries.get(g.get("season"), {
+			copy: true,
 		});
 		let foundSeries;
 		let seriesTitle = "";
@@ -600,18 +595,20 @@ const updateNewsFeed = async ({ updateEvents }: ViewArgs) => {
 		const NUM_EVENTS = 8;
 
 		// Load all events from this season, and last season too if more are needed
-		const eventsAll = await idb.getCopies.events({
-			season: g.get("season"),
-		});
+		const eventsAll = await idb.merged.events.getAll(
+			{ season: g.get("season") },
+			{ copy: true },
+		);
 		eventsAll.reverse();
 
 		const events = await processEvents(eventsAll, {
 			limit: NUM_EVENTS,
 		});
 		if (events.length < NUM_EVENTS) {
-			const eventsAll2 = await idb.getCopies.events({
-				season: g.get("season") - 1,
-			});
+			const eventsAll2 = await idb.merged.events.getAll(
+				{ season: g.get("season") - 1 },
+				{ copy: true },
+			);
 			eventsAll2.reverse();
 			const events2 = await processEvents(eventsAll2, {
 				limit: NUM_EVENTS - events.length,

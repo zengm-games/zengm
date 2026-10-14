@@ -114,7 +114,7 @@ class AbbrevsCache {
 				seasonTemp >= this.minSafeSeason ? seasonTemp : this.minSafeSeason;
 
 			if (bulkFetch) {
-				const rows = await idb.getCopies.teamSeasons({ season }, "noCopyCache");
+				const rows = await idb.merged.teamSeasons.getAll({ season });
 				for (const row of rows) {
 					if (abbrevsByTid.has(row.tid)) {
 						this.saveAbbrev(abbrevsByTid, row.tid, row.abbrev);
@@ -130,10 +130,7 @@ class AbbrevsCache {
 						this.saveAbbrev(abbrevsByTid, tid, undefined);
 					}
 				} else {
-					const row = await idb.getCopy.teamSeasons(
-						{ season, tid },
-						"noCopyCache",
-					);
+					const row = await idb.merged.teamSeasons.getByTidSeason(tid, season);
 					this.saveAbbrev(abbrevsByTid, tid, row?.abbrev);
 				}
 			}

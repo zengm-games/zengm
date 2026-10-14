@@ -2,7 +2,7 @@ import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 
 const percentageDraftPicksSigned = async () => {
-	const players = await idb.getCopies.players(undefined, "noCopyCache");
+	const players = await idb.merged.players.getAll();
 
 	const counts: {
 		[key: string]: {

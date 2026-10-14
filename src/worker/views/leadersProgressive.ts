@@ -78,9 +78,7 @@ export default defineView({
 			}));
 
 			for (const row of allLeaders) {
-				const awards = await idb.getCopy.awards({
-					season: row.season,
-				});
+				const awards = await idb.merged.awards.get(row.season, { copy: true });
 				if (awards) {
 					row.linkSeason = true;
 				}

@@ -519,10 +519,7 @@ export const processAwards = async ({
 						};
 					});
 				} else if (typeof baseAward.statRange === "number") {
-					const playoffSeries = await idb.getCopy.playoffSeries(
-						{ season },
-						"noCopyCache",
-					);
+					const playoffSeries = await idb.merged.playoffSeries.get(season);
 					const roundSeries =
 						playoffSeries?.series.at(baseAward.statRange) ?? [];
 					expandedAwards = roundSeries

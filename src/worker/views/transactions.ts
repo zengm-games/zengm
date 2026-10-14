@@ -51,14 +51,9 @@ export default defineView({
 			let events;
 
 			if (inputs.season === "all") {
-				events = await idb.getCopies.events(undefined, "noCopyCache");
+				events = await idb.merged.events.getAll();
 			} else {
-				events = await idb.getCopies.events(
-					{
-						season: inputs.season,
-					},
-					"noCopyCache",
-				);
+				events = await idb.merged.events.getAll({ season: inputs.season });
 			}
 
 			events.reverse(); // Newest first

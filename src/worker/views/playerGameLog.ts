@@ -58,7 +58,7 @@ export default defineView({
 				new Set(Object.values(PLAYER_GAME_STATS).flatMap((x) => x.stats)),
 			);
 
-			const games = await idb.getCopies.games({ season }, "noCopyCache");
+			const games = await idb.merged.games.getAll({ season });
 
 			const abbrevsByTid: Record<number, string> = {};
 			const getAbbrev = async (tid: number) => {

@@ -446,10 +446,7 @@ export class GamesPlayedCache {
 			// In the playoffs, if we're in the first round or later (not the play-in), set the number of games to the minimum number of games to win a first round series (or the number of games so far). That way you won't see someone who played like 1 game in the play-in tournament leading in points per game after the entire playoffs.
 			let minGpPlayoffs = 0;
 			if (playoffs) {
-				const playoffSeries = await idb.getCopy.playoffSeries(
-					{ season },
-					"noCopyCache",
-				);
+				const playoffSeries = await idb.merged.playoffSeries.get(season);
 
 				// This only matters if there is a play-in tournament
 				if (playoffSeries?.playIns) {
@@ -594,7 +591,7 @@ export const iterateAllPlayersWithStats = async (
 		return;
 	}
 
-	// This is similar to activeSeason from getCopies.players
+	// This is similar to activeSeason from idb.merged.players
 	const index = idb.league
 		.transaction("players")
 		.store.index("draft.year, retiredYear");

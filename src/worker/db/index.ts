@@ -4,6 +4,7 @@ import connectLeague, { type LeagueDB } from "./connectLeague.ts";
 import connectMeta from "./connectMeta.ts";
 import * as getCopies from "./getCopies/index.ts";
 import * as getCopy from "./getCopy/index.ts";
+import * as merged from "./merged/index.ts";
 import { SafeIdb } from "./SafeIdb.ts";
 
 const idb = {
@@ -12,6 +13,7 @@ const idb = {
 	getCopy,
 	// @ts-expect-error
 	league: undefined as IDBPDatabase<LeagueDB>,
+	merged,
 	meta: new SafeIdb(connectMeta),
 };
 

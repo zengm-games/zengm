@@ -103,12 +103,9 @@ export default defineView({
 				Infinity,
 			]);
 		} else {
-			playersAll = await idb.getCopies.players(
-				{
-					draftYear: inputs.season,
-				},
-				"noCopyCache",
-			);
+			playersAll = await idb.merged.players.getAll({
+				draftYear: inputs.season,
+			});
 		}
 
 		playersAll = playersAll.filter((p) => {

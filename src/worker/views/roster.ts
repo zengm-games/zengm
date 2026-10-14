@@ -329,13 +329,10 @@ export default defineView({
 				}
 			} else {
 				// Show all players with stats for the given team and year
-				const playersAll = await idb.getCopies.players(
-					{
-						activeSeason: inputs.season,
-						statsTid: inputs.tid,
-					},
-					"noCopyCache",
-				);
+				const playersAll = await idb.merged.players.getAll({
+					activeSeason: inputs.season,
+					statsTid: inputs.tid,
+				});
 				players = await idb.getCopies.playersPlus(playersAll, {
 					attrs,
 					ratings,
@@ -358,10 +355,11 @@ export default defineView({
 					p.canRelease = false;
 				}
 
-				const teamSeason = await idb.getCopy.teamSeasons({
-					season: inputs.season,
-					tid: inputs.tid,
-				});
+				const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
+					inputs.tid,
+					inputs.season,
+					{ copy: true },
+				);
 
 				// >0 check handles old leagues that might have it undefined, and real players leagues that have a dummy negative value
 				if (teamSeason && teamSeason.payrollEndOfSeason > 0) {

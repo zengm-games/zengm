@@ -19,24 +19,22 @@ export const setLiveSimRatingsStatsPopoverPlayers = async (
 		}
 	}
 
-	const players = (await idb.getCopies.players({ pids }, "noCopyCache")).map(
-		(p) => {
-			let stats: typeof p.stats = [];
-			const currentStats = p.stats.at(-1);
-			if (currentStats) {
-				// Rather than cloning the entire object, just clone the part that we care about remaining constant (current stats row, and also ratings in case of injury)
-				stats = [...p.stats.slice(0, -1), helpers.deepCopy(currentStats)];
-			} else {
-				stats = [];
-			}
+	const players = (await idb.merged.players.getAll({ pids })).map((p) => {
+		let stats: typeof p.stats = [];
+		const currentStats = p.stats.at(-1);
+		if (currentStats) {
+			// Rather than cloning the entire object, just clone the part that we care about remaining constant (current stats row, and also ratings in case of injury)
+			stats = [...p.stats.slice(0, -1), helpers.deepCopy(currentStats)];
+		} else {
+			stats = [];
+		}
 
-			return {
-				...p,
-				ratings: [...p.ratings] as NonEmptyArray<MinimalPlayerRatings>,
-				stats,
-			};
-		},
-	);
+		return {
+			...p,
+			ratings: [...p.ratings] as NonEmptyArray<MinimalPlayerRatings>,
+			stats,
+		};
+	});
 
 	local.liveSimRatingsStatsPopoverPlayers = {};
 	for (const p of players) {

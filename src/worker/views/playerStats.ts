@@ -130,12 +130,10 @@ export default defineView({
 					Infinity,
 				]);
 			} else {
-				playersAll = await idb.getCopies.players(
-					{
-						activeSeason:
-							typeof inputs.season === "number" ? inputs.season : undefined,
-					},
-					"noCopyCache",
+				playersAll = await idb.merged.players.getAll(
+					typeof inputs.season === "number"
+						? { activeSeason: inputs.season }
+						: undefined,
 				);
 			}
 

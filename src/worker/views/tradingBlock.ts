@@ -59,12 +59,9 @@ export default defineView({
 				}),
 			);
 
-			const userPicks = await idb.getCopies.draftPicks(
-				{
-					tid: g.get("userTid"),
-				},
-				"noCopyCache",
-			);
+			const userPicks = await idb.merged.draftPicks.getAll({
+				tid: g.get("userTid"),
+			});
 
 			const userPicks2 = await Promise.all(
 				userPicks.map(async (dp) => {

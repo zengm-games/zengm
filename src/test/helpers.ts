@@ -7,20 +7,28 @@ import {
 } from "../common/defaultGameAttributes.ts";
 
 export const mockIDBLeague = (): any => {
+	// Like an empty database
+	const queries = {
+		get() {
+			return undefined;
+		},
+		getAll() {
+			return [];
+		},
+		async *iterate() {},
+		async *[Symbol.asyncIterator]() {},
+	};
+
 	const store = {
+		...queries,
 		index() {
-			return {
-				getAll() {
-					return [];
-				},
-			};
+			return queries;
 		},
 	};
 
 	const league = {
-		getAll() {
-			return [];
-		},
+		get: queries.get,
+		getAll: queries.getAll,
 		transaction() {
 			return {
 				store,

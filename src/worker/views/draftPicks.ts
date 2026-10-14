@@ -101,10 +101,10 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 		// Extra filter at the end is for TypeScript
 		const events = (
-			await idb.getCopies.events({
-				dpid: dp.dpid,
-				filter: (event) => event.type === "trade",
-			})
+			await idb.merged.events.getAll(
+				{ dpid: dp.dpid },
+				{ copy: true, filter: (event) => event.type === "trade" },
+			)
 		).filter((row) => row.type === "trade");
 
 		let trades;

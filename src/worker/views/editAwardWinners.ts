@@ -21,21 +21,11 @@ export default defineView({
 			}
 
 			let season = inputs.season;
-			let awards = await idb.getCopy.awards(
-				{
-					season,
-				},
-				"noCopyCache",
-			);
+			let awards = await idb.merged.awards.get(season);
 			if (!awards) {
 				if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
 					season -= 1;
-					awards = await idb.getCopy.awards(
-						{
-							season,
-						},
-						"noCopyCache",
-					);
+					awards = await idb.merged.awards.get(season);
 				}
 			}
 

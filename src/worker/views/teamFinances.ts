@@ -93,9 +93,10 @@ export default defineView({
 				salariesSeasons.push(season + i);
 			}
 
-			const teamSeasons = await idb.getCopies.teamSeasons({
-				tid: inputs.tid,
-			});
+			const teamSeasons = await idb.merged.teamSeasons.getAll(
+				{ tid: inputs.tid },
+				{ copy: true },
+			);
 			teamSeasons.reverse(); // Most recent season first
 
 			// Add in luxuryTaxShare if it's missing

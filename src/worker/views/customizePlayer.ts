@@ -101,9 +101,7 @@ export default defineView({
 				p.imgURL = "http://";
 			} else {
 				// Load a player to edit
-				const p2 = await idb.getCopy.players({
-					pid: inputs.pid,
-				});
+				const p2 = await idb.merged.players.get(inputs.pid, { copy: true });
 
 				if (!p2) {
 					// https://stackoverflow.com/a/59923262/786644
@@ -151,10 +149,7 @@ export default defineView({
 
 			for (const relative of p.relatives) {
 				if (!pids.has(relative.pid)) {
-					const pRelative = await idb.getCopy.players(
-						{ pid: relative.pid },
-						"noCopyCache",
-					);
+					const pRelative = await idb.merged.players.get(relative.pid);
 					if (pRelative) {
 						currentPlayers.push(pRelative);
 					}

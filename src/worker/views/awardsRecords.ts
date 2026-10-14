@@ -176,7 +176,7 @@ export default defineView({
 	load: async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
 		let awardTypes: AwardType[];
 		if (!prevOutput.awardTypes) {
-			const awards = await idb.getCopies.awards(undefined, "noCopyCache");
+			const awards = await idb.merged.awards.getAll();
 			awards.reverse();
 			awardTypes = [];
 
@@ -213,12 +213,9 @@ export default defineView({
 			updateEvents.has("firstRun") ||
 			inputs.awardType !== prevInputs?.awardType
 		) {
-			const playersAll = await idb.getCopies.players(
-				{
-					activeAndRetired: true,
-					filter: (p) => p.awards.length > 0,
-				},
-				"noCopyCache",
+			const playersAll = await idb.merged.players.getAll(
+				{ activeAndRetired: true },
+				{ filter: (p) => p.awards.length > 0 },
 			);
 			const players: LocalPlayer[] = await idb.getCopies.playersPlus(
 				playersAll,

@@ -180,12 +180,8 @@ export default defineView({
 				season < g.get("season") ||
 				(season === g.get("season") && g.get("phase") >= PHASE.DRAFT_LOTTERY)
 			) {
-				const draftLotteryResult = await idb.getCopy.draftLotteryResults(
-					{
-						season,
-					},
-					"noCopyCache",
-				);
+				const draftLotteryResult =
+					await idb.merged.draftLotteryResults.get(season);
 
 				let draftPicks;
 				if (season === g.get("season") && g.get("phase") === PHASE.DRAFT) {

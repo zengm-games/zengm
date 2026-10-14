@@ -250,12 +250,9 @@ export default defineView({
 				throw new Error("Invalid team ID number");
 			}
 
-			const teamSeasons = await idb.getCopies.teamSeasons(
-				{
-					tid: inputs.tid,
-				},
-				"noCopyCache",
-			);
+			const teamSeasons = await idb.merged.teamSeasons.getAll({
+				tid: inputs.tid,
+			});
 
 			const retiredJerseyNumbers = await Promise.all(
 				(t.retiredJerseyNumbers ?? []).map(async (row) => {
@@ -271,10 +268,7 @@ export default defineView({
 					let pos;
 					let lastSeasonWithTeam = -Infinity;
 					if (row.pid !== undefined) {
-						const p = await idb.getCopy.players(
-							{ pid: row.pid },
-							"noCopyCache",
-						);
+						const p = await idb.merged.players.get(row.pid);
 						if (p) {
 							firstName = p.firstName;
 							lastName = p.lastName;
@@ -313,9 +307,10 @@ export default defineView({
 				Record<string, number[]>
 			>();
 			const players = (
-				await idb.getCopies.players({
-					statsTid: inputs.tid,
-				})
+				await idb.merged.players.getAll(
+					{ statsTid: inputs.tid },
+					{ copy: true },
+				)
 			).map((p) => {
 				const stats = p.stats.filter((row) => row.tid === inputs.tid);
 				const retirableJerseyNumbers: Record<string, number[]> = {};

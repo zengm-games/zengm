@@ -37,12 +37,7 @@ export default defineView({
 				football: ["keyStats", "av"],
 				hockey: ["keyStats", "ops", "dps", "ps"],
 			} as const);
-			const playersAll = await idb.getCopies.players(
-				{
-					hof: true,
-				},
-				"noCopyCache",
-			);
+			const playersAll = await idb.merged.players.getAll({ hof: true });
 			const players = (
 				await idb.getCopies.playersPlus(playersAll, {
 					attrs: [

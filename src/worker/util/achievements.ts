@@ -137,13 +137,10 @@ const trustTheProcessCutoff = bySport({
 });
 
 const checkDynasty = async (titles: number, years: number) => {
-	const teamSeasons = await idb.getCopies.teamSeasons(
-		{
-			tid: g.get("userTid"),
-			seasons: [g.get("season") - (years - 1), Infinity],
-		},
-		"noCopyCache",
-	);
+	const teamSeasons = await idb.merged.teamSeasons.getAll({
+		tid: g.get("userTid"),
+		seasons: [g.get("season") - (years - 1), Infinity],
+	});
 
 	let titlesFound = 0;
 	for (let i = 0; i < years; i++) {
@@ -363,12 +360,9 @@ const checkAroundTheWorld = async (target: number) => {
 	) {
 		const tid = g.get("userTid", season);
 		if (tid >= 0) {
-			const teamSeason = await idb.getCopy.teamSeasons(
-				{
-					tid,
-					season,
-				},
-				"noCopyCache",
+			const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
+				tid,
+				season,
 			);
 			if (
 				teamSeason?.playoffRoundsWon ===
@@ -393,12 +387,7 @@ const checkAroundTheWorld = async (target: number) => {
 };
 
 const getUserSeed = async () => {
-	const playoffSeries = await idb.getCopy.playoffSeries(
-		{
-			season: g.get("season"),
-		},
-		"noCopyCache",
-	);
+	const playoffSeries = await idb.merged.playoffSeries.get(g.get("season"));
 
 	if (!playoffSeries || playoffSeries.series.length === 0) {
 		return;
@@ -417,12 +406,7 @@ const getUserSeed = async () => {
 
 const checkSevenGameFinals = async () => {
 	// Confirm 4-3 finals
-	const playoffSeries = await idb.getCopy.playoffSeries(
-		{
-			season: g.get("season"),
-		},
-		"noCopyCache",
-	);
+	const playoffSeries = await idb.merged.playoffSeries.get(g.get("season"));
 
 	const matchup = playoffSeries?.series.at(-1)?.[0];
 
@@ -707,13 +691,10 @@ const achievements: Achievement[] = [
 
 			const NUM_SEASONS = 108;
 
-			const teamSeasons = await idb.getCopies.teamSeasons(
-				{
-					tid: g.get("userTid"),
-					seasons: [g.get("season") - NUM_SEASONS, g.get("season") - 1],
-				},
-				"noCopyCache",
-			);
+			const teamSeasons = await idb.merged.teamSeasons.getAll({
+				tid: g.get("userTid"),
+				seasons: [g.get("season") - NUM_SEASONS, g.get("season") - 1],
+			});
 
 			if (teamSeasons.length < NUM_SEASONS) {
 				// Not enough seasons played
@@ -904,13 +885,10 @@ const achievements: Achievement[] = [
 		category: "Playoffs",
 
 		async check() {
-			const teamSeasons = await idb.getCopies.teamSeasons(
-				{
-					tid: g.get("userTid"),
-					seasons: [g.get("season") - 3, g.get("season")],
-				},
-				"noCopyCache",
-			);
+			const teamSeasons = await idb.merged.teamSeasons.getAll({
+				tid: g.get("userTid"),
+				seasons: [g.get("season") - 3, g.get("season")],
+			});
 			let count = 0;
 
 			for (const teamSeason of teamSeasons) {

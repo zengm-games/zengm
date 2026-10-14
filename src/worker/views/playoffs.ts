@@ -90,8 +90,8 @@ export default defineView({
 			let series: PlayoffSeries["series"];
 			let playIns: PlayoffSeries["playIns"];
 
-			const playoffSeries = await idb.getCopy.playoffSeries({
-				season: inputs.season,
+			const playoffSeries = await idb.merged.playoffSeries.get(inputs.season, {
+				copy: true,
 			});
 
 			if (playoffSeries) {

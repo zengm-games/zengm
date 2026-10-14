@@ -44,12 +44,7 @@ export default defineView({
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		} as const);
-		const playersAll2 = await idb.getCopies.players(
-			{
-				filter,
-			},
-			"noCopyCache",
-		);
+		const playersAll2 = await idb.merged.players.getAll(undefined, { filter });
 		const playersAll = await idb.getCopies.playersPlus(playersAll2, {
 			attrs: [
 				"tid",
@@ -81,11 +76,8 @@ export default defineView({
 			let lotteryChange: number | undefined;
 			let lotteryProb: number | undefined;
 			if (p.draft.round === 1) {
-				const draftLottery = await idb.getCopy.draftLotteryResults(
-					{
-						season: p.draft.year,
-					},
-					"noCopyCache",
+				const draftLottery = await idb.merged.draftLotteryResults.get(
+					p.draft.year,
 				);
 				if (draftLottery) {
 					const lotteryRowIndex = draftLottery.result.findIndex(

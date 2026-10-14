@@ -44,13 +44,14 @@ export default defineView({
 			g.get("season") === inputs.season;
 
 		const playersRaw = showActualFreeAgents
-			? await idb.getCopies.players({
-					tid: PLAYER.FREE_AGENT,
-				})
-			: await idb.getCopies.players({
-					tid: [0, Infinity],
-					filter: (p) => p.contract.exp === inputs.season,
-				});
+			? await idb.merged.players.getAll(
+					{ tid: PLAYER.FREE_AGENT },
+					{ copy: true },
+				)
+			: await idb.merged.players.getAll(
+					{ tid: [0, Infinity] },
+					{ copy: true, filter: (p) => p.contract.exp === inputs.season },
+				);
 		const playersRawByPid = groupByUnique(playersRaw, "pid");
 
 		const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {

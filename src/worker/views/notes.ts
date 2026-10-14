@@ -36,10 +36,9 @@ export default defineView({
 			type !== prevInputs?.type
 		) {
 			if (type === "draftPick") {
-				const draftPicksRaw = await idb.getCopies.draftPicks(
-					{ note: true },
-					"noCopyCache",
-				);
+				const draftPicksRaw = await idb.merged.draftPicks.getAll({
+					note: true,
+				});
 
 				const draftPicks = await processDraftPicks(draftPicksRaw);
 
@@ -48,10 +47,7 @@ export default defineView({
 					draftPicks,
 				};
 			} else if (type === "game") {
-				const gamesRaw = await idb.getCopies.games(
-					{ note: true },
-					"noCopyCache",
-				);
+				const gamesRaw = await idb.merged.games.getAll({ note: true });
 
 				const teamInfoCache: Record<string, { abbrev: string } | undefined> =
 					{};
@@ -96,10 +92,7 @@ export default defineView({
 					games,
 				};
 			} else if (type === "player") {
-				const playersRaw = await idb.getCopies.players(
-					{ note: true },
-					"noCopyCache",
-				);
+				const playersRaw = await idb.merged.players.getAll({ note: true });
 
 				const playoffs = "regularSeason" as const;
 				const statType = bySport<PlayerStatType>({
@@ -122,10 +115,7 @@ export default defineView({
 					stats,
 				};
 			} else if (type === "teamSeason") {
-				const teamSeasons = await idb.getCopies.teamSeasons(
-					{ note: true },
-					"noCopyCache",
-				);
+				const teamSeasons = await idb.merged.teamSeasons.getAll({ note: true });
 
 				const pointsFormula = g.get("pointsFormula");
 				const usePts = pointsFormula !== "";

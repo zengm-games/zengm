@@ -1,6 +1,6 @@
 import fastDeepEqual from "fast-deep-equal";
 import { PHASE_TEXT, PLAYER } from "../../common/constants.ts";
-import { groupByUnique } from "../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../common/utils.ts";
 import {
 	getScheduledEventPhases,
 	getTeamsBeforeScheduledEvent,
@@ -307,7 +307,7 @@ const validate = async (
 		const { pid } = event.info;
 
 		// No check for if the player is currently retired, because that could change before this event happens
-		const p = await idb.getCopy.players({ pid }, "noCopyCache");
+		const p = await idb.merged.players.get(pid);
 		if (!p) {
 			return "Player not found.";
 		}
@@ -381,14 +381,14 @@ const save = async (
 
 // Run after anything that deletes or changes scheduled events without going through the functions below
 export const normalizeScheduledEventsAfterChange = async () => {
-	const stored = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const stored = await idb.merged.scheduledEvents.getAll();
 	const { events: normalized } = await normalize(stored);
 	await save(normalized, stored);
 };
 
 // Call this after deleting scheduled events. `before` is a copy of all the scheduled events from before anything was deleted. Returns the key for undoing it, or undefined if nothing changed.
 export const addScheduledEventsUndo = async (before: ScheduledEvent[]) => {
-	const after = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const after = await idb.merged.scheduledEvents.getAll();
 	const afterById = groupByUnique(after, "id");
 
 	// Events that were deleted or changed, including ones changed as a side effect. `after` is undefined for a deleted event.
@@ -411,10 +411,7 @@ export const addScheduledEventsUndo = async (before: ScheduledEvent[]) => {
 	}
 
 	return local.undoLog.add(async () => {
-		const stored = await idb.getCopies.scheduledEvents(
-			undefined,
-			"noCopyCache",
-		);
+		const stored = await idb.merged.scheduledEvents.getAll();
 		const storedById = groupByUnique(stored, "id");
 
 		// If something else changed one of these events since then, restoring it would overwrite that change
@@ -450,7 +447,7 @@ export const deleteScheduledEvent = async ({
 	dryRun: boolean;
 	id: number;
 }) => {
-	const stored = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const stored = await idb.merged.scheduledEvents.getAll();
 	const events = stored.filter((event) => event.id !== id);
 
 	const { changes, events: normalized } = await normalize(events);
@@ -483,7 +480,7 @@ export const upsertScheduledEvent = async ({
 			changes: string[];
 	  }
 > => {
-	const stored = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const stored = await idb.merged.scheduledEvents.getAll();
 
 	const error = await validate(event, stored);
 	if (error !== undefined) {
@@ -515,18 +512,12 @@ export const upsertScheduledEvent = async ({
 
 // Too many to send to the UI every time the scheduled events page loads
 export const getPlayersForScheduledEvents = async () => {
-	const players = await idb.getCopies.players(undefined, "noCopyCache");
-
 	const teamInfoCache = g.get("teamInfoCache");
 
-	return players
-		.filter((p) => p.diedYear === undefined)
-		.sort(
-			(a, b) =>
-				a.lastName.localeCompare(b.lastName) ||
-				a.firstName.localeCompare(b.firstName),
-		)
-		.map((p) => {
+	// Only keep what's needed from each player, because reading every player object into memory at once is too much for large leagues
+	const players = await idb.merged.players.getAll(undefined, {
+		filter: (p) => p.diedYear === undefined,
+		map: (p) => {
 			let info;
 			if (p.tid === PLAYER.RETIRED) {
 				info = `retired ${p.retiredYear}`;
@@ -540,8 +531,18 @@ export const getPlayersForScheduledEvents = async () => {
 
 			return {
 				pid: p.pid,
-				name: `${p.firstName} ${p.lastName}`,
+				firstName: p.firstName,
+				lastName: p.lastName,
 				info,
 			};
-		});
+		},
+	});
+
+	return orderBy(players, ["lastName", "firstName"]).map((p) => {
+		return {
+			pid: p.pid,
+			name: `${p.firstName} ${p.lastName}`,
+			info: p.info,
+		};
+	});
 };

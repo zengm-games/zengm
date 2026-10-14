@@ -18,16 +18,13 @@ export default defineView({
 			updateEvents.has("team")
 		) {
 			const scheduledEvents = sortScheduledEvents(
-				await idb.getCopies.scheduledEvents(undefined, "noCopyCache"),
+				await idb.merged.scheduledEvents.getAll(),
 			);
 
 			const augmented = [];
 			for (const event of scheduledEvents) {
 				if (event.type === "retirePlayer" || event.type === "unretirePlayer") {
-					const p = await idb.getCopy.players(
-						{ pid: event.info.pid },
-						"noCopyCache",
-					);
+					const p = await idb.merged.players.get(event.info.pid);
 					if (p) {
 						augmented.push({
 							id: event.id,

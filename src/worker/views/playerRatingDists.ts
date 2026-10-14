@@ -26,12 +26,9 @@ export default defineView({
 					Infinity,
 				]);
 			} else {
-				playersRaw = await idb.getCopies.players(
-					{
-						activeSeason: inputs.season,
-					},
-					"noCopyCache",
-				);
+				playersRaw = await idb.merged.players.getAll({
+					activeSeason: inputs.season,
+				});
 			}
 
 			const extraRatings = bySport({

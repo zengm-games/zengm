@@ -109,12 +109,7 @@ export default defineView({
 			inputs.statType !== prevInputs?.statType ||
 			inputs.playoffs !== prevInputs?.playoffs
 		) {
-			const playersAll = await idb.getCopies.players(
-				{
-					watch: true,
-				},
-				"noCopyCache",
-			);
+			const playersAll = await idb.merged.players.getAll({ watch: true });
 
 			const { players, stats } = await formatPlayersWatchList(
 				playersAll,

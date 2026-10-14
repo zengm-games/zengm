@@ -115,10 +115,7 @@ const addNewTeamToExistingLeague = async (
 	// Manually adding a new team can mess with scheduled events, because they are indexed on tid. Let's try to adjust them.
 	if (!fromScheduledEvent && !prevT) {
 		// This means a new team was added, with a newly generated tid. Increment tids in future scheduled events to account for this
-		const scheduledEvents = await idb.getCopies.scheduledEvents(
-			undefined,
-			"noCopyCache",
-		);
+		const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 		for (const scheduledEvent of scheduledEvents) {
 			if (scheduledEvent.season < g.get("season")) {
 				await idb.cache.scheduledEvents.delete(scheduledEvent.id);

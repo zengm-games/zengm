@@ -38,10 +38,7 @@ const INFLATION_GAME_ATTRIBUTES = [
 ] as const;
 
 const upcomingScheduledEventBlocksInflation = async () => {
-	const scheduledEvents = await idb.getCopies.scheduledEvents(
-		undefined,
-		"noCopyCache",
-	);
+	const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 	return scheduledEvents.some((event) => {
 		if (event.type === "gameAttributes") {
 			for (const key of INFLATION_GAME_ATTRIBUTES) {

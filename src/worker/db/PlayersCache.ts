@@ -11,7 +11,7 @@ export class PlayersCache {
 			return p;
 		}
 
-		const p2 = await idb.getCopy.players({ pid }, "noCopyCache");
+		const p2 = await idb.merged.players.get(pid);
 		if (p2) {
 			this.cache.set(pid, p2);
 			return p2;

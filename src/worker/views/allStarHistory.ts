@@ -84,7 +84,9 @@ export default defineView({
 	id: "allStarHistory",
 	load: async ({ updateEvents }) => {
 		if (updateEvents.has("firstRun") || updateEvents.has("gameSim")) {
-			const allAllStars = await idb.getCopies.allStars();
+			const allAllStars = await idb.merged.allStars.getAll(undefined, {
+				copy: true,
+			});
 			return {
 				allAllStars: augment(allAllStars),
 			};

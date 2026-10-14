@@ -62,12 +62,7 @@ export default defineView({
 			inputs.cid !== prevInputs?.cid
 		) {
 			const process = async (inputsDayOverride?: number) => {
-				const games = await idb.getCopies.games(
-					{
-						season: inputs.season,
-					},
-					"noCopyCache",
-				);
+				const games = await idb.merged.games.getAll({ season: inputs.season });
 
 				const daysAndPlayoffs = new Map<number, boolean>();
 				for (const game of games) {
@@ -209,10 +204,11 @@ export default defineView({
 						completed[i] = { ...game };
 
 						for (const t of game.teams) {
-							const teamSeason = await idb.getCopy.teamSeasons({
-								season: game.season,
-								tid: t.tid,
-							});
+							const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
+								t.tid,
+								game.season,
+								{ copy: true },
+							);
 
 							if (teamSeason) {
 								t.branding = {

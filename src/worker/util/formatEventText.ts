@@ -187,7 +187,7 @@ export const formatEventText = async (event: EventBBGM) => {
 				])}">${teamInfo.name}</a>`
 			: "???";
 
-		const p = await idb.getCopy.players({ pid: event.pids[0] }, "noCopyCache");
+		const p = await idb.merged.players.get(event.pids[0]);
 		const playerName = p
 			? `<a href="${helpers.leagueUrl([
 					"player",
@@ -217,7 +217,7 @@ export const formatEventText = async (event: EventBBGM) => {
 			);
 		}
 
-		const p = await idb.getCopy.players({ pid: event.pids[0] }, "noCopyCache");
+		const p = await idb.merged.players.get(event.pids[0]);
 		const playerName = p
 			? `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
 					p.lastName

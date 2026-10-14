@@ -95,12 +95,9 @@ export default defineView({
 			"playersByTid",
 			g.get("userTid"),
 		);
-		const userPicks = await idb.getCopies.draftPicks(
-			{
-				tid: g.get("userTid"),
-			},
-			"noCopyCache",
-		);
+		const userPicks = await idb.merged.draftPicks.getAll({
+			tid: g.get("userTid"),
+		});
 		const attrs = [
 			"pid",
 			"firstName",
@@ -155,12 +152,7 @@ export default defineView({
 			"playersByTid",
 			otherTid,
 		);
-		const otherPicks = await idb.getCopies.draftPicks(
-			{
-				tid: otherTid,
-			},
-			"noCopyCache",
-		);
+		const otherPicks = await idb.merged.draftPicks.getAll({ tid: otherTid });
 		const t = await idb.getCopy.teamsPlus(
 			{
 				tid: otherTid,

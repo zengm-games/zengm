@@ -28,12 +28,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 
 	const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
 	for (const t of teams) {
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				tid: t.tid,
-			},
-			"noCopyCache",
-		);
+		const teamSeasons = await idb.merged.teamSeasons.getAll({ tid: t.tid });
 
 		const historyTotal = getHistoryTeam(teamSeasons, playoffsByConfBySeason);
 		const historyUser = getHistoryTeam(
@@ -43,12 +38,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 			playoffsByConfBySeason,
 		);
 
-		const draftPicksRaw = await idb.getCopies.draftPicks(
-			{
-				tid: t.tid,
-			},
-			"noCopyCache",
-		);
+		const draftPicksRaw = await idb.merged.draftPicks.getAll({ tid: t.tid });
 
 		const draftPicks = await Promise.all(
 			draftPicksRaw.map(async (dp) => {

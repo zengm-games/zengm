@@ -61,12 +61,7 @@ const getRelatives = async (
 	const pids = p.relatives
 		.filter((rel) => rel.type === type)
 		.map((rel) => rel.pid);
-	const players = await idb.getCopies.players(
-		{
-			pids,
-		},
-		"noCopyCache",
-	);
+	const players = await idb.merged.players.getAll({ pids });
 
 	return players.filter((p2) => !!p2);
 };
@@ -182,12 +177,7 @@ export const makeSon = async (p: Player) => {
 	);
 	const draftYear = p.draft.year - randInt(21, maxYearsAgo);
 	const possibleFathers = (
-		await idb.getCopies.players(
-			{
-				draftYear,
-			},
-			"noCopyCache",
-		)
+		await idb.merged.players.getAll({ draftYear })
 	).filter(
 		(father) =>
 			typeof father.diedYear !== "number" || father.diedYear >= p.born.year,
@@ -304,12 +294,7 @@ export const makeBrother = async (p: Player) => {
 	const draftYear = p.draft.year - randInt(0, 5);
 	const existingRelativePids = p.relatives.map((rel) => rel.pid);
 	const possibleBrothers = (
-		await idb.getCopies.players(
-			{
-				draftYear,
-			},
-			"noCopyCache",
-		)
+		await idb.merged.players.getAll({ draftYear })
 	).filter((p2) => {
 		if (p2.pid === p.pid) {
 			return false;

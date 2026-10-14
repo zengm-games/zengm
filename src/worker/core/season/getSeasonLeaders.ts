@@ -84,12 +84,7 @@ const calculateSeasonLeaders = async (
 			Infinity,
 		]);
 	} else {
-		playersRaw = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
+		playersRaw = await idb.merged.players.getAll({ activeSeason: season });
 	}
 
 	const requirements = getLeaderRequirements();

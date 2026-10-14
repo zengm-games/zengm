@@ -15,7 +15,7 @@ const getShortTall = (pids: [number, number]) => {
 
 	return Promise.all(
 		pids.map(async (pid) => {
-			const p = await idb.getCopy.players({ pid }, "noCopyCache");
+			const p = await idb.merged.players.get(pid);
 			if (p) {
 				return {
 					pid: p.pid,
@@ -57,12 +57,9 @@ export default defineView({
 				return returnValue;
 			}
 
-			const playersRaw = await idb.getCopies.players(
-				{
-					pids: dunk.players.map((p) => p.pid),
-				},
-				"noCopyCache",
-			);
+			const playersRaw = await idb.merged.players.getAll({
+				pids: dunk.players.map((p) => p.pid),
+			});
 
 			const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
 				attrs: [

@@ -48,9 +48,7 @@ export default defineView({
 		}
 
 		if (updateEvents.has("firstRun") || prevInputs?.season !== season) {
-			const awards = await idb.getCopy.awards({
-				season,
-			});
+			const awards = await idb.merged.awards.get(season, { copy: true });
 
 			if (!awards) {
 				viewedSeasonSummary(); // Should never happen, but just in case
@@ -244,12 +242,9 @@ export default defineView({
 				teamAwards,
 			};
 
-			const retiredPlayersAll = await idb.getCopies.players(
-				{
-					retiredYear: season,
-				},
-				"noCopyCache",
-			);
+			const retiredPlayersAll = await idb.merged.players.getAll({
+				retiredYear: season,
+			});
 			const retiredStat = bySport({
 				baseball: "war",
 				basketball: "ws",

@@ -38,12 +38,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 	);
 
 	for (const releasedPlayer of releasedPlayers) {
-		const p = await idb.getCopy.players(
-			{
-				pid: releasedPlayer.pid,
-			},
-			"noCopyCache",
-		);
+		const p = await idb.merged.players.get(releasedPlayer.pid);
 
 		if (p) {
 			const { pos, skills } = last(p.ratings);

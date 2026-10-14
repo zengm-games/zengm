@@ -309,8 +309,8 @@ export default defineView({
 			byType !== prevInputs?.byType ||
 			filter !== prevInputs?.filter
 		) {
-			const awards = await idb.getCopies.awards(undefined, "noCopyCache");
-			const allStars = await idb.getCopies.allStars(undefined, "noCopyCache");
+			const awards = await idb.merged.awards.getAll();
+			const allStars = await idb.merged.allStars.getAll();
 
 			// Show newest awards in leftmost columns if we scan in order from most recent
 			awards.reverse();

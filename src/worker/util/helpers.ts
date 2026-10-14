@@ -20,12 +20,7 @@ const augmentSeries = async (
 	}[][],
 	season: number = g.get("season"),
 ) => {
-	const teamSeasons = await idb.getCopies.teamSeasons(
-		{
-			season,
-		},
-		"noCopyCache",
-	);
+	const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 
 	const ties = hasTies(season);
 

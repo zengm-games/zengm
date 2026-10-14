@@ -1,4 +1,4 @@
-import { maybeDeepCopy, mergeByPk } from "./helpers.ts";
+import { getOptions, maybeDeepCopy, mergeByPk } from "./helpers.ts";
 import { team } from "../../core/index.ts";
 import { idb } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -52,20 +52,20 @@ const processSeasonAttrs = async <
 
 	if (season === undefined) {
 		// All seasons
-		seasons = await idb.getCopies.teamSeasons(
+		seasons = await idb.merged.teamSeasons.getAll(
 			{
 				tid: t.tid,
 			},
-			type,
+			getOptions(type),
 		);
 	} else {
 		// Single season, from database
-		seasons = await idb.getCopies.teamSeasons(
+		seasons = await idb.merged.teamSeasons.getAll(
 			{
 				season,
 				tid: t.tid,
 			},
-			type,
+			getOptions(type),
 		);
 	}
 

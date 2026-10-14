@@ -25,7 +25,7 @@ const getPlayoffsByConf = async (
 		if (!isFutureSeason) {
 			const playoffSeries =
 				overrides?.playoffSeries ??
-				(await idb.getCopy.playoffSeries({ season }, "noCopyCache"));
+				(await idb.merged.playoffSeries.get(season));
 			const byConf = playoffSeries?.byConf;
 
 			if (byConf !== undefined) {

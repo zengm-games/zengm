@@ -16,12 +16,9 @@ export default defineView({
 			const NUM_PLAYERS_TO_SHOW = 10;
 			const NUM_TEAMS_TO_SHOW = 5;
 
-			const playersRaw = await idb.getCopies.players(
-				{
-					activeSeason: season,
-				},
-				"noCopyCache",
-			);
+			const playersRaw = await idb.merged.players.getAll({
+				activeSeason: season,
+			});
 
 			const prevTeamTidsByPid = new Map<number, number>();
 
@@ -109,18 +106,12 @@ export default defineView({
 				}
 			}
 
-			const teamSeasonsCurrent = await idb.getCopies.teamSeasons(
-				{
-					season,
-				},
-				"noCopyCache",
-			);
-			const teamSeasonsPrev = await idb.getCopies.teamSeasons(
-				{
-					season: season - 1,
-				},
-				"noCopyCache",
-			);
+			const teamSeasonsCurrent = await idb.merged.teamSeasons.getAll({
+				season,
+			});
+			const teamSeasonsPrev = await idb.merged.teamSeasons.getAll({
+				season: season - 1,
+			});
 
 			const playersByTid = Map.groupBy(players, (t) => t.tid);
 

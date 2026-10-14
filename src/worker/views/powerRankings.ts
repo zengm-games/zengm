@@ -78,13 +78,10 @@ export const addPowerRankingsStuffToTeams = async <
 					t.tid,
 				);
 			} else {
-				teamPlayers = await idb.getCopies.players(
-					{
-						activeSeason: season,
-						statsTid: t.tid,
-					},
-					"noCopyCache",
-				);
+				teamPlayers = await idb.merged.players.getAll({
+					activeSeason: season,
+					statsTid: t.tid,
+				});
 			}
 
 			const ratings = [

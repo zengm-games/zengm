@@ -508,12 +508,7 @@ const create = async (conditions: Conditions) => {
 	allStars.type = allStarType;
 
 	if (__SPORT === "basketball") {
-		const lastYear = await idb.getCopy.allStars(
-			{
-				season: g.get("season") - 1,
-			},
-			"noCopyCache",
-		);
+		const lastYear = await idb.merged.allStars.get(g.get("season") - 1);
 		let prevWinnerDunk: number | undefined;
 		if (lastYear?.dunk?.winner !== undefined) {
 			prevWinnerDunk = lastYear.dunk.players[lastYear.dunk.winner]!.pid;

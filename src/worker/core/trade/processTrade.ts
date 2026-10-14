@@ -68,10 +68,7 @@ const processTrade = async (
 			undoInfoTeams[j].numPlayersTradedAway = teamSeason.numPlayersTradedAway;
 		}
 
-		const players = await idb.getCopies.players(
-			{ pids: pids[j] },
-			"noCopyCache",
-		);
+		const players = await idb.merged.players.getAll({ pids: pids[j] });
 		if (players.length !== pids[j].length) {
 			throw new Error("Invalid pid");
 		}
@@ -237,10 +234,7 @@ const processTrade = async (
 		const draftPicks: [DraftPick[], DraftPick[]] = [[], []];
 		for (const i of [0, 1] as const) {
 			const j = i === 0 ? 1 : 0;
-			players[i] = await idb.getCopies.players(
-				{ pids: pids[i] },
-				"noCopyCache",
-			);
+			players[i] = await idb.merged.players.getAll({ pids: pids[i] });
 			if (players[i].length !== pids[i].length) {
 				return false;
 			}

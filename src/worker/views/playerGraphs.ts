@@ -94,11 +94,8 @@ const getPlayerStats = async (
 			Infinity,
 		]);
 	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				activeSeason: typeof season === "number" ? season : undefined,
-			},
-			"noCopyCache",
+		playersAll = await idb.merged.players.getAll(
+			typeof season === "number" ? { activeSeason: season } : undefined,
 		);
 	}
 

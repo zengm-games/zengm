@@ -48,12 +48,9 @@ export default defineView({
 					Infinity,
 				]);
 			} else {
-				players = await idb.getCopies.players(
-					{
-						activeSeason: inputs.season,
-					},
-					"noCopyCache",
-				);
+				players = await idb.merged.players.getAll({
+					activeSeason: inputs.season,
+				});
 			}
 
 			let stats = undefined;

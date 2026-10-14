@@ -82,12 +82,7 @@ export const getStats = async ({
 
 	// For playoffs, fix W/L to be playoff W/L not regular season
 	if (playoffs) {
-		const playoffSeries = await idb.getCopy.playoffSeries(
-			{
-				season,
-			},
-			"noCopyCache",
-		);
+		const playoffSeries = await idb.merged.playoffSeries.get(season);
 
 		if (playoffSeries !== undefined) {
 			// Reset W/L
@@ -136,13 +131,10 @@ export const getStats = async ({
 				if (noDynamicAvgAge) {
 					continue;
 				}
-				playersRaw = await idb.getCopies.players(
-					{
-						activeSeason: season,
-						statsTid: t.tid,
-					},
-					"noCopyCache",
-				);
+				playersRaw = await idb.merged.players.getAll({
+					activeSeason: season,
+					statsTid: t.tid,
+				});
 			}
 
 			const players = await idb.getCopies.playersPlus(playersRaw, {

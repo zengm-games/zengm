@@ -4,7 +4,9 @@ import { defineView } from "../util/defineView.ts";
 export default defineView({
 	id: "inbox",
 	load: async () => {
-		const messages = await idb.getCopies.messages();
+		const messages = await idb.merged.messages.getAll(undefined, {
+			copy: true,
+		});
 		messages.reverse();
 		let anyUnread = false;
 

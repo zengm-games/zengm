@@ -16,7 +16,7 @@ export type MessagesSelector = {
 // Newest to oldest, stopping once enough messages are read. Some messages in the cache might be more recent, but there's no need to read more than this from IndexedDB.
 async function* newestFromDb(limit: number) {
 	// Messages deleted from the cache but not yet from IndexedDB will be skipped, so read extra to make up for them
-	const numToRead = limit + idb.cache._deletes.messages.size;
+	const numToRead = limit + idb.cache.messages.numPendingDeletes();
 
 	let numRead = 0;
 	for await (const cursor of idb.league

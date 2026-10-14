@@ -1,6 +1,6 @@
 import { helpers } from "../../util/index.ts";
 import { storeInfos, type Store } from "../Cache.ts";
-import { idb } from "../../db/index.ts";
+import { cacheStore } from "../merged/engine.ts";
 import type { GetCopyType } from "../../../common/types.ts";
 
 // When "noCopyCache" is passed, that means we promise not to mutate any of these records, so we don't need to deepCopy
@@ -42,7 +42,7 @@ export const mergeByPk = <
 	const output = fromDb
 		.filter((row) => {
 			// Filter out rows if they have been deleted from the cache, but not yet persisted to IndexedDB
-			return !idb.cache._deletes[storeName].has(row[pk]);
+			return !cacheStore(storeName).hasPendingDelete(row[pk]);
 		})
 		.map((row) => {
 			const key = row[pk];

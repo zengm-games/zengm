@@ -395,7 +395,7 @@ for (const [store, { indexes }] of helpers.entries(storeInfos)) {
 	}
 }
 
-class StoreAPI<Input, Output, ID extends string | number> {
+export class StoreAPI<Input, Output, ID extends string | number> {
 	cache: Cache;
 
 	store: Store;
@@ -419,6 +419,15 @@ class StoreAPI<Input, Output, ID extends string | number> {
 
 	getAllByKey(): Promise<Record<ID, Output>> {
 		return this.cache._getAllByKey(this.store);
+	}
+
+	// Pending deletes are records deleted from the cache, but not yet deleted from IndexedDB. They only exist once the cache is filled, so only call these after awaiting another method, like getAll. Unlike the other methods, these are synchronous, so they can be used while reading from IndexedDB.
+	hasPendingDelete(id: ID): boolean {
+		return this.cache._deletes[this.store].has(id);
+	}
+
+	numPendingDeletes(): number {
+		return this.cache._deletes[this.store].size;
 	}
 
 	// Not sure how to type key as ID in some methods below

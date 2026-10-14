@@ -1,11 +1,20 @@
 import { g, helpers } from "../../util/index.ts";
-import { storeInfos, type Store } from "../Cache.ts";
+import { storeInfos, type Store, type StoreAPI } from "../Cache.ts";
 import type { LeagueDB } from "../connectLeague.ts";
 import { idb } from "../index.ts";
 
 export type Row<MyStore extends Store> = LeagueDB[MyStore]["value"];
 
 type Key = number | string;
+
+// TypeScript can't tell that idb.cache[storeName] is the StoreAPI for Row<MyStore> when storeName is generic
+export const cacheStore = <MyStore extends Store>(storeName: MyStore) => {
+	return idb.cache[storeName] as unknown as StoreAPI<
+		unknown,
+		Row<MyStore>,
+		Key
+	>;
+};
 
 // Rows read from IndexedDB, either one at a time from a cursor (like from iterate) or all at once (like from getAll).
 //
@@ -116,13 +125,14 @@ const getAllWithKeys = async <MyStore extends Store, Output>(
 
 	const rows = new Map<number, { row: Row<MyStore>; fromCache: boolean }>();
 
-	const cacheByKey = await idb.cache._getAllByKey(storeName);
+	const store = cacheStore(storeName);
+	const cacheByKey = await store.getAllByKey();
 	const keysForDb = [];
 	for (const key of new Set(keys)) {
 		const row = cacheByKey[key];
 		if (row !== undefined) {
 			rows.set(key, { row, fromCache: true });
-		} else if (!idb.cache._deletes[storeName].has(key)) {
+		} else if (!store.hasPendingDelete(key)) {
 			keysForDb.push(key);
 		}
 	}
@@ -148,13 +158,13 @@ export const get = async <MyStore extends Store>(
 	key: Key,
 	{ copy }: GetOptions = {},
 ): Promise<Row<MyStore> | undefined> => {
-	const row = await idb.cache._get(storeName, key);
+	const store = cacheStore(storeName);
+	const row = await store.get(key);
 	if (row !== undefined) {
 		return copy ? helpers.deepCopy(row) : row;
 	}
 
-	// Deleted from the cache, but not yet deleted from IndexedDB
-	if (idb.cache._deletes[storeName].has(key)) {
+	if (store.hasPendingDelete(key)) {
 		return undefined;
 	}
 
@@ -189,8 +199,10 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 		output.push(toOutput(row, rowFromCache));
 	};
 
-	// Wait for the cache to be ready before reading _data and _deletes below
-	await idb.cache._waitForStatus("full");
+	const store = cacheStore(storeName);
+
+	// This is the cache's own object, not a copy, so it stays up to date if the cache changes while waiting on IndexedDB
+	const cacheByKey = await store.getAllByKey();
 
 	const addFromDb = (row: any) => {
 		const key: Key = row[pk];
@@ -199,13 +211,11 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 		}
 		seen.add(key);
 
-		// Deleted from the cache, but not yet deleted from IndexedDB
-		if (idb.cache._deletes[storeName].has(key)) {
+		if (store.hasPendingDelete(key)) {
 			return;
 		}
 
-		// Read from the cache here rather than once at the start, because it could change while waiting on IndexedDB
-		const rowCache = idb.cache._data[storeName][key];
+		const rowCache = cacheByKey[key];
 		if (rowCache !== undefined) {
 			add(rowCache, true);
 		} else {
@@ -226,9 +236,7 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 		}
 	}
 
-	const rowsCache: any[] = fromCache
-		? await fromCache()
-		: await idb.cache._getAll(storeName);
+	const rowsCache: any[] = fromCache ? await fromCache() : await store.getAll();
 	for (const row of rowsCache) {
 		const key: Key = row[pk];
 		if (!seen.has(key)) {
@@ -271,7 +279,7 @@ export class MergedStore<MyStore extends Store, Selector = undefined> {
 		options: GetOptions = {},
 	): Promise<Row<MyStore> | undefined> {
 		if (this.currentSeasonInCache && key === g.get("season")) {
-			const row = await idb.cache._get(this.storeName, key);
+			const row = await cacheStore(this.storeName).get(key);
 			return row !== undefined && options.copy ? helpers.deepCopy(row) : row;
 		}
 

@@ -838053,6 +838053,69 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Eastern Division"
+          },
+          {
+            "cid": 1,
+            "did": 1,
+            "name": "Western Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 0
+          },
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 3
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 7
+          },
+          {
+            "did": 1,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 4
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1947,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "awards": [
           {
             "actAs": "roy",
@@ -838085,6 +838148,85 @@
       "phase": 0,
       "season": 1948,
       "type": "gameAttributes"
+    },
+    {
+      "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Eastern Division"
+          },
+          {
+            "cid": 1,
+            "did": 1,
+            "name": "Western Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 0
+          },
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 3
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 0,
+            "tid": 4
+          },
+          {
+            "did": 1,
+            "tid": 12
+          },
+          {
+            "did": 1,
+            "tid": 13
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 7
+          },
+          {
+            "did": 1,
+            "tid": 14
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1948,
+      "type": "confsDivs"
     },
     {
       "info": {
@@ -838604,6 +838746,73 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Eastern Division"
+          },
+          {
+            "cid": 1,
+            "did": 1,
+            "name": "Western Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 12
+          },
+          {
+            "did": 1,
+            "tid": 13
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 3
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1962,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "luxuryPayroll": 1600,
         "minPayroll": 850,
         "salaryCap": 1250
@@ -838720,6 +838929,77 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Eastern Division"
+          },
+          {
+            "cid": 1,
+            "did": 1,
+            "name": "Western Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 12
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 13
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 3
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1966,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "luxuryPayroll": 1950,
         "maxContract": 500,
         "minPayroll": 1000,
@@ -838744,6 +839024,85 @@
       "phase": 0,
       "season": 1967,
       "type": "gameAttributes"
+    },
+    {
+      "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Eastern Division"
+          },
+          {
+            "cid": 1,
+            "did": 1,
+            "name": "Western Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 9
+          },
+          {
+            "did": 0,
+            "tid": 12
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 13
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 3
+          },
+          {
+            "did": 1,
+            "tid": 21
+          },
+          {
+            "did": 1,
+            "tid": 22
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1967,
+      "type": "confsDivs"
     },
     {
       "info": {
@@ -839012,6 +839371,115 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Atlantic Division"
+          },
+          {
+            "cid": 0,
+            "did": 1,
+            "name": "Central Division"
+          },
+          {
+            "cid": 1,
+            "did": 2,
+            "name": "Midwest Division"
+          },
+          {
+            "cid": 1,
+            "did": 3,
+            "name": "Pacific Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 24
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 22
+          },
+          {
+            "did": 2,
+            "tid": 6
+          },
+          {
+            "did": 2,
+            "tid": 9
+          },
+          {
+            "did": 2,
+            "tid": 12
+          },
+          {
+            "did": 2,
+            "tid": 18
+          },
+          {
+            "did": 3,
+            "tid": 13
+          },
+          {
+            "did": 3,
+            "tid": 3
+          },
+          {
+            "did": 3,
+            "tid": 23
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 21
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1972,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "luxuryPayroll": 2550,
         "minPayroll": 1350,
         "salaryCap": 2000
@@ -839149,6 +839617,135 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Atlantic Division"
+          },
+          {
+            "cid": 0,
+            "did": 1,
+            "name": "Central Division"
+          },
+          {
+            "cid": 1,
+            "did": 2,
+            "name": "Midwest Division"
+          },
+          {
+            "cid": 1,
+            "did": 3,
+            "name": "Pacific Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 27
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 22
+          },
+          {
+            "did": 1,
+            "tid": 26
+          },
+          {
+            "did": 1,
+            "tid": 28
+          },
+          {
+            "did": 2,
+            "tid": 6
+          },
+          {
+            "did": 2,
+            "tid": 20
+          },
+          {
+            "did": 2,
+            "tid": 14
+          },
+          {
+            "did": 2,
+            "tid": 12
+          },
+          {
+            "did": 2,
+            "tid": 18
+          },
+          {
+            "did": 3,
+            "tid": 13
+          },
+          {
+            "did": 3,
+            "tid": 3
+          },
+          {
+            "did": 3,
+            "tid": 23
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 24
+          },
+          {
+            "did": 3,
+            "tid": 21
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1978,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "luxuryPayroll": 3350,
         "maxContract": 900,
         "minPayroll": 1800,
@@ -839169,6 +839766,135 @@
       "phase": 0,
       "season": 1979,
       "type": "gameAttributes"
+    },
+    {
+      "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Atlantic Division"
+          },
+          {
+            "cid": 0,
+            "did": 1,
+            "name": "Central Division"
+          },
+          {
+            "cid": 1,
+            "did": 2,
+            "name": "Midwest Division"
+          },
+          {
+            "cid": 1,
+            "did": 3,
+            "name": "Pacific Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 27
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 22
+          },
+          {
+            "did": 1,
+            "tid": 14
+          },
+          {
+            "did": 1,
+            "tid": 28
+          },
+          {
+            "did": 2,
+            "tid": 6
+          },
+          {
+            "did": 2,
+            "tid": 20
+          },
+          {
+            "did": 2,
+            "tid": 12
+          },
+          {
+            "did": 2,
+            "tid": 18
+          },
+          {
+            "did": 2,
+            "tid": 26
+          },
+          {
+            "did": 3,
+            "tid": 13
+          },
+          {
+            "did": 3,
+            "tid": 3
+          },
+          {
+            "did": 3,
+            "tid": 23
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 24
+          },
+          {
+            "did": 3,
+            "tid": 21
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1979,
+      "type": "confsDivs"
     },
     {
       "info": {
@@ -839194,6 +839920,139 @@
       "phase": 0,
       "season": 1980,
       "type": "gameAttributes"
+    },
+    {
+      "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Atlantic Division"
+          },
+          {
+            "cid": 0,
+            "did": 1,
+            "name": "Central Division"
+          },
+          {
+            "cid": 1,
+            "did": 2,
+            "name": "Midwest Division"
+          },
+          {
+            "cid": 1,
+            "did": 3,
+            "name": "Pacific Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 27
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 14
+          },
+          {
+            "did": 1,
+            "tid": 18
+          },
+          {
+            "did": 2,
+            "tid": 29
+          },
+          {
+            "did": 2,
+            "tid": 20
+          },
+          {
+            "did": 2,
+            "tid": 22
+          },
+          {
+            "did": 2,
+            "tid": 12
+          },
+          {
+            "did": 2,
+            "tid": 28
+          },
+          {
+            "did": 2,
+            "tid": 26
+          },
+          {
+            "did": 3,
+            "tid": 13
+          },
+          {
+            "did": 3,
+            "tid": 3
+          },
+          {
+            "did": 3,
+            "tid": 23
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 24
+          },
+          {
+            "did": 3,
+            "tid": 21
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1980,
+      "type": "confsDivs"
     },
     {
       "info": {
@@ -839531,6 +840390,147 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Atlantic Division"
+          },
+          {
+            "cid": 0,
+            "did": 1,
+            "name": "Central Division"
+          },
+          {
+            "cid": 1,
+            "did": 2,
+            "name": "Midwest Division"
+          },
+          {
+            "cid": 1,
+            "did": 3,
+            "name": "Pacific Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 30
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 27
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 14
+          },
+          {
+            "did": 1,
+            "tid": 18
+          },
+          {
+            "did": 2,
+            "tid": 29
+          },
+          {
+            "did": 2,
+            "tid": 20
+          },
+          {
+            "did": 2,
+            "tid": 22
+          },
+          {
+            "did": 2,
+            "tid": 31
+          },
+          {
+            "did": 2,
+            "tid": 28
+          },
+          {
+            "did": 2,
+            "tid": 26
+          },
+          {
+            "did": 3,
+            "tid": 24
+          },
+          {
+            "did": 3,
+            "tid": 13
+          },
+          {
+            "did": 3,
+            "tid": 3
+          },
+          {
+            "did": 3,
+            "tid": 23
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 12
+          },
+          {
+            "did": 3,
+            "tid": 21
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1988,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "luxuryPayroll": 9500,
         "maxContract": 2400,
         "minPayroll": 4850,
@@ -839628,6 +840628,155 @@
     },
     {
       "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Atlantic Division"
+          },
+          {
+            "cid": 0,
+            "did": 1,
+            "name": "Central Division"
+          },
+          {
+            "cid": 1,
+            "did": 2,
+            "name": "Midwest Division"
+          },
+          {
+            "cid": 1,
+            "did": 3,
+            "name": "Pacific Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 31
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 27
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 14
+          },
+          {
+            "did": 1,
+            "tid": 18
+          },
+          {
+            "did": 1,
+            "tid": 32
+          },
+          {
+            "did": 2,
+            "tid": 30
+          },
+          {
+            "did": 2,
+            "tid": 29
+          },
+          {
+            "did": 2,
+            "tid": 20
+          },
+          {
+            "did": 2,
+            "tid": 22
+          },
+          {
+            "did": 2,
+            "tid": 33
+          },
+          {
+            "did": 2,
+            "tid": 28
+          },
+          {
+            "did": 2,
+            "tid": 26
+          },
+          {
+            "did": 3,
+            "tid": 24
+          },
+          {
+            "did": 3,
+            "tid": 13
+          },
+          {
+            "did": 3,
+            "tid": 3
+          },
+          {
+            "did": 3,
+            "tid": 23
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 12
+          },
+          {
+            "did": 3,
+            "tid": 21
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1989,
+      "type": "confsDivs"
+    },
+    {
+      "info": {
         "luxuryPayroll": 12850,
         "maxContract": 3250,
         "minContract": 100,
@@ -839673,6 +840822,155 @@
       "phase": 0,
       "season": 1991,
       "type": "gameAttributes"
+    },
+    {
+      "info": {
+        "confs": [
+          {
+            "cid": 0,
+            "name": "Eastern Conference"
+          },
+          {
+            "cid": 1,
+            "name": "Western Conference"
+          }
+        ],
+        "divs": [
+          {
+            "cid": 0,
+            "did": 0,
+            "name": "Atlantic Division"
+          },
+          {
+            "cid": 0,
+            "did": 1,
+            "name": "Central Division"
+          },
+          {
+            "cid": 1,
+            "did": 2,
+            "name": "Midwest Division"
+          },
+          {
+            "cid": 1,
+            "did": 3,
+            "name": "Pacific Division"
+          }
+        ],
+        "teams": [
+          {
+            "did": 0,
+            "tid": 1
+          },
+          {
+            "did": 0,
+            "tid": 31
+          },
+          {
+            "did": 0,
+            "tid": 2
+          },
+          {
+            "did": 0,
+            "tid": 27
+          },
+          {
+            "did": 0,
+            "tid": 32
+          },
+          {
+            "did": 0,
+            "tid": 15
+          },
+          {
+            "did": 0,
+            "tid": 11
+          },
+          {
+            "did": 1,
+            "tid": 16
+          },
+          {
+            "did": 1,
+            "tid": 30
+          },
+          {
+            "did": 1,
+            "tid": 6
+          },
+          {
+            "did": 1,
+            "tid": 8
+          },
+          {
+            "did": 1,
+            "tid": 9
+          },
+          {
+            "did": 1,
+            "tid": 14
+          },
+          {
+            "did": 1,
+            "tid": 18
+          },
+          {
+            "did": 2,
+            "tid": 29
+          },
+          {
+            "did": 2,
+            "tid": 20
+          },
+          {
+            "did": 2,
+            "tid": 22
+          },
+          {
+            "did": 2,
+            "tid": 33
+          },
+          {
+            "did": 2,
+            "tid": 28
+          },
+          {
+            "did": 2,
+            "tid": 26
+          },
+          {
+            "did": 3,
+            "tid": 24
+          },
+          {
+            "did": 3,
+            "tid": 13
+          },
+          {
+            "did": 3,
+            "tid": 3
+          },
+          {
+            "did": 3,
+            "tid": 23
+          },
+          {
+            "did": 3,
+            "tid": 25
+          },
+          {
+            "did": 3,
+            "tid": 12
+          },
+          {
+            "did": 3,
+            "tid": 21
+          }
+        ]
+      },
+      "phase": 4,
+      "season": 1991,
+      "type": "confsDivs"
     },
     {
       "info": {

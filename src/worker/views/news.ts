@@ -100,16 +100,18 @@ export const processEvents = async (
 			return !IGNORE_EVENT_TYPES.includes(event.type);
 		})
 		.map((event) => {
+			// Events involving the user's team are more important
 			if (
 				event.score !== undefined &&
 				event.tids &&
 				event.tids.includes(g.get("userTid"))
 			) {
-				if (event.type === "madePlayoffs" || event.type === "draft") {
-					event.score += 20;
-				} else {
-					event.score += 10;
-				}
+				const bonus =
+					event.type === "madePlayoffs" || event.type === "draft" ? 20 : 10;
+				return {
+					...event,
+					score: event.score + bonus,
+				};
 			}
 
 			return event;
@@ -197,10 +199,7 @@ export default defineView({
 			prevInputs?.abbrev !== abbrev ||
 			prevInputs?.order !== order
 		) {
-			const eventsAll = await idb.merged.events.getAll(
-				{ season },
-				{ copy: true },
-			);
+			const eventsAll = await idb.merged.events.getAll({ season });
 
 			if (order === "newest") {
 				eventsAll.reverse();

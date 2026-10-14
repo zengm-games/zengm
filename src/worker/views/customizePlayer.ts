@@ -1,7 +1,7 @@
 import { PLAYER, PHASE } from "../../common/constants.ts";
 import { finances, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type { PlayerWithoutKey, Player } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { last, orderBy } from "../../common/utils.ts";
@@ -101,7 +101,7 @@ export default defineView({
 				p.imgURL = "http://";
 			} else {
 				// Load a player to edit
-				const p2 = await idb.merged.players.get(inputs.pid, { copy: true });
+				const p2 = await idb.merged.players.get(inputs.pid);
 
 				if (!p2) {
 					// https://stackoverflow.com/a/59923262/786644
@@ -111,7 +111,8 @@ export default defineView({
 					return returnValue;
 				}
 
-				p = p2;
+				// Copy because the player is edited below
+				p = helpers.deepCopy(p2);
 
 				await upgradeFace(p);
 

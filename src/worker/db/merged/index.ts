@@ -1,6 +1,6 @@
 import { MergedStore } from "./engine.ts";
 
-// Each of these is like the same store in idb.cache or idb.league, except it merges the data in both. If a row is in both, the cache version is used. Rows are not copied by default, so don't mutate them unless you pass the copy option.
+// Each of these is like the same store in idb.cache or idb.league, except it merges the data in both. If a row is in both, the cache version is used. Rows from the cache are not copied, so don't mutate them.
 export const allStars = new MergedStore("allStars", {
 	currentSeasonInCache: true,
 });

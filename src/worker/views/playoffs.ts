@@ -90,9 +90,7 @@ export default defineView({
 			let series: PlayoffSeries["series"];
 			let playIns: PlayoffSeries["playIns"];
 
-			const playoffSeries = await idb.merged.playoffSeries.get(inputs.season, {
-				copy: true,
-			});
+			const playoffSeries = await idb.merged.playoffSeries.get(inputs.season);
 
 			if (playoffSeries) {
 				series = playoffSeries.series;
@@ -104,18 +102,16 @@ export default defineView({
 				playIns = result.playIns;
 			}
 
-			await helpers.augmentSeries(series, inputs.season);
-
-			if (playIns) {
-				await helpers.augmentSeries(playIns, inputs.season);
-			}
-
-			// Because augmentSeries mutates series, this is for TypeScript
-			const series2 = series as {
+			// augmentSeries adds all the properties in SeriesTeam, but its return type doesn't say so
+			const series2 = (await helpers.augmentSeries(series, inputs.season)) as {
 				home: SeriesTeam;
 				away?: SeriesTeam;
 			}[][];
-			const playIns2 = playIns as PlayIns;
+			const playIns2 = (
+				playIns
+					? await helpers.augmentSeries(playIns, inputs.season)
+					: undefined
+			) as PlayIns;
 
 			// Formatting for the table in playoffs.html
 			const matchups: {

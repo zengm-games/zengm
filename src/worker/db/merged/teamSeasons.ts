@@ -2,12 +2,7 @@ import type { TeamSeason } from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 import { NUM_PRIOR_SEASONS_TEAM_SEASONS } from "../Cache.ts";
 import { idb } from "../index.ts";
-import {
-	MergedStore,
-	type Exclusive,
-	type GetOptions,
-	type Query,
-} from "./engine.ts";
+import { MergedStore, type Exclusive, type Query } from "./engine.ts";
 
 export type TeamSeasonsSelector = Exclusive<
 	// seasons is [min, max]
@@ -118,8 +113,8 @@ class TeamSeasonsStore extends MergedStore<"teamSeasons", TeamSeasonsSelector> {
 	}
 
 	// There is at most one team season for a tid and season
-	async getByTidSeason(tid: number, season: number, options?: GetOptions) {
-		const rows = await this.getAll({ tid, season }, options);
+	async getByTidSeason(tid: number, season: number) {
+		const rows = await this.getAll({ tid, season });
 		return rows[0];
 	}
 }

@@ -93,18 +93,20 @@ export default defineView({
 				salariesSeasons.push(season + i);
 			}
 
-			const teamSeasons = await idb.merged.teamSeasons.getAll(
-				{ tid: inputs.tid },
-				{ copy: true },
-			);
-			teamSeasons.reverse(); // Most recent season first
-
-			// Add in luxuryTaxShare if it's missing
-			for (const teamSeason of teamSeasons) {
-				if (!teamSeason.revenues.luxuryTaxShare) {
-					teamSeason.revenues.luxuryTaxShare = 0;
-				}
-			}
+			const teamSeasons = (
+				await idb.merged.teamSeasons.getAll({ tid: inputs.tid })
+			)
+				.reverse() // Most recent season first
+				.map((teamSeason) => {
+					// Add in luxuryTaxShare if it's missing
+					return {
+						...teamSeason,
+						revenues: {
+							...teamSeason.revenues,
+							luxuryTaxShare: teamSeason.revenues.luxuryTaxShare ?? 0,
+						},
+					};
+				});
 
 			const formatRevenueExpenses = (teamSeason: TeamSeason) => {
 				const output = {} as Record<

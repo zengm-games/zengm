@@ -13,18 +13,23 @@ import { roundContract as roundContractRaw } from "../../common/roundContract.ts
 import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
 import type { LeagueUrlParts } from "../../ui/router/types.ts";
 
-const augmentSeries = async (
-	series: {
+// Returns a copy of series with team info and regular season records added to each team
+const augmentSeries = async <
+	Matchup extends {
 		away?: PlayoffSeriesTeam;
 		home: PlayoffSeriesTeam;
-	}[][],
+	},
+>(
+	series: Readonly<Matchup[]>[],
 	season: number = g.get("season"),
-) => {
+): Promise<Matchup[][]> => {
 	const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 
 	const ties = hasTies(season);
 
-	const setAll = (obj: PlayoffSeriesTeam) => {
+	const augmentTeam = (team: PlayoffSeriesTeam) => {
+		const obj = { ...team };
+
 		const t = g.get("teamInfoCache")[obj.tid];
 		obj.abbrev = t?.abbrev;
 		obj.region = t?.region;
@@ -65,17 +70,22 @@ const augmentSeries = async (
 		if (!obj.colors) {
 			obj.colors = DEFAULT_TEAM_COLORS;
 		}
+
+		return obj;
 	};
 
-	for (const round of series) {
-		for (const matchup of round) {
+	return series.map((round) =>
+		round.map((matchup) => {
+			const augmented = {
+				...matchup,
+				home: augmentTeam(matchup.home),
+			};
 			if (matchup.away) {
-				setAll(matchup.away);
+				augmented.away = augmentTeam(matchup.away);
 			}
-
-			setAll(matchup.home);
-		}
-	}
+			return augmented;
+		}),
+	);
 };
 
 const calcWinp = ({

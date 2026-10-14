@@ -1,4 +1,4 @@
-import { g, helpers } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import { storeInfos, type Store, type StoreAPI } from "../Cache.ts";
 import type { LeagueDB } from "../connectLeague.ts";
 import { idb } from "../index.ts";
@@ -23,12 +23,7 @@ export const cacheStore = <MyStore extends Store>(storeName: MyStore) => {
 // getAll is faster, so it's better for queries that return a moderate amount of data and are run often.
 export type DbRows<MyRow> = AsyncIterable<{ value: MyRow }> | Promise<MyRow[]>;
 
-export type GetOptions = {
-	// Rows from the cache are the same objects that are stored in the cache, so they must not be mutated unless copy is true
-	copy?: boolean;
-};
-
-export type GetAllOptions<MyRow, Output = MyRow> = GetOptions & {
+export type GetAllOptions<MyRow, Output = MyRow> = {
 	filter?: (row: MyRow) => boolean;
 
 	// Only the return value of map is kept in memory, so use this when reading many rows but only needing a little data from each. Like filter, this runs inside an IndexedDB transaction, so it must be synchronous.
@@ -58,20 +53,14 @@ export type Exclusive<T, All = T> = T extends unknown
 	? T & Partial<Record<Exclude<AllKeys<All>, keyof T>, never>>
 	: never;
 
-const makeToOutput = <MyRow, Output>({
-	copy,
-	map,
-}: GetAllOptions<MyRow, Output>) => {
-	return (row: MyRow, fromCache: boolean): Output => {
-		// Rows from IndexedDB are already new objects
-		const row2 = copy && fromCache ? helpers.deepCopy(row) : row;
-
+const makeToOutput = <MyRow, Output>({ map }: GetAllOptions<MyRow, Output>) => {
+	return (row: MyRow): Output => {
 		if (map) {
-			return map(row2);
+			return map(row);
 		}
 
 		// With no map function, Output is MyRow
-		return row2 as unknown as Output;
+		return row as unknown as Output;
 	};
 };
 
@@ -123,7 +112,7 @@ const getAllWithKeys = async <MyStore extends Store, Output>(
 	const pk = storeInfos[storeName].pk;
 	const toOutput = makeToOutput(options);
 
-	const rows = new Map<number, { row: Row<MyStore>; fromCache: boolean }>();
+	const rows = new Map<number, Row<MyStore>>();
 
 	const store = cacheStore(storeName);
 	const cacheByKey = await store.getAllByKey();
@@ -131,21 +120,21 @@ const getAllWithKeys = async <MyStore extends Store, Output>(
 	for (const key of new Set(keys)) {
 		const row = cacheByKey[key];
 		if (row !== undefined) {
-			rows.set(key, { row, fromCache: true });
+			rows.set(key, row);
 		} else if (!store.hasPendingDelete(key)) {
 			keysForDb.push(key);
 		}
 	}
 
 	for await (const { value } of rowsWithKeysFromDb(storeName, keysForDb)) {
-		rows.set((value as any)[pk], { row: value, fromCache: false });
+		rows.set((value as any)[pk], value);
 	}
 
 	const output = [];
 	for (const key of keys) {
-		const info = rows.get(key);
-		if (info && (!options.filter || options.filter(info.row))) {
-			output.push(toOutput(info.row, info.fromCache));
+		const row = rows.get(key);
+		if (row && (!options.filter || options.filter(row))) {
+			output.push(toOutput(row));
 		}
 	}
 
@@ -156,12 +145,11 @@ const getAllWithKeys = async <MyStore extends Store, Output>(
 export const get = async <MyStore extends Store>(
 	storeName: MyStore,
 	key: Key,
-	{ copy }: GetOptions = {},
 ): Promise<Row<MyStore> | undefined> => {
 	const store = cacheStore(storeName);
 	const row = await store.get(key);
 	if (row !== undefined) {
-		return copy ? helpers.deepCopy(row) : row;
+		return row;
 	}
 
 	if (store.hasPendingDelete(key)) {
@@ -191,12 +179,12 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 	const output: Output[] = [];
 	const seen = new Set<Key>();
 
-	const add = (row: Row<MyStore>, rowFromCache: boolean) => {
+	const add = (row: Row<MyStore>) => {
 		if ((matches && !matches(row)) || (filter && !filter(row))) {
 			return;
 		}
 
-		output.push(toOutput(row, rowFromCache));
+		output.push(toOutput(row));
 	};
 
 	const store = cacheStore(storeName);
@@ -215,12 +203,7 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 			return;
 		}
 
-		const rowCache = cacheByKey[key];
-		if (rowCache !== undefined) {
-			add(rowCache, true);
-		} else {
-			add(row, false);
-		}
+		add(cacheByKey[key] ?? row);
 	};
 
 	if (fromDb) {
@@ -241,7 +224,7 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 		const key: Key = row[pk];
 		if (!seen.has(key)) {
 			seen.add(key);
-			add(row, true);
+			add(row);
 		}
 	}
 
@@ -249,6 +232,8 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 };
 
 // Like the same store in idb.cache or idb.league, except it merges the data in both. Subclasses can support selectors by overriding toQuery, or override get and getAll if something else is different about a store.
+//
+// Rows from the cache are the same objects that are stored in the cache, so they must not be mutated. To change a row, copy it first or put the changed row back in the cache.
 export class MergedStore<MyStore extends Store, Selector = undefined> {
 	readonly storeName: MyStore;
 
@@ -274,16 +259,12 @@ export class MergedStore<MyStore extends Store, Selector = undefined> {
 		throw new Error("Invalid selector");
 	}
 
-	async get(
-		key: LeagueDB[MyStore]["key"],
-		options: GetOptions = {},
-	): Promise<Row<MyStore> | undefined> {
+	get(key: LeagueDB[MyStore]["key"]): Promise<Row<MyStore> | undefined> {
 		if (this.currentSeasonInCache && key === g.get("season")) {
-			const row = await cacheStore(this.storeName).get(key);
-			return row !== undefined && options.copy ? helpers.deepCopy(row) : row;
+			return cacheStore(this.storeName).get(key);
 		}
 
-		return get(this.storeName, key, options);
+		return get(this.storeName, key);
 	}
 
 	// async so an error from toQuery is a rejected promise, like any other error in getAll

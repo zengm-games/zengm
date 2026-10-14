@@ -4,13 +4,6 @@ import { cacheStore } from "../merged/engine.ts";
 import type { GetCopyType } from "../../../common/types.ts";
 
 // When "noCopyCache" is passed, that means we promise not to mutate any of these records, so we don't need to deepCopy
-// Options for idb.merged, which does not copy by default
-export const getOptions = (type: GetCopyType | undefined) => {
-	return {
-		copy: type !== "noCopyCache",
-	};
-};
-
 export const maybeDeepCopy = <T>(row: T, type: GetCopyType | undefined) =>
 	type === "noCopyCache" ? row : helpers.deepCopy(row);
 

@@ -1,12 +1,6 @@
 import type { Message } from "../../../common/types.ts";
-import { helpers } from "../../util/index.ts";
 import { idb } from "../index.ts";
-import {
-	getAll,
-	MergedStore,
-	type GetAllOptions,
-	type GetOptions,
-} from "./engine.ts";
+import { getAll, MergedStore, type GetAllOptions } from "./engine.ts";
 
 export type MessagesSelector = {
 	// Only the most recent messages
@@ -32,7 +26,7 @@ async function* newestFromDb(limit: number) {
 }
 
 // With limit, filter is not allowed, because it would be unclear if it applies before or after finding the most recent messages
-type LimitOptions<Output> = GetOptions & {
+type LimitOptions<Output> = {
 	filter?: never;
 	map?: (message: Message) => Output;
 };
@@ -54,7 +48,7 @@ class MessagesStore extends MergedStore<"messages", MessagesSelector> {
 			return super.getAll(undefined, options);
 		}
 
-		const { copy, filter, map } = options;
+		const { filter, map } = options;
 		if (filter) {
 			throw new Error("filter is not allowed with limit");
 		}
@@ -75,11 +69,8 @@ class MessagesStore extends MergedStore<"messages", MessagesSelector> {
 			.sort((a, b) => a.mid - b.mid)
 			.slice(-limit)
 			.map((message) => {
-				// Rows from IndexedDB don't need to be copied, but it doesn't hurt to copy them too, since there are only a few
-				const message2 = copy ? helpers.deepCopy(message) : message;
-
 				// With no map function, Output is Message
-				return map ? map(message2) : (message2 as unknown as Output);
+				return map ? map(message) : (message as unknown as Output);
 			});
 	}
 }

@@ -172,15 +172,6 @@ describe("get", () => {
 		assert.strictEqual(p, cached);
 	});
 
-	test("copy option returns a copy of the row in the cache", async () => {
-		const cached = makePlayer(1);
-		await idb.cache.players.put(cached);
-
-		const p = await idb.merged.players.get(1, { copy: true });
-		assert.notStrictEqual(p, cached);
-		assert.deepStrictEqual(p, cached);
-	});
-
 	test("don't return a row that was deleted from the cache but is still in IndexedDB", async () => {
 		await idb.league.put("players", makePlayer(1));
 		await idb.cache.players.delete(1);
@@ -273,16 +264,12 @@ describe("getAll", () => {
 		assert.deepStrictEqual(output.sort(), [1, 3]);
 	});
 
-	test("rows from the cache are only copied with the copy option", async () => {
+	test("rows from the cache are not copied", async () => {
 		const cached = makePlayer(1);
 		await idb.cache.players.put(cached);
 
-		const noCopy = await idb.merged.players.getAll();
-		assert.strictEqual(noCopy[0], cached);
-
-		const copy = await idb.merged.players.getAll(undefined, { copy: true });
-		assert.notStrictEqual(copy[0], cached);
-		assert.deepStrictEqual(copy[0], cached);
+		const players = await idb.merged.players.getAll();
+		assert.strictEqual(players[0], cached);
 	});
 
 	test("works for a store with no custom selectors", async () => {

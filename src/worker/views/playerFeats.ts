@@ -46,23 +46,22 @@ export default defineView({
 			inputs.abbrev !== prevInputs?.abbrev ||
 			inputs.season !== prevInputs?.season
 		) {
-			let feats = await idb.merged.playerFeats.getAll(undefined, {
-				copy: true,
-			});
-
 			// Put fake fid on cached feats
 			let maxFid = 0;
-
-			for (const feat of feats) {
+			let feats = (await idb.merged.playerFeats.getAll()).map((feat) => {
 				if (feat.fid !== undefined) {
 					if (feat.fid > maxFid) {
 						maxFid = feat.fid;
 					}
-				} else {
-					maxFid += 1;
-					feat.fid = maxFid;
+					return feat;
 				}
-			}
+
+				maxFid += 1;
+				return {
+					...feat,
+					fid: maxFid,
+				};
+			});
 
 			if (inputs.tid !== undefined) {
 				feats = feats.filter((feat) => feat.tid === inputs.tid);
@@ -76,27 +75,30 @@ export default defineView({
 			}
 
 			const featsProcessed = feats.map((feat) => {
-				if (__SPORT === "basketball") {
-					feat.stats.trb = feat.stats.orb + feat.stats.drb;
-					feat.stats.fgp =
-						feat.stats.fga > 0 ? (100 * feat.stats.fg) / feat.stats.fga : 0;
-					feat.stats.tpp =
-						feat.stats.tpa > 0 ? (100 * feat.stats.tp) / feat.stats.tpa : 0;
-					feat.stats.ftp =
-						feat.stats.fta > 0 ? (100 * feat.stats.ft) / feat.stats.fta : 0;
+				const featStats = { ...feat.stats };
+				let score = feat.score;
 
-					feat.stats.gmsc = helpers.gameScore(feat.stats);
+				if (__SPORT === "basketball") {
+					featStats.trb = featStats.orb + featStats.drb;
+					featStats.fgp =
+						featStats.fga > 0 ? (100 * featStats.fg) / featStats.fga : 0;
+					featStats.tpp =
+						featStats.tpa > 0 ? (100 * featStats.tp) / featStats.tpa : 0;
+					featStats.ftp =
+						featStats.fta > 0 ? (100 * featStats.ft) / featStats.fta : 0;
+
+					featStats.gmsc = helpers.gameScore(featStats);
 				} else if (__SPORT === "hockey") {
 					const toAdd = ["g", "a", "pts", "sPct", "foPct"];
-					const processed = processPlayerStats(feat.stats, toAdd);
+					const processed = processPlayerStats(featStats, toAdd);
 					for (const stat of toAdd) {
-						feat.stats[stat] = processed[stat];
+						featStats[stat] = processed[stat];
 					}
 				} else if (__SPORT === "baseball") {
 					const toAdd = ["ip", "gmsc"];
-					const processed = processPlayerStats(feat.stats, toAdd);
+					const processed = processPlayerStats(featStats, toAdd);
 					for (const stat of toAdd) {
-						feat.stats[stat] = processed[stat];
+						featStats[stat] = processed[stat];
 					}
 				}
 
@@ -105,7 +107,7 @@ export default defineView({
 					feat.numPeriods,
 				);
 				if (overtimeText !== "") {
-					feat.score += ` (${overtimeText})`;
+					score += ` (${overtimeText})`;
 				}
 
 				let type: "regularSeason" | "playoffs" | "allStar";
@@ -119,6 +121,8 @@ export default defineView({
 
 				return {
 					...feat,
+					stats: featStats,
+					score,
 					abbrev: g.get("teamInfoCache")[feat.tid]?.abbrev,
 					oppAbbrev: g.get("teamInfoCache")[feat.oppTid]?.abbrev,
 					type,

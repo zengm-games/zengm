@@ -395,17 +395,14 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 		(updateEvents.has("newPhase") &&
 			(g.get("phase") === PHASE.PLAYOFFS || g.get("phase") === PHASE.PRESEASON))
 	) {
-		const playoffSeries = await idb.merged.playoffSeries.get(g.get("season"), {
-			copy: true,
-		});
+		const playoffSeries = await idb.merged.playoffSeries.get(g.get("season"));
 		let foundSeries;
 		let seriesTitle = "";
 		let showPlayoffSeries = false;
 		let numGamesToWinSeries = 4;
 
 		if (playoffSeries !== undefined && playoffSeries.series.length > 0) {
-			const series = playoffSeries.series;
-			await helpers.augmentSeries(series);
+			const series = await helpers.augmentSeries(playoffSeries.series);
 
 			// Find the latest playoff series with the user's team in it
 
@@ -446,9 +443,8 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 				}
 			}
 
-			const playIns = playoffSeries.playIns;
-			if (!found && playIns) {
-				await helpers.augmentSeries(playIns);
+			if (!found && playoffSeries.playIns) {
+				const playIns = await helpers.augmentSeries(playoffSeries.playIns);
 				for (const playIn of playIns) {
 					for (let i = playIn.length - 1; i >= 0; i--) {
 						const { away, home } = playIn[i]!;
@@ -595,20 +591,18 @@ const updateNewsFeed = async ({ updateEvents }: ViewArgs) => {
 		const NUM_EVENTS = 8;
 
 		// Load all events from this season, and last season too if more are needed
-		const eventsAll = await idb.merged.events.getAll(
-			{ season: g.get("season") },
-			{ copy: true },
-		);
+		const eventsAll = await idb.merged.events.getAll({
+			season: g.get("season"),
+		});
 		eventsAll.reverse();
 
 		const events = await processEvents(eventsAll, {
 			limit: NUM_EVENTS,
 		});
 		if (events.length < NUM_EVENTS) {
-			const eventsAll2 = await idb.merged.events.getAll(
-				{ season: g.get("season") - 1 },
-				{ copy: true },
-			);
+			const eventsAll2 = await idb.merged.events.getAll({
+				season: g.get("season") - 1,
+			});
 			eventsAll2.reverse();
 			const events2 = await processEvents(eventsAll2, {
 				limit: NUM_EVENTS - events.length,

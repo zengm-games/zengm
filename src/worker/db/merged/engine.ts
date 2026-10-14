@@ -1,4 +1,4 @@
-import { helpers } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import { storeInfos, type Store } from "../Cache.ts";
 import type { LeagueDB } from "../connectLeague.ts";
 import { idb } from "../index.ts";
@@ -244,8 +244,15 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 export class MergedStore<MyStore extends Store, Selector = undefined> {
 	readonly storeName: MyStore;
 
-	constructor(storeName: MyStore) {
+	// For stores where the primary key is season and the cache always has the current season (see getData in Cache.ts). Then if the current season is not in the cache, it doesn't exist at all, so there's no need to check IndexedDB.
+	readonly currentSeasonInCache: boolean;
+
+	constructor(
+		storeName: MyStore,
+		{ currentSeasonInCache = false }: { currentSeasonInCache?: boolean } = {},
+	) {
 		this.storeName = storeName;
+		this.currentSeasonInCache = currentSeasonInCache;
 	}
 
 	// Returning undefined means the whole store
@@ -259,7 +266,15 @@ export class MergedStore<MyStore extends Store, Selector = undefined> {
 		throw new Error("Invalid selector");
 	}
 
-	get(key: LeagueDB[MyStore]["key"], options?: GetOptions) {
+	async get(
+		key: LeagueDB[MyStore]["key"],
+		options: GetOptions = {},
+	): Promise<Row<MyStore> | undefined> {
+		if (this.currentSeasonInCache && key === g.get("season")) {
+			const row = await idb.cache._get(this.storeName, key);
+			return row !== undefined && options.copy ? helpers.deepCopy(row) : row;
+		}
+
 		return get(this.storeName, key, options);
 	}
 

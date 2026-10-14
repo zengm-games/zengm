@@ -11,7 +11,9 @@ import {
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { PLAYER } from "../../../common/constants.ts";
 import type {
+	AllStars,
 	EventBBGM,
+	Game,
 	Message,
 	Player,
 	TeamSeason,
@@ -40,6 +42,32 @@ const makeMessage = (mid: number): Message => {
 		read: false,
 		text: `Message ${mid}`,
 		year: SEASON,
+	};
+};
+
+const makeGame = (gid: number, season: number): Game => {
+	return {
+		att: 0,
+		gid,
+		lost: { tid: 1, pts: 0 },
+		overtimes: 0,
+		season,
+		teams: [
+			{ tid: 0, players: [], pts: 1 },
+			{ tid: 1, players: [], pts: 0 },
+		],
+		won: { tid: 0, pts: 1 },
+	};
+};
+
+const makeAllStars = (season: number): AllStars => {
+	return {
+		season,
+		teamNames: ["", ""],
+		teams: [[], []],
+		remaining: [],
+		finalized: true,
+		type: "draft",
 	};
 };
 
@@ -176,6 +204,18 @@ describe("get", () => {
 		assert.strictEqual(old?.currentRound, 0);
 		const current = await idb.merged.playoffSeries.get(SEASON);
 		assert.strictEqual(current?.currentRound, 1);
+	});
+
+	test("current season is only read from the cache for stores with currentSeasonInCache", async () => {
+		// Can't happen in a real league, but it shows that IndexedDB is not checked
+		await idb.league.put("allStars", makeAllStars(SEASON));
+		await idb.league.put("allStars", makeAllStars(SEASON - 1));
+
+		assert.strictEqual(await idb.merged.allStars.get(SEASON), undefined);
+		assert.strictEqual(
+			(await idb.merged.allStars.get(SEASON - 1))?.season,
+			SEASON - 1,
+		);
 	});
 });
 
@@ -508,6 +548,22 @@ describe("messages", () => {
 			await idb.merged.messages.getAll({ limit: 2 }, { map: (m) => m.mid }),
 			[2, 3],
 		);
+	});
+});
+
+describe("games", () => {
+	test("season only reads the current season from the cache", async () => {
+		// Can't happen in a real league, because the cache has every game from the current season, but it shows that IndexedDB is not checked
+		await idb.league.put("games", makeGame(0, SEASON));
+
+		await idb.league.put("games", makeGame(1, SEASON - 1));
+		await idb.cache.games.put(makeGame(2, SEASON));
+
+		const gids = (season: number) => {
+			return idb.merged.games.getAll({ season }, { map: (game) => game.gid });
+		};
+		assert.deepStrictEqual(await gids(SEASON), [2]);
+		assert.deepStrictEqual(await gids(SEASON - 1), [1]);
 	});
 });
 

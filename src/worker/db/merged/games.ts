@@ -1,4 +1,5 @@
 import type { Game } from "../../../common/types.ts";
+import { g } from "../../util/index.ts";
 import { idb } from "../index.ts";
 import { MergedStore, type Exclusive, type Query } from "./engine.ts";
 
@@ -23,8 +24,15 @@ class GamesStore extends MergedStore<"games", GamesSelector> {
 		if (selector.season !== undefined) {
 			const season = selector.season;
 			return {
-				fromDb: () =>
-					idb.league.transaction("games").store.index("season").iterate(season),
+				// The cache has every game from the current season
+				fromDb:
+					season === g.get("season")
+						? undefined
+						: () =>
+								idb.league
+									.transaction("games")
+									.store.index("season")
+									.iterate(season),
 				matches: (game) => game.season === season,
 			};
 		}

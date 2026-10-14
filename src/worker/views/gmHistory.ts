@@ -15,9 +15,6 @@ export default defineView({
 		) {
 			const seasonsByTid: Record<number, Set<number>> = {};
 			const teamSeasonsByTeam: TeamSeason[][] = [];
-			const teamSeasonsIndex = idb.league
-				.transaction("teamSeasons")
-				.store.index("season, tid");
 			let prevTid: number | undefined;
 			for (
 				let season = g.get("startingSeason");
@@ -30,15 +27,7 @@ export default defineView({
 					teamSeasonsByTeam.push([]);
 				}
 
-				let ts;
-				if (season === g.get("season")) {
-					ts = await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
-						tid,
-						g.get("season"),
-					]);
-				} else {
-					ts = await teamSeasonsIndex.get([season, tid]);
-				}
+				const ts = await idb.merged.teamSeasons.getByTidSeason(tid, season);
 				if (ts) {
 					teamSeasonsByTeam.at(-1)!.push(ts);
 

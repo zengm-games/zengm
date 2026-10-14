@@ -161,26 +161,25 @@ const tidAndSeasonToAbbrev = async (most: Most) => {
 	const extra = most.extra as any;
 	const tid = extra.tid;
 	const season = extra.bestSeasonOverride ?? extra.season;
-	const teamSeason = await idb.league
-		.transaction("teamSeasons")
-		.store.index("season, tid")
-		.get([season, tid]);
+	const teamSeason = await idb.merged.teamSeasons.getByTidSeason(tid, season);
 	if (teamSeason) {
 		abbrev = teamSeason.abbrev;
 	}
 
 	if (abbrev === undefined) {
 		if (season < g.get("startingSeason")) {
-			const teamSeason = await idb.league
-				.transaction("teamSeasons")
-				.store.index("season, tid")
-				.get([g.get("startingSeason"), tid]);
+			const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
+				tid,
+				g.get("startingSeason"),
+			);
 			if (teamSeason) {
 				abbrev = teamSeason.abbrev;
 			}
 		}
 
-		abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+		if (abbrev === undefined) {
+			abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+		}
 	}
 
 	return {

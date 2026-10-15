@@ -56,24 +56,7 @@ export default defineView({
 				(watchPids === undefined || watchPids.has(feat.pid)) &&
 				(inputs.season === "all" || feat.season === inputs.season);
 
-			// Put fake fid on cached feats. Those come after all the feats from IndexedDB, so the fake fids don't conflict with any real fids.
-			let maxFid = 0;
-			const feats = (
-				await idb.merged.playerFeats.getAll(undefined, { filter })
-			).map((feat) => {
-				if (feat.fid !== undefined) {
-					if (feat.fid > maxFid) {
-						maxFid = feat.fid;
-					}
-					return feat;
-				}
-
-				maxFid += 1;
-				return {
-					...feat,
-					fid: maxFid,
-				};
-			});
+			const feats = await idb.merged.playerFeats.getAll(undefined, { filter });
 
 			const featsProcessed = feats.map((feat) => {
 				const featStats = { ...feat.stats };

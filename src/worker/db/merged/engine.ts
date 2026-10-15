@@ -240,12 +240,19 @@ export class MergedStore<MyStore extends Store, Selector = undefined> {
 	// For stores where the primary key is season and the cache always has the current season (see getData in Cache.ts). Then if the current season is not in the cache, it doesn't exist at all, so there's no need to check IndexedDB.
 	readonly currentSeasonInCache: boolean;
 
+	// For stores that are small enough to read all at once. Then reading the whole store from IndexedDB uses one getAll call, which is faster than a cursor. Big stores use a cursor so that with a filter, rows that don't pass it are not all held in memory at once.
+	readonly small: boolean;
+
 	constructor(
 		storeName: MyStore,
-		{ currentSeasonInCache = false }: { currentSeasonInCache?: boolean } = {},
+		{
+			currentSeasonInCache = false,
+			small = false,
+		}: { currentSeasonInCache?: boolean; small?: boolean } = {},
 	) {
 		this.storeName = storeName;
 		this.currentSeasonInCache = currentSeasonInCache;
+		this.small = small;
 	}
 
 	// Returning undefined means the whole store
@@ -253,6 +260,12 @@ export class MergedStore<MyStore extends Store, Selector = undefined> {
 		selector: Selector | undefined,
 	): Query<Row<MyStore>> | undefined {
 		if (selector === undefined) {
+			if (this.small) {
+				return {
+					fromDb: () => idb.league.transaction(this.storeName).store.getAll(),
+				};
+			}
+
 			return undefined;
 		}
 

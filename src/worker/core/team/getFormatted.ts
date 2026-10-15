@@ -458,10 +458,10 @@ export const getFormatted = async <
 	attrs,
 	seasonAttrs,
 	stats,
-	playoffs = false,
-	regularSeason = true,
-	statType = "perGame",
-	addDummySeason = false,
+	playoffs,
+	regularSeason,
+	statType,
+	addDummySeason,
 }: {
 	tid: number;
 	season?: Season;

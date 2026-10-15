@@ -17,6 +17,8 @@ class TeamStatsStore extends MergedStore<"teamStats", TeamStatsSelector> {
 
 		if (season !== undefined) {
 			// Single team, single season
+			//
+			// No fromCache using the teamStatsByPlayoffsTid index, because the cache only has the current season, which is just a couple rows per team, so scanning it is cheap. And for a range of compound keys like [[false, tid], [false, tid]], Cache._indexGetAll loops over every index key anyway, so it wouldn't avoid a scan.
 			return {
 				// The cache has every team stats row from the current season
 				fromDb:

@@ -104,13 +104,14 @@ class PlayersStore extends MergedStore<"players", PlayersSelector> {
 		if (selector.tid !== undefined) {
 			const tid = selector.tid;
 
+			// Retired players aren't all in the cache
 			if (Array.isArray(tid)) {
 				const [minTid, maxTid] = tid;
-
-				// Retired players aren't all in the cache
 				if (minTid <= PLAYER.RETIRED && maxTid >= PLAYER.RETIRED) {
 					throw new Error("Not implemented");
 				}
+			} else if (tid === PLAYER.RETIRED) {
+				throw new Error("Not implemented");
 			}
 
 			return {

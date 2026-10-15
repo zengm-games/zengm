@@ -62,4 +62,4 @@ class MessagesStore extends MergedStore<"messages", MessagesSelector> {
 	}
 }
 
-export default new MessagesStore("messages");
+export default new MessagesStore("messages", { small: true });

@@ -1,5 +1,5 @@
-import { team } from "../../core/index.ts";
-import { idb } from "../index.ts";
+import { team } from "../index.ts";
+import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type {
 	Team,
@@ -369,7 +369,7 @@ const processTeam = async <
  * @param {boolean=} options.showNoStats If season is specified, should we return data for this team if it is missing a TeamStats entry, but has a TeamSeason entry? Since TeamStats is now lazily created, this is needed to return anything in preseason or regular season before games are played.
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
-async function getCopies<
+export async function getFormattedAll<
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
@@ -416,7 +416,7 @@ async function getCopies<
 		if (active) {
 			if (season !== undefined && season !== g.get("season")) {
 				throw new Error(
-					"Don't call teamsPlus with active=true for any season other than the current season",
+					"Don't call getFormattedAll with active=true for any season other than the current season",
 				);
 			}
 			teams = teams.filter((t) => !t.disabled);
@@ -446,4 +446,43 @@ async function getCopies<
 	return [];
 }
 
-export default getCopies;
+// Like getFormattedAll, but for a single team. Returns undefined if the team doesn't exist.
+export const getFormatted = async <
+	Attrs extends Readonly<TeamAttr[]> | undefined,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined = undefined,
+>({
+	tid,
+	season,
+	attrs,
+	seasonAttrs,
+	stats,
+	playoffs = false,
+	regularSeason = true,
+	statType = "perGame",
+	addDummySeason = false,
+}: {
+	tid: number;
+	season?: Season;
+	attrs?: Attrs;
+	seasonAttrs?: SeasonAttrs;
+	stats?: StatAttrs;
+	playoffs?: boolean;
+	regularSeason?: boolean;
+	statType?: TeamStatType;
+	addDummySeason?: boolean;
+}) => {
+	const result = await getFormattedAll<Attrs, SeasonAttrs, StatAttrs, Season>({
+		tid,
+		season,
+		attrs,
+		seasonAttrs,
+		stats,
+		playoffs,
+		regularSeason,
+		statType,
+		addDummySeason,
+	});
+	return result[0];
+};

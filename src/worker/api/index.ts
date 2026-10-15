@@ -1499,7 +1499,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	for (const s of seasons) {
 		console.log(s, new Date());
-		const players2 = await idb.getCopies.playersPlus(players, {
+		const players2 = await player.formatAll(players, {
 			attrs: ["pid", "name", "age", "draft", "salary"],
 			ratings: ["pos", "ovr", "pot", ...ratings],
 			stats: ["abbrev", ...stats],
@@ -1942,7 +1942,7 @@ const getNegotiationProps = async (pid: number) => {
 	const p2 = await idb.cache.players.get(negotiation.pid);
 	let pFiltered;
 	if (p2) {
-		pFiltered = await idb.getCopy.playersPlus(p2, {
+		pFiltered = await player.format(p2, {
 			attrs: [
 				"pid",
 				"tid",
@@ -1998,7 +1998,7 @@ const getNegotiationProps = async (pid: number) => {
 
 	const payroll = await team.getPayroll(userTid);
 
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		tid: g.get("userTid"),
 		attrs: ["colors", "jersey"],
 	});
@@ -2112,7 +2112,7 @@ const getPlayersCommandPalette = async () => {
 		Infinity,
 	]);
 
-	return idb.getCopies.playersPlus(playersAll, {
+	return player.formatAll(playersAll, {
 		attrs: ["pid", "firstName", "lastName", "abbrev", "age"],
 		ratings: ["pos", "ovr", "pot"],
 		season: g.get("season"),
@@ -2366,7 +2366,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		return [];
 	}
 
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["abbrev", "region", "name", "strategy", "tid"],
 		seasonAttrs: ["won", "lost", "tied", "otl"],
 		season: g.get("season"),
@@ -2412,7 +2412,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 					(p) => pids.includes(p.pid) && !isUntradable(p).untradable,
 				);
 				return addFirstNameShort(
-					await idb.getCopies.playersPlus(playersAll, {
+					await player.formatAll(playersAll, {
 						attrs: [
 							"pid",
 							"firstName",
@@ -3133,7 +3133,7 @@ const ratingsStatsPopoverInfo = async ({
 		...(includeAbbrev ? (["abbrev"] as const) : []),
 	] as const;
 
-	const playersPlusOptions = {
+	const formatOptions = {
 		attrs,
 		ratings,
 		stats: ["tid", "season", "playoffs", ...stats],
@@ -3146,7 +3146,7 @@ const ratingsStatsPopoverInfo = async ({
 	let info;
 	if (actualSeason === undefined) {
 		// Career stats
-		const p2 = await idb.getCopy.playersPlus(p, playersPlusOptions);
+		const p2 = await player.format(p, formatOptions);
 		if (!p2) {
 			return blankObj;
 		}
@@ -3165,8 +3165,8 @@ const ratingsStatsPopoverInfo = async ({
 			statsRow: careerStats,
 		};
 	} else {
-		const p2 = await idb.getCopy.playersPlus(p, {
-			...playersPlusOptions,
+		const p2 = await player.format(p, {
+			...formatOptions,
 			season: actualSeason,
 		});
 		if (!p2) {
@@ -3270,7 +3270,7 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 };
 
 const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: ["cid", "did", "abbrev"],
 		season: g.get("season"),
@@ -4773,7 +4773,7 @@ const updateAwards = async (
 	const playersAll = await idb.merged.players.getAll({
 		activeSeason: newAwards.season,
 	});
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const players = await player.formatAll(playersAll, {
 		attrs: ["name", "pid"],
 	});
 

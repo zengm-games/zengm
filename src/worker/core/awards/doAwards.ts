@@ -9,6 +9,7 @@ import {
 } from "./awardsByPlayer.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
 import { leaderAwardCategories } from "../../../common/awards.ts";
+import { team } from "../index.ts";
 
 const teamAwards = async (
 	teamsUnsorted: TeamFiltered<
@@ -78,7 +79,7 @@ const NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD = 5;
 export const doAwards = async (conditions: Conditions) => {
 	const season = g.get("season");
 
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: [
 			"won",

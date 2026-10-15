@@ -122,7 +122,7 @@ const doInflation = async (conditions: Conditions) => {
 };
 
 const setChampNoPlayoffs = async (conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: [
 			"cid",
@@ -321,7 +321,7 @@ const newPhaseBeforeDraft = async (
 	}
 
 	await doAwards(conditions);
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: ["playoffRoundsWon"],
 		season: g.get("season"),

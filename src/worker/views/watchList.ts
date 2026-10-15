@@ -52,7 +52,7 @@ export const formatPlayersWatchList = async (
 	} as const);
 
 	const players = addFirstNameShort(
-		await idb.getCopies.playersPlus(playersAll, {
+		await player.formatAll(playersAll, {
 			attrs: [
 				"pid",
 				"firstName",

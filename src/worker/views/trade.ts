@@ -1,5 +1,5 @@
 import { bySport } from "../../common/sportFunctions.ts";
-import { trade } from "../core/index.ts";
+import { player, team, trade } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { TradeSummary, TradeTeams } from "../../common/types.ts";
@@ -118,7 +118,7 @@ export default defineView({
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		} as const);
 		const userRoster = addFirstNameShort(
-			await idb.getCopies.playersPlus(userRosterAll, {
+			await player.formatAll(userRosterAll, {
 				attrs,
 				ratings,
 				stats,
@@ -153,7 +153,7 @@ export default defineView({
 			otherTid,
 		);
 		const otherPicks = await idb.merged.draftPicks.getAll({ tid: otherTid });
-		const t = await idb.getCopy.teamsPlus({
+		const t = await team.getFormatted({
 			tid: otherTid,
 			season: g.get("season"),
 			attrs: ["strategy"],
@@ -170,7 +170,7 @@ export default defineView({
 		}
 
 		const otherRoster = addFirstNameShort(
-			await idb.getCopies.playersPlus(otherRosterAll, {
+			await player.formatAll(otherRosterAll, {
 				attrs,
 				ratings,
 				stats,

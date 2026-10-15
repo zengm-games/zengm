@@ -1,5 +1,4 @@
 import { g } from "../util/index.ts";
-import { idb } from "../db/index.ts";
 import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { actualPhase } from "../util/actualPhase.ts";
@@ -7,9 +6,10 @@ import { PHASE } from "../../common/constants.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { defaultAwards } from "../../common/defaultGameAttributes.ts";
 import { defineView } from "../util/defineView.ts";
+import { team } from "../core/index.ts";
 
 const getTeams = async (season: number) => {
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: ["won", "lost", "tied", "otl"],
 		season,

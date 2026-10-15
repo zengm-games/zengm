@@ -166,7 +166,7 @@ export default defineView({
 			}
 
 			// Get stuff for the finances form
-			const tTemp = await idb.getCopy.teamsPlus({
+			const tTemp = await team.getFormatted({
 				attrs: ["budget", "adjustForInflation", "autoTicketPrice"],
 				seasonAttrs: ["expenses"],
 				season: g.get("season"),

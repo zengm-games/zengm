@@ -3,7 +3,7 @@ import { g, helpers } from "../util/index.ts";
 import type { TeamStatAttr, TeamSeasonAttr } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { TEAM_STATS_TABLES } from "../../common/constants.ts";
-import { season, team } from "../core/index.ts";
+import { player, season, team } from "../core/index.ts";
 import { lowerIsBetter } from "../../common/lowerIsBetter.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -63,7 +63,7 @@ export const getStats = async ({
 		seasonAttrs.push("winp");
 	}
 	const teams = (
-		await idb.getCopies.teamsPlus({
+		await team.getFormattedAll({
 			attrs: ["tid"],
 			seasonAttrs,
 			stats: ["gp", ...stats] as TeamStatAttr[],
@@ -134,7 +134,7 @@ export const getStats = async ({
 				});
 			}
 
-			const players = await idb.getCopies.playersPlus(playersRaw, {
+			const players = await player.formatAll(playersRaw, {
 				attrs: ["age"],
 				stats: ["gp", "min"],
 				season,

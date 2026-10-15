@@ -10,6 +10,7 @@ import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
 import { DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"teamHistory">) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
@@ -177,7 +178,7 @@ export const getHistory = async (
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	} as const);
 
-	const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
+	const playersFiltered = await player.formatAll(playersAll, {
 		attrs: [
 			"pid",
 			"firstName",

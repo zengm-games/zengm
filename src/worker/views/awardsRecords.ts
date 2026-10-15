@@ -10,6 +10,7 @@ import {
 	leaderAwardCategories,
 } from "../../common/awards.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"awardsRecords">) => {
 	return {
@@ -217,22 +218,19 @@ export default defineView({
 				{ activeAndRetired: true },
 				{ filter: (p) => p.awards.length > 0 },
 			);
-			const players: LocalPlayer[] = await idb.getCopies.playersPlus(
-				playersAll,
-				{
-					attrs: [
-						"awards",
-						"firstName",
-						"lastName",
-						"pid",
-						"retiredYear",
-						"hof",
-						"draft",
-					],
-					ratings: ["pos", "season"],
-					stats: ["abbrev", "season"],
-				},
-			);
+			const players: LocalPlayer[] = await player.formatAll(playersAll, {
+				attrs: [
+					"awards",
+					"firstName",
+					"lastName",
+					"pid",
+					"retiredYear",
+					"hof",
+					"draft",
+				],
+				ratings: ["pos", "season"],
+				stats: ["abbrev", "season"],
+			});
 			const awardType = inputs.awardType;
 
 			const awardsRecords = addFirstNameShort(

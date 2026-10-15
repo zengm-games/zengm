@@ -1,4 +1,4 @@
-import { allStar } from "../core/index.ts";
+import { allStar, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
@@ -42,7 +42,7 @@ const getPlayerInfo = async (
 		return;
 	}
 
-	const p2 = await idb.getCopy.playersPlus(p, {
+	const p2 = await player.format(p, {
 		attrs: ["pid", "injury", "watch", "age", "numAllStar"],
 		ratings: ["ovr", "skills", "pos"],
 		season,

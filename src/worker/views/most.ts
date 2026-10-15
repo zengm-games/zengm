@@ -87,7 +87,7 @@ const getMostXPlayers = async ({
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	} as const);
 
-	const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
+	const playersFiltered = await player.formatAll(playersAll, {
 		attrs: [
 			"pid",
 			"firstName",
@@ -107,9 +107,9 @@ const getMostXPlayers = async ({
 		mergeStats: "totOnly",
 	});
 
-	// Match up most by index rather than pid, since a player can appear multiple times with different most values. This is safe because with no season or seasonRange, playersPlus returns every player
+	// Match up most by index rather than pid, since a player can appear multiple times with different most values. This is safe because with no season or seasonRange, player.formatAll returns every player
 	if (playersFiltered.length !== playersAll.length) {
-		throw new Error("playersPlus filtered out some players");
+		throw new Error("player.formatAll filtered out some players");
 	}
 	const players = playersFiltered.map((p, i) => ({
 		...p,

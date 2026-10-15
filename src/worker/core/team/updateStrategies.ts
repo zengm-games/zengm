@@ -1,5 +1,6 @@
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
+import { player } from "../index.ts";
 
 /**
  * Update team strategies (contending or rebuilding) for every team in the league.
@@ -37,7 +38,7 @@ const updateStrategies = async () => {
 			"playersByTid",
 			t.tid,
 		);
-		const players = await idb.getCopies.playersPlus(playersAll, {
+		const players = await player.formatAll(playersAll, {
 			season: g.get("season"),
 			tid: t.tid,
 			attrs: ["age", "value", "contract"],

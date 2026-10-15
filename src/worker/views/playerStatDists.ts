@@ -12,6 +12,7 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { getNumericStat, hasNonZeroStat } from "../../common/statValue.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateSeason } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"playerStatDists">) => {
 	const defaultStatType = bySport({
@@ -79,7 +80,7 @@ export default defineView({
 				}
 			}
 
-			players = await idb.getCopies.playersPlus(players, {
+			players = await player.formatAll(players, {
 				ratings: ["skills"],
 				stats: getPlayerStatsTableStats(stats),
 				season: inputs.season,

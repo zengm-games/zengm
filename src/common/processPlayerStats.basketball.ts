@@ -153,7 +153,7 @@ export const processStats = (
 ) => {
 	const row: any = {};
 
-	// This is how we identify if we should fill in a missing value with 0 - don't want to do it for "null" historical data where there is a partial record! 2 rather than 0 to account for jerseyNumber and yearsWithTeam. Would be better to explicitly note somewhere what type of row this is - real stats row with stats, individual stats row with no stats (maybe just jerseyNumber or yearsWithTeam added from playersPlus), or completely empty row to fill in career stats
+	// This is how we identify if we should fill in a missing value with 0 - don't want to do it for "null" historical data where there is a partial record! 2 rather than 0 to account for jerseyNumber and yearsWithTeam. Would be better to explicitly note somewhere what type of row this is - real stats row with stats, individual stats row with no stats (maybe just jerseyNumber or yearsWithTeam added from player.formatAll), or completely empty row to fill in career stats
 	const fillWithZeros = Object.keys(ps).length <= 2 && keepWithNoStats;
 
 	const statFunctions2 = statFunctions as Record<string, StatFunction>;

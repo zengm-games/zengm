@@ -13,7 +13,7 @@ type AdvancedPlayerSearchField = {
 	colKey: string;
 	colOverrides?: Partial<Col>;
 
-	// Used in worker to determine what data to fetch from playersPlus, if it's not just the string value in "key".
+	// Used in worker to determine what data to fetch from player.formatAll, if it's not just the string value in "key".
 	// null means don't fetch anything.
 	workerFieldOverride?: string | null;
 } & (

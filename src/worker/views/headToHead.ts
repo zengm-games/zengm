@@ -1,7 +1,6 @@
 import { g, helpers } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
-import { headToHead } from "../core/index.ts";
-import { idb } from "../db/index.ts";
+import { headToHead, team } from "../core/index.ts";
 import hasTies from "../core/season/hasTies.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
@@ -86,7 +85,7 @@ export default defineView({
 				},
 			);
 
-			const teamInfos = await idb.getCopies.teamsPlus({
+			const teamInfos = await team.getFormattedAll({
 				attrs: ["tid"],
 				seasonAttrs: ["region", "name", "abbrev", "imgURL", "imgURLSmall"],
 				season: season === "all" ? g.get("season") : season,

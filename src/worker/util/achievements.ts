@@ -23,6 +23,7 @@ import {
 } from "../../common/defaultGameAttributes.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { formatList } from "../../common/formatList.ts";
+import { team } from "../core/index.ts";
 
 const findAwards = <
 	Input extends AwardSettingIndividual | AwardSettingTeam,
@@ -163,7 +164,7 @@ const checkDynasty = async (titles: number, years: number) => {
 };
 
 const checkMoneyball = async (maxPayroll: number) => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		seasonAttrs: ["expenses", "playoffRoundsWon"],
 		season: g.get("season"),
 		tid: g.get("userTid"),
@@ -178,7 +179,7 @@ const checkMoneyball = async (maxPayroll: number) => {
 };
 
 const checkExpansion = async (numSeasons: number) => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		attrs: ["firstSeasonAfterExpansion"],
 		seasonAttrs: ["playoffRoundsWon"],
 		season: g.get("season"),
@@ -194,7 +195,7 @@ const checkExpansion = async (numSeasons: number) => {
 };
 
 const checkSmallMarket = async (popCutoff: number) => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		seasonAttrs: ["playoffRoundsWon", "pop"],
 		season: g.get("season"),
 		tid: g.get("userTid"),
@@ -208,7 +209,7 @@ const checkSmallMarket = async (popCutoff: number) => {
 };
 
 const userWonTitle = async (season = g.get("season")) => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		seasonAttrs: ["playoffRoundsWon"],
 		season,
 		tid: g.get("userTid"),
@@ -1570,7 +1571,7 @@ if (__SPORT === "hockey" || __SPORT === "basketball") {
 			category: "Season",
 
 			async check() {
-				const t = await idb.getCopy.teamsPlus({
+				const t = await team.getFormatted({
 					seasonAttrs: ["won"],
 					season: g.get("season"),
 					tid: g.get("userTid"),
@@ -1623,7 +1624,7 @@ if (__SPORT === "hockey" || __SPORT === "basketball") {
 					return false;
 				}
 
-				const t = await idb.getCopy.teamsPlus({
+				const t = await team.getFormatted({
 					seasonAttrs: ["won", "lost", "tied", "otl"],
 					season: g.get("season"),
 					tid: g.get("userTid"),
@@ -1780,7 +1781,7 @@ if (__SPORT === "hockey" || __SPORT === "basketball") {
 
 			async check() {
 				// Confirm lost finals
-				const t = await idb.getCopy.teamsPlus({
+				const t = await team.getFormatted({
 					seasonAttrs: ["playoffRoundsWon"],
 					season: g.get("season"),
 					tid: g.get("userTid"),
@@ -1823,7 +1824,7 @@ if (__SPORT === "hockey" || __SPORT === "basketball") {
 
 			async check() {
 				// Confirm lost in first round
-				const t = await idb.getCopy.teamsPlus({
+				const t = await team.getFormatted({
 					seasonAttrs: ["playoffRoundsWon"],
 					season: g.get("season"),
 					tid: g.get("userTid"),
@@ -2286,7 +2287,7 @@ if (__SPORT === "football") {
 				const wonTitle = await userWonTitle();
 
 				if (wonTitle) {
-					const t = await idb.getCopy.teamsPlus({
+					const t = await team.getFormatted({
 						seasonAttrs: ["won", "lost"],
 						season: g.get("season"),
 						tid: g.get("userTid"),

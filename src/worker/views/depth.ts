@@ -253,7 +253,7 @@ export default defineView({
 				tid,
 			);
 			const players = addFirstNameShort(
-				await idb.getCopies.playersPlus(playersAll, {
+				await player.formatAll(playersAll, {
 					attrs: ["pid", "firstName", "lastName", "age", "injury", "watch"],
 					ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
 					seasonType: playoffs,

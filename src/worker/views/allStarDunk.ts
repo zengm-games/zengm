@@ -1,4 +1,4 @@
-import { allStar } from "../core/index.ts";
+import { allStar, player } from "../core/index.ts";
 import type { DunkAttempt } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
@@ -61,7 +61,7 @@ export default defineView({
 				pids: dunk.players.map((p) => p.pid),
 			});
 
-			const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
+			const playersFiltered = await player.formatAll(playersRaw, {
 				attrs: [
 					"pid",
 					"firstName",

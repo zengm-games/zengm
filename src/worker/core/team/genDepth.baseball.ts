@@ -1,4 +1,3 @@
-import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import type {
 	PlayerRatings,
@@ -7,8 +6,9 @@ import type {
 import type { Player } from "../../../common/types.ts";
 import { groupByUnique, last, maxBy } from "../../../common/utils.ts";
 import { shuffle } from "../../../common/random.ts";
+import { player } from "../index.ts";
 
-// Everything used here, either from playersPlus or from the ratings of a Player
+// Everything used here, either from player.formatAll or from the ratings of a Player
 type PlayerForDepth = {
 	pid: number;
 	ratings: Pick<PlayerRatings, "spd" | "con" | "hpw" | "eye" | "ovrs"> & {
@@ -28,7 +28,7 @@ const getScorePosBonus = (pos: Position) => {
 	return 0;
 };
 
-// Score for playing a specific position. Players come from playersPlus or are constructed manually, so the type is just what this needs
+// Score for playing a specific position. Players come from player.formatAll or are constructed manually, so the type is just what this needs
 const score = (
 	p: {
 		ratings: {
@@ -380,7 +380,7 @@ const genDepth = async (
 
 	let players: PlayerForDepth[];
 
-	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
+	// Can't use player.formatAll in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
 		players = playersRaw.map((p) => {
 			const ratings = last(p.ratings) as PlayerRatings;
@@ -397,7 +397,7 @@ const genDepth = async (
 			};
 		});
 	} else {
-		const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
+		const playersFiltered = await player.formatAll(playersRaw, {
 			attrs: ["pid"],
 			ratings: ["spd", "con", "hpw", "eye", "pos", "ovrs"],
 			season: g.get("season"),

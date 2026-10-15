@@ -1,8 +1,8 @@
-import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 export default defineView({
 	id: "teamStatDists",
@@ -200,7 +200,7 @@ export default defineView({
 					"oppRbs",
 				],
 			});
-			const teams = await idb.getCopies.teamsPlus({
+			const teams = await team.getFormattedAll({
 				seasonAttrs: ["won", "lost"],
 				stats,
 				season: inputs.season,

@@ -13,7 +13,6 @@ import type {
 import type { ViewInput } from "../util/defineView.ts";
 import { last, maxBy, assertDefined } from "../../common/utils.ts";
 import { normalizeIntl } from "../../common/normalizeIntl.ts";
-import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "../views/depth.ts";
@@ -21,6 +20,7 @@ import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
 import type { SeasonType } from "../util/processInputs.ts";
 import type { processInputs } from "../views/advancedPlayerSearch.ts";
 import { actualPhase } from "../util/actualPhase.ts";
+import { player } from "../core/index.ts";
 
 const getPlayers = async (
 	// Ignored if seasonRange is set
@@ -39,7 +39,7 @@ const getPlayers = async (
 		// For draft prospets and free agents, use current status
 		playersAll = playersAll.filter((p) => p.tid === tidInput);
 	} else {
-		// For other teams, use playersPlus
+		// For other teams, use player.formatAll
 		tid = tidInput;
 	}
 
@@ -73,7 +73,7 @@ const getPlayers = async (
 
 	if (seasonRange) {
 		// Sum up totals within seasonRange, and use peak ratings
-		const players = await idb.getCopies.playersPlus(playersAll, {
+		const players = await player.formatAll(playersAll, {
 			...options,
 			seasonRange,
 		});
@@ -120,7 +120,7 @@ const getPlayers = async (
 		);
 	}
 
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const players = await player.formatAll(playersAll, {
 		...options,
 		season,
 	});
@@ -128,7 +128,7 @@ const getPlayers = async (
 	const isCurrentSeason = g.get("season") === season;
 
 	return players.flatMap((p) => {
-		// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
+		// player.formatAll `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
 		// For the current season, use the current team (including FA), not the last stats team
 		// For other seasons, use the stats team for filtering
 		if (tid !== undefined) {
@@ -248,7 +248,7 @@ export const advancedPlayerSearch = async ({
 		actualSeasonEnd,
 		seasonRangeType,
 	)) {
-		const playersPlus = await getPlayers(
+		const playersFormatted = await getPlayers(
 			// Math.min is for draft prospects in future seasons
 			Math.min(season, seasonEnd),
 			extraAttrs,
@@ -261,7 +261,7 @@ export const advancedPlayerSearch = async ({
 			seasonRange,
 		);
 
-		for (const p of playersPlus) {
+		for (const p of playersFormatted) {
 			if (__SPORT === "baseball") {
 				buffOvrDH(p);
 			}

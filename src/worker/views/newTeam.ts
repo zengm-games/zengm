@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { PHASE } from "../../common/constants.ts";
-import { season, team } from "../core/index.ts";
+import { player, season, team } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { getHistoryTeam } from "./teamHistory.ts";
 import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
@@ -9,7 +9,7 @@ import { defineView } from "../util/defineView.ts";
 
 export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const players = await player.formatAll(playersAll, {
 		attrs: ["injury", "pid", "value"],
 		ratings: ["ovr", "pot", "ovrs", "pos"],
 		season: g.get("season"),
@@ -54,7 +54,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 			t.tid,
 		);
 		const players = orderBy(
-			await idb.getCopies.playersPlus(playersRaw, {
+			await player.formatAll(playersRaw, {
 				attrs: [
 					"pid",
 					"firstName",
@@ -109,7 +109,7 @@ export default defineView({
 	load: async ({ updateEvents }) => {
 		// When switching teams, the "leagues" update event is sent out, so we want to ignore that because otherwise the UI flickers before redirecting
 		if (!updateEvents.has("leagues")) {
-			const rawTeams = await idb.getCopies.teamsPlus({
+			const rawTeams = await team.getFormattedAll({
 				attrs: [
 					"tid",
 					"region",

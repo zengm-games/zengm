@@ -1,6 +1,6 @@
 import type { Player } from "../../common/types.ts";
 import stats from "../core/player/stats.ts";
-import { weightByMinutes } from "../db/getCopies/playersPlus.ts";
+import { weightByMinutes } from "../core/player/format.ts";
 import { FormulaEvaluator } from "./FormulaEvaluator.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";

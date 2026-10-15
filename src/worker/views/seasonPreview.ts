@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
-import { team } from "../core/index.ts";
+import { player, team } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { PHASE } from "../../common/constants.ts";
 import { loadAbbrevs } from "./gameLog.ts";
@@ -50,7 +50,7 @@ export default defineView({
 				}
 			}
 
-			const players = await idb.getCopies.playersPlus(playersRaw, {
+			const players = await player.formatAll(playersRaw, {
 				attrs: [
 					"pid",
 					"tid",

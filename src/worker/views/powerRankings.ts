@@ -2,7 +2,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { team } from "../core/index.ts";
+import { player, team } from "../core/index.ts";
 import {
 	NOT_REAL_POSITIONS,
 	POSITIONS,
@@ -91,7 +91,7 @@ export const addPowerRankingsStuffToTeams = async <
 				...(__SPORT === "basketball" ? RATINGS : []),
 			] as const;
 
-			teamPlayers = await idb.getCopies.playersPlus(teamPlayers, {
+			teamPlayers = await player.formatAll(teamPlayers, {
 				attrs: ["tid", "injury", "value", "age", "pid"],
 				ratings,
 				stats: ["season", "tid", "gp", "min"],
@@ -208,7 +208,7 @@ export default defineView({
 			season !== prevInputs?.season ||
 			playoffs !== prevInputs?.playoffs
 		) {
-			const teams = await idb.getCopies.teamsPlus({
+			const teams = await team.getFormattedAll({
 				attrs: ["tid", "depth", "playThroughInjuries"],
 				seasonAttrs: [
 					"won",

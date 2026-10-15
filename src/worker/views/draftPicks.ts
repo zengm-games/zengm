@@ -8,6 +8,7 @@ import { getEstPicks } from "../core/team/ValueChangeCalculator.ts";
 import { PLAYER } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"draftPicks">) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
@@ -51,7 +52,7 @@ const adjustProjectedPick = ({
 export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 	const draftPicks = [];
 
-	const teamsRaw = await idb.getCopies.teamsPlus({
+	const teamsRaw = await team.getFormattedAll({
 		attrs: ["tid", "abbrev", "playThroughInjuries"],
 		seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
 		stats: ["gp", "mov"],

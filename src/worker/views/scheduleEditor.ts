@@ -6,7 +6,7 @@ import type {
 	TeamFiltered,
 } from "../../common/types.ts";
 import { groupByUnique, maxBy, orderBy } from "../../common/utils.ts";
-import { season } from "../core/index.ts";
+import { season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
@@ -85,7 +85,7 @@ export default defineView({
 		) {
 			const scheduleRaw = await season.getSchedule();
 
-			const teams = await idb.getCopies.teamsPlus({
+			const teams = await team.getFormattedAll({
 				attrs: ["tid"],
 				seasonAttrs: ["abbrev", "region", "name", "tid", "cid", "did"],
 				season: g.get("season"),
@@ -94,7 +94,7 @@ export default defineView({
 
 			let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;
 			if (canRegenerateSchedule) {
-				const teams = await idb.getCopies.teamsPlus({
+				const teams = await team.getFormattedAll({
 					attrs: ["tid"],
 					stats: ["gp"],
 					season: g.get("season"),

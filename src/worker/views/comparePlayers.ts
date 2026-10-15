@@ -18,6 +18,7 @@ import type { SeasonType } from "../util/processInputs.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"comparePlayers">) => {
 	const players: {
@@ -348,7 +349,7 @@ const getPlayer = async (
 	playoffs: SeasonType,
 	allStats: PlayerStatAttr[],
 ) => {
-	const playersPlusOptions = {
+	const formatOptions = {
 		attrs: [
 			"pid",
 			"firstName",
@@ -375,7 +376,7 @@ const getPlayer = async (
 	} as const;
 
 	if (season === "career") {
-		const p = await idb.getCopy.playersPlus(pRaw, playersPlusOptions);
+		const p = await player.format(pRaw, formatOptions);
 		if (!p) {
 			return;
 		}
@@ -413,8 +414,8 @@ const getPlayer = async (
 		};
 	}
 
-	const p = await idb.getCopy.playersPlus(pRaw, {
-		...playersPlusOptions,
+	const p = await player.format(pRaw, {
+		...formatOptions,
 		season,
 	});
 	if (!p) {

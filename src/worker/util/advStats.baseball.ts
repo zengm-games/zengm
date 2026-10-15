@@ -1,5 +1,4 @@
 import { PHASE } from "../../common/constants.ts";
-import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
 import type { TeamFiltered } from "../../common/types.ts";
@@ -8,6 +7,7 @@ import { NUM_OUTS_PER_GAME } from "../../common/processPlayerStats.baseball.ts";
 import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { team } from "../core/index.ts";
 
 const teamStats = [
 	"h",
@@ -315,7 +315,7 @@ const advStats = async () => {
 
 	const { players, playersRaw } = await getPlayers(playoffs);
 
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		stats: teamStats,
 		seasonAttrs: ["ptsDefault"],

@@ -1369,13 +1369,13 @@ export type PlayerStatMax =
 	| null
 	| undefined;
 
-// Not using a homomorphic mapped type, so optional properties become required but still include undefined, since playersPlus always sets the key
+// Not using a homomorphic mapped type, so optional properties become required but still include undefined, since player.formatAll always sets the key
 type PlayerKey = keyof Player;
 type PlayerAllKeys = {
 	[K in PlayerKey]: Player[K];
 };
 
-// ratings and stats are excluded because they are handled separately by playersPlus, not as attrs
+// ratings and stats are excluded because they are handled separately by player.formatAll, not as attrs
 type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
 	PlayerAllKeys,
 	| "contract"
@@ -1500,7 +1500,7 @@ export type PlayerSummary = Record<
 
 export type PlayerSeasonType = "regularSeason" | "playoffs" | "combined";
 
-export type PlayersPlusOptions = {
+export type PlayerFormatOptions = {
 	season?: number;
 	seasonRange?: [number, number];
 	tid?: number;
@@ -1525,7 +1525,7 @@ export type PlayersPlusOptions = {
 
 // Is SeasonType one of the values in the seasonType option? Distributes over unions, so if seasonType is a union of single values (like "playoffs" | "regularSeason"), the result is boolean because it's not known which one it is
 type SeasonTypeIncluded<
-	SeasonTypeOption extends PlayersPlusOptions["seasonType"],
+	SeasonTypeOption extends PlayerFormatOptions["seasonType"],
 	SeasonType extends PlayerSeasonType,
 > =
 	SeasonTypeOption extends Readonly<(infer Values)[]>
@@ -1538,7 +1538,7 @@ type SeasonTypeIncluded<
 
 // Single seasonType value means a single stats row, array means an array of stats rows
 type SeasonTypeSingle<
-	SeasonTypeOption extends PlayersPlusOptions["seasonType"],
+	SeasonTypeOption extends PlayerFormatOptions["seasonType"],
 > = SeasonTypeOption extends Readonly<unknown[]> ? false : true;
 
 type RowOrRows<
@@ -1609,7 +1609,7 @@ type PlayerRatingsPart<
 	Ratings extends Readonly<PlayerRatingAttr[]>,
 	Season extends number | undefined,
 > = {
-	// Never empty, because playersPlus filters out players with no ratings rows
+	// Never empty, because player.formatAll filters out players with no ratings rows
 	ratings: Season extends number
 		? Pick<PlayerRatingsPlus, Ratings[number]>
 		: NonEmptyArray<Pick<PlayerRatingsPlus, Ratings[number]>>;
@@ -1714,9 +1714,9 @@ type PlayerFilteredInner<
 				>);
 
 // Value of an option, or its default value if it may be missing. Uses Options[Key] rather than inferring from an optional property, because that would drop undefined from the type
-type PlayersPlusOptionValue<
+type PlayerFormatOptionValue<
 	Options,
-	Key extends keyof PlayersPlusOptions,
+	Key extends keyof PlayerFormatOptions,
 	Default,
 > = Key extends keyof Options
 	?
@@ -1725,27 +1725,27 @@ type PlayersPlusOptionValue<
 	: Default;
 
 type PlayerFilteredWithSeasonType<
-	Options extends PlayersPlusOptions,
-	SeasonTypeOption extends PlayersPlusOptions["seasonType"],
+	Options extends PlayerFormatOptions,
+	SeasonTypeOption extends PlayerFormatOptions["seasonType"],
 > = PlayerFilteredInner<
-	PlayersPlusOptionValue<Options, "attrs", undefined>,
-	PlayersPlusOptionValue<Options, "ratings", undefined>,
-	PlayersPlusOptionValue<Options, "stats", undefined>,
-	PlayersPlusOptionValue<Options, "season", undefined>,
-	PlayersPlusOptionValue<Options, "seasonRange", undefined>,
+	PlayerFormatOptionValue<Options, "attrs", undefined>,
+	PlayerFormatOptionValue<Options, "ratings", undefined>,
+	PlayerFormatOptionValue<Options, "stats", undefined>,
+	PlayerFormatOptionValue<Options, "season", undefined>,
+	PlayerFormatOptionValue<Options, "seasonRange", undefined>,
 	SeasonTypeSingle<SeasonTypeOption>,
 	SeasonTypeIncluded<SeasonTypeOption, "playoffs">,
 	SeasonTypeIncluded<SeasonTypeOption, "regularSeason">,
 	SeasonTypeIncluded<SeasonTypeOption, "combined">,
-	PlayersPlusOptionValue<Options, "showNoStats", false>,
-	PlayersPlusOptionValue<Options, "showRookies", false>
+	PlayerFormatOptionValue<Options, "showNoStats", false>,
+	PlayerFormatOptionValue<Options, "showRookies", false>
 >;
 
-// Output of playersPlus for a given set of options
-export type PlayerFiltered<Options extends PlayersPlusOptions> =
+// Output of player.formatAll for a given set of options
+export type PlayerFiltered<Options extends PlayerFormatOptions> =
 	PlayerFilteredWithSeasonType<
 		Options,
-		PlayersPlusOptionValue<Options, "seasonType", "regularSeason">
+		PlayerFormatOptionValue<Options, "seasonType", "regularSeason">
 	>;
 
 export type Race = "asian" | "black" | "brown" | "white";

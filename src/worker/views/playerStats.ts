@@ -20,6 +20,7 @@ import { actualPhase } from "../util/actualPhase.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 import { validateSeasonType } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"playerStats">) => {
 	let abbrev;
@@ -167,7 +168,7 @@ export default defineView({
 				}
 			}
 
-			const playersPlusOptions = {
+			const formatOptions = {
 				attrs: [
 					"pid",
 					"firstName",
@@ -193,8 +194,8 @@ export default defineView({
 			// Normalize to one row per player (or per player season, for "all") with a single stats row, regardless of inputs.season
 			let rows;
 			if (typeof inputs.season === "number") {
-				const players = await idb.getCopies.playersPlus(playersAll, {
-					...playersPlusOptions,
+				const players = await player.formatAll(playersAll, {
+					...formatOptions,
 					season: inputs.season,
 				});
 				rows = players.map(({ ratings, ...p }) => ({
@@ -203,10 +204,7 @@ export default defineView({
 					skills: ratings.skills,
 				}));
 			} else {
-				const players = await idb.getCopies.playersPlus(
-					playersAll,
-					playersPlusOptions,
-				);
+				const players = await player.formatAll(playersAll, formatOptions);
 
 				if (inputs.season === "all") {
 					rows = players.flatMap(

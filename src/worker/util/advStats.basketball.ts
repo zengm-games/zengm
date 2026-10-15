@@ -1,11 +1,11 @@
 import { PHASE } from "../../common/constants.ts";
-import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import helpers from "./helpers.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { team } from "../core/index.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -778,7 +778,7 @@ const advStats = async () => {
 	// For DRtg: blk, drb, drtg, min, oppFga, oppFg, oppFta, oppFt, oppOrb, oppPts, oppTov, stl, poss
 	// For Ortg: min, pts, ft, fg, fga, fta, ast, oppDrb, orb, tp, tov, poss
 
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		stats: [
 			"gp",

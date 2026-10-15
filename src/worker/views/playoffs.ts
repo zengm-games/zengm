@@ -1,4 +1,4 @@
-import { season } from "../core/index.ts";
+import { season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayoffSeries } from "../../common/types.ts";
@@ -136,7 +136,7 @@ export default defineView({
 
 			let teamsToEdit: TeamToEdit[] = [];
 			if (canEdit) {
-				const teamsUnsorted = await idb.getCopies.teamsPlus({
+				const teamsUnsorted = await team.getFormattedAll({
 					attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
 					seasonAttrs: [
 						"cid",

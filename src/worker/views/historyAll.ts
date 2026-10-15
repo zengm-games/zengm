@@ -6,6 +6,7 @@ import { formatAwardNamePrefix } from "../core/awards/prefixes.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { PlayersCache } from "../db/PlayersCache.ts";
 import { defineView } from "../util/defineView.ts";
+import { team } from "../core/index.ts";
 
 const getAbbrev = (
 	tid: number,
@@ -42,7 +43,7 @@ export default defineView({
 			updateEvents.has("firstRun") ||
 			(updateEvents.has("newPhase") && g.get("phase") === PHASE.DRAFT_LOTTERY)
 		) {
-			const teams = await idb.getCopies.teamsPlus({
+			const teams = await team.getFormattedAll({
 				attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
 				seasonAttrs: [
 					"season",

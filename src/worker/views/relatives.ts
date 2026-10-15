@@ -7,6 +7,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { processInputs } from "./player.ts";
+import { player } from "../core/index.ts";
 
 const getRelationText = (
 	gender: GameAttributesLeague["gender"],
@@ -228,7 +229,7 @@ export default defineView({
 				});
 			}
 
-			const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
+			const playersFiltered = await player.formatAll(playersAll, {
 				attrs: [
 					"pid",
 					"firstName",

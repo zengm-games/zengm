@@ -168,7 +168,7 @@ const getProcessedPlayers = async (
 		["regularSeason", "playoffs", "combined"] as const
 	).filter((seasonType) => statRanges.has(seasonType));
 
-	const players = (await idb.getCopies.playersPlus(playersAll, {
+	const players = (await player.formatAll(playersAll, {
 		attrs: [
 			"pid",
 			"name",

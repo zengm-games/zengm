@@ -51,7 +51,7 @@ export default defineView({
 				);
 		const playersRawByPid = groupByUnique(playersRaw, "pid");
 
-		const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
+		const playersFiltered = await player.formatAll(playersRaw, {
 			attrs: [
 				"pid",
 				"name",

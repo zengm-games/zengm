@@ -2,7 +2,7 @@ import setSchedule from "./setSchedule.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, lock } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
-import { season } from "../index.ts";
+import { season, team } from "../index.ts";
 import { chunk, groupByUnique } from "../../../common/utils.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
 
@@ -33,7 +33,7 @@ const seriesIsNotOver = (
 	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
 
 const getTeamsForOrderTeams = () => {
-	return idb.getCopies.teamsPlus({
+	return team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: [
 			"winp",

@@ -1,14 +1,14 @@
-import { idb } from "../db/index.ts";
 import { helpers, g } from "../util/index.ts";
 import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { defineView } from "../util/defineView.ts";
+import { team } from "../core/index.ts";
 
 export default defineView({
 	id: "manageTeams",
 	load: async () => {
 		const teams = (
-			await idb.getCopies.teamsPlus({
+			await team.getFormattedAll({
 				attrs: [
 					"tid",
 					"abbrev",

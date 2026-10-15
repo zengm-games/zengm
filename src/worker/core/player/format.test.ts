@@ -2,8 +2,7 @@ import { assert, beforeAll, describe, test } from "vitest";
 import { assert as typeAssert, type IsExact } from "conditional-type-checks";
 import { PLAYER } from "../../../common/constants.ts";
 import { resetCache, resetG } from "../../../test/helpers.ts";
-import { player } from "../../core/index.ts";
-import { idb } from "../index.ts";
+import { player } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { last } from "../../../common/utils.ts";
@@ -58,7 +57,7 @@ beforeAll(async () => {
 });
 
 test("return requested info if tid/season match", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
 		stats: ["season", "tid", "fg", "fgp", "per"],
@@ -86,7 +85,7 @@ test("return requested info if tid/season match", async () => {
 });
 
 test("return requested info if tid/season match for an array of player objects", async () => {
-	const pfs = await idb.getCopies.playersPlus([p, p], {
+	const pfs = await player.formatAll([p, p], {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
 		stats: ["season", "tid", "fg", "fgp", "per"],
@@ -114,7 +113,7 @@ test("return requested info if tid/season match for an array of player objects",
 });
 
 test("return requested info if tid/season match, even when no attrs requested", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		ratings: ["season", "ovr"],
 		stats: ["season", "tid", "fg", "fgp", "per"],
 		tid: 4,
@@ -139,7 +138,7 @@ test("return requested info if tid/season match, even when no attrs requested", 
 });
 
 test("return requested info if tid/season match, even when no ratings requested", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		attrs: ["tid", "awards"],
 		stats: ["season", "tid", "fg", "fgp", "per"],
 		tid: 4,
@@ -164,7 +163,7 @@ test("return requested info if tid/season match, even when no ratings requested"
 });
 
 test("return requested info if tid/season match, even when no stats requested", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
 		tid: 4,
@@ -186,7 +185,7 @@ test("return requested info if tid/season match, even when no stats requested", 
 });
 
 test("return undefined if tid does not match any on record", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
 		stats: ["season", "tid", "fg", "fgp", "per"],
@@ -197,7 +196,7 @@ test("return undefined if tid does not match any on record", async () => {
 });
 
 test("return undefined if season does not match any on record", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
 		stats: ["season", "abbrev", "fg", "fgp", "per"],
@@ -207,7 +206,7 @@ test("return undefined if season does not match any on record", async () => {
 	assert.strictEqual(pf, undefined);
 });
 test('return season totals is options.statType is "totals", and per-game averages otherwise', async () => {
-	let pf = await idb.getCopy.playersPlus(p, {
+	let pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 4,
 		season: 2012,
@@ -220,7 +219,7 @@ test('return season totals is options.statType is "totals", and per-game average
 
 	assert.strictEqual(pf.stats.gp, 5);
 	assert.strictEqual(pf.stats.fg, 20);
-	pf = await idb.getCopy.playersPlus(p, {
+	pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 4,
 		season: 2012,
@@ -235,7 +234,7 @@ test('return season totals is options.statType is "totals", and per-game average
 });
 
 test("return regular season and playoff stats if options.seasonType includes both", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 4,
 		season: 2012,
@@ -258,7 +257,7 @@ test("return regular season and playoff stats if options.seasonType includes bot
 });
 
 test("not return undefined with options.showNoStats even if tid does not match any on record", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 5,
 		season: 2012,
@@ -268,7 +267,7 @@ test("not return undefined with options.showNoStats even if tid does not match a
 });
 
 test("not return undefined with options.showNoStats if season does not match any on record", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 4,
 		season: 2015,
@@ -279,7 +278,7 @@ test("not return undefined with options.showNoStats if season does not match any
 
 test("not return undefined with options.showRookies if the player was drafted this season", async () => {
 	g.setWithoutSavingToDB("season", 2011);
-	let pf = await idb.getCopy.playersPlus(p, {
+	let pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 5,
 		season: 2011,
@@ -287,7 +286,7 @@ test("not return undefined with options.showRookies if the player was drafted th
 	});
 	assert.strictEqual(typeof pf, "object");
 	g.setWithoutSavingToDB("season", 2012);
-	pf = await idb.getCopy.playersPlus(p, {
+	pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 5,
 		season: 2011,
@@ -297,7 +296,7 @@ test("not return undefined with options.showRookies if the player was drafted th
 });
 
 test("fuzz ratings if options.fuzz is true", async () => {
-	let pf = await idb.getCopy.playersPlus(p, {
+	let pf = await player.format(p, {
 		ratings: ["ovr"],
 		tid: 4,
 		season: 2012,
@@ -311,7 +310,7 @@ test("fuzz ratings if options.fuzz is true", async () => {
 	assert(p.ratings[1]);
 
 	assert.strictEqual(pf.ratings.ovr, p.ratings[1].ovr);
-	pf = await idb.getCopy.playersPlus(p, {
+	pf = await player.format(p, {
 		ratings: ["ovr"],
 		tid: 4,
 		season: 2012,
@@ -331,7 +330,7 @@ test("fuzz ratings if options.fuzz is true", async () => {
 
 test("return stats from previous season if options.oldStats is true and current season has no stats record", async () => {
 	g.setWithoutSavingToDB("season", 2013);
-	let pf = await idb.getCopy.playersPlus(p, {
+	let pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 0,
 		season: 2013,
@@ -344,7 +343,7 @@ test("return stats from previous season if options.oldStats is true and current 
 
 	assert.strictEqual(pf.stats.gp, 8);
 	assert.strictEqual(pf.stats.fg, 7);
-	pf = await idb.getCopy.playersPlus(p, {
+	pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 0,
 		season: 2014,
@@ -352,7 +351,7 @@ test("return stats from previous season if options.oldStats is true and current 
 	});
 	assert.strictEqual(pf, undefined);
 	g.setWithoutSavingToDB("season", 2014);
-	pf = await idb.getCopy.playersPlus(p, {
+	pf = await player.format(p, {
 		stats: ["gp", "fg"],
 		tid: 0,
 		season: 2014,
@@ -370,7 +369,7 @@ test("return stats from previous season if options.oldStats is true and current 
 
 test("adjust cashOwed by options.numGamesRemaining", async () => {
 	g.setWithoutSavingToDB("season", 2012);
-	let pf = await idb.getCopy.playersPlus(p, {
+	let pf = await player.format(p, {
 		attrs: ["cashOwed"],
 		tid: 4,
 		season: 2012,
@@ -382,7 +381,7 @@ test("adjust cashOwed by options.numGamesRemaining", async () => {
 	}
 
 	assert.strictEqual(pf.cashOwed, (p.contract.amount * 2) / 1000);
-	pf = await idb.getCopy.playersPlus(p, {
+	pf = await player.format(p, {
 		attrs: ["cashOwed"],
 		tid: 4,
 		season: 2012,
@@ -394,7 +393,7 @@ test("adjust cashOwed by options.numGamesRemaining", async () => {
 	}
 
 	assert.strictEqual(pf.cashOwed, (p.contract.amount * 1.5) / 1000);
-	pf = await idb.getCopy.playersPlus(p, {
+	pf = await player.format(p, {
 		attrs: ["cashOwed"],
 		tid: 4,
 		season: 2012,
@@ -409,7 +408,7 @@ test("adjust cashOwed by options.numGamesRemaining", async () => {
 });
 
 test("return stats and ratings from all seasons and teams if no season or team is specified", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
 		stats: ["season", "tid", "fg"],
@@ -444,7 +443,7 @@ test("return stats and ratings from all seasons and teams if no season or team i
 });
 
 test("return stats and ratings from all seasons with a specific team if no season is specified but a team is", async () => {
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
 		stats: ["season", "tid", "fg"],
@@ -476,7 +475,7 @@ test("mergeStats combines stats from multiple teams in the same season", async (
 	p2.stats[1]!.playoffs = false;
 	p2.stats[1]!.tid = 20;
 
-	const pf = await idb.getCopy.playersPlus(p2, {
+	const pf = await player.format(p2, {
 		attrs: ["tid"],
 		stats: ["season", "fg", "tid"],
 		season: 2012,
@@ -496,7 +495,7 @@ test("mergeStats combines stats from multiple teams in the same season, for mult
 	p2.stats[1]!.playoffs = false;
 	p2.stats[1]!.tid = 20;
 
-	const pf = await idb.getCopy.playersPlus(p2, {
+	const pf = await player.format(p2, {
 		attrs: ["tid"],
 		stats: ["season", "fg", "tid"],
 		mergeStats: "totOnly",
@@ -519,7 +518,7 @@ test("mergeStats totAndTeams results ", async () => {
 	p2.stats[1]!.playoffs = false;
 	p2.stats[1]!.tid = 20;
 
-	const pf = await idb.getCopy.playersPlus(p2, {
+	const pf = await player.format(p2, {
 		attrs: ["tid"],
 		stats: ["season", "fg", "tid"],
 		ratings: ["season", "tid"],
@@ -583,7 +582,7 @@ test("mergeStats totOnly when first row has >0 GP and second has 0 GP", async ()
 	p2.stats[1]!.gp = 0;
 	p2.stats[1]!.fg = 0;
 
-	const pf = await idb.getCopy.playersPlus(p2, {
+	const pf = await player.format(p2, {
 		stats: ["gp", "tid"],
 		season: 2012,
 		mergeStats: "totOnly",
@@ -603,7 +602,7 @@ test("careerStats works when player has no stats rows", async () => {
 		pid: 0,
 		...player.generate(PLAYER.UNDRAFTED, 19, 2011, false, DEFAULT_LEVEL),
 	};
-	const pf = await idb.getCopy.playersPlus(p, {
+	const pf = await player.format(p, {
 		stats: ["gp", "playoffs", "bpm"],
 	});
 
@@ -615,7 +614,7 @@ test("careerStats works when player has no stats rows", async () => {
 
 describe("TypeScript", () => {
 	test("Returns attrs, ratings, and stats as objects for a single season", async () => {
-		const players = await idb.getCopies.playersPlus([p], {
+		const players = await player.formatAll([p], {
 			attrs: ["tid", "awards"],
 			ratings: ["season", "ovr"],
 			stats: ["season", "tid", "fg", "fgp", "per"],
@@ -623,7 +622,7 @@ describe("TypeScript", () => {
 			season: 2012,
 		});
 
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			attrs: ["tid", "awards"],
 			ratings: ["season", "ovr"],
 			stats: ["season", "tid", "fg", "fgp", "per"],
@@ -660,7 +659,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns just attrs", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			attrs: ["tid", "awards"],
 			season: 2012,
 		});
@@ -677,7 +676,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns arrays and careerStats when no season is supplied", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			attrs: ["tid"],
 			ratings: ["season", "ovr"],
 			stats: ["season", "fg"],
@@ -714,7 +713,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns stats array and no careerStats for a single season with both playoffs and regular season", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			stats: ["gp", "fg"],
 			tid: 4,
 			season: 2012,
@@ -737,7 +736,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns stats object for a single season with only playoffs", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			stats: ["gp"],
 			season: 2012,
 			seasonType: "playoffs",
@@ -758,7 +757,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns careerStats and careerStatsPlayoffs when no season is supplied and seasonType includes regular season and playoffs", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			stats: ["gp"],
 			seasonType: ["regularSeason", "playoffs"],
 		});
@@ -791,7 +790,7 @@ describe("TypeScript", () => {
 		// Functions rather than constants, otherwise TypeScript narrows the types
 		const getSeason = (): number | undefined => 2012;
 		const getSeasonType = (): PlayerSeasonType => "regularSeason";
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			ratings: ["ovr"],
 			stats: ["gp"],
 			season: getSeason(),
@@ -841,7 +840,7 @@ describe("TypeScript", () => {
 
 	test("Returns stats object for a single season when seasonType is a single value not known statically", async () => {
 		const getSeasonType = (): PlayerSeasonType => "regularSeason";
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			stats: ["gp"],
 			season: 2012,
 			seasonType: getSeasonType(),
@@ -860,7 +859,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns stats array for a single season when seasonType is an array, even with one value", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			stats: ["gp"],
 			tid: 4,
 			season: 2012,
@@ -882,7 +881,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Derived and overridden attrs have the correct types", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			attrs: [
 				"name",
 				"age",
@@ -917,7 +916,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Stats from different sports have the correct types", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			stats: ["keyStats", "a", "ptsMax", "abbrev", "jerseyNumber"],
 			tid: 4,
 			season: 2012,
@@ -946,15 +945,15 @@ describe("TypeScript", () => {
 	test("Invalid attrs, ratings, and stats are errors", () => {
 		// Not called, just type checked
 		const f = async () => {
-			await idb.getCopy.playersPlus(p, {
+			await player.format(p, {
 				// @ts-expect-error
 				attrs: ["notAnAttr"],
 			});
-			await idb.getCopy.playersPlus(p, {
+			await player.format(p, {
 				// @ts-expect-error
 				ratings: ["notARating"],
 			});
-			await idb.getCopy.playersPlus(p, {
+			await player.format(p, {
 				// @ts-expect-error
 				stats: ["notAStat"],
 			});
@@ -963,7 +962,7 @@ describe("TypeScript", () => {
 	});
 
 	test("contract.exp may be undefined with seasonRange and no season", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			attrs: ["contract"],
 			seasonRange: [2011, 2012],
 		});
@@ -974,7 +973,7 @@ describe("TypeScript", () => {
 			>
 		>(true);
 
-		const pf2 = await idb.getCopy.playersPlus(p, {
+		const pf2 = await player.format(p, {
 			attrs: ["contract"],
 			season: 2012,
 			seasonRange: [2011, 2012],
@@ -991,7 +990,7 @@ describe("TypeScript", () => {
 			hasTot?: true;
 		};
 
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			stats: ["gp"],
 			season: 2012,
 			showRookies: true,
@@ -1001,7 +1000,7 @@ describe("TypeScript", () => {
 		>(true);
 
 		// showNoStats adds an empty row, which has no playoffs value
-		const pf2 = await idb.getCopy.playersPlus(p, {
+		const pf2 = await player.format(p, {
 			stats: ["gp"],
 			season: 2012,
 			showRookies: true,
@@ -1020,7 +1019,7 @@ describe("TypeScript", () => {
 	});
 
 	test("combined stats", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			stats: ["gp"],
 			seasonType: ["regularSeason", "combined"],
 		});
@@ -1053,8 +1052,8 @@ describe("TypeScript", () => {
 		>(true);
 	});
 
-	test("PlayerFiltered matches playersPlus output", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+	test("PlayerFiltered matches player.formatAll output", async () => {
+		const pf = await player.format(p, {
 			attrs: ["pid", "name"],
 			ratings: ["ovr"],
 			stats: ["gp"],
@@ -1075,7 +1074,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Ratings array is never empty, so the last row is always defined", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			ratings: ["season", "ovr"],
 		});
 
@@ -1090,7 +1089,7 @@ describe("TypeScript", () => {
 	});
 
 	test("Empty ratings array is the same as not requesting ratings", async () => {
-		const pf = await idb.getCopy.playersPlus(p, {
+		const pf = await player.format(p, {
 			attrs: ["pid"],
 			ratings: [],
 			season: 2012,

@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common/constants.ts";
-import { season, team } from "../index.ts";
+import { player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { GameResults } from "../../../common/types.ts";
@@ -448,7 +448,7 @@ const writeTeamStats = async (results: GameResults) => {
 				"playersByTid",
 				teamSeason.tid,
 			);
-			const players = await idb.getCopies.playersPlus(playersRaw, {
+			const players = await player.formatAll(playersRaw, {
 				attrs: ["pid", "injury", "value"],
 				fuzz: true,
 				ratings: ["ovr", "pos", "ovrs"],

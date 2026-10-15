@@ -11,6 +11,7 @@ import { bySport } from "../../common/sportFunctions.ts";
 import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"draftTeamHistory">) => {
 	let [tid, abbrev] = validateAbbrev(params.abbrev);
@@ -45,7 +46,7 @@ export default defineView({
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		} as const);
 		const playersAll2 = await idb.merged.players.getAll(undefined, { filter });
-		const playersAll = await idb.getCopies.playersPlus(playersAll2, {
+		const playersAll = await player.formatAll(playersAll2, {
 			attrs: [
 				"tid",
 				"abbrev",

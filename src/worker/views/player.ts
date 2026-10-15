@@ -60,7 +60,7 @@ export const getPlayer = async <
 ) => {
 	const stats = getPlayerProfileStats();
 
-	const p = await idb.getCopy.playersPlus(pRaw, {
+	const p = await player.format(pRaw, {
 		attrs: [
 			"pid",
 			"name",

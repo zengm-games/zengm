@@ -5,6 +5,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { getPlayers } from "../core/awards/getPlayers.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 export default defineView({
 	id: "editAwardWinners",
@@ -71,7 +72,7 @@ export default defineView({
 
 			const actualAwards = awards.awards;
 
-			const teams = await idb.getCopies.teamsPlus({
+			const teams = await team.getFormattedAll({
 				attrs: ["tid"],
 				seasonAttrs: ["abbrev"],
 				season,

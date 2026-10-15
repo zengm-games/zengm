@@ -2,7 +2,7 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { AllStars, Awards } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { season } from "../core/index.ts";
+import { season, team } from "../core/index.ts";
 import { omit, orderBy } from "../../common/utils.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 
@@ -337,7 +337,7 @@ export default defineView({
 			}
 
 			const teamsAll = orderBy(
-				await idb.getCopies.teamsPlus({
+				await team.getFormattedAll({
 					attrs: [
 						"tid",
 						"abbrev",

@@ -8,6 +8,7 @@ import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { defineView } from "../util/defineView.ts";
+import { player } from "../core/index.ts";
 
 const playerValue = (p: Player) => {
 	let sum = 0;
@@ -128,7 +129,7 @@ export default defineView({
 			);
 			const bestPlayers = addFirstNameShort(
 				processPlayersHallOfFame(
-					await idb.getCopies.playersPlus(bestPlayersAll, {
+					await player.formatAll(bestPlayersAll, {
 						attrs: [
 							"pid",
 							"firstName",

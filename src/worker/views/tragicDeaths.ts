@@ -5,6 +5,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { defineView } from "../util/defineView.ts";
+import { player } from "../core/index.ts";
 
 export default defineView({
 	id: "tragicDeaths",
@@ -41,7 +42,7 @@ export default defineView({
 			} as const);
 			const playersAll = await idb.merged.players.getAll({ pids });
 
-			const players = await idb.getCopies.playersPlus(playersAll, {
+			const players = await player.formatAll(playersAll, {
 				attrs: [
 					"pid",
 					"firstName",

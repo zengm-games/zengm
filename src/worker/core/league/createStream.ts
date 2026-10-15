@@ -882,7 +882,7 @@ const processTeamInfos = async ({
 					}
 				}
 
-				// See similar code in teamsPlus
+				// See similar code in team.getFormattedAll
 				const copyFromTeamIfUndefined = [
 					// For upgrades, or manually edited league files
 					"cid",

@@ -121,7 +121,7 @@ const PLAYER_STATS = bySport({
 	hockey: ["gp", "min", "g", "a", "sa", "ga", "pm"],
 });
 
-// Since WAR uses current team's stats rather than mergedStats, we can avoid a playersPlus call
+// Since WAR uses current team's stats rather than mergedStats, we can avoid a player.formatAll call
 export const getPlayers = async (playoffs: boolean) => {
 	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
 		0, // Active players have tid >= 0

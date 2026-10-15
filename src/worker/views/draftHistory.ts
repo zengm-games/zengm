@@ -10,6 +10,7 @@ import { PHASE } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { helpers } from "../util/index.ts";
 import { validateSeason } from "../util/processInputs.ts";
+import { player, team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"draftHistory">) => {
 	let season: number;
@@ -45,7 +46,7 @@ const processInputs = (params: RouteParams<"draftHistory">) => {
 export const getDraftTeamsByTid = async (season: number) => {
 	const teamsByTid = groupByUnique(
 		(
-			await idb.getCopies.teamsPlus({
+			await team.getFormattedAll({
 				attrs: ["tid"],
 				seasonAttrs: ["abbrev", "imgURL", "imgURLSmall"],
 				season,
@@ -111,7 +112,7 @@ export default defineView({
 		playersAll = playersAll.filter((p) => {
 			return p.draft.year === inputs.season;
 		});
-		playersAll = await idb.getCopies.playersPlus(playersAll, {
+		playersAll = await player.formatAll(playersAll, {
 			attrs: [
 				"tid",
 				"abbrev",

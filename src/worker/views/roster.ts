@@ -1,5 +1,5 @@
 import { PHASE, POSITIONS } from "../../common/constants.ts";
-import { finances, season, team } from "../core/index.ts";
+import { finances, player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { Player, TeamSeasonAttr } from "../../common/types.ts";
@@ -60,7 +60,7 @@ const sortByPos = (p: {
 };
 
 const getStandingsInfo = async (info: { season: number; tid: number }) => {
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: [
 			"won",
@@ -189,7 +189,7 @@ export default defineView({
 				"avgAge",
 				"note",
 			];
-			const t = await idb.getCopy.teamsPlus({
+			const t = await team.getFormatted({
 				season: inputs.season,
 				tid: inputs.tid,
 				attrs: [
@@ -281,7 +281,7 @@ export default defineView({
 					}
 				}
 
-				players = await idb.getCopies.playersPlus(playersAll, {
+				players = await player.formatAll(playersAll, {
 					attrs,
 					ratings,
 					seasonType: inputs.playoffs,
@@ -327,7 +327,7 @@ export default defineView({
 					activeSeason: inputs.season,
 					statsTid: inputs.tid,
 				});
-				players = await idb.getCopies.playersPlus(playersAll, {
+				players = await player.formatAll(playersAll, {
 					attrs,
 					ratings,
 					seasonType: inputs.playoffs,

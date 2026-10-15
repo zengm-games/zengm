@@ -1,4 +1,4 @@
-import { season } from "../index.ts";
+import { season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
 import type { Conditions, Game, PhaseReturn } from "../../../common/types.ts";
@@ -138,7 +138,7 @@ const deleteOldBoxScores = async () => {
 const newPhaseRegularSeason = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: ["cid", "did"],
 		season: g.get("season"),

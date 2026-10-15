@@ -12,6 +12,7 @@ import generate from "./generate.ts";
 import genDepth from "./genDepth.ts";
 import getContracts from "./getContracts.ts";
 import getDepthPlayers from "./getDepthPlayers.ts";
+import { getFormatted, getFormattedAll } from "./getFormatted.ts";
 import getPayroll from "./getPayroll.ts";
 import getPayrolls from "./getPayrolls.ts";
 import ovr from "./ovr.ts";
@@ -41,6 +42,8 @@ export default {
 	genDepth,
 	getContracts,
 	getDepthPlayers,
+	getFormatted,
+	getFormattedAll,
 	getPayroll,
 	getPayrolls,
 	ovr,

@@ -7,6 +7,7 @@ import { formatEventText } from "../util/formatEventText.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"news">) => {
 	const season = validateSeason(params.season);
@@ -212,7 +213,7 @@ export default defineView({
 			});
 
 			const teams = (
-				await idb.getCopies.teamsPlus({
+				await team.getFormattedAll({
 					seasonAttrs: [
 						"abbrev",
 						"colors",

@@ -1,6 +1,5 @@
 import { PHASE, RATINGS } from "../../../common/constants.ts";
 import type { Player } from "../../../common/types.ts";
-import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import { getPlayerProfileStats } from "../../views/player.ts";
 import player from "./index.ts";
@@ -35,7 +34,7 @@ const getLeaders = async (pRaw: Player) => {
 		const regularSeasonOnly =
 			season === currentSeason && currentPhase < PHASE.PLAYOFFS;
 
-		const p = await idb.getCopy.playersPlus(pRaw, {
+		const p = await player.format(pRaw, {
 			attrs: ["age"],
 			// pos is for getLeaderRequirements
 			ratings: ["pos", ...ratings],

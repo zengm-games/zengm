@@ -10,7 +10,7 @@ import type {
 import { defineView } from "../util/defineView.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { season } from "../core/index.ts";
+import { player, season, team } from "../core/index.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
@@ -473,7 +473,7 @@ export class GamesPlayedCache {
 				}
 			}
 
-			const teams = await idb.getCopies.teamsPlus({
+			const teams = await team.getFormattedAll({
 				attrs: ["tid"],
 				stats: ["gp"], // Use this only for playoffs, since seasonAttrs.gp does not increment for playoffs
 				seasonAttrs: ["gp"], // Use seasonAttrs.gp rather than stats.gp for real player historical data which has no team stats
@@ -813,7 +813,7 @@ export default defineView({
 			// Returns the player, the stats row to use, and some values that differ between career and single season
 			const getPlayerInfo = async (pRaw: Player, season: number | "career") => {
 				if (season === "career") {
-					const p = await idb.getCopy.playersPlus(pRaw, {
+					const p = await player.format(pRaw, {
 						attrs,
 						// season and ovr only needed for bestPos
 						ratings: ["season", "ovr", "skills", "pos"],
@@ -860,7 +860,7 @@ export default defineView({
 					};
 				}
 
-				const p = await idb.getCopy.playersPlus(pRaw, {
+				const p = await player.format(pRaw, {
 					attrs,
 					ratings: ["skills", "pos"],
 					stats: allStats,

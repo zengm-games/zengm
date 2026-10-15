@@ -2,6 +2,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 export default defineView({
 	id: "leagueFinances",
@@ -19,7 +20,7 @@ export default defineView({
 			]);
 
 			const teams = (
-				await idb.getCopies.teamsPlus({
+				await team.getFormattedAll({
 					attrs: ["tid", "budget", "strategy"],
 					seasonAttrs: [
 						"att",

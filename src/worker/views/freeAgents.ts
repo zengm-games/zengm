@@ -44,7 +44,7 @@ const processInputs = (params: RouteParams<"freeAgents">) => {
 	};
 };
 
-// Call this after playersPlus, with the raw player objects that were passed to playersPlus. getContractAmount can override the contract amount used for each player's mood
+// Call this after player.formatAll, with the raw player objects that were passed to player.formatAll. getContractAmount can override the contract amount used for each player's mood
 export const addMood = async <T extends { pid: number }>(
 	players: T[],
 	playersRaw: Player[],
@@ -185,7 +185,7 @@ export default defineView({
 			const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
 			const getPlayersFiltered = (players: Player[]) =>
-				idb.getCopies.playersPlus(players, {
+				player.formatAll(players, {
 					attrs: [
 						"pid",
 						"name",
@@ -277,7 +277,7 @@ export default defineView({
 			// Default sort, used for the compare players link
 			players = orderBy(players, (p) => p.contract.amount, "desc");
 
-			const userPlayers = await idb.getCopies.playersPlus(playersByType.user, {
+			const userPlayers = await player.formatAll(playersByType.user, {
 				attrs: [],
 				ratings: ["pos"],
 				stats: [],

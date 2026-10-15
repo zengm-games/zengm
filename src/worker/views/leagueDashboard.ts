@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
-import { season, team } from "../core/index.ts";
+import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { Player } from "../../common/types.ts";
@@ -97,7 +97,7 @@ const updateTeams = async ({ updateEvents }: ViewArgs) => {
 			football: ["Points", "Allowed", "PssYds", "RusYds"],
 			hockey: ["Goals", "Allowed"],
 		});
-		const teams = await idb.getCopies.teamsPlus({
+		const teams = await team.getFormattedAll({
 			attrs: ["tid"],
 			seasonAttrs: [
 				"won",
@@ -224,7 +224,7 @@ const updatePlayers = async ({ updateEvents }: ViewArgs) => {
 		]);
 
 		// League leaders
-		const leaderPlayers = await idb.getCopies.playersPlus(playersAll, {
+		const leaderPlayers = await player.formatAll(playersAll, {
 			attrs: ["pid", "firstName", "lastName", "abbrev", "tid"],
 			stats: leaderStats,
 			season: g.get("season"),
@@ -273,7 +273,7 @@ const updatePlayers = async ({ updateEvents }: ViewArgs) => {
 		}
 
 		const userPlayers = addFirstNameShort(
-			await idb.getCopies.playersPlus(
+			await player.formatAll(
 				playersAll.filter((p) => p.tid === g.get("userTid")),
 				{
 					attrs: [
@@ -478,7 +478,7 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 
 const updateStandings = async ({ updateEvents }: ViewArgs) => {
 	if (updateEvents.has("firstRun") || updateEvents.has("gameSim")) {
-		const teams = await idb.getCopies.teamsPlus({
+		const teams = await team.getFormattedAll({
 			attrs: ["tid"],
 			seasonAttrs: [
 				"won",
@@ -605,7 +605,7 @@ const updateNewsFeed = async ({ updateEvents }: ViewArgs) => {
 		}
 
 		const teams = (
-			await idb.getCopies.teamsPlus({
+			await team.getFormattedAll({
 				seasonAttrs: [
 					"abbrev",
 					"colors",

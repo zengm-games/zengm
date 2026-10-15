@@ -4,6 +4,7 @@ import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 export default defineView({
 	id: "exportPlayers",
@@ -23,7 +24,7 @@ export default defineView({
 			}
 
 			const players = addFirstNameShort(
-				await idb.getCopies.playersPlus(playersAll, {
+				await player.formatAll(playersAll, {
 					attrs: [
 						"pid",
 						"firstName",

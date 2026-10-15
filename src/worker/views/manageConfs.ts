@@ -1,7 +1,7 @@
-import { idb } from "../db/index.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
+import { team } from "../core/index.ts";
 
 export default defineView({
 	id: "manageConfs",
@@ -9,7 +9,7 @@ export default defineView({
 		const initialConfs = g.get("confs");
 		const initialDivs = g.get("divs");
 
-		const initialTeams = await idb.getCopies.teamsPlus({
+		const initialTeams = await team.getFormattedAll({
 			attrs: [
 				"abbrev",
 				"region",

@@ -4,12 +4,11 @@ import {
 	RATINGS,
 	TEAM_STATS_TABLES,
 } from "../../common/constants.ts";
-import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { TeamFiltered, TeamSeasonAttr } from "../../common/types.ts";
 import { defineView, type ViewArgs } from "../util/defineView.ts";
 import type { TeamStatAttr } from "../../common/types.baseball.ts";
-import { season } from "../core/index.ts";
+import { season, team } from "../core/index.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 import { choice } from "../../common/random.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
@@ -172,7 +171,7 @@ const getTeamStats = async (
 	playoffs: "playoffs" | "regularSeason",
 	seasons: [number, number],
 ) => {
-	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to playersPlus
+	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to player.formatAll
 	const statTypePlus =
 		statTypeInput !== undefined && statTypes.includes(statTypeInput)
 			? statTypeInput
@@ -209,7 +208,7 @@ const getTeamStats = async (
 	const teamsPlayoffs =
 		playoffs === "playoffs" && statTypePlus !== "powerRankings";
 
-	let teams = await idb.getCopies.teamsPlus({
+	let teams = await team.getFormattedAll({
 		attrs: ["tid", "playThroughInjuries", "abbrev"],
 		seasonAttrs,
 		stats: statKeys as TeamStatAttr[],

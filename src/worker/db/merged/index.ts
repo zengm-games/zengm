@@ -20,3 +20,4 @@ export const playoffSeries = new MergedStore("playoffSeries", {
 });
 export const scheduledEvents = new MergedStore("scheduledEvents");
 export { default as teamSeasons } from "./teamSeasons.ts";
+export { default as teamStats } from "./teamStats.ts";

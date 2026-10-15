@@ -17,6 +17,7 @@ import type {
 	Message,
 	Player,
 	TeamSeason,
+	TeamStats,
 } from "../../../common/types.ts";
 import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player, team } from "../../core/index.ts";
@@ -87,6 +88,19 @@ const makeTeamSeason = (
 	});
 	return {
 		...team.genSeasonRow(t),
+		rid,
+		season,
+	};
+};
+
+const makeTeamStats = (
+	rid: number,
+	tid: number,
+	season: number,
+	playoffs = false,
+): TeamStats => {
+	return {
+		...team.genStatsRow(tid, playoffs),
 		rid,
 		season,
 	};
@@ -655,6 +669,65 @@ describe("teamSeasons", () => {
 				}),
 			),
 			[4, 6, 8],
+		);
+	});
+});
+
+describe("teamStats", () => {
+	const rids = (rows: TeamStats[]) => {
+		return rows.map((row) => row.rid).sort();
+	};
+
+	beforeEach(async () => {
+		// Like the real cache, only the current season is in the cache
+		let rid = 0;
+		for (let season = SEASON - 2; season <= SEASON; season++) {
+			for (const tid of [0, 1]) {
+				for (const playoffs of [false, true]) {
+					const row = makeTeamStats(rid, tid, season, playoffs);
+					await idb.league.put("teamStats", row);
+					if (season === SEASON) {
+						await idb.cache.teamStats.put(
+							makeTeamStats(rid, tid, season, playoffs),
+						);
+					}
+					rid += 1;
+				}
+			}
+		}
+	});
+
+	test("single team and season", async () => {
+		assert.deepStrictEqual(
+			rids(await idb.merged.teamStats.getAll({ tid: 1, season: SEASON - 2 })),
+			[2, 3],
+		);
+
+		const current = await idb.merged.teamStats.getAll({
+			tid: 1,
+			season: SEASON,
+		});
+		assert.deepStrictEqual(rids(current), [10, 11]);
+		assert.strictEqual(current[0], await idb.cache.teamStats.get(10));
+	});
+
+	test("current season only reads from the cache", async () => {
+		// Can't happen in a real league, because the cache has every team stats row from the current season, but it shows that IndexedDB is not checked
+		await idb.league.put("teamStats", makeTeamStats(100, 1, SEASON));
+
+		assert.deepStrictEqual(
+			rids(await idb.merged.teamStats.getAll({ tid: 1, season: SEASON })),
+			[10, 11],
+		);
+	});
+
+	test("all seasons for a team, including a new row only in the cache and a row deleted from the cache", async () => {
+		await idb.cache.teamStats.put(makeTeamStats(100, 0, SEASON));
+		await idb.cache.teamStats.delete(9);
+
+		assert.deepStrictEqual(
+			rids(await idb.merged.teamStats.getAll({ tid: 0 })),
+			[0, 1, 100, 4, 5, 8],
 		);
 	});
 });

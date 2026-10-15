@@ -1,4 +1,3 @@
-import { mergeByPk } from "./helpers.ts";
 import { team } from "../../core/index.ts";
 import { idb } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -253,52 +252,7 @@ const processStats = async <
 	showNoStats: boolean,
 	season: Season | undefined,
 ) => {
-	let teamStats;
-
-	const teamStatsFromCache = async () => {
-		// Single season, from cache
-		let teamStats2: TeamStats[] = [];
-
-		if (regularSeason) {
-			teamStats2 = teamStats2.concat(
-				await idb.cache.teamStats.indexGetAll("teamStatsByPlayoffsTid", [
-					[false, t.tid],
-					[false, t.tid],
-				]),
-			);
-		}
-
-		if (playoffs) {
-			teamStats2 = teamStats2.concat(
-				await idb.cache.teamStats.indexGetAll("teamStatsByPlayoffsTid", [
-					[true, t.tid],
-					[true, t.tid],
-				]),
-			);
-		}
-
-		return teamStats2;
-	};
-
-	if (season === undefined) {
-		// All seasons
-		teamStats = mergeByPk(
-			await idb.league
-				.transaction("teamStats")
-				.store.index("tid")
-				.getAll(t.tid),
-			await teamStatsFromCache(),
-			"teamStats",
-		);
-	} else if (season === g.get("season")) {
-		teamStats = await teamStatsFromCache();
-	} else {
-		// Single season, from database
-		teamStats = await idb.league
-			.transaction("teamStats")
-			.store.index("season, tid")
-			.getAll([season, t.tid]);
-	}
+	let teamStats = await idb.merged.teamStats.getAll({ tid: t.tid, season });
 
 	// Handle playoffs/regularSeason
 	teamStats = filterOrderStats(teamStats, playoffs, regularSeason);

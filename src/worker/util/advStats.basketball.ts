@@ -1,11 +1,11 @@
 import { PHASE } from "../../common/constants.ts";
-import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import helpers from "./helpers.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { team } from "../core/index.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -778,51 +778,48 @@ const advStats = async () => {
 	// For DRtg: blk, drb, drtg, min, oppFga, oppFg, oppFta, oppFt, oppOrb, oppPts, oppTov, stl, poss
 	// For Ortg: min, pts, ft, fg, fga, fta, ast, oppDrb, orb, tp, tov, poss
 
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			stats: [
-				"gp",
-				"ft",
-				"pf",
-				"ast",
-				"fg",
-				"pts",
-				"fga",
-				"orb",
-				"tov",
-				"fta",
-				"trb",
-				"oppPts",
-				"pace",
-				"min",
-				"oppFga",
-				"oppTpa",
-				"drb",
-				"oppOrb",
-				"oppDrb",
-				"oppFta",
-				"oppFg",
-				"oppTov",
-				"oppTrb",
-				"blk",
-				"drtg",
-				"ortg",
-				"oppFg",
-				"oppFt",
-				"stl",
-				"tp",
-				"poss",
-			],
-			season: g.get("season"),
-			playoffs,
-			regularSeason: !playoffs,
-			statType: "totals",
-			addDummySeason: true,
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		stats: [
+			"gp",
+			"ft",
+			"pf",
+			"ast",
+			"fg",
+			"pts",
+			"fga",
+			"orb",
+			"tov",
+			"fta",
+			"trb",
+			"oppPts",
+			"pace",
+			"min",
+			"oppFga",
+			"oppTpa",
+			"drb",
+			"oppOrb",
+			"oppDrb",
+			"oppFta",
+			"oppFg",
+			"oppTov",
+			"oppTrb",
+			"blk",
+			"drtg",
+			"ortg",
+			"oppFg",
+			"oppFt",
+			"stl",
+			"tp",
+			"poss",
+		],
+		season: g.get("season"),
+		playoffs,
+		regularSeason: !playoffs,
+		statType: "totals",
+		addDummySeason: true,
+		active: true,
+	});
 
 	// Total league stats (not per game averages)
 	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb

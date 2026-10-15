@@ -2,6 +2,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 export default defineView({
 	id: "leagueFinances",
@@ -19,28 +20,25 @@ export default defineView({
 			]);
 
 			const teams = (
-				await idb.getCopies.teamsPlus(
-					{
-						attrs: ["tid", "budget", "strategy"],
-						seasonAttrs: [
-							"att",
-							"revenue",
-							"profit",
-							"cash",
-							"payrollOrSalaryPaid",
-							"pop",
-							"abbrev",
-							"tid",
-							"region",
-							"name",
-							"imgURL",
-							"imgURLSmall",
-							"expenseLevels",
-						],
-						season: inputs.season,
-					},
-					"noCopyCache",
-				)
+				await team.getFormattedAll({
+					attrs: ["tid", "budget", "strategy"],
+					seasonAttrs: [
+						"att",
+						"revenue",
+						"profit",
+						"cash",
+						"payrollOrSalaryPaid",
+						"pop",
+						"abbrev",
+						"tid",
+						"region",
+						"name",
+						"imgURL",
+						"imgURLSmall",
+						"expenseLevels",
+					],
+					season: inputs.season,
+				})
 			).map((t) => {
 				const rosterSpots =
 					g.get("maxRosterSize") -

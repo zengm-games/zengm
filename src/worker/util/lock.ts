@@ -166,12 +166,7 @@ const canStartGames = () => {
  * @return {Promise.boolean}
  */
 const unreadMessage = async () => {
-	const messages = await idb.getCopies.messages(
-		{
-			limit: 10,
-		},
-		"noCopyCache",
-	);
+	const messages = await idb.merged.messages.getAll({ limit: 10 });
 
 	return messages.some((message) => !message.read);
 };

@@ -10,10 +10,7 @@ import { choice, shuffle } from "../../../common/random.ts";
 import { assertDefined } from "../../../common/utils.ts";
 
 const upcomingScheduledEventBlocksRelocateExpand = async () => {
-	const scheduledEvents = await idb.getCopies.scheduledEvents(
-		undefined,
-		"noCopyCache",
-	);
+	const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 	return scheduledEvents.some((event) => {
 		return (
 			event.type === "teamInfo" ||

@@ -17,6 +17,7 @@ import { PlayersCache } from "../db/PlayersCache.ts";
 import { PHASE } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateSeason } from "../util/processInputs.ts";
+import { player, team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"history">) => {
 	let season = validateSeason(params.season);
@@ -48,9 +49,7 @@ export default defineView({
 		}
 
 		if (updateEvents.has("firstRun") || prevInputs?.season !== season) {
-			const awards = await idb.getCopy.awards({
-				season,
-			});
+			const awards = await idb.merged.awards.get(season);
 
 			if (!awards) {
 				viewedSeasonSummary(); // Should never happen, but just in case
@@ -63,23 +62,20 @@ export default defineView({
 				return returnValue;
 			}
 
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid"],
-					seasonAttrs: [
-						"playoffRoundsWon",
-						"abbrev",
-						"region",
-						"name",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-					],
-					season,
-				},
-				"noCopyCache",
-			);
+			const teams = await team.getFormattedAll({
+				attrs: ["tid"],
+				seasonAttrs: [
+					"playoffRoundsWon",
+					"abbrev",
+					"region",
+					"name",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+				],
+				season,
+			});
 			const teamsByTid = groupByUnique(teams, "tid");
 
 			const augmentTeams = (bestRecords: Record<number, number>) => {
@@ -128,7 +124,7 @@ export default defineView({
 				if (!p) {
 					return;
 				}
-				const p2 = await idb.getCopy.playersPlus(p, {
+				const p2 = await player.format(p, {
 					attrs: ["name"],
 					stats: allStats,
 					season,
@@ -151,7 +147,7 @@ export default defineView({
 					p.ratings.findLast((row) => row.season === season)?.pos ??
 					last(p.ratings).pos;
 
-				// Could have asked for "abbrev" in playersPlus, but we already have the teams in memory...
+				// Could have asked for "abbrev" in player.formatAll, but we already have the teams in memory...
 				const t = teamsByTid[tid];
 
 				return {
@@ -244,12 +240,9 @@ export default defineView({
 				teamAwards,
 			};
 
-			const retiredPlayersAll = await idb.getCopies.players(
-				{
-					retiredYear: season,
-				},
-				"noCopyCache",
-			);
+			const retiredPlayersAll = await idb.merged.players.getAll({
+				retiredYear: season,
+			});
 			const retiredStat = bySport({
 				baseball: "war",
 				basketball: "ws",
@@ -257,7 +250,7 @@ export default defineView({
 				hockey: "ps",
 			} as const);
 			const retiredPlayers = processPlayersHallOfFame(
-				await idb.getCopies.playersPlus(retiredPlayersAll, {
+				await player.formatAll(retiredPlayersAll, {
 					attrs: ["pid", "name", "born", "hof"],
 					ratings: ["pos", "season"],
 					stats: ["season", "tid", "abbrev", retiredStat],

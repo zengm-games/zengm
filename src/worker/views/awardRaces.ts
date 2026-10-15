@@ -1,9 +1,9 @@
 import { g } from "../util/index.ts";
-import { idb } from "../db/index.ts";
 import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { defineView } from "../util/defineView.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 export default defineView({
 	id: "awardRaces",
@@ -19,14 +19,11 @@ export default defineView({
 				await getAwardCandidates(inputs.season)
 			).awardCandidates.flat();
 
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid"],
-					seasonAttrs: ["won", "lost", "tied", "otl"],
-					season: inputs.season,
-				},
-				"noCopyCache",
-			);
+			const teams = await team.getFormattedAll({
+				attrs: ["tid"],
+				seasonAttrs: ["won", "lost", "tied", "otl"],
+				season: inputs.season,
+			});
 
 			return {
 				awardCandidates,

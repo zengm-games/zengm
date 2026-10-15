@@ -5,6 +5,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { defineView } from "../util/defineView.ts";
+import { player } from "../core/index.ts";
 
 // gpF is used on processPlayersHallOfFame for baseball
 export const extraStats = bySport({
@@ -37,14 +38,9 @@ export default defineView({
 				football: ["keyStats", "av"],
 				hockey: ["keyStats", "ops", "dps", "ps"],
 			} as const);
-			const playersAll = await idb.getCopies.players(
-				{
-					hof: true,
-				},
-				"noCopyCache",
-			);
+			const playersAll = await idb.merged.players.getAll({ hof: true });
 			const players = (
-				await idb.getCopies.playersPlus(playersAll, {
+				await player.formatAll(playersAll, {
 					attrs: [
 						"pid",
 						"firstName",

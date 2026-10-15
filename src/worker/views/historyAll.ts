@@ -6,6 +6,7 @@ import { formatAwardNamePrefix } from "../core/awards/prefixes.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { PlayersCache } from "../db/PlayersCache.ts";
 import { defineView } from "../util/defineView.ts";
+import { team } from "../core/index.ts";
 
 const getAbbrev = (
 	tid: number,
@@ -42,26 +43,23 @@ export default defineView({
 			updateEvents.has("firstRun") ||
 			(updateEvents.has("newPhase") && g.get("phase") === PHASE.DRAFT_LOTTERY)
 		) {
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
-					seasonAttrs: [
-						"season",
-						"playoffRoundsWon",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"abbrev",
-						"region",
-						"name",
-						"imgURL",
-						"imgURLSmall",
-					],
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			);
+			const teams = await team.getFormattedAll({
+				attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
+				seasonAttrs: [
+					"season",
+					"playoffRoundsWon",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"abbrev",
+					"region",
+					"name",
+					"imgURL",
+					"imgURLSmall",
+				],
+				addDummySeason: true,
+			});
 			const teamsByTid = groupByUnique(teams, "tid");
 
 			type MyTeam = (typeof teams)[number];
@@ -115,7 +113,7 @@ export default defineView({
 			};
 			type FormattedTeam = ReturnType<typeof formatTeam>;
 
-			const awards = await idb.getCopies.awards(undefined, "noCopyCache");
+			const awards = await idb.merged.awards.getAll();
 			const awardsBySeason = groupByUnique(awards, "season");
 
 			// Start with the oldest season we have team or awards history for
@@ -225,10 +223,7 @@ export default defineView({
 				});
 			}
 
-			const playoffSeries = await idb.getCopies.playoffSeries(
-				undefined,
-				"noCopyCache",
-			);
+			const playoffSeries = await idb.merged.playoffSeries.getAll();
 			const playoffSeriesBySeason = groupByUnique(playoffSeries, "season");
 
 			for (const row of seasons) {
@@ -273,10 +268,7 @@ export default defineView({
 					}
 				} else {
 					// This is for people with some missing playoffSeries data, either because it was deleted or because it never existed (like adding teamSeasons manually for past years)
-					const teamSeasons = await idb.getCopies.teamSeasons(
-						{ season },
-						"noCopyCache",
-					);
+					const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 
 					const numPlayoffRounds = g.get(
 						"numGamesPlayoffSeries",

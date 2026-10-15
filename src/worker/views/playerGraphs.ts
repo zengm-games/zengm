@@ -20,6 +20,7 @@ import { defineView, type ViewArgs } from "../util/defineView.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateSeason } from "../util/processInputs.ts";
 import { validateSeasonType } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"playerGraphs">) => {
 	const playoffsX = validateSeasonType(params.playoffsX);
@@ -63,7 +64,7 @@ const getPlayerStats = async (
 	season: number | "career",
 	playoffs: "playoffs" | "regularSeason" | "combined",
 ) => {
-	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to playersPlus
+	// This is the value form the form/URL (or a random one), which confusingly is not the same as statType passed to player.formatAll
 	const statTypePlus =
 		statTypeInput !== undefined && statTypes.includes(statTypeInput)
 			? statTypeInput
@@ -94,11 +95,8 @@ const getPlayerStats = async (
 			Infinity,
 		]);
 	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				activeSeason: typeof season === "number" ? season : undefined,
-			},
-			"noCopyCache",
+		playersAll = await idb.merged.players.getAll(
+			typeof season === "number" ? { activeSeason: season } : undefined,
 		);
 	}
 
@@ -106,7 +104,7 @@ const getPlayerStats = async (
 		? getPlayerStatsTableStats(statsTable.stats)
 		: (["gp"] as const);
 
-	const playersPlusOptions = {
+	const formatOptions = {
 		attrs: [
 			"pid",
 			"name",
@@ -144,10 +142,7 @@ const getPlayerStats = async (
 
 	let players;
 	if (season === "career") {
-		const playersRaw = await idb.getCopies.playersPlus(
-			playersAll,
-			playersPlusOptions,
-		);
+		const playersRaw = await player.formatAll(playersAll, formatOptions);
 		players = playersRaw.map(
 			({
 				careerStats,
@@ -171,8 +166,8 @@ const getPlayerStats = async (
 				),
 		);
 	} else {
-		const playersRaw = await idb.getCopies.playersPlus(playersAll, {
-			...playersPlusOptions,
+		const playersRaw = await player.formatAll(playersAll, {
+			...formatOptions,
 			season,
 		});
 		players = playersRaw.map(({ ratings: ratingsRow, stats: statsRow, ...p }) =>

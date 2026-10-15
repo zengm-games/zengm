@@ -32,12 +32,7 @@ export default defineView({
 
 			if (inputs.mid === undefined) {
 				const messages = (
-					await idb.getCopies.messages(
-						{
-							limit: 10,
-						},
-						"noCopyCache",
-					)
+					await idb.merged.messages.getAll({ limit: 10 })
 				).reverse(); // First look for an unread message
 
 				for (const m of messages) {
@@ -59,12 +54,7 @@ export default defineView({
 					return returnValue;
 				}
 			} else {
-				message = await idb.getCopy.messages(
-					{
-						mid: inputs.mid,
-					},
-					"noCopyCache",
-				);
+				message = await idb.merged.messages.get(inputs.mid);
 			}
 
 			if (message && !message.read) {
@@ -90,11 +80,11 @@ export default defineView({
 					for (const [i, mood] of message.ownerMoods.entries()) {
 						const season = message.year - message.ownerMoods.length + 1 + i;
 
-						const teamSeason = await idb.getCopy.teamSeasons({
+						const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
 							// Old messages don't include tid
-							tid: message.tid ?? g.get("userTid"),
+							message.tid ?? g.get("userTid"),
 							season,
-						});
+						);
 
 						let seasonInfo;
 						if (teamSeason) {

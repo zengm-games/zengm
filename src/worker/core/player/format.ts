@@ -1,5 +1,5 @@
 import { PLAYER, PHASE } from "../../../common/constants.ts";
-import { player, trade } from "../../core/index.ts";
+import { player, trade } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { processPlayerStats as processPlayerStats2 } from "../../util/processPlayerStats.ts";
 import type {
@@ -8,17 +8,17 @@ import type {
 	PlayerSeasonType,
 	PlayerStatAttr,
 	PlayerStatType,
-	PlayersPlusOptions,
+	PlayerFormatOptions,
 } from "../../../common/types.ts";
 import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball.ts";
-import { idb } from "../index.ts";
+import { idb } from "../../db/index.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { last } from "../../../common/utils.ts";
 
-type PlayersPlusOptionsRequired = Required<
+type PlayerFormatOptionsRequired = Required<
 	Omit<
-		PlayersPlusOptions,
+		PlayerFormatOptions,
 		| "disableAbbrevsCacheDatabaseAccess"
 		| "season"
 		| "seasonRange"
@@ -114,7 +114,7 @@ class AbbrevsCache {
 				seasonTemp >= this.minSafeSeason ? seasonTemp : this.minSafeSeason;
 
 			if (bulkFetch) {
-				const rows = await idb.getCopies.teamSeasons({ season }, "noCopyCache");
+				const rows = await idb.merged.teamSeasons.getAll({ season });
 				for (const row of rows) {
 					if (abbrevsByTid.has(row.tid)) {
 						this.saveAbbrev(abbrevsByTid, row.tid, row.abbrev);
@@ -130,10 +130,7 @@ class AbbrevsCache {
 						this.saveAbbrev(abbrevsByTid, tid, undefined);
 					}
 				} else {
-					const row = await idb.getCopy.teamSeasons(
-						{ season, tid },
-						"noCopyCache",
-					);
+					const row = await idb.merged.teamSeasons.getByTidSeason(tid, season);
 					this.saveAbbrev(abbrevsByTid, tid, row?.abbrev);
 				}
 			}
@@ -166,7 +163,7 @@ const processAttrs = (
 		season,
 		seasonRange,
 		tid,
-	}: PlayersPlusOptionsRequired,
+	}: PlayerFormatOptionsRequired,
 	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	const getSalary = () => {
@@ -418,7 +415,7 @@ const processRatings = (
 		stats,
 		season,
 		tid,
-	}: PlayersPlusOptionsRequired,
+	}: PlayerFormatOptionsRequired,
 	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	let playerRatings = playerRatingsInput;
@@ -604,7 +601,7 @@ export const weightByMinutes = new Set(
 const filterForCareerStats = (
 	allStats: any[],
 	seasonType: "playoffs" | "regularSeason" | "combined",
-	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
+	mergeStats: PlayerFormatOptionsRequired["mergeStats"],
 ) => {
 	return allStats.filter(
 		(row) =>
@@ -763,7 +760,7 @@ const getPlayerStats = (
 	playoffs: boolean,
 	regularSeason: boolean,
 	combined: boolean,
-	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
+	mergeStats: PlayerFormatOptionsRequired["mergeStats"],
 ) => {
 	const rows = playerStats.filter((ps) => {
 		// Not sure why this is needed, but might fix an error someone reported
@@ -1054,7 +1051,7 @@ const processStats = (
 		oldStats,
 		statType,
 		stats,
-	}: PlayersPlusOptionsRequired,
+	}: PlayerFormatOptionsRequired,
 	keepWithNoStats: boolean,
 	abbrevsCache: AbbrevsCache | undefined,
 ) => {
@@ -1262,7 +1259,7 @@ const processStats = (
 
 const processPlayer = (
 	p: Player,
-	options: PlayersPlusOptionsRequired,
+	options: PlayerFormatOptionsRequired,
 	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	const {
@@ -1377,10 +1374,10 @@ const processPlayer = (
  * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */
-const getCopies = async <Options extends PlayersPlusOptions>(
+export const formatAll = async <Options extends PlayerFormatOptions>(
 	players: Player[],
 	optionsInput: Options &
-		Record<Exclude<keyof Options, keyof PlayersPlusOptions>, never>,
+		Record<Exclude<keyof Options, keyof PlayerFormatOptions>, never>,
 ): Promise<PlayerFiltered<Options>[]> => {
 	const {
 		season,
@@ -1400,7 +1397,7 @@ const getCopies = async <Options extends PlayersPlusOptions>(
 		statType = "perGame",
 		mergeStats = "none",
 		disableAbbrevsCacheDatabaseAccess = false,
-	}: PlayersPlusOptions = optionsInput;
+	}: PlayerFormatOptions = optionsInput;
 
 	if (mergeStats === "totAndTeams" && season !== undefined) {
 		throw new Error(
@@ -1411,7 +1408,7 @@ const getCopies = async <Options extends PlayersPlusOptions>(
 	const seasonTypes: Readonly<PlayerSeasonType[]> =
 		typeof seasonType === "string" ? [seasonType] : seasonType;
 
-	const options: PlayersPlusOptionsRequired = {
+	const options: PlayerFormatOptionsRequired = {
 		season,
 		seasonRange,
 		tid,
@@ -1480,4 +1477,12 @@ const getCopies = async <Options extends PlayersPlusOptions>(
 		.filter((p) => p !== undefined);
 };
 
-export default getCopies;
+// Like formatAll, but for a single player. Returns undefined if the player is filtered out by the options.
+export const format = async <Options extends PlayerFormatOptions>(
+	p: Player,
+	options: Options &
+		Record<Exclude<keyof Options, keyof PlayerFormatOptions>, never>,
+) => {
+	const result = await formatAll<Options>([p], options);
+	return result[0];
+};

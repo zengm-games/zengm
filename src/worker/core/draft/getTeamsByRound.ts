@@ -15,6 +15,7 @@ import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
+import { team } from "../index.ts";
 
 /**
  * Differences across sports:
@@ -280,7 +281,7 @@ const getTeamsByRound = async (
 	draftType: DraftType,
 	draftPicksIndexed: DraftPickWithoutKey[][],
 ) => {
-	const allTeams = await idb.getCopies.teamsPlus({
+	const allTeams = await team.getFormattedAll({
 		attrs: ["tid", "draftLottery"],
 		seasonAttrs: [
 			"playoffRoundsWon",

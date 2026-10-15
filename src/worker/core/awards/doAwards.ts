@@ -9,6 +9,7 @@ import {
 } from "./awardsByPlayer.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
 import { leaderAwardCategories } from "../../../common/awards.ts";
+import { team } from "../index.ts";
 
 const teamAwards = async (
 	teamsUnsorted: TeamFiltered<
@@ -78,37 +79,34 @@ const NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD = 5;
 export const doAwards = async (conditions: Conditions) => {
 	const season = g.get("season");
 
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-				"winp",
-				"pts",
-				"playoffRoundsWon",
-				"abbrev",
-				"region",
-				"name",
-				"cid",
-				"did",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season,
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+			"winp",
+			"pts",
+			"playoffRoundsWon",
+			"abbrev",
+			"region",
+			"name",
+			"cid",
+			"did",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season,
+		showNoStats: true,
+	});
 	const bestRecords = await teamAwards(teams);
 
 	const { players, realizedAwards } = await processAwards({

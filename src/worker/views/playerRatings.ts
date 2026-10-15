@@ -18,7 +18,7 @@ import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "./depth.ts";
 import { actualPhase } from "../util/actualPhase.ts";
-import { season } from "../core/index.ts";
+import { player, season } from "../core/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
@@ -171,12 +171,7 @@ export const getPlayers = async (
 		playersAll = await idb.cache.players.getAll();
 		playersAll = playersAll.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
 	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
+		playersAll = await idb.merged.players.getAll({ activeSeason: season });
 	}
 
 	if (tid === undefined) {
@@ -191,7 +186,7 @@ export const getPlayers = async (
 	// showNoStats for current season (so draft picks etc show up on their correct team) or for no team (so free agents show up)
 	const showNoStats = season === g.get("season") || tid === undefined;
 
-	const playersMaybeWithoutStats = await idb.getCopies.playersPlus(playersAll, {
+	const playersMaybeWithoutStats = await player.formatAll(playersAll, {
 		attrs: [
 			"pid",
 			"firstName",
@@ -221,7 +216,7 @@ export const getPlayers = async (
 			p.stats !== undefined,
 	);
 
-	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
+	// player.formatAll `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
 	// For the current season, use the current abbrev (including FA), not the last stats abbrev
 	// For other seasons, use the stats abbrev for filtering
 	if (g.get("season") === season) {

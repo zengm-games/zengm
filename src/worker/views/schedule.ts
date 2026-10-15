@@ -89,15 +89,12 @@ export const getUpcoming = async ({
 		return [];
 	}
 
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["playThroughInjuries", "tid"],
-			seasonAttrs: ["won", "lost", "tied", "otl"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["playThroughInjuries", "tid"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
+		season: g.get("season"),
+		active: true,
+	});
 	const teamsByTid = groupByUnique(teams, "tid");
 
 	// Only load players on teams that are actually needed, since often this is just for one game (such as updating the user's next game after every day of the regular season). Active players have tid >= 0
@@ -116,7 +113,7 @@ export const getUpcoming = async ({
 			...(await idb.cache.players.indexGetAll("playersByTid", tid)),
 		);
 	}
-	const players = await idb.getCopies.playersPlus(playersRaw, {
+	const players = await player.formatAll(playersRaw, {
 		attrs: ["injury", "pid", "value", "tid"],
 		ratings: ["ovr", "pos", "ovrs"],
 		season: g.get("season"),
@@ -217,7 +214,7 @@ export const getTopPlayers = async <T extends any[]>(
 	// On daily schedule, for baseball SP calculation, we don't need to look at any games beyond the requested day
 	targetDay?: number,
 ) => {
-	const playersPlusOptions = (tid: number) => {
+	const formatOptions = (tid: number) => {
 		return {
 			attrs: ["pid", "name", "injury", "abbrev", "tid"],
 			ratings: ["ovr", "pos"],
@@ -313,9 +310,9 @@ export const getTopPlayers = async <T extends any[]>(
 				};
 			}
 
-			const depthPlayersProcessed = await idb.getCopies.playersPlus(
+			const depthPlayersProcessed = await player.formatAll(
 				depthPlayers,
-				playersPlusOptions(t.tid),
+				formatOptions(t.tid),
 			);
 			for (const p of depthPlayersProcessed) {
 				processedPlayersByPid[p.pid] = p;
@@ -465,10 +462,7 @@ export const getTopPlayers = async <T extends any[]>(
 				.slice(0, numPerTeam)
 				.reverse();
 
-			const players = await idb.getCopies.playersPlus(
-				playersRaw,
-				playersPlusOptions(tid),
-			);
+			const players = await player.formatAll(playersRaw, formatOptions(tid));
 
 			topPlayers[tid] = players as T;
 		}

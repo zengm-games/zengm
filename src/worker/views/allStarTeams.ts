@@ -1,4 +1,4 @@
-import { allStar } from "../core/index.ts";
+import { allStar, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
@@ -36,13 +36,13 @@ const getPlayerInfo = async (
 	{ pid, tid, name }: AllStarPlayer,
 	season: number,
 ) => {
-	const p = await idb.getCopy.players({ pid }, "noCopyCache");
+	const p = await idb.merged.players.get(pid);
 	if (!p) {
 		// Can happen if player was deleted before starting sim
 		return;
 	}
 
-	const p2 = await idb.getCopy.playersPlus(p, {
+	const p2 = await player.format(p, {
 		attrs: ["pid", "injury", "watch", "age", "numAllStar"],
 		ratings: ["ovr", "skills", "pos"],
 		season,

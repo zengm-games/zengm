@@ -8,6 +8,7 @@ import { getEstPicks } from "../core/team/ValueChangeCalculator.ts";
 import { PLAYER } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"draftPicks">) => {
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
@@ -51,16 +52,13 @@ const adjustProjectedPick = ({
 export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 	const draftPicks = [];
 
-	const teamsRaw = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid", "abbrev", "playThroughInjuries"],
-			seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
-			stats: ["gp", "mov"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teamsRaw = await team.getFormattedAll({
+		attrs: ["tid", "abbrev", "playThroughInjuries"],
+		seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
+		stats: ["gp", "mov"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 
 	const teamsWithRankings = await addPowerRankingsStuffToTeams(
 		teamsRaw,
@@ -101,10 +99,10 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 		// Extra filter at the end is for TypeScript
 		const events = (
-			await idb.getCopies.events({
-				dpid: dp.dpid,
-				filter: (event) => event.type === "trade",
-			})
+			await idb.merged.events.getAll(
+				{ dpid: dp.dpid },
+				{ filter: (event) => event.type === "trade" },
+			)
 		).filter((row) => row.type === "trade");
 
 		let trades;

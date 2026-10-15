@@ -2,7 +2,7 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { AllStars, Awards } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { season } from "../core/index.ts";
+import { season, team } from "../core/index.ts";
 import { omit, orderBy } from "../../common/utils.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 
@@ -309,8 +309,8 @@ export default defineView({
 			byType !== prevInputs?.byType ||
 			filter !== prevInputs?.filter
 		) {
-			const awards = await idb.getCopies.awards(undefined, "noCopyCache");
-			const allStars = await idb.getCopies.allStars(undefined, "noCopyCache");
+			const awards = await idb.merged.awards.getAll();
+			const allStars = await idb.merged.allStars.getAll();
 
 			// Show newest awards in leftmost columns if we scan in order from most recent
 			awards.reverse();
@@ -337,35 +337,32 @@ export default defineView({
 			}
 
 			const teamsAll = orderBy(
-				await idb.getCopies.teamsPlus(
-					{
-						attrs: [
-							"tid",
-							"abbrev",
-							"region",
-							"name",
-							"cid",
-							"did",
-							"disabled",
-							"imgURL",
-							"imgURLSmall",
-						],
-						seasonAttrs: [
-							"abbrev",
-							"region",
-							"name",
-							"season",
-							"won",
-							"lost",
-							"tied",
-							"otl",
-							"pts",
-							"ptsMax",
-							"playoffRoundsWon",
-						],
-					},
-					"noCopyCache",
-				),
+				await team.getFormattedAll({
+					attrs: [
+						"tid",
+						"abbrev",
+						"region",
+						"name",
+						"cid",
+						"did",
+						"disabled",
+						"imgURL",
+						"imgURLSmall",
+					],
+					seasonAttrs: [
+						"abbrev",
+						"region",
+						"name",
+						"season",
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"pts",
+						"ptsMax",
+						"playoffRoundsWon",
+					],
+				}),
 				["region", "name", "tid"],
 			);
 

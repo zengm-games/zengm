@@ -549,7 +549,7 @@ const processContraction = async (
 };
 
 const processRetirePlayer = async (pid: number, conditions: Conditions) => {
-	const p = await idb.getCopy.players({ pid }, "noCopyCache");
+	const p = await idb.merged.players.get(pid);
 
 	// Player might be deleted or already retired
 	if (!p || p.tid === PLAYER.RETIRED) {
@@ -577,7 +577,7 @@ const processRetirePlayer = async (pid: number, conditions: Conditions) => {
 
 // Returns undefined when nothing happened
 const processUnretirePlayer = async (pid: number) => {
-	const p = await idb.getCopy.players({ pid }, "noCopyCache");
+	const p = await idb.merged.players.get(pid);
 
 	// Player might have been deleted or might not be retired. In both of those cases, there is nothing to do.
 	if (p?.tid !== PLAYER.RETIRED) {

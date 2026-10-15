@@ -91,8 +91,6 @@ const genTeam = async (
 	};
 };
 
-type RequireOnly<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
-
 const getMostXRows = async ({
 	filter,
 	getValue,
@@ -105,29 +103,31 @@ const getMostXRows = async ({
 	const LIMIT = 100;
 	const trades: Trade[] = [];
 
-	const events: RequireOnly<TradeEvent, "phase" | "teams">[] = [];
-
 	// Would be nice to not read these all into memory, but then would have to pass around the transaction to genTeam and others
-	const store = await idb.league.transaction("events").store;
-	for await (const cursor of store) {
-		const event = cursor.value;
-		if (isTradeEvent(event)) {
-			if (event.phase === undefined || !event.teams) {
-				continue;
-			}
+	const events = (
+		await idb.merged.events.getAll(undefined, {
+			map: (event) => {
+				if (
+					!isTradeEvent(event) ||
+					event.phase === undefined ||
+					event.teams === undefined ||
+					(filter !== undefined && !filter(event))
+				) {
+					return undefined;
+				}
 
-			if (filter !== undefined && !filter(event)) {
-				continue;
-			}
-
-			events.push(event as any);
-		}
-	}
+				return {
+					...event,
+					phase: event.phase,
+					teams: event.teams,
+				};
+			},
+		})
+	).filter((event) => event !== undefined);
 
 	const eventsBySeason = Map.groupBy(events, (event) => event.season);
 
 	for (const [season, eventsSeason] of eventsBySeason) {
-		console.log(season, eventsSeason);
 		const cache = new CacheTeamInfoSeason(season);
 
 		for (const event of eventsSeason) {

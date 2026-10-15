@@ -12,9 +12,10 @@ import { last, orderBy, range, assertDefined } from "../../../common/utils.ts";
 import { getPosByGpF } from "../player/getPosByGpF.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
+import { player } from "../index.ts";
 
 // This is from the old football awards sytem. Eventually should make All-Star teams use the same formulas as the default All-League awards...
-// Football players from playersPlus, with currentStats added in create
+// Football players from player.formatAll, with currentStats added in create
 const mvpScoreStats = [
 	"defSk",
 	"defTckLoss",
@@ -123,7 +124,7 @@ const create = async (conditions: Conditions) => {
 		PLAYER.FREE_AGENT,
 		Infinity,
 	]);
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const players = await player.formatAll(playersAll, {
 		attrs: ["pid", "firstName", "name", "tid", "injury"],
 		ratings: ["pos", "ovr"],
 		stats: bySport({
@@ -508,12 +509,7 @@ const create = async (conditions: Conditions) => {
 	allStars.type = allStarType;
 
 	if (__SPORT === "basketball") {
-		const lastYear = await idb.getCopy.allStars(
-			{
-				season: g.get("season") - 1,
-			},
-			"noCopyCache",
-		);
+		const lastYear = await idb.merged.allStars.get(g.get("season") - 1);
 		let prevWinnerDunk: number | undefined;
 		if (lastYear?.dunk?.winner !== undefined) {
 			prevWinnerDunk = lastYear.dunk.players[lastYear.dunk.winner]!.pid;

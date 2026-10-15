@@ -14,22 +14,14 @@ export async function* iterateActivePlayersSeasonRange(
 ) {
 	// Start with players who were drafted before seasonStart - if seasonStart is startingSeason, this would be faster to use draftYear index only, but using activeSeason is faster if we're doing some arbitrary start that is not startingSeason
 	let players = (
-		await idb.getCopies.players(
-			{
-				activeSeason: seasonStart,
-			},
-			"noCopyCache",
-		)
+		await idb.merged.players.getAll({ activeSeason: seasonStart })
 	).filter((p) => p.draft.year < seasonStart);
 
 	for (let season = seasonStart; season <= seasonEnd; season++) {
 		if (season > seasonStart) {
-			const rookies = await idb.getCopies.players(
-				{
-					draftYear: season - 1,
-				},
-				"noCopyCache",
-			);
+			const rookies = await idb.merged.players.getAll({
+				draftYear: season - 1,
+			});
 
 			if (type === "all") {
 				// Remove players who retired after the previous season
@@ -78,7 +70,7 @@ export default defineView({
 				g.get("season"),
 				"all",
 			)) {
-				// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
+				// Can't use idb.merged.players easily because it doesn't elegantly handle when a player plays for two teams in a season
 				const minutesAll = range(g.get("numTeams")).map(
 					() => new Map<number, number>(),
 				);
@@ -114,13 +106,10 @@ export default defineView({
 
 								if (sumMinutesContinuity === 0) {
 									// Is it really 0, or did team not exist for one of these seasons?
-									const teamSeasons = await idb.getCopies.teamSeasons(
-										{
-											tid: i,
-											seasons: [season - 1, season],
-										},
-										"noCopyCache",
-									);
+									const teamSeasons = await idb.merged.teamSeasons.getAll({
+										tid: i,
+										seasons: [season - 1, season],
+									});
 									if (teamSeasons.length < 2) {
 										return undefined;
 									}

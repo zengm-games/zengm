@@ -5,7 +5,10 @@ import g from "./g.ts";
 import type {
 	ByConf,
 	DraftPick,
+	PlayInTournament,
+	PlayoffSeries,
 	PlayoffSeriesTeam,
+	PlayoffSeriesTeamAugmented,
 } from "../../common/types.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import hasTies from "../core/season/hasTies.ts";
@@ -13,74 +16,108 @@ import { roundContract as roundContractRaw } from "../../common/roundContract.ts
 import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
 import type { LeagueUrlParts } from "../../ui/router/types.ts";
 
-const augmentSeries = async (
-	series: {
-		away?: PlayoffSeriesTeam;
-		home: PlayoffSeriesTeam;
-	}[][],
-	season: number = g.get("season"),
-) => {
-	const teamSeasons = await idb.getCopies.teamSeasons(
-		{
-			season,
-		},
-		"noCopyCache",
-	);
+const getAugmentTeam = async (season: number) => {
+	const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 
 	const ties = hasTies(season);
+	const otl = g.get("otl", season);
 
-	const setAll = (obj: PlayoffSeriesTeam) => {
-		const t = g.get("teamInfoCache")[obj.tid];
-		obj.abbrev = t?.abbrev;
-		obj.region = t?.region;
-		obj.imgURL = t?.imgURL;
-		obj.regularSeason = {
-			won: 0,
-			lost: 0,
-			tied: ties ? 0 : undefined,
-			otl: g.get("otl", season) ? 0 : undefined,
+	return (team: PlayoffSeriesTeam): PlayoffSeriesTeamAugmented => {
+		const t = g.get("teamInfoCache")[team.tid];
+		const teamSeason = teamSeasons.find((ts) => ts.tid === team.tid);
+
+		const info = teamSeason?.abbrev
+			? {
+					abbrev: teamSeason.abbrev,
+					region: teamSeason.region,
+					imgURL: teamSeason.imgURL,
+					imgURLSmall: teamSeason.imgURLSmall,
+				}
+			: {
+					abbrev: t?.abbrev ?? "",
+					region: t?.region ?? "",
+					imgURL: t?.imgURL,
+					imgURLSmall: t?.imgURLSmall || team.imgURLSmall,
+				};
+
+		const regularSeason = teamSeason
+			? {
+					won: teamSeason.won,
+					lost: teamSeason.lost,
+					tied: ties ? teamSeason.tied : undefined,
+					otl: otl ? teamSeason.otl : undefined,
+				}
+			: {
+					won: 0,
+					lost: 0,
+					tied: ties ? 0 : undefined,
+					otl: otl ? 0 : undefined,
+				};
+
+		return {
+			...team,
+			...info,
+			regularSeason,
+			colors:
+				(teamSeason ? teamSeason.colors : team.colors) ?? DEFAULT_TEAM_COLORS,
 		};
+	};
+};
 
-		const imgURLSmall = t?.imgURLSmall;
-		if (imgURLSmall) {
-			obj.imgURLSmall = imgURLSmall;
-		}
+// Returns a copy of series with team info and regular season records added to each team
+const augmentSeries = async (
+	series: PlayoffSeries["series"],
+	season: number = g.get("season"),
+) => {
+	const augmentTeam = await getAugmentTeam(season);
 
-		const teamSeason = teamSeasons.find((ts) => ts.tid === obj.tid);
-		if (teamSeason) {
-			if (teamSeason.abbrev) {
-				obj.abbrev = teamSeason.abbrev;
-				obj.region = teamSeason.region;
-				obj.imgURL = teamSeason.imgURL;
-				obj.imgURLSmall = teamSeason.imgURLSmall;
-			}
-			obj.regularSeason.won = teamSeason.won;
-			obj.regularSeason.lost = teamSeason.lost;
+	return series.map((round) =>
+		round.map(({ away, home, ...matchup }) => {
+			return {
+				...matchup,
+				home: augmentTeam(home),
+				away: away ? augmentTeam(away) : undefined,
+			};
+		}),
+	);
+};
 
-			if (ties) {
-				obj.regularSeason.tied = teamSeason.tied;
-			}
-			if (g.get("otl", season)) {
-				obj.regularSeason.otl = teamSeason.otl;
-			}
+// Like augmentSeries, but for play-in tournaments
+const augmentPlayIns = async (
+	playIns: PlayInTournament[],
+	season: number = g.get("season"),
+) => {
+	const augmentTeam = await getAugmentTeam(season);
 
-			obj.colors = teamSeason.colors;
-		}
-
-		if (!obj.colors) {
-			obj.colors = DEFAULT_TEAM_COLORS;
-		}
+	const augmentMatchup = ({
+		away,
+		home,
+		...matchup
+	}: PlayInTournament[number]) => {
+		return {
+			...matchup,
+			home: augmentTeam(home),
+			away: augmentTeam(away),
+		};
 	};
 
-	for (const round of series) {
-		for (const matchup of round) {
-			if (matchup.away) {
-				setAll(matchup.away);
+	type MatchupAugmented = ReturnType<typeof augmentMatchup>;
+
+	return playIns.map(
+		([matchup0, matchup1, matchup2]):
+			| [MatchupAugmented, MatchupAugmented]
+			| [MatchupAugmented, MatchupAugmented, MatchupAugmented] => {
+			if (matchup2 === undefined) {
+				return [augmentMatchup(matchup0), augmentMatchup(matchup1)];
 			}
 
-			setAll(matchup.home);
-		}
-	}
+			return [
+				augmentMatchup(matchup0),
+				augmentMatchup(matchup1),
+				augmentMatchup(matchup2),
+			];
+		},
+	);
 };
 
 const calcWinp = ({
@@ -454,6 +491,7 @@ const roundsWonText = ({
 
 const helpers = {
 	...commonHelpers,
+	augmentPlayIns,
 	augmentSeries,
 	calcWinp,
 	correctLinkLid,

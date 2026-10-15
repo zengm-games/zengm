@@ -1,5 +1,5 @@
 import { bySport } from "../../common/sportFunctions.ts";
-import { trade } from "../core/index.ts";
+import { player, team, trade } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { TradeSummary, TradeTeams } from "../../common/types.ts";
@@ -95,12 +95,9 @@ export default defineView({
 			"playersByTid",
 			g.get("userTid"),
 		);
-		const userPicks = await idb.getCopies.draftPicks(
-			{
-				tid: g.get("userTid"),
-			},
-			"noCopyCache",
-		);
+		const userPicks = await idb.merged.draftPicks.getAll({
+			tid: g.get("userTid"),
+		});
 		const attrs = [
 			"pid",
 			"firstName",
@@ -121,7 +118,7 @@ export default defineView({
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		} as const);
 		const userRoster = addFirstNameShort(
-			await idb.getCopies.playersPlus(userRosterAll, {
+			await player.formatAll(userRosterAll, {
 				attrs,
 				ratings,
 				stats,
@@ -155,22 +152,14 @@ export default defineView({
 			"playersByTid",
 			otherTid,
 		);
-		const otherPicks = await idb.getCopies.draftPicks(
-			{
-				tid: otherTid,
-			},
-			"noCopyCache",
-		);
-		const t = await idb.getCopy.teamsPlus(
-			{
-				tid: otherTid,
-				season: g.get("season"),
-				attrs: ["strategy"],
-				seasonAttrs: ["won", "lost", "tied", "otl"],
-				addDummySeason: true,
-			},
-			"noCopyCache",
-		);
+		const otherPicks = await idb.merged.draftPicks.getAll({ tid: otherTid });
+		const t = await team.getFormatted({
+			tid: otherTid,
+			season: g.get("season"),
+			attrs: ["strategy"],
+			seasonAttrs: ["won", "lost", "tied", "otl"],
+			addDummySeason: true,
+		});
 
 		if (t === undefined) {
 			// https://stackoverflow.com/a/59923262/786644
@@ -181,7 +170,7 @@ export default defineView({
 		}
 
 		const otherRoster = addFirstNameShort(
-			await idb.getCopies.playersPlus(otherRosterAll, {
+			await player.formatAll(otherRosterAll, {
 				attrs,
 				ratings,
 				stats,

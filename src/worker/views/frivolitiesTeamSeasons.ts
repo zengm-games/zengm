@@ -137,12 +137,11 @@ const getMostXTeamSeasons = async ({
 	}
 
 	// Add margin of victory, playoff seed
-	const tx = idb.league.transaction(["teamStats", "playoffSeries"]);
 	for (const ts of teamSeasons) {
-		const teamStats = await tx
-			.objectStore("teamStats")
-			.index("season, tid")
-			.getAll([ts.season, ts.tid]);
+		const teamStats = await idb.merged.teamStats.getAll({
+			tid: ts.tid,
+			season: ts.season,
+		});
 		const row = teamStats.find((row) => !row.playoffs);
 		if (row) {
 			ts.mov = team.processStats(row, ["mov"], false, "perGame").mov;
@@ -158,9 +157,7 @@ const getMostXTeamSeasons = async ({
 		}
 
 		if (ts.playoffRoundsWon >= 0) {
-			const playoffSeries = await tx
-				.objectStore("playoffSeries")
-				.get(ts.season);
+			const playoffSeries = await idb.merged.playoffSeries.get(ts.season);
 			if (playoffSeries?.series[0]) {
 				const matchups = playoffSeries.series[0];
 				for (const matchup of matchups) {

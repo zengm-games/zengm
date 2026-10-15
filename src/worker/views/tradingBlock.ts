@@ -7,6 +7,7 @@ import { augmentOffers } from "../api/index.ts";
 import { addMissingAssets } from "./savedTrades.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"tradingBlock">, ctxBBGM: any) => {
 	return {
@@ -36,7 +37,7 @@ export default defineView({
 				g.get("userTid"),
 			);
 			const userRoster = addFirstNameShort(
-				await idb.getCopies.playersPlus(userRosterAll, {
+				await player.formatAll(userRosterAll, {
 					attrs: [
 						"pid",
 						"firstName",
@@ -59,12 +60,9 @@ export default defineView({
 				}),
 			);
 
-			const userPicks = await idb.getCopies.draftPicks(
-				{
-					tid: g.get("userTid"),
-				},
-				"noCopyCache",
-			);
+			const userPicks = await idb.merged.draftPicks.getAll({
+				tid: g.get("userTid"),
+			});
 
 			const userPicks2 = await Promise.all(
 				userPicks.map(async (dp) => {

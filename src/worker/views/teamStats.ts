@@ -3,7 +3,7 @@ import { g, helpers } from "../util/index.ts";
 import type { TeamStatAttr, TeamSeasonAttr } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { TEAM_STATS_TABLES } from "../../common/constants.ts";
-import { season, team } from "../core/index.ts";
+import { player, season, team } from "../core/index.ts";
 import { lowerIsBetter } from "../../common/lowerIsBetter.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -63,18 +63,15 @@ export const getStats = async ({
 		seasonAttrs.push("winp");
 	}
 	const teams = (
-		await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs,
-				stats: ["gp", ...stats] as TeamStatAttr[],
-				season,
-				tid,
-				playoffs,
-				regularSeason: !playoffs,
-			},
-			"noCopyCache",
-		)
+		await team.getFormattedAll({
+			attrs: ["tid"],
+			seasonAttrs,
+			stats: ["gp", ...stats] as TeamStatAttr[],
+			season,
+			tid,
+			playoffs,
+			regularSeason: !playoffs,
+		})
 	).filter((t) => {
 		// For playoffs, only show teams who actually made playoffs (gp > 0)
 		return !playoffs || t.stats.gp > 0;
@@ -82,12 +79,7 @@ export const getStats = async ({
 
 	// For playoffs, fix W/L to be playoff W/L not regular season
 	if (playoffs) {
-		const playoffSeries = await idb.getCopy.playoffSeries(
-			{
-				season,
-			},
-			"noCopyCache",
-		);
+		const playoffSeries = await idb.merged.playoffSeries.get(season);
 
 		if (playoffSeries !== undefined) {
 			// Reset W/L
@@ -136,16 +128,13 @@ export const getStats = async ({
 				if (noDynamicAvgAge) {
 					continue;
 				}
-				playersRaw = await idb.getCopies.players(
-					{
-						activeSeason: season,
-						statsTid: t.tid,
-					},
-					"noCopyCache",
-				);
+				playersRaw = await idb.merged.players.getAll({
+					activeSeason: season,
+					statsTid: t.tid,
+				});
 			}
 
-			const players = await idb.getCopies.playersPlus(playersRaw, {
+			const players = await player.formatAll(playersRaw, {
 				attrs: ["age"],
 				stats: ["gp", "min"],
 				season,

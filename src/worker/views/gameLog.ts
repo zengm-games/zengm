@@ -145,23 +145,21 @@ export const makeAbbrevsUnique = <T extends { abbrev: string }>(
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
 const boxScore = async (gid: number) => {
-	const game = await idb.getCopy.games({ gid });
+	const gameRaw = await idb.merged.games.get(gid);
 
 	// If game doesn't exist (bad gid or deleted box scores), show nothing
-	if (!game) {
+	if (!gameRaw) {
 		return { gid: -1 };
 	}
+
+	// Copy because team info is added to the game below
+	const game = helpers.deepCopy(gameRaw);
 
 	const allStarGame = game.teams[0].tid === -1 || game.teams[1].tid === -1;
 	let allStars: AllStars | undefined;
 
 	if (allStarGame) {
-		allStars = await idb.getCopy.allStars(
-			{
-				season: game.season,
-			},
-			"noCopyCache",
-		);
+		allStars = await idb.merged.allStars.get(game.season);
 
 		if (!allStars) {
 			return { gid: -1 };
@@ -269,9 +267,7 @@ export const loadAbbrevs = async (season: number) => {
 
 	// For historical seasons, look up old abbrevs
 	if (g.get("season") !== season || g.get("phase") >= PHASE.PLAYOFFS) {
-		const teamSeasons = await idb.getCopies.teamSeasons({
-			season,
-		});
+		const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 		if (teamSeasons.length > 0) {
 			for (const row of teamSeasons) {
 				abbrevs[row.tid] = row.abbrev;

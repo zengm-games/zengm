@@ -10,7 +10,7 @@ import type {
 import { defineView } from "../util/defineView.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { season } from "../core/index.ts";
+import { player, season, team } from "../core/index.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
@@ -446,10 +446,7 @@ export class GamesPlayedCache {
 			// In the playoffs, if we're in the first round or later (not the play-in), set the number of games to the minimum number of games to win a first round series (or the number of games so far). That way you won't see someone who played like 1 game in the play-in tournament leading in points per game after the entire playoffs.
 			let minGpPlayoffs = 0;
 			if (playoffs) {
-				const playoffSeries = await idb.getCopy.playoffSeries(
-					{ season },
-					"noCopyCache",
-				);
+				const playoffSeries = await idb.merged.playoffSeries.get(season);
 
 				// This only matters if there is a play-in tournament
 				if (playoffSeries?.playIns) {
@@ -476,7 +473,7 @@ export class GamesPlayedCache {
 				}
 			}
 
-			const teams = await idb.getCopies.teamsPlus({
+			const teams = await team.getFormattedAll({
 				attrs: ["tid"],
 				stats: ["gp"], // Use this only for playoffs, since seasonAttrs.gp does not increment for playoffs
 				seasonAttrs: ["gp"], // Use seasonAttrs.gp rather than stats.gp for real player historical data which has no team stats
@@ -594,7 +591,7 @@ export const iterateAllPlayersWithStats = async (
 		return;
 	}
 
-	// This is similar to activeSeason from getCopies.players
+	// This is similar to activeSeason from idb.merged.players
 	const index = idb.league
 		.transaction("players")
 		.store.index("draft.year, retiredYear");
@@ -816,7 +813,7 @@ export default defineView({
 			// Returns the player, the stats row to use, and some values that differ between career and single season
 			const getPlayerInfo = async (pRaw: Player, season: number | "career") => {
 				if (season === "career") {
-					const p = await idb.getCopy.playersPlus(pRaw, {
+					const p = await player.format(pRaw, {
 						attrs,
 						// season and ovr only needed for bestPos
 						ratings: ["season", "ovr", "skills", "pos"],
@@ -863,7 +860,7 @@ export default defineView({
 					};
 				}
 
-				const p = await idb.getCopy.playersPlus(pRaw, {
+				const p = await player.format(pRaw, {
 					attrs,
 					ratings: ["skills", "pos"],
 					stats: allStats,

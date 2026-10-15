@@ -5,6 +5,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { getPlayers } from "../core/awards/getPlayers.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 export default defineView({
 	id: "editAwardWinners",
@@ -21,21 +22,11 @@ export default defineView({
 			}
 
 			let season = inputs.season;
-			let awards = await idb.getCopy.awards(
-				{
-					season,
-				},
-				"noCopyCache",
-			);
+			let awards = await idb.merged.awards.get(season);
 			if (!awards) {
 				if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
 					season -= 1;
-					awards = await idb.getCopy.awards(
-						{
-							season,
-						},
-						"noCopyCache",
-					);
+					awards = await idb.merged.awards.get(season);
 				}
 			}
 
@@ -81,14 +72,11 @@ export default defineView({
 
 			const actualAwards = awards.awards;
 
-			const teams = await idb.getCopies.teamsPlus(
-				{
-					attrs: ["tid"],
-					seasonAttrs: ["abbrev"],
-					season,
-				},
-				"noCopyCache",
-			);
+			const teams = await team.getFormattedAll({
+				attrs: ["tid"],
+				seasonAttrs: ["abbrev"],
+				season,
+			});
 			const abbrevsByTid: Record<number, string> = {};
 			for (const t of teams) {
 				abbrevsByTid[t.tid] = t.seasonAttrs.abbrev;

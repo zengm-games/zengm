@@ -38,10 +38,7 @@ const INFLATION_GAME_ATTRIBUTES = [
 ] as const;
 
 const upcomingScheduledEventBlocksInflation = async () => {
-	const scheduledEvents = await idb.getCopies.scheduledEvents(
-		undefined,
-		"noCopyCache",
-	);
+	const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 	return scheduledEvents.some((event) => {
 		if (event.type === "gameAttributes") {
 			for (const key of INFLATION_GAME_ATTRIBUTES) {
@@ -125,33 +122,30 @@ const doInflation = async (conditions: Conditions) => {
 };
 
 const setChampNoPlayoffs = async (conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"cid",
-				"did",
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"winp",
-				"pts",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"cid",
+			"did",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"pts",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 
 	const ordered = await orderTeams(teams, teams);
 
@@ -327,15 +321,12 @@ const newPhaseBeforeDraft = async (
 	}
 
 	await doAwards(conditions);
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["playoffRoundsWon"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: ["playoffRoundsWon"],
+		season: g.get("season"),
+		active: true,
+	});
 
 	// Give award to all players on the championship team
 	const t = teams.find(

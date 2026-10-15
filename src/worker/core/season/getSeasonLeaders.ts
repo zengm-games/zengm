@@ -19,7 +19,7 @@ import { NUM_SEASON_LEADERS_CACHE } from "../../db/Cache.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 
-// Organize stats rows from playersPlus with multiple seasonTypes (and mergeStats totOnly) by season type
+// Organize stats rows from player.formatAll with multiple seasonTypes (and mergeStats totOnly) by season type
 export const splitRegularSeasonPlayoffsCombined = <
 	Row extends {
 		playoffs?: boolean | "combined";
@@ -84,12 +84,7 @@ const calculateSeasonLeaders = async (
 			Infinity,
 		]);
 	} else {
-		playersRaw = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
+		playersRaw = await idb.merged.players.getAll({ activeSeason: season });
 	}
 
 	const requirements = getLeaderRequirements();
@@ -107,21 +102,18 @@ const calculateSeasonLeaders = async (
 	// Can skip playoffs if it hasn't happened yet, and combined would be redundant with regularSeason too
 	const regularSeasonOnly = seasonInProgress && currentPhase < PHASE.PLAYOFFS;
 
-	const playersWithoutStatsByType = await idb.getCopies.playersPlus(
-		playersRaw,
-		{
-			attrs: ["age"],
-			// pos is for getLeaderRequirements
-			ratings: ["fuzz", "pos", ...ratings],
-			// tid is for GamesPlayedCache lookup
-			stats: ["tid", ...stats],
-			season,
-			mergeStats: "totOnly",
-			seasonType: regularSeasonOnly
-				? ["regularSeason"]
-				: ["regularSeason", "playoffs", "combined"],
-		},
-	);
+	const playersWithoutStatsByType = await player.formatAll(playersRaw, {
+		attrs: ["age"],
+		// pos is for getLeaderRequirements
+		ratings: ["fuzz", "pos", ...ratings],
+		// tid is for GamesPlayedCache lookup
+		stats: ["tid", ...stats],
+		season,
+		mergeStats: "totOnly",
+		seasonType: regularSeasonOnly
+			? ["regularSeason"]
+			: ["regularSeason", "playoffs", "combined"],
+	});
 	const players = playersWithoutStatsByType.map((p) => ({
 		...p,
 		statsByType: splitRegularSeasonPlayoffsCombined(p.stats),

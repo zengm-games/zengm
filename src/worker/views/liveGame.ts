@@ -206,11 +206,14 @@ export default defineView({
 			inputs.playByPlay !== undefined &&
 			inputs.playByPlay.length > 0
 		) {
-			const boxScore = await idb.getCopy.games({ gid: inputs.gid });
+			const boxScoreRaw = await idb.merged.games.get(inputs.gid);
 
-			if (!boxScore) {
+			if (!boxScoreRaw) {
 				throw new Error("Invalid gid");
 			}
+
+			// Copy because boxScoreToLiveSim modifies the box score
+			const boxScore = helpers.deepCopy(boxScoreRaw);
 
 			const allStarGame =
 				boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;

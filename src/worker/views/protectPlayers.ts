@@ -3,6 +3,7 @@ import { idb } from "../db/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { defineView } from "../util/defineView.ts";
+import { player } from "../core/index.ts";
 
 export default defineView({
 	id: "protectPlayers",
@@ -50,7 +51,7 @@ export default defineView({
 				g.get("userTid"),
 			);
 			players = addFirstNameShort(
-				await idb.getCopies.playersPlus(playersAll, {
+				await player.formatAll(playersAll, {
 					attrs: [
 						"pid",
 						"firstName",

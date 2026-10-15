@@ -1,4 +1,4 @@
-import { allStar } from "../core/index.ts";
+import { allStar, player } from "../core/index.ts";
 import type { DunkAttempt } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
@@ -15,7 +15,7 @@ const getShortTall = (pids: [number, number]) => {
 
 	return Promise.all(
 		pids.map(async (pid) => {
-			const p = await idb.getCopy.players({ pid }, "noCopyCache");
+			const p = await idb.merged.players.get(pid);
 			if (p) {
 				return {
 					pid: p.pid,
@@ -57,14 +57,11 @@ export default defineView({
 				return returnValue;
 			}
 
-			const playersRaw = await idb.getCopies.players(
-				{
-					pids: dunk.players.map((p) => p.pid),
-				},
-				"noCopyCache",
-			);
+			const playersRaw = await idb.merged.players.getAll({
+				pids: dunk.players.map((p) => p.pid),
+			});
 
-			const playersFiltered = await idb.getCopies.playersPlus(playersRaw, {
+			const playersFiltered = await player.formatAll(playersRaw, {
 				attrs: [
 					"pid",
 					"firstName",

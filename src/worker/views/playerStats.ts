@@ -5,8 +5,9 @@ import {
 	getPlayerStatsTableStats,
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
+import type { PlayersSelector } from "../db/merged/players.ts";
 import { g, helpers } from "../util/index.ts";
-import type { PlayerStatType } from "../../common/types.ts";
+import type { Player, PlayerStatType } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
@@ -20,6 +21,7 @@ import { actualPhase } from "../util/actualPhase.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 import { validateSeasonType } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"playerStats">) => {
 	let abbrev;
@@ -120,6 +122,31 @@ export default defineView({
 				actualStats = getPlayerStatsTableStats(stats);
 			}
 
+			let tid: number | undefined = g
+				.get("teamInfoCache")
+				.findIndex((t) => t.abbrev === inputs.abbrev);
+
+			if (tid < 0) {
+				tid = undefined;
+			}
+
+			// Applied while reading players, so players who won't be shown are not all held in memory. For a team, this keeps anyone with any stats for that team, and player.formatAll does the exact filtering.
+			let filter: ((p: Player) => boolean) | undefined;
+			if (tid !== undefined) {
+				const season = inputs.season;
+				filter = (p) =>
+					p.stats.some(
+						(ps) =>
+							ps.tid === tid &&
+							(typeof season !== "number" || ps.season === season),
+					);
+			} else if (inputs.abbrev === "watch") {
+				filter = (p) => p.watch !== undefined;
+			} else if (inputs.abbrev === "playoffs") {
+				const playoffTids = await getActivePlayoffTids();
+				filter = (p) => playoffTids.has(p.tid);
+			}
+
 			let playersAll;
 			if (
 				g.get("season") === inputs.season &&
@@ -129,22 +156,18 @@ export default defineView({
 					PLAYER.FREE_AGENT,
 					Infinity,
 				]);
+				if (filter) {
+					playersAll = playersAll.filter(filter);
+				}
 			} else {
-				playersAll = await idb.getCopies.players(
-					{
-						activeSeason:
-							typeof inputs.season === "number" ? inputs.season : undefined,
-					},
-					"noCopyCache",
-				);
-			}
-
-			let tid: number | undefined = g
-				.get("teamInfoCache")
-				.findIndex((t) => t.abbrev === inputs.abbrev);
-
-			if (tid < 0) {
-				tid = undefined;
+				let selector: PlayersSelector | undefined;
+				if (typeof inputs.season === "number") {
+					selector = { activeSeason: inputs.season };
+				} else if (inputs.abbrev === "watch") {
+					// Only read players on the watch list, rather than all players
+					selector = { watch: true };
+				}
+				playersAll = await idb.merged.players.getAll(selector, { filter });
 			}
 
 			let statType: PlayerStatType;
@@ -160,16 +183,7 @@ export default defineView({
 				statType = "totals";
 			}
 
-			if (tid === undefined) {
-				if (inputs.abbrev === "watch") {
-					playersAll = playersAll.filter((p) => p.watch);
-				} else if (inputs.abbrev === "playoffs") {
-					const playoffTids = await getActivePlayoffTids();
-					playersAll = playersAll.filter((p) => playoffTids.has(p.tid));
-				}
-			}
-
-			const playersPlusOptions = {
+			const formatOptions = {
 				attrs: [
 					"pid",
 					"firstName",
@@ -195,8 +209,8 @@ export default defineView({
 			// Normalize to one row per player (or per player season, for "all") with a single stats row, regardless of inputs.season
 			let rows;
 			if (typeof inputs.season === "number") {
-				const players = await idb.getCopies.playersPlus(playersAll, {
-					...playersPlusOptions,
+				const players = await player.formatAll(playersAll, {
+					...formatOptions,
 					season: inputs.season,
 				});
 				rows = players.map(({ ratings, ...p }) => ({
@@ -205,10 +219,7 @@ export default defineView({
 					skills: ratings.skills,
 				}));
 			} else {
-				const players = await idb.getCopies.playersPlus(
-					playersAll,
-					playersPlusOptions,
-				);
+				const players = await player.formatAll(playersAll, formatOptions);
 
 				if (inputs.season === "all") {
 					rows = players.flatMap(

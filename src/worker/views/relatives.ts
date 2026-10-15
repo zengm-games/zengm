@@ -7,6 +7,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { processInputs } from "./player.ts";
+import { player } from "../core/index.ts";
 
 const getRelationText = (
 	gender: GameAttributesLeague["gender"],
@@ -136,12 +137,9 @@ export default defineView({
 					}[],
 					initial: boolean,
 				) => {
-					const players = await idb.getCopies.players(
-						{
-							pids: infos.map((info) => info.pid),
-						},
-						"noCopyCache",
-					);
+					const players = await idb.merged.players.getAll({
+						pids: infos.map((info) => info.pid),
+					});
 
 					const infosNext: typeof infos = [];
 
@@ -226,15 +224,12 @@ export default defineView({
 					true,
 				);
 			} else {
-				playersAll = await idb.getCopies.players(
-					{
-						filter: (p) => p.relatives.length > 0,
-					},
-					"noCopyCache",
-				);
+				playersAll = await idb.merged.players.getAll(undefined, {
+					filter: (p) => p.relatives.length > 0,
+				});
 			}
 
-			const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
+			const playersFiltered = await player.formatAll(playersAll, {
 				attrs: [
 					"pid",
 					"firstName",

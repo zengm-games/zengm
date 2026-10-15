@@ -4,8 +4,6 @@ import type {
 } from "../../../../common/types.ts";
 import { orderBy } from "../../../../common/utils.ts";
 
-type ScheduledEventMaybeId = ScheduledEventWithoutKey & { id?: number };
-
 /**
  * Before version 74, changes to confs, divs, and awards were in "gameAttributes" scheduled events along with any other settings. Now confs and divs are in a "confsDivs" event, and awards are in an "awards" event.
  *
@@ -24,8 +22,8 @@ export const splitScheduledEvents = ({
 }: {
 	confs: GameAttributesLeague["confs"] | undefined;
 	divs: GameAttributesLeague["divs"] | undefined;
-	events: ScheduledEventMaybeId[];
-}): ScheduledEventMaybeId[] => {
+	events: ScheduledEventWithoutKey[];
+}): ScheduledEventWithoutKey[] => {
 	let confs = initialConfs;
 	let divs = initialDivs;
 
@@ -37,7 +35,7 @@ export const splitScheduledEvents = ({
 		(event) => event.id ?? Infinity,
 	]);
 
-	const output: ScheduledEventMaybeId[] = [];
+	const output: ScheduledEventWithoutKey[] = [];
 
 	for (const { id, ...event } of sorted) {
 		if (event.type !== "gameAttributes") {

@@ -168,7 +168,7 @@ const getProcessedPlayers = async (
 		["regularSeason", "playoffs", "combined"] as const
 	).filter((seasonType) => statRanges.has(seasonType));
 
-	const players = (await idb.getCopies.playersPlus(playersAll, {
+	const players = (await player.formatAll(playersAll, {
 		attrs: [
 			"pid",
 			"name",
@@ -241,10 +241,7 @@ const getPlayoffSeriesStats = async (
 	statOverridesByMatchup: StatOverridesByMatchup | undefined,
 	variables: Set<string> | undefined,
 ) => {
-	const playoffSeries = await idb.getCopy.playoffSeries(
-		{ season },
-		"noCopyCache",
-	);
+	const playoffSeries = await idb.merged.playoffSeries.get(season);
 	if (!playoffSeries) {
 		return;
 	}
@@ -270,7 +267,7 @@ const getPlayoffSeriesStats = async (
 
 	const rowsByPid: Record<number, StatsRow> = {};
 
-	const games = await idb.getCopies.games({ gids }, "noCopyCache");
+	const games = await idb.merged.games.getAll({ gids });
 
 	// Some games couldn't be found, so instead see if statOverridesByMatchup has the info we need (from saved awards, like on Award Races)
 	if (games.length !== gids.length) {
@@ -357,12 +354,7 @@ export const getPlayers = async (
 			Infinity,
 		]);
 	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
+		playersAll = await idb.merged.players.getAll({ activeSeason: season });
 	}
 
 	const players = await getProcessedPlayers(
@@ -372,12 +364,7 @@ export const getPlayers = async (
 	);
 
 	// Cache some stuff for later
-	const teamSeasons = await idb.getCopies.teamSeasons(
-		{
-			season,
-		},
-		"noCopyCache",
-	);
+	const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 	const teamInfos: Record<
 		number,
 		{

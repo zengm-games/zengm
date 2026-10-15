@@ -1,7 +1,7 @@
 import { PLAYER, PHASE } from "../../common/constants.ts";
 import { finances, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type { PlayerWithoutKey, Player } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { last, orderBy } from "../../common/utils.ts";
@@ -101,9 +101,7 @@ export default defineView({
 				p.imgURL = "http://";
 			} else {
 				// Load a player to edit
-				const p2 = await idb.getCopy.players({
-					pid: inputs.pid,
-				});
+				const p2 = await idb.merged.players.get(inputs.pid);
 
 				if (!p2) {
 					// https://stackoverflow.com/a/59923262/786644
@@ -113,7 +111,8 @@ export default defineView({
 					return returnValue;
 				}
 
-				p = p2;
+				// Copy because the player is edited below
+				p = helpers.deepCopy(p2);
 
 				await upgradeFace(p);
 
@@ -151,10 +150,7 @@ export default defineView({
 
 			for (const relative of p.relatives) {
 				if (!pids.has(relative.pid)) {
-					const pRelative = await idb.getCopy.players(
-						{ pid: relative.pid },
-						"noCopyCache",
-					);
+					const pRelative = await idb.merged.players.get(relative.pid);
 					if (pRelative) {
 						currentPlayers.push(pRelative);
 					}

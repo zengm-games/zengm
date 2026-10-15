@@ -2,7 +2,7 @@ import setSchedule from "./setSchedule.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, lock } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
-import { season } from "../index.ts";
+import { season, team } from "../index.ts";
 import { chunk, groupByUnique } from "../../../common/utils.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
 
@@ -33,33 +33,30 @@ const seriesIsNotOver = (
 	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
 
 const getTeamsForOrderTeams = () => {
-	return idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"winp",
-				"pts",
-				"won",
-				"lost",
-				"otl",
-				"tied",
-				"did",
-				"cid",
-				"wonDiv",
-				"lostDiv",
-				"otlDiv",
-				"tiedDiv",
-				"wonConf",
-				"lostConf",
-				"otlConf",
-				"tiedConf",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	return team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"winp",
+			"pts",
+			"won",
+			"lost",
+			"otl",
+			"tied",
+			"did",
+			"cid",
+			"wonDiv",
+			"lostDiv",
+			"otlDiv",
+			"tiedDiv",
+			"wonConf",
+			"lostConf",
+			"otlConf",
+			"tiedConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 };
 
 /**
@@ -181,7 +178,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			series[rnd]![0]!.away?.won === 0
 		) {
 			// Make sure we didn't just play the All-Star Game - only schedule once
-			const allStar = await idb.getCopy.allStars({ season: g.get("season") });
+			const allStar = await idb.merged.allStars.get(g.get("season"));
 			if (!allStar?.score) {
 				tids.unshift([-1, -2]);
 			}

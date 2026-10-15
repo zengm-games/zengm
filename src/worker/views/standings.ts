@@ -1,9 +1,8 @@
-import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { ByConf } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { getTiebreakers, orderTeams } from "../util/orderTeams.ts";
-import { season } from "../core/index.ts";
+import { season, team } from "../core/index.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { validateSeason } from "../util/processInputs.ts";
@@ -83,50 +82,47 @@ export default defineView({
 			const usePts = pointsFormula !== "";
 
 			const teams = (
-				await idb.getCopies.teamsPlus(
-					{
-						attrs: ["tid"],
-						seasonAttrs: [
-							"won",
-							"lost",
-							"tied",
-							"otl",
-							"winp",
-							"pts",
-							"ptsPct",
-							"wonHome",
-							"lostHome",
-							"tiedHome",
-							"otlHome",
-							"wonAway",
-							"lostAway",
-							"tiedAway",
-							"otlAway",
-							"wonDiv",
-							"lostDiv",
-							"tiedDiv",
-							"otlDiv",
-							"wonConf",
-							"lostConf",
-							"tiedConf",
-							"otlConf",
-							"lastTen",
-							"streak",
-							"cid",
-							"did",
-							"abbrev",
-							"region",
-							"name",
-							"clinchedPlayoffs",
-							"imgURL",
-							"imgURLSmall",
-						],
-						stats: ["pts", "oppPts", "gp"],
-						season: inputs.season,
-						showNoStats: true,
-					},
-					"noCopyCache",
-				)
+				await team.getFormattedAll({
+					attrs: ["tid"],
+					seasonAttrs: [
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"winp",
+						"pts",
+						"ptsPct",
+						"wonHome",
+						"lostHome",
+						"tiedHome",
+						"otlHome",
+						"wonAway",
+						"lostAway",
+						"tiedAway",
+						"otlAway",
+						"wonDiv",
+						"lostDiv",
+						"tiedDiv",
+						"otlDiv",
+						"wonConf",
+						"lostConf",
+						"tiedConf",
+						"otlConf",
+						"lastTen",
+						"streak",
+						"cid",
+						"did",
+						"abbrev",
+						"region",
+						"name",
+						"clinchedPlayoffs",
+						"imgURL",
+						"imgURLSmall",
+					],
+					stats: ["pts", "oppPts", "gp"],
+					season: inputs.season,
+					showNoStats: true,
+				})
 			).map((t) => ({
 				...t,
 				gb: {

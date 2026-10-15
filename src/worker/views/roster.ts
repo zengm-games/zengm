@@ -1,5 +1,5 @@
 import { PHASE, POSITIONS } from "../../common/constants.ts";
-import { finances, season, team } from "../core/index.ts";
+import { finances, player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { Player, TeamSeasonAttr } from "../../common/types.ts";
@@ -60,33 +60,30 @@ const sortByPos = (p: {
 };
 
 const getStandingsInfo = async (info: { season: number; tid: number }) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-				"winp",
-				"pts",
-				"cid",
-				"did",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: info.season,
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+			"winp",
+			"pts",
+			"cid",
+			"did",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: info.season,
+		showNoStats: true,
+	});
 
 	const cid = teams.find((t) => t.tid === info.tid)?.seasonAttrs.cid;
 
@@ -192,24 +189,21 @@ export default defineView({
 				"avgAge",
 				"note",
 			];
-			const t = await idb.getCopy.teamsPlus(
-				{
-					season: inputs.season,
-					tid: inputs.tid,
-					attrs: [
-						"tid",
-						"strategy",
-						"region",
-						"name",
-						"keepRosterSorted",
-						"playThroughInjuries",
-					],
-					seasonAttrs,
-					stats: ["pts", "oppPts", "gp"],
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			);
+			const t = await team.getFormatted({
+				season: inputs.season,
+				tid: inputs.tid,
+				attrs: [
+					"tid",
+					"strategy",
+					"region",
+					"name",
+					"keepRosterSorted",
+					"playThroughInjuries",
+				],
+				seasonAttrs,
+				stats: ["pts", "oppPts", "gp"],
+				addDummySeason: true,
+			});
 
 			if (!t) {
 				const returnValue = {
@@ -287,7 +281,7 @@ export default defineView({
 					}
 				}
 
-				players = await idb.getCopies.playersPlus(playersAll, {
+				players = await player.formatAll(playersAll, {
 					attrs,
 					ratings,
 					seasonType: inputs.playoffs,
@@ -329,14 +323,11 @@ export default defineView({
 				}
 			} else {
 				// Show all players with stats for the given team and year
-				const playersAll = await idb.getCopies.players(
-					{
-						activeSeason: inputs.season,
-						statsTid: inputs.tid,
-					},
-					"noCopyCache",
-				);
-				players = await idb.getCopies.playersPlus(playersAll, {
+				const playersAll = await idb.merged.players.getAll({
+					activeSeason: inputs.season,
+					statsTid: inputs.tid,
+				});
+				players = await player.formatAll(playersAll, {
 					attrs,
 					ratings,
 					seasonType: inputs.playoffs,
@@ -358,10 +349,10 @@ export default defineView({
 					p.canRelease = false;
 				}
 
-				const teamSeason = await idb.getCopy.teamSeasons({
-					season: inputs.season,
-					tid: inputs.tid,
-				});
+				const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
+					inputs.tid,
+					inputs.season,
+				);
 
 				// >0 check handles old leagues that might have it undefined, and real players leagues that have a dummy negative value
 				if (teamSeason && teamSeason.payrollEndOfSeason > 0) {

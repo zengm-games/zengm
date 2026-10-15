@@ -143,13 +143,10 @@ const newPhasePreseason = async (
 		// Only need scoutingLevel for the user's team to calculate fuzz when ratings are updated below.
 		// This is done BEFORE a new season row is added.
 		if (t.tid === g.get("userTid")) {
-			const teamSeasons = await idb.getCopies.teamSeasons(
-				{
-					tid: t.tid,
-					seasons: [newSeason - 3, newSeason - 1],
-				},
-				"noCopyCache",
-			);
+			const teamSeasons = await idb.merged.teamSeasons.getAll({
+				tid: t.tid,
+				seasons: [newSeason - 3, newSeason - 1],
+			});
 			scoutingLevel = await finances.getLevelLastThree("scouting", {
 				t,
 				teamSeasons,
@@ -249,13 +246,10 @@ const newPhasePreseason = async (
 
 	const coachingLevels: Record<number, number> = {};
 	for (const t of teams) {
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				tid: t.tid,
-				seasons: [newSeason - 3, newSeason - 1],
-			},
-			"noCopyCache",
-		);
+		const teamSeasons = await idb.merged.teamSeasons.getAll({
+			tid: t.tid,
+			seasons: [newSeason - 3, newSeason - 1],
+		});
 		coachingLevels[t.tid] = await finances.getLevelLastThree("coaching", {
 			t,
 			teamSeasons,

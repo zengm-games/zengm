@@ -7,6 +7,7 @@ import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts"
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import { player } from "../core/index.ts";
 
 type InfoTemp = {
 	numPlayers: number;
@@ -145,7 +146,7 @@ export const genView = (
 				const infosWithPlayer = (
 					await Promise.all(
 						Object.entries(infosTemp).map(async ([name, info]) => {
-							const p = await idb.getCopy.playersPlus(info.best.p, {
+							const p = await player.format(info.best.p, {
 								attrs: [
 									"pid",
 									"firstName",

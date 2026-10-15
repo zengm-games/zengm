@@ -5,11 +5,16 @@ import {
 	getSettingsBeforeScheduledEvent,
 	getTeamsBeforeScheduledEvent,
 	normalizeScheduledEvents,
-	type ScheduledEventMaybeId,
 } from "./scheduledEvents.ts";
 import loadDataBasketball from "../worker/core/realRosters/loadData.basketball.ts";
 import formatScheduledEvents from "../worker/core/realRosters/formatScheduledEvents.ts";
-import type { Conf, Div, NonEmptyArray } from "./types.ts";
+import type {
+	Conf,
+	Div,
+	NonEmptyArray,
+	ScheduledEvent,
+	ScheduledEventWithoutKey,
+} from "./types.ts";
 import { range } from "./utils.ts";
 
 const current = {
@@ -41,7 +46,7 @@ const expansionTeam = (name: string, tid: number | undefined) => {
 
 let nextId = 0;
 const event = (
-	type: ScheduledEventMaybeId["type"],
+	type: ScheduledEventWithoutKey["type"],
 	season: number,
 	info: unknown,
 	phase: number = PHASE.PRESEASON,
@@ -54,10 +59,10 @@ const event = (
 		season,
 		phase,
 		info,
-	} as ScheduledEventMaybeId & { id: number };
+	} as ScheduledEvent;
 };
 
-const normalize = (events: ScheduledEventMaybeId[]) => {
+const normalize = (events: ScheduledEventWithoutKey[]) => {
 	return normalizeScheduledEvents({
 		current,
 		events,
@@ -66,7 +71,7 @@ const normalize = (events: ScheduledEventMaybeId[]) => {
 };
 
 // Summarize the team events, so tests are easier to read
-const summarize = (events: ScheduledEventMaybeId[]) => {
+const summarize = (events: ScheduledEventWithoutKey[]) => {
 	return events.map((event) => {
 		if (event.type === "expansionDraft") {
 			return `${event.season} expansionDraft ${event.info.teams
@@ -376,7 +381,7 @@ describe("normalizeScheduledEvents", () => {
 	});
 
 	test("assigns tids to new teams with no tid", () => {
-		const events: ScheduledEventMaybeId[] = [
+		const events: ScheduledEventWithoutKey[] = [
 			event("expansionDraft", 2027, { teams: [expansionTeam("d", 3)] }),
 			event("teamInfo", 2028, { tid: 3, region: "New" }),
 

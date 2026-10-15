@@ -1,5 +1,5 @@
 import { PLAYER } from "../../common/constants.ts";
-import { team } from "../core/index.ts";
+import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
@@ -34,7 +34,7 @@ export default defineView({
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
 		).filter((p) => negotiationPids.has(p.pid));
 
-		const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
+		const playersFiltered = await player.formatAll(playersAll, {
 			attrs: [
 				"pid",
 				"name",
@@ -72,7 +72,7 @@ export default defineView({
 		const payroll = await team.getPayroll(userTid);
 		const capSpace = (g.get("salaryCap") - payroll) / 1000;
 
-		const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
+		const userPlayers = await player.formatAll(userPlayersAll, {
 			attrs: [],
 			ratings: ["pos"],
 			stats: [],

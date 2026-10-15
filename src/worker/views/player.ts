@@ -60,7 +60,7 @@ export const getPlayer = async <
 ) => {
 	const stats = getPlayerProfileStats();
 
-	const p = await idb.getCopy.playersPlus(pRaw, {
+	const p = await player.format(pRaw, {
 		attrs: [
 			"pid",
 			"name",
@@ -151,12 +151,7 @@ export const getCommon = async (
 		return returnValue;
 	}
 
-	const pRaw = await idb.getCopy.players(
-		{
-			pid,
-		},
-		"noCopyCache",
-	);
+	const pRaw = await idb.merged.players.get(pid);
 
 	if (!pRaw) {
 		// https://stackoverflow.com/a/59923262/786644
@@ -512,19 +507,9 @@ export default defineView({
 
 			const eventsAll = orderBy(
 				[
-					...(await idb.getCopies.events(
-						{
-							pid: topStuff.pid,
-						},
-						"noCopyCache",
-					)),
+					...(await idb.merged.events.getAll({ pid: topStuff.pid })),
 					...(p.draft.dpid !== undefined
-						? await idb.getCopies.events(
-								{
-									dpid: p.draft.dpid,
-								},
-								"noCopyCache",
-							)
+						? await idb.merged.events.getAll({ dpid: p.draft.dpid })
 						: []),
 				],
 				"eid",

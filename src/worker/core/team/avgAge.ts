@@ -2,7 +2,7 @@ const avgAge = (
 	players: {
 		age: number;
 
-		// undefined can happen with showRookies and no showNoStats in playersPlus, treated the same as no minutes played
+		// undefined can happen with showRookies and no showNoStats in player.formatAll, treated the same as no minutes played
 		stats:
 			| {
 					min: number | undefined;

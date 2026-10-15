@@ -5,18 +5,16 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { defineView } from "../util/defineView.ts";
+import { player } from "../core/index.ts";
 
 export default defineView({
 	id: "tragicDeaths",
 	load: async ({ updateEvents }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.has("firstRun")) {
-			const events = await idb.getCopies.events(
-				{
-					filter: (event) => event.type === "tragedy",
-				},
-				"noCopyCache",
-			);
+			const events = await idb.merged.events.getAll(undefined, {
+				filter: (event) => event.type === "tragedy",
+			});
 			const pids: number[] = [];
 
 			for (const event of events) {
@@ -42,14 +40,9 @@ export default defineView({
 				football: ["keyStats", "av"],
 				hockey: ["keyStats", "ops", "dps", "ps"],
 			} as const);
-			const playersAll = await idb.getCopies.players(
-				{
-					pids,
-				},
-				"noCopyCache",
-			);
+			const playersAll = await idb.merged.players.getAll({ pids });
 
-			const players = await idb.getCopies.playersPlus(playersAll, {
+			const players = await player.formatAll(playersAll, {
 				attrs: [
 					"pid",
 					"firstName",

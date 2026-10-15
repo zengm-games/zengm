@@ -12,6 +12,7 @@ import {
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getNumericStat } from "../../common/statValue.ts";
 import { processInputs } from "./leadersYears.ts";
+import { player } from "../core/index.ts";
 
 type MyLeader = Omit<
 	Leader,
@@ -78,9 +79,7 @@ export default defineView({
 			}));
 
 			for (const row of allLeaders) {
-				const awards = await idb.getCopy.awards({
-					season: row.season,
-				});
+				const awards = await idb.merged.awards.get(row.season);
 				if (awards) {
 					row.linkSeason = true;
 				}
@@ -109,7 +108,7 @@ export default defineView({
 					return;
 				}
 
-				const playersPlusArgs = {
+				const formatOptions = {
 					attrs: [
 						"pid",
 						"firstName",
@@ -131,8 +130,8 @@ export default defineView({
 
 				{
 					// Single season stats
-					const p = await idb.getCopy.playersPlus(pRaw, {
-						...playersPlusArgs,
+					const p = await player.format(pRaw, {
+						...formatOptions,
 						season,
 					});
 					if (p) {
@@ -184,12 +183,12 @@ export default defineView({
 						(row) => row.season <= season,
 					);
 
-					const p = await idb.getCopy.playersPlus(
+					const p = await player.format(
 						{
 							...pRaw,
 							stats: filteredStats,
 						},
-						playersPlusArgs,
+						formatOptions,
 					);
 					let playerStats;
 					if (p) {

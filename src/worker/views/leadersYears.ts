@@ -14,6 +14,7 @@ import type { RouteParams } from "../../ui/router/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { validateSeasonType } from "../util/processInputs.ts";
 import { validateStatType } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 export const processInputs = (
 	params: RouteParams<"leadersProgressive"> | RouteParams<"leadersYears">,
@@ -74,9 +75,7 @@ export default defineView({
 				.reverse();
 
 			for (const row of allLeaders) {
-				const awards = await idb.getCopy.awards({
-					season: row.season,
-				});
+				const awards = await idb.merged.awards.get(row.season);
 				if (awards) {
 					row.linkSeason = true;
 				}
@@ -105,7 +104,7 @@ export default defineView({
 					return;
 				}
 
-				const p = await idb.getCopy.playersPlus(pRaw, {
+				const p = await player.format(pRaw, {
 					attrs: [
 						"pid",
 						"firstName",

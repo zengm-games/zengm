@@ -7,6 +7,7 @@ import { formatEventText } from "../util/formatEventText.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateAbbrev } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"news">) => {
 	const season = validateSeason(params.season);
@@ -63,12 +64,7 @@ const getTid = (event: { tids?: number[]; type: LogEventType }) => {
 };
 
 export const getWatchPids = async () => {
-	const watchPlayers = await idb.getCopies.players(
-		{
-			watch: true,
-		},
-		"noCopyCache",
-	);
+	const watchPlayers = await idb.merged.players.getAll({ watch: true });
 	return new Set(watchPlayers.map((p) => p.pid));
 };
 
@@ -110,11 +106,12 @@ export const processEvents = async (
 				event.tids &&
 				event.tids.includes(g.get("userTid"))
 			) {
-				if (event.type === "madePlayoffs" || event.type === "draft") {
-					event.score += 20;
-				} else {
-					event.score += 10;
-				}
+				const bonus =
+					event.type === "madePlayoffs" || event.type === "draft" ? 20 : 10;
+				return {
+					...event,
+					score: event.score + bonus,
+				};
 			}
 
 			return event;
@@ -171,10 +168,7 @@ export const processEvents = async (
 
 	for (const event of eventsWithPlayers) {
 		if (event.pids && event.pids.length > 0) {
-			const player = await idb.getCopy.players(
-				{ pid: event.pids[0] },
-				"noCopyCache",
-			);
+			const player = await idb.merged.players.get(event.pids[0]);
 			if (player) {
 				event.p = {
 					imgURL: player.imgURL,
@@ -205,9 +199,7 @@ export default defineView({
 			prevInputs?.abbrev !== abbrev ||
 			prevInputs?.order !== order
 		) {
-			const eventsAll = await idb.getCopies.events({
-				season,
-			});
+			const eventsAll = await idb.merged.events.getAll({ season });
 
 			if (order === "newest") {
 				eventsAll.reverse();
@@ -220,21 +212,18 @@ export default defineView({
 			});
 
 			const teams = (
-				await idb.getCopies.teamsPlus(
-					{
-						seasonAttrs: [
-							"abbrev",
-							"colors",
-							"jersey",
-							"imgURL",
-							"imgURLSmall",
-							"region",
-						],
-						season,
-						addDummySeason: true,
-					},
-					"noCopyCache",
-				)
+				await team.getFormattedAll({
+					seasonAttrs: [
+						"abbrev",
+						"colors",
+						"jersey",
+						"imgURL",
+						"imgURLSmall",
+						"region",
+					],
+					season,
+					addDummySeason: true,
+				})
 			).map((t) => t.seasonAttrs);
 
 			return {

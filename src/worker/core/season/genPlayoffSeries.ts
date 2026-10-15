@@ -7,12 +7,12 @@ import type {
 	ByConf,
 } from "../../../common/types.ts";
 import genPlayoffSeeds from "./genPlayoffSeeds.ts";
-import { idb } from "../../db/index.ts";
 import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 import validatePlayoffSettings from "./validatePlayoffSettings.ts";
 import { range } from "../../../common/utils.ts";
 import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
+import { team } from "../index.ts";
 
 type MyTeam = TeamFiltered<
 	["tid"],
@@ -364,33 +364,30 @@ export const genPlayoffSeriesFromTeams = async (
 };
 
 const genPlayoffSeries = async () => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"cid",
-				"did",
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"winp",
-				"pts",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"cid",
+			"did",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"pts",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 
 	return genPlayoffSeriesFromTeams(teams);
 };

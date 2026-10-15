@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { PHASE } from "../../common/constants.ts";
-import { season, team } from "../core/index.ts";
+import { player, season, team } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { getHistoryTeam } from "./teamHistory.ts";
 import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
@@ -9,7 +9,7 @@ import { defineView } from "../util/defineView.ts";
 
 export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const players = await player.formatAll(playersAll, {
 		attrs: ["injury", "pid", "value"],
 		ratings: ["ovr", "pot", "ovrs", "pos"],
 		season: g.get("season"),
@@ -28,12 +28,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 
 	const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
 	for (const t of teams) {
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				tid: t.tid,
-			},
-			"noCopyCache",
-		);
+		const teamSeasons = await idb.merged.teamSeasons.getAll({ tid: t.tid });
 
 		const historyTotal = getHistoryTeam(teamSeasons, playoffsByConfBySeason);
 		const historyUser = getHistoryTeam(
@@ -43,12 +38,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 			playoffsByConfBySeason,
 		);
 
-		const draftPicksRaw = await idb.getCopies.draftPicks(
-			{
-				tid: t.tid,
-			},
-			"noCopyCache",
-		);
+		const draftPicksRaw = await idb.merged.draftPicks.getAll({ tid: t.tid });
 
 		const draftPicks = await Promise.all(
 			draftPicksRaw.map(async (dp) => {
@@ -64,7 +54,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 			t.tid,
 		);
 		const players = orderBy(
-			await idb.getCopies.playersPlus(playersRaw, {
+			await player.formatAll(playersRaw, {
 				attrs: [
 					"pid",
 					"firstName",
@@ -119,34 +109,31 @@ export default defineView({
 	load: async ({ updateEvents }) => {
 		// When switching teams, the "leagues" update event is sent out, so we want to ignore that because otherwise the UI flickers before redirecting
 		if (!updateEvents.has("leagues")) {
-			const rawTeams = await idb.getCopies.teamsPlus(
-				{
-					attrs: [
-						"tid",
-						"region",
-						"name",
-						"pop",
-						"imgURL",
-						"imgURLSmall",
-						"cid",
-						"abbrev",
-					],
-					seasonAttrs: [
-						"winp",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"season",
-						"playoffRoundsWon",
-						"revenue",
-					],
-					season: g.get("season"),
-					active: true,
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			);
+			const rawTeams = await team.getFormattedAll({
+				attrs: [
+					"tid",
+					"region",
+					"name",
+					"pop",
+					"imgURL",
+					"imgURLSmall",
+					"cid",
+					"abbrev",
+				],
+				seasonAttrs: [
+					"winp",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"season",
+					"playoffRoundsWon",
+					"revenue",
+				],
+				season: g.get("season"),
+				active: true,
+				addDummySeason: true,
+			});
 
 			const teamsAll = helpers.addPopRank(rawTeams);
 

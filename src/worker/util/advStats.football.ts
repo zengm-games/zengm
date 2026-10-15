@@ -1,5 +1,4 @@
 import { PHASE } from "../../common/constants.ts";
-import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
@@ -10,6 +9,7 @@ import {
 } from "../../common/defaultGameAttributes.ts";
 import helpers from "./helpers.ts";
 import { processAwards } from "../core/awards/processAwards.ts";
+import { team } from "../core/index.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -334,18 +334,15 @@ const advStats = async () => {
 		"rbw",
 		"rba",
 	] as const;
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			stats: teamStats,
-			season: g.get("season"),
-			playoffs,
-			regularSeason: !playoffs,
-			addDummySeason: true,
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		stats: teamStats,
+		season: g.get("season"),
+		playoffs,
+		regularSeason: !playoffs,
+		addDummySeason: true,
+		active: true,
+	});
 	const league: any = teams.reduce((memo: any, t) => {
 		for (const key of teamStats) {
 			if (Object.hasOwn(memo, key)) {

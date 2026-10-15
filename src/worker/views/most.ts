@@ -87,7 +87,7 @@ const getMostXPlayers = async ({
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 	} as const);
 
-	const playersFiltered = await idb.getCopies.playersPlus(playersAll, {
+	const playersFiltered = await player.formatAll(playersAll, {
 		attrs: [
 			"pid",
 			"firstName",
@@ -107,9 +107,9 @@ const getMostXPlayers = async ({
 		mergeStats: "totOnly",
 	});
 
-	// Match up most by index rather than pid, since a player can appear multiple times with different most values. This is safe because with no season or seasonRange, playersPlus returns every player
+	// Match up most by index rather than pid, since a player can appear multiple times with different most values. This is safe because with no season or seasonRange, player.formatAll returns every player
 	if (playersFiltered.length !== playersAll.length) {
-		throw new Error("playersPlus filtered out some players");
+		throw new Error("player.formatAll filtered out some players");
 	}
 	const players = playersFiltered.map((p, i) => ({
 		...p,
@@ -161,26 +161,25 @@ const tidAndSeasonToAbbrev = async (most: Most) => {
 	const extra = most.extra as any;
 	const tid = extra.tid;
 	const season = extra.bestSeasonOverride ?? extra.season;
-	const teamSeason = await idb.league
-		.transaction("teamSeasons")
-		.store.index("season, tid")
-		.get([season, tid]);
+	const teamSeason = await idb.merged.teamSeasons.getByTidSeason(tid, season);
 	if (teamSeason) {
 		abbrev = teamSeason.abbrev;
 	}
 
 	if (abbrev === undefined) {
 		if (season < g.get("startingSeason")) {
-			const teamSeason = await idb.league
-				.transaction("teamSeasons")
-				.store.index("season, tid")
-				.get([g.get("startingSeason"), tid]);
+			const teamSeason = await idb.merged.teamSeasons.getByTidSeason(
+				tid,
+				g.get("startingSeason"),
+			);
 			if (teamSeason) {
 				abbrev = teamSeason.abbrev;
 			}
 		}
 
-		abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+		if (abbrev === undefined) {
+			abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+		}
 	}
 
 	return {

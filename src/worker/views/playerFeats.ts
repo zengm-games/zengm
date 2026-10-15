@@ -1,4 +1,5 @@
 import { idb } from "../db/index.ts";
+import type { PlayerFeat } from "../../common/types.ts";
 import { g, helpers } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -46,55 +47,42 @@ export default defineView({
 			inputs.abbrev !== prevInputs?.abbrev ||
 			inputs.season !== prevInputs?.season
 		) {
-			let feats = await idb.getCopies.playerFeats();
+			const watchPids =
+				inputs.abbrev === "watch" ? await getWatchPids() : undefined;
 
-			// Put fake fid on cached feats
-			let maxFid = 0;
+			// Applied while reading feats, so feats that won't be shown are not all held in memory
+			const filter = (feat: PlayerFeat) =>
+				(inputs.tid === undefined || feat.tid === inputs.tid) &&
+				(watchPids === undefined || watchPids.has(feat.pid)) &&
+				(inputs.season === "all" || feat.season === inputs.season);
 
-			for (const feat of feats) {
-				if (feat.fid !== undefined) {
-					if (feat.fid > maxFid) {
-						maxFid = feat.fid;
-					}
-				} else {
-					maxFid += 1;
-					feat.fid = maxFid;
-				}
-			}
-
-			if (inputs.tid !== undefined) {
-				feats = feats.filter((feat) => feat.tid === inputs.tid);
-			} else if (inputs.abbrev === "watch") {
-				const watchPids = await getWatchPids();
-				feats = feats.filter((feat) => watchPids.has(feat.pid));
-			}
-
-			if (inputs.season !== "all") {
-				feats = feats.filter((feat) => feat.season === inputs.season);
-			}
+			const feats = await idb.merged.playerFeats.getAll(undefined, { filter });
 
 			const featsProcessed = feats.map((feat) => {
-				if (__SPORT === "basketball") {
-					feat.stats.trb = feat.stats.orb + feat.stats.drb;
-					feat.stats.fgp =
-						feat.stats.fga > 0 ? (100 * feat.stats.fg) / feat.stats.fga : 0;
-					feat.stats.tpp =
-						feat.stats.tpa > 0 ? (100 * feat.stats.tp) / feat.stats.tpa : 0;
-					feat.stats.ftp =
-						feat.stats.fta > 0 ? (100 * feat.stats.ft) / feat.stats.fta : 0;
+				const featStats = { ...feat.stats };
+				let score = feat.score;
 
-					feat.stats.gmsc = helpers.gameScore(feat.stats);
+				if (__SPORT === "basketball") {
+					featStats.trb = featStats.orb + featStats.drb;
+					featStats.fgp =
+						featStats.fga > 0 ? (100 * featStats.fg) / featStats.fga : 0;
+					featStats.tpp =
+						featStats.tpa > 0 ? (100 * featStats.tp) / featStats.tpa : 0;
+					featStats.ftp =
+						featStats.fta > 0 ? (100 * featStats.ft) / featStats.fta : 0;
+
+					featStats.gmsc = helpers.gameScore(featStats);
 				} else if (__SPORT === "hockey") {
 					const toAdd = ["g", "a", "pts", "sPct", "foPct"];
-					const processed = processPlayerStats(feat.stats, toAdd);
+					const processed = processPlayerStats(featStats, toAdd);
 					for (const stat of toAdd) {
-						feat.stats[stat] = processed[stat];
+						featStats[stat] = processed[stat];
 					}
 				} else if (__SPORT === "baseball") {
 					const toAdd = ["ip", "gmsc"];
-					const processed = processPlayerStats(feat.stats, toAdd);
+					const processed = processPlayerStats(featStats, toAdd);
 					for (const stat of toAdd) {
-						feat.stats[stat] = processed[stat];
+						featStats[stat] = processed[stat];
 					}
 				}
 
@@ -103,7 +91,7 @@ export default defineView({
 					feat.numPeriods,
 				);
 				if (overtimeText !== "") {
-					feat.score += ` (${overtimeText})`;
+					score += ` (${overtimeText})`;
 				}
 
 				let type: "regularSeason" | "playoffs" | "allStar";
@@ -117,6 +105,8 @@ export default defineView({
 
 				return {
 					...feat,
+					stats: featStats,
+					score,
 					abbrev: g.get("teamInfoCache")[feat.tid]?.abbrev,
 					oppAbbrev: g.get("teamInfoCache")[feat.oppTid]?.abbrev,
 					type,

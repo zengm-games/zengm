@@ -64,7 +64,7 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards) => {
 };
 
 const getAwards = async (season: number) => {
-	const persistedAwards = await idb.getCopy.awards({ season });
+	const persistedAwards = await idb.merged.awards.get(season);
 
 	let awards;
 	let statOverridesByMatchup;

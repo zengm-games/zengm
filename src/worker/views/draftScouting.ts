@@ -5,10 +5,11 @@ import type { Player } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { last } from "../../common/utils.ts";
 import { defineView } from "../util/defineView.ts";
+import { player } from "../core/index.ts";
 
 const getSeason = async (playersAll: Player[], season: number) => {
 	const playersAllFiltered = playersAll.filter((p) => p.draft.year === season);
-	const players = await idb.getCopies.playersPlus(playersAllFiltered, {
+	const players = await player.formatAll(playersAllFiltered, {
 		attrs: ["pid", "firstName", "lastName", "age", "valueFuzz", "watch"],
 		ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
 		showNoStats: true,

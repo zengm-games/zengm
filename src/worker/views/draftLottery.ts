@@ -1,5 +1,5 @@
 import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common/constants.ts";
-import { draft } from "../core/index.ts";
+import { draft, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
@@ -139,7 +139,7 @@ export default defineView({
 			);
 
 			const teams = groupByUnique(
-				await idb.getCopies.teamsPlus({
+				await team.getFormattedAll({
 					attrs: ["tid"],
 					seasonAttrs: [
 						"won",
@@ -161,7 +161,7 @@ export default defineView({
 
 			let colaTable;
 			if (g.get("draftType") === "cola" && season === g.get("season")) {
-				colaTable = await idb.getCopies.teamsPlus({
+				colaTable = await team.getFormattedAll({
 					attrs: [
 						"tid",
 						"abbrev",
@@ -180,12 +180,8 @@ export default defineView({
 				season < g.get("season") ||
 				(season === g.get("season") && g.get("phase") >= PHASE.DRAFT_LOTTERY)
 			) {
-				const draftLotteryResult = await idb.getCopy.draftLotteryResults(
-					{
-						season,
-					},
-					"noCopyCache",
-				);
+				const draftLotteryResult =
+					await idb.merged.draftLotteryResults.get(season);
 
 				let draftPicks;
 				if (season === g.get("season") && g.get("phase") === PHASE.DRAFT) {

@@ -1,18 +1,18 @@
 import fastDeepEqual from "fast-deep-equal";
 import { PHASE_TEXT, PLAYER } from "../../common/constants.ts";
-import { groupByUnique } from "../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../common/utils.ts";
 import {
 	getScheduledEventPhases,
 	getTeamsBeforeScheduledEvent,
 	isFutureScheduledEvent,
 	normalizeScheduledEvents,
-	type ScheduledEventMaybeId,
 	type ScheduledEventsChange,
 } from "../../common/scheduledEvents.ts";
 import {
 	awardSettingsSchema,
 	type Phase,
 	type ScheduledEvent,
+	type ScheduledEventWithoutKey,
 } from "../../common/types.ts";
 import { FormulaEvaluators } from "../core/awards/processAwards.ts";
 import { idb } from "../db/index.ts";
@@ -28,7 +28,7 @@ export const getScheduledEventsCurrent = () => {
 };
 
 // For a team in a contraction or teamInfo event. If it's a future team, it has to be found in the expansion draft that creates it.
-const getTeamName = (tid: number, events: ScheduledEventMaybeId[]) => {
+const getTeamName = (tid: number, events: ScheduledEventWithoutKey[]) => {
 	const t = g.get("teamInfoCache")[tid];
 	if (t) {
 		return `${t.region} ${t.name}`;
@@ -48,8 +48,8 @@ const getTeamName = (tid: number, events: ScheduledEventMaybeId[]) => {
 
 // Describe a change made by normalizeScheduledEvents to an existing event, as a side effect of something else changing
 const formatChange = (
-	change: ScheduledEventsChange<ScheduledEventMaybeId>,
-	events: ScheduledEventMaybeId[],
+	change: ScheduledEventsChange<ScheduledEventWithoutKey>,
+	events: ScheduledEventWithoutKey[],
 ) => {
 	const { event } = change;
 	const prefix = `${event.season} ${PHASE_TEXT[event.phase]}:`;
@@ -81,7 +81,7 @@ const formatChange = (
 
 // Same as formatChange, except for when it's the event being saved that is not valid
 const formatChangeAsError = (
-	change: ScheduledEventsChange<ScheduledEventMaybeId>,
+	change: ScheduledEventsChange<ScheduledEventWithoutKey>,
 ) => {
 	if (change.type === "removeExpansionTeams") {
 		const names = change.teams.map((t) => `${t.region} ${t.name}`).join(", ");
@@ -115,7 +115,7 @@ const isInvalidStadiumCapacity = (value: unknown) => {
 
 // Check everything that normalizeScheduledEvents doesn't. Returns an error message, if there is a problem.
 const validate = async (
-	event: ScheduledEventMaybeId,
+	event: ScheduledEventWithoutKey,
 	stored: ScheduledEvent[],
 ) => {
 	if (!g.get("godMode")) {
@@ -307,7 +307,7 @@ const validate = async (
 		const { pid } = event.info;
 
 		// No check for if the player is currently retired, because that could change before this event happens
-		const p = await idb.getCopy.players({ pid }, "noCopyCache");
+		const p = await idb.merged.players.get(pid);
 		if (!p) {
 			return "Player not found.";
 		}
@@ -332,7 +332,7 @@ const validate = async (
 };
 
 // Make all scheduled events valid, see normalizeScheduledEvents for details. `events` is what the scheduled events should be before any adjustments are made, which could differ from what is currently saved.
-const normalize = async (events: ScheduledEventMaybeId[]) => {
+const normalize = async (events: ScheduledEventWithoutKey[]) => {
 	return normalizeScheduledEvents({
 		current: getScheduledEventsCurrent(),
 		events,
@@ -342,7 +342,7 @@ const normalize = async (events: ScheduledEventMaybeId[]) => {
 
 // Other events that are changed as a side effect of adding/editing/deleting an event
 const formatChanges = (
-	changes: ScheduledEventsChange<ScheduledEventMaybeId>[],
+	changes: ScheduledEventsChange<ScheduledEventWithoutKey>[],
 	stored: ScheduledEvent[],
 ) => {
 	// Team names come from what is currently saved, because that's what the user sees, and the expansion draft creating a team could be the event that is being deleted
@@ -351,7 +351,7 @@ const formatChanges = (
 
 // Replace what is currently saved (`stored`) with the output of normalizeScheduledEvents
 const save = async (
-	normalized: ScheduledEventMaybeId[],
+	normalized: ScheduledEventWithoutKey[],
 	stored: ScheduledEvent[],
 ) => {
 	const storedById = groupByUnique(stored, "id");
@@ -381,14 +381,14 @@ const save = async (
 
 // Run after anything that deletes or changes scheduled events without going through the functions below
 export const normalizeScheduledEventsAfterChange = async () => {
-	const stored = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const stored = await idb.merged.scheduledEvents.getAll();
 	const { events: normalized } = await normalize(stored);
 	await save(normalized, stored);
 };
 
 // Call this after deleting scheduled events. `before` is a copy of all the scheduled events from before anything was deleted. Returns the key for undoing it, or undefined if nothing changed.
 export const addScheduledEventsUndo = async (before: ScheduledEvent[]) => {
-	const after = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const after = await idb.merged.scheduledEvents.getAll();
 	const afterById = groupByUnique(after, "id");
 
 	// Events that were deleted or changed, including ones changed as a side effect. `after` is undefined for a deleted event.
@@ -411,10 +411,7 @@ export const addScheduledEventsUndo = async (before: ScheduledEvent[]) => {
 	}
 
 	return local.undoLog.add(async () => {
-		const stored = await idb.getCopies.scheduledEvents(
-			undefined,
-			"noCopyCache",
-		);
+		const stored = await idb.merged.scheduledEvents.getAll();
 		const storedById = groupByUnique(stored, "id");
 
 		// If something else changed one of these events since then, restoring it would overwrite that change
@@ -450,7 +447,7 @@ export const deleteScheduledEvent = async ({
 	dryRun: boolean;
 	id: number;
 }) => {
-	const stored = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const stored = await idb.merged.scheduledEvents.getAll();
 	const events = stored.filter((event) => event.id !== id);
 
 	const { changes, events: normalized } = await normalize(events);
@@ -474,7 +471,7 @@ export const upsertScheduledEvent = async ({
 	event,
 }: {
 	dryRun: boolean;
-	event: ScheduledEventMaybeId;
+	event: ScheduledEventWithoutKey;
 }): Promise<
 	| {
 			error: string;
@@ -483,7 +480,7 @@ export const upsertScheduledEvent = async ({
 			changes: string[];
 	  }
 > => {
-	const stored = await idb.getCopies.scheduledEvents(undefined, "noCopyCache");
+	const stored = await idb.merged.scheduledEvents.getAll();
 
 	const error = await validate(event, stored);
 	if (error !== undefined) {
@@ -515,18 +512,12 @@ export const upsertScheduledEvent = async ({
 
 // Too many to send to the UI every time the scheduled events page loads
 export const getPlayersForScheduledEvents = async () => {
-	const players = await idb.getCopies.players(undefined, "noCopyCache");
-
 	const teamInfoCache = g.get("teamInfoCache");
 
-	return players
-		.filter((p) => p.diedYear === undefined)
-		.sort(
-			(a, b) =>
-				a.lastName.localeCompare(b.lastName) ||
-				a.firstName.localeCompare(b.firstName),
-		)
-		.map((p) => {
+	// Only keep what's needed from each player, because reading every player object into memory at once is too much for large leagues
+	const players = await idb.merged.players.getAll(undefined, {
+		filter: (p) => p.diedYear === undefined,
+		map: (p) => {
 			let info;
 			if (p.tid === PLAYER.RETIRED) {
 				info = `retired ${p.retiredYear}`;
@@ -540,8 +531,18 @@ export const getPlayersForScheduledEvents = async () => {
 
 			return {
 				pid: p.pid,
-				name: `${p.firstName} ${p.lastName}`,
+				firstName: p.firstName,
+				lastName: p.lastName,
 				info,
 			};
-		});
+		},
+	});
+
+	return orderBy(players, ["lastName", "firstName"]).map((p) => {
+		return {
+			pid: p.pid,
+			name: `${p.firstName} ${p.lastName}`,
+			info: p.info,
+		};
+	});
 };

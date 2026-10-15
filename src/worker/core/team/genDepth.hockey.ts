@@ -1,4 +1,3 @@
-import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import {
 	NUM_LINES,
@@ -7,8 +6,9 @@ import {
 import type { PlayerRatings, Position } from "../../../common/types.hockey.ts";
 import type { Player } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
+import { player } from "../index.ts";
 
-// Either from playersPlus, or from the ratings of a Player
+// Either from player.formatAll, or from the ratings of a Player
 type PlayerForDepth = {
 	pid: number;
 	ratings: {
@@ -102,7 +102,7 @@ const genDepth = async (
 
 	let players: PlayerForDepth[];
 
-	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
+	// Can't use player.formatAll in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
 		players = playersRaw.map((p) => {
 			const ratings = last(p.ratings) as PlayerRatings;
@@ -115,7 +115,7 @@ const genDepth = async (
 			};
 		});
 	} else {
-		players = await idb.getCopies.playersPlus(playersRaw, {
+		players = await player.formatAll(playersRaw, {
 			attrs: ["pid"],
 			ratings: ["pos", "ovrs"],
 			season: g.get("season"),

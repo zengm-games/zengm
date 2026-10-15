@@ -4,6 +4,7 @@ import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 export default defineView({
 	id: "playerRatingDists",
@@ -26,12 +27,9 @@ export default defineView({
 					Infinity,
 				]);
 			} else {
-				playersRaw = await idb.getCopies.players(
-					{
-						activeSeason: inputs.season,
-					},
-					"noCopyCache",
-				);
+				playersRaw = await idb.merged.players.getAll({
+					activeSeason: inputs.season,
+				});
 			}
 
 			const extraRatings = bySport({
@@ -41,7 +39,7 @@ export default defineView({
 				hockey: ["ovrs", "pots"],
 			} as const);
 
-			const players = await idb.getCopies.playersPlus(playersRaw, {
+			const players = await player.formatAll(playersRaw, {
 				ratings: ["ovr", "pot", ...extraRatings, ...RATINGS],
 				season: inputs.season,
 				showNoStats: true,

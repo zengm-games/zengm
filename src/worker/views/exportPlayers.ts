@@ -4,6 +4,7 @@ import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
 export default defineView({
 	id: "exportPlayers",
@@ -19,16 +20,11 @@ export default defineView({
 				playersAll = await idb.cache.players.getAll();
 				playersAll = playersAll.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
 			} else {
-				playersAll = await idb.getCopies.players(
-					{
-						activeSeason: season,
-					},
-					"noCopyCache",
-				);
+				playersAll = await idb.merged.players.getAll({ activeSeason: season });
 			}
 
 			const players = addFirstNameShort(
-				await idb.getCopies.playersPlus(playersAll, {
+				await player.formatAll(playersAll, {
 					attrs: [
 						"pid",
 						"firstName",

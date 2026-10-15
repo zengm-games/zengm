@@ -503,7 +503,7 @@ const clearInjuries = async (pids: number[] | "all") => {
 	const players = (
 		pids === "all"
 			? await idb.cache.players.getAll()
-			: await idb.getCopies.players({ pids }, "noCopyCache")
+			: await idb.merged.players.getAll({ pids })
 	).filter((p) => p.injury.gamesRemaining > 0);
 
 	for (const p of players) {
@@ -537,12 +537,9 @@ const noteUpdateEvents: Record<NoteInfo["type"], UpdateEvents> = {
 
 const clearNotes = async (type: NoteInfo["type"]) => {
 	const storeName = `${type}s` as const;
-	const rows = await idb.getCopies[storeName](
-		{
-			note: true,
-		},
-		"noCopyCache",
-	);
+	const rows = await idb.merged[storeName].getAll({
+		note: true,
+	});
 
 	const primaryKeyField = (
 		{
@@ -570,11 +567,11 @@ const clearNotes = async (type: NoteInfo["type"]) => {
 			if (storeName === "draftPicks") {
 				row = await idb.cache[storeName].get(key);
 			} else if (storeName === "games") {
-				row = await idb.getCopy.games({ gid: key });
+				row = await idb.merged.games.get(key);
 			} else if (storeName === "players") {
-				row = await idb.getCopy.players({ pid: key });
+				row = await idb.merged.players.get(key);
 			} else {
-				row = await idb.getCopy.teamSeasons({ rid: key });
+				row = await idb.merged.teamSeasons.get(key);
 			}
 			if (row) {
 				row.note = note;
@@ -598,12 +595,7 @@ const getUpdateWatch = (players: Player[]) => {
 };
 
 const clearWatchList = async (type: "all" | number) => {
-	const players = await idb.getCopies.players(
-		{
-			watch: true,
-		},
-		"noCopyCache",
-	);
+	const players = await idb.merged.players.getAll({ watch: true });
 
 	const toUndo = new Map<number, number>();
 
@@ -621,12 +613,9 @@ const clearWatchList = async (type: "all" | number) => {
 	]);
 
 	return local.undoLog.add(async () => {
-		const players = await idb.getCopies.players(
-			{
-				pids: Array.from(toUndo.keys()),
-			},
-			"noCopyCache",
-		);
+		const players = await idb.merged.players.getAll({
+			pids: Array.from(toUndo.keys()),
+		});
 
 		for (const p of players) {
 			const watch = toUndo.get(p.pid);
@@ -1049,10 +1038,7 @@ const deleteFromTeamInfoScheduledEvent = async (
 };
 
 const deleteScheduledEvents = async (type: string) => {
-	const scheduledEvents = await idb.getCopies.scheduledEvents(
-		undefined,
-		"noCopyCache",
-	);
+	const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 
 	// Copy because some events are edited in place below
 	const before = helpers.deepCopy(scheduledEvents);
@@ -1416,19 +1402,9 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 			Infinity,
 		]);
 	} else if (season === "all") {
-		players = await idb.getCopies.players(
-			{
-				activeAndRetired: true,
-			},
-			"noCopyCache",
-		);
+		players = await idb.merged.players.getAll({ activeAndRetired: true });
 	} else {
-		players = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
+		players = await idb.merged.players.getAll({ activeSeason: season });
 	}
 
 	// Array of seasons in stats, either just one or all of them
@@ -1523,7 +1499,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	for (const s of seasons) {
 		console.log(s, new Date());
-		const players2 = await idb.getCopies.playersPlus(players, {
+		const players2 = await player.formatAll(players, {
 			attrs: ["pid", "name", "age", "draft", "salary"],
 			ratings: ["pos", "ovr", "pot", ...ratings],
 			stats: ["abbrev", ...stats],
@@ -1741,7 +1717,7 @@ const exportDraftClass = async ({
 				g.get("phase") >= 0 &&
 				g.get("phase") <= PHASE.DRAFT_LOTTERY));
 
-	let players = await idb.getCopies.players(
+	let players = await idb.merged.players.getAll(
 		retiredPlayers
 			? {
 					retiredYear: season,
@@ -1749,7 +1725,6 @@ const exportDraftClass = async ({
 			: {
 					draftYear: season,
 				},
-		"noCopyCache",
 	);
 
 	// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
@@ -1830,7 +1805,7 @@ const getAutoPos = (ratings: any) => {
 };
 
 const getBornLoc = async (pid: number) => {
-	const p = await idb.getCopy.players({ pid });
+	const p = await idb.merged.players.get(pid);
 	if (p) {
 		return p.born.loc;
 	}
@@ -1967,7 +1942,7 @@ const getNegotiationProps = async (pid: number) => {
 	const p2 = await idb.cache.players.get(negotiation.pid);
 	let pFiltered;
 	if (p2) {
-		pFiltered = await idb.getCopy.playersPlus(p2, {
+		pFiltered = await player.format(p2, {
 			attrs: [
 				"pid",
 				"tid",
@@ -2023,7 +1998,7 @@ const getNegotiationProps = async (pid: number) => {
 
 	const payroll = await team.getPayroll(userTid);
 
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		tid: g.get("userTid"),
 		attrs: ["colors", "jersey"],
 	});
@@ -2137,7 +2112,7 @@ const getPlayersCommandPalette = async () => {
 		Infinity,
 	]);
 
-	return idb.getCopies.playersPlus(playersAll, {
+	return player.formatAll(playersAll, {
 		attrs: ["pid", "firstName", "lastName", "abbrev", "age"],
 		ratings: ["pos", "ovr", "pot"],
 		season: g.get("season"),
@@ -2160,12 +2135,7 @@ const getPlayerRangeFooterStats = async ({
 	pid: number;
 	seasonRange: [number, number];
 }) => {
-	const pRaw = await idb.getCopy.players(
-		{
-			pid,
-		},
-		"noCopyCache",
-	);
+	const pRaw = await idb.merged.players.get(pid);
 	if (!pRaw) {
 		return;
 	}
@@ -2203,7 +2173,7 @@ const getPlayerWatch = async (pid: number) => {
 	if (p) {
 		return p.watch ?? 0;
 	}
-	const p2 = await idb.getCopy.players({ pid }, "noCopyCache");
+	const p2 = await idb.merged.players.get(pid);
 	if (p2) {
 		return p2.watch ?? 0;
 	}
@@ -2396,7 +2366,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		return [];
 	}
 
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["abbrev", "region", "name", "strategy", "tid"],
 		seasonAttrs: ["won", "lost", "tied", "otl"],
 		season: g.get("season"),
@@ -2420,12 +2390,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 			}
 
 			const formatPicks = async (tid: number, dpids: number[]) => {
-				let picks = await idb.getCopies.draftPicks(
-					{
-						tid,
-					},
-					"noCopyCache",
-				);
+				let picks = await idb.merged.draftPicks.getAll({ tid });
 				picks = picks.filter((dp) => dpids.includes(dp.dpid));
 
 				return await Promise.all(
@@ -2447,7 +2412,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 					(p) => pids.includes(p.pid) && !isUntradable(p).untradable,
 				);
 				return addFirstNameShort(
-					await idb.getCopies.playersPlus(playersAll, {
+					await player.formatAll(playersAll, {
 						attrs: [
 							"pid",
 							"firstName",
@@ -3030,23 +2995,9 @@ const initGold = async () => {
 };
 
 const loadRetiredPlayers = async () => {
-	const playersByPid = await idb.cache.players.getAllByKey();
-
-	const playerNames: {
-		pid: number;
-		firstName: string;
-		lastName: string;
-		firstSeason: number;
-		lastSeason: number;
-	}[] = [];
-
-	for await (const { value: pTemp } of idb.league.transaction("players")
-		.store) {
-		// Make sure we have latest version of this player
-		const p = playersByPid[pTemp.pid] ?? pTemp;
-
-		playerNames.push(formatPlayerRelativesList(p));
-	}
+	const playerNames = await idb.merged.players.getAll(undefined, {
+		map: formatPlayerRelativesList,
+	});
 
 	return finalizePlayersRelativesList(playerNames);
 };
@@ -3100,12 +3051,7 @@ const ratingsStatsPopoverInfo = async ({
 	}
 
 	if (!p) {
-		p = await idb.getCopy.players(
-			{
-				pid,
-			},
-			"noCopyCache",
-		);
+		p = await idb.merged.players.get(pid);
 	}
 
 	if (!p) {
@@ -3187,7 +3133,7 @@ const ratingsStatsPopoverInfo = async ({
 		...(includeAbbrev ? (["abbrev"] as const) : []),
 	] as const;
 
-	const playersPlusOptions = {
+	const formatOptions = {
 		attrs,
 		ratings,
 		stats: ["tid", "season", "playoffs", ...stats],
@@ -3200,7 +3146,7 @@ const ratingsStatsPopoverInfo = async ({
 	let info;
 	if (actualSeason === undefined) {
 		// Career stats
-		const p2 = await idb.getCopy.playersPlus(p, playersPlusOptions);
+		const p2 = await player.format(p, formatOptions);
 		if (!p2) {
 			return blankObj;
 		}
@@ -3219,8 +3165,8 @@ const ratingsStatsPopoverInfo = async ({
 			statsRow: careerStats,
 		};
 	} else {
-		const p2 = await idb.getCopy.playersPlus(p, {
-			...playersPlusOptions,
+		const p2 = await player.format(p, {
+			...formatOptions,
 			season: actualSeason,
 		});
 		if (!p2) {
@@ -3324,15 +3270,12 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 };
 
 const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["cid", "did", "abbrev"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did", "abbrev"],
+		season: g.get("season"),
+		active: true,
+	});
 
 	const tids = season.newSchedule(teams, conditions);
 
@@ -3351,7 +3294,7 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		return;
 	}
 
-	const players = await idb.getCopies.players({ pids });
+	const players = await idb.merged.players.getAll({ pids });
 	if (players.length !== pids.length) {
 		return "Player not found";
 	}
@@ -3450,10 +3393,7 @@ const removeLastTeam = async () => {
 
 	// Manually removing a new team can mess with scheduled events, because they are indexed on tid. Let's try to adjust them.
 	// Delete future scheduledEvents for the deleted team, and decrement future tids for new teams
-	const scheduledEvents = await idb.getCopies.scheduledEvents(
-		undefined,
-		"noCopyCache",
-	);
+	const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 	for (const scheduledEvent of scheduledEvents) {
 		if (scheduledEvent.season < g.get("season")) {
 			await idb.cache.scheduledEvents.delete(scheduledEvent.id);
@@ -3672,7 +3612,7 @@ const retiredJerseyNumberUpsert = async ({
 	let playerText = "";
 	let score: number | undefined;
 	if (info.pid !== undefined) {
-		const p = await idb.getCopy.players({ pid: info.pid }, "noCopyCache");
+		const p = await idb.merged.players.get(info.pid);
 		if (p) {
 			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 				p.firstName
@@ -3930,29 +3870,13 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 		object = await idb.cache.draftPicks.get(info.dpid);
 	} else if (info.type === "game") {
 		cacheStore = idb.cache.games;
-		object = await idb.getCopy.games(
-			{
-				gid: info.gid,
-			},
-			"noCopyCache",
-		);
+		object = await idb.merged.games.get(info.gid);
 	} else if (info.type === "player") {
 		cacheStore = idb.cache.players;
-		object = await idb.getCopy.players(
-			{
-				pid: info.pid,
-			},
-			"noCopyCache",
-		);
+		object = await idb.merged.players.get(info.pid);
 	} else {
 		cacheStore = idb.cache.teamSeasons;
-		object = await idb.getCopy.teamSeasons(
-			{
-				tid: info.tid,
-				season: info.season,
-			},
-			"noCopyCache",
-		);
+		object = await idb.merged.teamSeasons.getByTidSeason(info.tid, info.season);
 	}
 
 	if (object) {
@@ -4454,7 +4378,7 @@ const updatePlayerWatch = async ({
 		p = getEightyTwoZeroDraftPlayer(pid);
 		eightyTwoZeroDraftPlayer = p !== undefined;
 		if (!p) {
-			p = await idb.getCopy.players({ pid }, "noCopyCache");
+			p = await idb.merged.players.get(pid);
 		}
 	}
 
@@ -4509,10 +4433,9 @@ const updatePlayersWatch = async ({
 	watch?: number;
 }) => {
 	// Need to get all players to see what the new watch value should be!
-	const players = await idb.getCopies.players(
-		{ pids: Array.from(new Set(pids)) },
-		"noCopyCache",
-	);
+	const players = await idb.merged.players.getAll({
+		pids: Array.from(new Set(pids)),
+	});
 
 	if (players.length === 0) {
 		return;
@@ -4841,24 +4764,16 @@ const updateAwards = async (
 	newAwards: Pick<Awards, "awards" | "season">,
 	conditions: Conditions,
 ): Promise<any> => {
-	const oldAwards = await idb.getCopy.awards(
-		{
-			season: newAwards.season,
-		},
-		"noCopyCache",
-	);
+	const oldAwards = await idb.merged.awards.get(newAwards.season);
 
 	if (!oldAwards) {
 		throw new Error("oldAwards not found");
 	}
 
-	const playersAll = await idb.getCopies.players(
-		{
-			activeSeason: newAwards.season,
-		},
-		"noCopyCache",
-	);
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const playersAll = await idb.merged.players.getAll({
+		activeSeason: newAwards.season,
+	});
+	const players = await player.formatAll(playersAll, {
 		attrs: ["name", "pid"],
 	});
 
@@ -5072,12 +4987,7 @@ const upsertCustomizedPlayer = async (
 	};
 
 	for (const rel of p.relatives) {
-		const p2 = await idb.getCopy.players(
-			{
-				pid: rel.pid,
-			},
-			"noCopyCache",
-		);
+		const p2 = await idb.merged.players.get(rel.pid);
 
 		if (p2) {
 			rel.name = p2.firstName;
@@ -5095,9 +5005,7 @@ const upsertCustomizedPlayer = async (
 	p.relatives = relatives;
 
 	const prevPlayer =
-		p.pid !== undefined
-			? await idb.getCopy.players({ pid: p.pid }, "noCopyCache")
-			: undefined;
+		p.pid !== undefined ? await idb.merged.players.get(p.pid) : undefined;
 	if (prevPlayer) {
 		// Any relation in here that is no longer in p should be deleted in the corresponding player too
 		for (const prevRel of prevPlayer.relatives) {
@@ -5106,12 +5014,7 @@ const upsertCustomizedPlayer = async (
 			);
 			if (!currentRel) {
 				// prevRel has been deleted!
-				const p2 = await idb.getCopy.players(
-					{
-						pid: prevRel.pid,
-					},
-					"noCopyCache",
-				);
+				const p2 = await idb.merged.players.get(prevRel.pid);
 				if (p2) {
 					p2.relatives = p2.relatives.filter(
 						(rel) =>
@@ -5199,12 +5102,7 @@ const upsertCustomizedPlayer = async (
 
 	// Only after pid is known - update current relatives
 	for (const rel of p.relatives) {
-		const p2 = await idb.getCopy.players(
-			{
-				pid: rel.pid,
-			},
-			"noCopyCache",
-		);
+		const p2 = await idb.merged.players.get(rel.pid);
 
 		if (p2) {
 			await ensureRelationExists(p as Player, p2, rel.type);

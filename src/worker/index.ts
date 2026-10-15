@@ -7,6 +7,10 @@ import * as util from "./util/index.ts";
 import * as random from "../common/random.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
 import { registerGlobal } from "../common/registerGlobal.ts";
+import { getCopies, getCopy } from "./db/deprecatedConsoleApi.ts";
+
+// Old functions that people used from the console. They are added to the idb object itself so bbgm.idb.league etc. still work, but they are not in the type of idb, so the app can't use them.
+Object.assign(db.idb, { getCopies, getCopy });
 
 registerGlobal({
 	...common,

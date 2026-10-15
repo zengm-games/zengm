@@ -53,17 +53,17 @@ export const initializeNba2027 = async () => {
 	const phase = actualPhase();
 
 	// Check existence of draftLotteryResults first, to handle any edge case where that is prespecified like in real player leagues during the playoffs
-	let lastDraftLotteryResults = await idb.getCopy.draftLotteryResults({
-		season: lastDraftLotterySeason,
-	});
+	let lastDraftLotteryResults = await idb.merged.draftLotteryResults.get(
+		lastDraftLotterySeason,
+	);
 	if (!lastDraftLotteryResults) {
 		// Lottery must not have happened yet
 		if (phase <= PHASE.DRAFT_LOTTERY) {
 			lastDraftLotterySeason -= 1;
 
-			lastDraftLotteryResults = await idb.getCopy.draftLotteryResults({
-				season: lastDraftLotterySeason,
-			});
+			lastDraftLotteryResults = await idb.merged.draftLotteryResults.get(
+				lastDraftLotterySeason,
+			);
 		}
 	}
 
@@ -85,12 +85,9 @@ export const initializeNba2027 = async () => {
 		}
 	} else {
 		// We need to check players, since draft lottery results are missing
-		const players = await idb.getCopies.players(
-			{
-				draftYear: lastDraftLotterySeason,
-			},
-			"noCopyCache",
-		);
+		const players = await idb.merged.players.getAll({
+			draftYear: lastDraftLotterySeason,
+		});
 		for (const p of players) {
 			if (p.draft.round !== 1) {
 				continue;
@@ -106,9 +103,9 @@ export const initializeNba2027 = async () => {
 
 	// Check one season further back for restricted5
 	const olderDraftLotterySeason = lastDraftLotterySeason - 1;
-	const olderDraftLotteryResults = await idb.getCopy.draftLotteryResults({
-		season: olderDraftLotterySeason,
-	});
+	const olderDraftLotteryResults = await idb.merged.draftLotteryResults.get(
+		olderDraftLotterySeason,
+	);
 	if (
 		olderDraftLotteryResults &&
 		olderDraftLotteryResults.result.length > RESTRICTED_5_PICK
@@ -124,12 +121,9 @@ export const initializeNba2027 = async () => {
 		}
 	} else {
 		// We need to check players, since draft lottery results are missing
-		const players = await idb.getCopies.players(
-			{
-				draftYear: olderDraftLotterySeason,
-			},
-			"noCopyCache",
-		);
+		const players = await idb.merged.players.getAll({
+			draftYear: olderDraftLotterySeason,
+		});
 		for (const p of players) {
 			if (p.draft.round !== 1) {
 				continue;

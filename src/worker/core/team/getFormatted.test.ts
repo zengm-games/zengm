@@ -1,8 +1,8 @@
 import { assert, beforeAll, describe, test } from "vitest";
 import { assert as typeAssert, type IsExact } from "conditional-type-checks";
 import { mockIDBLeague, resetCache, resetG } from "../../../test/helpers.ts";
-import { player, team } from "../../core/index.ts";
-import { idb } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { player, team } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
@@ -38,7 +38,7 @@ beforeAll(async () => {
 });
 
 test("return requested info if tid/season match", async () => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		attrs: ["tid", "abbrev"],
 		seasonAttrs: ["season", "won", "payroll"],
 		stats: ["gp", "fg", "fgp"],
@@ -69,7 +69,7 @@ test("return requested info if tid/season match", async () => {
 });
 
 test("return an array if no team ID is specified", async () => {
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid", "abbrev"],
 		seasonAttrs: ["season", "won"],
 		stats: ["gp", "fg", "fgp"],
@@ -94,7 +94,7 @@ test("return an array if no team ID is specified", async () => {
 });
 
 test("return requested info if tid/season match, even when no attrs requested", async () => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		seasonAttrs: ["season", "won"],
 		stats: ["gp", "fg", "fgp"],
 		tid: 4,
@@ -115,7 +115,7 @@ test("return requested info if tid/season match, even when no attrs requested", 
 });
 
 test("return requested info if tid/season match, even when no seasonAttrs requested", async () => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		attrs: ["tid", "abbrev"],
 		stats: ["gp", "fg", "fgp"],
 		tid: 4,
@@ -134,7 +134,7 @@ test("return requested info if tid/season match, even when no seasonAttrs reques
 });
 
 test("return requested info if tid/season match, even when no stats requested", async () => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		attrs: ["tid", "abbrev"],
 		seasonAttrs: ["season", "won"],
 		tid: 4,
@@ -151,7 +151,7 @@ test("return requested info if tid/season match, even when no stats requested", 
 });
 
 test("return season totals if statType is 'totals'", async () => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		stats: ["gp", "fg", "fga", "fgp"],
 		tid: 4,
 		season: g.get("season"),
@@ -169,7 +169,7 @@ test("return season totals if statType is 'totals'", async () => {
 });
 
 test("return playoff stats if playoffs is true", async () => {
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		stats: ["gp", "fg", "fga", "fgp"],
 		tid: 4,
 		season: g.get("season"),
@@ -189,7 +189,7 @@ test("return playoff stats if playoffs is true", async () => {
 
 test("return stats in an array if no season is specified", async () => {
 	idb.league = mockIDBLeague();
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		stats: ["gp", "fg", "fga", "fgp"],
 		tid: 4,
 		playoffs: true,
@@ -212,7 +212,7 @@ test("return stats in an array if no season is specified", async () => {
 
 test("return stats in an array if regular season and playoffs are specified", async () => {
 	idb.league = mockIDBLeague();
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		stats: ["gp", "fg", "fga", "fgp"],
 		tid: 4,
 		playoffs: true,
@@ -241,14 +241,14 @@ test("return stats in an array if regular season and playoffs are specified", as
 
 describe("TypeScript", () => {
 	test("Returns attrs, seasonAttrs, and stats for a single season", async () => {
-		const teams = await idb.getCopies.teamsPlus({
+		const teams = await team.getFormattedAll({
 			attrs: ["tid", "abbrev"],
 			seasonAttrs: ["season", "won", "payroll"],
 			stats: ["gp", "fg", "fgp"],
 			season: g.get("season"),
 		});
 
-		const t = await idb.getCopy.teamsPlus({
+		const t = await team.getFormatted({
 			tid: 0,
 			attrs: ["tid", "abbrev"],
 			seasonAttrs: ["season", "won", "payroll"],
@@ -283,12 +283,12 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns just attrs", async () => {
-		const teams = await idb.getCopies.teamsPlus({
+		const teams = await team.getFormattedAll({
 			attrs: ["tid", "abbrev"],
 			season: g.get("season"),
 		});
 
-		const t = await idb.getCopy.teamsPlus({
+		const t = await team.getFormatted({
 			tid: 0,
 			attrs: ["tid", "abbrev"],
 			season: g.get("season"),
@@ -310,13 +310,13 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns just attrs and seasonAttrs", async () => {
-		const teams = await idb.getCopies.teamsPlus({
+		const teams = await team.getFormattedAll({
 			attrs: ["tid", "abbrev"],
 			seasonAttrs: ["season", "won", "payroll"],
 			season: g.get("season"),
 		});
 
-		const t = await idb.getCopy.teamsPlus({
+		const t = await team.getFormatted({
 			tid: 0,
 			attrs: ["tid", "abbrev"],
 			seasonAttrs: ["season", "won", "payroll"],
@@ -344,13 +344,13 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns just attrs and stats", async () => {
-		const teams = await idb.getCopies.teamsPlus({
+		const teams = await team.getFormattedAll({
 			attrs: ["tid", "abbrev"],
 			stats: ["gp", "fg", "fgp"],
 			season: g.get("season"),
 		});
 
-		const t = await idb.getCopy.teamsPlus({
+		const t = await team.getFormatted({
 			tid: 0,
 			attrs: ["tid", "abbrev"],
 			stats: ["gp", "fg", "fgp"],
@@ -379,13 +379,13 @@ describe("TypeScript", () => {
 	});
 
 	test("Returns just seasonAttrs and stats", async () => {
-		const teams = await idb.getCopies.teamsPlus({
+		const teams = await team.getFormattedAll({
 			seasonAttrs: ["season", "won", "payroll"],
 			stats: ["gp", "fg", "fgp"],
 			season: g.get("season"),
 		});
 
-		const t = await idb.getCopy.teamsPlus({
+		const t = await team.getFormatted({
 			tid: 0,
 			seasonAttrs: ["season", "won", "payroll"],
 			stats: ["gp", "fg", "fgp"],
@@ -419,13 +419,13 @@ describe("TypeScript", () => {
 	test("Returns array for seasonAttrs and stats when no season is supplied", async () => {
 		idb.league = mockIDBLeague();
 
-		const teams = await idb.getCopies.teamsPlus({
+		const teams = await team.getFormattedAll({
 			attrs: ["tid", "abbrev"],
 			seasonAttrs: ["season", "won", "payroll"],
 			stats: ["gp", "fg", "fgp"],
 		});
 
-		const t = await idb.getCopy.teamsPlus({
+		const t = await team.getFormatted({
 			tid: 0,
 			attrs: ["tid", "abbrev"],
 			seasonAttrs: ["season", "won", "payroll"],

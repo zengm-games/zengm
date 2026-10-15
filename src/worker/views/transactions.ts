@@ -1,4 +1,5 @@
 import { idb } from "../db/index.ts";
+import type { EventBBGM } from "../../common/types.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import { defineView } from "../util/defineView.ts";
 import { getWatchPids } from "./news.ts";
@@ -48,43 +49,40 @@ export default defineView({
 			inputs.abbrev !== prevInputs?.abbrev ||
 			inputs.eventType !== prevInputs?.eventType
 		) {
-			let events;
+			const watchPids =
+				inputs.abbrev === "watch" ? await getWatchPids() : undefined;
 
-			if (inputs.season === "all") {
-				events = await idb.getCopies.events(undefined, "noCopyCache");
-			} else {
-				events = await idb.getCopies.events(
-					{
-						season: inputs.season,
-					},
-					"noCopyCache",
-				);
-			}
+			const filter = (event: EventBBGM) => {
+				if (inputs.tid !== undefined && !event.tids?.includes(inputs.tid)) {
+					return false;
+				}
 
-			events.reverse(); // Newest first
+				if (
+					watchPids !== undefined &&
+					!event.pids?.some((pid) => watchPids.has(pid))
+				) {
+					return false;
+				}
 
-			if (inputs.abbrev !== "all") {
-				const watchPids =
-					inputs.abbrev === "watch" ? await getWatchPids() : undefined;
-				events = events.filter(
-					(event) =>
-						(inputs.tid === undefined || event.tids?.includes(inputs.tid)) &&
-						(!watchPids || event.pids?.some((pid) => watchPids.has(pid))),
-				);
-			}
-
-			if (inputs.eventType === "all") {
-				events = events.filter(
-					(event) =>
+				if (inputs.eventType === "all") {
+					return (
 						event.type === "reSigned" ||
 						event.type === "release" ||
 						event.type === "trade" ||
 						event.type === "freeAgent" ||
-						event.type === "draft",
-				);
-			} else {
-				events = events.filter((event) => event.type === inputs.eventType);
-			}
+						event.type === "draft"
+					);
+				}
+
+				return event.type === inputs.eventType;
+			};
+
+			const events = await idb.merged.events.getAll(
+				inputs.season === "all" ? undefined : { season: inputs.season },
+				{ filter },
+			);
+
+			events.reverse(); // Newest first
 
 			const events2 = [];
 			for (const event of events) {

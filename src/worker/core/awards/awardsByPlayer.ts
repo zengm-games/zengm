@@ -159,7 +159,7 @@ export const updatePlayerAwards = async ({
 	const playersToSave = [];
 
 	for (const [pid, { toDelete, toSave }] of awardsByPid) {
-		const p = await idb.getCopy.players({ pid }, "noCopyCache");
+		const p = await idb.merged.players.get(pid);
 		if (p) {
 			p.awards = p.awards.filter((award) => {
 				if (award.season !== season) {

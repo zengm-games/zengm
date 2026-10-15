@@ -1,10 +1,6 @@
-scheduled events editor
-- blog
-  - force retire
-
-put map/filter functions in all
-- getPlayersForScheduledEvents
-  - how does this work for relatives now?
+future idb.merged stuff
+- iterate method, similar to getall (adding cached values to db) - not sure it's worth the complexity
+- a way to share a transaction across multiple calls, for when called in a loop like frivolitiesTeamSeasons. generally not many places would benefit from this
 
 store contract info somewhere, so we can know when a player was on a roster definitively
 - export rosters at season
@@ -136,7 +132,6 @@ race condition with mutable cached variables and async stuff (example, AbbrevsCa
   - stop mutating objects from database ever, instead do some immutable edit
     - would this be too slow/cumbersome for updating stats?
     - can this be enforced? if not, could be difficult to maintain
-    - get rid of noCopyCache since we never need to copy
   - somehow wait until a day's game is finished before doing other stuff, like rendering a view
     - also a bit cumbersome to make sure we correctly do this every time
   - be very careful of using a cached object after any await (i try, but it's hard!)

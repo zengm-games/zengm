@@ -1,10 +1,6 @@
-scheduled events editor
-- blog
-  - force retire
-
-put map/filter functions in all
-- getPlayersForScheduledEvents
-  - how does this work for relatives now?
+future idb.merged stuff
+- iterate method, similar to getall (adding cached values to db) - not sure it's worth the complexity
+- a way to share a transaction across multiple calls, for when called in a loop like frivolitiesTeamSeasons. generally not many places would benefit from this
 
 store contract info somewhere, so we can know when a player was on a roster definitively
 - export rosters at season

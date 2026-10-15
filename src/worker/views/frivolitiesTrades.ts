@@ -103,7 +103,7 @@ const getMostXRows = async ({
 	const LIMIT = 100;
 	const trades: Trade[] = [];
 
-	// Other events become undefined in map, which takes much less memory than keeping the events
+	// Would be nice to not read these all into memory, but then would have to pass around the transaction to genTeam and others
 	const events = (
 		await idb.merged.events.getAll(undefined, {
 			map: (event) => {

@@ -233,7 +233,7 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 
 // Like the same store in idb.cache or idb.league, except it merges the data in both. Subclasses can support selectors by overriding toQuery, or override get and getAll if something else is different about a store.
 //
-// Rows from the cache are the same objects that are stored in the cache, so they must not be mutated. To change a row, copy it first or put the changed row back in the cache.
+// Rows from the cache are the same objects that are stored in the cache, so they must not be mutated. To change a row, copy it first or put the changed row back in the cache when you're done.
 export class MergedStore<MyStore extends Store, Selector = undefined> {
 	readonly storeName: MyStore;
 

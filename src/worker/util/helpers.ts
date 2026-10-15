@@ -16,7 +16,6 @@ import { roundContract as roundContractRaw } from "../../common/roundContract.ts
 import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
 import type { LeagueUrlParts } from "../../ui/router/types.ts";
 
-// Adds team info and regular season records to a team in a playoff series
 const getAugmentTeam = async (season: number) => {
 	const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 
@@ -27,7 +26,6 @@ const getAugmentTeam = async (season: number) => {
 		const t = g.get("teamInfoCache")[team.tid];
 		const teamSeason = teamSeasons.find((ts) => ts.tid === team.tid);
 
-		// Prefer team info from that season, if it's there
 		const info = teamSeason?.abbrev
 			? {
 					abbrev: teamSeason.abbrev,

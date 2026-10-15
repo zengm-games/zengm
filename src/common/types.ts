@@ -1375,7 +1375,6 @@ type PlayerAllKeys = {
 	[K in PlayerKey]: Player[K];
 };
 
-// ratings and stats are excluded because they are handled separately by player.formatAll, not as attrs
 type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
 	PlayerAllKeys,
 	| "contract"
@@ -1911,7 +1910,6 @@ export type PlayoffSeriesTeam = {
 	sPts?: number; // undefined means game hasn't happened yet or there was no shootout
 };
 
-// From augmentSeries, with team info and regular season record added
 export type PlayoffSeriesTeamAugmented = PlayoffSeriesTeam & {
 	abbrev: string;
 	colors: [string, string, string];

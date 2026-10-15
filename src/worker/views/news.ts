@@ -101,7 +101,6 @@ export const processEvents = async (
 			return !IGNORE_EVENT_TYPES.includes(event.type);
 		})
 		.map((event) => {
-			// Events involving the user's team are more important
 			if (
 				event.score !== undefined &&
 				event.tids &&

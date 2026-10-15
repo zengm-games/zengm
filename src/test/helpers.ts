@@ -7,7 +7,6 @@ import {
 } from "../common/defaultGameAttributes.ts";
 
 export const mockIDBLeague = (): any => {
-	// Like an empty database
 	const queries = {
 		get() {
 			return undefined;

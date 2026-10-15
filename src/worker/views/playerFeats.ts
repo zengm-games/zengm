@@ -1,4 +1,5 @@
 import { idb } from "../db/index.ts";
+import type { PlayerFeat } from "../../common/types.ts";
 import { g, helpers } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -46,9 +47,20 @@ export default defineView({
 			inputs.abbrev !== prevInputs?.abbrev ||
 			inputs.season !== prevInputs?.season
 		) {
-			// Put fake fid on cached feats
+			const watchPids =
+				inputs.abbrev === "watch" ? await getWatchPids() : undefined;
+
+			// Applied while reading feats, so feats that won't be shown are not all held in memory
+			const filter = (feat: PlayerFeat) =>
+				(inputs.tid === undefined || feat.tid === inputs.tid) &&
+				(watchPids === undefined || watchPids.has(feat.pid)) &&
+				(inputs.season === "all" || feat.season === inputs.season);
+
+			// Put fake fid on cached feats. Those come after all the feats from IndexedDB, so the fake fids don't conflict with any real fids.
 			let maxFid = 0;
-			let feats = (await idb.merged.playerFeats.getAll()).map((feat) => {
+			const feats = (
+				await idb.merged.playerFeats.getAll(undefined, { filter })
+			).map((feat) => {
 				if (feat.fid !== undefined) {
 					if (feat.fid > maxFid) {
 						maxFid = feat.fid;
@@ -62,17 +74,6 @@ export default defineView({
 					fid: maxFid,
 				};
 			});
-
-			if (inputs.tid !== undefined) {
-				feats = feats.filter((feat) => feat.tid === inputs.tid);
-			} else if (inputs.abbrev === "watch") {
-				const watchPids = await getWatchPids();
-				feats = feats.filter((feat) => watchPids.has(feat.pid));
-			}
-
-			if (inputs.season !== "all") {
-				feats = feats.filter((feat) => feat.season === inputs.season);
-			}
 
 			const featsProcessed = feats.map((feat) => {
 				const featStats = { ...feat.stats };

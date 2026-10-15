@@ -7,9 +7,6 @@ import type {
 } from "./types.ts";
 import { orderBy } from "./utils.ts";
 
-// An event that might not be saved yet, so it might not have an id
-export type ScheduledEventMaybeId = ScheduledEventWithoutKey & { id?: number };
-
 type SeasonPhase = {
 	season: number;
 	phase: number;
@@ -73,7 +70,7 @@ const compareIds = (a: number | undefined, b: number | undefined) => {
 
 // Enough of an event to know where it is sorted, for an event that is still being edited
 type SortableEvent = Pick<
-	ScheduledEventMaybeId,
+	ScheduledEventWithoutKey,
 	"season" | "phase" | "type" | "id"
 >;
 
@@ -97,7 +94,7 @@ const compareScheduledEvents = makeCompare(getTypeSortValue);
 // Same, except for where confsDivs events are. This is for keeping track of teams, see getTeamsTypeSortValue.
 const compareScheduledEventsForTeams = makeCompare(getTeamsTypeSortValue);
 
-export const sortScheduledEvents = <T extends ScheduledEventMaybeId>(
+export const sortScheduledEvents = <T extends ScheduledEventWithoutKey>(
 	events: T[],
 ) => {
 	return events.toSorted(compareScheduledEvents);
@@ -143,7 +140,7 @@ export type ScheduledEventsTeam = TeamFields & {
 	future: boolean;
 };
 
-export type ScheduledEventsChange<T extends ScheduledEventMaybeId> = {
+export type ScheduledEventsChange<T extends ScheduledEventWithoutKey> = {
 	// The original event, before any changes
 	event: T;
 } & (
@@ -184,7 +181,7 @@ const copyTeamFields = (from: TeamFields, to: TeamFields) => {
  *
  * Nothing is mutated. An event in the output is the same object as in the input, unless something in it changed. Events that are not in the future are ignored.
  */
-export const normalizeScheduledEvents = <T extends ScheduledEventMaybeId>({
+export const normalizeScheduledEvents = <T extends ScheduledEventWithoutKey>({
 	current,
 	events,
 	teams,
@@ -408,7 +405,7 @@ export const getTeamsBeforeScheduledEvent = ({
 	teams,
 }: {
 	current: SeasonPhase;
-	events: ScheduledEventMaybeId[];
+	events: ScheduledEventWithoutKey[];
 	target: SortableEvent;
 	teams: ScheduledEventsCurrentTeam[];
 }) => {
@@ -429,8 +426,8 @@ export const getNextScheduledEventReplacing = ({
 	events,
 	target,
 }: {
-	events: ScheduledEventMaybeId[];
-	target: Pick<ScheduledEventMaybeId, "season" | "phase" | "id"> & {
+	events: ScheduledEventWithoutKey[];
+	target: Pick<ScheduledEventWithoutKey, "season" | "phase" | "id"> & {
 		type: "awards" | "confsDivs";
 	};
 }) => {
@@ -470,7 +467,7 @@ export const getSettingsBeforeScheduledEvent = ({
 	target,
 }: {
 	current: SeasonPhase;
-	events: ScheduledEventMaybeId[];
+	events: ScheduledEventWithoutKey[];
 
 	// Current values of these settings
 	settings: SettingsBefore;

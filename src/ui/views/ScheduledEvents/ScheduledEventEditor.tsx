@@ -6,9 +6,13 @@ import {
 	getSettingsBeforeScheduledEvent,
 	getTeamsBeforeScheduledEvent,
 	isFutureScheduledEvent,
-	type ScheduledEventMaybeId,
 } from "../../../common/scheduledEvents.ts";
-import type { Phase, ScheduledEvent, View } from "../../../common/types.ts";
+import type {
+	Phase,
+	ScheduledEvent,
+	ScheduledEventWithoutKey,
+	View,
+} from "../../../common/types.ts";
 import { Modal } from "../../components/Modal.tsx";
 import { toWorker } from "../../util/toWorker.ts";
 import {
@@ -79,7 +83,7 @@ const ScheduledEventEditor = ({
 	const [needsConfirmation, setNeedsConfirmation] = useState<
 		| {
 				changes: string[];
-				event: ScheduledEventMaybeId;
+				event: ScheduledEventWithoutKey;
 		  }
 		| undefined
 	>();
@@ -129,7 +133,7 @@ const ScheduledEventEditor = ({
 			: undefined;
 
 	const save = async (
-		eventToSave: ScheduledEventMaybeId,
+		eventToSave: ScheduledEventWithoutKey,
 		confirmed: boolean,
 	) => {
 		setError(undefined);
@@ -184,7 +188,7 @@ const ScheduledEventEditor = ({
 			season: seasonInt,
 			phase,
 			info,
-		} as ScheduledEventMaybeId;
+		} as ScheduledEventWithoutKey;
 		if (event) {
 			eventToSave.id = event.id;
 		}

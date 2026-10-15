@@ -6,13 +6,13 @@ import {
 	getTeamsBeforeScheduledEvent,
 	isFutureScheduledEvent,
 	normalizeScheduledEvents,
-	type ScheduledEventMaybeId,
 	type ScheduledEventsChange,
 } from "../../common/scheduledEvents.ts";
 import {
 	awardSettingsSchema,
 	type Phase,
 	type ScheduledEvent,
+	type ScheduledEventWithoutKey,
 } from "../../common/types.ts";
 import { FormulaEvaluators } from "../core/awards/processAwards.ts";
 import { idb } from "../db/index.ts";
@@ -28,7 +28,7 @@ export const getScheduledEventsCurrent = () => {
 };
 
 // For a team in a contraction or teamInfo event. If it's a future team, it has to be found in the expansion draft that creates it.
-const getTeamName = (tid: number, events: ScheduledEventMaybeId[]) => {
+const getTeamName = (tid: number, events: ScheduledEventWithoutKey[]) => {
 	const t = g.get("teamInfoCache")[tid];
 	if (t) {
 		return `${t.region} ${t.name}`;
@@ -48,8 +48,8 @@ const getTeamName = (tid: number, events: ScheduledEventMaybeId[]) => {
 
 // Describe a change made by normalizeScheduledEvents to an existing event, as a side effect of something else changing
 const formatChange = (
-	change: ScheduledEventsChange<ScheduledEventMaybeId>,
-	events: ScheduledEventMaybeId[],
+	change: ScheduledEventsChange<ScheduledEventWithoutKey>,
+	events: ScheduledEventWithoutKey[],
 ) => {
 	const { event } = change;
 	const prefix = `${event.season} ${PHASE_TEXT[event.phase]}:`;
@@ -81,7 +81,7 @@ const formatChange = (
 
 // Same as formatChange, except for when it's the event being saved that is not valid
 const formatChangeAsError = (
-	change: ScheduledEventsChange<ScheduledEventMaybeId>,
+	change: ScheduledEventsChange<ScheduledEventWithoutKey>,
 ) => {
 	if (change.type === "removeExpansionTeams") {
 		const names = change.teams.map((t) => `${t.region} ${t.name}`).join(", ");
@@ -115,7 +115,7 @@ const isInvalidStadiumCapacity = (value: unknown) => {
 
 // Check everything that normalizeScheduledEvents doesn't. Returns an error message, if there is a problem.
 const validate = async (
-	event: ScheduledEventMaybeId,
+	event: ScheduledEventWithoutKey,
 	stored: ScheduledEvent[],
 ) => {
 	if (!g.get("godMode")) {
@@ -332,7 +332,7 @@ const validate = async (
 };
 
 // Make all scheduled events valid, see normalizeScheduledEvents for details. `events` is what the scheduled events should be before any adjustments are made, which could differ from what is currently saved.
-const normalize = async (events: ScheduledEventMaybeId[]) => {
+const normalize = async (events: ScheduledEventWithoutKey[]) => {
 	return normalizeScheduledEvents({
 		current: getScheduledEventsCurrent(),
 		events,
@@ -342,7 +342,7 @@ const normalize = async (events: ScheduledEventMaybeId[]) => {
 
 // Other events that are changed as a side effect of adding/editing/deleting an event
 const formatChanges = (
-	changes: ScheduledEventsChange<ScheduledEventMaybeId>[],
+	changes: ScheduledEventsChange<ScheduledEventWithoutKey>[],
 	stored: ScheduledEvent[],
 ) => {
 	// Team names come from what is currently saved, because that's what the user sees, and the expansion draft creating a team could be the event that is being deleted
@@ -351,7 +351,7 @@ const formatChanges = (
 
 // Replace what is currently saved (`stored`) with the output of normalizeScheduledEvents
 const save = async (
-	normalized: ScheduledEventMaybeId[],
+	normalized: ScheduledEventWithoutKey[],
 	stored: ScheduledEvent[],
 ) => {
 	const storedById = groupByUnique(stored, "id");
@@ -471,7 +471,7 @@ export const upsertScheduledEvent = async ({
 	event,
 }: {
 	dryRun: boolean;
-	event: ScheduledEventMaybeId;
+	event: ScheduledEventWithoutKey;
 }): Promise<
 	| {
 			error: string;

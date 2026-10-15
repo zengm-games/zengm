@@ -491,7 +491,7 @@ export type ScheduledEventAwards = {
 	};
 };
 
-export type ScheduledEventWithoutKey =
+export type ScheduledEventWithoutKey = (
 	| ScheduledEventTeamInfo
 	| ScheduledEventGameAttributes
 	| ScheduledEventConfsDivs
@@ -532,7 +532,8 @@ export type ScheduledEventWithoutKey =
 			info: {
 				pid: number;
 			};
-	  };
+	  }
+) & { id?: number };
 
 export type ScheduledEvent = ScheduledEventWithoutKey & { id: number };
 

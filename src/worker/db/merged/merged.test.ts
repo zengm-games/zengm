@@ -22,7 +22,7 @@ import type {
 import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player, team } from "../../core/index.ts";
 import { g } from "../../util/index.ts";
-import { STORES } from "../Cache.ts";
+import Cache, { STORES } from "../Cache.ts";
 import { connectLeague, idb } from "../index.ts";
 
 const SEASON = 2016;
@@ -565,21 +565,24 @@ describe("games", () => {
 });
 
 describe("events", () => {
+	// Older than the seasons in the cache
+	const OLD_SEASON = SEASON - 2;
+
 	test("season merges the cache and IndexedDB", async () => {
 		for (let eid = 0; eid < 6; eid++) {
 			await idb.league.put(
 				"events",
-				makeEvent(eid, eid < 3 ? SEASON - 1 : SEASON),
+				makeEvent(eid, eid < 3 ? OLD_SEASON - 1 : OLD_SEASON),
 			);
 		}
 
 		// One event updated in the cache, one moved to a different season in the cache, one deleted, and one new one
-		await idb.cache.events.put(makeEvent(3, SEASON, "Updated"));
-		await idb.cache.events.put(makeEvent(4, SEASON - 1));
+		await idb.cache.events.put(makeEvent(3, OLD_SEASON, "Updated"));
+		await idb.cache.events.put(makeEvent(4, OLD_SEASON - 1));
 		await idb.cache.events.delete(5);
-		await idb.cache.events.put(makeEvent(6, SEASON));
+		await idb.cache.events.put(makeEvent(6, OLD_SEASON));
 
-		const events = await idb.merged.events.getAll({ season: SEASON });
+		const events = await idb.merged.events.getAll({ season: OLD_SEASON });
 		assert.deepStrictEqual(
 			events.map((event) => [event.eid, event.text]),
 			[
@@ -589,10 +592,45 @@ describe("events", () => {
 		);
 
 		assert.deepStrictEqual(
-			(await idb.merged.events.getAll({ season: SEASON - 1 })).map(
+			(await idb.merged.events.getAll({ season: OLD_SEASON - 1 })).map(
 				(event) => event.eid,
 			),
 			[0, 1, 2, 4],
+		);
+	});
+
+	test("current and previous season only read from the cache", async () => {
+		// Can't happen in a real league, because the cache has every event from these seasons, but it shows that IndexedDB is not checked
+		await idb.league.put("events", makeEvent(0, SEASON));
+		await idb.league.put("events", makeEvent(1, SEASON - 1));
+		await idb.league.put("events", makeEvent(2, OLD_SEASON));
+
+		await idb.cache.events.put(makeEvent(3, SEASON));
+		await idb.cache.events.put(makeEvent(4, SEASON - 1));
+
+		const eids = (season: number) => {
+			return idb.merged.events.getAll(
+				{ season },
+				{ map: (event) => event.eid },
+			);
+		};
+		assert.deepStrictEqual(await eids(SEASON), [3]);
+		assert.deepStrictEqual(await eids(SEASON - 1), [4]);
+		assert.deepStrictEqual(await eids(OLD_SEASON), [2]);
+	});
+
+	test("cache is filled with the current and previous season", async () => {
+		for (let season = SEASON - 3; season <= SEASON; season++) {
+			await idb.league.put("events", makeEvent(season, season));
+		}
+
+		// The cache from resetCache doesn't really fill
+		const cache = new Cache();
+		await cache.fill(SEASON);
+
+		assert.deepStrictEqual(
+			(await cache.events.getAll()).map((event) => event.season),
+			[SEASON - 1, SEASON],
 		);
 	});
 });

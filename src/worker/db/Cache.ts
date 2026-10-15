@@ -116,6 +116,9 @@ const AUTO_FLUSH_INTERVAL = 4000; // 4 seconds
 
 export const NUM_PRIOR_SEASONS_TEAM_SEASONS = 2;
 
+// The league dashboard shows recent events, which can go back to the previous season
+export const NUM_PRIOR_SEASONS_EVENTS = 1;
+
 // Hacks to support stringifying/parsing an array containing strings and numbers, including Infinity. Currently used for retiredYear.
 const stringifyInfinity = (array: (number | string | boolean)[]) => {
 	return JSON.stringify(array);
@@ -200,6 +203,13 @@ export const storeInfos: Record<Store, StoreInfo> = {
 		pk: "eid",
 		pkType: "number",
 		autoIncrement: true,
+		// Current season and NUM_PRIOR_SEASONS_EVENTS before it
+		getData: (tx, season) => {
+			return tx
+				.objectStore("events")
+				.index("season")
+				.getAll(IDBKeyRange.bound(season - NUM_PRIOR_SEASONS_EVENTS, season));
+		},
 	},
 	gameAttributes: {
 		pk: "key",

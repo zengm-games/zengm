@@ -62,15 +62,6 @@ export default defineView({
 			inputs.cid !== prevInputs?.cid
 		) {
 			const process = async (inputsDayOverride?: number) => {
-				const games = await idb.merged.games.getAll({ season: inputs.season });
-
-				const daysAndPlayoffs = new Map<number, boolean>();
-				for (const game of games) {
-					if (game.day !== undefined) {
-						daysAndPlayoffs.set(game.day, !!game.playoffs);
-					}
-				}
-
 				let isToday = false;
 
 				let day: number;
@@ -93,8 +84,9 @@ export default defineView({
 					}
 				}
 
+				let schedule;
 				if (inputs.season === currentSeason) {
-					const schedule = await season.getSchedule();
+					schedule = await season.getSchedule();
 
 					if (day === -1) {
 						if (schedule[0]?.day !== undefined) {
@@ -107,14 +99,6 @@ export default defineView({
 
 					const scheduleDay = schedule.filter((game) => game.day === day);
 					isToday = !!scheduleDay[0] && schedule[0]!.gid === scheduleDay[0].gid;
-
-					const isPlayoffs = g.get("phase") === PHASE.PLAYOFFS;
-
-					for (const game of schedule) {
-						if (game.day !== undefined) {
-							daysAndPlayoffs.set(game.day, isPlayoffs);
-						}
-					}
 				} else {
 					if (day === -1) {
 						day = 1;
@@ -151,9 +135,42 @@ export default defineView({
 						);
 					};
 				}
-				const completed = games.filter(
-					(game) => game.day === day && (!cidFilter || cidFilter(game.teams)),
+
+				// Only keep the whole game for games on this day. For other games, only day and playoffs are needed, for the list of days.
+				const games = await idb.merged.games.getAll(
+					{ season: inputs.season },
+					{
+						map: (game) => ({
+							day: game.day,
+							playoffs: game.playoffs,
+							completedGame:
+								game.day === day && (!cidFilter || cidFilter(game.teams))
+									? game
+									: undefined,
+						}),
+					},
 				);
+
+				const daysAndPlayoffs = new Map<number, boolean>();
+				for (const game of games) {
+					if (game.day !== undefined) {
+						daysAndPlayoffs.set(game.day, !!game.playoffs);
+					}
+				}
+
+				if (schedule) {
+					const isPlayoffs = g.get("phase") === PHASE.PLAYOFFS;
+
+					for (const game of schedule) {
+						if (game.day !== undefined) {
+							daysAndPlayoffs.set(game.day, isPlayoffs);
+						}
+					}
+				}
+
+				const completed = games
+					.map((game) => game.completedGame)
+					.filter((game) => game !== undefined);
 
 				let upcoming: Awaited<ReturnType<typeof getUpcoming>> = [];
 				if (inputs.season === currentSeason) {

@@ -58,7 +58,14 @@ export default defineView({
 				new Set(Object.values(PLAYER_GAME_STATS).flatMap((x) => x.stats)),
 			);
 
-			const games = await idb.merged.games.getAll({ season });
+			// Only keep games this player played in, rather than every game this season
+			const games = await idb.merged.games.getAll(
+				{ season },
+				{
+					filter: (game) =>
+						game.teams.some((t) => t.players.some((p) => p.pid === pid)),
+				},
+			);
 
 			const abbrevsByTid: Record<number, string> = {};
 			const getAbbrev = async (tid: number) => {

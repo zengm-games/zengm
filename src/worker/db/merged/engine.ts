@@ -36,7 +36,7 @@ export type Query<MyRow> =
 			keys: readonly number[];
 	  }
 	| {
-			// Must return every row in IndexedDB that matches the query. It's fine to return extra rows, because matches is applied after. Leave this undefined if every matching row is guaranteed to be in the cache.
+			// Must return every row in IndexedDB that matches the query. It's fine to return extra rows in some cases, because matches is applied after. Leave this undefined if every matching row is guaranteed to be in the cache. Default is the whole store.
 			fromDb?: () => DbRows<MyRow>;
 
 			// Must return every row in the cache that matches the query, default is the whole store

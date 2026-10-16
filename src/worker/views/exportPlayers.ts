@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common/constants.ts";
+import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
@@ -15,13 +15,11 @@ export default defineView({
 			(updateEvents.has("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
 			season !== prevInputs?.season
 		) {
-			let playersAll;
-			if (g.get("season") === season) {
-				playersAll = await idb.cache.players.getAll();
-				playersAll = playersAll.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
-			} else {
-				playersAll = await idb.merged.players.getAll({ activeSeason: season });
-			}
+			const playersAll = await idb.merged.players.getAll(
+				g.get("season") === season
+					? { nonRetired: true }
+					: { activeSeason: season },
+			);
 
 			const players = addFirstNameShort(
 				await player.formatAll(playersAll, {

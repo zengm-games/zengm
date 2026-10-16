@@ -1,6 +1,5 @@
 import {
 	PHASE,
-	PLAYER,
 	RATINGS,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
 } from "../../common/constants.ts";
@@ -165,14 +164,11 @@ export const getPlayers = async (
 	stats: Readonly<PlayerStatAttr[]>,
 	tid: number | undefined,
 ) => {
-	let playersAll;
-
-	if (g.get("season") === season) {
-		playersAll = await idb.cache.players.getAll();
-		playersAll = playersAll.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
-	} else {
-		playersAll = await idb.merged.players.getAll({ activeSeason: season });
-	}
+	let playersAll = await idb.merged.players.getAll(
+		g.get("season") === season
+			? { nonRetired: true }
+			: { activeSeason: season },
+	);
 
 	if (tid === undefined) {
 		if (abbrev === "watch") {

@@ -13,6 +13,8 @@ export type PlayersSelector = Exclusive<
 	| { retiredYear: number }
 	// All except draft prospects
 	| { activeAndRetired: true }
+	// Everyone in the cache except retired players, which includes draft prospects
+	| { nonRetired: true }
 	// With statsTid, which of activeSeason and statsTid is actually applied depends on which is faster. So it will only return players who played for that team, but some of them might not have been active that season.
 	| { activeSeason: number; statsTid?: number }
 	| { statsTid: number }
@@ -145,6 +147,14 @@ class PlayersStore extends MergedStore<"players", PlayersSelector> {
 						.store.index("tid")
 						.iterate(PLAYER.RETIRED),
 				matches: (p) => p.tid === PLAYER.RETIRED || p.tid >= PLAYER.FREE_AGENT,
+			};
+		}
+
+		if (selector.nonRetired) {
+			return {
+				// Non-retired players are all in the cache, so there's no need to read from IndexedDB. Retired players can be in the cache too, like from a tragic death or an edited player this session.
+				fromDb: undefined,
+				matches: (p) => p.tid !== PLAYER.RETIRED,
 			};
 		}
 

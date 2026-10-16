@@ -45,8 +45,7 @@ export default defineView({
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 		} as const);
-		const playersAll2 = await idb.merged.players.getAll(undefined, { filter });
-		const playersAll = await player.formatAll(playersAll2, {
+		const formatOptions = {
 			attrs: [
 				"tid",
 				"abbrev",
@@ -67,7 +66,17 @@ export default defineView({
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
-		});
+		} as const;
+		const abbrevs = await player.loadAbbrevs(formatOptions);
+		const formatPlayer = player.createFormatter(formatOptions, abbrevs);
+
+		const playersAll = (
+			await idb.merged.players.getAll(undefined, {
+				filter,
+				map: formatPlayer,
+			})
+		).filter((p) => p !== undefined);
+
 		const players = [];
 		for (const p of playersAll) {
 			const currentPr = last(p.ratings);

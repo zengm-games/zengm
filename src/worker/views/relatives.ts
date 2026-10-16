@@ -112,7 +112,28 @@ export default defineView({
 				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
 			} as const);
 
-			let playersAll: Player[] = [];
+			const formatOptions = {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"draft",
+					"retiredYear",
+					"statsTids",
+					"hof",
+					"relatives",
+					"numBrothers",
+					"numFathers",
+					"numSons",
+					"college",
+					"jerseyNumber",
+				],
+				ratings: ["season", "ovr", "pos"],
+				stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
+				fuzz: true,
+			} as const;
+
+			let playersFiltered;
 			const generationsByPid = new Map<number, number>();
 
 			// Anyone who is directly a father or son of the initial player, and their fathers/sons
@@ -126,6 +147,7 @@ export default defineView({
 			const spousePids = new Set<number>();
 
 			if (typeof pid === "number") {
+				const playersAll: Player[] = [];
 				const pidsSeen = new Set();
 				fatherLinePids.add(pid);
 				sonLinePids.add(pid);
@@ -223,32 +245,18 @@ export default defineView({
 					],
 					true,
 				);
-			} else {
-				playersAll = await idb.merged.players.getAll(undefined, {
-					filter: (p) => p.relatives.length > 0,
-				});
-			}
 
-			const playersFiltered = await player.formatAll(playersAll, {
-				attrs: [
-					"pid",
-					"firstName",
-					"lastName",
-					"draft",
-					"retiredYear",
-					"statsTids",
-					"hof",
-					"relatives",
-					"numBrothers",
-					"numFathers",
-					"numSons",
-					"college",
-					"jerseyNumber",
-				],
-				ratings: ["season", "ovr", "pos"],
-				stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
-				fuzz: true,
-			});
+				playersFiltered = await player.formatAll(playersAll, formatOptions);
+			} else {
+				const abbrevs = await player.loadAbbrevs(formatOptions);
+				const formatPlayer = player.createFormatter(formatOptions, abbrevs);
+				playersFiltered = (
+					await idb.merged.players.getAll(undefined, {
+						filter: (p) => p.relatives.length > 0,
+						map: formatPlayer,
+					})
+				).filter((p) => p !== undefined);
+			}
 
 			const players = playersFiltered.map((p) => {
 				const generation = generationsByPid.get(p.pid);

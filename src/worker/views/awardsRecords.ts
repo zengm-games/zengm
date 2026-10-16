@@ -214,11 +214,7 @@ export default defineView({
 			updateEvents.has("firstRun") ||
 			inputs.awardType !== prevInputs?.awardType
 		) {
-			const playersAll = await idb.merged.players.getAll(
-				{ activeAndRetired: true },
-				{ filter: (p) => p.awards.length > 0 },
-			);
-			const players: LocalPlayer[] = await player.formatAll(playersAll, {
+			const formatOptions = {
 				attrs: [
 					"awards",
 					"firstName",
@@ -230,14 +226,28 @@ export default defineView({
 				],
 				ratings: ["pos", "season"],
 				stats: ["abbrev", "season"],
-			});
+			} as const;
+			const abbrevs = await player.loadAbbrevs(formatOptions);
+			const formatPlayer = player.createFormatter(formatOptions, abbrevs);
 			const awardType = inputs.awardType;
 
-			const awardsRecords = addFirstNameShort(
-				players
-					.map((p) => getPlayerAwards(p, awardType))
-					.filter((p) => p !== undefined),
-			);
+			const playersAwards = (
+				await idb.merged.players.getAll(
+					{ activeAndRetired: true },
+					{
+						filter: (p) => p.awards.length > 0,
+						map: (pRaw) => {
+							const p: LocalPlayer | undefined = formatPlayer(pRaw);
+							if (!p) {
+								return;
+							}
+							return getPlayerAwards(p, awardType);
+						},
+					},
+				)
+			).filter((p) => p !== undefined);
+
+			const awardsRecords = addFirstNameShort(playersAwards);
 
 			const awardTypeOptions: DropdownOption[] = [
 				...awardTypes.flatMap((row) => {

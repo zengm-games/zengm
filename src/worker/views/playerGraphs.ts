@@ -87,19 +87,6 @@ const getPlayerStats = async (
 		statType = "totals";
 	}
 
-	let playersAll;
-
-	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-	} else {
-		playersAll = await idb.merged.players.getAll(
-			typeof season === "number" ? { activeSeason: season } : undefined,
-		);
-	}
-
 	const statKeys = statsTable
 		? getPlayerStatsTableStats(statsTable.stats)
 		: (["gp"] as const);
@@ -142,30 +129,50 @@ const getPlayerStats = async (
 
 	let players;
 	if (season === "career") {
-		const playersRaw = await player.formatAll(playersAll, formatOptions);
-		players = playersRaw.map(
-			({
-				careerStats,
-				careerStatsPlayoffs,
-				careerStatsCombined,
-				ratings: allRatings,
-				stats: allStats,
-				...p
-			}) =>
-				toRow(
-					p,
-					// Show row from max ovr season. allRatings is only actually there if ratings were requested
-					ratings.length > 0
-						? (maxBy(allRatings, (row) => row.ovr) ?? last(allRatings))
-						: undefined,
-					playoffs === "playoffs"
-						? careerStatsPlayoffs
-						: playoffs === "combined"
-							? careerStatsCombined
-							: careerStats,
-				),
-		);
+		const abbrevs = await player.loadAbbrevs(formatOptions);
+		const formatPlayer = player.createFormatter(formatOptions, abbrevs);
+		players = (
+			await idb.merged.players.getAll(undefined, {
+				map: (pRaw) => {
+					const pFormatted = formatPlayer(pRaw);
+					if (!pFormatted) {
+						return;
+					}
+
+					const {
+						careerStats,
+						careerStatsPlayoffs,
+						careerStatsCombined,
+						ratings: allRatings,
+						stats: allStats,
+						...p
+					} = pFormatted;
+					return toRow(
+						p,
+						// Show row from max ovr season. allRatings is only actually there if ratings were requested
+						ratings.length > 0
+							? (maxBy(allRatings, (row) => row.ovr) ?? last(allRatings))
+							: undefined,
+						playoffs === "playoffs"
+							? careerStatsPlayoffs
+							: playoffs === "combined"
+								? careerStatsCombined
+								: careerStats,
+					);
+				},
+			})
+		).filter((row) => row !== undefined);
 	} else {
+		let playersAll;
+		if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
+			playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+				PLAYER.FREE_AGENT,
+				Infinity,
+			]);
+		} else {
+			playersAll = await idb.merged.players.getAll({ activeSeason: season });
+		}
+
 		const playersRaw = await player.formatAll(playersAll, {
 			...formatOptions,
 			season,

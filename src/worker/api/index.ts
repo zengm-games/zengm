@@ -1394,30 +1394,6 @@ const evalOnWorker = async (code: string) => {
 // exportPlayerAveragesCsv(2015) - just 2015 stats
 // exportPlayerAveragesCsv("all") - all stats
 const exportPlayerAveragesCsv = async (season: number | "all") => {
-	let players: Player[];
-
-	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		players = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-	} else if (season === "all") {
-		players = await idb.merged.players.getAll({ activeAndRetired: true });
-	} else {
-		players = await idb.merged.players.getAll({ activeSeason: season });
-	}
-
-	// Array of seasons in stats, either just one or all of them
-	let seasons;
-
-	if (season === "all") {
-		seasons = Array.from(
-			new Set(players.flatMap((p) => p.ratings).map((pr) => pr.season)),
-		);
-	} else {
-		seasons = [season];
-	}
-
 	const ratings = [...RATINGS, ...extraRatings];
 
 	let stats: PlayerStatAttr[] = [];
@@ -1495,45 +1471,97 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				: [],
 		).map((col) => col.title),
 	];
-	const rows: any[] = [];
+	const formatOptions = {
+		attrs: ["pid", "name", "age", "draft", "salary"],
+		ratings: ["pos", "ovr", "pot", ...ratings],
+		stats: ["abbrev", ...stats],
+		mergeStats: "totOnly",
+	} as const;
 
-	for (const s of seasons) {
-		console.log(s, new Date());
-		const players2 = await player.formatAll(players, {
-			attrs: ["pid", "name", "age", "draft", "salary"],
-			ratings: ["pos", "ovr", "pot", ...ratings],
-			stats: ["abbrev", ...stats],
-			season: s,
-			mergeStats: "totOnly",
-		});
+	// One set of abbrevs, shared by the formatters for every season
+	const abbrevs = await player.loadAbbrevs(
+		season === "all" ? formatOptions : { ...formatOptions, season },
+	);
+	const createSeasonFormatter = (season2: number) =>
+		player.createFormatter({ ...formatOptions, season: season2 }, abbrevs);
+	const seasonFormatters = new Map<
+		number,
+		ReturnType<typeof createSeasonFormatter>
+	>();
 
-		for (const p of players2) {
-			rows.push([
-				p.pid,
-				p.name,
-				p.ratings.pos,
-				p.draft.round > 0 && p.draft.pick > 0
-					? (p.draft.round - 1) * 30 + p.draft.pick
-					: "",
-				p.age,
-				p.salary,
-				p.stats.abbrev,
+	// One row for each season the player has stats in. This runs while reading players, so the full player objects are not all held in memory at once.
+	const getRows = (pRaw: Player) => {
+		const seasons =
+			season === "all"
+				? new Set(pRaw.stats.map((row) => row.season))
+				: [season];
+
+		const rows = [];
+		for (const s of seasons) {
+			const formatPlayer = seasonFormatters.getOrInsertComputed(
 				s,
-				...stats.map((stat) => p.stats[stat]),
-				p.ratings.ovr,
-				p.ratings.pot,
-				...RATINGS.map((rating) => p.ratings[rating]),
-				...(extraRatings.length
-					? (["ovrs", "pots"] as const).flatMap((type) =>
-							// In sports with extraRatings, POSITIONS are the keys of ovrs/pots
-							(POSITIONS as (keyof typeof p.ratings.ovrs)[]).map(
-								(pos) => p.ratings[type][pos],
-							),
-						)
-					: []),
-			]);
+				createSeasonFormatter,
+			);
+			const p = formatPlayer(pRaw);
+			if (!p) {
+				continue;
+			}
+
+			rows.push({
+				season: s,
+				row: [
+					p.pid,
+					p.name,
+					p.ratings.pos,
+					p.draft.round > 0 && p.draft.pick > 0
+						? (p.draft.round - 1) * 30 + p.draft.pick
+						: "",
+					p.age,
+					p.salary,
+					p.stats.abbrev,
+					s,
+					...stats.map((stat) => p.stats[stat]),
+					p.ratings.ovr,
+					p.ratings.pot,
+					...RATINGS.map((rating) => p.ratings[rating]),
+					...(extraRatings.length
+						? (["ovrs", "pots"] as const).flatMap((type) =>
+								// In sports with extraRatings, POSITIONS are the keys of ovrs/pots
+								(POSITIONS as (keyof typeof p.ratings.ovrs)[]).map(
+									(pos) => p.ratings[type][pos],
+								),
+							)
+						: []),
+				],
+			});
+		}
+		return rows;
+	};
+
+	let rowsByPlayer;
+	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
+		const players = await idb.cache.players.indexGetAll("playersByTid", [
+			PLAYER.FREE_AGENT,
+			Infinity,
+		]);
+		rowsByPlayer = players.map(getRows);
+	} else {
+		rowsByPlayer = await idb.merged.players.getAll(
+			season === "all" ? { activeAndRetired: true } : { activeSeason: season },
+			{ map: getRows },
+		);
+	}
+
+	// Group rows by season
+	const rowsBySeason = new Map<number, any[][]>();
+	for (const playerRows of rowsByPlayer) {
+		for (const { season, row } of playerRows) {
+			rowsBySeason.getOrInsert(season, []).push(row);
 		}
 	}
+	const rows = Array.from(rowsBySeason)
+		.sort(([a], [b]) => a - b)
+		.flatMap(([, seasonRows]) => seasonRows);
 
 	return csvFormatRows([columns, ...rows]);
 };

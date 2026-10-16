@@ -116,12 +116,11 @@ export default defineView({
 						"retiredYear",
 					],
 					ratings: ["skills", "pos"],
-					stats: ["abbrev", "tid", ...stats],
+					stats: ["tid", ...stats],
 					season,
 					seasonType: inputs.playoffs,
 					mergeStats: "totOnly",
 					statType: inputs.statType,
-					disableAbbrevsCacheDatabaseAccess: true,
 				});
 				if (!p) {
 					return;

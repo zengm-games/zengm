@@ -1520,7 +1520,6 @@ export type PlayerFormatOptions = {
 	numGamesRemaining?: number;
 	statType?: PlayerStatType;
 	mergeStats?: "none" | "totOnly" | "totAndTeams";
-	disableAbbrevsCacheDatabaseAccess?: boolean;
 };
 
 // Is SeasonType one of the values in the seasonType option? Distributes over unions, so if seasonType is a union of single values (like "playoffs" | "regularSeason"), the result is boolean because it's not known which one it is

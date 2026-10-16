@@ -121,11 +121,10 @@ export default defineView({
 					],
 					ratings: ["skills", "pos"],
 					// season is for finding the team in the career stats rows
-					stats: ["abbrev", "season", "tid", ...stats],
+					stats: ["season", "tid", ...stats],
 					seasonType: inputs.playoffs,
 					mergeStats: "totOnly",
 					statType: inputs.statType,
-					disableAbbrevsCacheDatabaseAccess: true,
 				} as const;
 
 				{

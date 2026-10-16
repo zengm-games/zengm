@@ -17,14 +17,7 @@ import { actualPhase } from "../../util/actualPhase.ts";
 import { last } from "../../../common/utils.ts";
 
 type PlayerFormatOptionsRequired = Required<
-	Omit<
-		PlayerFormatOptions,
-		| "disableAbbrevsCacheDatabaseAccess"
-		| "season"
-		| "seasonRange"
-		| "seasonType"
-		| "tid"
-	>
+	Omit<PlayerFormatOptions, "season" | "seasonRange" | "seasonType" | "tid">
 > & {
 	season?: number;
 	seasonRange?: [number, number];
@@ -70,14 +63,6 @@ class AbbrevsCache {
 	// Make these all private after done debugging
 	data = new Map<number, Map<number, string | undefined>>();
 	state: "init" | "loading" | "loaded" = "init";
-	minSafeSeason: number;
-
-	// Set disableDatabaseAccess to true if you're calling this during another IndexedDB transaction that you don't want to auto close. Then it will only look up abbrevs that are safe to access in the cache
-	constructor(disableDatabaseAccess: boolean) {
-		this.minSafeSeason = disableDatabaseAccess
-			? g.get("season") - 2
-			: -Infinity;
-	}
 
 	add(season: number, tid: number) {
 		if (this.state !== "init") {
@@ -106,12 +91,9 @@ class AbbrevsCache {
 		}
 		this.state = "loading";
 
-		for (const [seasonTemp, abbrevsByTid] of this.data) {
+		for (const [season, abbrevsByTid] of this.data) {
 			// When should we fetch all for season vs not? I'm not sure what the ideal value is, I just guessed
 			const bulkFetch = abbrevsByTid.size >= 6;
-
-			const season =
-				seasonTemp >= this.minSafeSeason ? seasonTemp : this.minSafeSeason;
 
 			if (bulkFetch) {
 				const rows = await idb.merged.teamSeasons.getAll({ season });
@@ -371,7 +353,7 @@ const processAttrs = (
 						for (const [key, value] of Object.entries(dataJson)) {
 							dataJson[key] = Object.fromEntries(value as any);
 						}
-						const message = `${error.message} - ${JSON.stringify({ transactions: p.transactions, season, tid, transaction })} - ${JSON.stringify({ data: dataJson, minSafeSeason: abbrevsCache?.minSafeSeason })}`;
+						const message = `${error.message} - ${JSON.stringify({ transactions: p.transactions, season, tid, transaction })} - ${JSON.stringify({ data: dataJson })}`;
 						throw new Error(message);
 					}
 					const url =
@@ -1482,9 +1464,7 @@ export const formatAll = async <Options extends PlayerFormatOptions>(
 	let abbrevsCache: AbbrevsCache | undefined;
 	const abbrevsNeeded = getAbbrevsNeeded(options);
 	if (abbrevsNeeded.any) {
-		abbrevsCache = new AbbrevsCache(
-			optionsInput.disableAbbrevsCacheDatabaseAccess ?? false,
-		);
+		abbrevsCache = new AbbrevsCache();
 		for (const p of players) {
 			if (abbrevsNeeded.draft) {
 				for (const tid of [p.draft.tid, p.draft.originalTid]) {
@@ -1523,6 +1503,25 @@ export const formatAll = async <Options extends PlayerFormatOptions>(
 		.filter((p) => p !== undefined);
 };
 
+// Abbrevs for every team season, or every team in one season, for getFormatter and createFormatter
+export const loadAbbrevs = async (season: number | undefined) => {
+	const abbrevsCache = new AbbrevsCache();
+	await abbrevsCache.loadAll(season);
+	return abbrevsCache;
+};
+
+// Like getFormatter, but synchronous, using abbrevs that were already loaded by loadAbbrevs. This is for when you need formatters for several different options, like for different seasons, without loading abbrevs again for each one. abbrevsCache needs to include any season that will be formatted.
+export const createFormatter = <Options extends PlayerFormatOptions>(
+	optionsInput: Options &
+		Record<Exclude<keyof Options, keyof PlayerFormatOptions>, never>,
+	abbrevsCache: AbbrevsCache,
+) => {
+	const options = normalizeOptions(optionsInput);
+
+	return (p: Player): PlayerFiltered<Options> | undefined =>
+		processPlayer(p, options, abbrevsCache);
+};
+
 // Like formatAll, but rather than formatting an array of players, this returns a synchronous function that formats one player. That can be used in the map function of idb.merged getAll, so all the full player objects are never held in memory at once. Since the players are not known ahead of time, this loads abbrevs for every team season (or every team in options.season, if that's the only season abbrevs are needed for), rather than just the ones for these players.
 export const getFormatter = async <Options extends PlayerFormatOptions>(
 	optionsInput: Options &
@@ -1533,12 +1532,12 @@ export const getFormatter = async <Options extends PlayerFormatOptions>(
 	let abbrevsCache: AbbrevsCache | undefined;
 	const abbrevsNeeded = getAbbrevsNeeded(options);
 	if (abbrevsNeeded.any) {
-		abbrevsCache = new AbbrevsCache(false);
-
 		// Draft and latest transaction abbrevs can be from any season
 		const onlyOneSeason =
 			!abbrevsNeeded.draft && !abbrevsNeeded.latestTransaction;
-		await abbrevsCache.loadAll(onlyOneSeason ? options.season : undefined);
+		abbrevsCache = await loadAbbrevs(
+			onlyOneSeason ? options.season : undefined,
+		);
 	}
 
 	return (p: Player): PlayerFiltered<Options> | undefined =>

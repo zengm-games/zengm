@@ -561,7 +561,7 @@ export class GamesPlayedCache {
 
 export const iterateAllPlayersWithStats = async (
 	season: number | "all" | "career",
-	cb: (p: Player, season: number | "career") => Promise<void>,
+	cb: (p: Player, season: number | "career") => void | Promise<void>,
 ) => {
 	// Even in past seasons, make sure we have latest info for players
 	const cachePlayers = await idb.cache.players.getAll();
@@ -810,19 +810,46 @@ export default defineView({
 			] as const;
 			const allStats = ["abbrev", "tid", ...stats, ...extraStats] as const;
 
-			// Returns the player, the stats row to use, and some values that differ between career and single season
-			const getPlayerInfo = async (pRaw: Player, season: number | "career") => {
-				if (season === "career") {
-					const p = await player.format(pRaw, {
+			// Load abbrevs ahead of time, so there is no database access while iterating over players, which would make the IndexedDB transaction auto commit
+			const abbrevs = await player.loadAbbrevs(
+				typeof inputs.season === "number" ? inputs.season : undefined,
+			);
+
+			const formatCareer = player.createFormatter(
+				{
+					attrs,
+					// season and ovr only needed for bestPos
+					ratings: ["season", "ovr", "skills", "pos"],
+					stats: allStats,
+					seasonType: inputs.playoffs,
+					mergeStats: "totOnly",
+					statType: inputs.statType,
+				},
+				abbrevs,
+			);
+
+			const createSeasonFormatter = (season: number) =>
+				player.createFormatter(
+					{
 						attrs,
-						// season and ovr only needed for bestPos
-						ratings: ["season", "ovr", "skills", "pos"],
+						ratings: ["skills", "pos"],
 						stats: allStats,
+						season,
 						seasonType: inputs.playoffs,
 						mergeStats: "totOnly",
 						statType: inputs.statType,
-						disableAbbrevsCacheDatabaseAccess: true,
-					});
+					},
+					abbrevs,
+				);
+			const seasonFormatters = new Map<
+				number,
+				ReturnType<typeof createSeasonFormatter>
+			>();
+
+			// Returns the player, the stats row to use, and some values that differ between career and single season
+			const getPlayerInfo = (pRaw: Player, season: number | "career") => {
+				if (season === "career") {
+					const p = formatCareer(pRaw);
 					if (!p) {
 						return;
 					}
@@ -860,16 +887,11 @@ export default defineView({
 					};
 				}
 
-				const p = await player.format(pRaw, {
-					attrs,
-					ratings: ["skills", "pos"],
-					stats: allStats,
+				const formatSeason = seasonFormatters.getOrInsertComputed(
 					season,
-					seasonType: inputs.playoffs,
-					mergeStats: "totOnly",
-					statType: inputs.statType,
-					disableAbbrevsCacheDatabaseAccess: true,
-				});
+					createSeasonFormatter,
+				);
+				const p = formatSeason(pRaw);
 				if (!p) {
 					return;
 				}
@@ -886,8 +908,8 @@ export default defineView({
 				};
 			};
 
-			await iterateAllPlayersWithStats(inputs.season, async (pRaw, season) => {
-				const info = await getPlayerInfo(pRaw, season);
+			await iterateAllPlayersWithStats(inputs.season, (pRaw, season) => {
+				const info = getPlayerInfo(pRaw, season);
 				if (!info) {
 					return;
 				}

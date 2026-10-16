@@ -10,7 +10,13 @@ import checkStatisticalFeat from "./checkStatisticalFeat.ts";
 import compositeRating from "./compositeRating.ts";
 import contractSeasonsRemaining from "./contractSeasonsRemaining.ts";
 import develop from "./develop.ts";
-import { format, formatAll, getFormatter } from "./format.ts";
+import {
+	createFormatter,
+	format,
+	formatAll,
+	getFormatter,
+	loadAbbrevs,
+} from "./format.ts";
 import fuzzRating from "./fuzzRating.ts";
 import fuzzOvrs from "./fuzzOvrs.ts";
 import genContract from "./genContract.ts";
@@ -58,6 +64,7 @@ export default {
 	checkStatisticalFeat,
 	compositeRating,
 	contractSeasonsRemaining,
+	createFormatter,
 	develop,
 	format,
 	formatAll,
@@ -77,6 +84,7 @@ export default {
 	injury,
 	killOne,
 	limitRating,
+	loadAbbrevs,
 	madeHof,
 	moodInfo,
 	moodInfos,

@@ -6,6 +6,7 @@ import {
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
+	Player,
 	PlayerAttr,
 	PlayerRatingAttr,
 	PlayerStatAttr,
@@ -164,20 +165,22 @@ export const getPlayers = async (
 	stats: Readonly<PlayerStatAttr[]>,
 	tid: number | undefined,
 ) => {
-	let playersAll = await idb.merged.players.getAll(
+	let filter: ((p: Player) => boolean) | undefined;
+	if (tid === undefined) {
+		if (abbrev === "watch") {
+			filter = (p) => p.watch !== undefined;
+		} else if (abbrev === "playoffs") {
+			const playoffTids = await getActivePlayoffTids();
+			filter = (p) => playoffTids.has(p.tid);
+		}
+	}
+
+	const playersAll = await idb.merged.players.getAll(
 		g.get("season") === season
 			? { nonRetired: true }
 			: { activeSeason: season },
+		{ filter },
 	);
-
-	if (tid === undefined) {
-		if (abbrev === "watch") {
-			playersAll = playersAll.filter((p) => p.watch);
-		} else if (abbrev === "playoffs") {
-			const playoffTids = await getActivePlayoffTids();
-			playersAll = playersAll.filter((p) => playoffTids.has(p.tid));
-		}
-	}
 
 	// showNoStats for current season (so draft picks etc show up on their correct team) or for no team (so free agents show up)
 	const showNoStats = season === g.get("season") || tid === undefined;

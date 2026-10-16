@@ -2,7 +2,12 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { Player } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { omit, orderBy, type OrderBySortParams } from "../../common/utils.ts";
+import {
+	last,
+	omit,
+	orderBy,
+	type OrderBySortParams,
+} from "../../common/utils.ts";
 import { player } from "../core/index.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
@@ -69,15 +74,23 @@ const getMostXPlayers = async ({
 		}
 
 		for (const row of mosts) {
+			const lastValue = playersAll.at(-1)?.most.value;
+			if (
+				playersAll.length >= LIMIT &&
+				lastValue !== undefined &&
+				row.value <= lastValue
+			) {
+				// Not good enough for the top LIMIT. Ties go to whoever was already in the list, like they would with a stable sort.
+				continue;
+			}
+
 			playersAll.push({
 				...p,
 				most: row,
 			});
+			playersAll.sort((a, b) => b.most.value - a.most.value);
+			playersAll = playersAll.slice(0, LIMIT);
 		}
-
-		playersAll.sort((a, b) => b.most.value - a.most.value);
-
-		playersAll = playersAll.slice(0, LIMIT);
 	}
 
 	const stats = bySport({
@@ -825,10 +838,7 @@ export default defineView({
 
 					if (!oldest) {
 						// Skip players who are not yet 30 years old
-						const ratings = p.ratings.at(-1);
-						if (!ratings) {
-							return;
-						}
+						const ratings = last(p.ratings);
 						const age = ratings.season - p.born.year;
 						if (age < 30) {
 							return;

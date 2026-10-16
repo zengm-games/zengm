@@ -40,9 +40,7 @@ export default defineView({
 				football: ["keyStats", "av"],
 				hockey: ["keyStats", "ops", "dps", "ps"],
 			} as const);
-			const playersAll = await idb.merged.players.getAll({ pids });
-
-			const players = await player.formatAll(playersAll, {
+			const formatOptions = {
 				attrs: [
 					"pid",
 					"firstName",
@@ -56,7 +54,13 @@ export default defineView({
 				ratings: ["season", "ovr", "pos"],
 				stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 				fuzz: true,
-			});
+			} as const;
+			const abbrevs = await player.loadAbbrevs(formatOptions);
+			const formatPlayer = player.createFormatter(formatOptions, abbrevs);
+
+			const players = (
+				await idb.merged.players.getAll({ pids }, { map: formatPlayer })
+			).filter((p) => p !== undefined);
 
 			const players2 = addFirstNameShort(processPlayersHallOfFame(players)).map(
 				(p) => {

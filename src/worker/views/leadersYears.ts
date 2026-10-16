@@ -94,7 +94,32 @@ export default defineView({
 				);
 			}
 
-			await iterateAllPlayersWithStats("all", async (pRaw, season) => {
+			const formatOptions = {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"injury",
+					"watch",
+					"jerseyNumber",
+					"hof",
+					"retiredYear",
+				],
+				ratings: ["skills", "pos"],
+				stats: ["tid", ...stats],
+				seasonType: inputs.playoffs,
+				mergeStats: "totOnly",
+				statType: inputs.statType,
+			} as const;
+			const abbrevs = await player.loadAbbrevs(formatOptions);
+			const createSeasonFormatter = (season: number) =>
+				player.createFormatter({ ...formatOptions, season }, abbrevs);
+			const seasonFormatters = new Map<
+				number,
+				ReturnType<typeof createSeasonFormatter>
+			>();
+
+			await iterateAllPlayersWithStats("all", (pRaw, season) => {
 				if (typeof season !== "number") {
 					throw new Error("Invalid season");
 				}
@@ -104,24 +129,11 @@ export default defineView({
 					return;
 				}
 
-				const p = await player.format(pRaw, {
-					attrs: [
-						"pid",
-						"firstName",
-						"lastName",
-						"injury",
-						"watch",
-						"jerseyNumber",
-						"hof",
-						"retiredYear",
-					],
-					ratings: ["skills", "pos"],
-					stats: ["tid", ...stats],
+				const formatSeason = seasonFormatters.getOrInsertComputed(
 					season,
-					seasonType: inputs.playoffs,
-					mergeStats: "totOnly",
-					statType: inputs.statType,
-				});
+					createSeasonFormatter,
+				);
+				const p = formatSeason(pRaw);
 				if (!p) {
 					return;
 				}

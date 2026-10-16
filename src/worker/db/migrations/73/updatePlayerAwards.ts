@@ -1,6 +1,6 @@
 import fastDeepEqual from "fast-deep-equal";
 import addAward from "../../../core/player/addAward.ts";
-import type { LeagueDB } from "../../connectLeague.ts";
+import type { LeagueDB, LeagueDBStoreNames } from "../../connectLeague.ts";
 import type { IDBPObjectStore } from "@dumbmatter/idb";
 import type { PlayerAward } from "../../../../common/types.ts";
 
@@ -18,12 +18,15 @@ export const updatePlayerAwards = async ({
 }: {
 	awardsToDelete: AwardByPlayerMigrate73[];
 	awardsToSave: AwardByPlayerMigrate73[];
-	playerStore: IDBPObjectStore<
-		LeagueDB,
-		["players"],
-		"players",
-		"readwrite" | "versionchange"
-	>;
+	// From a database upgrade (migrate73) or a league file import (createStream)
+	playerStore:
+		| IDBPObjectStore<LeagueDB, ["players"], "players", "readwrite">
+		| IDBPObjectStore<
+				LeagueDB,
+				LeagueDBStoreNames[],
+				"players",
+				"versionchange"
+		  >;
 }) => {
 	const toDeleteByPid = Map.groupBy(awardsToDelete, (award) => award.pid);
 	const toSaveByPid = Map.groupBy(awardsToSave, (award) => award.pid);

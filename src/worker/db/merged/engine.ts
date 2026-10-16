@@ -104,13 +104,12 @@ async function* rowsByKeysFromDb<MyStore extends Store>(
 	}
 }
 
-const getAllByKeys = async <MyStore extends Store, Output>(
+// Rows with these primary keys, in this order
+const getAllByKeys = async <MyStore extends Store>(
 	storeName: MyStore,
 	keys: readonly number[],
-	options: GetAllOptions<Row<MyStore>, Output>,
 ) => {
 	const pk = storeInfos[storeName].pk;
-	const toOutput = makeToOutput(options);
 
 	const rows = new Map<number, Row<MyStore>>();
 
@@ -133,8 +132,8 @@ const getAllByKeys = async <MyStore extends Store, Output>(
 	const output = [];
 	for (const key of keys) {
 		const row = rows.get(key);
-		if (row && (!options.filter || options.filter(row))) {
-			output.push(toOutput(row));
+		if (row) {
+			output.push(row);
 		}
 	}
 
@@ -159,32 +158,32 @@ export const get = async <MyStore extends Store>(
 	return idb.league.get(storeName, key as any);
 };
 
-// Get all rows matching a query, merging the cache and IndexedDB. A row in the cache always takes priority over the same row in IndexedDB. With no query, this returns the whole store.
-export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
+// Call callback for each row matching a query, merging the cache and IndexedDB. A row in the cache always takes priority over the same row in IndexedDB. With no query, this is the whole store.
+export const forEach = async <MyStore extends Store>(
 	storeName: MyStore,
 	query: Query<Row<MyStore>> = {
 		fromDb: () => idb.league.transaction(storeName).store.iterate(),
 	},
-	options: GetAllOptions<Row<MyStore>, Output> = {},
-): Promise<Output[]> => {
+	callback: (row: Row<MyStore>) => void,
+) => {
 	if ("keys" in query) {
-		return getAllByKeys(storeName, query.keys, options);
+		for (const row of await getAllByKeys(storeName, query.keys)) {
+			callback(row);
+		}
+		return;
 	}
 
 	const { fromDb, fromCache, matches } = query;
-	const { filter } = options;
 	const pk = storeInfos[storeName].pk;
-	const toOutput = makeToOutput(options);
 
-	const output: Output[] = [];
 	const seen = new Set<Key>();
 
 	const add = (row: Row<MyStore>) => {
-		if ((matches && !matches(row)) || (filter && !filter(row))) {
+		if (matches && !matches(row)) {
 			return;
 		}
 
-		output.push(toOutput(row));
+		callback(row);
 	};
 
 	const store = cacheStore(storeName);
@@ -227,6 +226,25 @@ export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
 			add(row);
 		}
 	}
+};
+
+// Get all rows matching a query, merging the cache and IndexedDB. A row in the cache always takes priority over the same row in IndexedDB. With no query, this returns the whole store.
+export const getAll = async <MyStore extends Store, Output = Row<MyStore>>(
+	storeName: MyStore,
+	query: Query<Row<MyStore>> | undefined,
+	options: GetAllOptions<Row<MyStore>, Output> = {},
+): Promise<Output[]> => {
+	const { filter } = options;
+	const toOutput = makeToOutput(options);
+
+	const output: Output[] = [];
+	await forEach(storeName, query, (row) => {
+		if (filter && !filter(row)) {
+			return;
+		}
+
+		output.push(toOutput(row));
+	});
 
 	return output;
 };
@@ -286,5 +304,13 @@ export class MergedStore<MyStore extends Store, Selector = undefined> {
 		options?: GetAllOptions<Row<MyStore>, Output>,
 	) {
 		return await getAll(this.storeName, this.toQuery(selector), options);
+	}
+
+	// Like getAll, but rather than returning rows, this calls callback for each one. Use this when processing many rows without keeping them, so they're not all held in memory at once. callback runs inside an IndexedDB transaction, so it must be synchronous.
+	async forEach(
+		selector: Selector | undefined,
+		callback: (row: Row<MyStore>) => void,
+	) {
+		await forEach(this.storeName, this.toQuery(selector), callback);
 	}
 }

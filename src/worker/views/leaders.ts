@@ -1,5 +1,6 @@
 import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
+import { getActiveSeasonSelector } from "../db/merged/players.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
@@ -8,7 +9,7 @@ import type {
 	PlayerStatType,
 } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { groupByUnique, range } from "../../common/utils.ts";
+import { range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { player, season, team } from "../core/index.ts";
 import { extraStats } from "./hallOfFame.ts";
@@ -559,60 +560,29 @@ export class GamesPlayedCache {
 	}
 }
 
+// cb runs inside an IndexedDB transaction, so it must be synchronous
 export const iterateAllPlayersWithStats = async (
 	season: number | "all" | "career",
-	cb: (p: Player, season: number | "career") => void | Promise<void>,
+	cb: (p: Player, season: number | "career") => void,
 ) => {
-	// Even in past seasons, make sure we have latest info for players
-	const cachePlayers = await idb.cache.players.getAll();
-	const cachePlayersByPid = groupByUnique(cachePlayers, "pid");
-
-	const applyCB = async (p: Player) => {
-		const seasons = new Set(p.stats.map((row) => row.season));
-		if (season === "all") {
-			for (const season of seasons) {
-				await cb(p, season);
+	await idb.merged.players.forEach(
+		typeof season === "number" ? getActiveSeasonSelector(season) : undefined,
+		(p) => {
+			if (season === "all") {
+				const seasons = new Set(p.stats.map((row) => row.season));
+				for (const season of seasons) {
+					cb(p, season);
+				}
+			} else if (season === "career") {
+				// No need to look at career stats of player with no stats
+				if (p.stats.length > 0) {
+					cb(p, season);
+				}
+			} else if (p.stats.some((row) => row.season === season)) {
+				cb(p, season);
 			}
-		} else if (season === "career") {
-			// No need to look at career stats of player with no stats
-			if (p.stats.length > 0) {
-				await cb(p, season);
-			}
-		} else if (seasons.has(season)) {
-			await cb(p, season);
-		}
-	};
-
-	// For current season, assume everyone is cached, although this might not be true for tragic deaths and God Mode edited players
-	if (season === g.get("season") && g.get("phase") <= PHASE.PLAYOFFS) {
-		for (const p of cachePlayers) {
-			await applyCB(p);
-		}
-		return;
-	}
-
-	// This is similar to activeSeason from idb.merged.players
-	const index = idb.league
-		.transaction("players")
-		.store.index("draft.year, retiredYear");
-
-	let range;
-	const useRange = typeof season === "number";
-	if (useRange) {
-		// -1 is because players drafted the year won't play until next year
-		range = IDBKeyRange.bound([-Infinity, season], [season - 1, Infinity]);
-	}
-
-	// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-	for await (const cursor of index.iterate(range)) {
-		const [draftYear, retiredYear] = cursor.key;
-		if (useRange && retiredYear < season) {
-			cursor.continue([draftYear, season]);
-		} else {
-			const p = cachePlayersByPid[cursor.value.pid] ?? cursor.value;
-			await applyCB(p);
-		}
-	}
+		},
+	);
 };
 
 type Category = ReturnType<typeof getCategoriesAndStats>["categories"][number];

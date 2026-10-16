@@ -56,6 +56,12 @@ export const rolldownConfig = (
 				},
 				telemetry: false,
 
+				// Remove SDK code for features we don't use
+				bundleSizeOptimizations: {
+					excludeDebugStatements: true,
+					excludeTracing: true,
+				},
+
 				// Otherwise it warns about not having an auth token, which is only needed for the features disabled above
 				silent: true,
 			}),

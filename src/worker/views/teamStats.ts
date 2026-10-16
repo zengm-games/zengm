@@ -121,18 +121,16 @@ export const getStats = async ({
 
 	for (const t of teams) {
 		if (t.seasonAttrs.avgAge === undefined) {
-			let playersRaw;
-			if (g.get("season") === season) {
-				playersRaw = await idb.cache.players.indexGetAll("playersByTid", t.tid);
-			} else {
-				if (noDynamicAvgAge) {
-					continue;
-				}
-				playersRaw = await idb.merged.players.getAll({
-					activeSeason: season,
-					statsTid: t.tid,
-				});
+			const currentSeason = g.get("season") === season;
+			if (!currentSeason && noDynamicAvgAge) {
+				continue;
 			}
+
+			const playersRaw = await idb.merged.players.getAll(
+				currentSeason
+					? { tid: t.tid }
+					: { activeSeason: season, statsTid: t.tid },
+			);
 
 			const players = await player.formatAll(playersRaw, {
 				attrs: ["age"],

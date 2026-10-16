@@ -95,24 +95,14 @@ export default defineView({
 			hockey: "ps",
 		} as const);
 
-		let playersAll;
-
-		if (g.get("season") === inputs.season) {
-			// This is guaranteed to work (ignoring God Mode) because no player this season has had a chance to die or retire
-			playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				Infinity,
-			]);
-		} else {
-			playersAll = await idb.merged.players.getAll({
-				draftYear: inputs.season,
-			});
-		}
-
-		playersAll = playersAll.filter((p) => {
-			return p.draft.year === inputs.season;
-		});
-		playersAll = await player.formatAll(playersAll, {
+		const playersRaw = await idb.merged.players.getAll(
+			g.get("season") === inputs.season
+				? // This is guaranteed to work (ignoring God Mode) because no player this season has had a chance to die or retire
+					{ tid: [PLAYER.FREE_AGENT, Infinity] }
+				: { draftYear: inputs.season },
+			{ filter: (p) => p.draft.year === inputs.season },
+		);
+		const playersAll = await player.formatAll(playersRaw, {
 			attrs: [
 				"tid",
 				"abbrev",

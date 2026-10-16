@@ -70,19 +70,11 @@ export const addPowerRankingsStuffToTeams = async <
 	// Calculate team ovr ratings
 	const teamsWithRankings = await Promise.all(
 		teams.map(async (t) => {
-			let teamPlayers;
-
-			if (g.get("season") === season) {
-				teamPlayers = await idb.cache.players.indexGetAll(
-					"playersByTid",
-					t.tid,
-				);
-			} else {
-				teamPlayers = await idb.merged.players.getAll({
-					activeSeason: season,
-					statsTid: t.tid,
-				});
-			}
+			const teamPlayersRaw = await idb.merged.players.getAll(
+				g.get("season") === season
+					? { tid: t.tid }
+					: { activeSeason: season, statsTid: t.tid },
+			);
 
 			const ratings = [
 				"ovr",
@@ -91,7 +83,7 @@ export const addPowerRankingsStuffToTeams = async <
 				...(__SPORT === "basketball" ? RATINGS : []),
 			] as const;
 
-			teamPlayers = await player.formatAll(teamPlayers, {
+			const teamPlayers = await player.formatAll(teamPlayersRaw, {
 				attrs: ["tid", "injury", "value", "age", "pid"],
 				ratings,
 				stats: ["season", "tid", "gp", "min"],

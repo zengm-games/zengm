@@ -139,6 +139,27 @@ class AbbrevsCache {
 		this.state = "loaded";
 	}
 
+	// Instead of add and load, this loads abbrevs for every team season, or every team in one season. This is for when the players are not known ahead of time.
+	async loadAll(season: number | undefined) {
+		if (this.state !== "init") {
+			throw new Error("Cannot call loadAll after add or load");
+		}
+		this.state = "loading";
+
+		const rows = await idb.merged.teamSeasons.getAll(
+			season === undefined ? undefined : { season },
+			{
+				map: (ts) => ({ season: ts.season, tid: ts.tid, abbrev: ts.abbrev }),
+			},
+		);
+		for (const row of rows) {
+			const abbrevsByTid = this.data.getOrInsert(row.season, new Map());
+			abbrevsByTid.set(row.tid, row.abbrev);
+		}
+
+		this.state = "loaded";
+	}
+
 	get(season: number, tid: number) {
 		if (this.state !== "loaded") {
 			throw new Error("Cannot call get before load completes");
@@ -1344,6 +1365,81 @@ const processPlayer = (
 	return output;
 };
 
+// Fills in defaults and converts seasonType into the playoffs/regularSeason/combined flags
+const normalizeOptions = (
+	optionsInput: PlayerFormatOptions,
+): PlayerFormatOptionsRequired => {
+	const {
+		season,
+		seasonRange,
+		tid,
+		attrs = [],
+		ratings = [],
+		stats = [],
+		seasonType = "regularSeason",
+		showNoStats = false,
+		showRookies = false,
+		showRetired = false,
+		showDraftProspectRookieRatings = false,
+		fuzz = false,
+		oldStats = false,
+		numGamesRemaining = 0,
+		statType = "perGame",
+		mergeStats = "none",
+	} = optionsInput;
+
+	if (mergeStats === "totAndTeams" && season !== undefined) {
+		throw new Error(
+			"mergeStats totAndTeams is not supported for individual seasons",
+		);
+	}
+
+	const seasonTypes: Readonly<PlayerSeasonType[]> =
+		typeof seasonType === "string" ? [seasonType] : seasonType;
+
+	return {
+		season,
+		seasonRange,
+		tid,
+		attrs,
+		ratings,
+		stats,
+		playoffs: seasonTypes.includes("playoffs"),
+		regularSeason: seasonTypes.includes("regularSeason"),
+		combined: seasonTypes.includes("combined"),
+		singleSeasonType: typeof seasonType === "string",
+		showNoStats,
+		showRookies,
+		showDraftProspectRookieRatings,
+		showRetired,
+		fuzz,
+		oldStats,
+		numGamesRemaining,
+		statType,
+		mergeStats,
+	};
+};
+
+// Which abbrevs formatting needs to look up from team seasons
+const getAbbrevsNeeded = ({
+	attrs,
+	ratings,
+	stats,
+}: PlayerFormatOptionsRequired) => {
+	const draft = attrs.includes("draft");
+	const latestTransaction = attrs.includes("latestTransaction");
+
+	// Ratings uses the tid from stats, so have ratings and stats both trigger a stats check
+	const stats2 = ratings.includes("abbrev") || stats.includes("abbrev");
+
+	return {
+		any: draft || latestTransaction || stats2,
+		draft,
+		latestTransaction,
+		stats: stats2,
+	};
+};
+
 /**
  * Retrieve a filtered copy of a player object, or an array of filtered player objects.
  *
@@ -1379,73 +1475,24 @@ export const formatAll = async <Options extends PlayerFormatOptions>(
 	optionsInput: Options &
 		Record<Exclude<keyof Options, keyof PlayerFormatOptions>, never>,
 ): Promise<PlayerFiltered<Options>[]> => {
-	const {
-		season,
-		seasonRange,
-		tid,
-		attrs = [],
-		ratings = [],
-		stats = [],
-		seasonType = "regularSeason",
-		showNoStats = false,
-		showRookies = false,
-		showRetired = false,
-		showDraftProspectRookieRatings = false,
-		fuzz = false,
-		oldStats = false,
-		numGamesRemaining = 0,
-		statType = "perGame",
-		mergeStats = "none",
-		disableAbbrevsCacheDatabaseAccess = false,
-	}: PlayerFormatOptions = optionsInput;
-
-	if (mergeStats === "totAndTeams" && season !== undefined) {
-		throw new Error(
-			"mergeStats totAndTeams is not supported for individual seasons",
-		);
-	}
-
-	const seasonTypes: Readonly<PlayerSeasonType[]> =
-		typeof seasonType === "string" ? [seasonType] : seasonType;
-
-	const options: PlayerFormatOptionsRequired = {
-		season,
-		seasonRange,
-		tid,
-		attrs,
-		ratings,
-		stats,
-		playoffs: seasonTypes.includes("playoffs"),
-		regularSeason: seasonTypes.includes("regularSeason"),
-		combined: seasonTypes.includes("combined"),
-		singleSeasonType: typeof seasonType === "string",
-		showNoStats,
-		showRookies,
-		showDraftProspectRookieRatings,
-		showRetired,
-		fuzz,
-		oldStats,
-		numGamesRemaining,
-		statType,
-		mergeStats,
-	};
+	const options = normalizeOptions(optionsInput);
+	const { season, seasonRange, tid } = options;
 
 	// Preload any abbrevs we need for past seasons, so we don't need to make all functions async and do it on demand
 	let abbrevsCache: AbbrevsCache | undefined;
-	const hasDraft = attrs.includes("draft");
-	const hasLatestTransaction = attrs.includes("latestTransaction");
-	const hasRatings = ratings.includes("abbrev");
-	const hasStats = stats.includes("abbrev");
-	if (hasDraft || hasLatestTransaction || hasRatings || hasStats) {
-		abbrevsCache = new AbbrevsCache(disableAbbrevsCacheDatabaseAccess);
+	const abbrevsNeeded = getAbbrevsNeeded(options);
+	if (abbrevsNeeded.any) {
+		abbrevsCache = new AbbrevsCache(
+			optionsInput.disableAbbrevsCacheDatabaseAccess ?? false,
+		);
 		for (const p of players) {
-			if (hasDraft) {
+			if (abbrevsNeeded.draft) {
 				for (const tid of [p.draft.tid, p.draft.originalTid]) {
 					abbrevsCache.add(p.draft.year, tid);
 				}
 			}
 
-			if (hasLatestTransaction) {
+			if (abbrevsNeeded.latestTransaction) {
 				const transaction = getLatestTransaction(p.transactions, season, tid);
 				if (
 					transaction &&
@@ -1455,8 +1502,7 @@ export const formatAll = async <Options extends PlayerFormatOptions>(
 				}
 			}
 
-			// Ratings uses the tid from stats, so have ratings and stats both trigger a stats check
-			if (hasRatings || hasStats) {
+			if (abbrevsNeeded.stats) {
 				for (const row of p.stats) {
 					if (
 						(season === undefined || season === row.season) &&
@@ -1475,6 +1521,28 @@ export const formatAll = async <Options extends PlayerFormatOptions>(
 	return players
 		.map((p) => processPlayer(p, options, abbrevsCache))
 		.filter((p) => p !== undefined);
+};
+
+// Like formatAll, but rather than formatting an array of players, this returns a synchronous function that formats one player. That can be used in the map function of idb.merged getAll, so all the full player objects are never held in memory at once. Since the players are not known ahead of time, this loads abbrevs for every team season (or every team in options.season, if that's the only season abbrevs are needed for), rather than just the ones for these players.
+export const getFormatter = async <Options extends PlayerFormatOptions>(
+	optionsInput: Options &
+		Record<Exclude<keyof Options, keyof PlayerFormatOptions>, never>,
+) => {
+	const options = normalizeOptions(optionsInput);
+
+	let abbrevsCache: AbbrevsCache | undefined;
+	const abbrevsNeeded = getAbbrevsNeeded(options);
+	if (abbrevsNeeded.any) {
+		abbrevsCache = new AbbrevsCache(false);
+
+		// Draft and latest transaction abbrevs can be from any season
+		const onlyOneSeason =
+			!abbrevsNeeded.draft && !abbrevsNeeded.latestTransaction;
+		await abbrevsCache.loadAll(onlyOneSeason ? options.season : undefined);
+	}
+
+	return (p: Player): PlayerFiltered<Options> | undefined =>
+		processPlayer(p, options, abbrevsCache);
 };
 
 // Like formatAll, but for a single player. Returns undefined if the player is filtered out by the options.

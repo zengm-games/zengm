@@ -130,7 +130,7 @@ export default defineView({
 				tid = undefined;
 			}
 
-			// Applied while reading players, so players who won't be shown are not all held in memory. For a team, this keeps anyone with any stats for that team, and player.formatAll does the exact filtering.
+			// Applied while reading players, so players who won't be shown are not all held in memory. For a team, this keeps anyone with any stats for that team, and formatting does the exact filtering.
 			let filter: ((p: Player) => boolean) | undefined;
 			if (tid !== undefined) {
 				const season = inputs.season;
@@ -145,29 +145,6 @@ export default defineView({
 			} else if (inputs.abbrev === "playoffs") {
 				const playoffTids = await getActivePlayoffTids();
 				filter = (p) => playoffTids.has(p.tid);
-			}
-
-			let playersAll;
-			if (
-				g.get("season") === inputs.season &&
-				g.get("phase") <= PHASE.PLAYOFFS
-			) {
-				playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-					PLAYER.FREE_AGENT,
-					Infinity,
-				]);
-				if (filter) {
-					playersAll = playersAll.filter(filter);
-				}
-			} else {
-				let selector: PlayersSelector | undefined;
-				if (typeof inputs.season === "number") {
-					selector = { activeSeason: inputs.season };
-				} else if (inputs.abbrev === "watch") {
-					// Only read players on the watch list, rather than all players
-					selector = { watch: true };
-				}
-				playersAll = await idb.merged.players.getAll(selector, { filter });
 			}
 
 			let statType: PlayerStatType;
@@ -206,52 +183,109 @@ export default defineView({
 				mergeStats: "totOnly",
 			} as const;
 
+			// Reads players and turns each one into rows, using getRows to format the player. This runs while reading players, so the full player objects are not all held in memory at once.
+			const readRows = async <Row>(getRows: (p: Player) => Row[]) => {
+				if (
+					g.get("season") === inputs.season &&
+					g.get("phase") <= PHASE.PLAYOFFS
+				) {
+					let playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+						PLAYER.FREE_AGENT,
+						Infinity,
+					]);
+					if (filter) {
+						playersAll = playersAll.filter(filter);
+					}
+					return playersAll.flatMap(getRows);
+				}
+
+				let selector: PlayersSelector | undefined;
+				if (typeof inputs.season === "number") {
+					selector = { activeSeason: inputs.season };
+				} else if (inputs.abbrev === "watch") {
+					// Only read players on the watch list, rather than all players
+					selector = { watch: true };
+				}
+
+				const rowsByPlayer = await idb.merged.players.getAll(selector, {
+					filter,
+					map: getRows,
+				});
+				const rows: Row[] = [];
+				for (const playerRows of rowsByPlayer) {
+					rows.push(...playerRows);
+				}
+				return rows;
+			};
+
 			// Normalize to one row per player (or per player season, for "all") with a single stats row, regardless of inputs.season
 			let rows;
 			if (typeof inputs.season === "number") {
-				const players = await player.formatAll(playersAll, {
+				const formatPlayer = await player.getFormatter({
 					...formatOptions,
 					season: inputs.season,
 				});
-				rows = players.map(({ ratings, ...p }) => ({
-					...p,
-					pos: ratings.pos,
-					skills: ratings.skills,
-				}));
+				rows = await readRows((pRaw) => {
+					const p = formatPlayer(pRaw);
+					if (!p) {
+						return [];
+					}
+
+					const { ratings, ...pRest } = p;
+					return [
+						{
+							...pRest,
+							pos: ratings.pos,
+							skills: ratings.skills,
+						},
+					];
+				});
 			} else {
-				const players = await player.formatAll(playersAll, formatOptions);
+				const formatPlayer = await player.getFormatter(formatOptions);
 
 				if (inputs.season === "all") {
-					rows = players.flatMap(
-						({
+					rows = await readRows((pRaw) => {
+						const p = formatPlayer(pRaw);
+						if (!p) {
+							return [];
+						}
+
+						const {
 							careerStats,
 							careerStatsPlayoffs,
 							careerStatsCombined,
 							ratings: allRatings,
 							stats: allStats,
-							...p
-						}) =>
-							allStats.map((stats) => {
-								const ratings =
-									allRatings.find((pr) => pr.season === stats.season) ??
-									last(allRatings);
+							...pRest
+						} = p;
+						return allStats.map((stats) => {
+							const ratings =
+								allRatings.find((pr) => pr.season === stats.season) ??
+								last(allRatings);
 
-								return {
-									...p,
-									pos: ratings.pos,
-									skills: ratings.skills,
-									stats,
-								};
-							}),
-					);
+							return {
+								...pRest,
+								pos: ratings.pos,
+								skills: ratings.skills,
+								stats,
+							};
+						});
+					});
 				} else {
-					rows = [];
-					for (const {
-						careerStats,
-						careerStatsPlayoffs,
-						careerStatsCombined,
-						...p
-					} of players) {
+					rows = await readRows((pRaw) => {
+						const p = formatPlayer(pRaw);
+						if (!p) {
+							return [];
+						}
+
+						const {
+							careerStats,
+							careerStatsPlayoffs,
+							careerStatsCombined,
+							ratings,
+							stats: allStats,
+							...pRest
+						} = p;
 						const stats =
 							inputs.playoffs === "playoffs"
 								? careerStatsPlayoffs
@@ -259,18 +293,18 @@ export default defineView({
 									? careerStatsCombined
 									: careerStats;
 						if (!stats) {
-							continue;
+							return [];
 						}
 
-						const { ratings, stats: allStats, ...pRest } = p;
-
-						rows.push({
-							...pRest,
-							pos: getBestPos({ ratings, stats: allStats }, tid),
-							skills: undefined,
-							stats,
-						});
-					}
+						return [
+							{
+								...pRest,
+								pos: getBestPos({ ratings, stats: allStats }, tid),
+								skills: undefined,
+								stats,
+							},
+						];
+					});
 				}
 			}
 

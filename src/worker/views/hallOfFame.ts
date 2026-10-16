@@ -38,43 +38,57 @@ export default defineView({
 				football: ["keyStats", "av"],
 				hockey: ["keyStats", "ops", "dps", "ps"],
 			} as const);
-			const playersAll = await idb.merged.players.getAll({ hof: true });
+			const formatOptions = {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"draft",
+					"retiredYear",
+					"statsTids",
+					"awards",
+				],
+				ratings: ["season", "ovr", "pos"],
+				stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
+				fuzz: true,
+			} as const;
+			const abbrevs = await player.loadAbbrevs(formatOptions);
+			const formatPlayer = player.createFormatter(formatOptions, abbrevs);
+
 			const players = (
-				await player.formatAll(playersAll, {
-					attrs: [
-						"pid",
-						"firstName",
-						"lastName",
-						"draft",
-						"retiredYear",
-						"statsTids",
-						"awards",
-					],
-					ratings: ["season", "ovr", "pos"],
-					stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
-					fuzz: true,
-				})
-			).map(({ awards, ...p }) => {
-				let countMvp = 0;
-				let countTitles = 0;
-				for (const award of awards) {
-					if (
-						award.type === undefined &&
-						award.numTeams === undefined &&
-						award.actAs === "mvp" &&
-						award.rank === 1
-					) {
-						countMvp += 1;
-					} else if (award.type === "Won Championship") {
-						countTitles += 1;
-					}
-				}
-				return {
-					...p,
-					countMvp,
-					countTitles,
-				};
-			});
+				await idb.merged.players.getAll(
+					{ hof: true },
+					{
+						map: (pRaw) => {
+							const pFormatted = formatPlayer(pRaw);
+							if (!pFormatted) {
+								return;
+							}
+
+							const { awards, ...p } = pFormatted;
+							let countMvp = 0;
+							let countTitles = 0;
+							for (const award of awards) {
+								if (
+									award.type === undefined &&
+									award.numTeams === undefined &&
+									award.actAs === "mvp" &&
+									award.rank === 1
+								) {
+									countMvp += 1;
+								} else if (award.type === "Won Championship") {
+									countTitles += 1;
+								}
+							}
+							return {
+								...p,
+								countMvp,
+								countTitles,
+							};
+						},
+					},
+				)
+			).filter((p) => p !== undefined);
 
 			return {
 				players: addFirstNameShort(processPlayersHallOfFame(players)),

@@ -9,6 +9,7 @@ import type {
 	PlayerStatAttr,
 	PlayerStatType,
 	PlayerFormatOptions,
+	TeamSeason,
 } from "../../../common/types.ts";
 import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball.ts";
 import { idb } from "../../db/index.ts";
@@ -134,6 +135,15 @@ class AbbrevsCache {
 				map: (ts) => ({ season: ts.season, tid: ts.tid, abbrev: ts.abbrev }),
 			},
 		);
+		this.loadFromRows(rows);
+	}
+
+	// Instead of add and load, use abbrevs from team seasons that were already read
+	loadFromRows(rows: Pick<TeamSeason, "abbrev" | "season" | "tid">[]) {
+		if (this.state !== "init" && this.state !== "loading") {
+			throw new Error("Cannot call loadFromRows after load");
+		}
+
 		for (const row of rows) {
 			const abbrevsByTid = this.data.getOrInsert(row.season, new Map());
 			abbrevsByTid.set(row.tid, row.abbrev);
@@ -1517,6 +1527,15 @@ export const loadAbbrevs = async (optionsInput: PlayerFormatOptions) => {
 
 	const abbrevsCache = new AbbrevsCache();
 	await abbrevsCache.loadAll(onlyOneSeason ? options.season : undefined);
+	return abbrevsCache;
+};
+
+// Like loadAbbrevs, but using team seasons that were already read, for when those are the only team seasons formatting will need abbrevs for. Abbrevs for any other team season fall back to the team's current abbrev.
+export const abbrevsFromTeamSeasons = (
+	teamSeasons: Pick<TeamSeason, "abbrev" | "season" | "tid">[],
+) => {
+	const abbrevsCache = new AbbrevsCache();
+	abbrevsCache.loadFromRows(teamSeasons);
 	return abbrevsCache;
 };
 

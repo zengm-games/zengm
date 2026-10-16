@@ -10,7 +10,13 @@ import checkStatisticalFeat from "./checkStatisticalFeat.ts";
 import compositeRating from "./compositeRating.ts";
 import contractSeasonsRemaining from "./contractSeasonsRemaining.ts";
 import develop from "./develop.ts";
-import { createFormatter, format, formatAll, loadAbbrevs } from "./format.ts";
+import {
+	abbrevsFromTeamSeasons,
+	createFormatter,
+	format,
+	formatAll,
+	loadAbbrevs,
+} from "./format.ts";
 import fuzzRating from "./fuzzRating.ts";
 import fuzzOvrs from "./fuzzOvrs.ts";
 import genContract from "./genContract.ts";
@@ -49,6 +55,7 @@ import valueCombineOvrPot from "./valueCombineOvrPot.ts";
 export default {
 	addAward,
 	addRatingsRow,
+	abbrevsFromTeamSeasons,
 	addRelatives,
 	addStatsRow,
 	addToFreeAgents,

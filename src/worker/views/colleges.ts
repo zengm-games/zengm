@@ -138,39 +138,40 @@ export const genView = (
 				} as const);
 
 				const infosTemp: { [key: string]: InfoTemp } = {};
-				for await (const { value: p } of idb.league.transaction("players")
-					.store) {
+				await idb.merged.players.forEach(undefined, (p) => {
 					reducer(type, infosTemp, p);
-				}
+				});
 
-				const infosWithPlayer = (
-					await Promise.all(
-						Object.entries(infosTemp).map(async ([name, info]) => {
-							const p = await player.format(info.best.p, {
-								attrs: [
-									"pid",
-									"firstName",
-									"lastName",
-									"draft",
-									"retiredYear",
-									"statsTids",
-									"hof",
-									"jerseyNumber",
-								],
-								ratings: ["season", "ovr", "pos"],
-								stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
-								fuzz: true,
-							});
+				const formatOptions = {
+					attrs: [
+						"pid",
+						"firstName",
+						"lastName",
+						"draft",
+						"retiredYear",
+						"statsTids",
+						"hof",
+						"jerseyNumber",
+					],
+					ratings: ["season", "ovr", "pos"],
+					stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
+					fuzz: true,
+				} as const;
+				const abbrevs = await player.loadAbbrevs(formatOptions);
+				const formatPlayer = player.createFormatter(formatOptions, abbrevs);
 
-							// Should never happen, since there's no season or seasonRange and every player has ratings
-							if (!p) {
-								return;
-							}
+				const infosWithPlayer = Object.entries(infosTemp)
+					.map(([name, info]) => {
+						const p = formatPlayer(info.best.p);
 
-							return { name, info, p };
-						}),
-					)
-				).filter((row) => row !== undefined);
+						// Should never happen, since there's no season or seasonRange and every player has ratings
+						if (!p) {
+							return;
+						}
+
+						return { name, info, p };
+					})
+					.filter((row) => row !== undefined);
 
 				const retiredCounts: Record<string, number> = {};
 				if (type === "jerseyNumbers") {

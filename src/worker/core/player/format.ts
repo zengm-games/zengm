@@ -1503,42 +1503,30 @@ export const formatAll = async <Options extends PlayerFormatOptions>(
 		.filter((p) => p !== undefined);
 };
 
-// Abbrevs for every team season, or every team in one season, for getFormatter and createFormatter
-export const loadAbbrevs = async (season: number | undefined) => {
+// Loads the abbrevs that formatting with these options might need, for createFormatter. Since the players are not known ahead of time, this loads abbrevs for every team season (or every team in options.season, if that's the only season abbrevs are needed for), rather than just the ones for specific players.
+export const loadAbbrevs = async (optionsInput: PlayerFormatOptions) => {
+	const options = normalizeOptions(optionsInput);
+	const abbrevsNeeded = getAbbrevsNeeded(options);
+	if (!abbrevsNeeded.any) {
+		return;
+	}
+
+	// Draft and latest transaction abbrevs can be from any season
+	const onlyOneSeason =
+		!abbrevsNeeded.draft && !abbrevsNeeded.latestTransaction;
+
 	const abbrevsCache = new AbbrevsCache();
-	await abbrevsCache.loadAll(season);
+	await abbrevsCache.loadAll(onlyOneSeason ? options.season : undefined);
 	return abbrevsCache;
 };
 
-// Like getFormatter, but synchronous, using abbrevs that were already loaded by loadAbbrevs. This is for when you need formatters for several different options, like for different seasons, without loading abbrevs again for each one. abbrevsCache needs to include any season that will be formatted.
+// Like formatAll, but rather than formatting an array of players, this returns a synchronous function that formats one player. That can be used in the map function of idb.merged getAll, so all the full player objects are never held in memory at once. abbrevsCache comes from loadAbbrevs, and it can be shared between formatters (like for different seasons) if it was loaded with options that need abbrevs for every season these formatters will use.
 export const createFormatter = <Options extends PlayerFormatOptions>(
 	optionsInput: Options &
 		Record<Exclude<keyof Options, keyof PlayerFormatOptions>, never>,
-	abbrevsCache: AbbrevsCache,
+	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	const options = normalizeOptions(optionsInput);
-
-	return (p: Player): PlayerFiltered<Options> | undefined =>
-		processPlayer(p, options, abbrevsCache);
-};
-
-// Like formatAll, but rather than formatting an array of players, this returns a synchronous function that formats one player. That can be used in the map function of idb.merged getAll, so all the full player objects are never held in memory at once. Since the players are not known ahead of time, this loads abbrevs for every team season (or every team in options.season, if that's the only season abbrevs are needed for), rather than just the ones for these players.
-export const getFormatter = async <Options extends PlayerFormatOptions>(
-	optionsInput: Options &
-		Record<Exclude<keyof Options, keyof PlayerFormatOptions>, never>,
-) => {
-	const options = normalizeOptions(optionsInput);
-
-	let abbrevsCache: AbbrevsCache | undefined;
-	const abbrevsNeeded = getAbbrevsNeeded(options);
-	if (abbrevsNeeded.any) {
-		// Draft and latest transaction abbrevs can be from any season
-		const onlyOneSeason =
-			!abbrevsNeeded.draft && !abbrevsNeeded.latestTransaction;
-		abbrevsCache = await loadAbbrevs(
-			onlyOneSeason ? options.season : undefined,
-		);
-	}
 
 	return (p: Player): PlayerFiltered<Options> | undefined =>
 		processPlayer(p, options, abbrevsCache);

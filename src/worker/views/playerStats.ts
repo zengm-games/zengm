@@ -221,10 +221,15 @@ export default defineView({
 			// Normalize to one row per player (or per player season, for "all") with a single stats row, regardless of inputs.season
 			let rows;
 			if (typeof inputs.season === "number") {
-				const formatPlayer = await player.getFormatter({
+				const seasonFormatOptions = {
 					...formatOptions,
 					season: inputs.season,
-				});
+				};
+				const abbrevs = await player.loadAbbrevs(seasonFormatOptions);
+				const formatPlayer = player.createFormatter(
+					seasonFormatOptions,
+					abbrevs,
+				);
 				rows = await readRows((pRaw) => {
 					const p = formatPlayer(pRaw);
 					if (!p) {
@@ -241,7 +246,8 @@ export default defineView({
 					];
 				});
 			} else {
-				const formatPlayer = await player.getFormatter(formatOptions);
+				const abbrevs = await player.loadAbbrevs(formatOptions);
+				const formatPlayer = player.createFormatter(formatOptions, abbrevs);
 
 				if (inputs.season === "all") {
 					rows = await readRows((pRaw) => {

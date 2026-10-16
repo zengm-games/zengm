@@ -810,23 +810,24 @@ export default defineView({
 			] as const;
 			const allStats = ["abbrev", "tid", ...stats, ...extraStats] as const;
 
-			// Load abbrevs ahead of time, so there is no database access while iterating over players, which would make the IndexedDB transaction auto commit
+			const careerFormatOptions = {
+				attrs,
+				// season and ovr only needed for bestPos
+				ratings: ["season", "ovr", "skills", "pos"],
+				stats: allStats,
+				seasonType: inputs.playoffs,
+				mergeStats: "totOnly",
+				statType: inputs.statType,
+			} as const;
+
+			// Load abbrevs ahead of time, so there is no database access while iterating over players, which would make the IndexedDB transaction auto commit. For a single season, only load abbrevs for that season. Otherwise, the career options (with no season) load abbrevs for every season, which are shared by the career formatter and all the single season formatters.
 			const abbrevs = await player.loadAbbrevs(
-				typeof inputs.season === "number" ? inputs.season : undefined,
+				typeof inputs.season === "number"
+					? { ...careerFormatOptions, season: inputs.season }
+					: careerFormatOptions,
 			);
 
-			const formatCareer = player.createFormatter(
-				{
-					attrs,
-					// season and ovr only needed for bestPos
-					ratings: ["season", "ovr", "skills", "pos"],
-					stats: allStats,
-					seasonType: inputs.playoffs,
-					mergeStats: "totOnly",
-					statType: inputs.statType,
-				},
-				abbrevs,
-			);
+			const formatCareer = player.createFormatter(careerFormatOptions, abbrevs);
 
 			const createSeasonFormatter = (season: number) =>
 				player.createFormatter(

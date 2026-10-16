@@ -1,11 +1,12 @@
 import {
-	PHASE,
-	PLAYER,
 	PLAYER_STATS_TABLES,
 	getPlayerStatsTableStats,
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
-import type { PlayersSelector } from "../db/merged/players.ts";
+import {
+	getActiveSeasonSelector,
+	type PlayersSelector,
+} from "../db/merged/players.ts";
 import { g, helpers } from "../util/index.ts";
 import type { Player, PlayerStatType } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
@@ -185,23 +186,9 @@ export default defineView({
 
 			// Reads players and turns each one into rows, using getRows to format the player. This runs while reading players, so the full player objects are not all held in memory at once.
 			const readRows = async <Row>(getRows: (p: Player) => Row[]) => {
-				if (
-					g.get("season") === inputs.season &&
-					g.get("phase") <= PHASE.PLAYOFFS
-				) {
-					let playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-						PLAYER.FREE_AGENT,
-						Infinity,
-					]);
-					if (filter) {
-						playersAll = playersAll.filter(filter);
-					}
-					return playersAll.flatMap(getRows);
-				}
-
 				let selector: PlayersSelector | undefined;
 				if (typeof inputs.season === "number") {
-					selector = { activeSeason: inputs.season };
+					selector = getActiveSeasonSelector(inputs.season);
 				} else if (inputs.abbrev === "watch") {
 					// Only read players on the watch list, rather than all players
 					selector = { watch: true };

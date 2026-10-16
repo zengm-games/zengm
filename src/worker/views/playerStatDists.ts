@@ -1,10 +1,9 @@
 import {
 	getPlayerStatsTableStats,
-	PHASE,
-	PLAYER,
 	PLAYER_STATS_TABLES,
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
+import { getActiveSeasonSelector } from "../db/merged/players.ts";
 import { g } from "../util/index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
@@ -38,21 +37,9 @@ export default defineView({
 			inputs.season !== prevInputs?.season ||
 			inputs.statType !== prevInputs?.statType
 		) {
-			let players;
-
-			if (
-				g.get("season") === inputs.season &&
-				g.get("phase") <= PHASE.PLAYOFFS
-			) {
-				players = await idb.cache.players.indexGetAll("playersByTid", [
-					PLAYER.FREE_AGENT,
-					Infinity,
-				]);
-			} else {
-				players = await idb.merged.players.getAll({
-					activeSeason: inputs.season,
-				});
-			}
+			const playersRaw = await idb.merged.players.getAll(
+				getActiveSeasonSelector(inputs.season),
+			);
 
 			let stats = undefined;
 			let statType: PlayerStatType = "perGame";
@@ -80,7 +67,7 @@ export default defineView({
 				}
 			}
 
-			players = await player.formatAll(players, {
+			let players = await player.formatAll(playersRaw, {
 				ratings: ["skills"],
 				stats: getPlayerStatsTableStats(stats),
 				season: inputs.season,

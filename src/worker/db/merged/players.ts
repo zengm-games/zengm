@@ -1,5 +1,5 @@
 import type { IDBPDatabase } from "@dumbmatter/idb";
-import { PLAYER } from "../../../common/constants.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import type { Player } from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 import type { LeagueDB } from "../connectLeague.ts";
@@ -21,6 +21,15 @@ export type PlayersSelector = Exclusive<
 	| { note: true }
 	| { watch: true }
 >;
+
+// Players who were active in a season. For the current season during the regular season or playoffs, this reads non-retired players from the cache, which is faster than the activeSeason selector but misses anyone who retired during the season (like from a tragic death) and is no longer in the cache.
+export const getActiveSeasonSelector = (season: number): PlayersSelector => {
+	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
+		return { tid: [PLAYER.FREE_AGENT, Infinity] };
+	}
+
+	return { activeSeason: season };
+};
 
 async function* activeSeasonFromDb(
 	league: IDBPDatabase<LeagueDB>,

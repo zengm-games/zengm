@@ -1,11 +1,11 @@
 import {
-	PHASE,
 	PLAYER,
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	getPlayerStatsTableStats,
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
+import { getActiveSeasonSelector } from "../db/merged/players.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
 import { POS_NUMBERS } from "../../common/constants.baseball.ts";
@@ -163,15 +163,9 @@ const getPlayerStats = async (
 			})
 		).filter((row) => row !== undefined);
 	} else {
-		let playersAll;
-		if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-			playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				Infinity,
-			]);
-		} else {
-			playersAll = await idb.merged.players.getAll({ activeSeason: season });
-		}
+		const playersAll = await idb.merged.players.getAll(
+			getActiveSeasonSelector(season),
+		);
 
 		const playersRaw = await player.formatAll(playersAll, {
 			...formatOptions,

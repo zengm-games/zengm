@@ -12,9 +12,9 @@ import getLeaderRequirements, {
 	getLeaderRequirementsStats,
 } from "../season/getLeaderRequirements.ts";
 import { idb } from "../../db/index.ts";
+import { getActiveSeasonSelector } from "../../db/merged/players.ts";
 import {
 	PHASE,
-	PLAYER,
 	PLAYER_STATS_TABLES,
 	getPlayerStatsTableStats,
 } from "../../../common/constants.ts";
@@ -347,15 +347,9 @@ export const getPlayers = async (
 	statOverridesByMatchup: StatOverridesByMatchup | undefined,
 	variables: FormulaEvaluators["variables"] | undefined,
 ) => {
-	let playersAll;
-	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-	} else {
-		playersAll = await idb.merged.players.getAll({ activeSeason: season });
-	}
+	const playersAll = await idb.merged.players.getAll(
+		getActiveSeasonSelector(season),
+	);
 
 	const players = await getProcessedPlayers(
 		playersAll,

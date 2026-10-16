@@ -1,5 +1,6 @@
-import { PHASE, PLAYER, RATINGS } from "../../common/constants.ts";
+import { RATINGS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
+import { getActiveSeasonSelector } from "../db/merged/players.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -16,21 +17,9 @@ export default defineView({
 				(updateEvents.has("gameSim") || updateEvents.has("playerMovement"))) ||
 			inputs.season !== prevInputs?.season
 		) {
-			let playersRaw;
-
-			if (
-				g.get("season") === inputs.season &&
-				g.get("phase") <= PHASE.PLAYOFFS
-			) {
-				playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-					PLAYER.FREE_AGENT,
-					Infinity,
-				]);
-			} else {
-				playersRaw = await idb.merged.players.getAll({
-					activeSeason: inputs.season,
-				});
-			}
+			const playersRaw = await idb.merged.players.getAll(
+				getActiveSeasonSelector(inputs.season),
+			);
 
 			const extraRatings = bySport({
 				baseball: ["ovrs", "pots"],

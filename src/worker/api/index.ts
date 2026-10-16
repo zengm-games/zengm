@@ -37,6 +37,7 @@ import {
 	season,
 } from "../core/index.ts";
 import { idb } from "../db/index.ts";
+import { getActiveSeasonSelector } from "../db/merged/players.ts";
 import {
 	achievement,
 	g,
@@ -1538,19 +1539,12 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		return rows;
 	};
 
-	let rowsByPlayer;
-	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		const players = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-		rowsByPlayer = players.map(getRows);
-	} else {
-		rowsByPlayer = await idb.merged.players.getAll(
-			season === "all" ? { activeAndRetired: true } : { activeSeason: season },
-			{ map: getRows },
-		);
-	}
+	const rowsByPlayer = await idb.merged.players.getAll(
+		season === "all"
+			? { activeAndRetired: true }
+			: getActiveSeasonSelector(season),
+		{ map: getRows },
+	);
 
 	// Group rows by season
 	const rowsBySeason = new Map<number, any[][]>();

@@ -1,6 +1,7 @@
 import { g, helpers } from "../../../worker/util/index.ts";
 import type { GamePlayer } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
+import { NUM_OUTS_PER_INNING } from "../../../common/constants.baseball.ts";
 
 const checkStatisticalFeat = (p: GamePlayer, teamStat: { e: number[] }) => {
 	const minFactor = helpers.quarterLengthFactor();
@@ -57,7 +58,11 @@ const checkStatisticalFeat = (p: GamePlayer, teamStat: { e: number[] }) => {
 		score += p.stat.soPit >= TWENTY ? 20 : 10;
 	}
 
-	const noHitter = p.stat.cg > 0 && p.stat.sho > 0 && p.stat.hPit === 0;
+	// Runs can score in a no-hitter, but it has to last the full game, so a road pitcher losing after 8 innings doesn't count
+	const noHitter =
+		p.stat.cg > 0 &&
+		p.stat.outs >= NUM_OUTS_PER_INNING * g.get("numPeriods") &&
+		p.stat.hPit === 0;
 	const teamErrors = helpers.sum(teamStat.e);
 	const perfectGame =
 		noHitter && p.stat.bbPit === 0 && p.stat.hbpPit === 0 && teamErrors === 0;

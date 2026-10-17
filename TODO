@@ -318,8 +318,7 @@ global untouchable players (persist over reloads and multiple features, like tra
 - what happens if we click "trade for" or "trade away" on one?
 
 sentry
-- https://docs.sentry.io/platforms/javascript/configuration/filtering/#using-thirdpartyerrorfilterintegration
-- one project per sport?
+- see sentry2 branch, kind of sucks
 
 catchers with strong arms never have people try stealing, maybe https://discord.com/channels/290013534023057409/944392892905037885/1441779272048971828 can fix it
 - better https://discord.com/channels/290013534023057409/1519340010489512026/1519340010489512026

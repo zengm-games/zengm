@@ -23,7 +23,16 @@ const client = Sentry.init({
 
 		return event;
 	},
-	integrations: [
+	integrations: (defaultIntegrations) => [
+		// Disable BrowserApiErrors because it breaks thirdPartyErrorFilterIntegration. BrowserApiErrors wraps every event listener and timer on the page, including ones added by ad scripts, so errors thrown by ad code get a frame from our bundle (Sentry's wrapper function) at the bottom of the stack trace, and then thirdPartyErrorFilterIntegration keeps them. The ignoreSentryInternalFrames option is supposed to skip that frame, but it only recognizes a function named exactly "sentryWrapped" or (for minified code) a name of 2 characters or less. For event listeners, Chrome prefixes the receiver, like "HTMLDocument.r", so neither check matches, whatever the minifier names it.
+		//
+		// Without BrowserApiErrors, errors are still reported through window.onerror by the GlobalHandlers integration, with full stack traces for our code since it's served from the same origin. Errors from cross origin ad scripts become "Script error." with no stack, which Sentry ignores by default.
+		//
+		// See also https://github.com/getsentry/sentry-javascript/issues/13835#issuecomment-3701313236
+		...defaultIntegrations.filter(
+			(integration) => integration.name !== "BrowserApiErrors",
+		),
+
 		// Ignore request breadcrumbs because it's almost all just header bidding noise
 		Sentry.breadcrumbsIntegration({
 			fetch: false,
@@ -34,7 +43,6 @@ const client = Sentry.init({
 		Sentry.thirdPartyErrorFilterIntegration({
 			filterKeys: [APPLICATION_KEY],
 			behaviour: "drop-error-if-exclusively-contains-third-party-frames",
-			ignoreSentryInternalFrames: true,
 		}),
 	],
 });

@@ -15,14 +15,17 @@ export default defineView({
 			const events = await idb.merged.events.getAll(undefined, {
 				filter: (event) => event.type === "tragedy",
 			});
-			const pids: number[] = [];
+			const eventsByPid = new Map<number, (typeof events)[number]>();
 
 			for (const event of events) {
-				// if would not be necessary if EventBBGM was typed better! See check below too.
+				// if would not be necessary if EventBBGM was typed better!
 				if (event.pids) {
-					pids.push(...event.pids);
+					for (const pid of event.pids) {
+						eventsByPid.set(pid, event);
+					}
 				}
 			}
+			const pids = Array.from(eventsByPid.keys());
 
 			const stats = bySport({
 				baseball: ["gp", "keyStats", "war"],
@@ -64,9 +67,7 @@ export default defineView({
 
 			const players2 = addFirstNameShort(processPlayersHallOfFame(players)).map(
 				(p) => {
-					const event = events.find(
-						(event2) => event2.pids && event2.pids.includes(p.pid),
-					);
+					const event = eventsByPid.get(p.pid);
 					const details =
 						event?.text !== undefined
 							? helpers.correctLinkLid(g.get("lid"), event.text)

@@ -134,7 +134,7 @@ const ovrByPosFactory = (
 			getTerms(pos, values, true, (coefficientsByPos[pos] ??= []));
 
 		if (__SPORT === "baseball") {
-			const sorted = players.slice().sort((a, b) => b.value - a.value);
+			const sorted = players.toSorted((a, b) => b.value - a.value);
 			const evaluate = (candidate?: Player) => {
 				const roster = candidate ? [...players, candidate] : players;
 				let orderedPlayers = sorted;

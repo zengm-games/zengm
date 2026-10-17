@@ -319,8 +319,7 @@ export default defineView({
 					"These are the players who played the most career games while never making the playoffs.";
 
 				filter = (p) =>
-					p.stats.length > 0 &&
-					p.stats.filter((ps) => ps.playoffs).length === 0;
+					p.stats.length > 0 && !p.stats.some((ps) => ps.playoffs);
 				getValue = (p) => {
 					let sum = 0;
 					for (const ps of p.stats) {

@@ -85,7 +85,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		...basketball.scheduledEventsTeams,
 	];
 
-	const hofSlugs = new Set();
+	const hofSlugs = new Set<string>();
 	let players;
 	if (options.type === "real") {
 		const { scheduledEvents, initialGameAttributes, initialTeams } =
@@ -701,7 +701,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				options.season < 2021 &&
 				!options.randomDebuts
 			) {
-				const nextSeasonSlugs = new Set();
+				const nextSeasonSlugs = new Set<string>();
 				for (const row of basketball.ratings) {
 					if (row.season === options.season + 1) {
 						nextSeasonSlugs.add(row.slug);

@@ -87,7 +87,7 @@ export const getRosterOrderByPid = (
 		}
 	}
 
-	const rosterOrders = new Map();
+	const rosterOrders = new Map<number, number>();
 
 	for (const [i, p] of newPlayers.entries()) {
 		rosterOrders.set(p.pid, i);

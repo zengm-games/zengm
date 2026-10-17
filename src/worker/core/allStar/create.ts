@@ -211,7 +211,7 @@ const create = async (conditions: Conditions) => {
 		allStarType = "top";
 	}
 
-	let healthyPids = new Set();
+	let healthyPids = new Set<number>();
 	let pickedAllStars = false;
 
 	const pickAllStars = (

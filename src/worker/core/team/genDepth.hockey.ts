@@ -251,7 +251,7 @@ const genDepth = async (
 					...sorted.filter((p) => !selected.includes(p)).map((p) => p.pid),
 				);
 			} else {
-				const playersUsed = new Set();
+				const playersUsed = new Set<PlayerForDepth>();
 
 				for (let i = 0; i < NUM_LINES[pos2]; i++) {
 					// Find a center

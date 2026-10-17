@@ -19,7 +19,7 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards) => {
 
 	const awards: GameAttributesLeague["awards"] = [];
 
-	const seenShortNames = new Set();
+	const seenShortNames = new Set<string>();
 
 	for (const persistedAward of persistedAwards.awards) {
 		// Store statOverrides first before ignoring repeated ones, so semifinals MVP statOverrides get saved for both awards

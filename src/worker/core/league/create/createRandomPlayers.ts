@@ -241,7 +241,7 @@ const createRandomPlayers = async ({
 	};
 
 	// Drafted players kept with own team, with some probability
-	const playersStayedOnOwnTeam = new Set();
+	const playersStayedOnOwnTeam = new Set<PlayerWithoutKey>();
 	for (let i = 0; i < numPlayerPerTeam * activeTids.length; i++) {
 		const p = keptPlayers[i]!;
 

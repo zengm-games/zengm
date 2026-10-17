@@ -227,7 +227,10 @@ const getSeasonInfoLeague = async ({
 						false,
 					);
 					for (const p of teamPlayers) {
-						p.rosterOrder = rosterOrderByPid.get(p.pid);
+						const rosterOrder = rosterOrderByPid.get(p.pid);
+						if (rosterOrder !== undefined) {
+							p.rosterOrder = rosterOrder;
+						}
 					}
 				}
 			}

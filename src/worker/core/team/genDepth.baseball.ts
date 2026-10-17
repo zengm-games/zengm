@@ -321,7 +321,7 @@ export const getDepthPitchers = (
 
 	const getTopByPos = (pos: "SP" | "RP", numToAdd: number) => {
 		const pids = [];
-		const indexes = new Set();
+		const indexes = new Set<number>();
 		const records = findMaxBy(playersRemaining, numToAdd, (p) => score(p, pos));
 		for (const record of records) {
 			pids.push(playersRemaining[record.index]!.pid);

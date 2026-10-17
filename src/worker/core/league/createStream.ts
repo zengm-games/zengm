@@ -680,8 +680,12 @@ const finalizeDBExceptPlayers = async ({
 	await Promise.all(promises);
 };
 
-const confirmSequential = (objs: any, key: string, objectName: string) => {
-	const values = new Set();
+const confirmSequential = <Key extends string>(
+	objs: Record<Key, unknown>[],
+	key: Key,
+	objectName: string,
+) => {
+	const values = new Set<number>();
 
 	for (const obj of objs) {
 		const value = obj[key];
@@ -700,8 +704,6 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 			);
 		}
 	}
-
-	return values;
 };
 
 const processTeamInfos = async ({
@@ -806,7 +808,7 @@ const processTeamInfos = async ({
 	const teamSeasons: TeamSeasonWithoutKey[] = [];
 	const teamStats: TeamStatsWithoutKey[] = [];
 
-	const teamSeasonUniqueKeys = new Set();
+	const teamSeasonUniqueKeys = new Set<string>();
 	const teamSeasonUniqueKeyErrorCounts: Record<string, number> = {};
 
 	let scoutingLevel: number | undefined;
@@ -1514,7 +1516,7 @@ const afterDBStream = async ({
 			});
 
 	// If players are specified for some team on import (from CustomizeTeams), replace the randomly generated players
-	const replaceTids = new Set();
+	const replaceTids = new Set<number>();
 	const extraActivePlayers: PlayerWithoutKey[] = [];
 	const draftPickAutoContract = g.get("draftPickAutoContract");
 	const rookieSalaries = draftPickAutoContract ? draft.getRookieSalaries() : [];

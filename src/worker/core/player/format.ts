@@ -400,7 +400,7 @@ const processAttrs = (
 				p.tid === PLAYER.RETIRED ? "mostCommon" : "current",
 			);
 		} else if (attr === "experience") {
-			const seasons = new Set();
+			const seasons = new Set<number>();
 			for (const row of p.stats) {
 				// gp is for real player data before minutes were tracked
 				const played = (row.min ?? 0) > 0 || (row.gp ?? 0) > 0;

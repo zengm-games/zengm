@@ -8,7 +8,7 @@ const addDaysToSchedule = (
 	}[],
 	existingGames?: Game[],
 ): ScheduleGameWithoutKey[] => {
-	const dayTids = new Set();
+	const dayTids = new Set<number>();
 	let prevDayAllStarGame = false;
 	let prevDayTradeDeadline = false;
 

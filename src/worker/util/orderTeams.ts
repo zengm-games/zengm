@@ -247,25 +247,18 @@ export const breakTies = <T extends BaseTeam>(
 		commonOpponentsInfo = {};
 
 		const addOpponentTids = (tid: number, set: Set<number>) => {
-			const tids: number[] = [];
-
-			for (const t2 of teams) {
-				const firstLevel = headToHead.regularSeason[t2.tid];
-				if (firstLevel) {
-					const tids = Object.keys(firstLevel).map((string) =>
-						Number.parseInt(string),
-					);
-					for (const tid2 of tids) {
-						if (tid2 === tid) {
-							set.add(t2.tid);
-						} else if (t2.tid === tid) {
-							set.add(tid2);
-						}
+			for (const [string, firstLevel] of Object.entries(
+				headToHead.regularSeason,
+			)) {
+				const tid2 = Number.parseInt(string);
+				if (tid2 === tid) {
+					for (const string2 of Object.keys(firstLevel)) {
+						set.add(Number.parseInt(string2));
 					}
+				} else if (firstLevel[tid]) {
+					set.add(tid2);
 				}
 			}
-
-			return tids;
 		};
 
 		// First, identify the common opponents shared by all of the teams

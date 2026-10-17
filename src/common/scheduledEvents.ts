@@ -13,14 +13,14 @@ type SeasonPhase = {
 };
 
 // Scheduled events are only processed after switching to one of these phases
-export const SCHEDULED_EVENT_PHASES = [
+const SCHEDULED_EVENT_PHASES = [
 	PHASE.PRESEASON,
 	PHASE.DRAFT_LOTTERY,
 	PHASE.FREE_AGENCY,
 ] satisfies Phase[];
 
 // An expansion draft can only happen in these phases
-export const SCHEDULED_EVENT_PHASES_EXPANSION_DRAFT = [
+const SCHEDULED_EVENT_PHASES_EXPANSION_DRAFT = [
 	PHASE.PRESEASON,
 	PHASE.DRAFT_LOTTERY,
 ] satisfies Phase[];
@@ -127,7 +127,7 @@ const TEAM_FIELDS = [
 	"stadiumCapacity",
 ] as const satisfies (keyof TeamFields)[];
 
-export type ScheduledEventsCurrentTeam = TeamFields & {
+type ScheduledEventsCurrentTeam = TeamFields & {
 	tid: number;
 	disabled?: boolean;
 };

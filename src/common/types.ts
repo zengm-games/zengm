@@ -465,7 +465,7 @@ export type ScheduledEventTeamInfo = {
 };
 
 // Changing conferences and divisions requires also specifying which division each team is in. Also there is no way to edit confs/divs from SettingsForm
-export type ScheduledEventConfsDivs = {
+type ScheduledEventConfsDivs = {
 	type: "confsDivs";
 	season: number;
 	phase: Phase;
@@ -482,7 +482,7 @@ export type ScheduledEventConfsDivs = {
 };
 
 // No way to edit awards from SettingsForm
-export type ScheduledEventAwards = {
+type ScheduledEventAwards = {
 	type: "awards";
 	season: number;
 	phase: Phase;

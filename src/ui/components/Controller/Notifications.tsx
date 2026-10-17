@@ -36,21 +36,24 @@ const Notification = ({
 			timeoutStart = Date.now();
 		};
 
+		const pauseTimeout = () => {
+			clearTimeout(timeoutID);
+			timeoutRemaining -= Date.now() - timeoutStart;
+		};
+
 		if (!persistent && element) {
 			// Hide notification after timeout
 			notificationTimeout();
 
 			// When hovering over, don't count towards timeout
-			element.addEventListener("mouseenter", () => {
-				clearTimeout(timeoutID);
-				timeoutRemaining -= Date.now() - timeoutStart;
-			});
+			element.addEventListener("mouseenter", pauseTimeout);
 			element.addEventListener("mouseleave", notificationTimeout);
 		}
 
 		return () => {
 			window.clearTimeout(timeoutID);
 			if (element) {
+				element.removeEventListener("mouseenter", pauseTimeout);
 				element.removeEventListener("mouseleave", notificationTimeout);
 			}
 		};

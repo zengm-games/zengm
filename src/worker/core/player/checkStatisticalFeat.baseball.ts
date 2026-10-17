@@ -2,7 +2,7 @@ import { g, helpers } from "../../../worker/util/index.ts";
 import type { GamePlayer } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 
-const checkStatisticalFeat = (p: GamePlayer) => {
+const checkStatisticalFeat = (p: GamePlayer, teamStat: { e: number[] }) => {
 	const minFactor = helpers.quarterLengthFactor();
 
 	const TWENTY = minFactor * 20;
@@ -22,7 +22,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 		score += p.stat.hr >= FOUR ? 20 : 10;
 	}
 
-	if (p.stat.hits >= FIVE && p.stat.h >= 2) {
+	if (p.stat.h >= FIVE && p.stat.h >= 2) {
 		statArr.hits = p.stat.h;
 		score += p.stat.h >= SIX ? 20 : 10;
 	}
@@ -58,7 +58,9 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 	}
 
 	const noHitter = p.stat.cg > 0 && p.stat.sho > 0 && p.stat.hPit === 0;
-	const perfectGame = noHitter && p.stat.bbPit === 0 && p.stat.hbp === 0;
+	const teamErrors = helpers.sum(teamStat.e);
+	const perfectGame =
+		noHitter && p.stat.bbPit === 0 && p.stat.hbpPit === 0 && teamErrors === 0;
 	if (perfectGame) {
 		statArr["perfect games"] = 1;
 		score += 20;

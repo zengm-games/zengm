@@ -2019,7 +2019,7 @@ export const settings: Setting[] = (
 			name: "Balk Factor",
 			godModeRequired: "always",
 			type: "float",
-			description: "The probability of a balk is multipled by this number.",
+			description: "The probability of a balk is multiplied by this number.",
 		},
 		{
 			category: "Tendencies",
@@ -2451,7 +2451,7 @@ export const settings: Setting[] = (
 						<p>
 							{bySport({
 								baseball:
-									"For baseball, that means a home run derby! This setting specifies the # of swings/strikes your best hitter will get againts a pitcher from your own team throwing meatballs. If the game is still tied after both teams go, then it's repeated until someone wins.",
+									"For baseball, that means a home run derby! This setting specifies the # of swings/strikes your best hitter will get against a pitcher from your own team throwing meatballs. If the game is still tied after both teams go, then it's repeated until someone wins.",
 								basketball:
 									"For basketball, that means a three-point contest! This setting specifies the # of shots your best shooter will get. If the game is still tied after both teams go, then it's repeated until someone wins.",
 								football:

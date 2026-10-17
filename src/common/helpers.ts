@@ -1407,7 +1407,7 @@ const overtimeText = (
 	return overtimes;
 };
 
-// Replace with Math.sumPrecise - Chrome 147, Firefox 137, Safari 26.2
+// This can't be replaced by Math.sumPrecise because this ignores undefined, like for byPos stats
 const sum = (values: (number | undefined)[]) => {
 	let total = 0;
 	for (const value of values) {

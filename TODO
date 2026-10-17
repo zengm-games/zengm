@@ -74,9 +74,6 @@ ability to see which player has the most rings in a Family details https://www.r
 
 When creating a new custom league, I'd love to just be able to import my settings and be able to customize the amount of teams the league starts with. Right now it's either you do everything from scratch or, if you only import settings, you are stuck with the default 32 team league. I've changed a ton of settings and I'd love to be able to import them into different league configurations, as manually adding them takes time and leads to mistakes when trying to remember them all. https://www.reddit.com/r/BasketballGM/comments/1vc7l27/monthly_suggestions_thread/p10cfd8/
 
-draft race condition https://discord.com/channels/290013534023057409/1536156382552789023/1536156382552789023
-- I had the 3rd and 4th lottery pick in a draft and I spam clicked to pick and sim as I usually do, but I realized by the end of the draft that I drafted the same player twice. I didn't get the player twice- just once but the 4th pick is gone now. Not sure if this is a real backend bug or just lag on my end.
-
 btn-close vs glyphicon-remove vs CloseIcon
 
 default new league settings import should handle gameAttribute with history (take latest value)
@@ -527,8 +524,6 @@ ZGMB game sim tweaks
   - Higher probability of hits on line-drives
 
 use actualPhase in more places rather than just phase
-
-perfect game means there need to be no errors too https://old.reddit.com/r/ZenGMBaseball/comments/1l2rxp6/the_perfect_game_that_wasnt/
 
 option to show contracts as percentage of salary cap
 - need to know past salary caps for past seasons

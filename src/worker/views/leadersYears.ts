@@ -74,11 +74,11 @@ export default defineView({
 				}))
 				.reverse();
 
+			const awardsSeasons = new Set(
+				await idb.merged.awards.getAll(undefined, { map: (row) => row.season }),
+			);
 			for (const row of allLeaders) {
-				const awards = await idb.merged.awards.get(row.season);
-				if (awards) {
-					row.linkSeason = true;
-				}
+				row.linkSeason = awardsSeasons.has(row.season);
 			}
 
 			const leadersBySeason = groupByUnique(allLeaders, "season");

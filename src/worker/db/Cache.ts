@@ -81,7 +81,6 @@ type Index =
 	| "draftPicksByTid"
 	| "playersByDraftYearRetiredYear"
 	| "playersByTid"
-	| "releasedPlayers"
 	| "releasedPlayersByTid"
 	| "teamSeasonsBySeasonTid"
 	| "teamSeasonsByTidSeason"
@@ -405,7 +404,12 @@ for (const [store, { indexes }] of helpers.entries(storeInfos)) {
 	}
 }
 
-export class StoreAPI<Input, Output, ID extends string | number> {
+export class StoreAPI<
+	Input,
+	Output,
+	ID extends string | number,
+	MyIndex extends Index = never,
+> {
 	cache: Cache;
 
 	store: Store;
@@ -442,14 +446,14 @@ export class StoreAPI<Input, Output, ID extends string | number> {
 
 	// Not sure how to type key as ID in some methods below
 	indexGet(
-		index: Index,
+		index: MyIndex,
 		key: number | string | (number | string | boolean)[],
 	): Promise<Output | undefined> {
 		return this.cache._indexGet(index, key);
 	}
 
 	indexGetAll(
-		index: Index,
+		index: MyIndex,
 		key: number | string | [any, any] | any[],
 	): Promise<Output[]> {
 		return this.cache._indexGetAll(index, key);
@@ -520,7 +524,12 @@ class Cache {
 
 	draftLotteryResults: StoreAPI<DraftLotteryResult, DraftLotteryResult, number>;
 
-	draftPicks: StoreAPI<DraftPickWithoutKey, DraftPick, number>;
+	draftPicks: StoreAPI<
+		DraftPickWithoutKey,
+		DraftPick,
+		number,
+		"draftPicksBySeason" | "draftPicksByTid"
+	>;
 
 	events: StoreAPI<EventBBGMWithoutKey, EventBBGM, number>;
 
@@ -536,11 +545,21 @@ class Cache {
 
 	playerFeats: StoreAPI<PlayerFeatWithoutKey, PlayerFeat, number>;
 
-	players: StoreAPI<PlayerWithoutKey, Player, number>;
+	players: StoreAPI<
+		PlayerWithoutKey,
+		Player,
+		number,
+		"playersByDraftYearRetiredYear" | "playersByTid"
+	>;
 
 	playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
 
-	releasedPlayers: StoreAPI<ReleasedPlayerWithoutKey, ReleasedPlayer, number>;
+	releasedPlayers: StoreAPI<
+		ReleasedPlayerWithoutKey,
+		ReleasedPlayer,
+		number,
+		"releasedPlayersByTid"
+	>;
 
 	savedTrades: StoreAPI<SavedTrade, SavedTrade, string>;
 
@@ -552,9 +571,19 @@ class Cache {
 
 	seasonLeaders: StoreAPI<SeasonLeaders, SeasonLeaders, number>;
 
-	teamSeasons: StoreAPI<TeamSeasonWithoutKey, TeamSeason, number>;
+	teamSeasons: StoreAPI<
+		TeamSeasonWithoutKey,
+		TeamSeason,
+		number,
+		"teamSeasonsBySeasonTid" | "teamSeasonsByTidSeason"
+	>;
 
-	teamStats: StoreAPI<TeamStatsWithoutKey, TeamStats, number>;
+	teamStats: StoreAPI<
+		TeamStatsWithoutKey,
+		TeamStats,
+		number,
+		"teamStatsByPlayoffsTid"
+	>;
 
 	teams: StoreAPI<Team, Team, number>;
 

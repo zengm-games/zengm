@@ -142,7 +142,7 @@ export const addPowerRankingsStuffToTeams = async <
 		// Calculate score
 
 		// Start with MOV, scaled for games played
-		let score = (t.stats.mov * t.stats.gp) / g.get("numGames");
+		let score = (t.stats.mov * t.stats.gp) / g.get("numGames", season);
 
 		// Add estimated MOV from ovr (0/100 to -30/30)
 		const estimatedMOV = ovr * 0.6 - 30;

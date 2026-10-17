@@ -1182,9 +1182,11 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	const dp = draftPicks[0];
 
 	if (dp && g.get("userTids").includes(dp.tid)) {
-		draftPicks.shift();
-		await draft.selectPlayer(dp, pid);
-		await draft.afterPicks(draftPicks.length === 0, conditions);
+		const selected = await draft.selectPlayer(dp, pid);
+		if (selected) {
+			draftPicks.shift();
+			await draft.afterPicks(draftPicks.length === 0, conditions);
+		}
 	}
 };
 

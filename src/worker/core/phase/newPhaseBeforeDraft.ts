@@ -236,7 +236,7 @@ const doThanosMode = async (conditions: Conditions) => {
 		}
 		await idb.cache.players.putAll(snappedPlayers);
 
-		let text = "A Thanos event has occured! ";
+		let text = "A Thanos event has occurred! ";
 		const numPlayers = userSnappedPlayers.length;
 		if (numPlayers === 0) {
 			text += "Somehow your team did not lose any players.";

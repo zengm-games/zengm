@@ -155,7 +155,7 @@ export const get = async <MyStore extends Store>(
 		return undefined;
 	}
 
-	return idb.league.get(storeName, key as any);
+	return idb.league.get(storeName, key);
 };
 
 // Call callback for each row matching a query, merging the cache and IndexedDB. A row in the cache always takes priority over the same row in IndexedDB. With no query, this is the whole store.

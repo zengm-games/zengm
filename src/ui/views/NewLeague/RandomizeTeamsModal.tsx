@@ -268,7 +268,6 @@ const RandomizeTeamsModal = ({
 								<button
 									className="btn btn-secondary btn-xs ms-auto"
 									onClick={() => {
-										console.log("CLIK");
 										setContinents(realContinents);
 									}}
 									type="button"

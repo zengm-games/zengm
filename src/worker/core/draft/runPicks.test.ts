@@ -21,6 +21,7 @@ const testRunPicks = async (numNow: number, numTotal: number) => {
 
 let userPick1: number;
 let userPick2: number;
+let userDraftedPid: number;
 
 const testDraftUser = async (round: number) => {
 	const draftPicks = await draft.getOrder();
@@ -46,8 +47,10 @@ const testDraftUser = async (round: number) => {
 	).filter((p) => p.tid === PLAYER.UNDRAFTED);
 	const p = players[0];
 	assert(p);
-	await draft.selectPlayer(dp, p.pid);
+	const selected = await draft.selectPlayer(dp, p.pid);
+	assert.strictEqual(selected, true);
 	assert.strictEqual(p.tid, g.get("userTid"));
+	userDraftedPid = p.pid;
 };
 
 beforeAll(async () => {
@@ -69,6 +72,19 @@ test("draft players before the user's team first round pick", () => {
 
 test("then allow the user to draft in the first round", () => {
 	return testDraftUser(1);
+});
+
+test("don't let a player be drafted twice, like if the user double clicks", async () => {
+	const draftPicks = await draft.getOrder();
+	const dp = draftPicks[0];
+	assert(dp);
+
+	const selected = await draft.selectPlayer(dp, userDraftedPid);
+	assert.strictEqual(selected, false);
+
+	const p = await idb.cache.players.get(userDraftedPid);
+	assert.strictEqual(p?.draft.pick, userPick1);
+	assert.strictEqual((await draft.getOrder()).length, draftPicks.length);
 });
 
 test("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {

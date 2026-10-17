@@ -97,10 +97,10 @@ const disable = async (tid: number) => {
 			[t.tid, g.get("season")],
 		);
 		if (teamSeason) {
-			idb.cache.teamSeasons.delete(teamSeason.rid);
+			await idb.cache.teamSeasons.delete(teamSeason.rid);
 		}
 
-		const teamStats = await idb.cache.teamSeasons.indexGet(
+		const teamStats = await idb.cache.teamStats.indexGet(
 			"teamStatsByPlayoffsTid",
 			[false, t.tid],
 		);

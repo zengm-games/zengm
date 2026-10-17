@@ -66,13 +66,14 @@ const checkStatisticalFeat = (
 		);
 	};
 
-	const { score, feats } = checkPlayer(p);
+	const [i, j] =
+		results.team[0].id === tid ? ([0, 1] as const) : ([1, 0] as const);
+
+	const { score, feats } = checkPlayer(p, results.team[i].stat);
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 
 	const winner = getWinner([results.team[0].stat, results.team[1].stat]);
 	if (feats) {
-		const [i, j] =
-			results.team[0].id === tid ? ([0, 1] as const) : ([1, 0] as const);
 		const won = winner === i;
 		const tied = winner === -1;
 		const featTextArr = Object.keys(feats).map((stat) => {

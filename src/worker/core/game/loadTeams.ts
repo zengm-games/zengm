@@ -144,7 +144,6 @@ export const processTeam = async (
 		did: number;
 	},
 	players: Player[],
-	exhibitionGame?: boolean,
 ) => {
 	if (!playerStats) {
 		playerStats = Object.fromEntries([

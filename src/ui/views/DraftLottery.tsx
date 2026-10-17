@@ -926,7 +926,7 @@ const ColaTable = ({
 							It shows the exact current values. The table above shows either
 							the values from this season's completed draft lottery, or the
 							projected values for the upcoming draft lottery (possibly
-							including the projected {COLA_ALPHA} bonus lottery teams recieve
+							including the projected {COLA_ALPHA} bonus lottery teams receive
 							each year).
 						</li>
 					</ol>

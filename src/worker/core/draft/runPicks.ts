@@ -1,5 +1,6 @@
 import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common/constants.ts";
 import afterPicks from "./afterPicks.ts";
+import { canBeDrafted } from "./canBeDrafted.ts";
 import getOrder from "./getOrder.ts";
 import selectPlayer from "./selectPlayer.ts";
 import { idb } from "../../db/index.ts";
@@ -104,14 +105,14 @@ const runPicks = async (
 	} else if (expansionDraft.phase === "draft") {
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
-		).filter((p) => expansionDraft.availablePids.includes(p.pid));
+		).filter(canBeDrafted);
 	} else {
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
 				[g.get("season")],
 				[g.get("season"), Infinity],
 			])
-		).filter((p) => p.tid === PLAYER.UNDRAFTED);
+		).filter(canBeDrafted);
 	}
 	playersAll.sort((a, b) => b.value - a.value);
 

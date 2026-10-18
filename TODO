@@ -621,8 +621,6 @@ if a player comes back to your team for a 2nd stint but his jersey number is ret
 - after implementing this, maybe the "Retire Jersey" button should be enabled for players still on your team, since they can keep their jersey number
 - retired jersey number should not block the player it was retired for, and instead they should favor it https://discord.com/channels/290013534023057409/331882115119448065/1434939012585488515
 
-if you download a spreadsheet of the most lopsided trades, the spreadsheet leaves out the "team" columns https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/mceee7x/
-
 update game screenshots
 
 intermittent "tid not found" error when starting real players league with all stats in 1977
@@ -657,8 +655,6 @@ allow selecting season ranges in more places
 more randomization settings
 - pick a range of seasons for random debuts modes https://old.reddit.com/r/BasketballGM/comments/1ie8oak/how_to_mix_up_historic_draft_classes/mafigb4/?context=3
 
-show # of teams in each division when making expansion draft https://old.reddit.com/r/BasketballGM/comments/1iingd3/i_added_a_bunch_of_expansion_teams_but_added_too/
-
 https://www.compart.com/en/unicode/U+1F3C6 rather than ring
 
 apply checkbox td hack to buttons too
@@ -669,8 +665,6 @@ show career totals per team at bottom of stats tables in player profile pages
 - add some extra option to playersPlus like careerStatsPerTeam
 
 more aggressively use closers in playoffs https://discord.com/channels/290013534023057409/290015591216054273/1332735406176735263
-
-in FBGM game sim, simming until the next change of position doesn't trigger when a team scores a TD but throws an incomplete pass on the 2-point conversion. It simply skips through the next possession as well
 
 in late game critical situations (like tied, 0 outs, bases loaded) there should never be a fielder's choice, should always try for out at home https://discord.com/channels/290013534023057409/290015591216054273/1333641668762796035
 
@@ -749,15 +743,9 @@ runner stealing base should only very rarely be caught in double play
 make player graphs remember selections https://old.reddit.com/r/BasketballGM/comments/1gplx7g/could_you_make_the_player_graphs_remember_what/
 - other pages?
 
-FBGM end of game penalties
--  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008 https://discord.com/channels/@me/778760871911751700/1481009499744763955
-- accepts penalty on a scoring play (made FG) that would have won the game in overtime https://discord.com/channels/290013534023057409/1448891925837910228/1448891925837910228
-
 condense develop0 and updateValues into a single function, mainly for worker console
 
 Injury "games missed" has some counting bug. I can't send league (on phone, hundreds of years, etc.) but with standard 82 game seasons... guy plays 6/82 in '65 and 74/82 in '66. But under injuries is listed as "2065: Torn ACL, 148 games" and "2066: Torn ACL, 122 games". So under most injured frivolity, says he missed 400 career games but that's definitely not right. Could at least cap with (team games played  - player games played) per season somewhere if the cross-day accounting is needed for playoffs or FA or something https://discord.com/channels/290013534023057409/290015591216054273/1310287379457900564
-
-players just drafted should not count towards mood when traded away https://old.reddit.com/r/BasketballGM/comments/1gtj4dj/suggestion_for_core_updates_in_newsletter/
 
 hype should impact the magnitude of the home court advantage
 
@@ -992,10 +980,6 @@ new achievements
   - Offense Is The Best Defense: win the chip while having a bottom 5 defense
   - Height Doesn't Matter: have a player under 6 feet tall win mvp
 - rebuild achievements before 1980 https://discord.com/channels/290013534023057409/290013534023057409/1513623237064528073
-
-offsetting penalties at end of half should lead to untimed down, same as defensive penalty https://discord.com/channels/290013534023057409/290015591216054273/1215714915550232646
-
-draft pick trade logic bug https://old.reddit.com/message/messages/274jbgt AI may value the picks by team record only, even when the better record team is in the lottery and the worse record team is not
 
 hockey: add offsides, icing, puck out of play https://discord.com/channels/@me/778760871911751700/1213624877345411162
 - improve stats: more faceoffs, more shifts
@@ -1373,13 +1357,7 @@ FBGM not kicking game tying field goal at end https://discord.com/channels/29001
 
 ai draft trading bug https://old.reddit.com/r/BasketballGM/comments/x75ekz/bug_ai_trading_justdrafted_players_for_a_later/
 
-FBGM AI should not decline penalties at end of game when time runs out if losing https://discord.com/channels/290013534023057409/290015591216054273/1023130922209509438
-
 fbgm scoring summary still shows entry for penalty overturned score until another score happens https://discord.com/channels/290013534023057409/290015591216054273/1020032451642409083
-
-relatives in imported draft class https://discord.com/channels/290013534023057409/290015591216054273/1019432648629829663
-- delete any outside of draft class
-- within draft class, rewrite pids on import
 
 Customize Teams
 - ui is kind of confusing. i can select teams with real players by clicking random players and clicking customize, but i can't do the same thing by clicking real players
@@ -1454,7 +1432,6 @@ baseball bugs
 - high eye guys should get more BB https://old.reddit.com/r/ZenGMBaseball/comments/vi8eib/new_zengm_baseball_out_now/ide7b6a/
 - team ovr not very predictive
 - too many 3-0 swings?
-- ab missing in stat feats https://discord.com/channels/290013534023057409/290015591216054273/990008716466225153
 - not enough short players https://discord.com/channels/290013534023057409/290015591216054273/990044254803988480
 - every team rebuilding https://discord.com/channels/290013534023057409/290015591216054273/990123350623920128
 - injured pitcher doesn't update UI  on replacement https://discord.com/channels/290013534023057409/290015591216054273/990377723635593318

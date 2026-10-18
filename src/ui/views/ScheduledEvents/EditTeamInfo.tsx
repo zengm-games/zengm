@@ -3,6 +3,7 @@ import type { ScheduledEventTeamInfo } from "../../../common/types.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { helpers } from "../../util/helpers.ts";
 import TeamForm, {
+	getNumTeamsByDid,
 	type TeamFormToggleField,
 } from "../ManageTeams/TeamForm.tsx";
 import { type EditProps, FormButtons, formatTeamOption } from "./common.tsx";
@@ -78,6 +79,17 @@ const EditTeamInfo = ({
 				...changes,
 			}
 		: undefined;
+
+	// Active teams right after this event happens, including any division change for the selected team
+	const numTeamsByDid = getNumTeamsByDid(
+		teams
+			.filter((t) => t.active)
+			.map((t) =>
+				t === selectedTeam && after
+					? Number.parseInt(after.did)
+					: Number(t.did),
+			),
+	);
 
 	const enabledKeys = KEYS.filter((key) => changes[key] !== undefined);
 
@@ -233,6 +245,7 @@ const EditTeamInfo = ({
 							}}
 							hideStatus
 							moveButton
+							numTeamsByDid={numTeamsByDid}
 							t={after}
 						/>
 					</div>

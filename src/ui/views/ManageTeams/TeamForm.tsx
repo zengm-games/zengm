@@ -62,6 +62,15 @@ const FieldLabel = ({
 	);
 };
 
+// For the numTeamsByDid prop of TeamForm
+export const getNumTeamsByDid = (dids: number[]) => {
+	const numTeamsByDid = new Map<number, number>();
+	for (const did of dids) {
+		numTeamsByDid.set(did, (numTeamsByDid.get(did) ?? 0) + 1);
+	}
+	return numTeamsByDid;
+};
+
 const TeamForm = ({
 	classNamesCol,
 	classNameLabel,
@@ -75,6 +84,7 @@ const TeamForm = ({
 	hideStatus,
 	showPlayers,
 	moveButton,
+	numTeamsByDid,
 	t,
 }: {
 	classNamesCol: [
@@ -107,6 +117,7 @@ const TeamForm = ({
 	hideStatus?: boolean;
 	showPlayers?: boolean;
 	moveButton?: boolean;
+	numTeamsByDid: Map<number, number>;
 
 	// Really should just be ExpansionDraftSetupTeam, but need to update Manage Teams
 	t: (
@@ -126,9 +137,13 @@ const TeamForm = ({
 
 	const divisions = divs.map((div) => {
 		const conf = confs.find((c) => c.cid === div.cid);
+		let name = conf ? `${div.name} (${conf.name})` : div.name;
+		const numTeams = numTeamsByDid.get(div.did) ?? 0;
+		name += ` - ${numTeams} ${helpers.plural("team", numTeams)}`;
+
 		return {
 			did: div.did,
-			name: conf ? `${div.name} (${conf.name})` : div.name,
+			name,
 		};
 	});
 

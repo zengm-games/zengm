@@ -79,7 +79,7 @@ export default defineView({
 						featStats[stat] = processed[stat];
 					}
 				} else if (__SPORT === "baseball") {
-					const toAdd = ["ip", "gmsc"];
+					const toAdd = ["ab", "ip", "gmsc"];
 					const processed = processPlayerStats(featStats, toAdd);
 					for (const stat of toAdd) {
 						featStats[stat] = processed[stat];

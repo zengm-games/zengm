@@ -410,6 +410,276 @@ describe("penalty situations", () => {
 		assert.strictEqual(play.state.current.scrimmage, 39);
 	});
 
+	const defensivePenaltyAsTimeExpires = async ({
+		halftime = false,
+		ptsOffense,
+		ptsDefense,
+		scrimmage = 40,
+		ydsGained,
+	}: {
+		halftime?: boolean;
+		ptsOffense: number;
+		ptsDefense: number;
+		scrimmage?: number;
+		ydsGained: number | undefined;
+	}) => {
+		const game = await initGameSim();
+		game.o = 0;
+		game.d = 1;
+		game.down = 3;
+		game.toGo = 20;
+		game.scrimmage = scrimmage;
+		game.team[0].stat.pts = ptsOffense;
+		game.team[0].stat.ptsQtrs = halftime
+			? [0, ptsOffense]
+			: [0, 0, 0, ptsOffense];
+		game.team[1].stat.pts = ptsDefense;
+		game.team[1].stat.ptsQtrs = halftime
+			? [0, ptsDefense]
+			: [0, 0, 0, ptsDefense];
+		game.currentPlay = new Play(game);
+
+		game.updatePlayersOnField("pass");
+		const qb = game.getTopPlayerOnField(game.o, "QB");
+		const target = game.getTopPlayerOnField(game.o, "WR");
+		const defender = game.pickPlayer(game.d);
+
+		const play = game.currentPlay;
+
+		play.addEvent({
+			type: "dropback",
+			pbw: new Map(),
+		});
+		play.addEvent({
+			type: "penalty",
+			p: defender,
+			automaticFirstDown: false,
+			name: "Offside",
+			penYds: 5,
+			spotYds: undefined,
+			t: game.d,
+			tackOn: false,
+		});
+		play.addEvent({
+			type: "pss",
+			qb,
+			target,
+		});
+		if (ydsGained === undefined) {
+			play.addEvent({
+				type: "pssInc",
+				defender: undefined,
+			});
+		} else {
+			play.addEvent({
+				type: "pssCmp",
+				qb,
+				target,
+				yds: ydsGained,
+			});
+		}
+
+		play.commit(true);
+
+		return game;
+	};
+
+	test("defensive penalty as time expires at end of game, offense losing -> accept to get an untimed down", async () => {
+		// Declining would be a first down, which is better if the game wasn't over
+		const game = await defensivePenaltyAsTimeExpires({
+			ptsOffense: 0,
+			ptsDefense: 3,
+			ydsGained: 25,
+		});
+
+		assert.strictEqual(game.playUntimedPossession, true);
+		assert.strictEqual(game.scrimmage, 45);
+	});
+
+	test("defensive penalty as time expires at end of game, offense winning -> decline to end the game", async () => {
+		// Accepting would be better field position, if the game wasn't over
+		const game = await defensivePenaltyAsTimeExpires({
+			ptsOffense: 3,
+			ptsDefense: 0,
+			ydsGained: undefined,
+		});
+
+		assert.strictEqual(game.playUntimedPossession, false);
+		assert.strictEqual(game.scrimmage, 40);
+	});
+
+	test("defensive penalty as time expires at end of half, in scoring range -> accept to get an untimed down", async () => {
+		const game = await defensivePenaltyAsTimeExpires({
+			halftime: true,
+			ptsOffense: 0,
+			ptsDefense: 0,
+			scrimmage: 60,
+			ydsGained: undefined,
+		});
+
+		assert.strictEqual(game.playUntimedPossession, true);
+		assert.strictEqual(game.scrimmage, 65);
+	});
+
+	test("defensive penalty as time expires at end of half, not in scoring range -> decline", async () => {
+		const game = await defensivePenaltyAsTimeExpires({
+			halftime: true,
+			ptsOffense: 0,
+			ptsDefense: 0,
+			scrimmage: 20,
+			ydsGained: undefined,
+		});
+
+		assert.strictEqual(game.playUntimedPossession, false);
+		assert.strictEqual(game.scrimmage, 20);
+	});
+
+	test("offsetting penalties as time expires at end of half -> untimed down", async () => {
+		const game = await initGameSim();
+		game.o = 0;
+		game.d = 1;
+		game.down = 2;
+		game.toGo = 10;
+		game.scrimmage = 40;
+		game.team[0].stat.ptsQtrs = [0, 0];
+		game.team[1].stat.ptsQtrs = [0, 0];
+		game.currentPlay = new Play(game);
+
+		game.updatePlayersOnField("pass");
+		const qb = game.getTopPlayerOnField(game.o, "QB");
+		const target = game.getTopPlayerOnField(game.o, "WR");
+		const defender = game.pickPlayer(game.d);
+
+		const play = game.currentPlay;
+
+		play.addEvent({
+			type: "dropback",
+			pbw: new Map(),
+		});
+		play.addEvent({
+			type: "penalty",
+			p: qb,
+			automaticFirstDown: false,
+			name: "Holding",
+			penYds: 10,
+			spotYds: 0,
+			t: game.o,
+			tackOn: false,
+		});
+		play.addEvent({
+			type: "penalty",
+			p: defender,
+			automaticFirstDown: false,
+			name: "Offside",
+			penYds: 5,
+			spotYds: undefined,
+			t: game.d,
+			tackOn: false,
+		});
+		play.addEvent({
+			type: "pss",
+			qb,
+			target,
+		});
+		play.addEvent({
+			type: "pssCmp",
+			qb,
+			target,
+			yds: 20,
+		});
+
+		play.commit(true);
+
+		assert.strictEqual(game.playUntimedPossession, true);
+		assert.strictEqual(game.down, 2);
+		assert.strictEqual(game.scrimmage, 40);
+	});
+
+	test("offsetting penalties after 2 turnovers as time expires at end of half -> no untimed down", async () => {
+		const game = await initGameSim();
+		game.o = 0;
+		game.d = 1;
+		game.down = 2;
+		game.toGo = 10;
+		game.scrimmage = 40;
+		game.team[0].stat.ptsQtrs = [0, 0];
+		game.team[1].stat.ptsQtrs = [0, 0];
+		game.currentPlay = new Play(game);
+
+		game.updatePlayersOnField("pass");
+		const qb = game.getTopPlayerOnField(game.o, "QB");
+		const target = game.getTopPlayerOnField(game.o, "WR");
+		const defender = game.pickPlayer(game.d);
+
+		const play = game.currentPlay;
+
+		play.addEvent({
+			type: "dropback",
+			pbw: new Map(),
+		});
+		play.addEvent({
+			type: "pss",
+			qb,
+			target,
+		});
+		play.addEvent({
+			type: "possessionChange",
+			subtype: "turnover",
+			yds: 10,
+		});
+		play.addEvent({
+			type: "int",
+			qb,
+			defender,
+			ydsReturn: 5,
+		});
+		play.addEvent({
+			type: "fmb",
+			pFumbled: defender,
+			pForced: target,
+			yds: 0,
+		});
+		play.addEvent({
+			type: "possessionChange",
+			subtype: "turnover",
+			yds: 0,
+		});
+		play.addEvent({
+			type: "fmbRec",
+			pFumbled: defender,
+			pRecovered: target,
+			lost: true,
+			yds: 3,
+		});
+		play.addEvent({
+			type: "penalty",
+			p: target,
+			automaticFirstDown: false,
+			name: "Holding",
+			penYds: 10,
+			spotYds: 0,
+			t: 0,
+			tackOn: false,
+		});
+		play.addEvent({
+			type: "penalty",
+			p: defender,
+			automaticFirstDown: false,
+			name: "Holding",
+			penYds: 10,
+			spotYds: 0,
+			t: 1,
+			tackOn: false,
+		});
+
+		play.commit(true);
+
+		// Back with the original offense, but after possession changes, so the down is not replayed
+		assert.strictEqual(game.o, 0);
+		assert.strictEqual(game.down, 1);
+		assert.strictEqual(game.playUntimedPossession, false);
+	});
+
 	test("penalty on offense on made xp -> accept", async () => {
 		const game = await initGameSim();
 		game.o = 0;

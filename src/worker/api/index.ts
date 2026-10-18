@@ -2644,7 +2644,11 @@ const handleUploadedDraftClass = async ({
 	await player.remove(toRemove);
 
 	// Add new players to database
+	const addedPlayers = [];
+	const newPidsByOldPid = new Map<number, number>();
 	for (const p of players) {
+		const oldPid = p.pid;
+
 		// Adjust age and seasons
 		p.ratings[0].season = draftYear;
 
@@ -2696,6 +2700,34 @@ const handleUploadedDraftClass = async ({
 		await player.updateValues(p2);
 
 		await idb.cache.players.add(p2);
+
+		addedPlayers.push(p2);
+		if (typeof oldPid === "number") {
+			newPidsByOldPid.set(oldPid, p2.pid);
+		}
+	}
+
+	// pids are different after importing, so relatives can only be kept if they were imported too
+	for (const p of addedPlayers) {
+		if (p.relatives.length === 0) {
+			continue;
+		}
+
+		const relatives = [];
+		for (const relative of p.relatives) {
+			const pid = newPidsByOldPid.get(relative.pid);
+			if (pid !== undefined) {
+				relatives.push({
+					...relative,
+					pid,
+				});
+			}
+		}
+
+		if (relatives.length > 0) {
+			p.relatives = relatives;
+			await idb.cache.players.put(p);
+		}
 	}
 
 	// "Top off" the draft class if not enough players imported
@@ -3323,8 +3355,13 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		return "Player not found";
 	}
 
-	if (players.some((p) => p.tid !== g.get("userTid"))) {
-		return "You aren't allowed to do this";
+	// Could happen if the UI hasn't updated yet after a player was released or traded
+	const notOnTeam = players.filter((p) => p.tid !== g.get("userTid"));
+	if (notOnTeam.length === 1) {
+		const p = notOnTeam[0]!;
+		return `${p.firstName} ${p.lastName} is no longer on your team.`;
+	} else if (notOnTeam.length > 1) {
+		return `${notOnTeam.length} players are no longer on your team.`;
 	}
 
 	for (const p of players) {

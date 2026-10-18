@@ -147,7 +147,7 @@ const genDepth = async (
 					const pScore = score(p, scorePos);
 					let added = false;
 
-					for (let i = 0; i < depth[pos2].length; i++) {
+					for (let i = 0; i < depth[depthPos].length; i++) {
 						const p2 = players.find((p3) => p3.pid === depth[depthPos][i]);
 
 						if (!p2 || pScore > score(p2, scorePos)) {

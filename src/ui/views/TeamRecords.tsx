@@ -20,6 +20,7 @@ const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 				{t.region} {t.name}
 			</span>
 		),
+		searchValue: `${t.region} ${t.name}`,
 		sortValue: t.sortValue,
 	};
 };

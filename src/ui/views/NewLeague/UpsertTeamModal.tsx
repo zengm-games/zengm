@@ -20,7 +20,7 @@ import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { type ExhibitionLeagueWithSeasons } from "../Exhibition.tsx";
-import TeamForm from "../ManageTeams/TeamForm.tsx";
+import TeamForm, { getNumTeamsByDid } from "../ManageTeams/TeamForm.tsx";
 import type { AddEditTeamInfo } from "./CustomizeTeams.tsx";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";
@@ -615,6 +615,18 @@ const UpsertTeamModal = ({
 		onSave(edited);
 	};
 
+	// Use the division from the form for the team being added or edited
+	const dids = teams
+		.filter(
+			(t) =>
+				addEditTeamInfo.type !== "edit" || t.tid !== addEditTeamInfo.tidEdit,
+		)
+		.map((t) => t.did);
+	if (controlledTeam) {
+		dids.push(Number.parseInt(controlledTeam.did));
+	}
+	const numTeamsByDid = getNumTeamsByDid(dids);
+
 	// See comments in ColorPicker explaining why this is needed
 	const enforceFocus = false;
 
@@ -697,6 +709,7 @@ const UpsertTeamModal = ({
 									}
 								}}
 								hideStatus
+								numTeamsByDid={numTeamsByDid}
 								t={controlledTeam}
 								showPlayers={!!controlledTeam.players}
 							/>

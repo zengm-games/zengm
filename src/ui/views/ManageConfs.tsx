@@ -19,7 +19,7 @@ import {
 import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
 import type { NewLeagueTeamWithoutRank } from "./NewLeague/types.ts";
 import { Modal } from "../components/Modal.tsx";
-import TeamForm from "./ManageTeams/TeamForm.tsx";
+import TeamForm, { getNumTeamsByDid } from "./ManageTeams/TeamForm.tsx";
 import {
 	nextSeasonWarning,
 	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
@@ -32,12 +32,14 @@ const EditTeamModal = ({
 	divs,
 	onCancel,
 	onSave,
+	teams,
 }: {
 	t: NewLeagueTeamWithoutRank | undefined;
 	confs: NonEmptyArray<Conf>;
 	divs: NonEmptyArray<Div>;
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
+	teams: NewLeagueTeamWithoutRank[];
 }) => {
 	const { godMode, phase } = useLocal(["godMode", "phase"]);
 
@@ -80,6 +82,12 @@ const EditTeamModal = ({
 
 	const disableStatus =
 		!godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.has(phase);
+
+	// Use the division from the form for the team being edited
+	const numTeamsByDid = getNumTeamsByDid([
+		...teams.filter((t2) => t2.tid !== t.tid).map((t2) => t2.did),
+		Number.parseInt(controlledTeam.did),
+	]);
 
 	const save = () => {
 		const did = Number.parseInt(controlledTeam.did);
@@ -161,6 +169,7 @@ const EditTeamModal = ({
 							disablePop={!godMode}
 							disableStatus={disableStatus}
 							disableStadiumCapacity={!godMode}
+							numTeamsByDid={numTeamsByDid}
 							t={controlledTeam}
 						/>
 					</div>
@@ -313,6 +322,7 @@ const ManageConfs = ({
 				onCancel={() => {
 					setEditTeam(undefined);
 				}}
+				teams={teams}
 			/>
 		</>
 	);

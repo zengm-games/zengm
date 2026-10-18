@@ -1252,6 +1252,11 @@ class Play {
 						// No state changes for offsetting penalties
 						if (offsetStatus === "offset") {
 							state.isClockRunning = false;
+
+							// Same as a defensive penalty, the down is replayed even if time expired. Not if they were both after a change of possession, since then the down is not replayed.
+							if (timeExpiredAtEndOfHalf && state.numPossessionChanges === 0) {
+								state.playUntimedPossession = true;
+							}
 						} else {
 							this.updateState(state, penalty.event);
 

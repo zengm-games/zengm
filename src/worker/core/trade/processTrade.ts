@@ -124,7 +124,11 @@ const processTrade = async (
 				statsIndex: p.stats.length - (duringSeason ? 0 : 1), // Used to always have 1 subtracted from it until addStatsRow was removed. This is kind of weird - statsIndex references the first stats row for the new team for trades before the playoffs end, and the last stats row for the old team for trades after the playoffs. This logic is kept just to maintain backwards compatibility, it's handled in tradeSummary.ts too.
 			});
 
-			if (teamSeason) {
+			// Players who were just drafted were never really part of the team, so they don't count either
+			if (
+				teamSeason &&
+				!helpers.justDrafted(p, g.get("phase"), g.get("season"))
+			) {
 				// Bad players do not actually count as a "player traded away"
 				teamSeason.numPlayersTradedAway += helpers.sigmoid(
 					p.valueNoPot / 100,

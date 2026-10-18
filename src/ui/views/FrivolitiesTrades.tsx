@@ -6,7 +6,7 @@ import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
 import { PHASE_TEXT } from "../../common/constants.ts";
 import PickText from "./TradeSummary/PickText.tsx";
-import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
 
@@ -120,11 +120,11 @@ const FrivolitiesTrades = ({
 					if (asset.type === "realizedPick") {
 						return `${asset.pos} ${asset.name} ${helpers.ordinal(
 							asset.round,
-						)} round pick}`;
+						)} round pick`;
 					}
 
 					if (asset.type === "unrealizedPick") {
-						return `${helpers.ordinal(asset.round)} round pick}`;
+						return `${helpers.ordinal(asset.round)} round pick`;
 					}
 				})
 				.join(" ");
@@ -132,18 +132,16 @@ const FrivolitiesTrades = ({
 			const sortValue = t.assets.length;
 
 			return [
-				<TeamLogoAndName
-					t={{
+				wrappedTeamLogoAndName(
+					{
 						...t,
 						seasonAttrs: t,
-					}}
-					url={helpers.leagueUrl([
-						"roster",
-						`${t.abbrev}_${t.tid}`,
-						trade.season,
-					])}
-					noLogo
-				/>,
+					},
+					helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, trade.season]),
+					{
+						noLogo: true,
+					},
+				),
 				{
 					value: (
 						<ul className="list-unstyled mb-0">
@@ -204,13 +202,16 @@ const FrivolitiesTrades = ({
 			];
 		});
 
+		const seasonText = `${trade.season} ${PHASE_TEXT[trade.phase]}`;
+
 		return {
 			key: trade.rank,
 			data: [
 				trade.rank,
 				{
-					value: `${trade.season} ${PHASE_TEXT[trade.phase]}`,
+					value: seasonText,
 					sortValue: trade.season + (trade.phase + 10) / 1000,
+					exportValue: seasonText,
 				},
 				...teamCols[0]!,
 				...teamCols[1]!,

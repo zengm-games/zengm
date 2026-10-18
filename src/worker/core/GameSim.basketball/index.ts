@@ -842,8 +842,11 @@ class GameSim extends GameSimBase {
 			this.d = this.o === 1 ? 0 : 1;
 		}
 
-		this.updatePlayingTime(dtInbound + this.possessionLength);
-		const injuries = this.injuries();
+		const possessionTime = dtInbound + this.possessionLength;
+		this.updatePlayingTime(possessionTime);
+
+		// Nobody can get hurt if no time elapsed, otherwise a player could be injured immediately after subbing in, with 0 minutes played
+		const injuries = possessionTime > 0 ? this.injuries() : false;
 
 		this.prevPossessionOutcome = outcome;
 

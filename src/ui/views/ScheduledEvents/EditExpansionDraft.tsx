@@ -7,7 +7,7 @@ import type { ScheduledEvent } from "../../../common/types.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";
 import { helpers } from "../../util/helpers.ts";
-import TeamForm from "../ManageTeams/TeamForm.tsx";
+import TeamForm, { getNumTeamsByDid } from "../ManageTeams/TeamForm.tsx";
 import { type EditProps, FormButtons } from "./common.tsx";
 import {
 	getTeamFormValues,
@@ -84,6 +84,12 @@ const EditExpansionDraft = ({
 	const [teamToAdd, setTeamToAdd] = useState(BLANK_TEAM);
 
 	const formTids = new Set(formTeams.map((t) => t.tid));
+
+	// Teams that will be active at that time, plus the ones being added here
+	const numTeamsByDid = getNumTeamsByDid([
+		...teams.filter((t) => t.active).map((t) => Number(t.did)),
+		...formTeams.map((t) => Number.parseInt(t.values.did)),
+	]);
 	const formAbbrevs = new Set(formTeams.map((t) => t.values.abbrev));
 
 	const inactiveTeams = orderBy(
@@ -292,6 +298,7 @@ const EditExpansionDraft = ({
 										divs={divs}
 										handleInputChange={handleInputChange(t.key)}
 										hideStatus
+										numTeamsByDid={numTeamsByDid}
 										t={t.values}
 									/>
 								</div>

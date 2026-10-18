@@ -544,11 +544,7 @@ class GameSim extends GameSimBase {
 				eligible = this.team[t].depth.F;
 			}
 
-			return orderBy(
-				this.team[t].depth.F,
-				(p) => p.compositeRating.scoring,
-				"desc",
-			);
+			return orderBy(eligible, (p) => p.compositeRating.scoring, "desc");
 		}) as [PlayerGameSim[], PlayerGameSim[]];
 
 		const goalies = teamNums.map((t) => {

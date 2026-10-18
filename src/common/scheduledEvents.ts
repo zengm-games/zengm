@@ -421,6 +421,30 @@ export const getTeamsBeforeScheduledEvent = ({
 	}).teams;
 };
 
+// Get the state of all teams after every event in the same season/phase as `target` is processed. This is when settings from `target` are first used, like playoff settings, which could depend on expansion teams that join in the same season/phase.
+export const getTeamsAtEndOfScheduledEventPhase = ({
+	current,
+	events,
+	target,
+	teams,
+}: {
+	current: SeasonPhase;
+	events: ScheduledEventWithoutKey[];
+	target: SortableEvent;
+	teams: ScheduledEventsCurrentTeam[];
+}) => {
+	const eventsThroughPhase = events.filter((event) => {
+		const isTarget = event.id !== undefined && event.id === target.id;
+		return !isTarget && !isAfter(event, target);
+	});
+
+	return normalizeScheduledEvents({
+		current,
+		events: eventsThroughPhase,
+		teams,
+	}).teams;
+};
+
 // awards and confsDivs events contain all the award settings or all the conferences and divisions, not just what changed. So the next one after `target` replaces everything from `target`. Same for the old way of doing this, in a gameAttributes event.
 export const getNextScheduledEventReplacing = ({
 	events,

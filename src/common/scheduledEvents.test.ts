@@ -3,6 +3,7 @@ import { PHASE } from "./constants.ts";
 import {
 	getNextScheduledEventReplacing,
 	getSettingsBeforeScheduledEvent,
+	getTeamsAtEndOfScheduledEventPhase,
 	getTeamsBeforeScheduledEvent,
 	normalizeScheduledEvents,
 } from "./scheduledEvents.ts";
@@ -477,6 +478,56 @@ describe("getTeamsBeforeScheduledEvent", () => {
 				season: 2027,
 			}),
 			["0 A active", "1 B active", "2 C inactive", "3 d active"],
+		);
+	});
+});
+
+describe("getTeamsAtEndOfScheduledEventPhase", () => {
+	const events = [
+		event("expansionDraft", 2026, { teams: [expansionTeam("d", 3)] }),
+		event("expansionDraft", 2027, { teams: [expansionTeam("e", 4)] }),
+	];
+
+	const getTeams = (
+		target: Parameters<typeof getTeamsAtEndOfScheduledEventPhase>[0]["target"],
+	) => {
+		return getTeamsAtEndOfScheduledEventPhase({
+			current,
+			events,
+			target,
+			teams,
+		})
+			.filter((t) => t.active)
+			.map((t) => t.region);
+	};
+
+	test("includes an expansion draft in the same season and phase, even though it is processed last", () => {
+		assert.deepStrictEqual(
+			getTeams({
+				type: "gameAttributes",
+				season: 2026,
+				phase: PHASE.PRESEASON,
+			}),
+			["A", "B", "d"],
+		);
+	});
+
+	test("does not include later events", () => {
+		assert.deepStrictEqual(
+			getTeams({
+				type: "gameAttributes",
+				season: 2025,
+				phase: PHASE.DRAFT_LOTTERY,
+			}),
+			["A", "B"],
+		);
+		assert.deepStrictEqual(
+			getTeams({
+				type: "gameAttributes",
+				season: 2026,
+				phase: PHASE.DRAFT_LOTTERY,
+			}),
+			["A", "B", "d"],
 		);
 	});
 });

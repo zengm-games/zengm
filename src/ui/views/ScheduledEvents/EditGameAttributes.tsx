@@ -31,14 +31,19 @@ const supportedKeys = new Set<string>(
 );
 
 const EditGameAttributes = ({
+	confs,
 	event,
 	initialSettings,
 	onCancel,
 	seasonPhaseInvalid,
 	onSave,
 	setError,
+	numActiveTeams,
 }: EditProps<"gameAttributes"> & {
 	initialSettings: Settings;
+
+	// Number of active teams at the end of this season/phase, after any expansion draft or contraction
+	numActiveTeams: number;
 }) => {
 	const [settingsShown, setSettingsShown] = useState<Key[]>(() => {
 		if (!event) {
@@ -74,6 +79,13 @@ const EditGameAttributes = ({
 
 		return output;
 	});
+
+	// Validate against the league as it will be when this event happens, since other scheduled events (like an expansion draft) could change it
+	const initialSettingsAtEvent = {
+		...initialSettingsWithEvent,
+		confs,
+		numActiveTeams,
+	};
 
 	const options = Array.from(
 		Map.groupBy(
@@ -167,7 +179,7 @@ const EditGameAttributes = ({
 				}}
 				saveDisabled={seasonPhaseInvalid}
 				saveText="Save"
-				initialSettings={initialSettingsWithEvent}
+				initialSettings={initialSettingsAtEvent}
 				settingsShown={settingsShown}
 				hideShortcuts
 				hideGodModeToggle

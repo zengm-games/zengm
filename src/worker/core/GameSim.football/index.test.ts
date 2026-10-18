@@ -1,4 +1,4 @@
-import { assert, beforeAll, test } from "vitest";
+import { assert, beforeAll, describe, test } from "vitest";
 import GameSim from "./index.ts";
 import { player, team } from "../index.ts";
 import loadTeams from "../game/loadTeams.ts";
@@ -181,6 +181,84 @@ test("kick a field goal in overtime if it will win the game and is very likely t
 	game.overtimeState = "bothTeamsPossessed";
 
 	assert.strictEqual(game.getPlayType(), "fieldGoal");
+});
+
+describe("kneel to run out the clock", () => {
+	const initKneelSituation = async ({
+		down,
+		lead,
+		oppTimeouts,
+		scrimmage = 70,
+		seconds,
+	}: {
+		down: number;
+		lead: number;
+		oppTimeouts: number;
+		scrimmage?: number;
+		seconds: number;
+	}) => {
+		const game = await initGameSim();
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.team[0].stat.pts = lead;
+		game.team[0].stat.ptsQtrs = [0, 0, 0, game.team[0].stat.pts];
+		game.team[1].stat.pts = 0;
+		game.team[1].stat.ptsQtrs = [0, 0, 0, game.team[1].stat.pts];
+		game.down = down;
+		game.toGo = 10;
+		game.scrimmage = scrimmage;
+		game.clock = seconds / 60;
+		game.timeouts = [3, oppTimeouts];
+		game.currentPlay = new Play(game);
+		return game;
+	};
+
+	test("kneel rather than kick a field goal with a big lead at the end of the game, even if the opponent has timeouts", async () => {
+		const game = await initKneelSituation({
+			down: 3,
+			lead: 27,
+			oppTimeouts: 3,
+			seconds: 5,
+		});
+
+		assert.strictEqual(game.getPlayType(), "kneel");
+	});
+
+	test("kneel on 4th down if it will use up the rest of the time", async () => {
+		const game = await initKneelSituation({
+			down: 4,
+			lead: 3,
+			oppTimeouts: 0,
+			seconds: 1,
+		});
+
+		assert.strictEqual(game.getPlayType(), "kneel");
+	});
+
+	test("don't kneel on 4th down if there will be time left after a turnover on downs", async () => {
+		const game = await initKneelSituation({
+			down: 4,
+			lead: 3,
+			oppTimeouts: 0,
+			seconds: 5,
+		});
+
+		assert.notStrictEqual(game.getPlayType(), "kneel");
+	});
+
+	test("kneel near own end zone if there's only room for the kneels needed to run out the clock", async () => {
+		// 2 kneels needed, so 4 kneels worth of room is not necessary
+		const game = await initKneelSituation({
+			down: 1,
+			lead: 3,
+			oppTimeouts: 0,
+			scrimmage: 8,
+			seconds: 60,
+		});
+
+		assert.strictEqual(game.getPlayType(), "kneel");
+	});
 });
 
 test("don't punt when down late, and usually pass", async () => {

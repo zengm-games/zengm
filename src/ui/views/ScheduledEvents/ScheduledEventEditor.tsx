@@ -4,6 +4,7 @@ import {
 	getNextScheduledEventReplacing,
 	getScheduledEventPhases,
 	getSettingsBeforeScheduledEvent,
+	getTeamsAtEndOfScheduledEventPhase,
 	getTeamsBeforeScheduledEvent,
 	isFutureScheduledEvent,
 } from "../../../common/scheduledEvents.ts";
@@ -352,6 +353,14 @@ const ScheduledEventEditor = ({
 							{...commonProps}
 							event={getEvent(editing, "gameAttributes")}
 							initialSettings={initialSettings}
+							numActiveTeams={
+								getTeamsAtEndOfScheduledEventPhase({
+									current,
+									events: scheduledEvents,
+									target,
+									teams,
+								}).filter((t) => t.active).length
+							}
 						/>
 					) : null}
 					{type === "teamInfo" ? (

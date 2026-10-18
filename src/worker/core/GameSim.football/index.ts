@@ -45,6 +45,9 @@ const ESTIMATED_SECONDS_PER_KNEEL = 42;
 const ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT = 2;
 const YARDS_NEEDED_TO_KNEEL = 3;
 
+// Teams don't bother with timeouts late in a game when the score difference is this big
+const BLOWOUT_POINTS = 24;
+
 const NUM_DOWNS = 4; // Not used everywhere!
 const TWO_MINUTE_WARNING_TIME = 2; // Not used everywhere!
 
@@ -764,20 +767,34 @@ class GameSim extends GameSimBase {
 		}
 
 		if (quarter >= this.numPeriods && ptsDown < 0) {
-			// Does it make sense to kneel? Depends on clock time and opponent timeouts
+			// Does it make sense to kneel? Depends on clock time and opponent timeouts, if they'd use them (see the timeout logic in simPlay)
+			const opponentUsesTimeouts = -ptsDown < BLOWOUT_POINTS;
 			const numTimeouts =
-				this.timeouts[this.d] + (this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
-			const downsRemaining = NUM_DOWNS - this.down;
-			const timeoutDownsRemaining = Math.min(numTimeouts, downsRemaining);
-			const clockRunningDownsRemaining = downsRemaining - timeoutDownsRemaining;
-			const timeRemainingAfterKeels =
-				this.clock -
-				(ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT * timeoutDownsRemaining +
-					ESTIMATED_SECONDS_PER_KNEEL * clockRunningDownsRemaining) /
-					60;
+				(opponentUsesTimeouts ? this.timeouts[this.d] : 0) +
+				(this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
+			// Count how many kneels it takes to run out the clock, assuming the opponent uses its timeouts as early as possible. Before 4th down, a kneel takes the play plus the run-off before the next snap. On 4th down, the ball is turned over on downs unless the play itself uses the rest of the time
+			let timeRemaining = this.clock;
+			let timeoutsRemaining = numTimeouts;
+			let numKneels;
+			for (let down = this.down; down <= NUM_DOWNS; down += 1) {
+				if (down < NUM_DOWNS && timeoutsRemaining > 0) {
+					timeoutsRemaining -= 1;
+					timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT / 60;
+				} else if (down < NUM_DOWNS) {
+					timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL / 60;
+				} else {
+					timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT / 60;
+				}
 
-			if (timeRemainingAfterKeels < 0) {
-				if (this.scrimmage > YARDS_NEEDED_TO_KNEEL * downsRemaining) {
+				if (timeRemaining <= 0) {
+					numKneels = down - this.down + 1;
+					break;
+				}
+			}
+
+			if (numKneels !== undefined) {
+				// Make sure there's room to lose some yards on each kneel without a safety
+				if (this.scrimmage > YARDS_NEEDED_TO_KNEEL * numKneels) {
 					return "kneel";
 				} else {
 					// We don't have room to kneel, so probably just run
@@ -1056,7 +1073,7 @@ class GameSim extends GameSimBase {
 				const finalPeriod = quarter >= this.numPeriods;
 				if (finalPeriod) {
 					// No point in the 4th quarter of a blowout
-					if (diff < 24) {
+					if (diff < BLOWOUT_POINTS) {
 						if (diff > 0) {
 							// If offense is winning, defense uses timeouts when near the end
 							if (this.clock < 2.5) {
@@ -2648,9 +2665,10 @@ class GameSim extends GameSimBase {
 			yds,
 		});
 
+		// At least ESTIMATED_SECONDS_PER_KNEEL, so if getPlayType decided to kneel to run out the clock, it will make the same decision next play
 		const dt = randInt(
-			ESTIMATED_SECONDS_PER_KNEEL - 1,
 			ESTIMATED_SECONDS_PER_KNEEL,
+			ESTIMATED_SECONDS_PER_KNEEL + 1,
 		);
 
 		return dt;

@@ -1,18 +1,10 @@
-import {
-	Fragment,
-	type MouseEvent,
-	type ReactNode,
-	useState,
-	useEffect,
-	useMemo,
-} from "react";
+import { Fragment, type ReactNode, useState, useEffect, useMemo } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.baseball.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
-import updateSortBys from "./DataTable/updateSortBys.ts";
-import type { SortBy } from "./DataTable/index.tsx";
+import { useBoxScoreSortBys } from "./useBoxScoreSortBys.ts";
 import {
 	type BoxScorePlayer,
 	getText,
@@ -80,31 +72,7 @@ const StatsTable = ({
 		[...stats, ...seasonStats].map((stat) => `stat:${stat}`),
 	);
 
-	const [sortBys, setSortBys] = useState<SortBy[]>([]);
-
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys((prevSortBys) => {
-			const newSortBys =
-				updateSortBys({
-					cols,
-					event,
-					i,
-					prevSortBys,
-				}) ?? [];
-
-			if (
-				newSortBys.length === 1 &&
-				prevSortBys.length === 1 &&
-				newSortBys[0]![0] === prevSortBys[0]![0] &&
-				newSortBys[0]![1] === "desc"
-			) {
-				// User just clicked twice on the same column. Reset sort.
-				return [];
-			}
-
-			return newSortBys;
-		});
-	};
+	const { onClick, sortBys } = useBoxScoreSortBys({ cols });
 
 	const allStarGame = t.tid === -1 || t.tid === -2;
 	let players = t.players

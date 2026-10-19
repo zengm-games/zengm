@@ -1,17 +1,11 @@
-import {
-	Fragment,
-	type MouseEvent,
-	type ReactNode,
-	useState,
-	useMemo,
-} from "react";
+import { Fragment, type ReactNode, useMemo } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.hockey.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
-import updateSortBys from "./DataTable/updateSortBys.ts";
+import { useBoxScoreSortBys } from "./useBoxScoreSortBys.ts";
 import type { SortBy } from "./DataTable/index.tsx";
 import { formatClock } from "../../common/formatClock.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
@@ -60,23 +54,12 @@ const StatsTable = ({
 	const stats = PLAYER_GAME_STATS[type].stats;
 	const cols = getCols(stats.map((stat) => `stat:${stat}`));
 
-	const [sortBys, setSortBys] = useState(() => {
-		return PLAYER_GAME_STATS[type].sortBy.map(
+	const { onClick, sortBys } = useBoxScoreSortBys({
+		cols,
+		defaultSortBys: PLAYER_GAME_STATS[type].sortBy.map(
 			(stat) => [stats.indexOf(stat), "desc"] as SortBy,
-		);
+		),
 	});
-
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(
-			(prevSortBys) =>
-				updateSortBys({
-					cols,
-					event,
-					i,
-					prevSortBys,
-				}) ?? [],
-		);
-	};
 
 	const allStarGame = t.tid === -1 || t.tid === -2;
 	const players = t.players

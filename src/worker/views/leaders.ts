@@ -458,8 +458,9 @@ export class GamesPlayedCache {
 							const numGamesFirstRoundSoFar = series.home.won + series.away.won;
 
 							// Number of games in a first round sweep
-							const numGamesMinAfterFirstRound = helpers.numGamesToWinSeries(
-								g.get("numGamesPlayoffSeries", season)[0],
+							const numGamesMinAfterFirstRound = helpers.numGamesToWinRound(
+								0,
+								season,
 							);
 
 							minGpPlayoffs = Math.min(
@@ -551,9 +552,7 @@ export class GamesPlayedCache {
 				return gp;
 			}
 
-			return helpers.numGamesToWinSeries(
-				g.get("numGamesPlayoffSeries", season)[0],
-			);
+			return helpers.numGamesToWinRound(0, season);
 		}
 
 		return this.regularSeasonCache[season]?.[tid] ?? g.get("numGames", season);

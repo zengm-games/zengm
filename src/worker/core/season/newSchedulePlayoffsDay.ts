@@ -130,9 +130,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 	const rnd = playoffSeries.currentRound;
 	const tids: [number, number][] = [];
-	const numGamesToWin = helpers.numGamesToWinSeries(
-		g.get("numGamesPlayoffSeries", "current")[rnd],
-	);
+	const numGamesToWin = helpers.numGamesToWinRound(rnd);
 
 	let minGamesPlayedThisRound = Infinity;
 	for (const { away, home } of series[rnd]!) {

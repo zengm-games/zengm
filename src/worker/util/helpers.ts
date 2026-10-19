@@ -224,9 +224,18 @@ const leagueUrl = (components: Readonly<LeagueUrlParts>): string => {
 	return commonHelpers.leagueUrlBase(g.get("lid"), components);
 };
 
-const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
+// Number of wins needed to win a matchup in a playoff round. Round -1 is the play-in tournament, which is single games.
+const numGamesToWinRound = (
+	round: number,
+	season: number | "current" = "current",
+) => {
+	if (round === -1) {
+		return 1;
+	}
+
+	const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", season)[round];
 	if (
-		typeof numGamesPlayoffSeries !== "number" ||
+		numGamesPlayoffSeries === undefined ||
 		Number.isNaN(numGamesPlayoffSeries)
 	) {
 		return 4;
@@ -502,7 +511,7 @@ const helpers = {
 	getAbbrev,
 	getTeamSeasonGp,
 	leagueUrl,
-	numGamesToWinSeries,
+	numGamesToWinRound,
 	overtimeCounter,
 	pickDesc,
 	quarterLengthFactor,

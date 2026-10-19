@@ -221,8 +221,8 @@ export default defineView({
 				finalMatchups,
 				matchups,
 				numGamesPlayoffSeries,
-				numGamesToWinSeries: numGamesPlayoffSeries.map(
-					helpers.numGamesToWinSeries,
+				numGamesToWinSeries: numGamesPlayoffSeries.map((numGames, round) =>
+					helpers.numGamesToWinRound(round, inputs.season),
 				),
 				playIns: playIns2,
 				playoffsByConf,

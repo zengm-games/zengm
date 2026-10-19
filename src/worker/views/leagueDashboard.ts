@@ -427,9 +427,7 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 							seriesTitle = helpers.upperCaseFirstLetter(
 								helpers.playoffRoundName(rnd, numPlayoffRounds, playoffsByConf),
 							);
-							numGamesToWinSeries = helpers.numGamesToWinSeries(
-								g.get("numGamesPlayoffSeries", "current")[rnd],
-							);
+							numGamesToWinSeries = helpers.numGamesToWinRound(rnd);
 							break;
 						}
 					}
@@ -455,7 +453,7 @@ const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 
 							seriesTitle = "Play-in tournament";
 
-							numGamesToWinSeries = 1;
+							numGamesToWinSeries = helpers.numGamesToWinRound(-1);
 							break;
 						}
 					}

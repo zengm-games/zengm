@@ -1,5 +1,3 @@
-numGamesPlayoffSeries is the setting that triggers validation of playoff settings, so if in scheduled events you are changing only another one (like numPlayoffByes) in an invalid way, it won't do any validation
-
 draft class with relative of an active player. export/import it -> relation is still on the imported player, but not the existing one
 
 future idb.merged stuff

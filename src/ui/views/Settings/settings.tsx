@@ -47,6 +47,9 @@ type Setting = {
 		initialSettings: Settings,
 	) => void | Promise<void>;
 
+	// Other settings that the validator depends on. If any of these are displayed in the form, the validator runs even if this setting is not displayed in the form, like when a scheduled event only changes some settings.
+	validateWith?: Key[];
+
 	// For form fields that render one box for two keys, put any of the associated hidden keys here.
 	partners?: Key[];
 
@@ -309,6 +312,7 @@ export const settings: Setting[] = (
 			name: "# Games Per Season",
 			godModeRequired: "always",
 			type: "int",
+			validateWith: ["numGamesDiv", "numGamesConf"],
 			validator: (value, output) => {
 				if (value < 0) {
 					throw new Error("Must not be negative");
@@ -400,6 +404,7 @@ export const settings: Setting[] = (
 				</>
 			),
 			type: "jsonString",
+			validateWith: ["numPlayoffByes", "playIn", "playoffsByConf"],
 			validator: async (value, output, initialSettings) => {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
@@ -818,6 +823,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float1000",
 			decoration: "currency",
+			validateWith: ["minContract"],
 			validator: (value, output) => {
 				if (value < 0) {
 					throw new Error("Value cannot be negative");
@@ -847,6 +853,7 @@ export const settings: Setting[] = (
 			name: "Max Contract Length",
 			godModeRequired: "always",
 			type: "int",
+			validateWith: ["minContractLength"],
 			validator: (value, output) => {
 				if (value < 1) {
 					throw new Error("Value must be at least 1");
@@ -1630,6 +1637,7 @@ export const settings: Setting[] = (
 			key: "allStarNum",
 			name: "# Players Per Team",
 			type: "int",
+			validateWith: ["minRosterSize"],
 			validator: (value, output) => {
 				if (__SPORT === "basketball") {
 					if (
@@ -2260,6 +2268,7 @@ export const settings: Setting[] = (
 			name: "Minutes Left Trigger",
 			godModeRequired: "always",
 			type: "float",
+			validateWith: ["elam", "elamASG", "elamOvertime", "quarterLength"],
 			validator: (value, output) => {
 				if (
 					(output.elam || output.elamASG) &&
@@ -2278,6 +2287,7 @@ export const settings: Setting[] = (
 			name: "Target Points to Add",
 			godModeRequired: "always",
 			type: "int",
+			validateWith: ["elam", "elamASG"],
 			validator: (value, output) => {
 				if ((output.elam || output.elamASG) && value < 0) {
 					throw new Error("Value must be greater than 0");
@@ -2442,6 +2452,7 @@ export const settings: Setting[] = (
 				key,
 				name: `# Shootout Rounds ${playoffs ? " (Playoffs)" : ""}`,
 				type: "int",
+				validateWith: playoffs ? ["maxOvertimesPlayoffs"] : undefined,
 				descriptionLong: (
 					<>
 						<p>

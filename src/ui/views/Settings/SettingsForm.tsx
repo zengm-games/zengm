@@ -343,18 +343,27 @@ const SettingsForm = ({
 
 	const [filterText, setFilterText] = useState("");
 
+	const isShown = (key: Key) => !settingsShown || settingsShown.includes(key);
+
 	// Filter out the new league only ones when appropriate
-	const filteredSettings = settings.filter((setting) => {
+	const contextSettings = settings.filter((setting) => {
 		return (
-			(!settingsShown || settingsShown.includes(setting.key)) &&
-			(!setting.showOnlyIf ||
-				setting.showOnlyIf({
-					hasPlayers,
-					newLeague,
-					realPlayers,
-				}))
+			!setting.showOnlyIf ||
+			setting.showOnlyIf({
+				hasPlayers,
+				newLeague,
+				realPlayers,
+			})
 		);
 	});
+	const filteredSettings = contextSettings.filter((setting) =>
+		isShown(setting.key),
+	);
+
+	// Includes settings not in the form if they depend on settings that are
+	const validatedSettings = contextSettings.filter(
+		(setting) => isShown(setting.key) || setting.validateWith?.some(isShown),
+	);
 
 	// filteredSettings - removes ones not appropriate for this context, like new league only settings
 	// filteredSettings2 - handles the filter/search bar in the UI
@@ -439,22 +448,23 @@ const SettingsForm = ({
 			output[key] = state[key];
 		}
 
-		// Run validation functions at the end, so all values are available
-		for (const option of filteredSettings) {
-			const { key, name, validator } = option;
+		let totalOutput = output;
+		if (defaultNewLeagueSettings) {
+			totalOutput = {
+				// Passing initialSettings here is because from DefaultNewLeagueSettings, output will only contain a subset of settings
+				...initialSettings,
+				...output,
+			};
+		}
 
-			let totalOutput = output;
-			if (defaultNewLeagueSettings) {
-				totalOutput = {
-					// Passing initialSettings here is because from DefaultNewLeagueSettings, output will only contain a subset of settings
-					...initialSettings,
-					...output,
-				};
-			}
+		// Run validation functions at the end, so all values are available
+		for (const option of validatedSettings) {
+			const { key, name, validator } = option;
 
 			try {
 				if (validator) {
-					await validator(output[key], totalOutput, initialSettings);
+					// totalOutput rather than output, for settings that are only validated due to validateWith
+					await validator(totalOutput[key], totalOutput, initialSettings);
 				}
 			} catch (error) {
 				setSubmitting(false);

@@ -2,7 +2,8 @@ import Bugsnag from "@bugsnag/browser";
 import BugsnagPluginReact from "@bugsnag/plugin-react";
 
 Bugsnag.start({
-	apiKey: window.bugsnagKey,
+	apiKey: "b1ae6247b6a999159883b98af8e39fe6",
+	appType: __SPORT,
 	appVersion: window.bbgmVersion,
 	autoTrackSessions: false,
 	onError: (event) => {

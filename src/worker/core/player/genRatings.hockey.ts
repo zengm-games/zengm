@@ -1,31 +1,23 @@
 import genFuzz from "./genFuzz.ts";
 import limitRating from "./limitRating.ts";
+import { heightToInches } from "./heightToInches.ts";
 import { helpers } from "../../util/index.ts";
 import { POSITION_COUNTS } from "../../../common/constants.hockey.ts";
 import type { PlayerRatings } from "../../../common/types.hockey.ts";
-import { truncGauss } from "../../../common/random.ts";
+import { choice, truncGauss } from "../../../common/random.ts";
 
 const getPos = () => {
-	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {
-		return sum + val;
-	}, 0);
-	const rand = Math.random() * numPlayers;
-	let cumsum = 0;
+	const pos = choice(
+		helpers.keys(POSITION_COUNTS),
+		(pos) => POSITION_COUNTS[pos],
+	);
 
-	for (const [pos, count] of Object.entries(POSITION_COUNTS)) {
-		cumsum += count;
-
-		if (rand < cumsum) {
-			// Hacky - make more defense
-			if (pos === "C" && Math.random() < 0.25) {
-				return "D";
-			}
-
-			return pos;
-		}
+	// Hacky - make more defense
+	if (pos === "C" && Math.random() < 0.25) {
+		return "D";
 	}
 
-	throw new Error("No position found - this should never happen!");
+	return pos;
 };
 
 const getRatingsToBoost = (pos: string) => {
@@ -118,11 +110,6 @@ const getRatingsToBoost = (pos: string) => {
 	}
 
 	throw new Error(`Invalid position "${pos}"`);
-};
-
-// 5'4" to 6'10"
-const heightToInches = (hgt: number) => {
-	return Math.round(64 + (hgt * (82 - 64)) / 100);
 };
 
 /*const info = {};

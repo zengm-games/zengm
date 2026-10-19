@@ -661,6 +661,35 @@ class GameSim extends GameSimBase {
 		return 0;
 	}
 
+	// Time remaining after each kneel from firstDown (default is the current down) through lastDown, if the defense uses numTimeouts timeouts as early as possible, plus the two minute warning. Before 4th down, a kneel takes the play plus the run-off before the next snap. On 4th down, it only takes the play, since the clock stops for the turnover on downs.
+	getTimeRemainingAfterKneels({
+		firstDown = this.down,
+		lastDown,
+		numTimeouts,
+	}: {
+		firstDown?: number;
+		lastDown: number;
+		numTimeouts: number;
+	}) {
+		let clockStopsRemaining =
+			numTimeouts + (this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
+		let timeRemaining = this.clock;
+		const output = [];
+		for (let down = firstDown; down <= lastDown; down += 1) {
+			if (down < NUM_DOWNS && clockStopsRemaining > 0) {
+				clockStopsRemaining -= 1;
+				timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT / 60;
+			} else if (down < NUM_DOWNS) {
+				timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL / 60;
+			} else {
+				timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT / 60;
+			}
+			output.push(timeRemaining);
+		}
+
+		return output;
+	}
+
 	hurryUp() {
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[0].stat.ptsQtrs.length;
@@ -780,30 +809,18 @@ class GameSim extends GameSimBase {
 		if (quarter >= this.numPeriods && ptsDown < 0) {
 			// Does it make sense to kneel? Depends on clock time and opponent timeouts, if they'd use them (see the timeout logic in simPlay)
 			const opponentUsesTimeouts = -ptsDown < BLOWOUT_POINTS;
-			const numTimeouts =
-				(opponentUsesTimeouts ? this.timeouts[this.d] : 0) +
-				(this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
-			// Count how many kneels it takes to run out the clock, assuming the opponent uses its timeouts as early as possible. Before 4th down, a kneel takes the play plus the run-off before the next snap. On 4th down, the ball is turned over on downs unless the play itself uses the rest of the time
-			let timeRemaining = this.clock;
-			let timeoutsRemaining = numTimeouts;
-			let numKneels;
-			for (let down = this.down; down <= NUM_DOWNS; down += 1) {
-				if (down < NUM_DOWNS && timeoutsRemaining > 0) {
-					timeoutsRemaining -= 1;
-					timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT / 60;
-				} else if (down < NUM_DOWNS) {
-					timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL / 60;
-				} else {
-					timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT / 60;
-				}
+			const timeRemainingAfterKneels = this.getTimeRemainingAfterKneels({
+				lastDown: NUM_DOWNS,
+				numTimeouts: opponentUsesTimeouts ? this.timeouts[this.d] : 0,
+			});
 
-				if (timeRemaining <= 0) {
-					numKneels = down - this.down + 1;
-					break;
-				}
-			}
+			// Count how many kneels it takes to run out the clock. On 4th down, the ball is turned over on downs unless the play itself uses the rest of the time
+			const index = timeRemainingAfterKneels.findIndex(
+				(timeRemaining) => timeRemaining <= 0,
+			);
+			if (index >= 0) {
+				const numKneels = index + 1;
 
-			if (numKneels !== undefined) {
 				// Make sure there's room to lose some yards on each kneel without a safety
 				if (this.scrimmage > YARDS_NEEDED_TO_KNEEL * numKneels) {
 					return "kneel";
@@ -824,20 +841,15 @@ class GameSim extends GameSimBase {
 
 		let neverPunt = false;
 		if (quarter === this.numPeriods && ptsDown > 0) {
-			// Losing in 4th quarter, maybe don't punt if there's not much time left. Also depends on how many timeouts are left
-			const numTimeouts =
-				this.timeouts[this.o] + (this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
-			const downsRemaining = NUM_DOWNS - 1;
-			const timeoutDownsRemaining = Math.min(numTimeouts, downsRemaining);
-			const clockRunningDownsRemaining = downsRemaining - timeoutDownsRemaining;
-			const timeRemainingAfterKeels =
-				this.clock -
-				(ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT * timeoutDownsRemaining +
-					ESTIMATED_SECONDS_PER_KNEEL * clockRunningDownsRemaining) /
-					60;
+			// Losing in 4th quarter, maybe don't punt if there's not much time left. Depends on how much time the other team can run off by kneeling until 4th down, after getting the ball on 1st down, with us using our timeouts
+			const timeRemainingAfterKneels = this.getTimeRemainingAfterKneels({
+				firstDown: 1,
+				lastDown: NUM_DOWNS - 1,
+				numTimeouts: this.timeouts[this.o],
+			});
 
 			// We want at least 30 seconds after getting the ball back
-			if (timeRemainingAfterKeels < 0.5) {
+			if (timeRemainingAfterKneels.at(-1)! < 0.5) {
 				neverPunt = true;
 			}
 		} else if (quarter > this.numPeriods && ptsDown > 0) {

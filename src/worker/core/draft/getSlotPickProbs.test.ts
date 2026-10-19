@@ -7,19 +7,15 @@ import { range } from "../../../common/utils.ts";
 
 const NUM_TEAMS = 30;
 
-const sum = (numbers: number[]) => {
-	return numbers.reduce((total, number) => total + number, 0);
-};
-
 // Each slot gets exactly one pick, and each pick goes to exactly one slot
 const assertValidProbs = (probs: number[][]) => {
 	assert.strictEqual(probs.length, NUM_TEAMS);
 	for (const row of probs) {
 		assert.strictEqual(row.length, NUM_TEAMS);
-		assert.closeTo(sum(row), 1, 1e-9);
+		assert.closeTo(Math.sumPrecise(row), 1, 1e-9);
 	}
 	for (let pick = 0; pick < NUM_TEAMS; pick++) {
-		assert.closeTo(sum(probs.map((row) => row[pick]!)), 1, 1e-9);
+		assert.closeTo(Math.sumPrecise(probs.map((row) => row[pick]!)), 1, 1e-9);
 	}
 };
 
@@ -92,7 +88,7 @@ describe("nba2019", () => {
 		// Worst 3 teams each have a 14% chance at the top pick, and can't fall further than 4 spots
 		for (const slot of [0, 1, 2]) {
 			assert.closeTo(probs[slot]![0]!, 0.14, 1e-9);
-			assert.closeTo(sum(probs[slot]!.slice(slot + 5)), 0, 1e-9);
+			assert.closeTo(Math.sumPrecise(probs[slot]!.slice(slot + 5)), 0, 1e-9);
 		}
 
 		// Last lottery team has a small chance of moving up
@@ -133,7 +129,7 @@ describe("nba2027", () => {
 
 		// Worst 3 teams can't fall past the 12th pick
 		for (const slot of [0, 1, 2]) {
-			assert.closeTo(sum(probs[slot]!.slice(12)), 0, 1e-9);
+			assert.closeTo(Math.sumPrecise(probs[slot]!.slice(12)), 0, 1e-9);
 		}
 
 		// Losers of the 7/8 play-in games are the last 2 lottery teams, with the worst chances

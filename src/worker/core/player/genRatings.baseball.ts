@@ -1,27 +1,10 @@
 import genFuzz from "./genFuzz.ts";
 import limitRating from "./limitRating.ts";
+import { heightToInches } from "./heightToInches.ts";
 import { helpers } from "../../util/index.ts";
 import { POSITION_COUNTS } from "../../../common/constants.baseball.ts";
 import type { PlayerRatings } from "../../../common/types.baseball.ts";
-import { truncGauss } from "../../../common/random.ts";
-
-const getPos = () => {
-	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {
-		return sum + val;
-	}, 0);
-	const rand = Math.random() * numPlayers;
-	let cumsum = 0;
-
-	for (const [pos, count] of Object.entries(POSITION_COUNTS)) {
-		cumsum += count;
-
-		if (rand < cumsum) {
-			return pos;
-		}
-	}
-
-	throw new Error("No position found - this should never happen!");
-};
+import { choice, truncGauss } from "../../../common/random.ts";
 
 const getRatingsToBoost = (pos: string) => {
 	const nonPitcher = {
@@ -141,11 +124,6 @@ const getRatingsToBoost = (pos: string) => {
 	throw new Error(`Invalid position "${pos}"`);
 };
 
-// 5'4" to 6'10"
-const heightToInches = (hgt: number) => {
-	return Math.round(64 + (hgt * (82 - 64)) / 100);
-};
-
 /*const info = {};
 const infoIn = {};
 const infoOut = {};
@@ -174,7 +152,10 @@ const genRatings = (
 	heightInInches: number;
 	ratings: PlayerRatings;
 } => {
-	const pos = getPos();
+	const pos = choice(
+		helpers.keys(POSITION_COUNTS),
+		(pos) => POSITION_COUNTS[pos],
+	);
 
 	const isPitcher = pos === "RP" || pos === "SP";
 

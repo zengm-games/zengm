@@ -45,10 +45,6 @@ const getTeams = () => {
 	});
 };
 
-const sum = (numbers: number[]) => {
-	return numbers.reduce((total, number) => total + number, 0);
-};
-
 beforeAll(async () => {
 	resetG();
 	await resetCache({});
@@ -75,13 +71,13 @@ for (const playIn of [true, false]) {
 			assert.strictEqual(probs.size, teams.length);
 			for (const row of probs.values()) {
 				assert.strictEqual(row.length, teams.length);
-				assert.closeTo(sum(row), 1, 1e-9);
+				assert.closeTo(Math.sumPrecise(row), 1, 1e-9);
 			}
 
 			// Each slot has exactly one team in each simulation
 			for (let slot = 0; slot < teams.length; slot++) {
 				assert.closeTo(
-					sum(Array.from(probs.values(), (row) => row[slot]!)),
+					Math.sumPrecise(Array.from(probs.values(), (row) => row[slot]!)),
 					1,
 					1e-9,
 				);
@@ -99,7 +95,7 @@ for (const playIn of [true, false]) {
 			// 16 teams make the playoffs, and there is a smooth transition between teams projected to make it and teams projected to miss it
 			const teamsSorted = teams.toSorted((a, b) => a.winp - b.winp);
 			const probsNoPlayoffs = teamsSorted.map((t) =>
-				sum(probs.get(t.teamSeason.tid)!.slice(0, 14)),
+				Math.sumPrecise(probs.get(t.teamSeason.tid)!.slice(0, 14)),
 			);
 			assert.isAbove(probsNoPlayoffs[0]!, 0.9);
 			assert.isBelow(probsNoPlayoffs.at(-1)!, 0.1);
@@ -164,7 +160,7 @@ test("teams with no draft pick are not in the draft order", async () => {
 	assert.isFalse(probs.has(teams[0]!.teamSeason.tid));
 	for (const row of probs.values()) {
 		assert.strictEqual(row.length, teams.length - 1);
-		assert.closeTo(sum(row), 1, 1e-9);
+		assert.closeTo(Math.sumPrecise(row), 1, 1e-9);
 	}
 });
 

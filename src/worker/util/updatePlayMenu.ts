@@ -355,16 +355,8 @@ const updatePlayMenu = async () => {
 	}
 
 	const someOptions: Option[] = keys.map((id) => {
-		let code;
-		// @ts-expect-error
-		if (allOptions[id].key) {
-			// @ts-expect-error
-			code = `Key${allOptions[id].key.toUpperCase()}`;
-		}
-
 		return {
 			...allOptions[id],
-			code,
 			id,
 		};
 	});

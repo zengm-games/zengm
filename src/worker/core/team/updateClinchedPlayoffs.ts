@@ -9,6 +9,7 @@ import { g, helpers, logEvent } from "../../util/index.ts";
 import {
 	genPlayoffSeriesFromTeams,
 	getTidPlayIns,
+	InvalidPlayoffSettingsError,
 } from "../season/genPlayoffSeries.ts";
 import { getHypotheticalTeam } from "./getHypotheticalTeam.ts";
 import { season } from "../index.ts";
@@ -214,7 +215,15 @@ const updateClinchedPlayoffs = async (
 			teamStats.set(row.tid, row);
 		}
 
-		clinchedPlayoffs = await getClinchedPlayoffs(teamSeasons, teamStats);
+		try {
+			clinchedPlayoffs = await getClinchedPlayoffs(teamSeasons, teamStats);
+		} catch (error) {
+			if (error instanceof InvalidPlayoffSettingsError) {
+				// Can't figure out who clinched anything. The user will be told about the invalid settings when the playoffs are supposed to start
+				return;
+			}
+			throw error;
+		}
 	}
 
 	let playoffsByConf: ByConf | undefined;

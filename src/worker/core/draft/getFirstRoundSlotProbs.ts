@@ -141,7 +141,6 @@ export const getFirstRoundSlotProbs = async ({
 			),
 			{
 				byConf,
-				logError: false,
 				season,
 				skipTiebreakers: true,
 			},

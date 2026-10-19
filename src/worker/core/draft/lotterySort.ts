@@ -1,7 +1,10 @@
 import { PHASE } from "../../../common/constants.ts";
 import { g } from "../../util/index.ts";
 import type { TeamFiltered } from "../../../common/types.ts";
-import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
+import {
+	genPlayoffSeriesFromTeams,
+	InvalidPlayoffSettingsError,
+} from "../season/genPlayoffSeries.ts";
 import { range } from "../../../common/utils.ts";
 import { shuffle } from "../../../common/random.ts";
 
@@ -46,7 +49,16 @@ const lotterySort = async (
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	if (g.get("phase") < PHASE.PLAYOFFS) {
-		const { tidPlayoffs } = await genPlayoffSeriesFromTeams(teams);
+		let tidPlayoffs: number[] = [];
+		try {
+			({ tidPlayoffs } = await genPlayoffSeriesFromTeams(teams));
+		} catch (error) {
+			if (error instanceof InvalidPlayoffSettingsError) {
+				// Sort as if no teams make the playoffs. The user will be told about the invalid settings when the playoffs are supposed to start
+			} else {
+				throw error;
+			}
+		}
 
 		for (const t of teams) {
 			if (tidPlayoffs.includes(t.tid)) {

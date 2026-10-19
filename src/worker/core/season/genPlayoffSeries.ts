@@ -1,4 +1,4 @@
-import { g, logEvent } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type {
 	TeamFiltered,
 	PlayoffSeries,
@@ -38,7 +38,7 @@ type MyTeam = TeamFiltered<
 	number
 >;
 
-// The playoff settings don't work for the teams. This should never happen for the real playoffs, because settings are validated when they change. But it can happen for hypothetical playoffs, see getFirstRoundSlotProbs.
+// The playoff settings don't work for the teams. Settings are validated when they change, but this can still happen, like if teams are removed later, or for hypothetical playoffs (see getFirstRoundSlotProbs). This is not logged here, it's up to the caller to handle it, like by showing the message to the user.
 export class InvalidPlayoffSettingsError extends Error {
 	constructor(message: string) {
 		super(message);
@@ -138,13 +138,11 @@ const myValidatePlayoffSettings = ({
 	numPlayoffByes,
 	numTeams,
 	byConf,
-	logError,
 }: Pick<
 	Parameters<typeof validatePlayoffSettings>[0],
 	"numRounds" | "numPlayoffByes" | "byConf"
 > & {
 	numTeams: number;
-	logError: boolean;
 }) => {
 	try {
 		validatePlayoffSettings({
@@ -155,14 +153,6 @@ const myValidatePlayoffSettings = ({
 			byConf,
 		});
 	} catch (error) {
-		if (logError) {
-			logEvent({
-				type: "error",
-				text: error.message,
-				saveToDb: false,
-			});
-		}
-
 		// We need to stop executing because otherwise it will somehow have some other error due to invalid settings
 		throw new InvalidPlayoffSettingsError(error.message);
 	}
@@ -173,7 +163,6 @@ export const genPlayoffSeriesFromTeams = async (
 	{
 		byConf: byConfOverride,
 		divisionRanks,
-		logError = true,
 		season = g.get("season"),
 		skipTiebreakers,
 	}: {
@@ -182,9 +171,6 @@ export const genPlayoffSeriesFromTeams = async (
 
 		// See orderTeams
 		divisionRanks?: Map<number, number>;
-
-		// If the playoff settings are not valid for these teams, an InvalidPlayoffSettingsError is always thrown. This is for if the user is also shown an error message.
-		logError?: boolean;
 
 		// Use the playoff settings from this season. Teams are whatever is in `teams`, so they need to be the teams for this season too.
 		season?: number;
@@ -234,7 +220,6 @@ export const genPlayoffSeriesFromTeams = async (
 			numPlayoffByes,
 			numTeams,
 			byConf,
-			logError,
 		});
 
 		const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
@@ -312,7 +297,6 @@ export const genPlayoffSeriesFromTeams = async (
 			numPlayoffByes,
 			numTeams,
 			byConf: playoffsByConf,
-			logError,
 		});
 
 		const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;

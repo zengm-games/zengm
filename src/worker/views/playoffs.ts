@@ -1,4 +1,5 @@
 import { season, team } from "../core/index.ts";
+import { InvalidPlayoffSettingsError } from "../core/season/genPlayoffSeries.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayoffSeries } from "../../common/types.ts";
@@ -41,6 +42,7 @@ export default defineView({
 				series: Awaited<ReturnType<typeof helpers.augmentSeries>>;
 				teamsToEdit: TeamToEdit[];
 		  }
+		| { errorMessage: string }
 		| undefined
 	> => {
 		if (
@@ -60,7 +62,17 @@ export default defineView({
 				playIns = playoffSeries.playIns;
 				finalMatchups = true;
 			} else {
-				const result = await season.genPlayoffSeries();
+				let result;
+				try {
+					result = await season.genPlayoffSeries();
+				} catch (error) {
+					if (error instanceof InvalidPlayoffSettingsError) {
+						return {
+							errorMessage: `Invalid playoff settings: ${error.message}`,
+						};
+					}
+					throw error;
+				}
 				series = result.series;
 				playIns = result.playIns;
 			}

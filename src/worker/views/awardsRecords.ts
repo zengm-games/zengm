@@ -149,7 +149,6 @@ const getPlayerAwards = (p: LocalPlayer, key: string) => {
 		lastName: p.lastName,
 		pid: p.pid,
 		count: awards.length,
-		countText: awards.length.toString(),
 		years,
 		lastYear,
 		retired: p.retiredYear !== Infinity,
@@ -282,7 +281,6 @@ export default defineView({
 				awardsRecords,
 				awardType,
 				awardTypeOptions,
-				playerCount: awardsRecords.length,
 
 				// This is just for prevOutput.awardTypes so it doesn't need to be recomputed every time
 				awardTypes,

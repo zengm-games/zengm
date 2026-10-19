@@ -16,10 +16,7 @@ const EditPlayer = ({
 	onSave,
 	saving,
 	seasonPhaseInvalid,
-	type,
-}: EditProps<"retirePlayer" | "unretirePlayer"> & {
-	type: "retirePlayer" | "unretirePlayer";
-}) => {
+}: EditProps<"retirePlayer" | "unretirePlayer">) => {
 	const [players, setPlayers] = useState<PlayerOption[] | undefined>();
 	const [player, setPlayer] = useState<PlayerOption | null>(null);
 

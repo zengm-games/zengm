@@ -37,7 +37,6 @@ const AwardsRecords = ({
 	awardType,
 	awardTypeOptions,
 	awardsRecords,
-	playerCount,
 }: View<"awardsRecords">) => {
 	useTitleBar({
 		title: "Awards Records",

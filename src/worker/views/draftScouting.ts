@@ -28,7 +28,6 @@ const getSeason = async (playersAll: Player[], season: number) => {
 				lastName: pa.lastName,
 				age: pa.age,
 				watch: pa.watch,
-				valueFuzz: pa.valueFuzz,
 
 				// Ratings - just take the only entry
 				ovr: ratings.ovr,

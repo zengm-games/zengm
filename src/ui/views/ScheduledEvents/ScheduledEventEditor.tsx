@@ -371,11 +371,7 @@ const ScheduledEventEditor = ({
 						/>
 					) : null}
 					{type === "retirePlayer" || type === "unretirePlayer" ? (
-						<EditPlayer
-							{...commonProps}
-							event={getEvent(editing, type)}
-							type={type}
-						/>
+						<EditPlayer {...commonProps} event={getEvent(editing, type)} />
 					) : null}
 				</div>
 			</Modal.Body>

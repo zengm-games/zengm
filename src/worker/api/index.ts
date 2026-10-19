@@ -635,11 +635,6 @@ const clearWatchList = async (type: "all" | number) => {
 	}, ["leagueChange"]);
 };
 
-const countNegotiations = async () => {
-	const negotiations = await idb.cache.negotiations.getAll();
-	return negotiations.length;
-};
-
 const createLeague = async (
 	{
 		name,
@@ -5430,7 +5425,6 @@ const api = {
 		clearNotes,
 		clearTrade,
 		clearWatchList,
-		countNegotiations,
 		createLeague: whileWorkerBusy(createLeague),
 		createTrade,
 		deleteOldData: whileWorkerBusy(deleteOldData),

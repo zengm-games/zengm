@@ -104,30 +104,6 @@ const updateLocal = (obj: Partial<LocalStateUI>) => {
 	localActions.update(obj);
 };
 
-const updateTeamOvrs = (ovrs: number[]) => {
-	const games = local.getState().games;
-
-	// Find upcoming game, it's the only one that needs updating because it's the only one displayed in a ScoreBox in LeagueTopBar
-	const gameIndex = games.findIndex((game) => game.teams[0].pts === undefined);
-	if (gameIndex >= 0) {
-		const { teams } = games[gameIndex]!;
-		if (
-			teams[0].ovr !== ovrs[teams[0].tid] ||
-			teams[1].ovr !== ovrs[teams[1].tid]
-		) {
-			games[gameIndex] = {
-				...games[gameIndex]!,
-			};
-			teams[0].ovr = ovrs[teams[0].tid];
-			teams[1].ovr = ovrs[teams[1].tid];
-
-			localActions.update({
-				games: games.slice(),
-			});
-		}
-	}
-};
-
 const crossTabEmit = (
 	parameters: Parameters<(typeof crossTabEmitter)["emit"]>,
 ) => {
@@ -166,7 +142,6 @@ const api = {
 	showNotification: showNotification2,
 	showModal,
 	updateLocal,
-	updateTeamOvrs,
 };
 
 export default api;

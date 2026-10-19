@@ -100,12 +100,12 @@ const doInjury = async (
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	let injuryLength = "short";
-	if (p2.injury.gamesRemaining >= bySport({ default: 10, football: 4 })) {
-		injuryLength = "medium";
-	} else if (
-		p2.injury.gamesRemaining >= bySport({ default: 20, football: 8 })
-	) {
+	if (p2.injury.gamesRemaining >= bySport({ default: 20, football: 8 })) {
 		injuryLength = "long";
+	} else if (
+		p2.injury.gamesRemaining >= bySport({ default: 10, football: 4 })
+	) {
+		injuryLength = "medium";
 	}
 
 	let score;
@@ -125,8 +125,8 @@ const doInjury = async (
 		}
 	} else {
 		if (playoffs) {
-			if (playerQuality > 10 || injuryLength === "medium") {
-				// Good player or medium injury in playoffs
+			if (playerQuality > 10 || injuryLength !== "short") {
+				// Good player or medium/long injury in playoffs
 				score = 20;
 			} else {
 				// Mediocre player, short injury in playoffs
@@ -136,8 +136,8 @@ const doInjury = async (
 			if (playerQuality > 10 && injuryLength === "long") {
 				// Good player, long injury
 				score = 20;
-			} else if (playerQuality > 10 || injuryLength === "medium") {
-				// Good player or medium injury
+			} else if (playerQuality > 10 || injuryLength !== "short") {
+				// Good player or medium/long injury
 				score = 10;
 			} else {
 				// Mediocre player, short injury

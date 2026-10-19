@@ -1,5 +1,3 @@
-draft class with relative of an active player. export/import it -> relation is still on the imported player, but not the existing one
-
 future idb.merged stuff
 - a way to share a transaction across multiple calls, for when called in a loop like frivolitiesTeamSeasons. generally not many places would benefit from this
 
@@ -1124,9 +1122,7 @@ FBGM
 - blocked fg/xp
   - count as missed field goal
   - chance for either team to return (very slim for offense)
-- if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
-  - it really should be based on probability of making XP and probability of making TP making TP
-  - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!
+- 4th down decisions should account for a bad kicker, like 4th and 1 on the 30 with a bad kicker, don't punt!
 - too much parity? https://old.reddit.com/r/Football_GM/comments/17fvo5h/i_love_this_game_but_the_level_of_parity_is_out/
 - maybe show turnovers in scoring summary https://old.reddit.com/message/messages/21g6koz
 - options to enable canadian/arena football, and then put that as a preset for new leagues
@@ -1147,7 +1143,6 @@ FBGM
   - breakaway runs, based on speed, similar to passes https://discord.com/channels/290013534023057409/569726303926878219/1467871533929070612
   - broken tackles leading to bigger chunks https://discord.com/channels/290013534023057409/569726303926878219/1467871533929070612
 - nerf yardage of RB catches https://discord.com/channels/290013534023057409/569726303926878219/1467870075309785219
-- XP/2P decision should depend on probability of making XP, in the case where the kicker is really bad or the league settings make XP hard https://discord.com/channels/@me/778760871911751700/1469061366810804448
 - FG/punt decision - example of a bad punt from 30 yard line with 2 minutes left https://discord.com/channels/290013534023057409/1371864894579937322/threads/1506654099385487370 mostly because it's not factoring in that a punt from the 30 yard line is not worth much
 
 wrong team abbrev various places

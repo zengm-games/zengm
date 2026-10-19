@@ -261,6 +261,25 @@ describe("kneel to run out the clock", () => {
 	});
 });
 
+test("go for 2 after a touchdown if there is no healthy kicker", async () => {
+	const game = await initGameSim();
+	game.awaitingKickoff = undefined;
+	game.awaitingAfterTouchdown = true;
+	game.o = 0;
+	game.d = 1;
+	game.team[0].stat.ptsQtrs = [6];
+	game.team[1].stat.ptsQtrs = [0];
+	game.team[0].stat.pts = 6;
+	game.team[1].stat.pts = 0;
+	for (const p of game.team[0].depth.K) {
+		p.injured = true;
+	}
+
+	for (let i = 0; i < 20; i++) {
+		assert.strictEqual(game.getPlayType(), "twoPointConversion");
+	}
+});
+
 test("don't punt when down late, and usually pass", async () => {
 	// Down by 7, 4th quarter, ball on own 20 yard line, 4th down, 1:30 left
 	const game = await initGameSim();

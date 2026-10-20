@@ -159,7 +159,8 @@ export const groupAwards = (
 		const awardsReal = awards.filter((award) => award.type === undefined);
 		if (!awardsGroupedByType.has(type) && awardsReal[0]) {
 			const averageIndex =
-				helpers.sum(awardsReal.map((award) => award.index)) / awardsReal.length;
+				Math.sumPrecise(awardsReal.map((award) => award.index)) /
+				awardsReal.length;
 
 			const seasons: Record<string, number[]> = {};
 			for (const award of awardsReal) {

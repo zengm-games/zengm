@@ -19,6 +19,7 @@ import {
 	wrapFromStart,
 } from "../../../common/defaultGameAttributes.ts";
 import { last } from "../../../common/utils.ts";
+import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
 
 const createGameAttributes = async (
 	{
@@ -47,14 +48,7 @@ const createGameAttributes = async (
 		userTids: [userTid],
 		season: startingSeason,
 		startingSeason,
-		teamInfoCache: teamInfos.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		})),
+		teamInfoCache: getTeamInfoCache(teamInfos),
 		numTeams: teamInfos.length,
 		numActiveTeams: teamInfos.filter((t) => !t.disabled).length,
 	};

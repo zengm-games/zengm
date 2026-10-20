@@ -24,6 +24,7 @@ import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { choice, randInt, uniform } from "../../../common/random.ts";
 import { env } from "../../util/env.ts";
+import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -229,14 +230,7 @@ const newPhasePreseason = async (
 
 	if (updatedTeams) {
 		await league.setGameAttributes({
-			teamInfoCache: teams.map((t) => ({
-				abbrev: t.abbrev,
-				disabled: t.disabled,
-				imgURL: t.imgURL,
-				imgURLSmall: t.imgURLSmall,
-				name: t.name,
-				region: t.region,
-			})),
+			teamInfoCache: getTeamInfoCache(teams),
 		});
 	}
 

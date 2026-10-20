@@ -91,7 +91,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 		if (vals.length === 0) {
 			return undefined;
 		}
-		return vals.reduce((total, val) => total + val, 0) / vals.length;
+		return Math.sumPrecise(vals) / vals.length;
 	});
 
 	// If no draft class has a prospect at some pick, use the value of the nearest earlier pick, or the first pick with a value if there is no earlier one

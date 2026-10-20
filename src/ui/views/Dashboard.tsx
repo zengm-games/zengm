@@ -435,7 +435,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	return (
 		<>
-			{location.host.indexOf("beta") === 0 ? (
+			{location.host.startsWith("beta") ? (
 				<p
 					className="alert alert-warning d-inline-block"
 					style={{ maxWidth: 840 }}

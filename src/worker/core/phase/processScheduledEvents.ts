@@ -23,6 +23,7 @@ import { sortScheduledEvents } from "../../../common/scheduledEvents.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { formatList } from "../../../common/formatList.ts";
+import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
 
 // After the playoffs, the TeamSeason row of the current season is for a season that is already completed, so scheduled events should not change it. The TeamSeason row for the next season is created from the Team in the preseason, before scheduled events are processed.
 const isSeasonCompleted = (phase: number) => {
@@ -159,14 +160,7 @@ const processTeamInfo = async (
 	}
 
 	await league.setGameAttributes({
-		teamInfoCache: teams.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		})),
+		teamInfoCache: getTeamInfoCache(teams),
 	});
 
 	if (info.tid === g.get("userTid") && updatedRegionName) {

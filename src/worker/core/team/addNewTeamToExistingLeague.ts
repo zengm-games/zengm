@@ -7,6 +7,7 @@ import { draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { last } from "../../../common/utils.ts";
+import { getTeamInfoCache } from "./getTeamInfoCache.ts";
 
 const addNewTeamToExistingLeague = async (
 	teamInfo: {
@@ -82,14 +83,7 @@ const addNewTeamToExistingLeague = async (
 	await league.setGameAttributes({
 		numActiveTeams: allTeams.filter((t) => !t.disabled).length,
 		numTeams: allTeams.length,
-		teamInfoCache: allTeams.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		})),
+		teamInfoCache: getTeamInfoCache(allTeams),
 	});
 
 	await draft.genPicks();

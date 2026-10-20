@@ -436,7 +436,7 @@ const genOrder = async (
 			divideChancesOverTiedTeams(chances, firstRoundTeams, true);
 		}
 
-		const chanceTotal = chances.reduce((a, b) => a + b, 0);
+		const chanceTotal = Math.sumPrecise(chances);
 		const chancePct = chances.map((c) => (c / chanceTotal) * 100);
 
 		// Idenfity chances indexes protected by riggedLottery

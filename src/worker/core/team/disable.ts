@@ -12,6 +12,7 @@ import deleteUnreadMessages from "./deleteUnreadMessages.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { choice } from "../../../common/random.ts";
+import { getTeamInfoCache } from "./getTeamInfoCache.ts";
 
 const disable = async (tid: number) => {
 	const t = await idb.cache.teams.get(tid);
@@ -115,14 +116,7 @@ const disable = async (tid: number) => {
 	await league.setGameAttributes({
 		numActiveTeams: allTeams.filter((t) => !t.disabled).length,
 		numTeams: allTeams.length,
-		teamInfoCache: allTeams.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		})),
+		teamInfoCache: getTeamInfoCache(allTeams),
 	});
 
 	logEvent({

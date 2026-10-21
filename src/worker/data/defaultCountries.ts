@@ -133,6 +133,7 @@ if (__NODE_ENV === "test") {
 			Colombia: 15,
 			Congo: 34,
 			Croatia: 216,
+			Cyprus: 3,
 			"Czech Republic": 34,
 			Denmark: 21,
 			"Dominican Republic": 33,

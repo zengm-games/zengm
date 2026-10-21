@@ -37,7 +37,7 @@ https://forebears.io/canada/surnames is a good data source. Here is a script you
 				row.children[1].querySelector(".m")?.textContent ?? "0",
 			);
 
-			if (Number.isNaN(malePct) || malePct < 75) {
+			if (Number.isNaN(malePct) || malePct > 75) {
 				output.push({
 					name,
 					frequency,

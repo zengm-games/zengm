@@ -17,7 +17,8 @@ import {
 import { env } from "./env.ts";
 import { initUILocalGames } from "./initUILocalGames.ts";
 
-let heartbeatIntervalID: number;
+// ReturnType rather than number because bbgm-rosters type checks this with Node types
+let heartbeatIntervalID: ReturnType<typeof setInterval>;
 
 // Heartbeat stuff would be better inside a single transaction, but Firefox doesn't like that.
 

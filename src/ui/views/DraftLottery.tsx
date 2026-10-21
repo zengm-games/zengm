@@ -510,7 +510,10 @@ const DraftLotteryTable = (props: Props) => {
 	const numLeftToReveal = useRef(0); // Like indRevealed
 	const revealState = useRef<State["revealState"]>("init");
 
-	const timeoutID = useRef<number | undefined>(undefined);
+	// ReturnType rather than number because bbgm-rosters type checks this with Node types
+	const timeoutID = useRef<ReturnType<typeof setTimeout> | undefined>(
+		undefined,
+	);
 
 	const [state, dispatch] = useReducer(reducer, {
 		draftLotteryResult: props.draftLotteryResult,

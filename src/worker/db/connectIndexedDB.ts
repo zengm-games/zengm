@@ -8,7 +8,8 @@ import { WEBSITE_ROOT } from "../../common/constants.ts";
 import { logEvent, toUI } from "../util/index.ts";
 
 // If duplicate message is sent multiple times in a row (like IndexedDB transaction abort with many open requests), only show one
-const debounceMessagesStore = new Map<string, number>();
+// ReturnType rather than number because bbgm-rosters type checks this with Node types
+const debounceMessagesStore = new Map<string, ReturnType<typeof setTimeout>>();
 const stopBecauseDebounce = (text: string) => {
 	const timeoutID = debounceMessagesStore.get(text);
 	if (timeoutID === undefined) {

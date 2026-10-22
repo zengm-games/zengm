@@ -37,10 +37,5 @@ export const fetchWrapper = async ({
 		throw new Error(`HTTP error ${response.status}`);
 	}
 
-	// HACK HACK HACK! Some of my APIs (logout) return no content, rather than JSON
-	if (url.endsWith("logout.php")) {
-		return undefined;
-	}
-
 	return response.json();
 };

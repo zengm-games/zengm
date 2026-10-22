@@ -136,20 +136,17 @@ const DeleteAccountForm = ({
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [showDialog, setShowDialog] = useState(false);
 
-	if (showGoldActive) {
-		return (
-			<p>
-				You must cancel your ZenGM Gold subscription before you delete your
-				account. If you're having any trouble with that, please contact{" "}
-				<a href="mailto:jeremy@zengm.com">jeremy@zengm.com</a>.
-			</p>
-		);
-	}
 	return (
 		<>
 			<p>
 				This will delete your account with username <b>{username}</b> for{" "}
 				{GAME_NAME} and all other ZenGM games.
+				{showGoldActive ? (
+					<span className="text-danger">
+						{" "}
+						This will also cancel your ZenGM Gold subscription.
+					</span>
+				) : null}
 			</p>
 			<p>
 				This only affects your achievements, not your leagues. Leagues are

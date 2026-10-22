@@ -1,4 +1,5 @@
-import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../common/constants.ts";
+import { ACCOUNT_API_URL } from "../../common/constants.ts";
+import { isGoldActive } from "../../common/isGoldActive.ts";
 import { idb } from "../db/index.ts";
 import achievement from "./achievement.ts";
 import local from "./local.ts";
@@ -27,11 +28,10 @@ export const checkAccount = async (
 		local.mailingList = !!data.mailing_list;
 		local.email = data.username === "" ? undefined : data.email;
 		local.username = data.username === "" ? undefined : data.username;
-		const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 		await toUI("updateLocal", [
 			{
 				email: local.email,
-				gold: currentTimestamp <= data.gold_until,
+				gold: isGoldActive(data.gold_until),
 				username: local.username,
 			},
 		]);

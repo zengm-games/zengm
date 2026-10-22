@@ -290,9 +290,6 @@ export const WEBSITE_ROOT = bySport({
 	hockey: "zengm.com/hockey",
 });
 
-// For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
-export const GRACE_PERIOD = 60 * 60 * 24 * 3;
-
 export const TIEBREAKERS = {
 	commonOpponentsRecord: "Common opponents record",
 	confRecordIfSame: "Conference record (same conf)",

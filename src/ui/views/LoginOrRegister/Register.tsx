@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { type SubmitEvent, useRef, useState } from "react";
+import { type SubmitEvent, useState } from "react";
 import { ACCOUNT_API_URL } from "../../../common/constants.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
@@ -8,6 +8,7 @@ import { ActionButton } from "../../components/ActionButton.tsx";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";
 import { GameLinks } from "../../components/GameLinks.tsx";
 import { fetchWrapper } from "../../../common/fetchWrapper.ts";
+import { type FieldErrors, getFieldErrors } from "./getFieldErrors.ts";
 
 export const fields = {
 	username: {
@@ -36,41 +37,16 @@ export const fields = {
 	},
 };
 
-type State = {
-	submitting: boolean;
-	errorMessageEmail: string | undefined;
-	errorMessageOverall: string | undefined;
-	errorMessagePassword: string | undefined;
-	errorMessagePassword2: string | undefined;
-	errorMessageUsername: string | undefined;
-};
-
 const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
-	const [state, setState] = useState<State>({
-		submitting: false,
-		errorMessageEmail: undefined,
-		errorMessageOverall: undefined,
-		errorMessagePassword: undefined,
-		errorMessagePassword2: undefined,
-		errorMessageUsername: undefined,
-	});
-	const formRef = useRef<HTMLFormElement>(null);
+	const [submitting, setSubmitting] = useState(false);
+	const [errors, setErrors] = useState<FieldErrors>({});
 
-	const handleSubmit = async (event: SubmitEvent) => {
+	const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		setState({
-			submitting: true,
-			errorMessageEmail: undefined,
-			errorMessageOverall: undefined,
-			errorMessagePassword: undefined,
-			errorMessagePassword2: undefined,
-			errorMessageUsername: undefined,
-		});
+		setSubmitting(true);
+		setErrors({});
 
-		if (!formRef.current) {
-			throw new Error("signup element not found");
-		}
-		const formData = new FormData(formRef.current);
+		const formData = new FormData(event.currentTarget);
 
 		try {
 			const data = await fetchWrapper({
@@ -89,38 +65,13 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 
 				analyticsEvent("sign_up");
 			} else {
-				const updatedState: Partial<State> = {};
-
-				for (const error of Object.keys(data.errors)) {
-					if (error === "username") {
-						updatedState.errorMessageUsername = data.errors[error];
-					} else if (error === "email") {
-						updatedState.errorMessageEmail = data.errors[error];
-					} else if (error === "password") {
-						updatedState.errorMessagePassword = data.errors[error];
-					} else if (error === "password2") {
-						updatedState.errorMessagePassword2 = data.errors[error];
-					} else if (error === "passwords") {
-						updatedState.errorMessagePassword =
-							updatedState.errorMessagePassword ?? ""; // So it gets highlighted too
-
-						updatedState.errorMessagePassword2 = data.errors[error];
-					}
-				}
-
-				setState((state2) => ({
-					...state2,
-					...updatedState,
-					submitting: false,
-				}));
+				setSubmitting(false);
+				setErrors(getFieldErrors(data.errors));
 			}
 		} catch (error) {
 			console.error(error);
-			setState((state2) => ({
-				...state2,
-				submitting: false,
-				errorMessageOverall: ajaxErrorMsg,
-			}));
+			setSubmitting(false);
+			setErrors({ overall: ajaxErrorMsg });
 		}
 	};
 
@@ -130,7 +81,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 			<p className="alert alert-primary">
 				Accounts are shared between <GameLinks />.
 			</p>
-			<form onSubmit={handleSubmit} ref={formRef}>
+			<form onSubmit={handleSubmit}>
 				<input type="hidden" name="sport" value={__SPORT} />
 				<div className="mb-3">
 					<label className="form-label" htmlFor="register-username">
@@ -138,22 +89,18 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 					</label>
 					<input
 						className={clsx("form-control", {
-							"is-invalid": state.errorMessageUsername !== undefined,
+							"is-invalid": errors.username !== undefined,
 						})}
 						id="register-username"
 						name="username"
 						{...fields.username.inputProps}
 					/>
-					<span className="form-text text-body-secondary">
+					<div className="form-text text-body-secondary">
 						{fields.username.description}
-					</span>
-					<span
-						className={clsx("form-text", {
-							"text-danger": state.errorMessageUsername !== undefined,
-						})}
-					>
-						{state.errorMessageUsername}
-					</span>
+					</div>
+					{errors.username ? (
+						<div className="form-text text-danger">{errors.username}</div>
+					) : null}
 				</div>
 				<div className="mb-3">
 					<label className="form-label" htmlFor="register-email">
@@ -161,19 +108,15 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 					</label>
 					<input
 						className={clsx("form-control", {
-							"is-invalid": state.errorMessageEmail !== undefined,
+							"is-invalid": errors.email !== undefined,
 						})}
 						id="register-email"
 						name="email"
 						{...fields.email.inputProps}
 					/>
-					<span
-						className={clsx("form-text", {
-							"text-danger": state.errorMessageEmail !== undefined,
-						})}
-					>
-						{state.errorMessageEmail}
-					</span>
+					{errors.email ? (
+						<div className="form-text text-danger">{errors.email}</div>
+					) : null}
 				</div>
 				<div className="mb-3">
 					<label className="form-label" htmlFor="register-password">
@@ -181,20 +124,16 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 					</label>
 					<input
 						className={clsx("form-control", {
-							"is-invalid": state.errorMessagePassword !== undefined,
+							"is-invalid": errors.password !== undefined,
 						})}
 						id="register-password"
 						name="password"
 						{...fields.password.inputProps}
 						autoComplete="new-password"
 					/>
-					<span
-						className={clsx("form-text", {
-							"text-danger": state.errorMessagePassword !== undefined,
-						})}
-					>
-						{state.errorMessagePassword}
-					</span>
+					{errors.password ? (
+						<div className="form-text text-danger">{errors.password}</div>
+					) : null}
 				</div>
 				<div className="mb-3">
 					<label className="form-label" htmlFor="register-password2">
@@ -202,20 +141,16 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 					</label>
 					<input
 						className={clsx("form-control", {
-							"is-invalid": state.errorMessagePassword2 !== undefined,
+							"is-invalid": errors.password2 !== undefined,
 						})}
 						id="register-password2"
 						name="password2"
 						{...fields.password.inputProps}
 						autoComplete="new-password"
 					/>
-					<span
-						className={clsx("form-text", {
-							"text-danger": state.errorMessagePassword2 !== undefined,
-						})}
-					>
-						{state.errorMessagePassword2}
-					</span>
+					{errors.password2 ? (
+						<div className="form-text text-danger">{errors.password2}</div>
+					) : null}
 				</div>
 				<div className="mb-3 form-check">
 					<input
@@ -228,11 +163,11 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						Join the mailing list (one email per quarter)
 					</label>
 				</div>
-				<ActionButton type="submit" processing={state.submitting}>
+				<ActionButton type="submit" processing={submitting}>
 					Create New Account
 				</ActionButton>
-				{state.errorMessageOverall ? (
-					<p className="text-danger mt-3">{state.errorMessageOverall}</p>
+				{errors.overall ? (
+					<p className="text-danger mt-3">{errors.overall}</p>
 				) : null}
 			</form>
 		</>

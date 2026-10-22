@@ -9,10 +9,12 @@ import type { View } from "../../common/types.ts";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 import { getScript } from "../util/getScript.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
+import { ActionButton } from "../components/ActionButton.tsx";
 
 const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	const [state, setState] = useState({
-		disabled: true,
+		scriptLoaded: false,
+		submitting: false,
 		formError: undefined as string | undefined,
 		number: "",
 		cvc: "",
@@ -31,7 +33,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 
 			setState((prevState) => ({
 				...prevState,
-				disabled: false,
+				scriptLoaded: true,
 			}));
 		})();
 	}, []);
@@ -50,7 +52,8 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 
 		setState((prevState) => ({
 			...prevState,
-			disabled: true,
+			submitting: true,
+			formError: undefined,
 		}));
 
 		window.Stripe.card.createToken(
@@ -67,7 +70,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 				if (error) {
 					setState((prevState) => ({
 						...prevState,
-						disabled: false,
+						submitting: false,
 						formError: error.message,
 					}));
 				} else {
@@ -83,13 +86,14 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 							},
 							credentials: "include",
 						});
-						realtimeUpdate(["account"], "/account", {
+						await realtimeUpdate(["account"], "/account", {
 							goldResult: data,
 						});
-					} catch {
+					} catch (error) {
+						console.error(error);
 						setState((prevState) => ({
 							...prevState,
-							disabled: false,
+							submitting: false,
 							formError: ajaxErrorMsg,
 						}));
 					}
@@ -133,10 +137,6 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 			<p>To replace your saved card with a new one, fill out this form:</p>
 
 			<form onSubmit={handleSubmit}>
-				{state.formError ? (
-					<div className="alert alert-danger">{state.formError}</div>
-				) : null}
-
 				<div style={{ maxWidth: "300px" }}>
 					<div className="mb-3">
 						<label className="form-label" htmlFor="card-number">
@@ -191,15 +191,20 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 						</div>
 					</div>
 
-					<button
+					<ActionButton
 						type="submit"
-						disabled={state.disabled}
-						className="btn btn-primary"
+						disabled={!state.scriptLoaded}
+						processing={state.submitting}
+						processingText="Updating"
 					>
 						Update Card
-					</button>
+					</ActionButton>
 				</div>
 			</form>
+
+			{state.formError ? (
+				<p className="mt-3 text text-danger">{state.formError}</p>
+			) : null}
 		</>
 	);
 };

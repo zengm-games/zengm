@@ -1,6 +1,7 @@
 import { checkAccount } from "../util/checkAccount.ts";
 import { defineView } from "../util/defineView.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
+import { isGoldActive } from "../../common/isGoldActive.ts";
 
 const processInputs = (params: RouteParams<"account">, ctxBBGM: any) => {
 	return {
@@ -8,9 +9,6 @@ const processInputs = (params: RouteParams<"account">, ctxBBGM: any) => {
 		goldSuccess: ctxBBGM.goldResult ? !!ctxBBGM.goldResult.success : undefined,
 	};
 };
-
-// For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
-const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
 export default defineView({
 	id: "account",
@@ -24,16 +22,10 @@ export default defineView({
 				partialTopMenu.username !== "";
 			const goldUntilDate = new Date(partialTopMenu.goldUntil * 1000);
 			const goldUntilDateString = goldUntilDate.toDateString();
-			const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
-			const showGoldActive =
-				loggedIn &&
-				!partialTopMenu.goldCancelled &&
-				currentTimestamp < partialTopMenu.goldUntil;
-			const showGoldCancelled =
-				loggedIn &&
-				partialTopMenu.goldCancelled &&
-				currentTimestamp < partialTopMenu.goldUntil;
-			const showGoldPitch = !loggedIn || !showGoldActive;
+			const goldActive = loggedIn && isGoldActive(partialTopMenu.goldUntil);
+			const showGoldActive = goldActive && !partialTopMenu.goldCancelled;
+			const showGoldCancelled = goldActive && partialTopMenu.goldCancelled;
+			const showGoldPitch = !showGoldActive;
 
 			return {
 				email: partialTopMenu.email,

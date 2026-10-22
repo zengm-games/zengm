@@ -1,17 +1,18 @@
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Modal } from "../../components/Modal.tsx";
 import { ACCOUNT_API_URL, GAME_NAME } from "../../../common/constants.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
 import { fetchWrapper } from "../../../common/fetchWrapper.ts";
+import { ActionButton } from "../../components/ActionButton.tsx";
 
 const Dialog = ({
 	username,
 	show,
-	cancel: cancelRaw,
-	ok: okRaw,
+	cancel,
+	ok,
 }: {
 	username: string;
 	show: boolean;
@@ -21,34 +22,16 @@ const Dialog = ({
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const [invalidPassword, setInvalidPassword] = useState(false);
-
-	const resetState = () => {
-		setInvalidPassword(false);
-	};
-
-	const ok = () => {
-		okRaw();
-		resetState();
-	};
-
-	const cancel = (errorMessage?: string) => {
-		cancelRaw(errorMessage);
-		resetState();
-	};
-
-	useEffect(() => {
-		if (inputRef.current) {
-			inputRef.current.select();
-		}
-	}, []);
+	const [processing, setProcessing] = useState(false);
 
 	const deleteAccount = async () => {
 		const password = inputRef.current?.value;
-		if (password === undefined) {
+		if (password === undefined || processing) {
 			return;
 		}
 
 		setInvalidPassword(false);
+		setProcessing(true);
 
 		let response;
 		try {
@@ -70,6 +53,7 @@ const Dialog = ({
 		if (response.success) {
 			ok();
 		} else if (response.invalidPassword) {
+			setProcessing(false);
 			setInvalidPassword(true);
 		} else {
 			cancel("Unknown error");
@@ -77,7 +61,24 @@ const Dialog = ({
 	};
 
 	return (
-		<Modal animation show={show} onHide={cancel}>
+		<Modal
+			animation
+			show={show}
+			onHide={() => {
+				cancel();
+			}}
+			onEnter={() => {
+				// Stays mounted while closed so it can animate, so reset state from any previous time it was opened
+				setInvalidPassword(false);
+				setProcessing(false);
+				if (inputRef.current) {
+					inputRef.current.value = "";
+				}
+			}}
+			onEntered={() => {
+				inputRef.current?.focus();
+			}}
+		>
 			<Modal.Header closeButton>
 				<Modal.Title>Delete account</Modal.Title>
 			</Modal.Header>
@@ -102,6 +103,7 @@ const Dialog = ({
 							"is-invalid": invalidPassword,
 						})}
 						placeholder="Password"
+						autoComplete="current-password"
 					/>
 					{invalidPassword ? (
 						<div className="text-danger form-text">Invalid password</div>
@@ -118,9 +120,14 @@ const Dialog = ({
 				>
 					Cancel
 				</button>
-				<button className="btn btn-danger" onClick={deleteAccount}>
+				<ActionButton
+					variant="danger"
+					onClick={deleteAccount}
+					processing={processing}
+					processingText="Deleting"
+				>
 					Delete account
-				</button>
+				</ActionButton>
 			</Modal.Footer>
 		</Modal>
 	);
@@ -158,6 +165,7 @@ const DeleteAccountForm = ({
 			<button
 				className="btn btn-danger"
 				onClick={() => {
+					setErrorMessage(undefined);
 					setShowDialog(true);
 				}}
 			>
@@ -169,8 +177,8 @@ const DeleteAccountForm = ({
 			) : null}
 
 			<Dialog
-				show={showDialog}
 				username={username}
+				show={showDialog}
 				cancel={(errorMessage) => {
 					if (errorMessage) {
 						setErrorMessage(errorMessage);
@@ -178,9 +186,6 @@ const DeleteAccountForm = ({
 					setShowDialog(false);
 				}}
 				ok={async () => {
-					setErrorMessage(undefined);
-					setShowDialog(false);
-
 					await toWorker("main", "checkAccount", undefined);
 					await toWorker("main", "realtimeUpdate", ["account"]);
 					await realtimeUpdate([], "/");

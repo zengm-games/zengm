@@ -9,11 +9,11 @@ import {
 	RATINGS,
 	DEFAULT_JERSEY,
 	POSITIONS,
-	GRACE_PERIOD,
 	LEAGUE_DATABASE_VERSION,
 	REAL_PLAYERS_INFO,
 	getPlayerStatsTableStats,
 } from "../../common/constants.ts";
+import { isGoldActive } from "../../common/isGoldActive.ts";
 import actions from "./actions.ts";
 import * as awardSettings from "./awardSettings.ts";
 import leagueFileUpload, {
@@ -3007,10 +3007,9 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		})();
 	} else {
 		// No need to run checkAccount and make another HTTP request
-		const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 		await toUI("updateLocal", [
 			{
-				gold: local.goldUntil < Infinity && currentTimestamp <= local.goldUntil,
+				gold: local.goldUntil < Infinity && isGoldActive(local.goldUntil),
 				email: local.email,
 				username: local.username,
 			},

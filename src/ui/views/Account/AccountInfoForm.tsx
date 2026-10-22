@@ -1,16 +1,21 @@
 import clsx from "clsx";
-import { type ChangeEvent, useState } from "react";
+import { type ChangeEvent, type SubmitEvent, useState } from "react";
 import { ACCOUNT_API_URL } from "../../../common/constants.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import { helpers } from "../../util/helpers.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
 import { fields } from "../LoginOrRegister/Register.tsx";
 import { fetchWrapper } from "../../../common/fetchWrapper.ts";
+import {
+	type FieldErrors,
+	getFieldErrors,
+} from "../LoginOrRegister/getFieldErrors.ts";
 
 const formGroupStyle = {
 	width: 300,
 };
+
+type EditableField = "username" | "email" | "password";
 
 const AccountInfoForm = ({
 	initialEmail,
@@ -19,170 +24,113 @@ const AccountInfoForm = ({
 	initialEmail: string;
 	initialUsername: string;
 }) => {
-	const [state, setState] = useState({
-		submitting: false,
-		errorMessageOverall: undefined as string | undefined,
-		errorMessageUsername: undefined as string | undefined,
-		errorMessageEmail: undefined as string | undefined,
-		errorMessageNewPassword: undefined as string | undefined,
-		errorMessageNewPassword2: undefined as string | undefined,
-		errorMessageOldPassword: undefined as string | undefined,
-
-		editUsername: false,
-		editEmail: false,
-		editPassword: false,
-
+	const initialValues = {
 		username: initialUsername,
 		email: initialEmail,
 		newPassword: "",
 		newPassword2: "",
 		oldPassword: "",
+	};
+	const [values, setValues] = useState(initialValues);
+	const [editing, setEditing] = useState<Record<EditableField, boolean>>({
+		username: false,
+		email: false,
+		password: false,
 	});
+	const [submitting, setSubmitting] = useState(false);
+	const [errors, setErrors] = useState<FieldErrors>({});
+	const [saved, setSaved] = useState(false);
 
 	const handleChange =
-		(
-			field:
-				| "username"
-				| "email"
-				| "newPassword"
-				| "newPassword2"
-				| "oldPassword",
-		) =>
-		(event: ChangeEvent<HTMLInputElement>) => {
-			setState({
-				...state,
+		(field: keyof typeof values) => (event: ChangeEvent<HTMLInputElement>) => {
+			setValues({
+				...values,
 				[field]: event.target.value,
 			});
 		};
 
-	const handleEditCancel = (field: "username" | "email" | "password") => () => {
-		const editField = `edit${helpers.upperCaseFirstLetter(field)}` as const;
-
-		if (state[editField]) {
-			const newState = {
-				...state,
-				[editField]: false,
-			};
-
-			if (field === "username") {
-				newState.username = initialUsername;
-				newState.errorMessageUsername = undefined;
-			} else if (field === "email") {
-				newState.email = initialEmail;
-				newState.errorMessageEmail = undefined;
-			} else if (field === "password") {
-				newState.newPassword = "";
-				newState.newPassword2 = "";
-				newState.errorMessageNewPassword = undefined;
-				newState.errorMessageNewPassword2 = undefined;
+	// Clicking "Cancel" resets that field to its initial value and clears its errors
+	const handleEditCancel = (field: EditableField) => () => {
+		if (editing[field]) {
+			const fieldNames =
+				field === "password"
+					? (["newPassword", "newPassword2"] as const)
+					: ([field] as const);
+			const newValues = { ...values };
+			const newErrors = { ...errors };
+			for (const fieldName of fieldNames) {
+				newValues[fieldName] = initialValues[fieldName];
+				delete newErrors[fieldName];
 			}
-
-			setState(newState);
-		} else {
-			setState({
-				...state,
-				[editField]: true,
-			});
+			setValues(newValues);
+			setErrors(newErrors);
 		}
+
+		setEditing({
+			...editing,
+			[field]: !editing[field],
+		});
+		setSaved(false);
+	};
+
+	const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		setSubmitting(true);
+		setErrors({});
+		setSaved(false);
+
+		const toSubmit: Record<string, string> = {
+			sport: __SPORT,
+			oldPassword: values.oldPassword,
+		};
+		if (editing.username) {
+			toSubmit.username = values.username;
+		}
+		if (editing.email) {
+			toSubmit.email = values.email;
+		}
+		if (editing.password) {
+			toSubmit.newPassword = values.newPassword;
+			toSubmit.newPassword2 = values.newPassword2;
+		}
+
+		try {
+			const data = await fetchWrapper({
+				url: `${ACCOUNT_API_URL}/update_account.php`,
+				method: "POST",
+				data: toSubmit,
+				credentials: "include",
+			});
+
+			if (data.success) {
+				await realtimeUpdate(["account"], "/account");
+
+				setSaved(true);
+
+				setEditing({
+					username: false,
+					email: false,
+					password: false,
+				});
+				setValues((values2) => ({
+					...values2,
+					newPassword: "",
+					newPassword2: "",
+					oldPassword: "",
+				}));
+			} else {
+				setErrors(getFieldErrors(data.errors));
+			}
+		} catch (error) {
+			console.error(error);
+			setErrors({ overall: ajaxErrorMsg });
+		}
+
+		setSubmitting(false);
 	};
 
 	return (
-		<form
-			onSubmit={async (event) => {
-				event.preventDefault();
-
-				setState((state2) => ({
-					...state2,
-					submitting: true,
-					errorMessageEmail: undefined,
-					errorMessageOverall: undefined,
-					errorMessageNewPassword: undefined,
-					errorMessageNewPassword2: undefined,
-					errorMessageOldPassword: undefined,
-					errorMessageUsername: undefined,
-				}));
-
-				const toSubmit: {
-					sport: string;
-					username?: string;
-					email?: string;
-					newPassword?: string;
-					newPassword2?: string;
-					oldPassword: string;
-				} = {
-					sport: __SPORT,
-					oldPassword: state.oldPassword,
-				};
-
-				if (state.editUsername) {
-					toSubmit.username = state.username;
-				}
-				if (state.editEmail) {
-					toSubmit.email = state.email;
-				}
-				if (state.editPassword) {
-					toSubmit.newPassword = state.newPassword;
-					toSubmit.newPassword2 = state.newPassword2;
-				}
-
-				try {
-					const data = await fetchWrapper({
-						url: `${ACCOUNT_API_URL}/update_account.php`,
-						method: "POST",
-						data: toSubmit,
-						credentials: "include",
-					});
-
-					if (data.success) {
-						await realtimeUpdate(["account"], "/account");
-
-						setState((state2) => ({
-							...state2,
-							editUsername: false,
-							editEmail: false,
-							editPassword: false,
-							oldPassword: "",
-							submitting: false,
-						}));
-					} else {
-						const updatedState: Partial<typeof state> = {};
-
-						for (const error of Object.keys(data.errors)) {
-							if (error === "username") {
-								updatedState.errorMessageUsername = data.errors[error];
-							} else if (error === "email") {
-								updatedState.errorMessageEmail = data.errors[error];
-							} else if (error === "newPassword") {
-								updatedState.errorMessageNewPassword = data.errors[error];
-							} else if (error === "newPassword2") {
-								updatedState.errorMessageNewPassword2 = data.errors[error];
-							} else if (error === "newPasswords") {
-								updatedState.errorMessageNewPassword =
-									updatedState.errorMessageNewPassword ?? ""; // So it gets highlighted too
-								updatedState.errorMessageNewPassword2 = data.errors[error];
-							} else if (error === "oldPassword") {
-								updatedState.errorMessageOldPassword = data.errors[error];
-							} else if (error === "overall") {
-								updatedState.errorMessageOverall = data.errors[error];
-							}
-						}
-
-						setState((state2) => ({
-							...state2,
-							...updatedState,
-							submitting: false,
-						}));
-					}
-				} catch (error) {
-					console.error(error);
-					setState((state2) => ({
-						...state2,
-						submitting: false,
-						errorMessageOverall: ajaxErrorMsg,
-					}));
-				}
-			}}
-		>
+		<form onSubmit={handleSubmit}>
 			<div
 				className="d-md-flex"
 				style={{
@@ -197,33 +145,29 @@ const AccountInfoForm = ({
 						<div className="input-group">
 							<input
 								className={clsx("form-control", {
-									"is-invalid": state.errorMessageUsername !== undefined,
+									"is-invalid": errors.username !== undefined,
 								})}
 								id="account-username"
 								{...fields.username.inputProps}
-								value={state.username}
+								value={values.username}
 								onChange={handleChange("username")}
-								disabled={!state.editUsername}
-								required={state.editUsername}
+								disabled={!editing.username}
+								required={editing.username}
 							/>
 							<button
 								className="btn btn-secondary"
 								type="button"
 								onClick={handleEditCancel("username")}
 							>
-								{state.editUsername ? "Cancel" : "Edit"}
+								{editing.username ? "Cancel" : "Edit"}
 							</button>
 						</div>
-						<span className="form-text text-body-secondary">
+						<div className="form-text text-body-secondary">
 							{fields.username.description}
-						</span>
-						<span
-							className={clsx("form-text", {
-								"text-danger": state.errorMessageUsername,
-							})}
-						>
-							{state.errorMessageUsername}
-						</span>
+						</div>
+						{errors.username ? (
+							<div className="form-text text-danger">{errors.username}</div>
+						) : null}
 					</div>
 
 					<div className="mb-3" style={formGroupStyle}>
@@ -233,30 +177,26 @@ const AccountInfoForm = ({
 						<div className="input-group">
 							<input
 								className={clsx("form-control", {
-									"is-invalid": state.errorMessageEmail !== undefined,
+									"is-invalid": errors.email !== undefined,
 								})}
 								id="account-email"
 								{...fields.email.inputProps}
-								value={state.email}
+								value={values.email}
 								onChange={handleChange("email")}
-								disabled={!state.editEmail}
-								required={state.editEmail}
+								disabled={!editing.email}
+								required={editing.email}
 							/>
 							<button
 								className="btn btn-secondary"
 								type="button"
 								onClick={handleEditCancel("email")}
 							>
-								{state.editEmail ? "Cancel" : "Edit"}
+								{editing.email ? "Cancel" : "Edit"}
 							</button>
 						</div>
-						<span
-							className={clsx("form-text", {
-								"text-danger": state.errorMessageEmail,
-							})}
-						>
-							{state.errorMessageEmail}
-						</span>
+						{errors.email ? (
+							<div className="form-text text-danger">{errors.email}</div>
+						) : null}
 					</div>
 				</div>
 
@@ -268,14 +208,14 @@ const AccountInfoForm = ({
 						<div className="input-group">
 							<input
 								className={clsx("form-control", {
-									"is-invalid": state.errorMessageNewPassword !== undefined,
+									"is-invalid": errors.newPassword !== undefined,
 								})}
 								id="account-new-password"
 								{...fields.password.inputProps}
-								value={state.newPassword}
+								value={values.newPassword}
 								onChange={handleChange("newPassword")}
-								disabled={!state.editPassword}
-								required={state.editPassword}
+								disabled={!editing.password}
+								required={editing.password}
 								autoComplete="new-password"
 							/>
 							<button
@@ -283,16 +223,12 @@ const AccountInfoForm = ({
 								type="button"
 								onClick={handleEditCancel("password")}
 							>
-								{state.editPassword ? "Cancel" : "Edit"}
+								{editing.password ? "Cancel" : "Edit"}
 							</button>
 						</div>
-						<span
-							className={clsx("form-text", {
-								"text-danger": state.errorMessageNewPassword,
-							})}
-						>
-							{state.errorMessageNewPassword}
-						</span>
+						{errors.newPassword ? (
+							<div className="form-text text-danger">{errors.newPassword}</div>
+						) : null}
 					</div>
 
 					<div className="mb-3" style={formGroupStyle}>
@@ -301,23 +237,19 @@ const AccountInfoForm = ({
 						</label>
 						<input
 							className={clsx("form-control", {
-								"is-invalid": state.errorMessageNewPassword2 !== undefined,
+								"is-invalid": errors.newPassword2 !== undefined,
 							})}
 							id="account-new-password-2"
 							{...fields.password.inputProps}
-							value={state.newPassword2}
+							value={values.newPassword2}
 							onChange={handleChange("newPassword2")}
-							disabled={!state.editPassword}
-							required={state.editPassword}
+							disabled={!editing.password}
+							required={editing.password}
 							autoComplete="new-password"
 						/>
-						<span
-							className={clsx("form-text", {
-								"text-danger": state.errorMessageNewPassword2,
-							})}
-						>
-							{state.errorMessageNewPassword2}
-						</span>
+						{errors.newPassword2 ? (
+							<div className="form-text text-danger">{errors.newPassword2}</div>
+						) : null}
 					</div>
 				</div>
 			</div>
@@ -328,34 +260,31 @@ const AccountInfoForm = ({
 				</label>
 				<input
 					className={clsx("form-control", {
-						"is-invalid": state.errorMessageOldPassword !== undefined,
+						"is-invalid": errors.oldPassword !== undefined,
 					})}
 					id="account-old-password"
 					{...fields.password.inputProps}
-					value={state.oldPassword}
+					value={values.oldPassword}
 					onChange={handleChange("oldPassword")}
 					autoComplete="current-password"
 				/>
-				<span
-					className={clsx("form-text", {
-						"text-danger": state.errorMessageOldPassword,
-					})}
-				>
-					{state.errorMessageOldPassword}
-				</span>
+				{errors.oldPassword ? (
+					<div className="form-text text-danger">{errors.oldPassword}</div>
+				) : null}
 			</div>
 
 			<ActionButton
 				type="submit"
-				processing={state.submitting}
-				disabled={
-					!state.editUsername && !state.editEmail && !state.editPassword
-				}
+				processing={submitting}
+				disabled={!editing.username && !editing.email && !editing.password}
 			>
-				Save Changes
+				Save changes
 			</ActionButton>
-			{state.errorMessageOverall ? (
-				<p className="text-danger mt-3 mb-0">{state.errorMessageOverall}</p>
+			{errors.overall ? (
+				<p className="text-danger mt-3 mb-0">{errors.overall}</p>
+			) : null}
+			{saved ? (
+				<p className="text-success mt-3 mb-0">Your changes have been saved.</p>
 			) : null}
 		</form>
 	);

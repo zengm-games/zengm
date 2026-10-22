@@ -16,9 +16,49 @@ import { getScript } from "../../util/getScript.ts";
 import { confirm } from "../../util/confirm.tsx";
 import { fetchWrapper } from "../../../common/fetchWrapper.ts";
 import { TEXT_MAX_WIDTH } from "../AwardSettings/Documentation.tsx";
+import {
+	ActionButton,
+	ProcessingSpinner,
+} from "../../components/ActionButton.tsx";
+
+// Calls one of the gold_*.php APIs and then refreshes the account page to show the result. Resolves after the page has refreshed, so callers can show a processing state until then.
+const goldRequest = async (
+	api: "gold_start" | "gold_cancel",
+	data: Record<string, string>,
+) => {
+	let goldResult;
+	try {
+		goldResult = await fetchWrapper({
+			url: `${ACCOUNT_API_URL}/${api}.php`,
+			method: "POST",
+			data: {
+				sport: __SPORT,
+				...data,
+			},
+			credentials: "include",
+		});
+	} catch (error) {
+		console.error(error);
+		goldResult = {
+			success: false,
+			message: ajaxErrorMsg,
+		};
+	}
+
+	if (api === "gold_start" && goldResult.success) {
+		await toWorker("main", "initGold", undefined);
+	}
+
+	await realtimeUpdate(["account"], "/account", {
+		goldResult,
+	});
+};
 
 const StripeButton = ({ email }: { email: string }) => {
 	const [handler, setHandler] = useState<StripeCheckoutHandler | undefined>();
+
+	// From when Stripe Checkout returns a token until the account page is refreshed with the result, which can take several seconds
+	const [processing, setProcessing] = useState(false);
 
 	useEffect(() => {
 		(async () => {
@@ -31,31 +71,9 @@ const StripeButton = ({ email }: { email: string }) => {
 					key: STRIPE_PUBLISHABLE_KEY,
 					image: "/ico/icon128.png",
 					token: async (token) => {
-						try {
-							const data = await fetchWrapper({
-								url: `${ACCOUNT_API_URL}/gold_start.php`,
-								method: "POST",
-								data: {
-									sport: __SPORT,
-									token: token.id,
-								},
-								credentials: "include",
-							});
-							realtimeUpdate(["account"], "/account", {
-								goldResult: data,
-							});
-							if (data.success) {
-								toWorker("main", "initGold", undefined);
-							}
-						} catch (error) {
-							console.error(error);
-							realtimeUpdate(["account"], "/account", {
-								goldResult: {
-									success: false,
-									message: ajaxErrorMsg,
-								},
-							});
-						}
+						setProcessing(true);
+						await goldRequest("gold_start", { token: token.id });
+						setProcessing(false);
 					},
 				}),
 			);
@@ -77,13 +95,20 @@ const StripeButton = ({ email }: { email: string }) => {
 
 	return (
 		<>
-			<button
-				className="btn btn-lg btn-primary"
+			<ActionButton
+				size="lg"
 				disabled={!handler}
 				onClick={handleClick}
+				processing={processing}
+				processingText="Processing payment"
 			>
 				Subscribe to ZenGM Gold - $5/month
-			</button>
+			</ActionButton>
+			{processing ? (
+				<p className="text-body-secondary mt-2 mb-0">
+					This can take a few seconds, please don't leave this page.
+				</p>
+			) : null}
 			<div className="alert alert-info mt-3 mb-0">
 				If you would rather make a single payment rather than subscribe, send
 				money by{" "}
@@ -95,41 +120,6 @@ const StripeButton = ({ email }: { email: string }) => {
 			</div>
 		</>
 	);
-};
-
-const handleCancel = async (e: MouseEvent) => {
-	e.preventDefault();
-	const result = await confirm(
-		"Are you sure you want to cancel your ZenGM Gold subscription?",
-		{
-			okText: "Cancel subscription",
-			cancelText: "Keep subscription",
-		},
-	);
-
-	if (result) {
-		try {
-			const data = await fetchWrapper({
-				url: `${ACCOUNT_API_URL}/gold_cancel.php`,
-				method: "POST",
-				data: {
-					sport: __SPORT,
-				},
-				credentials: "include",
-			});
-			realtimeUpdate(["account"], "/account", {
-				goldResult: data,
-			});
-		} catch (error) {
-			console.log(error);
-			realtimeUpdate(["account"], "/account", {
-				goldResult: {
-					success: false,
-					message: ajaxErrorMsg,
-				},
-			});
-		}
-	}
 };
 
 const UserInfo = ({
@@ -146,6 +136,7 @@ const UserInfo = ({
 	username?: string;
 }) => {
 	const [logoutError, setLogoutError] = useState<string | undefined>();
+	const [cancelling, setCancelling] = useState(false);
 
 	const handleLogout = async (event: MouseEvent) => {
 		event.preventDefault();
@@ -169,6 +160,23 @@ const UserInfo = ({
 		await toWorker("main", "checkAccount", undefined);
 		await toWorker("main", "realtimeUpdate", ["account"]);
 		await realtimeUpdate([], "/");
+	};
+
+	const handleCancel = async (event: MouseEvent) => {
+		event.preventDefault();
+		const result = await confirm(
+			"Are you sure you want to cancel your ZenGM Gold subscription?",
+			{
+				okText: "Cancel subscription",
+				cancelText: "Keep subscription",
+			},
+		);
+
+		if (result) {
+			setCancelling(true);
+			await goldRequest("gold_cancel", {});
+			setCancelling(false);
+		}
 	};
 
 	return (
@@ -195,12 +203,20 @@ const UserInfo = ({
 			{logoutError ? <p className="text-danger">{logoutError}</p> : null}
 			{showGoldActive ? (
 				<p>
-					ZenGM Gold: Active, renews for $5 on {goldUntilDateString} (
-					<a href="/account/update_card">Update card</a> or{" "}
-					<a href="" id="gold-cancel" onClick={handleCancel}>
-						cancel
-					</a>
-					)
+					ZenGM Gold: Active, renews for $5 on {goldUntilDateString}{" "}
+					{cancelling ? (
+						<span className="text-warning">
+							<ProcessingSpinner text="Canceling" />
+						</span>
+					) : (
+						<>
+							(<a href="/account/update_card">Update card</a> or{" "}
+							<a href="" onClick={handleCancel}>
+								cancel
+							</a>
+							)
+						</>
+					)}
 				</p>
 			) : null}
 			{showGoldCancelled ? (
@@ -235,10 +251,7 @@ const Account = ({
 				<div style={TEXT_MAX_WIDTH}>
 					<GoldPitchText />
 
-					<p>
-						You can cancel a subscription at any time by clicking "Cancel" on
-						your account page.
-					</p>
+					<p>You can cancel a subscription at any time from this page.</p>
 
 					{!loggedIn ? (
 						<p className="mb-0">
@@ -270,10 +283,10 @@ const Account = ({
 			</div>
 
 			{goldSuccess === true ? (
-				<div className="alert alert-success">{goldMessage}</div>
+				<div className="alert alert-success d-inline-block">{goldMessage}</div>
 			) : null}
 			{goldSuccess === false ? (
-				<div className="alert alert-danger">{goldMessage}</div>
+				<div className="alert alert-danger d-inline-block">{goldMessage}</div>
 			) : null}
 
 			{goldPitchDiv}

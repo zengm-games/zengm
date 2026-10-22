@@ -1,5 +1,6 @@
 import { type SubmitEvent, useRef, useState } from "react";
-import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../../common/constants.ts";
+import { ACCOUNT_API_URL } from "../../../common/constants.ts";
+import { isGoldActive } from "../../../common/isGoldActive.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
@@ -32,8 +33,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 			});
 
 			if (data.success) {
-				const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
-				const gold = currentTimestamp <= data.gold_until;
+				const gold = isGoldActive(data.gold_until);
 				localActions.update({
 					gold,
 					username: data.username === "" ? undefined : data.username,

@@ -1,5 +1,6 @@
 import { useState, type SubmitEvent } from "react";
 import { ACCOUNT_API_URL } from "../../common/constants.ts";
+import { ActionButton } from "../components/ActionButton.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
@@ -14,6 +15,7 @@ const LostPassword = () => {
 		errorMessage: undefined,
 		successMessage: undefined,
 	});
+	const [submitting, setSubmitting] = useState(false);
 
 	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
@@ -29,6 +31,7 @@ const LostPassword = () => {
 
 		const formData = new FormData(element);
 
+		setSubmitting(true);
 		setState({
 			errorMessage: undefined,
 			successMessage: undefined,
@@ -59,18 +62,20 @@ const LostPassword = () => {
 				errorMessage: ajaxErrorMsg,
 			});
 			throw error;
+		} finally {
+			setSubmitting(false);
 		}
 	};
 	useTitleBar({ title: "Lost Password", hideNewWindow: true });
 
 	return (
 		<>
+			<p>
+				Enter your username or email address below to recover your login
+				information.
+			</p>
 			<div className="row">
 				<div className="col-lg-4 col-md-4 col-sm-6">
-					<p>
-						Enter your username or email address below to recover your login
-						information.
-					</p>
 					<form onSubmit={handleSubmit} id="lostpw">
 						<input type="hidden" name="sport" value={__SPORT} />
 						<div className="mb-3">
@@ -85,9 +90,9 @@ const LostPassword = () => {
 								required
 							/>
 						</div>
-						<button type="submit" className="btn btn-primary">
-							Recover Login Info
-						</button>
+						<ActionButton type="submit" processing={submitting}>
+							Recover login info
+						</ActionButton>
 						<p className="text-danger mt-3" id="lostpw-error">
 							{state.errorMessage}
 						</p>

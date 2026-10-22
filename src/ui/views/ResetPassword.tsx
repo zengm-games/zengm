@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState, type ReactNode, type SubmitEvent } from "react";
 import { ACCOUNT_API_URL, EMAIL_ADDRESS } from "../../common/constants.ts";
+import { ActionButton } from "../components/ActionButton.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { localActions } from "../util/local.ts";
@@ -21,6 +22,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 		globalMessage: "Validating token...", // Because on initial page load you need AJAX request to see if it's valid
 		showForm: false,
 	});
+	const [submitting, setSubmitting] = useState(false);
 
 	useEffect(() => {
 		const checkToken = async () => {
@@ -94,6 +96,8 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 
 		const formData = new FormData(element);
 
+		setSubmitting(true);
+
 		try {
 			const data = await fetchWrapper({
 				url: `${ACCOUNT_API_URL}/reset_password.php`,
@@ -125,9 +129,11 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 					}
 				}
 
+				setSubmitting(false);
 				setState(updatedState);
 			}
 		} catch {
+			setSubmitting(false);
 			setState({
 				...state,
 				errorMessageOverall: ajaxErrorMsg,
@@ -183,9 +189,9 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 						/>
 						<span className="form-text">{state.errorMessagePassword2}</span>
 					</div>
-					<button type="submit" className="btn btn-primary">
-						Reset Password
-					</button>
+					<ActionButton type="submit" processing={submitting}>
+						Reset password
+					</ActionButton>
 					<p className="text-danger mt-3">{state.errorMessageOverall}</p>
 				</form>
 			</div>

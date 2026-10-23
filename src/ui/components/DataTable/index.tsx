@@ -2,7 +2,6 @@ import clsx, { type ClassValue } from "clsx";
 import { csvFormatRows } from "d3-dsv";
 import {
 	type SyntheticEvent,
-	type MouseEvent,
 	type ReactNode,
 	useRef,
 	type CSSProperties,
@@ -23,7 +22,7 @@ import { ResponsiveTableWrapper } from "../ResponsiveTableWrapper.tsx";
 import { helpers } from "../../util/helpers.ts";
 import type { SortOrder, SortType } from "../../../common/types.ts";
 import { arrayMove } from "@dnd-kit/sortable";
-import updateSortBys from "./updateSortBys.ts";
+import updateSortBys, { type SortEvent } from "./updateSortBys.ts";
 import useStickyXX from "./useStickyXX.ts";
 import { useDataTableState } from "./useDataTableState.ts";
 import { processRows } from "./processRows.ts";
@@ -242,7 +241,7 @@ export const DataTable = <Type extends MetadataType = undefined>({
 		rows,
 	});
 
-	const handleColClick = (event: MouseEvent, i: number) => {
+	const handleColClick = (event: SortEvent, i: number) => {
 		if (state.sortBys !== undefined) {
 			const sortBys = updateSortBys({
 				cols,

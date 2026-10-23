@@ -111,6 +111,7 @@ const Controls = ({
 						onClick={onToggleFilters}
 						style={style}
 						title="Filter"
+						aria-label="Filter"
 					>
 						<span className="glyphicon glyphicon-filter" />
 					</button>

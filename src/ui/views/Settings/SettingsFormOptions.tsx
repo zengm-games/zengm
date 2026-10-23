@@ -272,8 +272,11 @@ const Option = ({
 						)}
 					</label>
 					{descriptionLong ? (
-						<span
-							className="ms-1 glyphicon glyphicon-question-sign help-icon"
+						<button
+							type="button"
+							className="ms-1 icon-button glyphicon glyphicon-question-sign help-icon"
+							aria-label="Show more information"
+							aria-expanded={showDescriptionLong}
 							onClick={() => {
 								setShowDescriptionLong((show) => !show);
 							}}

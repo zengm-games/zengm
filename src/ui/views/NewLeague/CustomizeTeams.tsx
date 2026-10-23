@@ -614,7 +614,8 @@ const CardHeader = ({
 				</form>
 			) : (
 				<div className="d-flex">
-					<div
+					<button
+						type="button"
 						className={clsx(
 							"btn btn-link p-0 border-0 text-reset text-decoration-none",
 							alignButtonsRight ? "me-auto" : "me-2",
@@ -624,7 +625,7 @@ const CardHeader = ({
 						}}
 					>
 						{name}
-					</div>
+					</button>
 					<button
 						className="ms-2 btn btn-link p-0 border-0 text-reset"
 						title="Move Up"

@@ -1,5 +1,5 @@
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 
 export const HelpPopover = ({
 	children,
@@ -17,21 +17,28 @@ export const HelpPopover = ({
 	if (!className) {
 		className = "";
 	}
-	className += " glyphicon glyphicon-question-sign help-icon";
+	className += " icon-button glyphicon glyphicon-question-sign help-icon";
+
+	const id = useId();
 
 	return (
 		<OverlayTrigger
 			trigger="click"
 			placement="auto"
 			overlay={
-				<Popover id={title}>
+				<Popover id={id}>
 					{title ? <Popover.Header as="h3">{title}</Popover.Header> : null}
 					<Popover.Body>{children}</Popover.Body>
 				</Popover>
 			}
 			rootClose
 		>
-			<span className={className} style={style} />
+			<button
+				type="button"
+				className={className}
+				style={style}
+				aria-label={title ? `Help: ${title}` : "Help"}
+			/>
 		</OverlayTrigger>
 	);
 };

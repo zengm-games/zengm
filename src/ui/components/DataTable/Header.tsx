@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import {
 	type SyntheticEvent,
+	type KeyboardEvent,
 	type MouseEvent,
 	Fragment,
 	forwardRef,
@@ -17,6 +18,7 @@ import type {
 } from "./index.tsx";
 import { range } from "../../../common/utils.ts";
 import { Dropdown } from "react-bootstrap";
+import type { SortEvent } from "./updateSortBys.ts";
 import type { SelectedRows } from "./useBulkSelectRows.ts";
 
 const FilterHeader = ({
@@ -46,6 +48,7 @@ const FilterHeader = ({
 					<th key={colIndex}>
 						{col.noSearch ? null : (
 							<input
+								aria-label={`Filter ${col.title}`}
 								className="datatable-filter-input"
 								onChange={(event) => handleFilterUpdate(event, colIndex)}
 								type="text"
@@ -171,6 +174,30 @@ export const getSortClassName = (sortBys: SortBy[], i: number) => {
 	}
 
 	return className;
+};
+
+// Makes a sortable column header usable from the keyboard, and tells screen readers the current sort
+export const getSortableHeaderProps = (
+	sortBys: SortBy[],
+	i: number,
+	onSort: (event: SortEvent) => void,
+) => {
+	const primarySortBy = sortBys[0];
+	let ariaSort: "ascending" | "descending" | undefined;
+	if (primarySortBy?.[0] === i) {
+		ariaSort = primarySortBy[1] === "asc" ? "ascending" : "descending";
+	}
+
+	return {
+		"aria-sort": ariaSort,
+		tabIndex: 0,
+		onKeyDown: (event: KeyboardEvent) => {
+			if (event.key === "Enter" || event.key === " ") {
+				event.preventDefault();
+				onSort(event);
+			}
+		},
+	};
 };
 
 type CheckboxState = "checked" | "unchecked" | "indeterminate";
@@ -349,7 +376,7 @@ const Header = ({
 	cols: Col[];
 	enableFilters: boolean;
 	filters: string[];
-	handleColClick: (b: MouseEvent, a: number) => void;
+	handleColClick: (b: SortEvent, a: number) => void;
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 	showBulkSelectCheckboxes: boolean;
 	showRowLabels: boolean | undefined;
@@ -376,7 +403,12 @@ const Header = ({
 					const { classNames, desc, sortSequence, title, titleReact, width } =
 						cols[colIndex]!;
 
+					const onSort = (event: SortEvent) => {
+						handleColClick(event, colIndex);
+					};
+
 					let sortClassName;
+					let sortableHeaderProps;
 					if (
 						(sortSequence && sortSequence.length === 0) ||
 						sortBys === undefined
@@ -384,17 +416,21 @@ const Header = ({
 						sortClassName = undefined;
 					} else {
 						sortClassName = getSortClassName(sortBys, colIndex);
+						sortableHeaderProps = getSortableHeaderProps(
+							sortBys,
+							colIndex,
+							onSort,
+						);
 					}
 
 					return (
 						<th
 							className={clsx(classNames, sortClassName)}
 							key={colIndex}
-							onClick={(event) => {
-								handleColClick(event, colIndex);
-							}}
+							onClick={onSort}
 							title={desc}
 							style={{ width }}
+							{...sortableHeaderProps}
 						>
 							{titleReact ?? title}
 						</th>

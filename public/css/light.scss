@@ -373,6 +373,14 @@ a.god-mode.active {
 	width: 180px;
 }
 
+// A <button> that looks like the bare icon inside it. Defined before .help-icon and .watch so their colors take precedence.
+.icon-button {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+}
+
 .help-icon {
 	cursor: pointer;
 	font-size: 13px;

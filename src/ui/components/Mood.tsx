@@ -207,31 +207,33 @@ export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 				) : null}
 				<ul className="nav nav-tabs mb-2">
 					<li className="nav-item">
-						<a
+						<button
+							type="button"
 							className={clsx("nav-link", {
 								active: type === "user",
 							})}
-							onClick={(event) => {
-								event.preventDefault();
+							aria-current={type === "user" ? true : undefined}
+							onClick={() => {
 								setType("user");
 							}}
 						>
 							{teamInfoCache[userTid]?.abbrev}
-						</a>
+						</button>
 					</li>
 					{canShowCurrent ? (
 						<li className="nav-item">
-							<a
+							<button
+								type="button"
 								className={clsx("nav-link", {
 									active: type === "current",
 								})}
-								onClick={(event) => {
-									event.preventDefault();
+								aria-current={type === "current" ? true : undefined}
+								onClick={() => {
 									setType("current");
 								}}
 							>
 								{teamInfoCache[p.tid]?.abbrev}
-							</a>
+							</button>
 						</li>
 					) : null}
 				</ul>

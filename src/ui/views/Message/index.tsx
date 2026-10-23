@@ -32,9 +32,13 @@ const Message = ({ message }: View<"message">) => {
 			) : null}
 
 			<div className="mt-3">
-				<a href="#" onClick={() => window.history.back()}>
+				<button
+					type="button"
+					className="btn btn-link p-0 border-0 align-baseline"
+					onClick={() => window.history.back()}
+				>
 					Previous page
-				</a>{" "}
+				</button>{" "}
 				· <a href={helpers.leagueUrl(["inbox"])}>Inbox</a>
 			</div>
 		</>

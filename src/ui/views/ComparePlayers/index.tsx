@@ -138,15 +138,16 @@ const HeaderRow = ({
 	return (
 		<tr>
 			<th colSpan={colSpan} className="table-info p-0">
-				<a
+				<button
+					type="button"
 					className="compare-players-heading"
-					onClick={(event) => {
-						event.preventDefault();
+					aria-expanded={open}
+					onClick={() => {
 						setOpen((prev) => !prev);
 					}}
 				>
 					<CollapseArrow open={open} /> {children}
-				</a>
+				</button>
 			</th>
 		</tr>
 	);

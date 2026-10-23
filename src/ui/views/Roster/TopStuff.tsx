@@ -35,13 +35,14 @@ const TeamRating = ({
 
 	return (
 		<>
-			<a
-				className="cursor-pointer"
+			<button
+				type="button"
+				className="btn btn-link p-0 border-0 align-baseline"
 				title={title}
 				onClick={() => setShowCurrent(!showCurrent)}
 			>
 				<span className={className}>{rating}</span>/100
-			</a>
+			</button>
 		</>
 	);
 };

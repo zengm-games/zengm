@@ -36,16 +36,17 @@ const Pagination = ({
 				className={clsx("page-item", i === currentPage ? "active" : null)}
 			>
 				{i === currentPage ? (
-					<span
+					<span className="page-link user-select-none" aria-current="page">
+						{i}
+					</span>
+				) : (
+					<button
+						type="button"
 						className="page-link user-select-none"
 						onClick={() => onClick(i)}
 					>
 						{i}
-					</span>
-				) : (
-					<a className="page-link user-select-none" onClick={() => onClick(i)}>
-						{i}
-					</a>
+					</button>
 				)}
 			</li>,
 		);
@@ -58,12 +59,14 @@ const Pagination = ({
 					disabled: !showPrev,
 				})}
 			>
-				<a
+				<button
+					type="button"
 					className="page-link user-select-none"
-					onClick={() => showPrev && onClick(currentPage - 1)}
+					disabled={!showPrev}
+					onClick={() => onClick(currentPage - 1)}
 				>
 					← Prev
-				</a>
+				</button>
 			</li>
 			{numberedPages}
 			<li
@@ -71,12 +74,14 @@ const Pagination = ({
 					disabled: !showNext,
 				})}
 			>
-				<a
+				<button
+					type="button"
 					className="page-link user-select-none"
-					onClick={() => showNext && onClick(currentPage + 1)}
+					disabled={!showNext}
+					onClick={() => onClick(currentPage + 1)}
 				>
 					Next →
-				</a>
+				</button>
 			</li>
 		</ul>
 	);

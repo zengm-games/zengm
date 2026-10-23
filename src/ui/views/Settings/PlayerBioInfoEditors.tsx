@@ -681,16 +681,18 @@ export const NamesEditor = ({
 				<ul className="nav nav-tabs mt-3">
 					{(["first", "last"] as const).map((type) => (
 						<li key={type} className="nav-item">
-							<a
+							<button
+								type="button"
 								className={clsx("nav-link", {
 									active: type === firstOrLast,
 								})}
+								aria-current={type === firstOrLast ? true : undefined}
 								onClick={() => {
 									setFirstOrLast(type);
 								}}
 							>
 								{helpers.upperCaseFirstLetter(type)}
-							</a>
+							</button>
 						</li>
 					))}
 				</ul>

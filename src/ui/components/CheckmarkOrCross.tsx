@@ -2,11 +2,23 @@ type Props = { hideCross?: boolean; success: boolean };
 
 export const CheckmarkOrCross = ({ hideCross, success }: Props) => {
 	if (success) {
-		return <span className="glyphicon glyphicon-ok text-success" />;
+		return (
+			<span
+				className="glyphicon glyphicon-ok text-success"
+				role="img"
+				aria-label="Yes"
+			/>
+		);
 	}
 
 	if (!hideCross) {
-		return <span className="glyphicon glyphicon-remove text-danger" />;
+		return (
+			<span
+				className="glyphicon glyphicon-remove text-danger"
+				role="img"
+				aria-label="No"
+			/>
+		);
 	}
 };
 

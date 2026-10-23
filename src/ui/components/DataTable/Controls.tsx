@@ -102,16 +102,18 @@ const Controls = ({
 							</p>
 						</HelpPopover>
 					</div>
-					<a
-						className={clsx("btn btn-sm btn-light-bordered cursor-pointer", {
+					<button
+						type="button"
+						className={clsx("btn btn-sm btn-light-bordered", {
 							active: enableFilters,
 						})}
+						aria-pressed={enableFilters}
 						onClick={onToggleFilters}
 						style={style}
 						title="Filter"
 					>
 						<span className="glyphicon glyphicon-filter" />
-					</a>
+					</button>
 					<input
 						className="form-control form-control-sm datatable-search mb-2"
 						onChange={onSearch}

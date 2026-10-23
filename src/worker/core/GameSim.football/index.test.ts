@@ -261,6 +261,146 @@ describe("kneel to run out the clock", () => {
 	});
 });
 
+describe("go down rather than score a TD to run out the clock", () => {
+	const initGoDownSituation = async ({
+		lead,
+		scrimmage = 70,
+		seconds,
+		toGo = 10,
+	}: {
+		lead: number;
+		scrimmage?: number;
+		seconds: number;
+		toGo?: number;
+	}) => {
+		const game = await initGameSim();
+		game.awaitingKickoff = undefined;
+		game.o = 0;
+		game.d = 1;
+		game.team[0].stat.pts = lead;
+		game.team[0].stat.ptsQtrs = [0, 0, 0, game.team[0].stat.pts];
+		game.team[1].stat.pts = 0;
+		game.team[1].stat.ptsQtrs = [0, 0, 0, game.team[1].stat.pts];
+		game.down = 1;
+		game.toGo = toGo;
+		game.scrimmage = scrimmage;
+		game.clock = seconds / 60;
+		game.timeouts = [0, 0];
+		game.currentPlay = new Play(game);
+		return game;
+	};
+
+	test("go down a few yards past the first down line if leading and kneeling will run out the clock", async () => {
+		const game = await initGoDownSituation({
+			lead: 1,
+			seconds: 30,
+		});
+
+		const yds = game.boundedYdsBallCarrier(100);
+		assert(yds >= 13 && yds <= 16, `yds: ${yds}`);
+	});
+
+	test("don't change a play that doesn't get past the first down line", async () => {
+		const game = await initGoDownSituation({
+			lead: 1,
+			seconds: 30,
+		});
+
+		assert.strictEqual(game.boundedYdsBallCarrier(5), 5);
+	});
+
+	test("go down far enough from own end zone to have room to kneel", async () => {
+		const game = await initGoDownSituation({
+			lead: 1,
+			scrimmage: 3,
+			seconds: 30,
+			toGo: 2,
+		});
+
+		assert.strictEqual(game.boundedYdsBallCarrier(100), 17);
+	});
+
+	test("go down just short of the goal line if the first down line is close to it", async () => {
+		const game = await initGoDownSituation({
+			lead: 1,
+			scrimmage: 85,
+			seconds: 30,
+		});
+
+		const yds = game.boundedYdsBallCarrier(100);
+		assert(yds >= 13 && yds <= 14, `yds: ${yds}`);
+	});
+
+	test("go down at the 1 yard line if it's goal to go", async () => {
+		const game = await initGoDownSituation({
+			lead: 1,
+			scrimmage: 95,
+			seconds: 30,
+			toGo: 5,
+		});
+
+		assert.strictEqual(game.boundedYdsBallCarrier(100), 4);
+	});
+
+	test("score if there is too much time left to kneel out the clock", async () => {
+		const game = await initGoDownSituation({
+			lead: 1,
+			seconds: 200,
+		});
+
+		assert.strictEqual(game.boundedYdsBallCarrier(100), 30);
+	});
+
+	test("score if the lead is big enough that there's no risk", async () => {
+		const game = await initGoDownSituation({
+			lead: 11,
+			seconds: 30,
+		});
+
+		assert.strictEqual(game.boundedYdsBallCarrier(100), 30);
+	});
+
+	test("score if not leading", async () => {
+		const game = await initGoDownSituation({
+			lead: 0,
+			seconds: 30,
+		});
+
+		assert.strictEqual(game.boundedYdsBallCarrier(100), 30);
+	});
+
+	test("don't return an interception if leading and kneeling will run out the clock", async () => {
+		const game = await initGoDownSituation({
+			lead: -1,
+			seconds: 30,
+		});
+
+		game.currentPlay.addEvent({
+			type: "possessionChange",
+			subtype: "turnover",
+			yds: 0,
+		});
+
+		assert.strictEqual(game.boundedYdsBallCarrier(100), 0);
+	});
+
+	test("return an interception in the end zone far enough to have room to kneel", async () => {
+		const game = await initGoDownSituation({
+			lead: -1,
+			seconds: 30,
+		});
+
+		// Intercepted 5 yards deep in the end zone
+		game.currentPlay.addEvent({
+			type: "possessionChange",
+			subtype: "turnover",
+			yds: 35,
+		});
+
+		assert.strictEqual(game.boundedYdsBallCarrier(100), 25);
+	});
+});
+
 test("go for 2 after a touchdown if there is no healthy kicker", async () => {
 	const game = await initGameSim();
 	game.awaitingKickoff = undefined;

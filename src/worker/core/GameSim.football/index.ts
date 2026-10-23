@@ -783,10 +783,16 @@ class GameSim extends GameSimBase {
 
 		if (
 			numKneels !== undefined &&
-			scrimmageGoDown > YARDS_NEEDED_TO_KNEEL * numKneels
+			scrimmageGoDown > YARDS_NEEDED_TO_KNEEL * numKneels &&
+			Math.random() >= this.probForgetToGoDown()
 		) {
 			return scrimmageGoDown;
 		}
+	}
+
+	// Sometimes the ball carrier forgets to go down and scores anyway
+	probForgetToGoDown() {
+		return 0.1;
 	}
 
 	hurryUp() {

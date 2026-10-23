@@ -287,6 +287,7 @@ describe("go down rather than score a TD to run out the clock", () => {
 		game.clock = seconds / 60;
 		game.timeouts = [0, 0];
 		game.currentPlay = new Play(game);
+		game.probForgetToGoDown = () => 0;
 		return game;
 	};
 
@@ -340,6 +341,16 @@ describe("go down rather than score a TD to run out the clock", () => {
 		});
 
 		assert.strictEqual(game.boundedYdsBallCarrier(100), 4);
+	});
+
+	test("score if the ball carrier forgets to go down", async () => {
+		const game = await initGoDownSituation({
+			lead: 1,
+			seconds: 30,
+		});
+		game.probForgetToGoDown = () => 1;
+
+		assert.strictEqual(game.boundedYdsBallCarrier(100), 30);
 	});
 
 	test("score if there is too much time left to kneel out the clock", async () => {

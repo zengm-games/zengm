@@ -48,7 +48,7 @@ if (showTemp === "true") {
 }
 
 const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
-	(set) => ({
+	(set, get) => ({
 		alwaysShowCountry: false,
 		budget: defaultGameAttributes.budget,
 		challengeNoRatings: false,
@@ -272,10 +272,11 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 
 				const updates: Partial<LocalStateUI> = {};
 
+				const state = get();
 				for (const key of gameAttributesSyncedToUi) {
 					if (
 						Object.hasOwn(gameAttributes, key) &&
-						updates[key] !== gameAttributes[key]
+						state[key] !== gameAttributes[key]
 					) {
 						// @ts-expect-error
 						updates[key] = gameAttributes[key];
@@ -285,6 +286,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 
 				if (flagOverrides) {
 					updates.flagOverrides = flagOverrides;
+					update = true;
 				}
 
 				if (update) {

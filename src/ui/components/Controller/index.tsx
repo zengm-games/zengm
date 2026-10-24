@@ -90,7 +90,7 @@ export const Controller = () => {
 	// Scroll to top each time a load says it should, see ViewManager.processUpdate
 	useEffect(() => {
 		if (scrollToTopCount > 0) {
-			window.scrollTo(window.pageXOffset, 0);
+			window.scrollTo(window.scrollX, 0);
 		}
 	}, [scrollToTopCount]);
 

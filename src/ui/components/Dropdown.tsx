@@ -7,7 +7,6 @@ import { helpers } from "../util/helpers.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { NextPrevButtons } from "./NextPrevButtons.tsx";
 import type { LocalStateUI } from "../../common/types.ts";
-import { sanitize } from "../util/sanitize.ts";
 import type { LeagueUrlParts } from "../router/types.ts";
 
 // This assumes that when val is an array, it is already sorted by minWidth ascending
@@ -61,7 +60,7 @@ const Select = ({
 		el.style.display = "inline";
 		el.className = "dropdown-select";
 		const el2 = document.createElement("option");
-		el2.innerHTML = sanitize(getResponsiveValue2(currentValue));
+		el2.textContent = getResponsiveValue2(currentValue);
 		el.append(el2);
 
 		document.body.append(el);

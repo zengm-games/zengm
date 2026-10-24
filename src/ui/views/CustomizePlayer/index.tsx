@@ -738,7 +738,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">
+								<label className="form-label" htmlFor="customize-player-height">
 									Height (in){" "}
 									<HelpPopover title="Height (inches)">
 										Height (inches) is just for show. The height rating is what
@@ -748,12 +748,13 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<input
 									type="text"
 									className="form-control"
+									id="customize-player-height"
 									onChange={handleChange.bind(null, "root", "hgt")}
 									value={p.hgt}
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">
+								<label className="form-label" htmlFor="customize-player-weight">
 									Weight (lbs){" "}
 									<HelpPopover title="Weight (lbs)">
 										Weight (lbs) is just for show. The height and strength
@@ -763,12 +764,16 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<input
 									type="text"
 									className="form-control"
+									id="customize-player-weight"
 									onChange={handleChange.bind(null, "root", "weight")}
 									value={p.weight}
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">
+								<label
+									className="form-label"
+									htmlFor="customize-player-position"
+								>
 									Position{" "}
 									<HelpPopover title="Position">
 										<p>
@@ -785,6 +790,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</label>
 								<select
 									className="form-select"
+									id="customize-player-position"
 									onChange={handleChange.bind(null, "root", "pos")}
 									value={p.pos ?? "auto"}
 									disabled={!godMode && p.tid !== PLAYER.RETIRED}
@@ -1237,8 +1243,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									))}
 								</div>
 							) : null}
-							<div className="col-sm-9 mb-3">
-								<label className="form-label">
+							<div
+								className="col-sm-9 mb-3"
+								role="group"
+								aria-labelledby="customize-player-custom-mood-items"
+							>
+								<div
+									className="form-label"
+									id="customize-player-custom-mood-items"
+								>
 									Custom Mood Items{" "}
 									<HelpPopover title="Custom Mood Items">
 										Add custom entries to a player's mood calculation. By
@@ -1247,7 +1260,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										any numeric value to alter a player's mood towards a
 										specific team or towards all teams.
 									</HelpPopover>
-								</label>
+								</div>
 								<CustomMoodItemsForm
 									godMode={godMode}
 									handleChange={handleChange}

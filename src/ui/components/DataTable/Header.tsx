@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import {
 	type SyntheticEvent,
-	type KeyboardEvent,
 	type MouseEvent,
 	Fragment,
 	forwardRef,
@@ -19,6 +18,7 @@ import type {
 import { range } from "../../../common/utils.ts";
 import { Dropdown } from "react-bootstrap";
 import type { SortEvent } from "./updateSortBys.ts";
+import { onEnterOrSpace } from "../../util/onEnterOrSpace.ts";
 import type { SelectedRows } from "./useBulkSelectRows.ts";
 
 const FilterHeader = ({
@@ -191,12 +191,7 @@ export const getSortableHeaderProps = (
 	return {
 		"aria-sort": ariaSort,
 		tabIndex: 0,
-		onKeyDown: (event: KeyboardEvent) => {
-			if (event.key === "Enter" || event.key === " ") {
-				event.preventDefault();
-				onSort(event);
-			}
-		},
+		onKeyDown: onEnterOrSpace(onSort),
 	};
 };
 

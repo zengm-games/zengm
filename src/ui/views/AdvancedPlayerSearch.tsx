@@ -381,6 +381,7 @@ const Filters = ({
 									});
 								}}
 								title="Delete filter"
+								aria-label="Delete filter"
 								style={{ fontSize: 20, marginTop: 3 }}
 								type="button"
 							>

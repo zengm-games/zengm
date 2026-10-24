@@ -76,8 +76,9 @@ const CustomMoodItemsForm = ({
 				return (
 					<div className="d-flex align-items-end mb-3" key={i}>
 						<div className="me-3 flex-shrink-0">
-							{i === 0 ? <label className="form-label">Amount</label> : null}
+							{i === 0 ? <div className="form-label">Amount</div> : null}
 							<input
+								aria-label="Amount"
 								className="form-control"
 								onChange={(event) => {
 									handleCustomMoodItemsChange(i, "amount", event.target.value);
@@ -89,8 +90,9 @@ const CustomMoodItemsForm = ({
 							/>
 						</div>
 						<div className="me-3 flex-grow-1">
-							{i === 0 ? <label className="form-label">Text</label> : null}
+							{i === 0 ? <div className="form-label">Text</div> : null}
 							<input
+								aria-label="Text"
 								className="form-control"
 								onChange={(event) => {
 									handleCustomMoodItemsChange(i, "text", event.target.value);
@@ -101,8 +103,9 @@ const CustomMoodItemsForm = ({
 							/>
 						</div>
 						<div className="me-2 flex-shrink-0">
-							{i === 0 ? <label className="form-label">Team</label> : null}
+							{i === 0 ? <div className="form-label">Team</div> : null}
 							<select
+								aria-label="Team"
 								className="form-select"
 								onChange={(event) => {
 									let tid;
@@ -132,6 +135,7 @@ const CustomMoodItemsForm = ({
 									handleCustomMoodItemsChange(i, "delete");
 								}}
 								title="Delete"
+								aria-label="Delete"
 								style={{ fontSize: 20 }}
 								disabled={!godMode}
 								type="button"

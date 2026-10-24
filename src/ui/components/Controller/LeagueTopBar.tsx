@@ -9,6 +9,7 @@ const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 		<button
 			className="btn btn-secondary p-0 league-top-bar-toggle"
 			title={show ? "Hide scores" : "Show scores"}
+			aria-label={show ? "Hide scores" : "Show scores"}
 			onClick={toggle}
 		>
 			<span

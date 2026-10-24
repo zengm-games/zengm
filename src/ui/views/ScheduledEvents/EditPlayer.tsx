@@ -56,12 +56,15 @@ const EditPlayer = ({
 				}
 			}}
 		>
-			<label className="form-label">Player</label>
+			<label className="form-label" htmlFor="edit-player-select">
+				Player
+			</label>
 			{event ? (
 				<div>{event.info.name}</div>
 			) : (
 				<div style={{ maxWidth: 400 }}>
 					<SelectMultiple
+						inputId="edit-player-select"
 						options={players ?? []}
 						value={player}
 						getOptionLabel={(p) => `${p.name} (${p.info})`}

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useId, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { helpers } from "../util/helpers.ts";
@@ -17,6 +17,7 @@ type TopMenuToggleProps = {
 };
 
 const TopMenuToggle = ({ long, openID, short, toggle }: TopMenuToggleProps) => {
+	const id = useId();
 	const handleMouseEnter = useCallback(
 		(event: MouseEvent<any>) => {
 			if (openID !== undefined && openID !== long && toggle) {
@@ -26,11 +27,7 @@ const TopMenuToggle = ({ long, openID, short, toggle }: TopMenuToggleProps) => {
 		[long, openID, toggle],
 	);
 	return (
-		<Dropdown.Toggle
-			as={Nav.Link}
-			id="whatever"
-			onMouseEnter={handleMouseEnter}
-		>
+		<Dropdown.Toggle as={Nav.Link} id={id} onMouseEnter={handleMouseEnter}>
 			<span className="d-none d-md-inline">{long}</span>
 			<span className="d-md-none" title={long}>
 				{short}

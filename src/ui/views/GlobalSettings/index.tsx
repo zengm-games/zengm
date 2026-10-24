@@ -243,7 +243,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 						</div>
 					</div>
 					<div className="col-sm-3 col-6 mb-3">
-						<label className="form-label">Persistent Storage</label>
+						<div className="form-label">Persistent Storage</div>
 						<Storage />
 					</div>
 				</div>

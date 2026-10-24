@@ -148,6 +148,8 @@ const Star = ({ lid, starred }: { lid: number; starred?: boolean }) => {
 				className="btn btn-link p-0 border-0"
 				onClick={toggle}
 				style={glyphiconStyle}
+				title="Unstar"
+				aria-label="Unstar"
 			>
 				<span className="glyphicon glyphicon-star p-1 text-primary" />
 			</button>
@@ -160,6 +162,7 @@ const Star = ({ lid, starred }: { lid: number; starred?: boolean }) => {
 			onClick={toggle}
 			style={glyphiconStyle}
 			title="Star"
+			aria-label="Star"
 		>
 			<span className="glyphicon glyphicon-star-empty p-1 text-body-secondary" />
 		</button>
@@ -310,6 +313,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 						id={`dashboard-actions-${league.lid}`}
 						style={glyphiconStyle}
 						title="Actions"
+						aria-label="Actions"
 						variant="link"
 						className="p-0 border-0"
 					>

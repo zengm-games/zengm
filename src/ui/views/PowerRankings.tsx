@@ -94,16 +94,15 @@ const PowerRankings = ({
 				<>
 					{otherKeysTitle}
 					{currentSeason === season ? (
-						<a
-							className="ms-2"
-							href=""
-							onClick={(event) => {
-								event.preventDefault();
+						<button
+							type="button"
+							className="btn btn-link p-0 border-0 align-baseline fw-bold ms-2"
+							onClick={() => {
 								setShowHealthy((val) => !val);
 							}}
 						>
 							{showHealthy ? "(Show with injuries)" : "(Show without injuries)"}
-						</a>
+						</button>
 					) : null}
 				</>
 			),

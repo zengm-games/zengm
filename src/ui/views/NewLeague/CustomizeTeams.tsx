@@ -519,6 +519,7 @@ const PlayersButton = ({
 			<button
 				className="ms-2 btn btn-link p-0 border-0 text-reset"
 				title="Players"
+				aria-label="Players"
 				type="button"
 			>
 				<span className="glyphicon glyphicon-user" />
@@ -533,6 +534,7 @@ const EditButton = ({ onClick }: { onClick: () => void }) => {
 			className="ms-2 btn btn-link p-0 border-0 text-reset"
 			onClick={onClick}
 			title="Edit"
+			aria-label="Edit"
 			type="button"
 		>
 			<span className="glyphicon glyphicon-edit" />
@@ -556,6 +558,7 @@ const DeleteButton = ({
 			disabled={disabled}
 			onClick={onClick}
 			title="Delete"
+			aria-label="Delete"
 			type="button"
 		>
 			<span className="glyphicon glyphicon-remove" />
@@ -629,6 +632,7 @@ const CardHeader = ({
 					<button
 						className="ms-2 btn btn-link p-0 border-0 text-reset"
 						title="Move Up"
+						aria-label="Move Up"
 						type="button"
 						onClick={onMoveUp}
 						disabled={disableMoveUp}
@@ -638,6 +642,7 @@ const CardHeader = ({
 					<button
 						className="ms-2 btn btn-link p-0 border-0 text-reset"
 						title="Move Down"
+						aria-label="Move Down"
 						type="button"
 						onClick={onMoveDown}
 						disabled={disableMoveDown}

@@ -137,6 +137,7 @@ const EditGameAttributes = ({
 									type="button"
 									className="btn btn-link text-danger p-0 border-0 ms-2"
 									title="Remove"
+									aria-label="Remove"
 									onClick={() => {
 										setOtherKeys((keys) => keys.filter((key2) => key2 !== key));
 									}}

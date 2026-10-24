@@ -652,17 +652,22 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 						<div className="row">
 							<div className="col-sm-6 mb-3">
-								<label className="form-label">Name</label>
+								<label className="form-label" htmlFor="customize-player-name">
+									Name
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-name"
 										type="text"
 										className="form-control"
+										aria-label="First name"
 										onChange={handleChange.bind(null, "root", "firstName")}
 										value={p.firstName}
 									/>
 									<input
 										type="text"
 										className="form-control"
+										aria-label="Last name"
 										onChange={handleChange.bind(null, "root", "lastName")}
 										value={p.lastName}
 									/>
@@ -697,8 +702,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</div>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Age</label>
+								<label className="form-label" htmlFor="customize-player-age">
+									Age
+								</label>
 								<input
+									id="customize-player-age"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "age")}
@@ -707,8 +715,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Team</label>
+								<label className="form-label" htmlFor="customize-player-team">
+									Team
+								</label>
 								<select
+									id="customize-player-team"
 									className="form-select"
 									onChange={handleChange.bind(null, "root", "tid")}
 									value={p.tid}
@@ -793,9 +804,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-6 col-sm-3 mb-3">
-								<label className="form-label">Jersey Number</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-jersey-number"
+								>
+									Jersey Number
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-jersey-number"
 										type="text"
 										className="form-control"
 										onChange={handleChange.bind(null, "root", "jerseyNumber")}
@@ -852,9 +869,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								) : null}
 							</div>
 							<div className="col-6 mb-3">
-								<label className="form-label">Country</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-country"
+								>
+									Country
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-country"
 										type="text"
 										className="form-control"
 										onChange={handleChange.bind(null, "born", "loc")}
@@ -895,9 +918,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</div>
 							</div>
 							<div className="col-6 mb-3">
-								<label className="form-label">College</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-college"
+								>
+									College
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-college"
 										type="text"
 										className="form-control"
 										onChange={handleChange.bind(null, "root", "college")}
@@ -933,8 +962,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</div>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Draft Class</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-draft-class"
+								>
+									Draft Class
+								</label>
 								<input
+									id="customize-player-draft-class"
 									type="text"
 									className={clsx(
 										"form-control",
@@ -957,8 +992,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								) : null}
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Draft Round</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-draft-round"
+								>
+									Draft Round
+								</label>
 								<input
+									id="customize-player-draft-round"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "draft", "round")}
@@ -967,8 +1008,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Draft Pick</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-draft-pick"
+								>
+									Draft Pick
+								</label>
 								<input
+									id="customize-player-draft-pick"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "draft", "pick")}
@@ -977,8 +1024,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Draft Team</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-draft-team"
+								>
+									Draft Team
+								</label>
 								<select
+									id="customize-player-draft-team"
 									className="form-select"
 									onChange={handleChange.bind(null, "draft", "tid")}
 									value={p.draft.tid}
@@ -995,8 +1048,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Year of Death</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-year-of-death"
+								>
+									Year of Death
+								</label>
 								<input
+									id="customize-player-year-of-death"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "diedYear")}
@@ -1005,8 +1064,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Hall of Fame</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-hall-of-fame"
+								>
+									Hall of Fame
+								</label>
 								<select
+									id="customize-player-hall-of-fame"
 									className="form-select"
 									onChange={handleChange.bind(null, "root", "hof")}
 									value={p.hof ? "yes" : "no"}
@@ -1017,11 +1082,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-sm-6 mb-3">
-								<label className="form-label">Injury and Games Out</label>
+								<label className="form-label" htmlFor="customize-player-injury">
+									Injury and Games Out
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-injury"
 										type="text"
 										className="form-control"
+										aria-label="Injury"
 										onChange={handleChange.bind(null, "injury", "type")}
 										value={p.injury.type}
 										disabled={!godMode}
@@ -1029,6 +1098,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<input
 										type="text"
 										className="form-control"
+										aria-label="Games out"
 										onChange={handleChange.bind(
 											null,
 											"injury",
@@ -1105,9 +1175,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						</div>
 						<div className="row">
 							<div className="col-6 mb-3">
-								<label className="form-label">Contract Amount</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-contract-amount"
+								>
+									Contract Amount
+								</label>
 								<CurrencyInputGroup displayUnit="M">
 									<input
+										id="customize-player-contract-amount"
 										type="text"
 										className="form-control"
 										onChange={handleChange.bind(null, "contract", "amount")}
@@ -1117,8 +1193,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</CurrencyInputGroup>
 							</div>
 							<div className="col-6 mb-3">
-								<label className="form-label">Contract Expiration</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-contract-exp"
+								>
+									Contract Expiration
+								</label>
 								<input
+									id="customize-player-contract-exp"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "contract", "exp")}
@@ -1127,8 +1209,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							{playerMoodTraits ? (
-								<div className="col-3 mb-3">
-									<label className="form-label">Mood Traits</label>
+								<div
+									className="col-3 mb-3"
+									role="group"
+									aria-labelledby="customize-player-mood-traits"
+								>
+									<div className="form-label" id="customize-player-mood-traits">
+										Mood Traits
+									</div>
 									{helpers.keys(MOOD_TRAITS).map((trait) => (
 										<div className="form-check" key={trait}>
 											<label className="form-check-label">
@@ -1171,11 +1259,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Appearance</h2>
 
 						<div>
-							<label className="form-label">
+							<label
+								className="form-label"
+								htmlFor="customize-player-appearance"
+							>
 								You can either create a cartoon face or specify the URL to an
 								image.
 							</label>
 							<select
+								id="customize-player-appearance"
 								className="form-select"
 								onChange={handleChangeAppearanceOption}
 								style={{ maxWidth: "150px" }}
@@ -1205,8 +1297,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							/>
 						) : (
 							<div className="my-3">
-								<label className="form-label">Image URL</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-img-url"
+								>
+									Image URL
+								</label>
 								<input
+									id="customize-player-img-url"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "imgURL")}
@@ -1287,6 +1385,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="btn btn-secondary btn-sm"
 									onClick={adjustRatings(-1)}
 									disabled={!godMode}
+									aria-label="Decrease all ratings"
 								>
 									<span className="glyphicon glyphicon-minus" />
 								</button>
@@ -1295,6 +1394,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="btn btn-secondary btn-sm"
 									onClick={adjustRatings(1)}
 									disabled={!godMode}
+									aria-label="Increase all ratings"
 								>
 									<span className="glyphicon glyphicon-plus" />
 								</button>

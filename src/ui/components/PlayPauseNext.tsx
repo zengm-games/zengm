@@ -102,6 +102,7 @@ export const PlayPauseNext = ({
 					disabled={disabled}
 					onClick={onPlay}
 					title={`${titlePlay}${formattedShortcutPlayPause !== undefined ? ` (${formattedShortcutPlayPause})` : ""}`}
+					aria-label={titlePlay}
 				>
 					<span className="glyphicon glyphicon-play" />
 				</button>
@@ -111,6 +112,7 @@ export const PlayPauseNext = ({
 					disabled={disabled}
 					onClick={onPause}
 					title={`${titlePause}${formattedShortcutPlayPause !== undefined ? ` (${formattedShortcutPlayPause})` : ""}`}
+					aria-label={titlePause}
 				>
 					<span className="glyphicon glyphicon-pause" />
 				</button>
@@ -120,6 +122,7 @@ export const PlayPauseNext = ({
 				disabled={disabled || !paused}
 				onClick={onNext}
 				title={`${titleNext}${formattedShortcutNext !== undefined ? ` (${formattedShortcutNext})` : ""}`}
+				aria-label={titleNext}
 			>
 				<span className="glyphicon glyphicon-step-forward" />
 			</button>
@@ -131,6 +134,7 @@ export const PlayPauseNext = ({
 						disabled={disabled || !paused || fastForwards.length === 0}
 						variant="no-class"
 						title="Fast Forward"
+						aria-label="Fast Forward"
 					>
 						<span className="glyphicon glyphicon-fast-forward" />
 					</Dropdown.Toggle>

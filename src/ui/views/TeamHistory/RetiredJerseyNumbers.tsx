@@ -433,6 +433,9 @@ const RetiredJerseyNumbers = ({
 										title={`Sort ${
 											jerseySortDirection === "asc" ? "descending" : "ascending"
 										}`}
+										aria-label={`Sort ${
+											jerseySortDirection === "asc" ? "descending" : "ascending"
+										}`}
 									>
 										<span
 											className={`glyphicon ${

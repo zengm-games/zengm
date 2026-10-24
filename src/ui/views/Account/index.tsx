@@ -194,9 +194,13 @@ const UserInfo = ({
 			) : (
 				<p>
 					Logged in as: <b>{username}</b> (
-					<a href="" onClick={handleLogout}>
+					<button
+						type="button"
+						className="btn btn-link p-0 border-0 align-baseline"
+						onClick={handleLogout}
+					>
 						Logout
-					</a>
+					</button>
 					)
 				</p>
 			)}
@@ -211,9 +215,13 @@ const UserInfo = ({
 					) : (
 						<>
 							(<a href="/account/update_card">Update card</a> or{" "}
-							<a href="" onClick={handleCancel}>
+							<button
+								type="button"
+								className="btn btn-link p-0 border-0 align-baseline"
+								onClick={handleCancel}
+							>
 								cancel
-							</a>
+							</button>
 							)
 						</>
 					)}

@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { RecordAndPlayoffs } from "../../components/RecordAndPlayoffs.tsx";
 import type { View } from "../../../common/types.ts";
 import { useState } from "react";
+import { onEnterOrSpace } from "../../util/onEnterOrSpace.ts";
 
 const ExpandableNote = ({ note }: { note: string | undefined }) => {
 	const [expand, setExpand] = useState(false);
@@ -10,14 +11,20 @@ const ExpandableNote = ({ note }: { note: string | undefined }) => {
 		return null;
 	}
 
+	const toggle = () => {
+		setExpand(!expand);
+	};
+
 	// Would be nice to use a button rather than a div, but I couldn't get text-truncate to work there
 	return (
 		<div
 			className={clsx("cursor-pointer", expand ? undefined : "text-truncate")}
 			style={expand ? { whiteSpace: "pre-line" } : undefined}
-			onClick={() => {
-				setExpand(!expand);
-			}}
+			role="button"
+			tabIndex={0}
+			aria-expanded={expand}
+			onClick={toggle}
+			onKeyDown={onEnterOrSpace(toggle)}
 		>
 			{note}
 		</div>

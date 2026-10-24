@@ -81,7 +81,6 @@ const Input = ({
 					checked={checked}
 					onChange={onChange}
 				/>
-				<label className="form-check-label" htmlFor={id} />
 			</div>
 		);
 	} else if (type === "rangePercent") {
@@ -245,6 +244,7 @@ const Option = ({
 				style={{ minHeight: 33 }}
 			>
 				<div className="me-auto text-nowrap">
+					{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- The click handler only cancels the label's default behavior, the control itself is still keyboard accessible */}
 					<label
 						className="form-label mb-0"
 						htmlFor={id}
@@ -367,8 +367,7 @@ const SettingsFormOptions = ({
 			{visibleCategories.map((category) => {
 				return (
 					<Fragment key={category.name}>
-						<a className="anchor" id={category.name} />
-						<h2 className="mb-3">
+						<h2 className="mb-3" id={category.name}>
 							{category.name}
 							{category.appendNumTeams ? (
 								<span

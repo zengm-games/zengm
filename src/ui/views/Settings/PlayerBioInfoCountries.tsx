@@ -46,6 +46,7 @@ export const PlayerBioInfoRowButton = ({
 			onClick={onClick}
 			style={{ fontSize: 20, marginTop: 10 }}
 			title={title}
+			aria-label={title}
 			type="button"
 		>
 			<span className={`glyphicon ${icon}`} />

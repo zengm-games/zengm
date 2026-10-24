@@ -537,6 +537,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 											}}
 											style={{ fontSize: 20 }}
 											title="Delete"
+											aria-label="Delete"
 											type="button"
 										>
 											<span className="glyphicon glyphicon-remove" />

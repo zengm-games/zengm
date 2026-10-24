@@ -31,17 +31,23 @@ const FieldLabel = ({
 	className,
 	field,
 	fieldToggles,
+	htmlFor,
 	text,
 }: {
 	className: string | undefined;
 	field: TeamFormToggleField;
 	fieldToggles: FieldToggles | undefined;
+	htmlFor?: string;
 	text: string;
 }) => {
 	const id = useId();
 
 	if (!fieldToggles) {
-		return <label className={className}>{text}</label>;
+		return (
+			<label className={className} htmlFor={htmlFor}>
+				{text}
+			</label>
+		);
 	}
 
 	return (
@@ -131,6 +137,10 @@ const TeamForm = ({
 }) => {
 	const [face, setFace] = useState<FaceConfig | undefined>();
 
+	// Multiple TeamForms can be on the same page, so ids need to be unique
+	const id = useId();
+	const fieldId = (field: string) => `${id}-${field}`;
+
 	const isDisabled = (field: TeamFormToggleField) => {
 		return fieldToggles !== undefined && !fieldToggles.enabled.has(field);
 	};
@@ -195,9 +205,11 @@ const TeamForm = ({
 						field="region"
 						fieldToggles={fieldToggles}
 						text="Region"
+						htmlFor={fieldId("region")}
 					/>
 					<div className="input-group">
 						<input
+							id={fieldId("region")}
 							type="text"
 							className="form-control"
 							disabled={isDisabled("region")}
@@ -225,8 +237,10 @@ const TeamForm = ({
 						field="name"
 						fieldToggles={fieldToggles}
 						text="Name"
+						htmlFor={fieldId("name")}
 					/>
 					<input
+						id={fieldId("name")}
 						type="text"
 						className="form-control"
 						disabled={isDisabled("name")}
@@ -242,8 +256,10 @@ const TeamForm = ({
 						field="abbrev"
 						fieldToggles={fieldToggles}
 						text="Abbrev"
+						htmlFor={fieldId("abbrev")}
 					/>
 					<input
+						id={fieldId("abbrev")}
 						type="text"
 						className="form-control"
 						disabled={isDisabled("abbrev")}
@@ -259,8 +275,10 @@ const TeamForm = ({
 						field="did"
 						fieldToggles={fieldToggles}
 						text="Division"
+						htmlFor={fieldId("did")}
 					/>
 					<select
+						id={fieldId("did")}
 						className="form-select"
 						disabled={isDisabled("did")}
 						onChange={(e) => handleInputChange("did", e)}
@@ -281,8 +299,10 @@ const TeamForm = ({
 						field="pop"
 						fieldToggles={fieldToggles}
 						text="Population (millions)"
+						htmlFor={fieldId("pop")}
 					/>
 					<input
+						id={fieldId("pop")}
 						type="text"
 						className="form-control"
 						disabled={disablePop || isDisabled("pop")}
@@ -298,8 +318,10 @@ const TeamForm = ({
 						field="stadiumCapacity"
 						fieldToggles={fieldToggles}
 						text="Stadium Capacity"
+						htmlFor={fieldId("stadiumCapacity")}
 					/>
 					<input
+						id={fieldId("stadiumCapacity")}
 						type="text"
 						className="form-control"
 						disabled={disableStadiumCapacity || isDisabled("stadiumCapacity")}
@@ -315,8 +337,10 @@ const TeamForm = ({
 						field="imgURL"
 						fieldToggles={fieldToggles}
 						text="Logo URL"
+						htmlFor={fieldId("imgURL")}
 					/>
 					<input
+						id={fieldId("imgURL")}
 						type="text"
 						className="form-control"
 						disabled={isDisabled("imgURL")}
@@ -332,8 +356,10 @@ const TeamForm = ({
 						field="imgURLSmall"
 						fieldToggles={fieldToggles}
 						text="Small Logo"
+						htmlFor={fieldId("imgURLSmall")}
 					/>
 					<input
+						id={fieldId("imgURLSmall")}
 						type="text"
 						className="form-control"
 						disabled={isDisabled("imgURLSmall")}
@@ -360,7 +386,7 @@ const TeamForm = ({
 							/>
 						</>
 					) : (
-						<label className={classNameLabel}>Jersey</label>
+						<div className={classNameLabel}>Jersey</div>
 					)}
 					<div className="input-group">
 						{([0, 1, 2] as const).map((j) => (
@@ -413,6 +439,7 @@ const TeamForm = ({
 					</div>
 				</div>
 				{face ? (
+					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Clicking just hides this preview, it's fine for that to be mouse only
 					<div
 						onClick={() => {
 							setFace(undefined);
@@ -445,8 +472,11 @@ const TeamForm = ({
 			{!hideStatus ? (
 				<div className={classNamesCol[9]}>
 					<div className="mb-3">
-						<label className={classNameLabel}>Status</label>
+						<label className={classNameLabel} htmlFor={fieldId("disabled")}>
+							Status
+						</label>
 						<select
+							id={fieldId("disabled")}
 							className="form-select"
 							disabled={disableStatus}
 							onChange={(e) => handleInputChange("disabled", e)}
@@ -461,7 +491,9 @@ const TeamForm = ({
 			{showPlayers ? (
 				<div className={classNamesCol[10]}>
 					<div className="mb-3">
-						<label className={classNameLabel}>Include Players</label>
+						<label className={classNameLabel} htmlFor={fieldId("usePlayers")}>
+							Include Players
+						</label>
 						<div
 							className="form-check form-switch"
 							title={t.usePlayers ? "Enabled" : "Disabled"}
@@ -471,11 +503,7 @@ const TeamForm = ({
 								className="form-check-input"
 								checked={!!t.usePlayers}
 								onChange={(e) => handleInputChange("usePlayers", e)}
-								id="TeamForm-usePlayers"
-							/>
-							<label
-								className="form-check-label"
-								htmlFor="TeamForm-usePlayers"
+								id={fieldId("usePlayers")}
 							/>
 						</div>
 					</div>

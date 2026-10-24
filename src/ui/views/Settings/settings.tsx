@@ -2579,8 +2579,8 @@ export const settings: Setting[] = (
 								onChange={handleChange("stopOnInjury", "bool")}
 								id={id + "2"}
 								value={state[key2]}
+								aria-label="Enable stop on injury"
 							/>
-							<label className="form-check-label" htmlFor={id + "2"} />
 						</div>
 						<div className="input-group">
 							<input

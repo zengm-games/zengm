@@ -135,6 +135,7 @@ const Controls = ({
 						padding: "0 0 0 5px",
 					}}
 					title="Actions"
+					aria-label="Actions"
 					variant="btn-link border-0"
 				>
 					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />

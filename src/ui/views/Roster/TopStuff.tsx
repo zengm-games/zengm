@@ -123,13 +123,7 @@ const PayrollAndPenalties = ({
 			}
 			rootClose
 		>
-			<button
-				className="btn btn-link p-0 border-0 text-danger"
-				style={{
-					// Without this, alignment is a bit off compared to the text version
-					verticalAlign: "baseline",
-				}}
-			>
+			<button className="btn btn-link p-0 border-0 align-baseline text-danger">
 				{payrollString}
 			</button>
 		</OverlayTrigger>

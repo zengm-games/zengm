@@ -67,7 +67,7 @@ const Relatives = ({
 			{numToHide > 0 ? (
 				<>
 					<button
-						className="btn btn-link p-0 m-0 border-0"
+						className="btn btn-link p-0 m-0 border-0 align-baseline"
 						onClick={() => {
 							setShowAll(true);
 						}}

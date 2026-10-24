@@ -986,7 +986,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					<>
 						{" "}
 						<button
-							className="btn btn-link p-0 border-0"
+							className="btn btn-link p-0 border-0 align-baseline"
 							onClick={() => {
 								setShowWarning(false);
 							}}

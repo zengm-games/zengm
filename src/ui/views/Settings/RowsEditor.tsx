@@ -1,5 +1,5 @@
 import { csvFormat, csvParse } from "d3-dsv";
-import { type ChangeEvent, useRef, useState } from "react";
+import { type ChangeEvent, useId, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import type { InjuriesSetting, TragicDeaths } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
@@ -131,6 +131,8 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 	) => void;
 	type: Type;
 }) => {
+	const id = useId();
+
 	const [importErrorMessage, setImportErrorMessage] = useState<
 		string | undefined
 	>();
@@ -169,7 +171,7 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 						<Dropdown.Toggle
 							className="btn-light-bordered btn-light-bordered-group-right"
 							variant="foo"
-							id="dropdown-injuries-reset"
+							id={`${id}-reset`}
 						>
 							Reset
 						</Dropdown.Toggle>

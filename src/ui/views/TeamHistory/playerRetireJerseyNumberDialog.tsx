@@ -67,7 +67,7 @@ const Confirm = confirmable<
 								))}
 							</select>
 						</div>
-						<button className="btn btn-primary" onClick={ok}>
+						<button className="btn btn-primary" type="submit">
 							Retire jersey number
 						</button>
 					</div>

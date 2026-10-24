@@ -256,11 +256,12 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>({
 				return;
 			}
 
-			// Disable if we are typing in a text field
+			// Disable if we are typing in a text field or using a select
 			const element = event.target;
 			if (
 				disableWhileEditing &&
 				(element instanceof HTMLInputElement ||
+					element instanceof HTMLSelectElement ||
 					element instanceof HTMLTextAreaElement ||
 					(element instanceof HTMLElement && element.isContentEditable))
 			) {

@@ -1,4 +1,5 @@
 import * as z from "zod";
+import type { IsExact } from "conditional-type-checks";
 import type { FaceConfig } from "facesjs";
 import type { ReactNode } from "react";
 import type * as views from "../worker/views/index.ts";
@@ -2377,7 +2378,55 @@ export type UpdateEvent =
 
 export type UpdateEvents = UpdateEvent[];
 
-export const realPlayerPhotosSchema = z.record(z.string(), z.string());
+const idSchema = z.object({ id: z.string() });
+
+const faceConfigStrictSchema = z.object({
+	fatness: z.number(),
+	teamColors: z.tuple([z.string(), z.string(), z.string()]),
+	hairBg: idSchema,
+	body: z.object({ id: z.string(), color: z.string(), size: z.number() }),
+	jersey: idSchema,
+	ear: z.object({ id: z.string(), size: z.number() }),
+	head: z.object({ id: z.string(), shave: z.string() }),
+	eyeLine: idSchema,
+	smileLine: z.object({ id: z.string(), size: z.number() }),
+	miscLine: idSchema,
+	facialHair: idSchema,
+	eye: z.object({ id: z.string(), angle: z.number() }),
+	eyebrow: z.object({ id: z.string(), angle: z.number() }),
+	hair: z.object({ id: z.string(), color: z.string(), flip: z.boolean() }),
+	mouth: z.object({ id: z.string(), flip: z.boolean() }),
+	nose: z.object({ id: z.string(), flip: z.boolean(), size: z.number() }),
+	glasses: idSchema,
+	accessories: idSchema,
+});
+
+// Compile error if FaceConfig and the schema ever differ, in either direction
+true satisfies IsExact<FaceConfig, z.infer<typeof faceConfigStrictSchema>>;
+
+// Unknown properties are kept rather than rejected or stripped
+const faceConfigSchema = faceConfigStrictSchema.loose();
+
+// Each value is either an imgURL or a facesjs face. Not z.union, because that only reports "Invalid input" for a bad face, rather than which property of the face is wrong.
+const realPlayerPhotoSchema = z
+	.unknown()
+	.transform((value, ctx): string | FaceConfig => {
+		const result = (
+			typeof value === "string" ? z.string() : faceConfigSchema
+		).safeParse(value);
+		if (!result.success) {
+			for (const issue of result.error.issues) {
+				ctx.addIssue({ ...issue });
+			}
+			return z.NEVER;
+		}
+		return result.data;
+	});
+
+export const realPlayerPhotosSchema = z.record(
+	z.string(),
+	realPlayerPhotoSchema,
+);
 export type RealPlayerPhotos = z.infer<typeof realPlayerPhotosSchema>;
 
 export const individualRealTeamInfoSchema = z.object({

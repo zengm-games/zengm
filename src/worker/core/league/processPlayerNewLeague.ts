@@ -1,10 +1,11 @@
 import { draft, player } from "../index.ts";
 import { PLAYER } from "../../../common/constants.ts";
+import type { FaceConfig } from "facesjs";
 import type {
 	PlayerWithoutKey,
 	RealPlayerPhotos,
 } from "../../../common/types.ts";
-import { g } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type { PreProcessParams } from "./createStream.ts";
 
 export const applyRealPlayerPhotos = (
@@ -13,6 +14,7 @@ export const applyRealPlayerPhotos = (
 		draft: {
 			year: number;
 		};
+		face?: FaceConfig;
 	} & (
 			| {
 					name?: string;
@@ -30,24 +32,24 @@ export const applyRealPlayerPhotos = (
 		// Do this before augment so it doesn't need to create a face
 		// p.imgURL check means creating a league with specified images does not get overwritten
 		if (p.srID && (!p.imgURL || p.imgURL === "/img/blank-face.png")) {
-			const realPlayerPhoto = realPlayerPhotos[p.srID];
-			if (realPlayerPhoto !== undefined) {
-				p.imgURL = realPlayerPhoto;
-			} else {
+			let realPlayerPhoto = realPlayerPhotos[p.srID];
+			if (realPlayerPhoto === undefined) {
 				const name = (p.name ?? `${p.firstName} ${p.lastName}`)
 					.replaceAll(" ", "_")
 					.toLowerCase();
 
 				// Keep in sync with bbgm-rosters
-				const key = `dp_${p.draft.year}_${name}`;
-				if (realPlayerPhotos[key] !== undefined) {
-					p.imgURL = realPlayerPhotos[key];
-				} else {
-					const key = `dp_${name}`;
-					if (realPlayerPhotos[key] !== undefined) {
-						p.imgURL = realPlayerPhotos[key];
-					}
-				}
+				realPlayerPhoto =
+					realPlayerPhotos[`dp_${p.draft.year}_${name}`] ??
+					realPlayerPhotos[`dp_${name}`];
+			}
+
+			if (typeof realPlayerPhoto === "string") {
+				p.imgURL = realPlayerPhoto;
+			} else if (realPlayerPhoto !== undefined) {
+				// Empty imgURL so the face is displayed rather than the blank face image
+				p.imgURL = "";
+				p.face = helpers.deepCopy(realPlayerPhoto);
 			}
 		}
 	}

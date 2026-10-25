@@ -75,8 +75,8 @@ importers:
         specifier: 10.47.0
         version: 10.47.0
       facesjs:
-        specifier: 5.0.3
-        version: 5.0.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: 5.0.4
+        version: 5.0.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       fast-deep-equal:
         specifier: 3.1.3
         version: 3.1.3
@@ -2906,8 +2906,8 @@ packages:
     resolution: {integrity: sha512-KfYbmpRm0VbLjEvVa9yGwCi9GI34xvi7A/HXYWQO65CSD2u3MczUJSuwXKFIxlGsgBQizV9q5J9NHj4VG0n+pA==}
     engines: {node: '>=12.0.0'}
 
-  facesjs@5.0.3:
-    resolution: {integrity: sha512-oOlOcjkjgkc9bl8v8bBUSC7h5uTiw33xkUm75i5I84iz6U3TmaJEJZD+k49ksYGAJ8GQ1jETg4ImrIN8LMS8cA==}
+  facesjs@5.0.4:
+    resolution: {integrity: sha512-8vG1T5iawfeAV07WV0zXlC3v48PCxhCC0ati2PlsrZTJ17phc3txtyJKSd+VGFmDu2U3y95QgEbB6tvc0UpMnw==}
     hasBin: true
     peerDependencies:
       react: '>=18.0.0'
@@ -7507,7 +7507,7 @@ snapshots:
 
   expect-type@1.4.0: {}
 
-  facesjs@5.0.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
+  facesjs@5.0.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
     dependencies:
       dlv: 1.1.3
       dset: 3.1.4

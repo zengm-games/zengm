@@ -4,6 +4,7 @@ import { JSONParseStream, type JSONPath } from "json-web-streams";
 import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util/index.ts";
 import type { Conditions } from "../../common/types.ts";
+import { fetchUserURL } from "../../common/fetchUserURL.ts";
 import {
 	DEFAULT_TEAM_COLORS,
 	LEAGUE_DATABASE_VERSION,
@@ -378,47 +379,7 @@ const initialCheck = async (
 	let stream: ReadableStream;
 	let sizeInBytes: number | undefined;
 	if (typeof file === "string") {
-		let response;
-		try {
-			response = await fetch(file);
-		} catch {
-			throw new Error(
-				"Could be a network error, an invalid URL, or an invalid Access-Control-Allow-Origin header",
-			);
-		}
-
-		if (!response.ok) {
-			let description;
-			switch (response.status) {
-				case 400:
-					description = "bad request";
-					break;
-				case 401:
-					description = "unauthorized";
-					break;
-				case 403:
-					description = "forbidden";
-					break;
-				case 404:
-					description = "file not found";
-					break;
-				case 500:
-					description = "internal server error";
-					break;
-				case 502:
-					description = "bad gateway";
-					break;
-				case 503:
-					description = "service unavailable";
-					break;
-			}
-
-			throw new Error(
-				`server responded with HTTP error code ${response.status}${
-					description ? ` (${description})` : ""
-				}`,
-			);
-		}
+		const response = await fetchUserURL(file);
 
 		if (response.body === null) {
 			throw new Error("Response body is null");

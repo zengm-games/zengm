@@ -1,13 +1,16 @@
 import type { ChangeEvent } from "react";
+import { LoadFromURL } from "./LoadFromURL.tsx";
 
 const RealData = ({
 	handleChange,
+	handleLoad,
 	realTeamInfo,
 	realPlayerPhotos,
 }: {
 	handleChange: (
 		name: string,
 	) => (event: ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => void;
+	handleLoad: (name: "realTeamInfo" | "realPlayerPhotos", json: string) => void;
 	realTeamInfo: string;
 	realPlayerPhotos: string;
 }) => {
@@ -29,6 +32,13 @@ const RealData = ({
 					<label className="form-label" htmlFor="options-team-info">
 						Team Info
 					</label>
+					<LoadFromURL
+						label="Team Info"
+						localStorageKey="realTeamInfoURL"
+						onLoad={(json) => {
+							handleLoad("realTeamInfo", json);
+						}}
+					/>
 					<textarea
 						id="options-team-info"
 						className="form-control"
@@ -45,6 +55,13 @@ const RealData = ({
 					<label className="form-label" htmlFor="options-player-photos">
 						Player Photos
 					</label>
+					<LoadFromURL
+						label="Player Photos"
+						localStorageKey="realPlayerPhotosURL"
+						onLoad={(json) => {
+							handleLoad("realPlayerPhotos", json);
+						}}
+					/>
 					<textarea
 						id="options-player-photos"
 						className="form-control"

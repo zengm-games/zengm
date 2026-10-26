@@ -62,6 +62,17 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 			setDirty(true);
 		};
 
+	const handleLoad = (
+		name: "realTeamInfo" | "realPlayerPhotos",
+		json: string,
+	) => {
+		setState((state2) => ({
+			...state2,
+			[name]: json,
+		}));
+		setDirty(true);
+	};
+
 	const handleFormSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
@@ -257,6 +268,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 						<h2>Team and Player Data for "Real Players" Leagues</h2>
 						<RealData
 							handleChange={handleChange}
+							handleLoad={handleLoad}
 							realPlayerPhotos={state.realPlayerPhotos}
 							realTeamInfo={state.realTeamInfo}
 						/>

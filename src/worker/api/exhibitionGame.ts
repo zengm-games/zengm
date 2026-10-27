@@ -113,6 +113,9 @@ const getSeasonInfoLeague = async ({
 
 	let pid = pidOffset;
 
+	// g.season might not be set yet (fresh worker), but it's needed by addStatsRow and player.updateValues below
+	g.setWithoutSavingToDB("season", season);
+
 	const players = (await getPlayersActiveSeason(league, season)).filter((p) => {
 		// Keep players who ended the season on this team. Not perfect, will miss released players. Second check is for players added to the team in God Mode during the playoffs.
 		let seasonStats =
@@ -205,7 +208,6 @@ const getSeasonInfoLeague = async ({
 
 			if (!isCurrentOngoingSeason) {
 				// Update player values, since it will be needed for either depth chart or rosterOrder
-				g.setWithoutSavingToDB("season", season);
 				g.setWithoutSavingToDB("numActiveTeams", 2);
 				local.playerOvrMean = 48;
 				local.playerOvrStd = 10;

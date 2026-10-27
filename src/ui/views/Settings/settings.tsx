@@ -296,9 +296,9 @@ export const settings: Setting[] = (
 					</p>
 					<p>
 						<b>Random:</b> Real draft prospects keep their names, heights, and
-						other bio info, but their ratings are randomly generated like in a
-						random players league, so their real careers tell you nothing about
-						how good they will be.
+						other bio info, but their ratings are generated like random draft
+						prospects, so their real careers tell you nothing about how good
+						they will be.
 					</p>
 				</>
 			),

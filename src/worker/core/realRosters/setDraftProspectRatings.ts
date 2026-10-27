@@ -6,7 +6,7 @@ import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import player from "../player/index.ts";
 import genRatings from "../player/genRatings.basketball.ts";
 import ovr from "../player/ovr.basketball.ts";
-import potEstimator from "../player/potEstimator.ts";
+import { potEstimatorBasketballWithoutNoise } from "../player/potEstimator.ts";
 import type { Basketball } from "./loadData.basketball.ts";
 
 /*
@@ -36,8 +36,59 @@ const VALUE_BY_PICK = [
 ];
 const VALUE_UNDRAFTED = 36.6;
 
-// Size of the draft classes VALUE_BY_PICK was generated from - 30 teams, 2 rounds, and the 7/6 factor in genPlayersWithoutSaving
-const NUM_PLAYERS_PER_DRAFT_CLASS = 70;
+/*
+Like VALUE_BY_PICK, but pooling many draft classes together, so the top end includes players better than the best player in a typical draft class. Each row is [fraction of draft prospects who are better, value]. Run this script in the worker console in a random players league (30 teams) to get the data:
+
+N = 5000;
+values = [];
+for (let i = 0; i < N; i++) {
+    const players = await bbgm.draft.genPlayersWithoutSaving(0, 34, []);
+    values.push(...players.map(p => bbgm.player.valueCombineOvrPot(p.ratings[0].ovr, p.ratings[0].pot, -p.born.year)));
+}
+values.sort((a, b) => b - a);
+quantiles = [0.0001, 0.0002, 0.0003, 0.0005, 0.0007, 0.001, 0.0015, 0.002, 0.003, 0.005, 0.007, 0.01, 0.02, 0.03, 0.05, 0.07, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.93, 0.95, 0.97, 0.98, 0.99];
+console.log(`const VALUE_BY_QUANTILE = ${JSON.stringify(quantiles.map(q => [q, helpers.localeParseFloat(values[Math.round(q * values.length) - 1].toFixed(1))]))};`);
+*/
+const VALUE_BY_QUANTILE: [number, number][] = [
+	[0.0001, 73],
+	[0.0002, 72.2],
+	[0.0003, 71.4],
+	[0.0005, 70.6],
+	[0.0007, 70],
+	[0.001, 69.4],
+	[0.0015, 68.5],
+	[0.002, 67.9],
+	[0.003, 67.1],
+	[0.005, 65.8],
+	[0.007, 65.1],
+	[0.01, 64.1],
+	[0.02, 62.2],
+	[0.03, 60.8],
+	[0.05, 59],
+	[0.07, 57.8],
+	[0.1, 56.4],
+	[0.15, 54.7],
+	[0.2, 53.5],
+	[0.25, 52.4],
+	[0.3, 51.5],
+	[0.35, 50.6],
+	[0.4, 49.7],
+	[0.45, 49],
+	[0.5, 48.2],
+	[0.55, 47.3],
+	[0.6, 46.6],
+	[0.65, 45.6],
+	[0.7, 44.6],
+	[0.75, 43.2],
+	[0.8, 41.6],
+	[0.85, 39.6],
+	[0.9, 37.1],
+	[0.93, 35.1],
+	[0.95, 33.4],
+	[0.97, 31],
+	[0.98, 29.4],
+	[0.99, 27.2],
+];
 
 // For the "career" setting, only seasons with ovr above this count towards a player's career value, so that hanging around the end of the bench for a long time doesn't count for much
 const REPLACEMENT_OVR = 40;
@@ -49,13 +100,13 @@ const MAX_OVR_DIFF_COMPARABLE = 10;
 
 const getValue = (ratings: Record<RatingKey, number>, age: number) => {
 	const ovrValue = ovr(ratings);
-	const pot = potEstimator(ovrValue, age);
+	const pot = potEstimatorBasketballWithoutNoise(ovrValue, age);
 
 	return player.valueCombineOvrPot(ovrValue, pot, age);
 };
 
 // index is the 0-based position in a 30 team draft, and can be fractional
-const getTargetValue = (index: number) => {
+const getTargetValueFromIndex = (index: number) => {
 	if (index >= VALUE_BY_PICK.length) {
 		return VALUE_UNDRAFTED;
 	}
@@ -68,31 +119,58 @@ const getTargetValue = (index: number) => {
 	);
 };
 
-// Shift all ratings except hgt up or down until the player's value matches targetValue
+// quantile is the fraction of draft prospects who are better than this player
+const getTargetValueFromQuantile = (quantile: number) => {
+	const upperIndex = VALUE_BY_QUANTILE.findIndex((row) => row[0] >= quantile);
+	if (upperIndex === 0) {
+		return VALUE_BY_QUANTILE[0]![1];
+	}
+	if (upperIndex === -1) {
+		return VALUE_BY_QUANTILE.at(-1)![1];
+	}
+
+	const [lowerQuantile, lowerValue] = VALUE_BY_QUANTILE[upperIndex - 1]!;
+	const [upperQuantile, upperValue] = VALUE_BY_QUANTILE[upperIndex]!;
+	const fraction = (quantile - lowerQuantile) / (upperQuantile - lowerQuantile);
+	return (1 - fraction) * lowerValue + fraction * upperValue;
+};
+
+// Shift all ratings except hgt up or down until the player's value is as close as possible to targetValue
 const adjustRatingsToTargetValue = (
 	ratings: Record<RatingKey, number>,
 	age: number,
 	targetValue: number,
 ) => {
-	let value = getValue(ratings, age);
-	let diff = targetValue - value;
-	if (Math.abs(diff) < 1) {
-		return;
-	}
-
+	let diff = targetValue - getValue(ratings, age);
 	const direction = Math.sign(diff);
 
 	while (true) {
+		const prevRatings = { ...ratings };
+		const prevDiff = diff;
+
+		let changed = false;
 		for (const rating of RATINGS) {
 			if (rating !== "hgt") {
-				ratings[rating] = player.limitRating(ratings[rating] + direction);
+				const newRating = player.limitRating(ratings[rating] + direction);
+				if (newRating !== ratings[rating]) {
+					ratings[rating] = newRating;
+					changed = true;
+				}
 			}
 		}
 
-		value = getValue(ratings, age);
-		diff = targetValue - value;
+		if (!changed) {
+			// Every rating is already at its limit
+			return;
+		}
+
+		diff = targetValue - getValue(ratings, age);
 
 		if ((diff <= 0 && direction > 0) || (diff >= 0 && direction < 0)) {
+			// Went past targetValue, so keep whichever of the last two steps was closer
+			if (Math.abs(prevDiff) < Math.abs(diff)) {
+				Object.assign(ratings, prevRatings);
+			}
 			return;
 		}
 	}
@@ -225,8 +303,8 @@ const getCareerScoresBySlug = (basketball: Basketball) => {
 	return careerScoresBySlug;
 };
 
-// Rank every real player by their career score, and convert that to an index like getIndexFromDraftPosition, as if every real player was in a draft class with NUM_PLAYERS_PER_DRAFT_CLASS players
-const getIndexesBySlug = (
+// Rank every real player by their career score, and convert that to a quantile for getTargetValueFromQuantile, as if all real players were a sample from the same distribution as random draft prospects
+const getQuantilesBySlug = (
 	careerScoresBySlug: Map<string, CareerScores>,
 	key: keyof CareerScores,
 ) => {
@@ -244,39 +322,38 @@ const getIndexesBySlug = (
 		}
 	}
 
-	const indexesBySlug = new Map<string, number>();
+	const quantilesBySlug = new Map<string, number>();
 	for (const [slug, careerScores] of careerScoresBySlug) {
 		const rank = ranksByScore.get(careerScores[key])!;
-		indexesBySlug.set(
-			slug,
-			(rank / scores.length) * NUM_PLAYERS_PER_DRAFT_CLASS,
-		);
+
+		// Middle of the range of quantiles this rank covers, so the best player is not treated as better than every possible draft prospect
+		quantilesBySlug.set(slug, (rank + 0.5) / scores.length);
 	}
 
-	return indexesBySlug;
+	return quantilesBySlug;
 };
 
-const indexesCache = new WeakMap<
+const quantilesCache = new WeakMap<
 	Basketball,
 	Record<"peak" | "career", Map<string, number>>
 >();
-const getIndexFromCareer = (
+const getQuantileFromCareer = (
 	basketball: Basketball,
 	key: "peak" | "career",
 	slug: string,
 ) => {
-	let indexes = indexesCache.get(basketball);
-	if (!indexes) {
+	let quantiles = quantilesCache.get(basketball);
+	if (!quantiles) {
 		const careerScoresBySlug = getCareerScoresBySlug(basketball);
-		indexes = {
-			peak: getIndexesBySlug(careerScoresBySlug, "peak"),
-			career: getIndexesBySlug(careerScoresBySlug, "career"),
+		quantiles = {
+			peak: getQuantilesBySlug(careerScoresBySlug, "peak"),
+			career: getQuantilesBySlug(careerScoresBySlug, "career"),
 		};
-		indexesCache.set(basketball, indexes);
+		quantilesCache.set(basketball, quantiles);
 	}
 
 	// undefined for players who have not played in the league yet, like future draft prospects
-	return indexes[key].get(slug);
+	return quantiles[key].get(slug);
 };
 
 const setRandomRatings = (ratings: Record<RatingKey, number>, age: number) => {
@@ -286,8 +363,11 @@ const setRandomRatings = (ratings: Record<RatingKey, number>, age: number) => {
 	}
 
 	// genRatings is just for the shape of the ratings. Its values are lower than real random draft prospects, which also get developed in genPlayersWithoutSaving. So pick a value like a random player from a random draft class.
-	const index = Math.random() * NUM_PLAYERS_PER_DRAFT_CLASS;
-	adjustRatingsToTargetValue(ratings, age, getTargetValue(index));
+	adjustRatingsToTargetValue(
+		ratings,
+		age,
+		getTargetValueFromQuantile(Math.random()),
+	);
 };
 
 // ratings should already have nerfDraftProspect applied
@@ -318,13 +398,20 @@ export const setDraftProspectRatings = ({
 		return;
 	}
 
-	const index =
-		realDraftRatings === "draft"
-			? getIndexFromDraftPosition(draft)
-			: getIndexFromCareer(basketball, realDraftRatings, slug);
-	if (index === undefined) {
+	if (realDraftRatings === "draft") {
+		const index = getIndexFromDraftPosition(draft);
+		if (index !== undefined) {
+			adjustRatingsToTargetValue(ratings, age, getTargetValueFromIndex(index));
+		}
 		return;
 	}
 
-	adjustRatingsToTargetValue(ratings, age, getTargetValue(index));
+	const quantile = getQuantileFromCareer(basketball, realDraftRatings, slug);
+	if (quantile !== undefined) {
+		adjustRatingsToTargetValue(
+			ratings,
+			age,
+			getTargetValueFromQuantile(quantile),
+		);
+	}
 };

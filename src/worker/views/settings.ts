@@ -9,6 +9,7 @@ import goatFormula from "../util/goatFormula.ts";
 import { defaultTragicDeaths } from "../util/defaultTragicDeaths.ts";
 import { defaultInjuries } from "../util/defaultInjuries.ts";
 import { defineView } from "../util/defineView.ts";
+import { DEFAULT_REAL_DRAFT_RATINGS } from "../../common/constants.ts";
 
 type Key =
 	| "godMode"
@@ -406,7 +407,7 @@ export const getInitialSettings = (): Settings => {
 		fakeAgeProb: g.get("fakeAgeProb"),
 
 		// Might as well be undefined, because it will never be saved from this form, only the new league form
-		realDraftRatings: g.get("realDraftRatings") ?? "rookie",
+		realDraftRatings: g.get("realDraftRatings") ?? DEFAULT_REAL_DRAFT_RATINGS,
 		randomization: "none",
 		realStats: "none",
 		giveMeWorstRoster: false,

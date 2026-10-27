@@ -9,6 +9,7 @@ import {
 	team,
 } from "../index.ts";
 import {
+	DEFAULT_REAL_DRAFT_RATINGS,
 	DEFAULT_STADIUM_CAPACITY,
 	DEPTH_CHART_NAME,
 	LEAGUE_DATABASE_VERSION,
@@ -1599,7 +1600,8 @@ const afterDBStream = async ({
 			players: activePlayers,
 			basketball,
 			numActiveTeams: gameAttributes.numActiveTeams,
-			realDraftRatings: gameAttributes.realDraftRatings ?? "rookie",
+			realDraftRatings:
+				gameAttributes.realDraftRatings ?? DEFAULT_REAL_DRAFT_RATINGS,
 			phase: gameAttributes.phase,
 			season: gameAttributes.season,
 		});

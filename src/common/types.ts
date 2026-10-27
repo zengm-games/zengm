@@ -718,7 +718,7 @@ export type GameAttributesLeague = {
 	playoffsReseed: boolean;
 	quarterLength: number;
 	randomDebutsForever?: number;
-	realDraftRatings?: RealDraftRatings;
+	realDraftRatings?: RealDraftRatingsSetting;
 	realPlayerDeterminism: number;
 	repeatSeason:
 		| undefined
@@ -2134,7 +2134,7 @@ import type {
 	RatingKey as RatingKeyHockey,
 	TeamStatAttr as TeamStatAttrHockey,
 } from "./types.hockey.ts";
-import type { TIEBREAKERS } from "./constants.ts";
+import type { REAL_DRAFT_RATINGS, TIEBREAKERS } from "./constants.ts";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
 import type { SuperCol } from "../ui/components/DataTable/index.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
@@ -2451,12 +2451,12 @@ export const realTeamInfoSchema = z.record(
 );
 export type RealTeamInfo = z.infer<typeof realTeamInfoSchema>;
 
-export type RealDraftRatings =
-	| "rookie"
-	| "draft"
-	| "peak"
-	| "career"
-	| "random";
+export type RealDraftRatings = (typeof REAL_DRAFT_RATINGS)[number];
+
+// Either one mode, or a weighted mixture of several
+export type RealDraftRatingsSetting =
+	| RealDraftRatings
+	| Record<RealDraftRatings, number>;
 
 export type GetLeagueOptionsReal = {
 	type: "real";
@@ -2464,7 +2464,7 @@ export type GetLeagueOptionsReal = {
 	phase: Phase;
 	randomDebuts: boolean;
 	randomDebutsKeepCurrent: boolean;
-	realDraftRatings: RealDraftRatings;
+	realDraftRatings: RealDraftRatingsSetting;
 	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
 	includePlayers: boolean;
 

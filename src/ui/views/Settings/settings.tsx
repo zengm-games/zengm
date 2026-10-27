@@ -2,6 +2,7 @@ import {
 	COURT,
 	DIFFICULTY,
 	GAME_NAME,
+	REAL_DRAFT_RATINGS,
 	REAL_PLAYERS_INFO,
 	TIEBREAKERS,
 	WEBSITE_ROOT,
@@ -19,10 +20,55 @@ import type { HandleChange, HandleChangeRaw } from "./SettingsFormOptions.tsx";
 import type { State } from "./SettingsForm.tsx";
 import RowsEditor from "./RowsEditor.tsx";
 import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
-import type { GameAttributesLeague } from "../../../common/types.ts";
+import type {
+	GameAttributesLeague,
+	RealDraftRatings,
+} from "../../../common/types.ts";
 import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
 import { getDraftTypeDescription } from "../DraftLottery.tsx";
 import { bySport } from "../../../common/sportFunctions.ts";
+
+const REAL_DRAFT_RATINGS_INFO: Record<
+	RealDraftRatings,
+	{
+		name: string;
+		shortName: string;
+	}
+> = {
+	rookie: {
+		name: "Based on rookie season stats",
+		shortName: "Rookie season stats",
+	},
+	draft: {
+		name: "Based on draft position",
+		shortName: "Draft position",
+	},
+	peak: {
+		name: "Based on peak performance",
+		shortName: "Peak performance",
+	},
+	career: {
+		name: "Based on career performance",
+		shortName: "Career performance",
+	},
+	random: {
+		name: "Random",
+		shortName: "Random",
+	},
+};
+
+const mapRealDraftRatings = <T,>(
+	callback: (mode: RealDraftRatings) => T,
+): Record<RealDraftRatings, T> => ({
+	rookie: callback("rookie"),
+	draft: callback("draft"),
+	peak: callback("peak"),
+	career: callback("career"),
+	random: callback("random"),
+});
+
+const getSingleModeWeights = (selectedMode: RealDraftRatings) =>
+	mapRealDraftRatings((mode) => (mode === selectedMode ? "1" : "0"));
 
 export const descriptions = {
 	difficulty:
@@ -255,14 +301,110 @@ export const settings: Setting[] = (
 				newLeague &&
 				((hasPlayers && realPlayers) ||
 					(REAL_PLAYERS_INFO && !hasPlayers && !realPlayers)),
-			type: "string",
-			values: [
-				{ key: "rookie", value: "Based on rookie season stats" },
-				{ key: "draft", value: "Based on draft position" },
-				{ key: "peak", value: "Based on peak performance" },
-				{ key: "career", value: "Based on career performance" },
-				{ key: "random", value: "Random" },
-			],
+			type: "custom",
+			customForm: ({ disabled, handleChangeRaw, id, inputStyle, state }) => {
+				const realDraftRatings = state.realDraftRatings;
+				const selectedMode = realDraftRatings.mode;
+				const custom = selectedMode === "custom";
+
+				// Outside of custom mode, show the weights for the selected mode
+				const weights = custom
+					? realDraftRatings.weights
+					: getSingleModeWeights(selectedMode);
+
+				const myHandleChange = handleChangeRaw("realDraftRatings");
+
+				return (
+					<div className="d-flex flex-column gap-1">
+						<select
+							id={id}
+							disabled={disabled}
+							className="form-select align-self-end"
+							style={inputStyle}
+							value={selectedMode}
+							onChange={(event) => {
+								myHandleChange({
+									mode: event.target.value as State["realDraftRatings"]["mode"],
+
+									// When switching to custom, start from the weights that were just shown
+									weights,
+								});
+							}}
+						>
+							{REAL_DRAFT_RATINGS.map((mode) => (
+								<option key={mode} value={mode}>
+									{REAL_DRAFT_RATINGS_INFO[mode].name}
+								</option>
+							))}
+							<option value="custom">Custom</option>
+						</select>
+						{REAL_DRAFT_RATINGS.map((mode) => (
+							<div
+								key={mode}
+								className="d-flex align-items-center justify-content-end gap-2"
+							>
+								<div>{REAL_DRAFT_RATINGS_INFO[mode].shortName}</div>
+								<input
+									disabled={disabled || !custom}
+									type="text"
+									className="form-control form-control-sm"
+									inputMode="decimal"
+									style={{ width: 50 }}
+									value={weights[mode]}
+									onChange={(event) => {
+										myHandleChange({
+											...realDraftRatings,
+											weights: {
+												...weights,
+												[mode]: event.target.value,
+											},
+										});
+									}}
+								/>
+							</div>
+						))}
+					</div>
+				);
+			},
+			stringify: (
+				value: Settings["realDraftRatings"],
+			): State["realDraftRatings"] => {
+				if (typeof value === "string") {
+					return {
+						mode: value,
+
+						weights: getSingleModeWeights(value),
+					};
+				}
+
+				return {
+					mode: "custom",
+					weights: mapRealDraftRatings((mode) => String(value[mode])),
+				};
+			},
+			parse: (
+				value: State["realDraftRatings"],
+			): Settings["realDraftRatings"] => {
+				if (value.mode !== "custom") {
+					return value.mode;
+				}
+
+				const weights = mapRealDraftRatings((mode) => {
+					const weight = helpers.localeParseFloat(value.weights[mode]);
+					if (Number.isNaN(weight) || weight < 0) {
+						throw new Error(
+							`Invalid weight for "${REAL_DRAFT_RATINGS_INFO[mode].shortName}" - should be a number greater than or equal to 0`,
+						);
+					}
+					return weight;
+				});
+
+				if (Object.values(weights).every((weight) => weight === 0)) {
+					throw new Error("At least one weight must be greater than 0");
+				}
+
+				return weights;
+			},
 			descriptionLong: (
 				<>
 					<p>
@@ -299,6 +441,11 @@ export const settings: Setting[] = (
 						other bio info, but their ratings are generated like random draft
 						prospects, so their real careers tell you nothing about how good
 						they will be.
+					</p>
+					<p>
+						<b>Custom:</b> Combine any of the options above. Each option gets a
+						weight, and a player's rating is the weighted average of what each
+						option would give them.
 					</p>
 				</>
 			),

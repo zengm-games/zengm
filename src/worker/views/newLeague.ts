@@ -10,6 +10,7 @@ import { defaultInjuries } from "../util/defaultInjuries.ts";
 import { newLeagueGodModeLimits } from "../util/newLeagueGodModeLimits.ts";
 import { getNewLeagueLid } from "../util/getNewLeagueLid.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { DEFAULT_REAL_DRAFT_RATINGS } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 
 const processInputs = (params: RouteParams<"newLeague">) => {
@@ -478,10 +479,10 @@ export const getDefaultSettings = () => {
 		),
 		fakeAgeProb: unwrapGameAttribute(defaultGameAttributes, "fakeAgeProb"),
 
-		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
+		// This can be undefined, but if the setting is ever displayed to the user, it should have a value
 		realDraftRatings:
 			unwrapGameAttribute(defaultGameAttributes, "realDraftRatings") ??
-			"rookie",
+			DEFAULT_REAL_DRAFT_RATINGS,
 	};
 
 	return defaultSettings;

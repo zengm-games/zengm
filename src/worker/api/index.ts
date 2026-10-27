@@ -12,6 +12,7 @@ import {
 	LEAGUE_DATABASE_VERSION,
 	REAL_PLAYERS_INFO,
 	getPlayerStatsTableStats,
+	DEFAULT_REAL_DRAFT_RATINGS,
 } from "../../common/constants.ts";
 import { isGoldActive } from "../../common/isGoldActive.ts";
 import actions from "./actions.ts";
@@ -2934,7 +2935,7 @@ const importPlayersGetReal = async (param: unknown, conditions: Conditions) => {
 			phase: g.get("phase"),
 			randomDebuts: false,
 			randomDebutsKeepCurrent: false,
-			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
+			realDraftRatings: g.get("realDraftRatings") ?? DEFAULT_REAL_DRAFT_RATINGS,
 			realStats: "all", // Maybe should default to "none" on mobile, but then I'd need a UI to change it, and most people probably want "all"  if they are using this feature
 			includePlayers: true,
 		},

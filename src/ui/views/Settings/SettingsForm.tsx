@@ -12,6 +12,7 @@ import type {
 	GameAttributesLeague,
 	InjuriesSetting,
 	PlayerBioInfo,
+	RealDraftRatings,
 	TragicDeaths,
 } from "../../../common/types.ts";
 import SettingsFormOptions from "./SettingsFormOptions.tsx";
@@ -221,7 +222,7 @@ type SpecialStateBoolean = (typeof SPECIAL_STATE_BOOLEANS)[number];
 type SpecialStateAll = (typeof SPECIAL_STATE_ALL)[number];
 
 export type State = Record<
-	Exclude<Key, SpecialStateAll | "saveOldBoxScores">,
+	Exclude<Key, SpecialStateAll | "saveOldBoxScores" | "realDraftRatings">,
 	string
 > &
 	Record<SpecialStateBoolean, boolean> & {
@@ -233,6 +234,10 @@ export type State = Record<
 			"pastSeasons"
 		> & {
 			pastSeasons: string;
+		};
+		realDraftRatings: {
+			mode: RealDraftRatings | "custom";
+			weights: Record<RealDraftRatings, string>;
 		};
 	};
 

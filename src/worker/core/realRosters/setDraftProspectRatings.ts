@@ -1,7 +1,13 @@
-import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
+import {
+	REAL_DRAFT_RATINGS,
+	REAL_PLAYERS_INFO,
+} from "../../../common/constants.ts";
 import { RATINGS } from "../../../common/constants.basketball.ts";
 import type { RatingKey } from "../../../common/types.basketball.ts";
-import type { RealDraftRatings } from "../../../common/types.ts";
+import type {
+	RealDraftRatings,
+	RealDraftRatingsSetting,
+} from "../../../common/types.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import player from "../player/index.ts";
 import genRatings from "../player/genRatings.basketball.ts";
@@ -356,18 +362,31 @@ const getQuantileFromCareer = (
 	return quantiles[key].get(slug);
 };
 
-const setRandomRatings = (ratings: Record<RatingKey, number>, age: number) => {
-	const randomRatings = genRatings(0, DEFAULT_LEVEL, ratings.hgt).ratings;
-	for (const rating of RATINGS) {
-		ratings[rating] = randomRatings[rating];
+// Normalized so the weights sum to 1
+const getWeights = (realDraftRatings: RealDraftRatingsSetting) => {
+	const weights: Record<RealDraftRatings, number> = {
+		rookie: 0,
+		draft: 0,
+		peak: 0,
+		career: 0,
+		random: 0,
+	};
+
+	if (typeof realDraftRatings === "string") {
+		weights[realDraftRatings] = 1;
+		return weights;
 	}
 
-	// genRatings is just for the shape of the ratings. Its values are lower than real random draft prospects, which also get developed in genPlayersWithoutSaving. So pick a value like a random player from a random draft class.
-	adjustRatingsToTargetValue(
-		ratings,
-		age,
-		getTargetValueFromQuantile(Math.random()),
-	);
+	const sum = Math.sumPrecise(Object.values(realDraftRatings));
+	if (sum <= 0) {
+		weights.rookie = 1;
+		return weights;
+	}
+
+	for (const mode of REAL_DRAFT_RATINGS) {
+		weights[mode] = realDraftRatings[mode] / sum;
+	}
+	return weights;
 };
 
 // ratings should already have nerfDraftProspect applied
@@ -386,32 +405,52 @@ export const setDraftProspectRatings = ({
 		pick: number | undefined;
 	};
 	ratings: Record<RatingKey, number>;
-	realDraftRatings: RealDraftRatings;
+	realDraftRatings: RealDraftRatingsSetting;
 	slug: string;
 }) => {
-	if (realDraftRatings === "rookie") {
-		return;
-	}
+	const weights = getWeights(realDraftRatings);
+	const rookieValue = getValue(ratings, age);
 
-	if (realDraftRatings === "random") {
-		setRandomRatings(ratings, age);
-		return;
-	}
-
-	if (realDraftRatings === "draft") {
-		const index = getIndexFromDraftPosition(draft);
-		if (index !== undefined) {
-			adjustRatingsToTargetValue(ratings, age, getTargetValueFromIndex(index));
+	const getTargetValue = (mode: RealDraftRatings) => {
+		if (mode === "random") {
+			return getTargetValueFromQuantile(Math.random());
 		}
-		return;
+
+		if (mode === "draft") {
+			const index = getIndexFromDraftPosition(draft);
+			if (index !== undefined) {
+				return getTargetValueFromIndex(index);
+			}
+		} else if (mode === "peak" || mode === "career") {
+			const quantile = getQuantileFromCareer(basketball, mode, slug);
+			if (quantile !== undefined) {
+				return getTargetValueFromQuantile(quantile);
+			}
+		}
+
+		// For "rookie", and also when another mode has no data for this player, like the draft position of a future draft prospect
+		return rookieValue;
+	};
+
+	let targetValue = 0;
+	for (const mode of REAL_DRAFT_RATINGS) {
+		if (weights[mode] > 0) {
+			targetValue += weights[mode] * getTargetValue(mode);
+		}
 	}
 
-	const quantile = getQuantileFromCareer(basketball, realDraftRatings, slug);
-	if (quantile !== undefined) {
-		adjustRatingsToTargetValue(
-			ratings,
-			age,
-			getTargetValueFromQuantile(quantile),
-		);
+	if (weights.random > 0) {
+		// genRatings is just for the shape of the ratings. Its values are lower than real random draft prospects, which also get developed in genPlayersWithoutSaving, which is why the "random" target value comes from VALUE_BY_QUANTILE.
+		const randomRatings = genRatings(0, DEFAULT_LEVEL, ratings.hgt).ratings;
+		for (const rating of RATINGS) {
+			if (rating !== "hgt") {
+				ratings[rating] = Math.round(
+					(1 - weights.random) * ratings[rating] +
+						weights.random * randomRatings[rating],
+				);
+			}
+		}
 	}
+
+	adjustRatingsToTargetValue(ratings, age, targetValue);
 };

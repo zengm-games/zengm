@@ -1215,7 +1215,22 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 1,
 					},
 					realDraftRatings: {
-						type: "string",
+						anyOf: [
+							{
+								enum: ["rookie", "draft", "peak", "career", "random"],
+							},
+							{
+								type: "object",
+								properties: {
+									rookie: { type: "number", minimum: 0 },
+									draft: { type: "number", minimum: 0 },
+									peak: { type: "number", minimum: 0 },
+									career: { type: "number", minimum: 0 },
+									random: { type: "number", minimum: 0 },
+								},
+								required: ["rookie", "draft", "peak", "career", "random"],
+							},
+						],
 					},
 					realPlayerDeterminism: {
 						type: "number",

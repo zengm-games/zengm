@@ -14,6 +14,7 @@ import type {
 	PlayerStatAttr,
 	PlayerStatsTables,
 	PlayerSummary,
+	RealDraftRatings,
 } from "./types.ts";
 
 export const ACCOUNT_API_URL =
@@ -289,6 +290,17 @@ export const WEBSITE_ROOT = bySport({
 	football: "football-gm.com",
 	hockey: "zengm.com/hockey",
 });
+
+export const REAL_DRAFT_RATINGS = [
+	"rookie",
+	"draft",
+	"peak",
+	"career",
+	"random",
+] as const;
+
+// Default for new leagues, and also used when the setting is undefined in an existing league
+export const DEFAULT_REAL_DRAFT_RATINGS: RealDraftRatings = "rookie";
 
 export const TIEBREAKERS = {
 	commonOpponentsRecord: "Common opponents record",

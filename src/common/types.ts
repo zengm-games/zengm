@@ -718,7 +718,7 @@ export type GameAttributesLeague = {
 	playoffsReseed: boolean;
 	quarterLength: number;
 	randomDebutsForever?: number;
-	realDraftRatings?: "draft" | "rookie";
+	realDraftRatings?: RealDraftRatings;
 	realPlayerDeterminism: number;
 	repeatSeason:
 		| undefined
@@ -2451,13 +2451,20 @@ export const realTeamInfoSchema = z.record(
 );
 export type RealTeamInfo = z.infer<typeof realTeamInfoSchema>;
 
+export type RealDraftRatings =
+	| "rookie"
+	| "draft"
+	| "peak"
+	| "career"
+	| "random";
+
 export type GetLeagueOptionsReal = {
 	type: "real";
 	season: number;
 	phase: Phase;
 	randomDebuts: boolean;
 	randomDebutsKeepCurrent: boolean;
-	realDraftRatings: "draft" | "rookie";
+	realDraftRatings: RealDraftRatings;
 	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
 	includePlayers: boolean;
 

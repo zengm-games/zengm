@@ -28,7 +28,7 @@ import addRetiredJerseyNumbers from "./addRetiredJerseyNumbers.ts";
 import genPlayoffSeries from "./genPlayoffSeries.ts";
 import getGameAttributes from "./getGameAttributes.ts";
 import getAwards from "./getAwards.ts";
-import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition.ts";
+import { setDraftProspectRatings } from "./setDraftProspectRatings.ts";
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
@@ -324,17 +324,18 @@ const getLeague = async (options: GetLeagueOptions) => {
 						nerfDraftProspect(currentRatings);
 						p.ratings = [currentRatings];
 						const bio = basketball.bios[p.srID];
-						if (
-							options.type === "real" &&
-							options.realDraftRatings === "draft" &&
-							bio
-						) {
-							const age = p.draft.year + 1 - p.born.year;
-							setDraftProspectRatingsBasedOnDraftPosition(
-								currentRatings,
-								age,
-								bio,
-							);
+						if (bio) {
+							setDraftProspectRatings({
+								age: p.draft.year + 1 - p.born.year,
+								basketball,
+								draft: {
+									round: bio.draftRound,
+									pick: bio.draftPick,
+								},
+								ratings: currentRatings,
+								realDraftRatings: options.realDraftRatings,
+								slug: p.srID,
+							});
 						}
 
 						// Delete stuff that may have been added on, for randomDebutsKeepCurrent if stats are kept
@@ -772,8 +773,12 @@ const getLeague = async (options: GetLeagueOptions) => {
 				options.season < REAL_PLAYERS_INFO!.MAX_SEASON
 			) {
 				const applyRookieContractAndFixRatings = (p: {
+					born: {
+						year: number;
+					};
 					draft: {
 						round: number | undefined;
+						pick: number | undefined;
 					};
 					contract: PlayerContract | undefined;
 					ratings: [OnlyRatings, ...OnlyRatings[]];
@@ -814,6 +819,15 @@ const getLeague = async (options: GetLeagueOptions) => {
 					const currentRatings = p.ratings[0];
 					currentRatings.season = options.season;
 					nerfDraftProspect(currentRatings);
+
+					setDraftProspectRatings({
+						age: currentRatings.season - p.born.year,
+						basketball,
+						draft: p.draft,
+						ratings: currentRatings,
+						realDraftRatings: options.realDraftRatings,
+						slug: p.srID,
+					});
 				};
 
 				const playersBySlug = Object.groupBy(players, (p) => p.srID);
@@ -843,18 +857,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 						};
 
 						applyRookieContractAndFixRatings(p);
-
-						if (
-							options.type === "real" &&
-							options.realDraftRatings === "draft"
-						) {
-							const currentRatings = p.ratings[0];
-							const age = currentRatings.season! - p.born.year;
-							setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, {
-								draftRound: p.draft.round,
-								draftPick: p.draft.pick,
-							});
-						}
 					}
 				}
 

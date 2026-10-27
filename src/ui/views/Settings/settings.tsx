@@ -259,6 +259,9 @@ export const settings: Setting[] = (
 			values: [
 				{ key: "rookie", value: "Based on rookie season stats" },
 				{ key: "draft", value: "Based on draft position" },
+				{ key: "peak", value: "Based on peak performance" },
+				{ key: "career", value: "Based on career performance" },
+				{ key: "random", value: "Random" },
 			],
 			descriptionLong: (
 				<>
@@ -278,6 +281,24 @@ export const settings: Setting[] = (
 						will have a high rating, even if in reality he was a bust. Every
 						late pick will have a low rating, even if in reality he became a
 						star.
+					</p>
+					<p>
+						<b>Based on peak performance:</b> Player ratings for real draft
+						prospects are based on the best ratings they had at any point in
+						their careers, scaled down to the level of a draft prospect. For
+						active players, their peak is projected based on what happened to
+						similar players in the past.
+					</p>
+					<p>
+						<b>Based on career performance:</b> Similar to peak performance, but
+						based on the value of an entire career, so players with long careers
+						will rate higher than players who were only good for a few seasons.
+					</p>
+					<p>
+						<b>Random:</b> Real draft prospects keep their names, heights, and
+						other bio info, but their ratings are randomly generated like in a
+						random players league, so their real careers tell you nothing about
+						how good they will be.
 					</p>
 				</>
 			),

@@ -13,7 +13,7 @@ import getOnlyRatings, { type OnlyRatings } from "./getOnlyRatings.ts";
 import type { Basketball, Ratings } from "./loadData.basketball.ts";
 import nerfDraftProspect from "./nerfDraftProspect.ts";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
-import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition.ts";
+import { setDraftProspectRatings } from "./setDraftProspectRatings.ts";
 import { getEWA } from "../../util/advStats.basketball.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { helpers } from "../../util/index.ts";
@@ -360,9 +360,18 @@ const formatPlayerFactory = async (
 				nerfDraftProspect(currentRatings);
 			}
 
-			if (options.type === "real" && options.realDraftRatings === "draft") {
-				const age = currentRatings.season! - bornYear;
-				setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, bio);
+			if (options.type === "real") {
+				setDraftProspectRatings({
+					age: currentRatings.season! - bornYear,
+					basketball,
+					draft: {
+						round: bio.draftRound,
+						pick: bio.draftPick,
+					},
+					ratings: currentRatings,
+					realDraftRatings: options.realDraftRatings,
+					slug,
+				});
 			}
 		}
 

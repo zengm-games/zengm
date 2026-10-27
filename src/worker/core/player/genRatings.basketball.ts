@@ -52,6 +52,8 @@ const skillRatings = new Set(["oiq", "diq", "drb", "pss", "reb"]); // ins purpos
 const genRatings = (
 	season: number,
 	scoutingLevel: number,
+	// For real players, who already have a height
+	hgtOverride?: number,
 ): {
 	heightInInches: number;
 	ratings: PlayerRatings;
@@ -61,7 +63,7 @@ const genRatings = (
 
 	const wingspanAdjust = heightInInches + randInt(-1, 1); // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
 
-	const hgt = heightToRating(wingspanAdjust);
+	const hgt = hgtOverride ?? heightToRating(wingspanAdjust);
 	heightInInches = Math.round(heightInInches); // Pick type of player (point, wing, or big) based on height
 
 	const randType = Math.random();

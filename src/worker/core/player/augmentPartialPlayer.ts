@@ -1,4 +1,5 @@
 import { PHASE, PLAYER } from "../../../common/constants.ts";
+import addRatingsRow from "./addRatingsRow.ts";
 import develop, { monteCarloPot } from "./develop.ts";
 import generate from "./generate.ts";
 import heightToRating from "./heightToRating.ts";
@@ -172,13 +173,15 @@ const augmentPartialPlayer = async (
 		}
 		p.ratings[0].season ??= currentSeason;
 
-		// Fix improperly-set season in ratings
-		if (
-			p.ratings.length === 1 &&
-			p.ratings[0].season < currentSeason &&
-			p.tid !== PLAYER.RETIRED
-		) {
-			p.ratings[0].season = currentSeason;
+		// Fix improperly-set season in ratings. Active players need a ratings row for the current season, otherwise they get filtered out of many views, like the roster
+		if (p.ratings.at(-1).season < currentSeason) {
+			if (p.ratings.length === 1) {
+				// Probably was a typo
+				p.ratings[0].season = currentSeason;
+			} else {
+				// Keep the old rows as ratings history
+				addRatingsRow(p);
+			}
 		}
 	}
 

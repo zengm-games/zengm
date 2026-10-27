@@ -45,11 +45,14 @@ export const getSeasons = async (lid: number) => {
 
 	league.close();
 
-	if (!season || typeof season.value !== "number") {
-		throw new Error("Invalid season");
-	}
-	if (!startingSeason || typeof startingSeason.value !== "number") {
-		throw new Error("Invalid startingSeason");
+	// League database might be missing or corrupted, in which case it can't be used
+	if (
+		!season ||
+		typeof season.value !== "number" ||
+		!startingSeason ||
+		typeof startingSeason.value !== "number"
+	) {
+		return;
 	}
 
 	return {
@@ -330,6 +333,7 @@ export const getSeasonInfo = async (
 
 		// Some value here is needed for ratingsStatsPopoverInfo and game sim
 		g.setWithoutSavingToDB("season", 0);
+		g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 		g.setWithoutSavingToDB("numActiveTeams", 2);
 	}
 

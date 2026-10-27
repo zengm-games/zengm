@@ -32,6 +32,7 @@ import { choice, randInt } from "../../common/random.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
+import { showNotification } from "../util/showNotification.ts";
 
 export type ExhibitionTeam = {
 	season: number;
@@ -106,6 +107,9 @@ export type ExhibitionLeagueWithSeasons =
 			seasonEnd: number;
 	  };
 
+export const corruptedLeagueMessage =
+	"Unable to load seasons from this league. Its data may be missing or corrupted.";
+
 const PlayerStatsSummary = ({
 	stats,
 }: {
@@ -138,6 +142,7 @@ const SelectTeam = ({
 	initialTeam,
 	leagues,
 	onChange,
+	onNoUsableLeagues,
 	realTeamInfo,
 }: {
 	disabled: boolean;
@@ -149,6 +154,7 @@ const SelectTeam = ({
 		t: ExhibitionTeam | undefined,
 		gameAttributes: ExhibitionGameAttributes,
 	) => void;
+	onNoUsableLeagues: () => void;
 	realTeamInfo: RealTeamInfo | undefined;
 }) => {
 	const [league, setLeague] = useState<
@@ -170,16 +176,14 @@ const SelectTeam = ({
 				seasonEnd: REAL_PLAYERS_INFO?.MAX_SEASON ?? 0,
 			};
 		} else {
-			const { seasonStart, seasonEnd } = await toWorker(
-				"exhibitionGame",
-				"getSeasons",
-				lid,
-			);
+			const seasons = await toWorker("exhibitionGame", "getSeasons", lid);
+			if (!seasons) {
+				return;
+			}
 			newLeague = {
 				type: "league",
 				lid,
-				seasonStart,
-				seasonEnd,
+				...seasons,
 			};
 		}
 
@@ -261,20 +265,31 @@ const SelectTeam = ({
 				if (initialTeam) {
 					const lid = initialTeam.type === "real" ? "real" : initialTeam.lid;
 					const league = await loadLeague(lid);
-					setSeason(initialTeam.season);
-					await loadTeams(league, initialTeam.season, initialTeam.tid);
-					return;
+					if (league) {
+						setSeason(initialTeam.season);
+						await loadTeams(league, initialTeam.season, initialTeam.tid);
+						return;
+					}
 				}
 			} catch (error) {
 				console.error(error);
 			}
 
-			const league = await loadLeague(
-				REAL_PLAYERS_INFO ? "real" : leagues[0]!.lid,
-			);
-			const randomSeason = randInt(league.seasonStart, league.seasonEnd);
-			setSeason(randomSeason);
-			await loadTeams(league, randomSeason, "random");
+			// Use the first league that loads, skipping any with missing/corrupted data
+			const lids = REAL_PLAYERS_INFO
+				? (["real"] as const)
+				: leagues.map((league) => league.lid);
+			for (const lid of lids) {
+				const league = await loadLeague(lid);
+				if (league) {
+					const randomSeason = randInt(league.seasonStart, league.seasonEnd);
+					setSeason(randomSeason);
+					await loadTeams(league, randomSeason, "random");
+					return;
+				}
+			}
+
+			onNoUsableLeagues();
 		},
 	);
 
@@ -305,6 +320,13 @@ const SelectTeam = ({
 							const value = event.target.value;
 							const lid = value === "real" ? value : Number.parseInt(value);
 							const league = await loadLeague(lid);
+							if (!league) {
+								showNotification({
+									type: "error",
+									text: corruptedLeagueMessage,
+								});
+								return;
+							}
 							setSeason(league.seasonEnd);
 							await loadTeams(league, league.seasonEnd);
 						}}
@@ -549,6 +571,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	const [gameAttributesInfo, setGameAttributesInfo] =
 		useState<GameAttributesInfo>(defaultState.gameAttributesInfo);
 	const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+	const [noUsableLeagues, setNoUsableLeagues] = useState(false);
 
 	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
 
@@ -633,8 +656,18 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	if (!REAL_PLAYERS_INFO && leagues?.length === 0) {
 		return (
 			<p>
-				You need to <a href="/new_league">create some leagues</a> before you
-				play an exhibition game.
+				You need to <a href="/new_league">create a league</a> before you play an
+				exhibition game.
+			</p>
+		);
+	}
+
+	if (noUsableLeagues) {
+		return (
+			<p>
+				Unable to load any of your leagues. Their data may be missing or
+				corrupted. You need to <a href="/new_league">create a new league</a>{" "}
+				before you play an exhibition game.
 			</p>
 		);
 	}
@@ -656,6 +689,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						onChange={(league, t, gameAttributes) => {
 							setTeam(1, league, t, gameAttributes);
 						}}
+						onNoUsableLeagues={() => {
+							setNoUsableLeagues(true);
+						}}
 					/>
 				</div>
 				<div className="col-12 col-sm-6 mt-3 mt-sm-0">
@@ -668,6 +704,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						realTeamInfo={realTeamInfo}
 						onChange={(league, t, gameAttributes) => {
 							setTeam(0, league, t, gameAttributes);
+						}}
+						onNoUsableLeagues={() => {
+							setNoUsableLeagues(true);
 						}}
 					/>
 				</div>

@@ -19,7 +19,10 @@ import { Modal } from "../../components/Modal.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { type ExhibitionLeagueWithSeasons } from "../Exhibition.tsx";
+import {
+	corruptedLeagueMessage,
+	type ExhibitionLeagueWithSeasons,
+} from "../Exhibition.tsx";
 import TeamForm, { getNumTeamsByDid } from "../ManageTeams/TeamForm.tsx";
 import type { AddEditTeamInfo } from "./CustomizeTeams.tsx";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
@@ -133,6 +136,7 @@ const SelectTeam = ({
 		| undefined
 	>();
 	const [loadingTeams, setLoadingTeams] = useState(false);
+	const [noUsableLeagues, setNoUsableLeagues] = useState(false);
 
 	const season =
 		addEditTeamInfo.type === "add" && addEditTeamInfo.addType === "real"
@@ -222,16 +226,14 @@ const SelectTeam = ({
 				seasonEnd: REAL_PLAYERS_INFO!.MAX_SEASON,
 			};
 		} else {
-			const { seasonStart, seasonEnd } = await toWorker(
-				"exhibitionGame",
-				"getSeasons",
-				lid,
-			);
+			const seasons = await toWorker("exhibitionGame", "getSeasons", lid);
+			if (!seasons) {
+				return;
+			}
 			newLeague = {
 				type: "league",
 				lid,
-				seasonStart,
-				seasonEnd,
+				...seasons,
 			};
 		}
 
@@ -260,7 +262,9 @@ const SelectTeam = ({
 			);
 		} else if (addEditTeamInfo.addType === "real") {
 			const league = await loadLeague("real");
-			await loadTeams(league, addEditTeamInfo.seasonReal);
+			if (league) {
+				await loadTeams(league, addEditTeamInfo.seasonReal);
+			}
 		} else if (addEditTeamInfo.addType === "league") {
 			const allLeagues = await toWorker(
 				"exhibitionGame",
@@ -268,17 +272,34 @@ const SelectTeam = ({
 				undefined,
 			);
 			setLeagues(allLeagues);
-			if (allLeagues[0]) {
-				const lid = addEditTeamInfo.lid ?? allLeagues[0].lid;
-				const league = await loadLeague(lid);
-				await loadTeams(
-					league,
-					addEditTeamInfo.seasonLeague ?? league.seasonEnd,
-				);
-			} else {
-				// If no leagues found, at least show something
-				onChange({ ...CUSTOM_TEAM });
+
+			// Try the previously selected league first, then fall back to the first league that loads, skipping any with missing/corrupted data
+			const lids = allLeagues
+				.map((league) => league.lid)
+				.filter((lid) => lid !== addEditTeamInfo.lid);
+			if (addEditTeamInfo.lid !== undefined) {
+				lids.unshift(addEditTeamInfo.lid);
 			}
+			for (const lid of lids) {
+				const league = await loadLeague(lid);
+				if (league) {
+					setAddEditTeamInfo((info) => ({
+						...info,
+						lid,
+					}));
+					const seasonToLoad =
+						lid === addEditTeamInfo.lid &&
+						addEditTeamInfo.seasonLeague !== undefined
+							? addEditTeamInfo.seasonLeague
+							: league.seasonEnd;
+					await loadTeams(league, seasonToLoad);
+					return;
+				}
+			}
+
+			// If no usable leagues found, at least show something
+			setNoUsableLeagues(true);
+			onChange({ ...CUSTOM_TEAM });
 		}
 	});
 
@@ -306,6 +327,13 @@ const SelectTeam = ({
 	const actualDisabled =
 		disabled || (addEditTeamInfo.addType !== "random" && !league);
 
+	let noLeaguesMessage;
+	if (leagues?.length === 0) {
+		noLeaguesMessage = "No leagues found";
+	} else if (noUsableLeagues) {
+		noLeaguesMessage = "Unable to load any leagues";
+	}
+
 	return (
 		<>
 			<div className="d-flex align-items-center">
@@ -330,19 +358,26 @@ const SelectTeam = ({
 					<option value="league">Team from existing league</option>
 				</select>
 				{addEditTeamInfo.addType === "league" ? (
-					leagues?.length === 0 ? (
-						<div className="text-danger ms-2">No leagues found</div>
+					noLeaguesMessage !== undefined ? (
+						<div className="text-danger ms-2">{noLeaguesMessage}</div>
 					) : (
 						<select
 							className="form-select ms-2"
 							value={addEditTeamInfo.lid}
 							onChange={async (event) => {
 								const lid = Number.parseInt(event.target.value);
+								const league = await loadLeague(lid);
+								if (!league) {
+									showNotification({
+										type: "error",
+										text: corruptedLeagueMessage,
+									});
+									return;
+								}
 								setAddEditTeamInfo((info) => ({
 									...info,
 									lid,
 								}));
-								const league = await loadLeague(lid);
 								setSeason(league.seasonEnd);
 								await loadTeams(league, league.seasonEnd);
 							}}
@@ -364,7 +399,8 @@ const SelectTeam = ({
 					)
 				) : null}
 			</div>
-			{addEditTeamInfo.addType === "league" && leagues?.length === 0 ? null : (
+			{addEditTeamInfo.addType === "league" &&
+			noLeaguesMessage !== undefined ? null : (
 				<>
 					<div className="input-group mt-3" style={{ maxWidth: 508 }}>
 						{addEditTeamInfo.addType !== "random" ? (

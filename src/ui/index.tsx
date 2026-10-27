@@ -27,6 +27,18 @@ import { unregisterServiceWorkers } from "./util/unregisterServiceWorkers.ts";
 import { safeLocalStorage } from "./util/safeLocalStorage.ts";
 import { showNotification } from "./util/showNotification.ts";
 import { toWorker } from "./util/toWorker.ts";
+import { installTranslationResilience } from "translation-resilience";
+
+// Browser translation (like Google Translate) modifies the DOM in ways that crash React or prevent text from updating, so this repairs the DOM when that happens. Breadcrumbs make it clear in Bugsnag when an error happened on a translated page. Only log each message once, since some can happen many times and would push other breadcrumbs out.
+const seenTranslationEvents = new Set<string>();
+installTranslationResilience({
+	onEvent: (message) => {
+		if (!seenTranslationEvents.has(message)) {
+			seenTranslationEvents.add(message);
+			Bugsnag.leaveBreadcrumb("translation-resilience", { message }, "log");
+		}
+	},
+});
 
 const handleVersion = () => {
 	window.addEventListener("storage", (e) => {

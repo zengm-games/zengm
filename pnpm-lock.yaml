@@ -125,6 +125,9 @@ importers:
       streamsaver:
         specifier: 2.0.6
         version: 2.0.6
+      translation-resilience:
+        specifier: 0.5.0
+        version: 0.5.0
       use-local-storage-state:
         specifier: 20.0.0
         version: 20.0.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -4353,6 +4356,9 @@ packages:
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
+
+  translation-resilience@0.5.0:
+    resolution: {integrity: sha512-LKlyikRXOqeVQwFiiIJnQ6SFCll/2Rsl6a19F7Mpp/QdC3+s8LV/J1Ar+oeAJOgFWCvUCfD8JcJCLsYrsbvNmw==}
 
   tree-kill@1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
@@ -8968,6 +8974,8 @@ snapshots:
       is-number: 7.0.0
 
   totalist@3.0.1: {}
+
+  translation-resilience@0.5.0: {}
 
   tree-kill@1.2.2: {}
 

@@ -70,6 +70,7 @@
 		"react-dom": "19.3.1",
 		"react-select": "5.10.2",
 		"streamsaver": "2.0.6",
+		"translation-resilience": "0.5.0",
 		"use-local-storage-state": "20.0.0",
 		"use-sync-external-store": "1.7.0",
 		"workbox-core": "7.4.1",

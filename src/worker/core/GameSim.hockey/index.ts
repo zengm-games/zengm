@@ -1374,8 +1374,10 @@ class GameSim extends GameSimBase {
 
 		if (nextLine.length === 0) {
 			// This could happen if a player gets a penalty while being on the only healthy line remaining due to many injuries
+			// Never use the goalie as a skater, otherwise there would be no goalie to put back in net after pulling him
+			const goalies = this.lines[t].G.flat();
 			let emergencyPlayers = [];
-			for (const existingLines of Object.values(this.lines[t])) {
+			for (const existingLines of [this.lines[t].F, this.lines[t].D]) {
 				for (const existingLine of existingLines) {
 					emergencyPlayers.push(...existingLine);
 				}
@@ -1386,7 +1388,7 @@ class GameSim extends GameSimBase {
 			if (emergencyPlayers.length === 0) {
 				// This could happen if everyone is injured resulting in lines not having players
 				emergencyPlayers = this.team[t].depth[pos].filter(
-					(p) => !playersRemainingOn.includes(p),
+					(p) => !playersRemainingOn.includes(p) && !goalies.includes(p),
 				);
 			}
 			return choice(emergencyPlayers);

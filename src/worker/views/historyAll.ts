@@ -73,6 +73,7 @@ export default defineView({
 				const teamSeason = t.seasonAttrs.find((ts) => ts.season === season);
 
 				return {
+					missing: false as const,
 					tid,
 					seed,
 					abbrev: teamSeason
@@ -106,12 +107,19 @@ export default defineView({
 			) => {
 				const t = teamsByTid[tid];
 				if (!t) {
-					throw new Error(`Team not found for tid ${tid}`);
+					// Team no longer exists, which shouldn't happen but has been seen in the error logs.
+					return {
+						missing: true as const,
+						tid,
+						seed,
+						region: g.get("teamInfoCache")[tid]?.region ?? "???",
+						count: 0,
+					};
 				}
 
 				return formatTeam(t, season, seed);
 			};
-			type FormattedTeam = ReturnType<typeof formatTeam>;
+			type FormattedTeam = ReturnType<typeof formatTeamWrapper>;
 
 			const awards = await idb.merged.awards.getAll();
 			const awardsBySeason = groupByUnique(awards, "season");

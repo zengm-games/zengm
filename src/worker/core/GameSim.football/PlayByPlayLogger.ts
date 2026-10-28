@@ -309,6 +309,12 @@ class FootballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutpu
 
 	private quarter = 1;
 
+	// Scoring events from the current play, which need their clock updated by setClockForScores because a score happens at the end of a play, not when the play started
+	private currentPlayScores: {
+		playByPlayEvent: PlayByPlayEventInputScore | undefined;
+		scoringSummaryEvent: PlayByPlayEventScore;
+	}[] = [];
+
 	constructor(active: boolean) {
 		super(active);
 		this.active = active;
@@ -319,16 +325,35 @@ class FootballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutpu
 			this.quarter += 1;
 		}
 
+		let playByPlayEvent;
 		if (this.active) {
-			this.playByPlay.push({
+			playByPlayEvent = {
 				...event,
-			});
+			};
+			this.playByPlay.push(playByPlayEvent);
 		}
 
 		const scoringSummaryEvent = formatScoringSummaryEvent(event, this.quarter);
 		if (scoringSummaryEvent) {
 			this.scoringSummary.push(scoringSummaryEvent);
+			this.currentPlayScores.push({
+				playByPlayEvent: playByPlayEvent as
+					| PlayByPlayEventInputScore
+					| undefined,
+				scoringSummaryEvent,
+			});
 		}
+	}
+
+	setClockForScores(clock: number) {
+		for (const { playByPlayEvent, scoringSummaryEvent } of this
+			.currentPlayScores) {
+			if (playByPlayEvent) {
+				playByPlayEvent.clock = clock;
+			}
+			scoringSummaryEvent.clock = clock;
+		}
+		this.currentPlayScores = [];
 	}
 
 	logClock({

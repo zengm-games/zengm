@@ -1,9 +1,9 @@
-import { idb } from "../db/index.ts";
 import logEvent from "./logEvent.ts";
 import type { Conditions } from "../../common/types.ts";
 import { SUBREDDIT_NAME } from "../../common/constants.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
 import { env } from "./env.ts";
+import { getMetaAttribute, putMetaAttribute } from "../db/metaAttributes.ts";
 
 const LAST_VERSION_BEFORE_THIS_EXISTED = "2021.05.25.0919";
 const MAX_NUM_TO_SHOW = 3;
@@ -14,7 +14,7 @@ const FETCH_LIMIT = 10;
 export const checkChanges = async (conditions: Conditions) => {
 	// Fall back to LAST_VERSION_BEFORE_THIS_EXISTED if data doesn't exist - must be a user from before then
 	const lastChangesVersion =
-		((await idb.meta.get("attributes", "lastChangesVersion")) as string) ??
+		(await getMetaAttribute("lastChangesVersion")) ??
 		LAST_VERSION_BEFORE_THIS_EXISTED;
 
 	if (env.bbgmVersion > lastChangesVersion) {
@@ -94,6 +94,6 @@ export const checkChanges = async (conditions: Conditions) => {
 			);
 		}
 
-		await idb.meta.put("attributes", env.bbgmVersion, "lastChangesVersion");
+		await putMetaAttribute("lastChangesVersion", env.bbgmVersion);
 	}
 };

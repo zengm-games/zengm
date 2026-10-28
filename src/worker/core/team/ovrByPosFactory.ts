@@ -1,12 +1,13 @@
 import { POSITION_COUNTS } from "../../../common/constants.ts";
+import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball.ts";
+import type { Position } from "../../../common/types.baseball.ts";
 import {
-	NUM_STARTING_PITCHERS,
-	POS_NUMBERS_INVERSE,
-} from "../../../common/constants.baseball.ts";
-import { getDepthDefense, getDepthPitchers } from "./genDepth.baseball.ts";
+	DEF_POSITIONS_DH,
+	getDepthDefense,
+	getDepthPitchers,
+} from "./genDepth.baseball.ts";
 
 type Player = {
-	pid: number | undefined;
 	value: number;
 	ratings: {
 		ovr: number;
@@ -23,25 +24,39 @@ const getPlayerInfo = (
 	wholeRoster: boolean | undefined,
 	orderedPlayers = players,
 ) => {
-	let startingPositionPlayers: number[] | undefined;
-	let depthPitchers: number[] | undefined;
+	const baseballPositions = new Map<Player, string>();
 	if (__SPORT === "baseball" && players.length > 0) {
 		// Hypothetical additions can change every starter, so always build fresh
-		// depth charts using the original roster order.
-		startingPositionPlayers = getDepthDefense(players as any, true).slice(0, 9);
-		depthPitchers = getDepthPitchers(players as any);
+		// depth charts using the original roster order. Players are identified by
+		// index because some have no pid yet, like draft prospects.
+		const depthPlayers = players.map((p, i) => ({
+			pid: i,
+			ratings: p.ratings as {
+				ovrs: Record<Position, number>;
+				pos: Position;
+			},
+		}));
+		const startingPositionPlayers = getDepthDefense(depthPlayers, true).slice(
+			0,
+			DEF_POSITIONS_DH.length,
+		);
+		for (const [i, index] of startingPositionPlayers.entries()) {
+			baseballPositions.set(players[index]!, DEF_POSITIONS_DH[i]!);
+		}
+		const startingPitchers = getDepthPitchers(depthPlayers).slice(
+			0,
+			NUM_STARTING_PITCHERS,
+		);
+		for (const index of startingPitchers) {
+			const p = players[index]!;
+			if (!baseballPositions.has(p)) {
+				baseballPositions.set(p, "SP");
+			}
+		}
 	}
 
 	return orderedPlayers.map((p) => {
-		let pos = p.ratings.pos;
-		if (startingPositionPlayers && depthPitchers) {
-			const index = startingPositionPlayers.indexOf(p.pid as any);
-			if (index >= 0) {
-				pos = (POS_NUMBERS_INVERSE as any)[index + 2];
-			} else if (depthPitchers.indexOf(p.pid as any) < NUM_STARTING_PITCHERS) {
-				pos = "SP";
-			}
-		}
+		const pos = baseballPositions.get(p) ?? p.ratings.pos;
 
 		return {
 			pos,

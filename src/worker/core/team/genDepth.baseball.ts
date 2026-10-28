@@ -57,7 +57,7 @@ const benchScore = (ratings: {
 		: ratings.ovrs[ratings.pos];
 
 const DEF_POSITIONS = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"] as const;
-const DEF_POSITIONS_DH = [
+export const DEF_POSITIONS_DH = [
 	"C",
 	"1B",
 	"2B",

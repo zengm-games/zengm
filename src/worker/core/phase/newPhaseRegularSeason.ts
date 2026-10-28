@@ -9,6 +9,7 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../../common/constants.ts";
+import { getMetaAttribute, putMetaAttribute } from "../../db/metaAttributes.ts";
 
 class GameHasYourTeamCache {
 	cache: Record<number, boolean> = {};
@@ -160,13 +161,8 @@ const newPhaseRegularSeason = async (
 		if (g.get("season") > g.get("startingSeason") && Math.random() < 0.1) {
 			await toUI("requestPersistentStorage", [], conditions);
 		} else {
-			let naggedMailingList = await idb.meta.get(
-				"attributes",
-				"naggedMailingList",
-			);
-			if (typeof naggedMailingList !== "number") {
-				naggedMailingList = 0;
-			}
+			const naggedMailingList =
+				(await getMetaAttribute("naggedMailingList")) ?? 0;
 			if (
 				!local.mailingList &&
 				g.get("season") === g.get("startingSeason") + 3 &&
@@ -174,11 +170,7 @@ const newPhaseRegularSeason = async (
 				(naggedMailingList === 0 ||
 					(naggedMailingList === 1 && Math.random() < 0.01))
 			) {
-				await idb.meta.put(
-					"attributes",
-					naggedMailingList + 1,
-					"naggedMailingList",
-				);
+				await putMetaAttribute("naggedMailingList", naggedMailingList + 1);
 				logEvent({
 					extraClass: "",
 					persistent: true,
@@ -187,14 +179,14 @@ const newPhaseRegularSeason = async (
 					type: "info",
 				});
 			} else {
-				const nagged = (await idb.meta.get("attributes", "nagged")) as number;
+				const nagged = await getMetaAttribute("nagged");
 
 				if (
 					g.get("season") === g.get("startingSeason") + 3 &&
 					g.get("lid") > 3 &&
 					(nagged === 0 || nagged === undefined)
 				) {
-					await idb.meta.put("attributes", 1, "nagged");
+					await putMetaAttribute("nagged", 1);
 					await idb.cache.messages.add({
 						read: false,
 						from: "The Commissioner",
@@ -206,7 +198,7 @@ const newPhaseRegularSeason = async (
 						(nagged === 1 && Math.random() < 0.125) ||
 						(nagged >= 2 && Math.random() < 0.0125)
 					) {
-						await idb.meta.put("attributes", 2, "nagged");
+						await putMetaAttribute("nagged", 2);
 						await idb.cache.messages.add({
 							read: false,
 							from: "The Commissioner",
@@ -220,7 +212,7 @@ const newPhaseRegularSeason = async (
 						Math.random() < 0.5
 					) {
 						// Skipping 3, obsolete
-						await idb.meta.put("attributes", 4, "nagged");
+						await putMetaAttribute("nagged", 4);
 						await idb.cache.messages.add({
 							read: false,
 							from: "The Commissioner",

@@ -6,31 +6,31 @@ import * as ovrBasketball from "./ovr.basketball.ts";
 import * as ovrFootball from "./ovr.football.ts";
 import * as ovrHockey from "./ovr.hockey.ts";
 
+type Player = {
+	injury: PlayerInjury;
+	ratings: {
+		ovr: number;
+		ovrs?: Record<string, number> | undefined;
+		pos: string;
+	};
+	value: number;
+};
+
+type Options = {
+	// When defined, only healthy players and players playing through injury are included
+	accountForInjuredPlayers?: {
+		numDaysInFuture: number;
+		playThroughInjuries: [number, number];
+	};
+	onlyPos?: string;
+	playoffs?: boolean;
+	rating?: string;
+	wholeRoster?: boolean;
+};
+
 // pos is used for position-specific rankings
 // wholeRoster=true is used for computing team value of the whole roster, like for determining who to draft or sign
-const ovr = (
-	players: {
-		injury: PlayerInjury;
-		pid: number | undefined;
-		ratings: {
-			ovr: number;
-			ovrs?: Record<string, number> | undefined;
-			pos: string;
-		};
-		value: number;
-	}[],
-	options: {
-		// When defined, only healthy players and players playing through injury are included
-		accountForInjuredPlayers?: {
-			numDaysInFuture: number;
-			playThroughInjuries: [number, number];
-		};
-		onlyPos?: string;
-		playoffs?: boolean;
-		rating?: string;
-		wholeRoster?: boolean;
-	} = {},
-) => {
+const ovr = (players: Player[], options: Options = {}) => {
 	let players2;
 	if (options.accountForInjuredPlayers) {
 		const { numDaysInFuture, playThroughInjuries } =
@@ -61,7 +61,7 @@ const ovr = (
 		players2 = players;
 	}
 
-	return bySport<(players: any, options: any) => number>({
+	return bySport<(players: Player[], options: Options) => number>({
 		baseball: ovrBaseball.ovr,
 		basketball: ovrBasketball.ovr,
 		football: ovrFootball.ovr,

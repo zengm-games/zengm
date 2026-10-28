@@ -26,7 +26,6 @@ export const getTeamOvrDiffs = (
 	const teamPlayers2 = teamPlayers.map((p) => {
 		const ratings = last(p.ratings);
 		return {
-			pid: p.pid,
 			injury: p.injury,
 			value: p.value,
 			ratings: {
@@ -47,7 +46,6 @@ export const getTeamOvrDiffs = (
 	return players.map((p) => {
 		const ratings = last(p.ratings);
 		const p2 = {
-			pid: p.pid,
 			injury: p.injury,
 			value: p.value,
 			ratings: {

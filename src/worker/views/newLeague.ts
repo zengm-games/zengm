@@ -1,5 +1,4 @@
 import { idb } from "../db/index.ts";
-import type { RealTeamInfo } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { env } from "../util/env.ts";
 import type { Settings } from "./settings.ts";
@@ -12,6 +11,7 @@ import { getNewLeagueLid } from "../util/getNewLeagueLid.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { DEFAULT_REAL_DRAFT_RATINGS } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
+import { getMetaAttribute } from "../db/metaAttributes.ts";
 
 const processInputs = (params: RouteParams<"newLeague">) => {
 	let type: "custom" | "random" | "real" | "legends" | "crossEra" = "custom";
@@ -489,9 +489,7 @@ export const getDefaultSettings = () => {
 };
 
 export const getRealTeamInfo = async () => {
-	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
-		| RealTeamInfo
-		| undefined;
+	const realTeamInfo = await getMetaAttribute("realTeamInfo");
 
 	return realTeamInfo;
 };
@@ -502,10 +500,7 @@ export default defineView({
 	load: async ({ inputs: { lid, type } }) => {
 		const godModeLimits = newLeagueGodModeLimits();
 
-		const overrides = (await idb.meta.get(
-			"attributes",
-			"defaultSettingsOverrides",
-		)) as Settings | undefined;
+		const overrides = await getMetaAttribute("defaultSettingsOverrides");
 
 		const defaultSettings = {
 			...getDefaultSettings(),

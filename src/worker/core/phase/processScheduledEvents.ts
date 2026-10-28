@@ -24,6 +24,7 @@ import { getNumPlayersTradedAwayNormalizedAll } from "../../core/player/getNumPl
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { formatList } from "../../../common/formatList.ts";
 import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
+import { getMetaAttribute } from "../../db/metaAttributes.ts";
 
 // After the playoffs, the TeamSeason row of the current season is for a season that is already completed, so scheduled events should not change it. The TeamSeason row for the next season is created from the Team in the preseason, before scheduled events are processed.
 const isSeasonCompleted = (phase: number) => {
@@ -633,9 +634,7 @@ export const processScheduledEvents = async (
 	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
 	const eventLogTexts: string[] = [];
 
-	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
-		| RealTeamInfo
-		| undefined;
+	const realTeamInfo = await getMetaAttribute("realTeamInfo");
 
 	const unretiredPids = [];
 

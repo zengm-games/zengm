@@ -16,7 +16,6 @@ import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
 import type {
 	Conditions,
 	PhaseReturn,
-	RealTeamInfo,
 	TeamSeason,
 } from "../../../common/types.ts";
 import { groupByUnique, maxBy } from "../../../common/utils.ts";
@@ -25,6 +24,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { choice, randInt, uniform } from "../../../common/random.ts";
 import { env } from "../../util/env.ts";
 import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
+import { getMetaAttribute } from "../../db/metaAttributes.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -50,9 +50,7 @@ const newPhasePreseason = async (
 	const teams = await idb.cache.teams.getAll();
 	const teamsByTid = groupByUnique(teams, "tid");
 
-	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
-		| RealTeamInfo
-		| undefined;
+	const realTeamInfo = await getMetaAttribute("realTeamInfo");
 
 	const popInfo: Record<
 		string,

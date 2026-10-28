@@ -1847,6 +1847,8 @@ class GameSim extends GameSimBase {
 				probMissAndFoul *= 0.75;
 				probMake *= 0.75;
 				probAndOne *= 0.75;
+			} else {
+				probMake *= g.get("twoPointAccuracyFactor");
 			}
 		} else if (
 			forceThreePointer ||
@@ -1964,7 +1966,21 @@ class GameSim extends GameSimBase {
 		tipInFromOutOfBounds: boolean,
 		lateGamePutBack: boolean,
 	) {
-		const putBack = lateGamePutBack; // Eventually use this in more situations
+		const needsThree =
+			!this.elamActive &&
+			g.get("threePointers") &&
+			this.team[this.o].stat.ptsQtrs.length >= this.numPeriods &&
+			this.t <= 10 &&
+			this.team[this.d].stat.pts - this.team[this.o].stat.pts >= 3;
+		const putBack =
+			lateGamePutBack ||
+			(this.prevPossessionOutcome === "orb" &&
+				this.lastOrbPlayer !== undefined &&
+				this.playersOnCourt[this.o].includes(this.lastOrbPlayer) &&
+				clockFactor !== "maintainLead" &&
+				!needsThree &&
+				// Keep this conservative: quicker, higher-percentage shots also increase pace.
+				Math.random() < 0.15);
 
 		// If it's a putback, override shooter selection with whoever got the last offensive rebound
 		if (putBack && this.lastOrbPlayer !== undefined) {
@@ -2064,7 +2080,8 @@ class GameSim extends GameSimBase {
 		if (
 			fgaLogType === "fgaLowPost" ||
 			fgaLogType === "fgaMidRange" ||
-			fgaLogType === "fgaAtRim"
+			fgaLogType === "fgaAtRim" ||
+			fgaLogType === "fgaPutBack"
 		) {
 			this.playByPlay.logEvent({
 				...baseLogInformation,

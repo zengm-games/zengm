@@ -117,6 +117,18 @@ export const cleanupAutoPlay = (error?: Error) => {
 	}
 };
 
+// Whether auto play should stop when it reaches this season and phase
+export const autoPlayStopsAt = (
+	autoPlayUntil: NonNullable<typeof local.autoPlayUntil>,
+	season: number,
+	phase: Phase,
+) => {
+	return (
+		autoPlayUntil.season < season ||
+		(autoPlayUntil.season === season && autoPlayUntil.phase <= phase)
+	);
+};
+
 export const startAutoPlay = (
 	season: number,
 	phase: Phase,

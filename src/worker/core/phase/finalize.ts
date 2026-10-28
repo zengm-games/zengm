@@ -14,7 +14,7 @@ import {
 import type { Conditions, Phase, PhaseReturn } from "../../../common/types.ts";
 import { getGlobalSettings } from "../../util/getGlobalSettings.ts";
 import { processScheduledEvents } from "./processScheduledEvents.ts";
-import { cleanupAutoPlay } from "../league/autoPlay.ts";
+import { autoPlayStopsAt, cleanupAutoPlay } from "../league/autoPlay.ts";
 
 const save = async () => {
 	await updateStatus("Saving...");
@@ -104,10 +104,7 @@ const finalize = async (
 	// Save a reference, since local.autoPlayUntil might be cleared during an await below, if the user stops auto play
 	const autoPlayUntil = local.autoPlayUntil;
 	if (autoPlayUntil) {
-		if (
-			autoPlayUntil.season < g.get("season") ||
-			(autoPlayUntil.season === g.get("season") && autoPlayUntil.phase <= phase)
-		) {
+		if (autoPlayStopsAt(autoPlayUntil, g.get("season"), phase)) {
 			if (!saved) {
 				await save();
 				await updateStatus();

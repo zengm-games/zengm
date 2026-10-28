@@ -14,6 +14,7 @@ import { last, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
+import { autoPlayStopsAt } from "../league/autoPlay.ts";
 
 export const FREE_AGENCY_DAYS = 30;
 
@@ -175,7 +176,12 @@ const newPhaseResignPlayers = async (
 
 		if (
 			g.get("userTids").includes(p.tid) &&
-			!local.autoPlayUntil &&
+			(!local.autoPlayUntil ||
+				autoPlayStopsAt(
+					local.autoPlayUntil,
+					g.get("season"),
+					PHASE.RESIGN_PLAYERS,
+				)) &&
 			!g.get("spectator")
 		) {
 			const tid = p.tid;

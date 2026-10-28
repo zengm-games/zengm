@@ -291,7 +291,7 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>({
 					eventKey === shortcut.key
 				) {
 					event.preventDefault();
-					callback(action as any);
+					callback(action);
 					break;
 				}
 			}

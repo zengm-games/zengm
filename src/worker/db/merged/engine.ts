@@ -126,7 +126,7 @@ const getAllByKeys = async <MyStore extends Store>(
 	}
 
 	for await (const { value } of rowsByKeysFromDb(storeName, keysForDb)) {
-		rows.set((value as any)[pk], value);
+		rows.set(value[pk], value);
 	}
 
 	const output = [];

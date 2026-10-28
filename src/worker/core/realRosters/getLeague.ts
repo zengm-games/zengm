@@ -712,7 +712,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				for (const p of players) {
 					if (p.tid >= 0 && !nextSeasonSlugs.has(p.srID)) {
 						p.tid = PLAYER.RETIRED;
-						(p as any).retiredYear = options.season;
+						p.retiredYear = options.season;
 					}
 				}
 			}

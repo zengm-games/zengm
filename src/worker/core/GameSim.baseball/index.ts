@@ -945,7 +945,7 @@ class GameSim extends GameSimBase {
 		this.bases = [undefined, undefined, undefined];
 		for (const runner of runners) {
 			if (runner && runner.to < 4 && !runner.out) {
-				this.bases[(runner.to - 1) as any] = prevBasesByPid[runner.pid];
+				this.bases[runner.to - 1] = prevBasesByPid[runner.pid];
 			}
 		}
 

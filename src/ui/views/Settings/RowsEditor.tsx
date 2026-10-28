@@ -250,7 +250,7 @@ const parseAndValidate = <Type extends "injuries" | "tragicDeaths">(
 			reason: row.reason,
 			frequency: helpers.localeParseFloat(row.frequency),
 		};
-	}) as any as Rows<Type>;
+	}) as Rows<Type>;
 
 	for (const row of rows) {
 		const name = type === "injuries" ? (row as any).name : (row as any).reason;

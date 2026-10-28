@@ -208,7 +208,7 @@ const StatsSummary = ({
 											"table-separator-left": separatorAfter.includes(i),
 										})}
 									>
-										{helpers.roundStat((ps as any)[stat], stat)}
+										{helpers.roundStat(ps[stat], stat)}
 									</td>
 								);
 							})}

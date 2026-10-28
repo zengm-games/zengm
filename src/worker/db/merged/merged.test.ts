@@ -151,7 +151,7 @@ afterAll(() => {
 	// @ts-expect-error
 	delete globalThis.indexedDB;
 	for (const name of IDB_GLOBALS) {
-		delete (globalThis as any)[name];
+		delete globalThis[name];
 	}
 });
 

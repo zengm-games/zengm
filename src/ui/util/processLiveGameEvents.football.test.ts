@@ -32,8 +32,12 @@ describe("penaltySegments", () => {
 });
 
 describe("processLiveGameEvents penalty yards", () => {
-	const team = (abbrev: string) =>
-		({ abbrev, players: [], ptsQtrs: [], timeouts: 3 }) as any;
+	const team = (abbrev: string) => ({
+		abbrev,
+		players: [],
+		ptsQtrs: [],
+		timeouts: 3,
+	});
 
 	// Feed every event through, the way the live game view does
 	const run = (events: any[]) => {

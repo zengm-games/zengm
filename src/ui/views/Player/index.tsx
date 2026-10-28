@@ -192,7 +192,7 @@ const Player2 = ({
 								...ratings.map((rating) =>
 									showRatings ? (
 										<MaybeBold bold={leaders[r.season]?.ratings.has(rating)}>
-											{(r as any)[rating]}
+											{r[rating]}
 										</MaybeBold>
 									) : null,
 								),

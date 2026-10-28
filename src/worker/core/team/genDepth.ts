@@ -49,12 +49,7 @@ const genDepth = async (
 		basketball: undefined as any,
 		football: genDepthFootball,
 		hockey: genDepthHockey,
-	})?.(
-		players,
-		initialDepth as any,
-		onlyNewPlayers,
-		pos as any,
-	)) as Team["depth"];
+	})?.(players, initialDepth, onlyNewPlayers, pos)) as Team["depth"];
 
 	return depth;
 };

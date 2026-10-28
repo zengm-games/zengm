@@ -287,7 +287,7 @@ const Filters = ({
 										className="form-select"
 										value={filter.category}
 										onChange={(event) => {
-											const newCategory = event.target.value as any;
+											const newCategory = event.target.value;
 											const newKey = Object.keys(
 												allFilters[newCategory]!.options,
 											)[0]!;

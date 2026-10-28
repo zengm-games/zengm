@@ -1224,7 +1224,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		invalidSeasonPhaseMessage = `Sorry, I'm not allowed to share the results of the ${REAL_PLAYERS_INFO.MAX_SEASON} ${
 			REAL_PLAYERS_INFO.MAX_PHASE === PHASE.PRESEASON
 				? "season"
-				: (PHASE_TEXT as any)[REAL_PLAYERS_INFO.MAX_PHASE]
+				: PHASE_TEXT[REAL_PLAYERS_INFO.MAX_PHASE]
 		} yet.`;
 	}
 

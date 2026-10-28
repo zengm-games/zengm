@@ -59,7 +59,7 @@ const recomputeRealSeasonLeaders = async () => {
 			delete (seasonLeaders as any).season;
 
 			// ratingsFuzz is useless because we don't know what fuzz is in this league
-			delete (seasonLeaders as any).ratingsFuzz;
+			delete seasonLeaders.ratingsFuzz;
 
 			output[season2] = seasonLeaders;
 		} else {

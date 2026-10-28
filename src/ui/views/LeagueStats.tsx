@@ -164,14 +164,14 @@ const LeagueStats = ({
 			: (s.stats.avgAge as number).toFixed(1);
 
 		for (const stat of stats) {
-			data[stat] = helpers.roundStat((s.stats as any)[stat], stat);
+			data[stat] = helpers.roundStat(s.stats[stat], stat);
 		}
 
 		return {
 			key:
 				__SPORT === "baseball" &&
 				(teamOpponent === "fielding" || teamOpponent === "oppFielding")
-					? `${s.season}-${(s.stats as any).pos}`
+					? `${s.season}-${s.stats.pos}`
 					: s.season,
 			data: Object.values(data),
 		};

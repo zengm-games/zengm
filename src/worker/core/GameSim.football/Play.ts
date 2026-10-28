@@ -922,6 +922,13 @@ class Play {
 				if (losing) {
 					state.overtimeState = "over";
 				}
+			} else if (event.type === "twoPointConversionDone" && !event.made) {
+				// Failed 2 point conversion while losing. Use event.t rather than state.o because possession may have changed during the attempt
+				const t2 = event.t === 0 ? 1 : 0;
+				const losing = state.pts[event.t] < state.pts[t2];
+				if (losing) {
+					state.overtimeState = "over";
+				}
 			}
 		}
 

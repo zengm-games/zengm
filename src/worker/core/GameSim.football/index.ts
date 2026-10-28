@@ -998,8 +998,8 @@ class GameSim extends GameSimBase {
 					(() => {
 						// In overtime, if tied and a field goal would win, try it
 						if (
-							((quarter > this.numPeriods &&
-								this.overtimeType === "suddenDeath") ||
+							quarter > this.numPeriods &&
+							(this.overtimeType === "suddenDeath" ||
 								this.overtimeState !== "firstPossession") &&
 							ptsDown === 0 &&
 							probMadeFieldGoal >= 0.7

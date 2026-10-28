@@ -141,7 +141,7 @@ const getPlayerAwards = (p: LocalPlayer, key: string) => {
 	const allPos = p.ratings.filter((row) => yearsSet.has(row.season));
 	if (allPos.length > 0) {
 		const posCounts = Object.entries(countBy(allPos, "pos"));
-		maxPos = maxBy(posCounts, 1)![0]!;
+		maxPos = maxBy(posCounts, 1)![0];
 	}
 
 	return {

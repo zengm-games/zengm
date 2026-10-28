@@ -235,7 +235,7 @@ const Row = ({
 
 	let revealedPickNumber = null;
 	const pickCols = range(NUM_PICKS).map((j) => {
-		const prob = probs[i]![j]!;
+		const prob = probs[i]![j];
 		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
 
 		let highlighted = false;

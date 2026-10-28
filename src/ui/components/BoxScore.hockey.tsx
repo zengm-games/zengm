@@ -139,7 +139,7 @@ const StatsTable = ({
 									<th key={stat}>
 										{stat === "pm"
 											? null
-											: helpers.roundStat(sumsByStat[stat]!, stat, true)}
+											: helpers.roundStat(sumsByStat[stat], stat, true)}
 									</th>
 								))}
 							</tr>

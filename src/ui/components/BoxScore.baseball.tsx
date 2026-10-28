@@ -177,7 +177,7 @@ const StatsTable = ({
 									<th key={stat}>
 										{stat === "gmsc"
 											? null
-											: helpers.roundStat(sumsByStat[stat]!, stat, true)}
+											: helpers.roundStat(sumsByStat[stat], stat, true)}
 									</th>
 								))}
 								{seasonStats.map((stat) => (

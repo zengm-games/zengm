@@ -195,8 +195,24 @@ const NegotiationList = ({
 		(p) => p.contract.rookie && p.mood.user.willing,
 	);
 
-	const showReSignAll =
-		(salaryCapType !== "hard" || sumContracts < capSpace) && players.length > 0;
+	let sumRookieContracts = 0;
+	for (const p of signableRookies) {
+		sumRookieContracts += p.mood.user.contractAmount;
+	}
+	sumRookieContracts /= 1000;
+
+	// Only check cap space for hard cap, since in a soft cap you can go over the cap to re-sign your own players
+	const overCapAll = salaryCapType === "hard" && sumContracts > capSpace;
+	const overCapRookies =
+		salaryCapType === "hard" &&
+		signableRookies.length > 0 &&
+		sumRookieContracts > capSpace;
+
+	const overCapText = overCapRookies
+		? "You don't have enough cap space to sign all your players or all your rookies."
+		: overCapAll
+			? "You don't have enough cap space to sign all your players."
+			: undefined;
 
 	const signAll = async (playersToSign: typeof players, undoText: string) => {
 		const response = await toWorker("main", "reSignAll", playersToSign);
@@ -253,16 +269,17 @@ const NegotiationList = ({
 				) : null}
 			</p>
 
-			{showReSignAll ? (
+			{players.length > 0 ? (
 				<div className="d-flex gap-2 mb-3">
 					<button
 						className="btn btn-secondary"
+						disabled={overCapAll}
 						onClick={async () => {
 							await signAll(
 								players,
-								`${rookiesNeedSigning ? "Signed" : "Re-signed"} ${signableRookies.length} ${helpers.plural(
+								`${rookiesNeedSigning ? "Signed" : "Re-signed"} ${players.length} ${helpers.plural(
 									"player",
-									signableRookies.length,
+									players.length,
 								)}`,
 							);
 						}}
@@ -272,7 +289,7 @@ const NegotiationList = ({
 					{rookiesNeedSigning ? (
 						<button
 							className="btn btn-secondary"
-							disabled={signableRookies.length === 0}
+							disabled={signableRookies.length === 0 || overCapRookies}
 							onClick={async () => {
 								await signAll(
 									signableRookies,
@@ -288,6 +305,8 @@ const NegotiationList = ({
 					) : null}
 				</div>
 			) : null}
+
+			{overCapText ? <p className="text-danger">{overCapText}</p> : null}
 
 			<DataTable
 				cols={cols}

@@ -101,20 +101,19 @@ const finalize = async (
 		}
 	}
 
-	if (local.autoPlayUntil) {
+	// Save a reference, since local.autoPlayUntil might be cleared during an await below, if the user stops auto play
+	const autoPlayUntil = local.autoPlayUntil;
+	if (autoPlayUntil) {
 		if (
-			local.autoPlayUntil.season < g.get("season") ||
-			(local.autoPlayUntil.season === g.get("season") &&
-				local.autoPlayUntil.phase <= phase)
+			autoPlayUntil.season < g.get("season") ||
+			(autoPlayUntil.season === g.get("season") && autoPlayUntil.phase <= phase)
 		) {
 			if (!saved) {
 				await save();
 				await updateStatus();
 			}
 			console.log(
-				`Auto play done in ${
-					(Date.now() - local.autoPlayUntil.start) / 1000
-				} seconds`,
+				`Auto play done in ${(Date.now() - autoPlayUntil.start) / 1000} seconds`,
 			);
 			cleanupAutoPlay();
 			await updatePlayMenu();

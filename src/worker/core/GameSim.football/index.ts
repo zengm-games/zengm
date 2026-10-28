@@ -525,7 +525,9 @@ class GameSim extends GameSimBase {
 		this.scrimmage = SCRIMMAGE_KICKOFF;
 
 		while (
-			(this.clock > 0 || this.playUntimedPossession) &&
+			(this.clock > 0 ||
+				this.awaitingAfterTouchdown ||
+				this.playUntimedPossession) &&
 			this.overtimeState !== "over"
 		) {
 			this.simPlay();

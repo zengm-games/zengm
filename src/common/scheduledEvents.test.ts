@@ -36,7 +36,7 @@ const expansionTeam = (name: string, tid: number | undefined) => {
 		region: name,
 		name,
 		imgURL: undefined,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#000000", "#cccccc", "#ffffff"] as [string, string, string],
 		pop: "1",
 		stadiumCapacity: "25000",
 		did: "0",

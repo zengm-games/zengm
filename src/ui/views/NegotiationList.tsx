@@ -54,10 +54,11 @@ const NegotiationList = ({
 			"season",
 		]);
 
-	const title =
-		salaryCapType === "hard" || !draftPickAutoContract
-			? "Rookies and Expiring Contracts"
-			: "Re-sign Players";
+	const rookiesNeedSigning = salaryCapType === "hard" || !draftPickAutoContract;
+
+	const title = rookiesNeedSigning
+		? "Rookies and Expiring Contracts"
+		: "Re-sign Players";
 
 	useTitleBar({ title });
 
@@ -190,6 +191,30 @@ const NegotiationList = ({
 
 	const hasRookies = players.some((p) => p.contract.rookie);
 
+	const signableRookies = players.filter(
+		(p) => p.contract.rookie && p.mood.user.willing,
+	);
+
+	const showReSignAll =
+		(salaryCapType !== "hard" || sumContracts < capSpace) && players.length > 0;
+
+	const signAll = async (playersToSign: typeof players, undoText: string) => {
+		const response = await toWorker("main", "reSignAll", playersToSign);
+
+		if (typeof response === "string") {
+			showNotification({
+				type: "error",
+				text: response,
+			});
+		} else {
+			showUndoNotification({
+				actionName: "signings",
+				undoKey: response,
+				title: undoText,
+			});
+		}
+	};
+
 	return (
 		<>
 			<RosterComposition className="float-end mb-3" players={userPlayers} />
@@ -228,31 +253,40 @@ const NegotiationList = ({
 				) : null}
 			</p>
 
-			{(salaryCapType !== "hard" || sumContracts < capSpace) &&
-			players.length > 0 ? (
-				<button
-					className="btn btn-secondary mb-3"
-					onClick={async () => {
-						const response = await toWorker("main", "reSignAll", players);
-
-						if (typeof response === "string") {
-							showNotification({
-								type: "error",
-								text: response,
-							});
-						} else {
-							showUndoNotification({
-								actionName: "signings",
-								undoKey: response,
-								title: `Re-signed all ${
-									players.length
-								} ${helpers.plural("player", players.length)}`,
-							});
-						}
-					}}
-				>
-					Re-sign all
-				</button>
+			{showReSignAll ? (
+				<div className="d-flex gap-2 mb-3">
+					<button
+						className="btn btn-secondary"
+						onClick={async () => {
+							await signAll(
+								players,
+								`${rookiesNeedSigning ? "Signed" : "Re-signed"} ${signableRookies.length} ${helpers.plural(
+									"player",
+									signableRookies.length,
+								)}`,
+							);
+						}}
+					>
+						{rookiesNeedSigning ? "Sign all" : "Re-sign all"}
+					</button>
+					{rookiesNeedSigning ? (
+						<button
+							className="btn btn-secondary"
+							disabled={signableRookies.length === 0}
+							onClick={async () => {
+								await signAll(
+									signableRookies,
+									`Signed ${signableRookies.length} ${helpers.plural(
+										"rookie",
+										signableRookies.length,
+									)}`,
+								);
+							}}
+						>
+							Sign all rookies
+						</button>
+					) : null}
+				</div>
 			) : null}
 
 			<DataTable

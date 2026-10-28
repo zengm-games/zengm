@@ -28,7 +28,7 @@ const getName = (pid: number) => {
 	return playersByPid?.[pid]?.name ?? "???";
 };
 
-export const getText = (
+const getText = (
 	event: PlayByPlayEventOutput,
 	boxScore: {
 		numPeriods: number;

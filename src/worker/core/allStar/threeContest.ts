@@ -11,7 +11,6 @@ import { getNextRoundType } from "./contest.ts";
 
 type Three = NonNullable<AllStars["three"]>;
 
-export const NUM_SHOOTERS_IN_CONTEST = 8;
 const NUM_RACKS = 5;
 const NUM_BALLS_PER_RACK = 5;
 

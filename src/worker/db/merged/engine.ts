@@ -3,12 +3,12 @@ import { storeInfos, type Store, type StoreAPI } from "../Cache.ts";
 import type { LeagueDB } from "../connectLeague.ts";
 import { idb } from "../index.ts";
 
-export type Row<MyStore extends Store> = LeagueDB[MyStore]["value"];
+type Row<MyStore extends Store> = LeagueDB[MyStore]["value"];
 
 type Key = number | string;
 
 // TypeScript can't tell that idb.cache[storeName] is the StoreAPI for Row<MyStore> when storeName is generic
-export const cacheStore = <MyStore extends Store>(storeName: MyStore) => {
+const cacheStore = <MyStore extends Store>(storeName: MyStore) => {
 	return idb.cache[storeName] as unknown as StoreAPI<
 		unknown,
 		Row<MyStore>,
@@ -141,7 +141,7 @@ const getAllByKeys = async <MyStore extends Store>(
 };
 
 // Get one row by primary key, from the cache if it's there and otherwise from IndexedDB
-export const get = async <MyStore extends Store>(
+const get = async <MyStore extends Store>(
 	storeName: MyStore,
 	key: Key,
 ): Promise<Row<MyStore> | undefined> => {
@@ -159,7 +159,7 @@ export const get = async <MyStore extends Store>(
 };
 
 // Call callback for each row matching a query, merging the cache and IndexedDB. A row in the cache always takes priority over the same row in IndexedDB. With no query, this is the whole store.
-export const forEach = async <MyStore extends Store>(
+const forEach = async <MyStore extends Store>(
 	storeName: MyStore,
 	query: Query<Row<MyStore>> = {
 		fromDb: () => idb.league.transaction(storeName).store.iterate(),

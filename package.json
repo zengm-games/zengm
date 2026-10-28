@@ -44,7 +44,6 @@
 		"@uiw/react-color-hue": "2.10.3",
 		"@uiw/react-color-saturation": "2.10.3",
 		"@uiw/react-color-swatch": "2.10.3",
-		"@vitest/browser": "5.0.5",
 		"ajv": "8.20.0",
 		"bootstrap": "5.3.8",
 		"clsx": "2.1.1",

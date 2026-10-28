@@ -12,7 +12,7 @@ export const getLockedCount = (round: number) => {
 	return Math.floor((round - 1) / 2);
 };
 
-export const isDuplicateSrID = (p: PlayerLike, picks: readonly PickLike[]) => {
+const isDuplicateSrID = (p: PlayerLike, picks: readonly PickLike[]) => {
 	return (
 		p.srID !== undefined &&
 		picks.some((pick) => pick.p.srID !== undefined && pick.p.srID === p.srID)

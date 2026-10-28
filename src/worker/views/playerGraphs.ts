@@ -285,7 +285,7 @@ const updatePlayers = async (
 	}
 };
 
-export type PlayerGraphsPlayer = Awaited<
+type PlayerGraphsPlayer = Awaited<
 	ReturnType<typeof getPlayerStats>
 >["players"][number];
 

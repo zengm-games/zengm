@@ -24,7 +24,7 @@ import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 export type Defaults = Awaited<ReturnType<typeof initDefaults>>;
 
-export const objectToArray = <T extends string>(
+const objectToArray = <T extends string>(
 	object: Record<string, number>,
 	key: T,
 	sortKey: string,
@@ -44,7 +44,7 @@ export const objectToArray = <T extends string>(
 		order,
 	);
 
-export const arrayToObject = <T extends string>(
+const arrayToObject = <T extends string>(
 	array: Record<T | "frequency", string>[],
 	key: T,
 ): Record<string, number> => {

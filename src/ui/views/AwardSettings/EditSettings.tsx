@@ -90,7 +90,7 @@ export const awardsToEditingState = (groups: InputAward[][]) => {
 
 export type EditingState = ReturnType<typeof awardSettingToEditingState>;
 
-export const editingStateToAward = (state: EditingState, index: number) => {
+const editingStateToAward = (state: EditingState, index: number) => {
 	const common: Omit<AwardInfoCommon, "group"> = {
 		shortName: state.shortName,
 		name: state.name,

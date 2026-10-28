@@ -3,7 +3,7 @@ import { g } from "../../util/index.ts";
 import { idb } from "../index.ts";
 import { MergedStore, type Query } from "./engine.ts";
 
-export type TeamStatsSelector = { tid: number; season?: number };
+type TeamStatsSelector = { tid: number; season?: number };
 
 class TeamStatsStore extends MergedStore<"teamStats", TeamStatsSelector> {
 	protected override toQuery(

@@ -221,7 +221,7 @@ export const getNumToPick = (
 // reverse: Reverse order of the teams
 // random: Random order
 // reverseLotteryTeams: Lottery teams are in reverse order, the rest are in the same order as the teams
-export type RoundOrderRule =
+type RoundOrderRule =
 	| "lottery"
 	| "same"
 	| "reverse"

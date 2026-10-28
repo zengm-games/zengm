@@ -15,7 +15,6 @@ export const HIGHEST_POSSIBLE_SCORE = 50;
 export const LOWEST_POSSIBLE_SCORE = 5;
 const MISS_SCORE = 0;
 const NUM_ATTEMPTS_PER_DUNK = 3;
-export const NUM_DUNKERS_IN_CONTEST = 4;
 const NUM_DUNKS_PER_ROUND = 2;
 const NUM_DUNKS_PER_TIEBREAKER = 1;
 const MAX_SCORE_DIFFICULTY = 8; // Dunk with this difficulty should get a perfect score

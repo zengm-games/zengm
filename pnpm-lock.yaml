@@ -47,9 +47,6 @@ importers:
       '@uiw/react-color-swatch':
         specifier: 2.10.3
         version: 2.10.3(@babel/runtime@7.29.10)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@vitest/browser':
-        specifier: 5.0.5
-        version: 5.0.5(vite@8.3.5(@types/node@26.6.5)(sass-embedded@1.78.0)(terser@5.51.2)(yaml@2.9.1))(vitest@5.0.5)
       ajv:
         specifier: 8.20.0
         version: 8.20.0

@@ -8,7 +8,7 @@ import { KEY_POSITIONS_NEEDED } from "../freeAgents/getBest.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 
-export const dropPlayers = async (players: Player[], numToDrop: number) => {
+const dropPlayers = async (players: Player[], numToDrop: number) => {
 	// Automatically drop lowest value players until we reach g.get("maxRosterSize")
 
 	// Only drop player from a position there is an excess of (no dropping your only kicker)

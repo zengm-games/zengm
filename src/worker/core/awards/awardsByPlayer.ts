@@ -23,7 +23,7 @@ import { groupByUnique } from "../../../common/utils.ts";
 import type { processAwards } from "./processAwards.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 
-export type AwardByPlayer = {
+type AwardByPlayer = {
 	pid: number;
 	tid: number;
 	name: string;

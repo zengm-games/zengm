@@ -2,7 +2,7 @@ import type { Message } from "../../../common/types.ts";
 import { idb } from "../index.ts";
 import { getAll, MergedStore, type GetAllOptions } from "./engine.ts";
 
-export type MessagesSelector = {
+type MessagesSelector = {
 	// Only the most recent messages
 	limit: number;
 };

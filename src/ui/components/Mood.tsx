@@ -88,7 +88,7 @@ const roundProbWilling = (probWilling: number) => {
 	return Math.round(probWilling * 100);
 };
 
-export const processComponents = (components: MoodComponents) => {
+const processComponents = (components: MoodComponents) => {
 	const componentsRounded = {
 		...components,
 	};

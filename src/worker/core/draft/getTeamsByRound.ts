@@ -72,7 +72,7 @@ const ORDER_AFTER_FIRST_ROUND = bySport<"record" | "firstRound">({
 	hockey: "firstRound",
 });
 
-export type Nba2027PlayIn = {
+type Nba2027PlayIn = {
 	tidPlayIn910: [number, number, number, number];
 	tidPlayIn78Loser: [number, number];
 	tidPlayIn78Winner: [number, number];

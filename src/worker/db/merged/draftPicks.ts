@@ -3,7 +3,7 @@ import { orderBy } from "../../../common/utils.ts";
 import { idb } from "../index.ts";
 import { MergedStore, type Exclusive, type Query } from "./engine.ts";
 
-export type DraftPicksSelector = Exclusive<{ tid: number } | { note: true }>;
+type DraftPicksSelector = Exclusive<{ tid: number } | { note: true }>;
 
 const sort = (draftPicks: DraftPick[]) => {
 	return orderBy(draftPicks, ["season", "round", "pick", "originalTid"]);

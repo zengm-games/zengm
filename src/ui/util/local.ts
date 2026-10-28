@@ -310,10 +310,9 @@ const useLocal = <Key extends keyof LocalStateUI>(keys: Key[]) => {
 	return useLocalRaw(selector);
 };
 
-// This assumes the actions object never changes!
-const useLocalActions = () => useLocalRaw((state) => state.actions);
-
 const local = useLocalRaw;
+
+// This assumes the actions object never changes!
 const localActions = local.getState().actions;
 
-export { local, localActions, useLocalActions, useLocal };
+export { local, localActions, useLocal };

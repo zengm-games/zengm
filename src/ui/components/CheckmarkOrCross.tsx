@@ -1,6 +1,6 @@
 type Props = { hideCross?: boolean; success: boolean };
 
-export const CheckmarkOrCross = ({ hideCross, success }: Props) => {
+const CheckmarkOrCross = ({ hideCross, success }: Props) => {
 	if (success) {
 		return (
 			<span

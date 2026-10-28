@@ -125,7 +125,7 @@ type StatsRow = StatsRowDefined & {
 	[key: string]: any;
 };
 
-export type CurrentStats = {
+type CurrentStats = {
 	numWon?: Record<string, number>;
 	numWonConsecutive?: Record<string, number>;
 	seasonFraction: number;

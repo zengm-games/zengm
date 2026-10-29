@@ -191,9 +191,15 @@ const NegotiationList = ({
 
 	const hasRookies = players.some((p) => p.contract.rookie);
 
-	const signableRookies = players.filter(
-		(p) => p.contract.rookie && p.mood.user.willing,
-	);
+	// reSignAll skips players who are not willing to sign, so they shouldn't count towards cap space or the number signed
+	const signablePlayers = players.filter((p) => p.mood.user.willing);
+	const signableRookies = signablePlayers.filter((p) => p.contract.rookie);
+
+	let sumSignableContracts = 0;
+	for (const p of signablePlayers) {
+		sumSignableContracts += p.mood.user.contractAmount;
+	}
+	sumSignableContracts /= 1000;
 
 	let sumRookieContracts = 0;
 	for (const p of signableRookies) {
@@ -202,7 +208,8 @@ const NegotiationList = ({
 	sumRookieContracts /= 1000;
 
 	// Only check cap space for hard cap, since in a soft cap you can go over the cap to re-sign your own players
-	const overCapAll = salaryCapType === "hard" && sumContracts > capSpace;
+	const overCapAll =
+		salaryCapType === "hard" && sumSignableContracts > capSpace;
 	const overCapRookies =
 		salaryCapType === "hard" &&
 		signableRookies.length > 0 &&
@@ -273,13 +280,13 @@ const NegotiationList = ({
 				<div className="d-flex gap-2 mb-3">
 					<button
 						className="btn btn-secondary"
-						disabled={overCapAll}
+						disabled={signablePlayers.length === 0 || overCapAll}
 						onClick={async () => {
 							await signAll(
-								players,
-								`${rookiesNeedSigning ? "Signed" : "Re-signed"} ${players.length} ${helpers.plural(
+								signablePlayers,
+								`${rookiesNeedSigning ? "Signed" : "Re-signed"} ${signablePlayers.length} ${helpers.plural(
 									"player",
-									players.length,
+									signablePlayers.length,
 								)}`,
 							);
 						}}

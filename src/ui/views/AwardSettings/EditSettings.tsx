@@ -142,7 +142,10 @@ const editingStateToAward = (state: EditingState, index: number) => {
 	}
 
 	if (state.group === "conf" || state.group === "div") {
-		award.group = state.group;
+		// conf/div grouping does not make sense for playoff series awards
+		if (typeof state.statRange !== "number") {
+			award.group = state.group;
+		}
 	}
 
 	if (state.showByPos) {
@@ -430,6 +433,8 @@ export const EditSettings = ({
 		hockey: POSITIONS,
 	});
 
+	const isPlayoffSeriesAward = typeof state.statRange === "number";
+
 	return (
 		<div>
 			<div className="d-flex gap-3">
@@ -583,25 +588,31 @@ export const EditSettings = ({
 					<label className="mb-1" htmlFor={groupId}>
 						Grouping
 					</label>
-					<HelpPopover title="Grouping" className="ms-1">
-						<p>
-							For playoff round awards, one award will be awarded for each
-							series in that round. So 2 awards for the semifinals, 4 for the
-							quarterfinals, etc.
-						</p>
-					</HelpPopover>
+					{isPlayoffSeriesAward ? (
+						<HelpPopover title="Grouping" className="ms-1">
+							<p>
+								For playoff round awards, one award will be awarded for each
+								series in that round. So 2 awards for the semifinals, 4 for the
+								quarterfinals, etc.
+							</p>
+						</HelpPopover>
+					) : null}
 					<select
 						id={groupId}
 						className="form-select"
-						disabled={disabled}
+						disabled={disabled || isPlayoffSeriesAward}
 						onChange={changeHandler("group")}
 						value={state.group}
 					>
-						{groups.map(({ key, text }) => (
-							<option key={key} value={key}>
-								{text}
-							</option>
-						))}
+						{isPlayoffSeriesAward ? (
+							<option value={state.group}>Playoff series</option>
+						) : (
+							groups.map(({ key, text }) => (
+								<option key={key} value={key}>
+									{text}
+								</option>
+							))
+						)}
 					</select>
 				</div>
 				<label>

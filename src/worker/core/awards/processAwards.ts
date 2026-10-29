@@ -496,29 +496,8 @@ export const processAwards = async ({
 					Awards["awards"][number],
 					"winner"
 				>[];
-				if (baseAward.group === "conf") {
-					const confs = g.get("confs", season);
-					expandedAwards = confs.map((conf) => {
-						return {
-							...baseAward,
-							group: {
-								type: "conf",
-								cid: conf.cid,
-							},
-						};
-					});
-				} else if (baseAward.group === "div") {
-					const divs = g.get("divs", season);
-					expandedAwards = divs.map((div) => {
-						return {
-							...baseAward,
-							group: {
-								type: "div",
-								did: div.did,
-							},
-						};
-					});
-				} else if (typeof baseAward.statRange === "number") {
+				// Check playoff series first, since conf/div grouping is ignored for playoff series awards
+				if (typeof baseAward.statRange === "number") {
 					const playoffSeries = await idb.merged.playoffSeries.get(season);
 					const roundSeries =
 						playoffSeries?.series.at(baseAward.statRange) ?? [];
@@ -550,6 +529,28 @@ export const processAwards = async ({
 							},
 						];
 					}
+				} else if (baseAward.group === "conf") {
+					const confs = g.get("confs", season);
+					expandedAwards = confs.map((conf) => {
+						return {
+							...baseAward,
+							group: {
+								type: "conf",
+								cid: conf.cid,
+							},
+						};
+					});
+				} else if (baseAward.group === "div") {
+					const divs = g.get("divs", season);
+					expandedAwards = divs.map((div) => {
+						return {
+							...baseAward,
+							group: {
+								type: "div",
+								did: div.did,
+							},
+						};
+					});
 				} else {
 					expandedAwards = [omit(baseAward, ["group"])];
 				}

@@ -3971,6 +3971,10 @@ const reSignAll = async (players: any[]) => {
 				});
 
 				if (typeof response === "string") {
+					// Undo any signings that already happened, so a partial failure doesn't leave some players signed with no way to undo it
+					for (const undo of undoFunctions.toReversed()) {
+						await undo();
+					}
 					return response;
 				} else {
 					undoFunctions.push(response);

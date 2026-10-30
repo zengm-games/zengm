@@ -262,6 +262,9 @@ const Depth = ({
 		let lineupPos;
 		if (__SPORT === "baseball" && pos === "D" && rowLabels?.[i]) {
 			lineupPos = rowLabels[i];
+		} else if (__SPORT === "baseball" && pos === "P") {
+			// Lineup position is not relevant on the pitching depth screen
+			lineupPos = p.ratings.pos;
 		} else {
 			lineupPos = p.lineupPos ?? p.ratings.pos;
 		}
@@ -309,19 +312,21 @@ const Depth = ({
 									: null,
 					classNames: {
 						"text-danger":
-							__SPORT === "baseball" && p.lineupPos !== undefined
-								? p.pid >= 0 &&
-									p.lineupPos !== "DH" &&
-									p.lineupPos !== p.ratings.pos
-								: __SPORT === "baseball" && (pos === "D" || pos === "DP")
-									? rowLabels?.[i] !== undefined &&
-										rowLabels[i] !== "DH" &&
-										rowLabels[i] !== p.ratings.pos
-									: __SPORT !== "baseball" &&
-										p.pid >= 0 &&
-										pos !== "KR" &&
-										pos !== "PR" &&
-										!positions.includes(p.ratings.pos),
+							__SPORT === "baseball" && pos === "P"
+								? false
+								: __SPORT === "baseball" && p.lineupPos !== undefined
+									? p.pid >= 0 &&
+										p.lineupPos !== "DH" &&
+										p.lineupPos !== p.ratings.pos
+									: __SPORT === "baseball" && (pos === "D" || pos === "DP")
+										? rowLabels?.[i] !== undefined &&
+											rowLabels[i] !== "DH" &&
+											rowLabels[i] !== p.ratings.pos
+										: __SPORT !== "baseball" &&
+											p.pid >= 0 &&
+											pos !== "KR" &&
+											pos !== "PR" &&
+											!positions.includes(p.ratings.pos),
 					},
 				},
 				p.age,

@@ -1,7 +1,5 @@
 import/export scheduled events https://www.reddit.com/r/BasketballGM/comments/1xit8my/importexport_scheduled_events/
 
-in baseball on pitching screen, out of position defensive players are shown in red, but there's no need for that on the pitching screen, should just show their primary position in white https://www.reddit.com/r/ZenGMBaseball/comments/1xipdk3/position_player_on_pitching_screen_issue/
-
 future idb.merged stuff
 - a way to share a transaction across multiple calls, for when called in a loop like frivolitiesTeamSeasons. generally not many places would benefit from this
 

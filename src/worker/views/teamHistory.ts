@@ -309,11 +309,54 @@ export default defineView({
 
 			const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
 			const teamHistory = getHistoryTeam(teamSeasons, playoffsByConfBySeason);
+
+			// Seasons when the user was the GM of this team
+			let userTeamSeasons = teamSeasons.filter(
+				(ts) =>
+					ts.season >= g.get("startingSeason") &&
+					g.get("userTid", ts.season) === inputs.tid,
+			);
+
+			// If the user was the GM for every season of this team and never controlled any other team, the user-specific UI would just duplicate the normal UI, so hide it. Checking for other userTid entries prevents it from being hidden for some teams but not others in the same league.
+			if (
+				userTeamSeasons.length === teamSeasons.length &&
+				g.getRaw("userTid").length === 1
+			) {
+				userTeamSeasons = [];
+			}
+			const userSeasons = userTeamSeasons.map((ts) => ts.season);
+			const userSeasonsSet = new Set(userSeasons);
+			let userTotals;
+			let processUserPlayer:
+				| ReturnType<typeof getHistoryPlayerProcessor>
+				| undefined;
+			if (userTeamSeasons.length > 0) {
+				// history is not returned, since it's a subset of teamHistory.history
+				const { history, ...userHistory } = getHistoryTeam(
+					userTeamSeasons,
+					playoffsByConfBySeason,
+				);
+				userTotals = {
+					...userHistory,
+					numSeasons: history.length,
+				};
+				processUserPlayer = getHistoryPlayerProcessor(
+					userTeamSeasons,
+					history,
+					false,
+				);
+			}
+
 			const processPlayer = getHistoryPlayerProcessor(
 				teamSeasons,
 				teamHistory.history,
 				false,
 			);
+
+			// Same as players, but only counting stats from userSeasons
+			const userPlayers: (NonNullable<ReturnType<typeof processPlayer>> & {
+				retirableJerseyNumbers: Record<string, number[]>;
+			})[] = [];
 
 			const players = addFirstNameShort(
 				(
@@ -341,6 +384,22 @@ export default defineView({
 									) {
 										retirableJerseyNumbers[jerseyNumber] ??= [];
 										retirableJerseyNumbers[jerseyNumber].push(season);
+									}
+								}
+
+								if (processUserPlayer) {
+									const userRow = processUserPlayer({
+										...pRaw,
+										stats: stats.filter((row) =>
+											userSeasonsSet.has(row.season),
+										),
+									});
+									if (userRow) {
+										// Jersey retirement is still based on all seasons with this team
+										userPlayers.push({
+											...userRow,
+											retirableJerseyNumbers,
+										});
 									}
 								}
 
@@ -384,6 +443,11 @@ export default defineView({
 				abbrev: inputs.abbrev,
 				tid: inputs.tid,
 				retiredJerseyNumbers: retiredJerseyNumbers2,
+				userPlayers: processUserPlayer
+					? addFirstNameShort(userPlayers)
+					: undefined,
+				userSeasons,
+				userTotals,
 			};
 		}
 	},

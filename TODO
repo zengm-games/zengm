@@ -1,3 +1,7 @@
+import/export scheduled events https://www.reddit.com/r/BasketballGM/comments/1xit8my/importexport_scheduled_events/
+
+in baseball on pitching screen, out of position defensive players are shown in red, but there's no need for that on the pitching screen, should just show their primary position in white https://www.reddit.com/r/ZenGMBaseball/comments/1xipdk3/position_player_on_pitching_screen_issue/
+
 future idb.merged stuff
 - a way to share a transaction across multiple calls, for when called in a loop like frivolitiesTeamSeasons. generally not many places would benefit from this
 
@@ -56,8 +60,6 @@ leaguewide jersey retirement https://discord.com/channels/290013534023057409/152
 - bill russell #6 in real players leagues is hardcoded per team
 
 I think if there was a way to show in the team history and gm history beside the record and playoff finish if there was a way to show where you ranked in terms of points per game and opponent points per game would be nice just so you can see how good you were at making offenses and defenses as well as seeing how good the teams were https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p6icjbc/
-
-I'd like an option in team History to see when you started being the GM of that team. This would make it easier to tell which championships were under your tenure. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p67almt/
 
 Retired jerseys should display the uniform the player wore during his peak season/most WAR accumulated - for scenarios when teams change their uniforms over the years. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p0jmqda/
 

@@ -18,7 +18,7 @@ import {
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
@@ -32,6 +32,7 @@ import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { useLocal } from "../../util/local.ts";
+import clsx from "clsx";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -62,7 +63,8 @@ const copyValidValues = (
 	if (target.hof !== source.hof) {
 		// Always remove old entries, so there are never duplicates
 		target.awards = target.awards.filter(
-			(award) => !award.type.includes("Hall of Fame"),
+			(award) =>
+				award.type === undefined || !award.type.includes("Hall of Fame"),
 		);
 		if (!target.hof && source.hof) {
 			// Add to HoF
@@ -244,8 +246,9 @@ const copyValidValues = (
 	{
 		const sourceRatings = last(source.ratings);
 		const targetRatings = last(target.ratings);
+		const ratingKeys: readonly string[] = RATINGS;
 		for (const rating of Object.keys(sourceRatings)) {
-			if (RATINGS.includes(rating)) {
+			if (ratingKeys.includes(rating)) {
 				const val = helpers.bound(
 					Number.parseInt((sourceRatings as any)[rating]),
 					0,
@@ -392,23 +395,23 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			saving: true,
 		}));
 
-		const p = props.p;
-
-		// Copy over values from state, if they're valid
-		const recomputePosOvrPot = copyValidValues(
-			state.p,
-			p,
-			minContract,
-			phase,
-			season,
-		);
-
-		// Only save image URL if it's selected
-		if (state.appearanceOption !== "Image URL") {
-			p.imgURL = "";
-		}
-
 		try {
+			const p = helpers.deepCopy(props.p);
+
+			// Copy over values from state, if they're valid
+			const recomputePosOvrPot = copyValidValues(
+				state.p,
+				p,
+				minContract,
+				phase,
+				season,
+			);
+
+			// Only save image URL if it's selected
+			if (state.appearanceOption !== "Image URL") {
+				p.imgURL = "";
+			}
+
 			const pid = await toWorker("main", "upsertCustomizedPlayer", {
 				p,
 				originalTid: props.originalTid,
@@ -418,10 +421,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 			realtimeUpdate([], helpers.leagueUrl(["player", pid]));
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			setState((prevState) => ({
@@ -544,7 +546,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const r = p.ratings.length - 1;
 
-	const adjustRatings = (amount: number) => async (event: MouseEvent) => {
+	const adjustRatings = (amount: number) => (event: MouseEvent) => {
 		event.preventDefault();
 		setState((prevState) => {
 			const p = prevState.p;
@@ -601,6 +603,26 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		p.draft.tid === PLAYER.UNDRAFTED ||
 		(p.draft.tid as any) === String(PLAYER.UNDRAFTED);
 
+	let invalidDraftYear:
+		| "activeBeforeDraftClass"
+		| "statsBeforeDraftClass"
+		| undefined;
+	if (p.tid !== PLAYER.UNDRAFTED) {
+		const draftYear = Number.parseInt(p.draft.year as any);
+		if (!Number.isNaN(draftYear)) {
+			if (draftYear > season || (draftYear === season && phase < PHASE.DRAFT)) {
+				invalidDraftYear = "activeBeforeDraftClass";
+			} else {
+				const firstStatSeason = p.stats.find(
+					(row) => row.tid !== PLAYER.DOES_NOT_EXIST,
+				)?.season;
+				if (firstStatSeason !== undefined && firstStatSeason <= draftYear) {
+					invalidDraftYear = "statsBeforeDraftClass";
+				}
+			}
+		}
+	}
+
 	return (
 		<>
 			{!godMode ? (
@@ -630,17 +652,22 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 						<div className="row">
 							<div className="col-sm-6 mb-3">
-								<label className="form-label">Name</label>
+								<label className="form-label" htmlFor="customize-player-name">
+									Name
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-name"
 										type="text"
 										className="form-control"
+										aria-label="First name"
 										onChange={handleChange.bind(null, "root", "firstName")}
 										value={p.firstName}
 									/>
 									<input
 										type="text"
 										className="form-control"
+										aria-label="Last name"
 										onChange={handleChange.bind(null, "root", "lastName")}
 										value={p.lastName}
 									/>
@@ -675,8 +702,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</div>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Age</label>
+								<label className="form-label" htmlFor="customize-player-age">
+									Age
+								</label>
 								<input
+									id="customize-player-age"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "age")}
@@ -685,8 +715,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Team</label>
+								<label className="form-label" htmlFor="customize-player-team">
+									Team
+								</label>
 								<select
+									id="customize-player-team"
 									className="form-select"
 									onChange={handleChange.bind(null, "root", "tid")}
 									value={p.tid}
@@ -705,7 +738,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">
+								<label className="form-label" htmlFor="customize-player-height">
 									Height (in){" "}
 									<HelpPopover title="Height (inches)">
 										Height (inches) is just for show. The height rating is what
@@ -715,12 +748,13 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<input
 									type="text"
 									className="form-control"
+									id="customize-player-height"
 									onChange={handleChange.bind(null, "root", "hgt")}
 									value={p.hgt}
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">
+								<label className="form-label" htmlFor="customize-player-weight">
 									Weight (lbs){" "}
 									<HelpPopover title="Weight (lbs)">
 										Weight (lbs) is just for show. The height and strength
@@ -730,12 +764,16 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<input
 									type="text"
 									className="form-control"
+									id="customize-player-weight"
 									onChange={handleChange.bind(null, "root", "weight")}
 									value={p.weight}
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">
+								<label
+									className="form-label"
+									htmlFor="customize-player-position"
+								>
 									Position{" "}
 									<HelpPopover title="Position">
 										<p>
@@ -752,6 +790,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</label>
 								<select
 									className="form-select"
+									id="customize-player-position"
 									onChange={handleChange.bind(null, "root", "pos")}
 									value={p.pos ?? "auto"}
 									disabled={!godMode && p.tid !== PLAYER.RETIRED}
@@ -771,9 +810,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-6 col-sm-3 mb-3">
-								<label className="form-label">Jersey Number</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-jersey-number"
+								>
+									Jersey Number
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-jersey-number"
 										type="text"
 										className="form-control"
 										onChange={handleChange.bind(null, "root", "jerseyNumber")}
@@ -830,9 +875,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								) : null}
 							</div>
 							<div className="col-6 mb-3">
-								<label className="form-label">Country</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-country"
+								>
+									Country
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-country"
 										type="text"
 										className="form-control"
 										onChange={handleChange.bind(null, "born", "loc")}
@@ -873,9 +924,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</div>
 							</div>
 							<div className="col-6 mb-3">
-								<label className="form-label">College</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-college"
+								>
+									College
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-college"
 										type="text"
 										className="form-control"
 										onChange={handleChange.bind(null, "root", "college")}
@@ -911,18 +968,44 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</div>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Draft Class</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-draft-class"
+								>
+									Draft Class
+								</label>
 								<input
+									id="customize-player-draft-class"
 									type="text"
-									className="form-control"
+									className={clsx(
+										"form-control",
+										invalidDraftYear !== undefined ? "is-invalid" : undefined,
+									)}
 									onChange={handleChange.bind(null, "draft", "year")}
 									value={p.draft.year}
 									disabled={!godMode}
 								/>
+								{invalidDraftYear === "activeBeforeDraftClass" ? (
+									<div className="invalid-feedback">
+										Some things may break if you have a draft class in the
+										future for a player who is not a draft prospect.
+									</div>
+								) : invalidDraftYear === "statsBeforeDraftClass" ? (
+									<div className="invalid-feedback">
+										Some things may break if you have a player with stats before
+										or during his draft class year.
+									</div>
+								) : null}
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Draft Round</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-draft-round"
+								>
+									Draft Round
+								</label>
 								<input
+									id="customize-player-draft-round"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "draft", "round")}
@@ -931,8 +1014,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Draft Pick</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-draft-pick"
+								>
+									Draft Pick
+								</label>
 								<input
+									id="customize-player-draft-pick"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "draft", "pick")}
@@ -941,8 +1030,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Draft Team</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-draft-team"
+								>
+									Draft Team
+								</label>
 								<select
+									id="customize-player-draft-team"
 									className="form-select"
 									onChange={handleChange.bind(null, "draft", "tid")}
 									value={p.draft.tid}
@@ -959,8 +1054,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Year of Death</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-year-of-death"
+								>
+									Year of Death
+								</label>
 								<input
+									id="customize-player-year-of-death"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "diedYear")}
@@ -969,8 +1070,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-3 mb-3">
-								<label className="form-label">Hall of Fame</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-hall-of-fame"
+								>
+									Hall of Fame
+								</label>
 								<select
+									id="customize-player-hall-of-fame"
 									className="form-select"
 									onChange={handleChange.bind(null, "root", "hof")}
 									value={p.hof ? "yes" : "no"}
@@ -981,11 +1088,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-sm-6 mb-3">
-								<label className="form-label">Injury and Games Out</label>
+								<label className="form-label" htmlFor="customize-player-injury">
+									Injury and Games Out
+								</label>
 								<div className="input-group">
 									<input
+										id="customize-player-injury"
 										type="text"
 										className="form-control"
+										aria-label="Injury"
 										onChange={handleChange.bind(null, "injury", "type")}
 										value={p.injury.type}
 										disabled={!godMode}
@@ -993,6 +1104,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<input
 										type="text"
 										className="form-control"
+										aria-label="Games out"
 										onChange={handleChange.bind(
 											null,
 											"injury",
@@ -1009,7 +1121,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										<button
 											className="btn btn-secondary"
 											type="button"
-											onClick={async (event) => {
+											onClick={(event) => {
 												event.preventDefault();
 
 												setState((prevState) => {
@@ -1069,9 +1181,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						</div>
 						<div className="row">
 							<div className="col-6 mb-3">
-								<label className="form-label">Contract Amount</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-contract-amount"
+								>
+									Contract Amount
+								</label>
 								<CurrencyInputGroup displayUnit="M">
 									<input
+										id="customize-player-contract-amount"
 										type="text"
 										className="form-control"
 										onChange={handleChange.bind(null, "contract", "amount")}
@@ -1081,8 +1199,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</CurrencyInputGroup>
 							</div>
 							<div className="col-6 mb-3">
-								<label className="form-label">Contract Expiration</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-contract-exp"
+								>
+									Contract Expiration
+								</label>
 								<input
+									id="customize-player-contract-exp"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "contract", "exp")}
@@ -1091,8 +1215,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							{playerMoodTraits ? (
-								<div className="col-3 mb-3">
-									<label className="form-label">Mood Traits</label>
+								<div
+									className="col-3 mb-3"
+									role="group"
+									aria-labelledby="customize-player-mood-traits"
+								>
+									<div className="form-label" id="customize-player-mood-traits">
+										Mood Traits
+									</div>
 									{helpers.keys(MOOD_TRAITS).map((trait) => (
 										<div className="form-check" key={trait}>
 											<label className="form-check-label">
@@ -1113,8 +1243,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									))}
 								</div>
 							) : null}
-							<div className="col-sm-9 mb-3">
-								<label className="form-label">
+							<div
+								className="col-sm-9 mb-3"
+								role="group"
+								aria-labelledby="customize-player-custom-mood-items"
+							>
+								<div
+									className="form-label"
+									id="customize-player-custom-mood-items"
+								>
 									Custom Mood Items{" "}
 									<HelpPopover title="Custom Mood Items">
 										Add custom entries to a player's mood calculation. By
@@ -1123,7 +1260,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										any numeric value to alter a player's mood towards a
 										specific team or towards all teams.
 									</HelpPopover>
-								</label>
+								</div>
 								<CustomMoodItemsForm
 									godMode={godMode}
 									handleChange={handleChange}
@@ -1135,11 +1272,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Appearance</h2>
 
 						<div>
-							<label className="form-label">
+							<label
+								className="form-label"
+								htmlFor="customize-player-appearance"
+							>
 								You can either create a cartoon face or specify the URL to an
 								image.
 							</label>
 							<select
+								id="customize-player-appearance"
 								className="form-select"
 								onChange={handleChangeAppearanceOption}
 								style={{ maxWidth: "150px" }}
@@ -1169,8 +1310,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							/>
 						) : (
 							<div className="my-3">
-								<label className="form-label">Image URL</label>
+								<label
+									className="form-label"
+									htmlFor="customize-player-img-url"
+								>
+									Image URL
+								</label>
 								<input
+									id="customize-player-img-url"
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "imgURL")}
@@ -1251,6 +1398,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="btn btn-secondary btn-sm"
 									onClick={adjustRatings(-1)}
 									disabled={!godMode}
+									aria-label="Decrease all ratings"
 								>
 									<span className="glyphicon glyphicon-minus" />
 								</button>
@@ -1259,6 +1407,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="btn btn-secondary btn-sm"
 									onClick={adjustRatings(1)}
 									disabled={!godMode}
+									aria-label="Increase all ratings"
 								>
 									<span className="glyphicon glyphicon-plus" />
 								</button>

@@ -8,12 +8,12 @@ import {
 	PHASE,
 } from "../../../common/constants.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { last } from "../../../common/utils.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
+import { last, assertDefined } from "../../../common/utils.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
-const SKIP_PLAYER_STATS = new Set(["minAvailable"]);
+export const SKIP_PLAYER_STATS = new Set(["minAvailable"]);
 
 // Is this a game 6/7 (generalized to other playoff series lengths than 7)
 export const isGame6EliminationGameOrGame7 = async (
@@ -78,7 +78,7 @@ export const getNumConsecutiveGamesGFactor = (
 };
 
 let playerStats: Record<string, number | number[]>;
-let teamStats: Record<string, number>;
+let teamStats: Record<string, number | number[]>;
 
 export const getActualPlayThroughInjuries = (
 	t: { tid: number; playThroughInjuries: [number, number] } | "default",
@@ -94,11 +94,46 @@ export const getActualPlayThroughInjuries = (
 	return DEFAULT_PLAY_THROUGH_INJURIES;
 };
 
+const SEASON_STATS_KEYS = bySport({
+	baseball: [
+		"pa",
+		"bb",
+		"hbp",
+		"sf",
+		"h",
+		"2b",
+		"3b",
+		"hr",
+		"er",
+		"outs",
+		"w",
+		"l",
+		"sv",
+		"bs",
+		"hld",
+		"sb",
+	],
+	basketball: undefined,
+	football: [
+		"pssTD",
+		"rusTD",
+		"recTD",
+		"defSk",
+		"fmb",
+		"defInt",
+		"pssInt",
+		"krTD",
+		"prTD",
+		"defFmbFrc",
+	],
+	hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
+} as const);
+
 export const processTeam = async (
 	teamInput: {
 		tid: number;
 		playThroughInjuries: [number, number];
-		depth?: any;
+		depth?: unknown;
 	},
 	teamSeason: {
 		won: number;
@@ -109,28 +144,39 @@ export const processTeam = async (
 		did: number;
 	},
 	players: Player[],
-	exhibitionGame?: boolean,
 ) => {
 	if (!playerStats) {
-		playerStats = {};
-		for (const key of player.stats.raw) {
-			if (!SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp")) {
-				playerStats[key] = 0;
-			}
-		}
+		playerStats = Object.fromEntries([
+			...player.stats.raw
+				.filter((key) => !SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp"))
+				.map((key) => [key, 0]),
+
+			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter
+			["courtTime", -3],
+			["benchTime", 0],
+			["energy", 1],
+
+			// Placeholders, replaced with a new array for each player below. Including them here avoids adding new properties to the object, which is slow
+			...(player.stats.byPos ?? []).map((key) => [key, []]),
+		]);
 	}
 
 	if (!teamStats) {
-		teamStats = {};
-		for (const key of team.stats.raw) {
-			if (!key.startsWith("opp")) {
-				teamStats[key] = 0;
-			}
-		}
-		if (isSport("basketball")) {
+		// Same idea as playerStats above
+		teamStats = Object.fromEntries([
+			...team.stats.raw
+				.filter((key) => !key.startsWith("opp"))
+				.map((key) => [key, 0]),
+
 			// ba is still recorded as a player stat for some reason, but not a team stat, so we need to add it here so it gets tracked for the box score correctly
-			teamStats.ba = 0;
-		}
+			...(__SPORT === "basketball" ? [["ba", 0]] : []),
+
+			["pts", 0],
+			["ptsQtrs", []],
+			...(team.stats.byPos ?? [])
+				.filter((key) => !key.startsWith("opp"))
+				.map((key) => [key, []]),
+		]);
 	}
 
 	const allStarGame = teamInput.tid === -1 || teamInput.tid === -2;
@@ -142,7 +188,7 @@ export const processTeam = async (
 	// Initialize team composite rating object
 	const compositeRating: any = {};
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
 			compositeRating[rating] = 0;
 		}
@@ -198,13 +244,28 @@ export const processTeam = async (
 	const playThroughInjuries = actualPlayThroughInjuries[playoffs ? 1 : 0];
 
 	let game6EliminationGameOrGame7: boolean | undefined;
+	const compositeWeights = Object.entries(COMPOSITE_WEIGHTS);
+
+	let seasonStatsByPid;
+	if (SEASON_STATS_KEYS !== undefined) {
+		// Only look at regular season stats for All-Star Game, in case All-Star Game is in playoffs
+		const regularSeason = allStarGame || g.get("phase") < PHASE.PLAYOFFS;
+		const rows = await player.formatAll(players, {
+			attrs: ["pid"],
+			stats: SEASON_STATS_KEYS,
+			season: g.get("season"),
+			seasonType: regularSeason ? "regularSeason" : "playoffs",
+			mergeStats: "totOnly",
+		});
+		seasonStatsByPid = new Map(rows.map((p) => [p.pid, p.stats]));
+	}
 
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
 
 		// p.jerseyNumber fallback is for exhibition game players for the current season with no stats
 		const jerseyNumber =
-			p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : p.jerseyNumber;
+			p.stats.length > 0 ? p.stats.at(-1)!.jerseyNumber : p.jerseyNumber;
 
 		const rating = last(p.ratings);
 		const playerCompositeRatings: any = {};
@@ -237,7 +298,7 @@ export const processTeam = async (
 		const seasonStats: Record<string, number> = {};
 
 		// These use the same formulas as the skill definitions in player.skills!
-		for (const [k, weightInfo] of Object.entries(COMPOSITE_WEIGHTS)) {
+		for (const [k, weightInfo] of compositeWeights) {
 			p2.compositeRating[k] =
 				player.compositeRating(
 					rating,
@@ -246,7 +307,7 @@ export const processTeam = async (
 					false,
 				) * injuryFactor;
 
-			if (isSport("hockey") && k === "goalkeeping") {
+			if (__SPORT === "hockey" && k === "goalkeeping") {
 				const numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
 
 				if (p.numConsecutiveGamesG !== undefined) {
@@ -270,70 +331,22 @@ export const processTeam = async (
 			}
 		}
 
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
-		const seasonStatsKeys = bySport({
-			baseball: [
-				"pa",
-				"bb",
-				"hbp",
-				"sf",
-				"h",
-				"2b",
-				"3b",
-				"hr",
-				"er",
-				"outs",
-				"w",
-				"l",
-				"sv",
-				"bs",
-				"hld",
-				"sb",
-			],
-			basketball: undefined,
-			football: [
-				"pssTD",
-				"rusTD",
-				"recTD",
-				"defSk",
-				"fmb",
-				"defInt",
-				"pssInt",
-				"krTD",
-				"prTD",
-				"defFmbFrc",
-			],
-			hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
-		});
-		if (seasonStatsKeys !== undefined) {
-			// Only look at regular season stats for All-Star Game, in case All-Star Game is in playoffs
-			const regularSeason = allStarGame || g.get("phase") < PHASE.PLAYOFFS;
-			const pSeasonStats = await idb.getCopy.playersPlus(p, {
-				stats: seasonStatsKeys,
-				season: g.get("season"),
-				regularSeason,
-				playoffs: !regularSeason,
-				mergeStats: "totOnly",
-			});
-			for (const key of seasonStatsKeys) {
-				seasonStats[key] = pSeasonStats?.stats[key] ?? 0;
+		if (SEASON_STATS_KEYS !== undefined) {
+			const pSeasonStats = seasonStatsByPid!.get(p.pid);
+			for (const key of SEASON_STATS_KEYS) {
+				seasonStats[key] = pSeasonStats?.[key] ?? 0;
 			}
 			(p2 as any).seasonStats = seasonStats;
 		}
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			(p2 as any).pFatigue = p.pFatigue ?? 0;
 		}
 
-		p2.stat = {
-			...playerStats,
-
-			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter
-			courtTime: -3,
-			benchTime: 0,
-			energy: 1,
-		};
+		// playerStats is created with Object.fromEntries and contains all properties, so that this spread is fast and produces an object with fast properties. Otherwise, with a lot of stats (like in ZGMB), it's slow to create and the object is slow to use in GameSim
+		p2.stat = { ...playerStats };
 
 		if (player.stats.byPos) {
 			for (const key of player.stats.byPos) {
@@ -344,11 +357,7 @@ export const processTeam = async (
 		t.player.push(p2);
 	}
 
-	for (const p of t.player) {
-		delete p.pid;
-	}
-
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		t.pace = 0;
 
 		let numPlayers = 0;
@@ -373,7 +382,8 @@ export const processTeam = async (
 		}
 	}
 
-	t.stat = { ...teamStats, pts: 0, ptsQtrs: isSport("baseball") ? [] : [0] };
+	t.stat = { ...teamStats };
+	t.stat.ptsQtrs = __SPORT === "baseball" ? [] : [0];
 
 	if (team.stats.byPos) {
 		for (const key of team.stats.byPos) {
@@ -403,9 +413,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 	if (tids.length === 2 && tids.includes(-1) && tids.includes(-2)) {
 		// All-Star Game
 		const allStars = await allStar.getOrCreate(g.get("season"));
-		if (!allStars) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(allStars);
 		if (!allStars.finalized) {
 			await allStar.draftAll();
 		}
@@ -428,20 +436,15 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 
 		for (const tid of tids) {
 			const allStarsTeamInd = tid === -1 ? 0 : 1;
-			const players = (
-				await Promise.all(
-					allStars.teams[allStarsTeamInd].map(async ({ pid }) => {
-						const p = await idb.cache.players.get(pid);
+			const players = [];
+			for (const { pid } of allStars.teams[allStarsTeamInd]) {
+				const p = await idb.cache.players.get(pid);
 
-						if (!p) {
-							// Can happen if player was deleted before starting sim
-							return;
-						}
-
-						return p;
-					}),
-				)
-			).filter((p) => p !== undefined) as Player[];
+				// Can happen if player was deleted before starting sim
+				if (p) {
+					players.push(p);
+				}
+			}
 
 			const depth = await team.genDepth(players);
 
@@ -463,27 +466,24 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 			);
 		}
 	} else {
-		await Promise.all(
-			tids.map(async (tid) => {
-				const [players, team, teamSeason] = await Promise.all([
-					idb.cache.players.indexGetAll("playersByTid", tid),
-					idb.cache.teams.get(tid),
-					idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
-						tid,
-						g.get("season"),
-					]),
-				]);
+		for (const tid of tids) {
+			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+			const t = await idb.cache.teams.get(tid);
 
-				if (!team) {
-					throw new Error("Invalid tid");
-				}
-				if (!teamSeason) {
-					throw new Error("Team season not found");
-				}
+			if (!t) {
+				throw new Error("Invalid tid");
+			}
 
-				teams[tid] = await processTeam(team, teamSeason, players);
-			}),
-		);
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[tid, g.get("season")],
+			);
+			if (!teamSeason) {
+				throw new Error("Team season not found");
+			}
+
+			teams[tid] = await processTeam(t, teamSeason, players);
+		}
 	}
 
 	return teams;

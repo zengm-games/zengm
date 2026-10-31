@@ -52,9 +52,9 @@ const Upgrade65 = () => {
 				In May 2025, an update to {GAME_NAME} added a new "Save Old Box Scores"
 				feature which gives you some control over which box scores get
 				automatically deleted after some time, and which don't. Two of the new
-				options require some ugprades to the database to work correctly for
+				options require some upgrades to the database to work correctly for
 				existing box scores, which can be slow in leagues with many seasons.
-				Thise features are:
+				These features are:
 			</p>
 			<ul>
 				<li>Saving box scores from finals games</li>

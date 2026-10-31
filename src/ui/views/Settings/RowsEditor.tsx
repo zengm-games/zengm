@@ -1,17 +1,17 @@
 import { csvFormat, csvParse } from "d3-dsv";
-import { type ChangeEvent, type CSSProperties, useRef, useState } from "react";
+import { type ChangeEvent, useId, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import type { InjuriesSetting, TragicDeaths } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import clsx from "clsx";
 import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { Modal } from "../../components/Modal.tsx";
 import { downloadFile } from "../../util/downloadFile.ts";
-import { resetFileInput } from "../../util/resetFileInput.ts";
 import { confirm } from "../../util/confirm.tsx";
+import { ImportFileButton } from "../../components/ImportFileButton.tsx";
 
 type Rows<Type> = Type extends "injuries" ? InjuriesSetting : TragicDeaths;
 type RowsState<Type> = Type extends "injuries"
@@ -46,25 +46,11 @@ const formatRows = <Type extends "injuries" | "tragicDeaths">(
 	});
 };
 
-export const IMPORT_FILE_STYLE: CSSProperties = {
-	position: "absolute",
-	top: 0,
-	right: 0,
-	minWidth: "100%",
-	minHeight: "100%",
-	fontSize: 100,
-	display: "block",
-	filter: "alpha(opacity=0)",
-	opacity: 0,
-	outline: "none",
-};
-
 const getColumns = (type: "injuries" | "tragicDeaths") =>
 	type === "injuries"
 		? ["name", "frequency", "games"]
 		: ["reason", "frequency"];
 
-// https://stackoverflow.com/a/35200633/786644
 const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 	setErrorMessage,
 	setRows,
@@ -74,63 +60,43 @@ const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 	setRows: (injuries: RowsState<Type>) => void;
 	type: Type;
 }) => (
-	<button
-		className="btn btn-light-bordered"
-		style={{ position: "relative", overflow: "hidden" }}
-		onClick={() => {}}
-	>
-		Import
-		<input
-			className="cursor-pointer"
-			type="file"
-			accept=".csv,text/csv"
-			style={IMPORT_FILE_STYLE}
-			onClick={resetFileInput}
-			onChange={(event) => {
-				if (!event.target.files) {
-					return;
-				}
-				const file = event.target.files[0];
-				if (!file) {
-					return;
-				}
+	<ImportFileButton
+		accept=".csv,text/csv"
+		variant="light-bordered"
+		withFile={(file) => {
+			setErrorMessage();
 
-				setErrorMessage();
+			const reader = new window.FileReader();
+			reader.readAsText(file);
 
-				const reader = new window.FileReader();
-				reader.readAsText(file);
+			reader.onload = (event2) => {
+				try {
+					// @ts-expect-error
+					const rows = csvParse(event2.currentTarget.result);
 
-				reader.onload = (event2) => {
-					try {
-						// @ts-expect-error
-						const rows = csvParse(event2.currentTarget.result);
+					const columns = getColumns(type);
 
-						const columns = getColumns(type);
-
-						for (const column of columns) {
-							if (!rows.columns.includes(column)) {
-								setErrorMessage(
-									`File should be a CSV file with columns: ${columns.join(
-										", ",
-									)}`,
-								);
-								return;
-							}
+					for (const column of columns) {
+						if (!rows.columns.includes(column)) {
+							setErrorMessage(
+								`File should be a CSV file with columns: ${columns.join(", ")}`,
+							);
+							return;
 						}
-
-						setRows(formatRows(rows as any));
-					} catch (error) {
-						setErrorMessage(error.message);
-						return;
 					}
-				};
 
-				reader.onerror = () => {
-					setErrorMessage("Failed to read file");
-				};
-			}}
-		/>
-	</button>
+					setRows(formatRows(rows as any));
+				} catch (error) {
+					setErrorMessage(error.message);
+					return;
+				}
+			};
+
+			reader.onerror = () => {
+				setErrorMessage("Failed to read file");
+			};
+		}}
+	/>
 );
 
 const ExportButton = <Type extends "injuries" | "tragicDeaths">({
@@ -165,6 +131,8 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 	) => void;
 	type: Type;
 }) => {
+	const id = useId();
+
 	const [importErrorMessage, setImportErrorMessage] = useState<
 		string | undefined
 	>();
@@ -203,7 +171,7 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 						<Dropdown.Toggle
 							className="btn-light-bordered btn-light-bordered-group-right"
 							variant="foo"
-							id="dropdown-injuries-reset"
+							id={`${id}-reset`}
 						>
 							Reset
 						</Dropdown.Toggle>
@@ -282,7 +250,7 @@ const parseAndValidate = <Type extends "injuries" | "tragicDeaths">(
 			reason: row.reason,
 			frequency: helpers.localeParseFloat(row.frequency),
 		};
-	}) as any as Rows<Type>;
+	}) as Rows<Type>;
 
 	for (const row of rows) {
 		const name = type === "injuries" ? (row as any).name : (row as any).reason;
@@ -372,10 +340,9 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 		try {
 			parsed = parseAndValidate(type, rows);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;
@@ -572,6 +539,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 											}}
 											style={{ fontSize: 20 }}
 											title="Delete"
+											aria-label="Delete"
 											type="button"
 										>
 											<span className="glyphicon glyphicon-remove" />

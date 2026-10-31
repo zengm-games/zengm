@@ -3,9 +3,8 @@ import { SafeHtml } from "../components/SafeHtml.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
-import { type MouseEvent, useState } from "react";
-import type { SortBy } from "./DataTable/index.tsx";
-import updateSortBys from "./DataTable/updateSortBys.ts";
+import { useBoxScoreSortBys } from "./useBoxScoreSortBys.ts";
+import { teamsInDisplayOrder } from "../util/boxScoreDisplayOrder.ts";
 
 const StatsTable = ({
 	Row,
@@ -24,32 +23,6 @@ const StatsTable = ({
 	season: number;
 	t: any;
 }) => {
-	const [sortBys, setSortBys] = useState<SortBy[]>([]);
-
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys((prevSortBys) => {
-			const newSortBys =
-				updateSortBys({
-					cols,
-					event,
-					i,
-					prevSortBys,
-				}) ?? [];
-
-			if (
-				newSortBys.length === 1 &&
-				prevSortBys.length === 1 &&
-				newSortBys[0]![0] === prevSortBys[0]![0] &&
-				newSortBys[0]![1] === "desc"
-			) {
-				// User just clicked twice on the same column. Reset sort.
-				return [];
-			}
-
-			return newSortBys;
-		});
-	};
-
 	const stats = [
 		"min",
 		"fg",
@@ -81,6 +54,8 @@ const StatsTable = ({
 			},
 		},
 	);
+
+	const { onClick, sortBys } = useBoxScoreSortBys({ cols });
 
 	// This is used for two purposes - keeping injured/DNP at the bottom while sorting, and also sorting in general for live sim (was too hard to account for this stuff in default sort from backend)
 	const playersActiveOrPlayed = [];
@@ -218,7 +193,7 @@ const BoxScore = ({
 	forceRowUpdate,
 }: {
 	boxScore: any;
-	Row: any;
+	Row: unknown;
 	forceRowUpdate: boolean;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
@@ -229,14 +204,14 @@ const BoxScore = ({
 
 	return (
 		<>
-			{boxScore.teams.map((t: any, i: number) => {
+			{teamsInDisplayOrder(boxScore.teams as [any, any]).map((t, i) => {
 				return (
 					<div
 						key={t.abbrev}
 						className="mb-3"
 						id={i === 0 ? "scroll-team-1" : "scroll-team-2"}
 						style={{
-							scrollMarginTop: 136,
+							scrollMarginTop: 76,
 						}}
 					>
 						<h2>

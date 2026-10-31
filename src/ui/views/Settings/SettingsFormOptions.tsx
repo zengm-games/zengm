@@ -2,7 +2,6 @@
 import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import gameSimPresets from "./gameSimPresets.ts";
 import {
@@ -82,7 +81,6 @@ const Input = ({
 					checked={checked}
 					onChange={onChange}
 				/>
-				<label className="form-check-label" htmlFor={id} />
 			</div>
 		);
 	} else if (type === "rangePercent") {
@@ -246,6 +244,7 @@ const Option = ({
 				style={{ minHeight: 33 }}
 			>
 				<div className="me-auto text-nowrap">
+					{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events -- The click handler only cancels the label's default behavior, the control itself is still keyboard accessible */}
 					<label
 						className="form-label mb-0"
 						htmlFor={id}
@@ -273,8 +272,11 @@ const Option = ({
 						)}
 					</label>
 					{descriptionLong ? (
-						<span
-							className="ms-1 glyphicon glyphicon-question-sign help-icon"
+						<button
+							type="button"
+							className="ms-1 icon-button glyphicon glyphicon-question-sign help-icon"
+							aria-label="Show more information"
+							aria-expanded={showDescriptionLong}
 							onClick={() => {
 								setShowDescriptionLong((show) => !show);
 							}}
@@ -365,8 +367,7 @@ const SettingsFormOptions = ({
 			{visibleCategories.map((category) => {
 				return (
 					<Fragment key={category.name}>
-						<a className="anchor" id={category.name} />
-						<h2 className="mb-3">
+						<h2 className="mb-3" id={category.name}>
 							{category.name}
 							{category.appendNumTeams ? (
 								<span
@@ -388,7 +389,7 @@ const SettingsFormOptions = ({
 							) : null}
 						</h2>
 						{category.name === "Tendencies" &&
-						isSport("basketball") &&
+						__SPORT === "basketball" &&
 						gameSimPresets &&
 						(godMode || showGodModeSettings) ? (
 							<select

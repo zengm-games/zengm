@@ -1,8 +1,6 @@
 import addDaysToSchedule from "./addDaysToSchedule.ts";
-import doAwards from "./doAwards.ts";
 import genPlayoffSeeds from "./genPlayoffSeeds.ts";
 import genPlayoffSeries from "./genPlayoffSeries.ts";
-import getAwardCandidates from "./getAwardCandidates.ts";
 import getDaysLeftSchedule from "./getDaysLeftSchedule.ts";
 import getInitialNumGamesConfDivSettings from "./getInitialNumGamesConfDivSettings.ts";
 import getLeaderRequirements from "./getLeaderRequirements.ts";
@@ -20,10 +18,8 @@ import validatePlayoffSettings from "./validatePlayoffSettings.ts";
 
 export default {
 	addDaysToSchedule,
-	doAwards,
 	genPlayoffSeeds,
 	genPlayoffSeries,
-	getAwardCandidates,
 	getDaysLeftSchedule,
 	getInitialNumGamesConfDivSettings,
 	getLeaderRequirements,

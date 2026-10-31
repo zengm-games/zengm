@@ -2,7 +2,6 @@ import clsx, { type ClassValue } from "clsx";
 import { csvFormatRows } from "d3-dsv";
 import {
 	type SyntheticEvent,
-	type MouseEvent,
 	type ReactNode,
 	useRef,
 	type CSSProperties,
@@ -23,7 +22,7 @@ import { ResponsiveTableWrapper } from "../ResponsiveTableWrapper.tsx";
 import { helpers } from "../../util/helpers.ts";
 import type { SortOrder, SortType } from "../../../common/types.ts";
 import { arrayMove } from "@dnd-kit/sortable";
-import updateSortBys from "./updateSortBys.ts";
+import updateSortBys, { type SortEvent } from "./updateSortBys.ts";
 import useStickyXX from "./useStickyXX.ts";
 import { useDataTableState } from "./useDataTableState.ts";
 import { processRows } from "./processRows.ts";
@@ -48,7 +47,7 @@ export type Col = {
 	classNames?: any; // Just header
 	desc?: string;
 	noSearch?: boolean;
-	sortSequence?: SortOrder[];
+	sortSequence?: ReadonlyArray<SortOrder>;
 	sortType?: SortType;
 	searchType?: SortType;
 	title: string;
@@ -64,25 +63,38 @@ export type SuperCol = {
 
 type Season = number | "career";
 
-export type DataTableRowMetadata =
-	| {
-			type: "player";
-			pid: number;
-			season:
-				| Season
-				| {
-						// Use this to specify different seasons for different actions
-						compare?: Season;
-						export?: Season;
-						default: Season;
-				  };
-			playoffs: "playoffs" | "regularSeason" | "combined";
-	  }
-	| {
-			type: "row";
-	  };
+type MetadataByType = {
+	league: {
+		type: "league";
+		lid: number;
+	};
+	player: {
+		type: "player";
+		pid: number;
+		season:
+			| Season
+			| {
+					// Use this to specify different seasons for different actions
+					compare?: Season;
+					export?: Season;
+					default: Season;
+			  };
+		playoffs: "playoffs" | "regularSeason" | "combined";
+	};
+	row: {
+		type: "row";
+	};
+};
 
-export type DataTableRow = {
+// undefined means no metadata
+export type MetadataType = keyof MetadataByType | undefined;
+
+export type DataTableRowMetadata<
+	Type extends MetadataType = NonNullable<MetadataType>,
+> = Type extends keyof MetadataByType ? MetadataByType[Type] : undefined;
+
+// Type is the type of metadata in this row, or undefined (the default) for no metadata. All rows in a table must have the same type, although some rows having no metadata is fine (such as drafted players during draft).
+export type DataTableRow<Type extends MetadataType = undefined> = {
 	key: number | string;
 	data: (
 		| ReactNode
@@ -90,8 +102,10 @@ export type DataTableRow = {
 				classNames?: ClassValue;
 				value: ReactNode;
 				exportValue?: string | number;
-				searchValue?: string | number;
-				sortValue?: string | number;
+
+				// null means no value - sorted below everything else for number sortType (see getSortVal), and "" for searching
+				searchValue?: string | number | null;
+				sortValue?: string | number | null;
 				header?: boolean;
 				title?: string;
 				colSpanToEnd?: boolean; // Maybe dangerous unless disableSort
@@ -104,7 +118,7 @@ export type DataTableRow = {
 				isFiltered: boolean;
 				sortBys: SortBy[] | undefined;
 		  }) => ClassValue);
-	metadata?: DataTableRowMetadata;
+	metadata?: DataTableRowMetadata<Type>;
 	rowLabel?: ReactNode;
 };
 
@@ -116,7 +130,8 @@ export type DataTableHandle = {
 	getFilters: () => string[];
 };
 
-export type Props = {
+// Type is inferred only from rows, and then NoInfer means everything else has to match that
+export type Props<Type extends MetadataType = undefined> = {
 	className?: string;
 	classNameWrapper?: string;
 	clickable?: boolean;
@@ -124,7 +139,7 @@ export type Props = {
 	defaultSort: SortBy | "disableSort";
 	disableSettingsCache?: boolean;
 	defaultStickyCols?: StickyCols;
-	extraBulkActions?: BulkAction[];
+	extraBulkActions?: BulkAction<NoInfer<Type>>[];
 	footer?: FooterRow | FooterRow[];
 	hideAllControls?: boolean; // When ReactNode, display as a title above the table
 	hideHeader?: boolean;
@@ -134,7 +149,7 @@ export type Props = {
 	pagination?: boolean;
 	rankCol?: number;
 	ref?: RefCallback<DataTableHandle>;
-	rows: DataTableRow[];
+	rows: DataTableRow<Type>[];
 	showRowLabels?: boolean;
 	small?: boolean;
 	sortableRows?: {
@@ -150,12 +165,12 @@ export type Props = {
 	title?: ReactNode;
 
 	// Pass this to control selectedRows from outside of this component (like if you want to have a button external to the table that does something with selected players). Otherwise, leave this undefined.
-	controlledSelectedRows?: SelectedRows;
+	controlledSelectedRows?: SelectedRows<NoInfer<Type>>;
 	alwaysShowBulkSelectRows?: boolean; // Often used along with controlledSelectedRows,
 	disableBulkSelectKeys?: Set<DataTableRow["key"]>;
 };
 
-export const DataTable = ({
+export const DataTable = <Type extends MetadataType = undefined>({
 	alwaysShowBulkSelectRows,
 	className,
 	classNameWrapper,
@@ -185,7 +200,7 @@ export const DataTable = ({
 	style,
 	superCols,
 	title,
-}: Props) => {
+}: Props<Type>) => {
 	if (sortableRows) {
 		if (!hideAllControls) {
 			throw new Error(
@@ -226,7 +241,7 @@ export const DataTable = ({
 		rows,
 	});
 
-	const handleColClick = (event: MouseEvent, i: number) => {
+	const handleColClick = (event: SortEvent, i: number) => {
 		if (state.sortBys !== undefined) {
 			const sortBys = updateSortBys({
 				cols,
@@ -586,6 +601,7 @@ export const DataTable = ({
 									extraActions={extraBulkActions}
 									hasTitle={title !== undefined}
 									hideAllControls={hideAllControls}
+									metadataType={metadataType}
 									name={name}
 									selectedRows={selectedRows}
 									wrapperRef={wrapperRef}

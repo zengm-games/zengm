@@ -8,9 +8,10 @@ const madeHof = (p: PlayerWithoutKey): boolean => {
 	let score = 0;
 	let scoreFirstSeason;
 	for (const ps of p.stats) {
-		const g = ps.evG + ps.ppG + ps.shG;
-		const a = ps.evA + ps.ppA + ps.shA;
-		score += (g + a) / 25 + ps.ops + ps.dps + 0.775 * ps.gps;
+		const g = (ps.evG ?? 0) + (ps.ppG ?? 0) + (ps.shG ?? 0);
+		const a = (ps.evA ?? 0) + (ps.ppA ?? 0) + (ps.shA ?? 0);
+		score +=
+			(g + a) / 25 + (ps.ops ?? 0) + (ps.dps ?? 0) + 0.775 * (ps.gps ?? 0);
 		if (scoreFirstSeason === undefined) {
 			scoreFirstSeason = score;
 		}

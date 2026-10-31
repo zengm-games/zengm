@@ -1,7 +1,7 @@
 import { Dropdown } from "react-bootstrap";
 import { Flag } from "../WatchBlock.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { useLocal } from "../../util/local.ts";
 import {
@@ -16,7 +16,7 @@ import { watchListDialog } from "./watchListDialog.tsx";
 import { exportPlayers } from "../../views/ExportPlayers.tsx";
 import { createPortal } from "react-dom";
 import { Modal } from "../Modal.tsx";
-import type { DataTableRowMetadata, Props } from "./index.tsx";
+import type { DataTableRowMetadata, MetadataType, Props } from "./index.tsx";
 import clsx from "clsx";
 import { confirm } from "../../util/confirm.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
@@ -62,7 +62,7 @@ const ExportModal = ({ abortController, show }: ExportModalStatus) => {
 };
 
 const getSeason = (
-	season: Extract<DataTableRowMetadata, { type: "player" }>["season"],
+	season: DataTableRowMetadata<"player">["season"],
 	type: "compare" | "export",
 ) => {
 	if (typeof season === "string" || typeof season === "number") {
@@ -72,81 +72,21 @@ const getSeason = (
 	return season[type] ?? season.default;
 };
 
-export type BulkAction = {
+export type BulkAction<Type extends MetadataType = undefined> = {
 	godMode?: boolean;
-	onClick: (selectedRows: SelectedRows) => void;
+	onClick: (selectedRows: SelectedRows<Type>) => void;
 	text: ReactNode;
 	textLong?: ReactNode;
 };
 
-export const BulkActions = ({
-	extraActions,
-	hasTitle,
-	hideAllControls,
-	name,
-	selectedRows,
-	wrapperRef,
-}: {
-	extraActions: BulkAction[] | undefined;
-	hasTitle: boolean;
-	hideAllControls: Props["hideAllControls"];
-	name: string;
-	selectedRows: SelectedRows;
-	wrapperRef: RefObject<HTMLDivElement | null>;
-}) => {
-	const { godMode, numWatchColors } = useLocal(["godMode", "numWatchColors"]);
+// Built-in actions for tables where rows are players
+const usePlayerBulkActions = (selectedRows: SelectedRows<"player">) => {
+	const { numWatchColors } = useLocal(["numWatchColors"]);
 	const [exportModalStatus, setExportModalStatus] = useState<ExportModalStatus>(
 		{
 			show: false,
 		},
 	);
-
-	const numExtraActions = extraActions?.length ?? 0;
-
-	const getUpdatedShowInlineButtons = useCallback(() => {
-		// Never show inline if there's a title, because there's no room!
-		if (hasTitle || !wrapperRef.current) {
-			return false;
-		}
-
-		// Cutoff for when there is enough room to show inline buttons - changes when more buttons are shown or more space is available
-		let baseCutoff = 460;
-
-		// Assume 80 pixels per button
-		baseCutoff += numExtraActions * 80;
-
-		if (godMode) {
-			baseCutoff += 108;
-		}
-
-		if (hideAllControls) {
-			baseCutoff -= 220;
-		}
-
-		return wrapperRef.current.offsetWidth >= baseCutoff;
-	}, [godMode, hasTitle, hideAllControls, numExtraActions, wrapperRef]);
-
-	const [showInlineButtons, setShowInlineButtons] = useState(false);
-
-	useEffect(() => {
-		if (wrapperRef.current) {
-			getUpdatedShowInlineButtons();
-
-			const update = () => {
-				setShowInlineButtons(getUpdatedShowInlineButtons);
-			};
-
-			const resizeObserver = new ResizeObserver(update);
-			resizeObserver.observe(wrapperRef.current);
-
-			return () => {
-				resizeObserver.disconnect();
-			};
-		}
-	}, [getUpdatedShowInlineButtons, wrapperRef]);
-
-	const hasSomeSelected = selectedRows.map.size > 0;
-
 	const onComparePlayers = async () => {
 		const seasonTypes = {
 			combined: "c",
@@ -155,7 +95,6 @@ export const BulkActions = ({
 		};
 		const players = Array.from(selectedRows.map.values())
 			.slice(0, MAX_NUM_TO_COMPARE)
-			.filter((metadata) => metadata.type === "player")
 			.map((metadata) => {
 				return `${metadata.pid}-${getSeason(metadata.season, "compare")}-${seasonTypes[metadata.playoffs]}`;
 			});
@@ -170,29 +109,26 @@ export const BulkActions = ({
 		const seasonsByPids = new Map<number, number | "latest">();
 		let duplicatePids = false;
 		for (const metadata of selectedRows.map.values()) {
-			if (metadata.type === "player") {
-				const seasonRaw = getSeason(metadata.season, "export");
+			const seasonRaw = getSeason(metadata.season, "export");
 
-				// Exported player must be at a specific season, so use latest season if career is specified
-				const season = seasonRaw === "career" ? "latest" : seasonRaw;
+			// Exported player must be at a specific season, so use latest season if career is specified
+			const season = seasonRaw === "career" ? "latest" : seasonRaw;
 
-				const prev = seasonsByPids.get(metadata.pid);
-				if (prev !== undefined) {
-					duplicatePids = true;
-					if (prev === "latest" || (season !== "latest" && season < prev)) {
-						continue;
-					}
+			const prev = seasonsByPids.get(metadata.pid);
+			if (prev !== undefined) {
+				duplicatePids = true;
+				if (prev === "latest" || (season !== "latest" && season < prev)) {
+					continue;
 				}
-
-				seasonsByPids.set(metadata.pid, season);
 			}
+
+			seasonsByPids.set(metadata.pid, season);
 		}
 
 		if (duplicatePids) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: "Exporting the same player from multiple seasons is not supported, only the latest season will be exported.",
-				saveToDb: false,
 			});
 		}
 
@@ -215,10 +151,9 @@ export const BulkActions = ({
 		try {
 			await exportPlayers(seasonsByPids, abortController.signal);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 			});
 		}
 
@@ -228,11 +163,9 @@ export const BulkActions = ({
 	};
 
 	const onWatchPlayers = async () => {
-		const pids = Array.from(selectedRows.map.values())
-			.filter((metadata) => metadata.type === "player")
-			.map((metadata) => {
-				return metadata.pid;
-			});
+		const pids = Array.from(selectedRows.map.values()).map((metadata) => {
+			return metadata.pid;
+		});
 
 		if (numWatchColors <= 1) {
 			// Toggle watch colors
@@ -257,11 +190,9 @@ export const BulkActions = ({
 			},
 		);
 		if (proceed) {
-			const pids = Array.from(selectedRows.map.values())
-				.filter((metadata) => metadata.type === "player")
-				.map((metadata) => {
-					return metadata.pid;
-				});
+			const pids = Array.from(selectedRows.map.values()).map((metadata) => {
+				return metadata.pid;
+			});
 			await toWorker("main", "removePlayers", pids);
 
 			// Clear because the selected players no longer exist!
@@ -270,15 +201,13 @@ export const BulkActions = ({
 	};
 
 	const onHealPlayers = async () => {
-		const pids = Array.from(selectedRows.map.values())
-			.filter((metadata) => metadata.type === "player")
-			.map((metadata) => {
-				return metadata.pid;
-			});
+		const pids = Array.from(selectedRows.map.values()).map((metadata) => {
+			return metadata.pid;
+		});
 		await toWorker("main", "clearInjuries", pids);
 	};
 
-	const actions: BulkAction[] = [
+	const actions: BulkAction<MetadataType>[] = [
 		{
 			onClick: onComparePlayers,
 			text: "Compare",
@@ -309,7 +238,6 @@ export const BulkActions = ({
 				</>
 			),
 		},
-		...(extraActions ?? []),
 		{
 			godMode: true,
 			onClick: onDeletePlayers,
@@ -324,14 +252,87 @@ export const BulkActions = ({
 		},
 	];
 
+	return {
+		actions,
+		exportModal: <ExportModal {...exportModalStatus} />,
+	};
+};
+
+// Approximate widths, for determining if there is enough room to show inline buttons
+const CONTROLS_WIDTH = 220;
+const BUTTON_WIDTH = 80;
+
+type BulkActionsProps<Type extends MetadataType> = {
+	extraActions: BulkAction<Type>[] | undefined;
+	hasTitle: boolean;
+	hideAllControls: Props["hideAllControls"];
+	metadataType: MetadataType;
+	name: string;
+	selectedRows: SelectedRows<Type>;
+	wrapperRef: RefObject<HTMLDivElement | null>;
+};
+
+const BulkActionsUI = <Type extends MetadataType>({
+	builtInActions,
+	extraActions,
+	hasTitle,
+	hideAllControls,
+	metadataType,
+	name,
+	selectedRows,
+	wrapperRef,
+}: BulkActionsProps<Type> & {
+	builtInActions: BulkAction<MetadataType>[];
+}) => {
+	const { godMode } = useLocal(["godMode"]);
+
+	// God mode actions go at the end, after any extra actions
+	const actions: BulkAction<Type>[] = [
+		...builtInActions.filter((action) => !action.godMode),
+		...(extraActions ?? []),
+		...builtInActions.filter((action) => action.godMode),
+	].filter((action) => !action.godMode || godMode);
+
+	const numActions = actions.length;
+
+	const getUpdatedShowInlineButtons = useCallback(() => {
+		// Never show inline if there's a title, because there's no room!
+		if (hasTitle || !wrapperRef.current) {
+			return false;
+		}
+
+		// Cutoff for when there is enough room to show inline buttons - changes when more buttons are shown or more space is available
+		const cutoff =
+			numActions * BUTTON_WIDTH + (hideAllControls ? 0 : CONTROLS_WIDTH);
+
+		return wrapperRef.current.offsetWidth >= cutoff;
+	}, [hasTitle, hideAllControls, numActions, wrapperRef]);
+
+	const [showInlineButtons, setShowInlineButtons] = useState(false);
+
+	useEffect(() => {
+		if (wrapperRef.current) {
+			getUpdatedShowInlineButtons();
+
+			const update = () => {
+				setShowInlineButtons(getUpdatedShowInlineButtons);
+			};
+
+			const resizeObserver = new ResizeObserver(update);
+			resizeObserver.observe(wrapperRef.current);
+
+			return () => {
+				resizeObserver.disconnect();
+			};
+		}
+	}, [getUpdatedShowInlineButtons, wrapperRef]);
+
+	const hasSomeSelected = selectedRows.map.size > 0;
+
 	if (showInlineButtons) {
 		return (
 			<div className="d-flex align-items-start gap-2 mb-2">
 				{actions.map((action, i) => {
-					if (action.godMode && !godMode) {
-						return null;
-					}
-
 					return (
 						<button
 							key={i}
@@ -353,41 +354,69 @@ export const BulkActions = ({
 	}
 
 	return (
-		<>
-			<Dropdown className="mb-2">
-				<Dropdown.Toggle
-					id={`datatable-bulk-actions-${name}`}
-					size="sm"
-					variant="primary"
-				>
-					Bulk actions
-				</Dropdown.Toggle>
-				<Dropdown.Menu>
-					{actions.map((action, i) => {
-						if (action.godMode && !godMode) {
-							return null;
-						}
+		<Dropdown className="mb-2">
+			<Dropdown.Toggle
+				id={`datatable-bulk-actions-${name}`}
+				size="sm"
+				variant="primary"
+			>
+				Bulk actions
+			</Dropdown.Toggle>
+			<Dropdown.Menu>
+				{actions.map((action, i) => {
+					return (
+						<Dropdown.Item
+							key={i}
+							className={action.godMode ? "god-mode" : undefined}
+							onClick={() => {
+								action.onClick(selectedRows);
+							}}
+							disabled={!hasSomeSelected}
+						>
+							{action.textLong ?? action.text}
+						</Dropdown.Item>
+					);
+				})}
+				<Dropdown.Header>
+					{selectedRows.map.size}{" "}
+					{helpers.plural(metadataType ?? "row", selectedRows.map.size)}{" "}
+					selected
+				</Dropdown.Header>
+			</Dropdown.Menu>
+		</Dropdown>
+	);
+};
 
-						return (
-							<Dropdown.Item
-								key={i}
-								className={action.godMode ? "god-mode" : undefined}
-								onClick={() => {
-									action.onClick(selectedRows);
-								}}
-								disabled={!hasSomeSelected}
-							>
-								{action.textLong ?? action.text}
-							</Dropdown.Item>
-						);
-					})}
-					<Dropdown.Header>
-						{selectedRows.map.size}{" "}
-						{helpers.plural("player", selectedRows.map.size)} selected
-					</Dropdown.Header>
-				</Dropdown.Menu>
-			</Dropdown>
-			<ExportModal {...exportModalStatus} />
+const PlayerBulkActions = <Type extends MetadataType>({
+	playerSelectedRows,
+	...props
+}: BulkActionsProps<Type> & {
+	playerSelectedRows: SelectedRows<"player">;
+}) => {
+	const { actions, exportModal } = usePlayerBulkActions(playerSelectedRows);
+
+	return (
+		<>
+			<BulkActionsUI {...props} builtInActions={actions} />
+			{exportModal}
 		</>
 	);
+};
+
+const noBuiltInActions: BulkAction<MetadataType>[] = [];
+
+export const BulkActions = <Type extends MetadataType>(
+	props: BulkActionsProps<Type>,
+) => {
+	if (props.metadataType === "player") {
+		// TypeScript can't connect metadataType to Type, but if metadataType is "player" then all the selected rows are players
+		return (
+			<PlayerBulkActions
+				{...props}
+				playerSelectedRows={props.selectedRows as SelectedRows<"player">}
+			/>
+		);
+	}
+
+	return <BulkActionsUI {...props} builtInActions={noBuiltInActions} />;
 };

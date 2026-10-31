@@ -1,12 +1,11 @@
 import { Buffer } from "node:buffer";
-import path from "node:path";
 import fs from "node:fs/promises";
 import { promisify } from "node:util";
-import browserslist from "browserslist";
 import { browserslistToTargets, transform } from "lightningcss";
 import { PurgeCSS } from "purgecss";
 import { render } from "sass-embedded";
 import { fileHash } from "./fileHash.ts";
+import { getBrowserslist } from "../lib/browserslist.ts";
 import { type ReplaceInfo } from "./replace.ts";
 
 export const buildCss = async (
@@ -80,11 +79,7 @@ export const buildCss = async (
 				code: Buffer.from(purgeCSSResult),
 				minify: true,
 				sourceMap: false,
-				targets: browserslistToTargets(
-					browserslist(undefined, {
-						config: path.join(import.meta.dirname, "../../.browserslistrc"),
-					}),
-				),
+				targets: browserslistToTargets(getBrowserslist()),
 			});
 
 			output = code.toString();

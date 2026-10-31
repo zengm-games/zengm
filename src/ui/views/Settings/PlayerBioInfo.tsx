@@ -4,7 +4,7 @@ import type {
 	PlayerBioInfo,
 } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import type { initDefaults } from "../../../worker/util/loadNames.ts";
@@ -24,7 +24,7 @@ import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 export type Defaults = Awaited<ReturnType<typeof initDefaults>>;
 
-export const objectToArray = <T extends string>(
+const objectToArray = <T extends string>(
 	object: Record<string, number>,
 	key: T,
 	sortKey: string,
@@ -44,7 +44,7 @@ export const objectToArray = <T extends string>(
 		order,
 	);
 
-export const arrayToObject = <T extends string>(
+const arrayToObject = <T extends string>(
 	array: Record<T | "frequency", string>[],
 	key: T,
 ): Record<string, number> => {
@@ -547,10 +547,9 @@ const PlayerBioInfo2 = ({
 			parsed = parseAndValidate(infoState);
 			parsed = prune(parsed, defaults, false);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;
@@ -705,7 +704,7 @@ const PlayerBioInfo2 = ({
 						onSetDefault={(type, i) => {
 							const country = infoState.countries[i]!.country;
 
-							let array: any;
+							let array: unknown;
 
 							if (type === "colleges") {
 								array = [...infoState.defaultColleges];

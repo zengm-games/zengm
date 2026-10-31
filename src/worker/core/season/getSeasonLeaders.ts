@@ -19,20 +19,31 @@ import { NUM_SEASON_LEADERS_CACHE } from "../../db/Cache.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 
-export const splitRegularSeasonPlayoffsCombined = (p: any) => {
-	for (const row of p.stats) {
+// Organize stats rows from player.formatAll with multiple seasonTypes (and mergeStats totOnly) by season type
+export const splitRegularSeasonPlayoffsCombined = <
+	Row extends {
+		playoffs?: boolean | "combined";
+	},
+>(
+	stats: readonly Row[],
+) => {
+	const statsByType: Partial<
+		Record<"regularSeason" | "playoffs" | "combined", Row>
+	> = {};
+	for (const row of stats) {
 		if (row.playoffs === "combined") {
-			p.combined = row;
+			statsByType.combined = row;
 		} else if (row.playoffs === true) {
-			p.playoffs = row;
+			statsByType.playoffs = row;
 		} else {
-			p.regularSeason = row;
+			statsByType.regularSeason = row;
 		}
 	}
+	return statsByType;
 };
 
 const max = (
-	rows: any[],
+	rows: unknown[],
 	getValue: (row: any) => number,
 	statInfo?: ReturnType<typeof getLeaderRequirements>["string"],
 ) => {
@@ -73,12 +84,7 @@ const calculateSeasonLeaders = async (
 			Infinity,
 		]);
 	} else {
-		playersRaw = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
+		playersRaw = await idb.merged.players.getAll({ activeSeason: season });
 	}
 
 	const requirements = getLeaderRequirements();
@@ -91,12 +97,12 @@ const calculateSeasonLeaders = async (
 	const stats = Array.from(
 		new Set([...getPlayerProfileStats(), ...requirementsStats]),
 	);
-	const ratings = ["ovr", "pot", ...RATINGS];
+	const ratings = ["ovr", "pot", ...RATINGS] as const;
 
 	// Can skip playoffs if it hasn't happened yet, and combined would be redundant with regularSeason too
 	const regularSeasonOnly = seasonInProgress && currentPhase < PHASE.PLAYOFFS;
 
-	const players = await idb.getCopies.playersPlus(playersRaw, {
+	const playersWithoutStatsByType = await player.formatAll(playersRaw, {
 		attrs: ["age"],
 		// pos is for getLeaderRequirements
 		ratings: ["fuzz", "pos", ...ratings],
@@ -104,12 +110,14 @@ const calculateSeasonLeaders = async (
 		stats: ["tid", ...stats],
 		season,
 		mergeStats: "totOnly",
-		playoffs: true, // Always true, or it tries to return an object for stats rather than array
-		combined: !regularSeasonOnly,
+		seasonType: regularSeasonOnly
+			? ["regularSeason"]
+			: ["regularSeason", "playoffs", "combined"],
 	});
-	for (const p of players) {
-		splitRegularSeasonPlayoffsCombined(p);
-	}
+	const players = playersWithoutStatsByType.map((p) => ({
+		...p,
+		statsByType: splitRegularSeasonPlayoffsCombined(p.stats),
+	}));
 
 	const leadersCache: SeasonLeaders & {
 		combined: Record<string, unknown>;
@@ -162,7 +170,7 @@ const calculateSeasonLeaders = async (
 
 			leadersCache[type][stat] = max(
 				players.filter((p) => {
-					const playerStats = p[type];
+					const playerStats = p.statsByType[type];
 					if (!playerStats) {
 						// Maybe no playoff stats
 						return false;
@@ -190,8 +198,8 @@ const calculateSeasonLeaders = async (
 					return pass;
 				}),
 				(p) => {
-					const value = p[type][stat];
-					if (player.stats.max.includes(stat) && value) {
+					const value = p.statsByType[type]?.[stat];
+					if (player.stats.max.includes(stat) && Array.isArray(value)) {
 						return value[0];
 					}
 

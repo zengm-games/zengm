@@ -16,18 +16,36 @@ import type {
 	Conditions,
 	RealTeamInfo,
 } from "../../../common/types.ts";
-import { PHASE } from "../../../common/constants.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import local from "../../util/local.ts";
-import { last, orderBy } from "../../../common/utils.ts";
+import { last } from "../../../common/utils.ts";
+import { sortScheduledEvents } from "../../../common/scheduledEvents.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
+import { formatList } from "../../../common/formatList.ts";
+import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
+import { getMetaAttribute } from "../../db/metaAttributes.ts";
+
+// After the playoffs, the TeamSeason row of the current season is for a season that is already completed, so scheduled events should not change it. The TeamSeason row for the next season is created from the Team in the preseason, before scheduled events are processed.
+const isSeasonCompleted = (phase: number) => {
+	return phase > PHASE.PLAYOFFS;
+};
 
 const processTeamInfo = async (
-	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
+	eventInfo: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
 	season: number,
+	phase: number,
 	realTeamInfo: RealTeamInfo | undefined,
+	confsDivsDids: Map<number, number>,
 ) => {
-	// This happens in preseason, but after a new TeamSeason row is created, so update Team and TeamSeason
+	// Update Team, and also TeamSeason unless isSeasonCompleted
+
+	// A confsDivs event in the same season/phase has the division of this team after everything else in that season/phase, so it overrides the division here no matter which event is processed first. This is the same as what happens in normalizeScheduledEvents.
+	let info = eventInfo;
+	if (eventInfo.did !== undefined && confsDivsDids.has(eventInfo.tid)) {
+		const { did: _ignored, ...rest } = eventInfo;
+		info = rest;
+	}
 
 	const eventLogTexts: string[] = [];
 
@@ -68,22 +86,26 @@ const processTeamInfo = async (
 
 	await idb.cache.teams.put(t);
 
-	const teamSeason = await idb.cache.teamSeasons.indexGet(
-		"teamSeasonsByTidSeason",
-		[info.tid, season],
-	);
-	if (!teamSeason) {
+	const teamSeason = isSeasonCompleted(phase)
+		? undefined
+		: await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
+				info.tid,
+				season,
+			]);
+	if (teamSeason) {
+		Object.assign(teamSeason, info);
+		if (deleteImgURLSmall) {
+			delete teamSeason.imgURLSmall;
+		}
+		teamSeason.did = div.did;
+		teamSeason.cid = div.cid;
+		await idb.cache.teamSeasons.put(teamSeason);
+	} else if (!t.disabled && !isSeasonCompleted(phase)) {
+		// Disabled teams have no team season
 		throw new Error(
 			`No team season found in scheduled event: ${info.tid}, ${season}`,
 		);
 	}
-	Object.assign(teamSeason, info);
-	if (deleteImgURLSmall) {
-		delete teamSeason.imgURLSmall;
-	}
-	teamSeason.did = div.did;
-	teamSeason.cid = div.cid;
-	await idb.cache.teamSeasons.put(teamSeason);
 
 	let updatedRegionName;
 	if (info.region && info.region !== old.region) {
@@ -139,14 +161,7 @@ const processTeamInfo = async (
 	}
 
 	await league.setGameAttributes({
-		teamInfoCache: teams.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		})),
+		teamInfoCache: getTeamInfoCache(teams),
 	});
 
 	if (info.tid === g.get("userTid") && updatedRegionName) {
@@ -343,6 +358,31 @@ const processGameAttributes = async (
 		texts.push(text);
 	}
 
+	if (info.awards !== undefined) {
+		const prevShortNames = new Set(
+			g.get("awards").map((award) => award.shortName),
+		);
+		const newShortNames = new Set(info.awards.map((award) => award.shortName));
+		const added = Array.from(newShortNames.difference(prevShortNames));
+		const removed = Array.from(prevShortNames.difference(newShortNames));
+		const addedText =
+			added.length > 0
+				? `${formatList(added)} ${helpers.plural("award", added.length)}`
+				: undefined;
+		const removedText =
+			removed.length > 0
+				? `${formatList(removed)} ${helpers.plural("award", removed.length)}`
+				: undefined;
+
+		if (addedText !== undefined && removedText !== undefined) {
+			texts.push(`Added ${addedText} and removed ${removedText}`);
+		} else if (addedText !== undefined) {
+			texts.push(`Added ${addedText}`);
+		} else if (removedText !== undefined) {
+			texts.push(`Removed ${removedText}`);
+		}
+	}
+
 	for (const text of texts) {
 		logEvent({
 			text,
@@ -366,11 +406,53 @@ const processGameAttributes = async (
 	return eventLogTexts;
 };
 
+const processConfsDivs = async (
+	info: Extract<ScheduledEvent, { type: "confsDivs" }>["info"],
+	season: number,
+	phase: number,
+) => {
+	await league.setGameAttributes({
+		confs: info.confs,
+		divs: info.divs,
+	});
+
+	const teams = await idb.cache.teams.getAll();
+	for (const { tid, did } of info.teams) {
+		const t = teams.find((t2) => t2.tid === tid);
+		const div = info.divs.find((div) => div.did === did);
+
+		// If the team or division does not exist, there is nothing to do here. ensureValidDivsConfs will make sure every team winds up in a valid division.
+		if (!t || !div) {
+			continue;
+		}
+
+		t.did = div.did;
+		t.cid = div.cid;
+		await idb.cache.teams.put(t);
+
+		if (isSeasonCompleted(phase)) {
+			continue;
+		}
+
+		// Disabled teams have no team season
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[tid, season],
+		);
+		if (teamSeason) {
+			teamSeason.did = div.did;
+			teamSeason.cid = div.cid;
+			await idb.cache.teamSeasons.put(teamSeason);
+		}
+	}
+};
+
 const processExpansionDraft = async (
 	info: Extract<ScheduledEvent, { type: "expansionDraft" }>["info"],
 	season: number,
 	realTeamInfo: RealTeamInfo | undefined,
 	conditions: Conditions,
+	confsDivsDids: Map<number, number>,
 ) => {
 	const numProtectedPlayers =
 		info.numProtectedPlayers !== undefined
@@ -397,6 +479,23 @@ const processExpansionDraft = async (
 	if (realTeamInfo) {
 		for (const t of expansionTeams) {
 			applyRealTeamInfo(t as any, realTeamInfo, season);
+		}
+	}
+
+	// A confsDivs event in the same season/phase includes the teams from this expansion draft, but they did not exist yet when it was processed
+	for (const t of expansionTeams) {
+		const did = t.tid === undefined ? undefined : confsDivsDids.get(t.tid);
+		if (did !== undefined) {
+			t.did = String(did);
+		}
+	}
+
+	// Divisions could have changed since this event was created, and an expansion draft can't start with a team in an invalid division
+	const divs = g.get("divs");
+	for (const t of expansionTeams) {
+		const did = Number.parseInt(t.did);
+		if (!divs.some((div) => div.did === did)) {
+			t.did = String(last(divs).did);
 		}
 	}
 
@@ -444,10 +543,45 @@ const processContraction = async (
 	return [text];
 };
 
+const processRetirePlayer = async (pid: number, conditions: Conditions) => {
+	const p = await idb.merged.players.get(pid);
+
+	// Player might be deleted or already retired
+	if (!p || p.tid === PLAYER.RETIRED) {
+		return [];
+	}
+
+	const ratings = last(p.ratings);
+	const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+	const userTeam = p.tid === g.get("userTid");
+
+	await player.retire(p, conditions);
+	await idb.cache.players.put(p);
+
+	// Only show notification if it's an above average player or a player on the user's team
+	if (ovr > local.playerOvrMean || userTeam) {
+		const text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+			p.firstName
+		} ${p.lastName}</a> has retired.`;
+
+		return [text];
+	}
+
+	return [];
+};
+
+// Returns undefined when nothing happened
 const processUnretirePlayer = async (pid: number) => {
-	const p = await idb.getCopy.players({ pid }, "noCopyCache");
-	if (!p) {
-		throw new Error(`No player found for scheduled event: ${pid}`);
+	const p = await idb.merged.players.get(pid);
+
+	// Player might have been deleted or might not be retired. In both of those cases, there is nothing to do.
+	if (p?.tid !== PLAYER.RETIRED) {
+		return;
+	}
+
+	// Player might have died after this event was scheduled
+	if (p.diedYear !== undefined) {
+		return;
 	}
 
 	// Player might need some new ratings rows added
@@ -500,20 +634,25 @@ export const processScheduledEvents = async (
 	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
 	const eventLogTexts: string[] = [];
 
-	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
-		| RealTeamInfo
-		| undefined;
+	const realTeamInfo = await getMetaAttribute("realTeamInfo");
 
 	const unretiredPids = [];
 
-	const scheduledEventsOrdered = orderBy(scheduledEvents, [
-		"season",
-		"phase",
-		(scheduledEvent) => {
-			// When running the expansionDraft event, it calls newPhase again which calls other scheduled events and other things. So this should be the last scheduled event of this season/phase, so any prior ones happen before all that other stuff. Previously this was causing bugs in auto play, where unretirePlayer for forceHistoricalRosters was being called after expansionDraft and then those players would not be unretired in time.
-			return scheduledEvent.type === "expansionDraft" ? 1 : 0;
-		},
-	]);
+	const scheduledEventsOrdered = sortScheduledEvents(scheduledEvents);
+
+	// Division of each team in a confsDivs event in this season/phase, see processTeamInfo and processExpansionDraft
+	const confsDivsDids = new Map<number, number>();
+	for (const scheduledEvent of scheduledEventsOrdered) {
+		if (
+			scheduledEvent.type === "confsDivs" &&
+			scheduledEvent.season === season &&
+			scheduledEvent.phase === phase
+		) {
+			for (const { tid, did } of scheduledEvent.info.teams) {
+				confsDivsDids.set(tid, did);
+			}
+		}
+	}
 
 	for (const scheduledEvent of scheduledEventsOrdered) {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
@@ -528,10 +667,25 @@ export const processScheduledEvents = async (
 
 		if (scheduledEvent.type === "teamInfo") {
 			eventLogTexts.push(
-				...(await processTeamInfo(scheduledEvent.info, season, realTeamInfo)),
+				...(await processTeamInfo(
+					scheduledEvent.info,
+					season,
+					phase,
+					realTeamInfo,
+					confsDivsDids,
+				)),
 			);
 		} else if (scheduledEvent.type === "gameAttributes") {
 			eventLogTexts.push(...(await processGameAttributes(scheduledEvent.info)));
+		} else if (scheduledEvent.type === "awards") {
+			// Same as the old way of doing this, with awards in a gameAttributes event
+			eventLogTexts.push(
+				...(await processGameAttributes({
+					awards: scheduledEvent.info.awards,
+				})),
+			);
+		} else if (scheduledEvent.type === "confsDivs") {
+			await processConfsDivs(scheduledEvent.info, season, phase);
 		} else if (scheduledEvent.type === "expansionDraft") {
 			eventLogTexts.push(
 				...(await processExpansionDraft(
@@ -539,15 +693,21 @@ export const processScheduledEvents = async (
 					season,
 					realTeamInfo,
 					conditions,
+					confsDivsDids,
 				)),
 			);
 		} else if (scheduledEvent.type === "contraction") {
 			eventLogTexts.push(...(await processContraction(scheduledEvent.info)));
-		} else if (scheduledEvent.type === "unretirePlayer") {
-			unretiredPids.push(scheduledEvent.info.pid);
+		} else if (scheduledEvent.type === "retirePlayer") {
 			eventLogTexts.push(
-				...(await processUnretirePlayer(scheduledEvent.info.pid)),
+				...(await processRetirePlayer(scheduledEvent.info.pid, conditions)),
 			);
+		} else if (scheduledEvent.type === "unretirePlayer") {
+			const texts = await processUnretirePlayer(scheduledEvent.info.pid);
+			if (texts) {
+				unretiredPids.push(scheduledEvent.info.pid);
+				eventLogTexts.push(...texts);
+			}
 		} else {
 			throw new Error(
 				`Unknown scheduled event type: ${(scheduledEvent as any).type}`,

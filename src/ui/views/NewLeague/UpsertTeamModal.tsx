@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useState } from "react";
 import { applyRealTeamInfos } from "./index.tsx";
 import {
 	DEFAULT_JERSEY,
@@ -17,10 +17,13 @@ import type {
 } from "../../../common/types.ts";
 import { Modal } from "../../components/Modal.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { type ExhibitionLeagueWithSeasons } from "../Exhibition.tsx";
-import TeamForm from "../ManageTeams/TeamForm.tsx";
+import {
+	corruptedLeagueMessage,
+	type ExhibitionLeagueWithSeasons,
+} from "../Exhibition.tsx";
+import TeamForm, { getNumTeamsByDid } from "../ManageTeams/TeamForm.tsx";
 import type { AddEditTeamInfo } from "./CustomizeTeams.tsx";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";
@@ -133,6 +136,7 @@ const SelectTeam = ({
 		| undefined
 	>();
 	const [loadingTeams, setLoadingTeams] = useState(false);
+	const [noUsableLeagues, setNoUsableLeagues] = useState(false);
 
 	const season =
 		addEditTeamInfo.type === "add" && addEditTeamInfo.addType === "real"
@@ -222,16 +226,14 @@ const SelectTeam = ({
 				seasonEnd: REAL_PLAYERS_INFO!.MAX_SEASON,
 			};
 		} else {
-			const { seasonStart, seasonEnd } = await toWorker(
-				"exhibitionGame",
-				"getSeasons",
-				lid,
-			);
+			const seasons = await toWorker("exhibitionGame", "getSeasons", lid);
+			if (!seasons) {
+				return;
+			}
 			newLeague = {
 				type: "league",
 				lid,
-				seasonStart,
-				seasonEnd,
+				...seasons,
 			};
 		}
 
@@ -240,52 +242,70 @@ const SelectTeam = ({
 		return newLeague;
 	};
 
-	useEffect(() => {
-		const run = async () => {
-			if (addEditTeamInfo.addType === "random") {
-				const availableAbbrevs = getUnusedAbbrevs([]);
-				const param = availableAbbrevs.map((abbrev) => ({
-					tid: -1,
-					cid: -1,
-					did: -1,
-					abbrev,
-				}));
-				setAllTeams(
-					orderBy(
-						getTeamInfos(param).map((t) => ({
-							...t,
-							popRank: -1,
-						})),
-						["region", "name"],
-					),
-				);
-			} else if (addEditTeamInfo.addType === "real") {
-				const league = await loadLeague("real");
+	const loadInitialTeams = useEffectEvent(async () => {
+		if (addEditTeamInfo.addType === "random") {
+			const availableAbbrevs = getUnusedAbbrevs([]);
+			const param = availableAbbrevs.map((abbrev) => ({
+				tid: -1,
+				cid: -1,
+				did: -1,
+				abbrev,
+			}));
+			setAllTeams(
+				orderBy(
+					getTeamInfos(param).map((t) => ({
+						...t,
+						popRank: -1,
+					})),
+					["region", "name"],
+				),
+			);
+		} else if (addEditTeamInfo.addType === "real") {
+			const league = await loadLeague("real");
+			if (league) {
 				await loadTeams(league, addEditTeamInfo.seasonReal);
-			} else if (addEditTeamInfo.addType === "league") {
-				const allLeagues = await toWorker(
-					"exhibitionGame",
-					"getLeagues",
-					undefined,
-				);
-				setLeagues(allLeagues);
-				if (allLeagues[0]) {
-					const lid = addEditTeamInfo.lid ?? allLeagues[0].lid;
-					const league = await loadLeague(lid);
-					await loadTeams(
-						league,
-						addEditTeamInfo.seasonLeague ?? league.seasonEnd,
-					);
-				} else {
-					// If no leagues found, at least show something
-					onChange({ ...CUSTOM_TEAM });
+			}
+		} else if (addEditTeamInfo.addType === "league") {
+			const allLeagues = await toWorker(
+				"exhibitionGame",
+				"getLeagues",
+				undefined,
+			);
+			setLeagues(allLeagues);
+
+			// Try the previously selected league first, then fall back to the first league that loads, skipping any with missing/corrupted data
+			const lids = allLeagues
+				.map((league) => league.lid)
+				.filter((lid) => lid !== addEditTeamInfo.lid);
+			if (addEditTeamInfo.lid !== undefined) {
+				lids.unshift(addEditTeamInfo.lid);
+			}
+			for (const lid of lids) {
+				const league = await loadLeague(lid);
+				if (league) {
+					setAddEditTeamInfo((info) => ({
+						...info,
+						lid,
+					}));
+					const seasonToLoad =
+						lid === addEditTeamInfo.lid &&
+						addEditTeamInfo.seasonLeague !== undefined
+							? addEditTeamInfo.seasonLeague
+							: league.seasonEnd;
+					await loadTeams(league, seasonToLoad);
+					return;
 				}
 			}
-		};
 
-		run();
-		// We only want this to run when changing the type
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+			// If no usable leagues found, at least show something
+			setNoUsableLeagues(true);
+			onChange({ ...CUSTOM_TEAM });
+		}
+	});
+
+	// We only want this to run when changing the type
+	useEffect(() => {
+		loadInitialTeams();
 	}, [addEditTeamInfo.type, addEditTeamInfo.addType]);
 
 	if (addEditTeamInfo.type !== "add") {
@@ -307,13 +327,20 @@ const SelectTeam = ({
 	const actualDisabled =
 		disabled || (addEditTeamInfo.addType !== "random" && !league);
 
+	let noLeaguesMessage;
+	if (leagues?.length === 0) {
+		noLeaguesMessage = "No leagues found";
+	} else if (noUsableLeagues) {
+		noLeaguesMessage = "Unable to load any leagues";
+	}
+
 	return (
 		<>
 			<div className="d-flex align-items-center">
 				<select
 					className="form-select"
 					value={addEditTeamInfo.addType}
-					onChange={async (event) => {
+					onChange={(event) => {
 						setAddEditTeamInfo((info) => ({
 							...info,
 							addType: event.target.value as any,
@@ -331,19 +358,26 @@ const SelectTeam = ({
 					<option value="league">Team from existing league</option>
 				</select>
 				{addEditTeamInfo.addType === "league" ? (
-					leagues?.length === 0 ? (
-						<div className="text-danger ms-2">No leagues found</div>
+					noLeaguesMessage !== undefined ? (
+						<div className="text-danger ms-2">{noLeaguesMessage}</div>
 					) : (
 						<select
 							className="form-select ms-2"
 							value={addEditTeamInfo.lid}
 							onChange={async (event) => {
 								const lid = Number.parseInt(event.target.value);
+								const league = await loadLeague(lid);
+								if (!league) {
+									showNotification({
+										type: "error",
+										text: corruptedLeagueMessage,
+									});
+									return;
+								}
 								setAddEditTeamInfo((info) => ({
 									...info,
 									lid,
 								}));
-								const league = await loadLeague(lid);
 								setSeason(league.seasonEnd);
 								await loadTeams(league, league.seasonEnd);
 							}}
@@ -365,7 +399,8 @@ const SelectTeam = ({
 					)
 				) : null}
 			</div>
-			{addEditTeamInfo.addType === "league" && leagues?.length === 0 ? null : (
+			{addEditTeamInfo.addType === "league" &&
+			noLeaguesMessage !== undefined ? null : (
 				<>
 					<div className="input-group mt-3" style={{ maxWidth: 508 }}>
 						{addEditTeamInfo.addType !== "random" ? (
@@ -501,6 +536,26 @@ const UpsertTeamModal = ({
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
 } & Pick<View<"newLeague">, "godModeLimits" | "realTeamInfo">) => {
+	const getNewControlledTeam = useCallback(
+		(t: NewLeagueTeamWithoutRank | undefined) => {
+			if (t) {
+				return {
+					...t,
+					pop: String(t.pop),
+					stadiumCapacity: String(
+						t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
+					),
+					colors: t.colors ?? DEFAULT_TEAM_COLORS,
+					jersey: t.jersey ?? DEFAULT_JERSEY,
+					did: String(addEditTeamInfo.did),
+					imgURL: t.imgURL ?? "",
+					imgURLSmall: t.imgURLSmall ?? "",
+				};
+			}
+		},
+		[addEditTeamInfo.did],
+	);
+
 	const [controlledTeam, setControlledTeam] = useState<
 		| {
 				tid: number;
@@ -518,31 +573,7 @@ const UpsertTeamModal = ({
 				players?: Player[];
 		  }
 		| undefined
-	>();
-
-	const newControlledTeam = useCallback(
-		(t: NewLeagueTeamWithoutRank | undefined) => {
-			if (!t) {
-				setControlledTeam(undefined);
-			} else {
-				setControlledTeam({
-					...t,
-					pop: String(t.pop),
-					stadiumCapacity: String(
-						t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
-					),
-					colors: t.colors ?? DEFAULT_TEAM_COLORS,
-					jersey: t.jersey ?? DEFAULT_JERSEY,
-					did: String(addEditTeamInfo.did),
-					imgURL: t.imgURL ?? "",
-					imgURLSmall: t.imgURLSmall ?? "",
-				});
-			}
-		},
-		[addEditTeamInfo.did],
-	);
-
-	useEffect(() => {
+	>(() => {
 		let t: NewLeagueTeamWithoutRank | undefined;
 		if (addEditTeamInfo.type === "edit") {
 			t = teams.find((t) => t.tid === addEditTeamInfo.tidEdit);
@@ -555,14 +586,15 @@ const UpsertTeamModal = ({
 			// Will be loaded asynchronously in SelectTeam
 		}
 
-		newControlledTeam(t);
-	}, [
-		addEditTeamInfo.addType,
-		addEditTeamInfo.type,
-		addEditTeamInfo.tidEdit,
-		newControlledTeam,
-		teams,
-	]);
+		return getNewControlledTeam(t);
+	});
+
+	const newControlledTeam = useCallback(
+		(t: NewLeagueTeamWithoutRank | undefined) => {
+			setControlledTeam(getNewControlledTeam(t));
+		},
+		[getNewControlledTeam],
+	);
 
 	const save = () => {
 		if (controlledTeam === undefined) {
@@ -609,16 +641,27 @@ const UpsertTeamModal = ({
 			errorMessage = `${errors[0]} and ${errors[1]} must be numbers.`;
 		}
 		if (errorMessage) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: errorMessage,
-				saveToDb: false,
 			});
 			return;
 		}
 
 		onSave(edited);
 	};
+
+	// Use the division from the form for the team being added or edited
+	const dids = teams
+		.filter(
+			(t) =>
+				addEditTeamInfo.type !== "edit" || t.tid !== addEditTeamInfo.tidEdit,
+		)
+		.map((t) => t.did);
+	if (controlledTeam) {
+		dids.push(Number.parseInt(controlledTeam.did));
+	}
+	const numTeamsByDid = getNumTeamsByDid(dids);
 
 	// See comments in ColorPicker explaining why this is needed
 	const enforceFocus = false;
@@ -643,9 +686,7 @@ const UpsertTeamModal = ({
 						addEditTeamInfo={addEditTeamInfo}
 						setAddEditTeamInfo={setAddEditTeamInfo}
 						disabled={!controlledTeam}
-						onChange={(t) => {
-							newControlledTeam(t);
-						}}
+						onChange={newControlledTeam}
 						currentTeams={teams}
 						realTeamInfo={realTeamInfo}
 					/>
@@ -704,6 +745,7 @@ const UpsertTeamModal = ({
 									}
 								}}
 								hideStatus
+								numTeamsByDid={numTeamsByDid}
 								t={controlledTeam}
 								showPlayers={!!controlledTeam.players}
 							/>

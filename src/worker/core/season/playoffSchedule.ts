@@ -1,5 +1,5 @@
 import { idb } from "../../db/index.ts";
-import { g, helpers } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import type {
 	PlayoffSeries,
 	PlayoffSeriesTeam,
@@ -61,9 +61,7 @@ export const deleteScheduledGamesForCompletedSeries = async (
 		return [];
 	}
 
-	const numGamesToWin = helpers.numGamesToWinSeries(
-		g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
-	);
+	const numGamesToWin = helpers.numGamesToWinRound(playoffSeries.currentRound);
 
 	const completedSeriesKeys = new Set<string>();
 	for (const { away, home } of roundSeries) {

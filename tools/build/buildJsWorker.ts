@@ -2,14 +2,9 @@ import { build } from "rolldown";
 import { parentPort, workerData } from "node:worker_threads";
 import { rolldownConfig } from "../lib/rolldownConfig.ts";
 import type { Sport } from "../lib/getSport.ts";
+import type { JsonHashes } from "../lib/jsonUrls.ts";
 
-const LODASH_BLACKLIST = [
-	/^lodash$/,
-	/^lodash-es/,
-
-	// lodash/debounce and lodash/memoize are used by visx
-	/^lodash\/(?!debounce|memoize)/,
-];
+const LODASH_BLACKLIST = [/^lodash$/, /^lodash-es/, /^lodash\//];
 
 const BLACKLIST = {
 	ui: [...LODASH_BLACKLIST, /\/worker/],
@@ -20,11 +15,13 @@ const buildFile = async (
 	sport: Sport,
 	name: "ui" | "worker",
 	versionNumber: string,
+	jsonHashes: JsonHashes,
 ) => {
 	let modulepreloadFilenames: string[] | undefined;
 	const config = rolldownConfig(sport, name, {
 		nodeEnv: "production",
 		blacklistOptions: BLACKLIST[name],
+		jsonHashes,
 		versionNumber,
 		onModulepreloadFilenames: (filenames) => {
 			modulepreloadFilenames = filenames;
@@ -39,6 +36,6 @@ const buildFile = async (
 	parentPort!.postMessage(modulepreloadFilenames);
 };
 
-const { name, sport, versionNumber } = workerData;
+const { name, sport, versionNumber, jsonHashes } = workerData;
 
-await buildFile(sport, name, versionNumber);
+await buildFile(sport, name, versionNumber, jsonHashes);

@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
 import { Modal } from "../Modal.tsx";
 import { range } from "../../../common/utils.ts";
@@ -12,14 +11,6 @@ const Confirm = confirmable<
 	},
 	number | null
 >(({ show, proceed, numPlayers, numWatchColors }) => {
-	const inputRef = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		if (inputRef.current) {
-			inputRef.current.select();
-		}
-	}, []);
-
 	const cancel = () => proceed(null);
 
 	return (

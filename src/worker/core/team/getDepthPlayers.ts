@@ -1,7 +1,7 @@
 import { POSITIONS } from "../../../common/constants.ts";
 import type { Team } from "../../../common/types.ts";
 import { groupByUnique, range } from "../../../common/utils.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
 const getDepthPlayers = <
@@ -31,7 +31,7 @@ const getDepthPlayers = <
 		(obj, pos: string) => {
 			// p.id is for call from play.ts
 
-			if (isSport("baseball") && (pos === "L" || pos === "LP")) {
+			if (__SPORT === "baseball" && (pos === "L" || pos === "LP")) {
 				// Lineup IDs are references to positions
 
 				return obj;
@@ -52,7 +52,7 @@ const getDepthPlayers = <
 
 			// Break referential integrity between D and DP, otherwise linupIndex and lineupPos get overwritten. But do it for the one we're not interested in, based on DH setting. This is needed for game sim to record stuff correctly.
 			if (
-				isSport("baseball") &&
+				__SPORT === "baseball" &&
 				((dh && pos === "DP") || (!dh && pos === "D"))
 			) {
 				// @ts-expect-error
@@ -64,7 +64,7 @@ const getDepthPlayers = <
 		{},
 	);
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		// Lineup IDs are references to positions
 		// -1 -> pitcher/DH
 		// -2 or less -> does not exist (not enough players)

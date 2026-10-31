@@ -1,7 +1,7 @@
 import type { PlayerStats } from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 
-const statsRowIsCurrent = (
+export const statsRowIsCurrent = (
 	ps: PlayerStats | undefined,
 	tid: number,
 	playoffs: boolean,
@@ -13,5 +13,3 @@ const statsRowIsCurrent = (
 		ps.season === g.get("season")
 	);
 };
-
-export default statsRowIsCurrent;

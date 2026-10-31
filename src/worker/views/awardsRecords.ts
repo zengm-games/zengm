@@ -1,333 +1,72 @@
 import { idb } from "../db/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts"; // Keep in sync with Dropdown.js
+import type { PlayerAward } from "../../common/types.ts"; // Keep in sync with Dropdown.js
+import { defineView, keepType } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { countBy, maxBy } from "../../common/utils.ts";
+import { countBy, maxBy, range } from "../../common/utils.ts";
+import type { DropdownOption } from "../../ui/hooks/useDropdownOptions.tsx";
+import {
+	formatPlayerAwardName,
+	leaderAwardCategories,
+} from "../../common/awards.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { player } from "../core/index.ts";
 
-// Sync with useDropdownOptions
-const optionsTmp = bySport({
-	baseball: [
-		{
-			val: "Won Championship",
-			key: "champion",
-		},
-		{
-			val: "Most Valuable Player",
-			key: "mvp",
-		},
-		{
-			val: "Finals MVP",
-			key: "finals_mvp",
-		},
-		{
-			val: "Pitcher of the Year",
-			key: "poy",
-		},
-		{
-			val: "Relief Pitcher of the Year",
-			key: "rpoy",
-		},
-		{
-			val: "Rookie of the Year",
-			key: "roy",
-		},
-		{
-			val: "All-Offensive",
-			key: "all_off",
-		},
-		{
-			val: "All-Defensive",
-			key: "all_def",
-		},
-		{
-			val: "All-Star",
-			key: "all_star",
-		},
-		{
-			val: "All-Star MVP",
-			key: "all_star_mvp",
-		},
-		{
-			val: "League HR Leader",
-			key: "hr_leader",
-		},
-		{
-			val: "League RBI Leader",
-			key: "rbi_leader",
-		},
-		{
-			val: "League Runs Leader",
-			key: "r_leader",
-		},
-		{
-			val: "League Stolen Bases Leader",
-			key: "sb_leader",
-		},
-		{
-			val: "League Walks Leader",
-			key: "bb_leader",
-		},
-		{
-			val: "League Wins Leader",
-			key: "w_leader",
-		},
-		{
-			val: "League Strikeouts Leader",
-			key: "soPit_leader",
-		},
-		{
-			val: "League WAR Leader",
-			key: "war_leader",
-		},
-	],
-	basketball: [
-		{
-			val: "Won Championship",
-			key: "champion",
-		},
-		{
-			val: "Most Valuable Player",
-			key: "mvp",
-		},
-		{
-			val: "Finals MVP",
-			key: "finals_mvp",
-		},
-		{
-			val: "Semifinals MVP",
-			key: "sfmvp",
-		},
-		{
-			val: "Defensive Player of the Year",
-			key: "dpoy",
-		},
-		{
-			val: "Sixth Man of the Year",
-			key: "smoy",
-		},
-		{
-			val: "Most Improved Player",
-			key: "mip",
-		},
-		{
-			val: "Rookie of the Year",
-			key: "roy",
-		},
-		{
-			val: "First Team All-League",
-			key: "first_team",
-		},
-		{
-			val: "Second Team All-League",
-			key: "second_team",
-		},
-		{
-			val: "Third Team All-League",
-			key: "third_team",
-		},
-		{
-			val: "All-League",
-			key: "all_league",
-		},
-		{
-			val: "First Team All-Defensive",
-			key: "first_def",
-		},
-		{
-			val: "Second Team All-Defensive",
-			key: "second_def",
-		},
-		{
-			val: "Third Team All-Defensive",
-			key: "third_def",
-		},
-		{
-			val: "All-Defensive",
-			key: "all_def",
-		},
-		{
-			val: "All-Star",
-			key: "all_star",
-		},
-		{
-			val: "All-Star MVP",
-			key: "all_star_mvp",
-		},
-		{
-			val: "Slam Dunk Contest Winner",
-			key: "dunk",
-		},
-		{
-			val: "Three-Point Contest Winner",
-			key: "three",
-		},
-		{
-			val: "League Scoring Leader",
-			key: "ppg_leader",
-		},
-		{
-			val: "League Rebounding Leader",
-			key: "rpg_leader",
-		},
-		{
-			val: "League Assists Leader",
-			key: "apg_leader",
-		},
-		{
-			val: "League Steals Leader",
-			key: "spg_leader",
-		},
-		{
-			val: "League Blocks Leader",
-			key: "bpg_leader",
-		},
-	],
-	football: [
-		{
-			val: "Won Championship",
-			key: "champion",
-		},
-		{
-			val: "Most Valuable Player",
-			key: "mvp",
-		},
-		{
-			val: "Finals MVP",
-			key: "finals_mvp",
-		},
-		{
-			val: "Offensive Player of the Year",
-			key: "opoy",
-		},
-		{
-			val: "Protector of the Year",
-			key: "poy",
-		},
-		{
-			val: "Defensive Player of the Year",
-			key: "dpoy",
-		},
-		{
-			val: "Offensive Rookie of the Year",
-			key: "oroy",
-		},
-		{
-			val: "Defensive Rookie of the Year",
-			key: "droy",
-		},
-		{
-			val: "First Team All-League",
-			key: "first_team",
-		},
-		{
-			val: "Second Team All-League",
-			key: "second_team",
-		},
-		{
-			val: "All-League",
-			key: "all_league",
-		},
-		{
-			val: "All-Star",
-			key: "all_star",
-		},
-		{
-			val: "All-Star MVP",
-			key: "all_star_mvp",
-		},
-		{
-			val: "League Passing Leader",
-			key: "pss_leader",
-		},
-		{
-			val: "League Rushing Leader",
-			key: "rush_leader",
-		},
-		{
-			val: "League Receiving Leader",
-			key: "rcv_leader",
-		},
-		{
-			val: "League Scrimmage Yards Leader",
-			key: "scr_leader",
-		},
-	],
-	hockey: [
-		{
-			val: "Won Championship",
-			key: "champion",
-		},
-		{
-			val: "Most Valuable Player",
-			key: "mvp",
-		},
-		{
-			val: "Playoffs MVP",
-			key: "finals_mvp",
-		},
-		{
-			val: "Defensive Player of the Year",
-			key: "dpoy",
-		},
-		{
-			val: "Defensive Forward of the Year",
-			key: "dfoy",
-		},
-		{
-			val: "Goalie of the Year",
-			key: "goy",
-		},
-		{
-			val: "Rookie of the Year",
-			key: "roy",
-		},
-		{
-			val: "First Team All-League",
-			key: "first_team",
-		},
-		{
-			val: "Second Team All-League",
-			key: "second_team",
-		},
-		{
-			val: "All-League",
-			key: "all_league",
-		},
-		{
-			val: "All-Star",
-			key: "all_star",
-		},
-		{
-			val: "All-Star MVP",
-			key: "all_star_mvp",
-		},
-		{
-			val: "League Points Leader",
-			key: "pts_leader",
-		},
-		{
-			val: "League Goals Leader",
-			key: "g_leader",
-		},
-		{
-			val: "League Assists Leader",
-			key: "ast_leader",
-		},
-	],
-});
-
-const awardOptions: any = {};
-optionsTmp.forEach((o) => {
-	awardOptions[o.key] = o.val;
-});
-
-type LocalPlayerAward = {
-	season: number;
-	type: string;
+const processInputs = (params: RouteParams<"awardsRecords">) => {
+	return {
+		awardType: params.awardType ?? "champion",
+	};
 };
 
+// Sync with useDropdownOptions
+const nonCustomAwardsList = [
+	{
+		value: "All-Star",
+		key: "all_star",
+	},
+	{
+		value: "All-Star MVP",
+		key: "all_star_mvp",
+	},
+	{
+		value: "Won Championship",
+		key: "champion",
+	},
+	...bySport({
+		baseball: [],
+		basketball: [
+			{
+				value: "Slam Dunk Contest Winner",
+				key: "dunk",
+			},
+			{
+				value: "Three-Point Contest Winner",
+				key: "three",
+			},
+		],
+		football: [],
+		hockey: [],
+	}),
+];
+
+nonCustomAwardsList.push(
+	...leaderAwardCategories.map((x) => {
+		return {
+			value: x.name,
+			key: `${x.stat}_leader`,
+		};
+	}),
+);
+
+const nonCustomAwards: Record<string, string> = {};
+for (const row of nonCustomAwardsList) {
+	nonCustomAwards[row.key] = row.value;
+}
+
+const DELIMITER = "~";
+
 type LocalPlayer = {
-	awards: LocalPlayerAward[];
+	awards: PlayerAward[];
 	draft: { round: number; pick: number; year: number };
 	firstName: string;
 	hof: boolean;
@@ -344,41 +83,42 @@ type LocalPlayer = {
 	}[];
 };
 
-const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
-	const aType = awardOptions[awardType];
-
-	let filter;
-	if (awardType === "all_league") {
-		filter = (a: LocalPlayerAward) => {
-			const o = awardOptions;
-			return (
-				a.type === o.first_team ||
-				a.type === o.second_team ||
-				a.type === o.third_team
-			);
-		};
-	} else if (awardType === "all_def") {
-		filter = (a: LocalPlayerAward) => {
-			const o = awardOptions;
-			return (
-				a.type === o.first_def ||
-				a.type === o.second_def ||
-				a.type === o.third_def ||
-				a.type === "All-Defensive Team"
-			);
-		};
-	} else if (awardType === "all_off") {
-		filter = (a: LocalPlayerAward) => {
-			return a.type === "All-Offensive Team";
-		};
+const getPlayerAwards = (p: LocalPlayer, key: string) => {
+	let filter: ((award: PlayerAward) => boolean) | undefined;
+	if (nonCustomAwards[key] !== undefined) {
+		filter = (award) => award.type === nonCustomAwards[key];
 	} else {
-		filter = (a: LocalPlayerAward) => a.type === aType;
+		// Must be a real custom award
+
+		// Look for a team number
+		const parts = key.split(DELIMITER);
+		if (parts.length > 0) {
+			const suffix = Number.parseInt(parts.at(-1)!);
+			if (!Number.isNaN(suffix)) {
+				const targetShortName = parts.slice(0, -1).join("");
+				const targetRank = suffix;
+
+				// Return all players on the Nth team only
+				filter = (award) =>
+					award.type === undefined &&
+					award.shortName === targetShortName &&
+					award.numTeams !== undefined &&
+					award.rank === targetRank;
+			}
+		}
+
+		if (!filter) {
+			// Return all players on all teams if numTeams, otherwise return only award winner
+			filter = (award) =>
+				award.type === undefined &&
+				award.shortName === key &&
+				(award.numTeams !== undefined ||
+					(award.numTeams === undefined && award.rank === 1));
+		}
 	}
 
 	const getTeam = (season: number) => {
-		const stats = p.stats.filter((s) => s.season === season);
-
-		return stats.at(-1)?.abbrev ?? "???";
+		return p.stats.findLast((row) => row.season === season)?.abbrev ?? "???";
 	};
 
 	const awards = p.awards.filter(filter);
@@ -401,7 +141,7 @@ const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
 	const allPos = p.ratings.filter((row) => yearsSet.has(row.season));
 	if (allPos.length > 0) {
 		const posCounts = Object.entries(countBy(allPos, "pos"));
-		maxPos = maxBy(posCounts, 1)![0]!;
+		maxPos = maxBy(posCounts, 1)![0];
 	}
 
 	return {
@@ -409,7 +149,6 @@ const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
 		lastName: p.lastName,
 		pid: p.pid,
 		count: awards.length,
-		countText: awards.length.toString(),
 		years,
 		lastYear,
 		retired: p.retiredYear !== Infinity,
@@ -419,58 +158,133 @@ const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
 	};
 };
 
-const updateAwardsRecords = async (
-	inputs: ViewInput<"awardsRecords">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		inputs.awardType !== state.awardType
-	) {
-		const playersAll = await idb.getCopies.players(
-			{
-				activeAndRetired: true,
-				filter: (p) => p.awards.length > 0,
-			},
-			"noCopyCache",
-		);
-		const players: LocalPlayer[] = await idb.getCopies.playersPlus(playersAll, {
-			attrs: [
-				"awards",
-				"firstName",
-				"lastName",
-				"pid",
-				"retiredYear",
-				"hof",
-				"draft",
-			],
-			ratings: ["pos", "season"],
-			stats: ["abbrev", "season"],
-		});
-		const awardType = inputs.awardType;
-
-		if (typeof awardType !== "string") {
-			// https://stackoverflow.com/a/59923262/786644
-			const returnValue = {
-				errorMessage: "Invalid input for awardType.",
-			};
-			return returnValue;
-		}
-
-		const awardsRecords = addFirstNameShort(
-			players
-				.map((p) => getPlayerAwards(p, awardType))
-				.filter((p) => p !== undefined),
-		);
-
-		return {
-			awardsRecords,
-			playerCount: awardsRecords.length,
-			awardTypeVal: awardOptions[awardType],
-			awardType,
-		};
-	}
+type AwardType = {
+	maxNumTeams?: number;
+	name: string;
+	shortName: string;
 };
 
-export default updateAwardsRecords;
+// awardTypes is expensive to compute, so it's computed once when the page loads and then reused
+const keepPrevOutput = {
+	awardTypes: keepType<AwardType[]>(),
+};
+
+export default defineView({
+	id: "awardsRecords",
+	processInputs,
+	keepPrevOutput,
+	load: async ({ inputs, updateEvents, prevInputs, prevOutput }) => {
+		let awardTypes: AwardType[];
+		if (!prevOutput.awardTypes) {
+			const awards = await idb.merged.awards.getAll();
+			awards.reverse();
+			awardTypes = [];
+
+			// Number contains the number of teams
+			const seenAwardTypes = new Map<string, AwardType>();
+
+			for (const row of awards) {
+				for (const award of row.awards) {
+					const info = seenAwardTypes.get(award.shortName);
+					if (!info) {
+						const newInfo: AwardType = {
+							name: award.name,
+							shortName: award.shortName,
+						};
+						if (award.numTeams !== undefined) {
+							newInfo.maxNumTeams = award.numTeams;
+						}
+						seenAwardTypes.set(award.shortName, newInfo);
+						awardTypes.push(newInfo);
+					} else if (
+						award.numTeams !== undefined &&
+						(info.maxNumTeams === undefined ||
+							award.numTeams > info.maxNumTeams)
+					) {
+						info.maxNumTeams = award.numTeams;
+					}
+				}
+			}
+		} else {
+			awardTypes = prevOutput.awardTypes;
+		}
+
+		if (
+			updateEvents.has("firstRun") ||
+			inputs.awardType !== prevInputs?.awardType
+		) {
+			const formatOptions = {
+				attrs: [
+					"awards",
+					"firstName",
+					"lastName",
+					"pid",
+					"retiredYear",
+					"hof",
+					"draft",
+				],
+				ratings: ["pos", "season"],
+				stats: ["abbrev", "season"],
+			} as const;
+			const abbrevs = await player.loadAbbrevs(formatOptions);
+			const formatPlayer = player.createFormatter(formatOptions, abbrevs);
+			const awardType = inputs.awardType;
+
+			const playersAwards = (
+				await idb.merged.players.getAll(
+					{ activeAndRetired: true },
+					{
+						filter: (p) => p.awards.length > 0,
+						map: (pRaw) => {
+							const p: LocalPlayer | undefined = formatPlayer(pRaw);
+							if (!p) {
+								return;
+							}
+							return getPlayerAwards(p, awardType);
+						},
+					},
+				)
+			).filter((p) => p !== undefined);
+
+			const awardsRecords = addFirstNameShort(playersAwards);
+
+			const awardTypeOptions: DropdownOption[] = [
+				...awardTypes.flatMap((row) => {
+					if (row.maxNumTeams !== undefined && row.maxNumTeams > 1) {
+						return [
+							...range(1, row.maxNumTeams + 1).map((rank) => {
+								return {
+									key: `${row.shortName}${DELIMITER}${rank}`,
+									value: formatPlayerAwardName({
+										name: row.name,
+										numTeams: row.maxNumTeams,
+										rank,
+									}),
+								};
+							}),
+							{
+								key: row.shortName,
+								value: row.name,
+							},
+						];
+					}
+
+					return {
+						key: row.shortName,
+						value: row.name,
+					};
+				}),
+				...nonCustomAwardsList,
+			];
+
+			return {
+				awardsRecords,
+				awardType,
+				awardTypeOptions,
+
+				// This is just for prevOutput.awardTypes so it doesn't need to be recomputed every time
+				awardTypes,
+			};
+		}
+	},
+});

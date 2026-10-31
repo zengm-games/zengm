@@ -2,6 +2,8 @@ import Select from "react-select";
 import { CustomMenuList, CustomOption } from "./components.tsx";
 
 const SelectMultiple = <T extends Record<string, unknown>>({
+	ariaLabel,
+	inputId,
 	value,
 	options,
 	onChange,
@@ -12,6 +14,8 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 	loading,
 	virtualize = true,
 }: {
+	ariaLabel?: string;
+	inputId?: string;
 	value: T | null | undefined;
 	options: (
 		| T
@@ -30,7 +34,9 @@ const SelectMultiple = <T extends Record<string, unknown>>({
 }) => {
 	return (
 		<Select<T>
+			aria-label={ariaLabel}
 			classNamePrefix="dark-select"
+			inputId={inputId}
 			value={value}
 			isClearable={isClearable}
 			onChange={onChange}

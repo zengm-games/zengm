@@ -3,6 +3,7 @@ import { resetG } from "../../../test/helpers.ts";
 import { player } from "../index.ts";
 import madeHofBasketball from "./madeHof.basketball.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import type { PlayerStats } from "../../../common/types.ts";
 
 test("narrowly make HoF based on dominance factor", () => {
 	resetG();
@@ -48,7 +49,7 @@ test("narrowly make HoF based on dominance factor", () => {
 			ows: 7,
 			ewa: 14,
 		},
-	];
+	] as PlayerStats[];
 	assert.strictEqual(madeHofBasketball(p), true);
 });
 
@@ -120,6 +121,6 @@ test("narrowly miss HoF based on dominance factor", () => {
 			ows: 4,
 			ewa: 8,
 		},
-	];
+	] as PlayerStats[];
 	assert.strictEqual(madeHofBasketball(p), false);
 });

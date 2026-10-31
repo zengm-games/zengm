@@ -1,31 +1,5 @@
 // Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
 
-// Chrome 92
-// https://github.com/tc39/proposal-relative-indexing-method#polyfill
-if (!Array.prototype.at) {
-	for (const C of [Array, String]) {
-		Object.defineProperty(C.prototype, "at", {
-			value(this: any, n: number) {
-				// ToInteger() abstract op
-				n = Math.trunc(n) || 0;
-				// Allow negative indexing from the end
-				if (n < 0) {
-					n += this.length;
-				}
-				// OOB access is guaranteed to return undefined
-				if (n < 0 || n >= this.length) {
-					return undefined;
-				}
-				// Otherwise, this is just normal property access
-				return this[n];
-			},
-			writable: true,
-			enumerable: false,
-			configurable: true,
-		});
-	}
-}
-
 // Chrome 97
 if (!Array.prototype.findLast) {
 	Object.defineProperty(Array.prototype, "findLast", {
@@ -35,21 +9,6 @@ if (!Array.prototype.findLast) {
 					return this[i];
 				}
 			}
-		},
-		configurable: true,
-		enumerable: false,
-		writable: true,
-	});
-}
-
-// Chrome 93
-if (!Object.hasOwn) {
-	Object.defineProperty(Object, "hasOwn", {
-		value: (object: object, property: PropertyKey) => {
-			if (object == null) {
-				throw new TypeError("Cannot convert undefined or null to object");
-			}
-			return Object.prototype.hasOwnProperty.call(Object(object), property);
 		},
 		configurable: true,
 		enumerable: false,
@@ -80,6 +39,30 @@ if (!Set.prototype.intersection) {
 			for (const elem of smallerElems) {
 				if (largerHas.has(elem)) {
 					result.add(elem);
+				}
+			}
+			return result;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}
+if (!Set.prototype.difference) {
+	Object.defineProperty(Set.prototype, "difference", {
+		value<T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
+			const result = new Set<T>(this);
+			if (this.size <= other.size) {
+				for (const elem of this) {
+					if (other.has(elem)) {
+						result.delete(elem);
+					}
+				}
+			} else {
+				for (const elem of other.keys()) {
+					if (result.has(elem)) {
+						result.delete(elem);
+					}
 				}
 			}
 			return result;
@@ -196,7 +179,7 @@ if (!Array.prototype.toSorted) {
 	});
 }
 
-// Chrome ?, Firefox 148, Safari ?
+// Chrome 153, Firefox 148, Safari ?
 type IterValue<T> =
 	T extends Iterable<infer U> ? U : T extends Iterator<infer U> ? U : never;
 type ZipValues<T extends readonly unknown[]> = {
@@ -212,7 +195,11 @@ declare global {
 		): IterableIterator<ZipValues<T>>;
 	}
 }
-if (typeof Iterator === "undefined" || Iterator == null) {
+if (
+	typeof Iterator === "undefined" ||
+	Iterator === undefined ||
+	Iterator === null
+) {
 	(globalThis as any).Iterator = {};
 }
 if (!Iterator.zip) {
@@ -304,5 +291,51 @@ if (!Iterator.zip) {
 				return this;
 			},
 		} as any;
+	};
+}
+
+// Chrome 110, Safari 16
+if (!Array.prototype.toReversed) {
+	Object.defineProperty(Array.prototype, "toReversed", {
+		value() {
+			const arr = Array.from(this);
+			arr.reverse();
+			return arr;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}
+
+// Chrome 119, Firefox 121, Safari 17.4
+if (!Promise.withResolvers) {
+	Promise.withResolvers = <T>() => {
+		let resolve!: (value: T | PromiseLike<T>) => void;
+		let reject!: (reason?: unknown) => void;
+
+		const promise = new Promise<T>((res, rej) => {
+			resolve = res;
+			reject = rej;
+		});
+
+		return { promise, resolve, reject };
+	};
+}
+
+// Chrome 147, Firefox 137, Safari 26.2
+declare global {
+	interface Math {
+		sumPrecise(items: Iterable<number>): number;
+	}
+}
+if (!Math.sumPrecise) {
+	// Not actually precise, just a basic sum
+	Math.sumPrecise = (items) => {
+		let total = 0;
+		for (const value of items) {
+			total += value;
+		}
+		return total;
 	};
 }

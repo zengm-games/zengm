@@ -76,7 +76,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 		ongoingSeries = ongoingSeries.filter((series) => series.numGamesLeft > 0);
 
 		// Add new series from teams not yet in an ongoing series for tomorrow
-		const tidsForTomorrow = new Set();
+		const tidsForTomorrow = new Set<number>();
 		for (const series of ongoingSeries) {
 			tidsForTomorrow.add(series.matchup[0]);
 			tidsForTomorrow.add(series.matchup[1]);

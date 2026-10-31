@@ -10,6 +10,7 @@ import type {
 	DraftType,
 	DraftPickWithoutKey,
 	DraftPick,
+	Team,
 } from "../../../common/types.ts";
 import genOrderGetPicks from "./genOrderGetPicks.ts";
 import getTeamsByRound from "./getTeamsByRound.ts";
@@ -21,7 +22,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 import { simLottery } from "./draftLottery.ts";
 import { RESTRICTED_5_PICK, updateNba2027AfterLottery } from "./nba2027.ts";
-import { orderBy, range } from "../../../common/utils.ts";
+import { orderBy, range, assertDefined } from "../../../common/utils.ts";
 
 type MyDraftLotteryResult<Completed extends boolean> =
 	DraftLotteryResult<Completed> & {
@@ -184,7 +185,7 @@ const getLotteryInfo = (
 	throw new Error(`Unsupported draft type "${draftType}"`);
 };
 
-const draftHasLottery = (
+export const draftHasLottery = (
 	draftType: any,
 ): draftType is (typeof LOTTERY_DRAFT_TYPES)[number] => {
 	return LOTTERY_DRAFT_TYPES.includes(draftType);
@@ -212,6 +213,145 @@ export const getNumToPick = (
 	}
 
 	return 0;
+};
+
+// For teams sorted in order going into the draft (worst team first, see getTeamsByRound), how are picks in a round assigned to them?
+// lottery: Some of the first picks are assigned by the lottery, the rest are in the same order as the teams
+// same: Same order as the teams
+// reverse: Reverse order of the teams
+// random: Random order
+// reverseLotteryTeams: Lottery teams are in reverse order, the rest are in the same order as the teams
+type RoundOrderRule =
+	| "lottery"
+	| "same"
+	| "reverse"
+	| "random"
+	| "reverseLotteryTeams";
+
+export const getRoundOrderRule = (
+	draftType: DraftType,
+	round: number,
+): RoundOrderRule => {
+	if (draftType === "random") {
+		return "random";
+	}
+
+	if (draftType === "noLotteryReverse") {
+		return "reverse";
+	}
+
+	if (round === 1) {
+		return draftHasLottery(draftType) ? "lottery" : "same";
+	}
+
+	if (draftType === "nba2027") {
+		return "reverseLotteryTeams";
+	}
+
+	return "same";
+};
+
+// Lottery chances for each lottery team. firstRoundTeams must already be sorted in lottery order (worst team first). This does not account for dividing chances over tied teams
+export const getLotteryChances = async ({
+	draftType,
+	firstRoundTeams,
+	draftPicksIndexed,
+	season = g.get("season"),
+}: {
+	draftType: (typeof LOTTERY_DRAFT_TYPES)[number];
+	firstRoundTeams: Pick<Team, "tid" | "draftLottery">[];
+	draftPicksIndexed: DraftPickWithoutKey[][];
+
+	// The number of lottery teams depends on the playoff settings, which are from this season. Only needed for a hypothetical future draft.
+	season?: number;
+}) => {
+	const numPlayoffTeamsInfo = await getNumPlayoffTeams(season);
+	const numPlayoffTeams = numPlayoffTeamsInfo.numPlayoffTeams;
+
+	const info = getLotteryInfo(
+		draftType,
+		firstRoundTeams.length - numPlayoffTeams,
+		numPlayoffTeamsInfo.numPlayInTeams,
+	);
+	const numToPick = info.numToPick;
+
+	if (firstRoundTeams.length < numToPick) {
+		throw new NotEnoughTeamsError(firstRoundTeams.length, draftType);
+	}
+
+	let numLotteryTeams;
+	if (draftType === "cola") {
+		numLotteryTeams = await getNumColaLotteryTeams();
+	} else {
+		numLotteryTeams = helpers.bound(
+			firstRoundTeams.length - numPlayoffTeams,
+			numToPick,
+			draftType === "coinFlip" ? numToPick : firstRoundTeams.length,
+		);
+	}
+
+	const lotteryTeams = firstRoundTeams.slice(0, numLotteryTeams);
+
+	let chances: number[];
+	let nba2027Restrictions: DraftLotteryResult["nba2027"];
+	if (draftType === "cola") {
+		// If the playoffs aren't over yet, then we haven't yet added COLA_ALPHA to all the lottery teams
+		const addAlpha = g.get("phase") <= PHASE.PLAYOFFS ? COLA_ALPHA : 0;
+
+		chances = lotteryTeams.map((t) => {
+			// Traded picks are not eligible for the lottery
+			const currentTid = draftPicksIndexed[t.tid]?.[1]?.tid;
+			if (currentTid !== t.tid) {
+				return 0;
+			}
+
+			const teamInfo =
+				t.draftLottery?.type === "cola" ? t.draftLottery : undefined;
+
+			if (teamInfo?.optOut) {
+				return 0;
+			}
+
+			return (teamInfo?.chances ?? 0) + addAlpha;
+		});
+	} else {
+		chances = info.chances;
+
+		if (draftType === "nba2027") {
+			const restricted1 = [];
+			const restricted5 = [];
+			for (const [i, t] of lotteryTeams.entries()) {
+				if (t.draftLottery?.type === "nba2027") {
+					if (t.draftLottery.restricted1) {
+						restricted1.push(i);
+					}
+					if (t.draftLottery.restricted5 === 2) {
+						restricted5.push(i);
+					}
+				}
+			}
+
+			nba2027Restrictions = {
+				restricted1,
+				restricted5,
+			};
+		}
+	}
+
+	if (numLotteryTeams < chances.length) {
+		chances = chances.slice(0, numLotteryTeams);
+	} else {
+		while (numLotteryTeams > chances.length) {
+			chances.push(chances.at(-1)!);
+		}
+	}
+
+	return {
+		chances,
+		nba2027Restrictions,
+		numLotteryTeams,
+		numToPick,
+	};
 };
 
 const TIEBREAKER_AFTER_FIRST_ROUND = bySport<"swap" | "rotate" | "same">({
@@ -278,83 +418,15 @@ const genOrder = async (
 	let chances: number[] = [];
 	let nba2027Restrictions: DraftLotteryResult["nba2027"];
 	if (draftHasLottery(draftType)) {
-		const numPlayoffTeamsInfo = await getNumPlayoffTeams(g.get("season"));
-		const numPlayoffTeams = numPlayoffTeamsInfo.numPlayoffTeams;
-
-		const info = getLotteryInfo(
+		const lotteryChances = await getLotteryChances({
 			draftType,
-			firstRoundTeams.length - numPlayoffTeams,
-			numPlayoffTeamsInfo.numPlayInTeams,
-		);
-		const numToPick = info.numToPick;
-
-		if (firstRoundTeams.length < numToPick) {
-			throw new NotEnoughTeamsError(firstRoundTeams.length, draftType);
-		}
-
-		if (draftType === "cola") {
-			numLotteryTeams = await getNumColaLotteryTeams();
-		} else {
-			numLotteryTeams = helpers.bound(
-				firstRoundTeams.length - numPlayoffTeams,
-				numToPick,
-				draftType === "coinFlip" ? numToPick : firstRoundTeams.length,
-			);
-		}
-
-		const lotteryTeams = firstRoundTeams.slice(0, numLotteryTeams);
-
-		if (draftType === "cola") {
-			// If the playoffs aren't over yet, then we haven't yet added COLA_ALPHA to all the lottery teams
-			const addAlpha = g.get("phase") <= PHASE.PLAYOFFS ? COLA_ALPHA : 0;
-
-			chances = lotteryTeams.map((t) => {
-				// Traded picks are not eligible for the lottery
-				const currentTid = draftPicksIndexed[t.tid]?.[1]?.tid;
-				if (currentTid !== t.tid) {
-					return 0;
-				}
-
-				const teamInfo =
-					t.draftLottery?.type === "cola" ? t.draftLottery : undefined;
-
-				if (teamInfo?.optOut) {
-					return 0;
-				}
-
-				return (teamInfo?.chances ?? 0) + addAlpha;
-			});
-		} else {
-			chances = info.chances;
-
-			if (draftType === "nba2027") {
-				const restricted1 = [];
-				const restricted5 = [];
-				for (const [i, t] of lotteryTeams.entries()) {
-					if (t.draftLottery?.type === "nba2027") {
-						if (t.draftLottery.restricted1) {
-							restricted1.push(i);
-						}
-						if (t.draftLottery.restricted5 === 2) {
-							restricted5.push(i);
-						}
-					}
-				}
-
-				nba2027Restrictions = {
-					restricted1,
-					restricted5,
-				};
-			}
-		}
-
-		if (numLotteryTeams < chances.length) {
-			chances = chances.slice(0, numLotteryTeams);
-		} else {
-			while (numLotteryTeams > chances.length) {
-				chances.push(chances.at(-1)!);
-			}
-		}
+			firstRoundTeams,
+			draftPicksIndexed,
+		});
+		const numToPick = lotteryChances.numToPick;
+		numLotteryTeams = lotteryChances.numLotteryTeams;
+		chances = lotteryChances.chances;
+		nba2027Restrictions = lotteryChances.nba2027Restrictions;
 
 		if (
 			DIVIDE_CHANCES_OVER_TIED_TEAMS &&
@@ -364,7 +436,7 @@ const genOrder = async (
 			divideChancesOverTiedTeams(chances, firstRoundTeams, true);
 		}
 
-		const chanceTotal = chances.reduce((a, b) => a + b, 0);
+		const chanceTotal = Math.sumPrecise(chances);
 		const chancePct = chances.map((c) => (c / chanceTotal) * 100);
 
 		// Idenfity chances indexes protected by riggedLottery
@@ -407,10 +479,11 @@ const genOrder = async (
 		}
 	} else {
 		firstN = [];
-		for (const roundTeams of teamsByRound) {
-			if (draftType === "random") {
+		for (const [roundIndex, roundTeams] of teamsByRound.entries()) {
+			const roundOrderRule = getRoundOrderRule(draftType, roundIndex + 1);
+			if (roundOrderRule === "random") {
 				shuffle(roundTeams);
-			} else if (draftType === "noLotteryReverse") {
+			} else if (roundOrderRule === "reverse") {
 				roundTeams.reverse();
 			}
 		}
@@ -484,9 +557,7 @@ const genOrder = async (
 				})
 				.filter((dp) => dp !== undefined) // Keep only lottery picks
 				.map((dp) => {
-					if (dp === undefined) {
-						throw new Error("Should never happen");
-					}
+					assertDefined(dp);
 
 					// For the original team
 					const i = firstRoundTeams.findIndex(
@@ -504,9 +575,7 @@ const genOrder = async (
 		};
 
 		if (draftType === "nba2027") {
-			if (!nba2027Restrictions) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(nba2027Restrictions);
 			draftLotteryResult = {
 				...common,
 				draftType,
@@ -582,7 +651,7 @@ const genOrder = async (
 			}
 		}
 
-		if (draftType === "nba2027") {
+		if (getRoundOrderRule(draftType, round) === "reverseLotteryTeams") {
 			// 2nd+ round, non-playoff teams are reverse of the first round
 			const firstRound = teamsByRound[0]!;
 			roundTeams = [

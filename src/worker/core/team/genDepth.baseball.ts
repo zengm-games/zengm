@@ -1,32 +1,63 @@
-import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
-import type { Position } from "../../../common/types.baseball.ts";
-import type { Player, PlayerFiltered } from "../../../common/types.ts";
+import type {
+	PlayerRatings,
+	Position,
+} from "../../../common/types.baseball.ts";
+import type { Player } from "../../../common/types.ts";
 import { groupByUnique, last, maxBy } from "../../../common/utils.ts";
 import { shuffle } from "../../../common/random.ts";
+import { player } from "../index.ts";
 
-const score = (p: PlayerFiltered, pos?: Position) => {
-	if (pos === undefined) {
-		return p.ratings.ovr;
+// Everything used here, either from player.formatAll or from the ratings of a Player
+type PlayerForDepth = {
+	pid: number;
+	ratings: Pick<PlayerRatings, "spd" | "con" | "hpw" | "eye" | "ovrs"> & {
+		pos: Position;
+	};
+};
+
+const getScorePosBonus = (pos: Position) => {
+	if (pos === "C") {
+		// More likely to put actual catcher at catcher
+		return 25;
+	} else if (pos !== "RP") {
+		// Relief pitcher, who cares about "right" position
+		return 10;
 	}
 
+	return 0;
+};
+
+// Score for playing a specific position. Players come from player.formatAll or are constructed manually, so the type is just what this needs
+const score = (
+	p: {
+		ratings: {
+			pos?: string;
+			ovrs: Record<Position, number>;
+		};
+	},
+	pos: Position,
+) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
-		if (pos === "C") {
-			// More likely to put actual catcher at catcher
-			tempScore += 25;
-		} else if (pos !== "RP") {
-			// Relief pitcher, who cares about "right" position
-			tempScore += 10;
-		}
+		tempScore += getScorePosBonus(pos);
 	}
 
 	return tempScore;
 };
 
+// Score for ordering position players on the bench. Pitchers are ranked by their ovr at a position they are bad at, so they wind up at the end
+const benchScore = (ratings: {
+	pos: Position;
+	ovrs: Record<Position, number>;
+}) =>
+	ratings.pos === "RP" || ratings.pos === "SP"
+		? ratings.ovrs.LF
+		: ratings.ovrs[ratings.pos];
+
 const DEF_POSITIONS = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"] as const;
-const DEF_POSITIONS_DH = [
+export const DEF_POSITIONS_DH = [
 	"C",
 	"1B",
 	"2B",
@@ -38,6 +69,27 @@ const DEF_POSITIONS_DH = [
 	"DH",
 ] as const;
 const NUM_STARTERS = 5;
+
+// Only the deterministic traversal order is shared; roster evaluations remain
+// independent. Keep at most five permutations for each DH setting this season.
+let positionIndexesCache:
+	| { season: number; dh: number[][]; noDh: number[][] }
+	| undefined;
+
+const getPositionIndexes = (dh: boolean, attempt: number) => {
+	const season = g.get("season");
+	if (!positionIndexesCache || positionIndexesCache.season !== season) {
+		positionIndexesCache = { season, dh: [], noDh: [] };
+	}
+	const permutations = dh ? positionIndexesCache.dh : positionIndexesCache.noDh;
+	let indexes = permutations[attempt];
+	if (indexes === undefined) {
+		indexes = (dh ? DEF_POSITIONS_DH : DEF_POSITIONS).map((_, i) => i);
+		shuffle(indexes, season + attempt);
+		permutations[attempt] = indexes;
+	}
+	return indexes;
+};
 
 const sortBattingOrder = (
 	starters: {
@@ -127,6 +179,9 @@ const findMaxBy = <T>(
 				return;
 			} else if (output[i]!.score < x.score) {
 				output.splice(i, 0, x);
+				if (output.length > count) {
+					output.pop();
+				}
 				return;
 			}
 		}
@@ -134,7 +189,8 @@ const findMaxBy = <T>(
 		output[count - 1] = x;
 	};
 
-	for (const [i, record] of records.entries()) {
+	for (let i = 0; i < records.length; i++) {
+		const record = records[i]!;
 		const score = getScore(record);
 		if (output.length < count || score > output[count - 1]!.score) {
 			addToOutput({
@@ -145,15 +201,15 @@ const findMaxBy = <T>(
 		}
 	}
 
-	return output.slice(0, count);
+	return output;
 };
 
 export const getDepthDefense = (
 	players: {
 		pid: number;
 		ratings: {
-			ovrs: Record<string, number>;
-			pos: string;
+			ovrs: Record<Position, number>;
+			pos: Position;
 		};
 	}[],
 	dh: boolean,
@@ -166,9 +222,20 @@ export const getDepthDefense = (
 
 	if (playersRemaining.length > 0) {
 		for (const scorePos of defPositions) {
-			const maxIndex = findMaxBy(playersRemaining, 1, (p) =>
-				score(p, scorePos),
-			)[0]!.index;
+			const positionBonus = getScorePosBonus(scorePos);
+			let maxIndex = 0;
+			let maxScore = -Infinity;
+			for (let i = 0; i < playersRemaining.length; i++) {
+				const ratings = playersRemaining[i]!.ratings;
+				let currentScore = ratings.ovrs[scorePos];
+				if (ratings.pos === scorePos) {
+					currentScore += positionBonus;
+				}
+				if (currentScore > maxScore) {
+					maxIndex = i;
+					maxScore = currentScore;
+				}
+			}
 
 			defensivePlayersSorted.push(playersRemaining[maxIndex]!);
 			playersRemaining.splice(maxIndex, 1);
@@ -179,15 +246,7 @@ export const getDepthDefense = (
 	}
 
 	playersRemaining.sort((a, b) => {
-		const bOvr =
-			b.ratings.pos === "RP" || b.ratings.pos === "SP"
-				? b.ratings.ovrs.LF!
-				: b.ratings.ovrs[b.ratings.pos]!;
-		const aOvr =
-			a.ratings.pos === "RP" || a.ratings.pos === "SP"
-				? a.ratings.ovrs.LF!
-				: a.ratings.ovrs[a.ratings.pos]!;
-		const diff = bOvr - aOvr;
+		const diff = benchScore(b.ratings) - benchScore(a.ratings);
 		if (diff === 0) {
 			// Deterministic order
 			return b.pid - a.pid;
@@ -202,34 +261,39 @@ export const getDepthDefense = (
 	for (let numSwapTries = 0; numSwapTries < 5; numSwapTries++) {
 		let swapped = false;
 
-		const defPositionsShuffled = defPositions.map((pos, i) => ({
-			pos,
-			i,
-		}));
-		shuffle(defPositionsShuffled, g.get("season") + numSwapTries);
+		const positionIndexes = getPositionIndexes(dh, numSwapTries);
 
-		for (const { i, pos } of defPositionsShuffled) {
+		for (const i of positionIndexes) {
+			let p = defensivePlayersSorted[i];
+			// Needed for empty rosters, like expansion drafts.
+			if (!p) {
+				continue;
+			}
+
+			const pos = defPositions[i]!;
+			let currentOvrs = p.ratings.ovrs;
+			let currentPosOvr = currentOvrs[pos];
 			for (let j = 0; j < numPlayersToTest; j++) {
 				if (i === j) {
 					continue;
 				}
 
-				const p = defensivePlayersSorted[i];
 				const p2 = defensivePlayersSorted[j];
-				const pos2 = defPositions[j]!;
-
-				// Needed for empty roster, like expansion draft
-				if (!p || !p2) {
+				if (!p2) {
 					continue;
 				}
 
+				const pos2 = defPositions[j]!;
+				const otherOvrs = p2.ratings.ovrs;
 				if (
-					p.ratings.ovrs[pos2]! + p2.ratings.ovrs[pos]! >
-					p.ratings.ovrs[pos]! + p2.ratings.ovrs[pos2]!
+					currentOvrs[pos2] + otherOvrs[pos] >
+					currentPosOvr + otherOvrs[pos2]
 				) {
-					const temp: any = defensivePlayersSorted[i];
-					defensivePlayersSorted[i] = defensivePlayersSorted[j]!;
-					defensivePlayersSorted[j] = temp;
+					defensivePlayersSorted[i] = p2;
+					defensivePlayersSorted[j] = p;
+					p = p2;
+					currentOvrs = otherOvrs;
+					currentPosOvr = currentOvrs[pos];
 					swapped = true;
 				}
 			}
@@ -247,7 +311,7 @@ export const getDepthPitchers = (
 	players: {
 		pid: number;
 		ratings: {
-			ovrs: Record<string, number>;
+			ovrs: Record<Position, number>;
 		};
 	}[],
 ) => {
@@ -257,7 +321,7 @@ export const getDepthPitchers = (
 
 	const getTopByPos = (pos: "SP" | "RP", numToAdd: number) => {
 		const pids = [];
-		const indexes = new Set();
+		const indexes = new Set<number>();
 		const records = findMaxBy(playersRemaining, numToAdd, (p) => score(p, pos));
 		for (const record of records) {
 			pids.push(playersRemaining[record.index]!.pid);
@@ -285,7 +349,7 @@ export const getDepthPitchers = (
 	}
 	playersRemaining.sort((a, b) => {
 		// Inlining this improves performance significantly, for some reason
-		const diff = b.ratings.ovrs.RP! - a.ratings.ovrs.RP!;
+		const diff = b.ratings.ovrs.RP - a.ratings.ovrs.RP;
 		if (diff === 0) {
 			// Deterministic order
 			return b.pid - a.pid;
@@ -314,23 +378,26 @@ const genDepth = async (
 	}
 	const depth = helpers.deepCopy(initialDepth);
 
-	let players: any[];
+	let players: PlayerForDepth[];
 
-	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
+	// Can't use player.formatAll in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
 		players = playersRaw.map((p) => {
-			const ratings = last(p.ratings);
+			const ratings = last(p.ratings) as PlayerRatings;
 			return {
 				pid: p.pid,
 				ratings: {
 					spd: ratings.spd,
-					pos: ratings.pos,
+					con: ratings.con,
+					hpw: ratings.hpw,
+					eye: ratings.eye,
 					ovrs: ratings.ovrs,
+					pos: ratings.pos as Position,
 				},
 			};
 		});
 	} else {
-		players = await idb.getCopies.playersPlus(playersRaw, {
+		const playersFiltered = await player.formatAll(playersRaw, {
 			attrs: ["pid"],
 			ratings: ["spd", "con", "hpw", "eye", "pos", "ovrs"],
 			season: g.get("season"),
@@ -338,6 +405,13 @@ const genDepth = async (
 			showRookies: true,
 			fuzz: true,
 		});
+		players = playersFiltered.map((p) => ({
+			pid: p.pid,
+			ratings: {
+				...p.ratings,
+				pos: p.ratings.pos as Position,
+			},
+		}));
 	}
 
 	// Lineup last, since that depends on defensive starters
@@ -389,12 +463,12 @@ const genDepth = async (
 
 				// Add any players not put in starting lineup or removed from starting lineup to bench
 				for (const p of addToBench) {
-					const pScore = score(p);
+					const pScore = benchScore(p.ratings);
 					let added = false;
 					for (let i = defPositions.length; i < depth[pos2].length; i++) {
 						const p2 = players.find((p2) => p2.pid === depth[pos2][i]);
 
-						if (!p2 || pScore > score(p2)) {
+						if (!p2 || pScore > benchScore(p2.ratings)) {
 							depth[pos2].splice(i, 0, p.pid);
 							added = true;
 							break;
@@ -463,12 +537,13 @@ const genDepth = async (
 				const depthDefense = depth[pos2 === "L" ? "D" : "DP"];
 				const playersByPid = groupByUnique(players, "pid");
 
+				// If a player is somehow missing, the lineup will be the wrong length and getDepthPlayers will use the default lineup
 				const starters = depthDefense
 					.slice(0, pos2 === "L" ? 9 : 8)
-					.map((pid, i) => ({
-						i,
-						p: playersByPid[pid],
-					}));
+					.flatMap((pid, i) => {
+						const p = playersByPid[pid];
+						return p ? [{ i, p }] : [];
+					});
 
 				const sortedStarters = sortBattingOrder(starters);
 

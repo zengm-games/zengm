@@ -12,27 +12,17 @@ import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 import { useLocal } from "../util/local.ts";
 
 const awardName = (
-	award:
-		| {
-				pid: number;
-				pos: string;
-				name: string;
-				tid: number;
-				abbrev: string;
-				count: number;
-		  }
-		| undefined,
+	award: {
+		pid: number;
+		pos: string | undefined;
+		name: string;
+		tid: number;
+		abbrev: string;
+		count: number;
+	},
 	season: number,
 	userTid: number,
 ) => {
-	if (!award) {
-		// For old seasons with no Finals MVP
-		return {
-			value: "N/A",
-			sortValue: undefined,
-		};
-	}
-
 	const wrappedValue = wrappedPlayerNameLabels({
 		pid: award.pid,
 		pos: award.pos,
@@ -59,6 +49,10 @@ const teamName = (
 	season: number,
 ) => {
 	if (t) {
+		if (t.missing) {
+			return t.region;
+		}
+
 		return (
 			<>
 				<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}>
@@ -86,7 +80,9 @@ const formatTeam = (
 		classNames: t.tid === userTid ? "table-info py-1" : "py-1",
 		value: (
 			<div className="d-flex align-items-center">
-				<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} />
+				{t.missing ? null : (
+					<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} />
+				)}
 				<div className="ms-1 me-auto">
 					{t.seed !== undefined ? `${t.seed}. ` : null}
 					{teamName(t, season)}
@@ -94,7 +90,9 @@ const formatTeam = (
 				<CountBadge count={t.count} />
 			</div>
 		),
-		sortValue: `${t.region} ${t.name} ${season}`,
+		sortValue: t.missing
+			? `${t.region} ${season}`
+			: `${t.region} ${t.name} ${season}`,
 	};
 };
 
@@ -106,7 +104,13 @@ const HistoryAll = ({ awards, seasons }: View<"historyAll">) => {
 		"Season",
 		"League Champion",
 		"Runner Up",
-		...awards.map((award) => `award:${award}`),
+		...awards.map((award) => {
+			return {
+				desc: award.name,
+				title: award.shortName,
+				sortType: "name" as const,
+			};
+		}),
 	]);
 
 	const rows = seasons.map((s) => {
@@ -124,13 +128,25 @@ const HistoryAll = ({ awards, seasons }: View<"historyAll">) => {
 
 		const runnerUpEl = formatTeam(s.runnerUp, s.season, userTid);
 
+		const awardsByShortName = Object.groupBy(
+			s.awards,
+			(award) => award.awardShortName,
+		);
+
 		return {
 			key: s.season,
 			data: [
 				seasonLink,
 				champEl,
 				runnerUpEl,
-				...awards.map((award) => awardName(s[award], s.season, userTid)),
+				...awards.map(({ shortName }) => {
+					const award = awardsByShortName[shortName];
+					if (!award || !award[0]) {
+						return;
+					}
+
+					return awardName(award[0], s.season, userTid);
+				}),
 			],
 		};
 	});

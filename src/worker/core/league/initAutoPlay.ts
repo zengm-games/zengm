@@ -1,6 +1,6 @@
-import autoPlay from "./autoPlay.ts";
-import { local, toUI, g, logEvent } from "../../util/index.ts";
-import type { Conditions } from "../../../common/types.ts";
+import { startAutoPlay } from "./autoPlay.ts";
+import { toUI, g, logEvent } from "../../util/index.ts";
+import type { Conditions, Phase } from "../../../common/types.ts";
 
 const initAutoPlay = async (conditions: Conditions) => {
 	if (g.get("gameOver")) {
@@ -38,12 +38,7 @@ const initAutoPlay = async (conditions: Conditions) => {
 		season > g.get("season") ||
 		(season === g.get("season") && phase > g.get("phase"))
 	) {
-		local.autoPlayUntil = {
-			season,
-			phase,
-			start: Date.now(),
-		};
-		autoPlay(conditions);
+		startAutoPlay(season, phase as Phase, conditions);
 	} else {
 		return false;
 	}

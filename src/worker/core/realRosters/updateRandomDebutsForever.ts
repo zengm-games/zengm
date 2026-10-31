@@ -4,7 +4,11 @@ import { g } from "../../util/index.ts";
 import getDraftProspects from "./getDraftProspects.ts";
 import loadDataBasketball from "./loadData.basketball.ts";
 import addRelatives from "./addRelatives.ts";
-import { LEAGUE_DATABASE_VERSION, PHASE } from "../../../common/constants.ts";
+import {
+	DEFAULT_REAL_DRAFT_RATINGS,
+	LEAGUE_DATABASE_VERSION,
+	PHASE,
+} from "../../../common/constants.ts";
 import { shuffle } from "../../../common/random.ts";
 
 const updateRandomDebutsForever = async (
@@ -36,7 +40,7 @@ const updateRandomDebutsForever = async (
 			phase: PHASE.DRAFT, // Faked, so initialDraftYear is correct in getDraftProspects
 			randomDebuts: true,
 			randomDebutsKeepCurrent: false,
-			realDraftRatings: g.get("realDraftRatings") ?? "draft",
+			realDraftRatings: g.get("realDraftRatings") ?? DEFAULT_REAL_DRAFT_RATINGS,
 			realStats: "none",
 			includePlayers: true,
 		},

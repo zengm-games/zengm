@@ -451,7 +451,7 @@ const setupPlayoffScheduleTest = async (
 
 describe("newSchedulePlayoffsDay", () => {
 	beforeEach(async () => {
-		await resetCache();
+		await resetCache({});
 	});
 
 	for (const numGamesPlayoffSeries of [4, 5, 7]) {
@@ -492,9 +492,7 @@ describe("newSchedulePlayoffsDay", () => {
 
 		assert.strictEqual(upcoming.length, 14);
 		assert.deepStrictEqual(
-			upcoming
-				.filter((game) => game.canLiveSim)
-				.map((game) => game.gid),
+			upcoming.filter((game) => game.canLiveSim).map((game) => game.gid),
 			[...currentDayGids],
 		);
 		assert.strictEqual(

@@ -1,5 +1,20 @@
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
+import { showUndoNotification } from "./UndoNotification.tsx";
+
+export const showSignUndo = ({
+	name,
+	undoKey,
+}: {
+	name: string;
+	undoKey: number;
+}) => {
+	showUndoNotification({
+		actionName: "signing",
+		undoKey,
+		title: `You signed ${name}`,
+	});
+};
 
 // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
 // are willing to sign.
@@ -19,7 +34,13 @@ export const NegotiateButtons = ({
 	minContract: number;
 	onNegotiate: () => void;
 	spectator: boolean;
-	p: any;
+	p: {
+		pid: number;
+		firstName: string;
+		lastName: string;
+		contract: { exp: number };
+		mood: { user: { contractAmount: number } };
+	};
 	willingToNegotiate: boolean;
 }) => {
 	if (spectator) {
@@ -38,7 +59,7 @@ export const NegotiateButtons = ({
 			(contractAmount / 1000 > capSpace + 1 / 1000 &&
 				contractAmount / 1000 > (minContract + 1) / 1000));
 	return (
-		<div className="btn-group">
+		<>
 			<button
 				className="btn btn-light-bordered btn-xs"
 				disabled={!!disabled}
@@ -50,23 +71,27 @@ export const NegotiateButtons = ({
 				className="btn btn-light-bordered btn-xs"
 				disabled={signDisabled}
 				onClick={async () => {
-					const errorMsg = await toWorker("main", "acceptContractNegotiation", {
+					const response = await toWorker("main", "acceptContractNegotiation", {
 						pid: p.pid,
 						amount: contractAmount,
 						exp: p.contract.exp,
 					});
 
-					if (errorMsg) {
-						logEvent({
+					if (typeof response === "string") {
+						showNotification({
 							type: "error",
-							text: errorMsg,
-							saveToDb: false,
+							text: response,
+						});
+					} else {
+						showSignUndo({
+							name: `${p.firstName} ${p.lastName}`,
+							undoKey: response,
 						});
 					}
 				}}
 			>
 				Sign
 			</button>
-		</div>
+		</>
 	);
 };

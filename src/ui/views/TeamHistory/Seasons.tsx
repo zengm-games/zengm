@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { RecordAndPlayoffs } from "../../components/RecordAndPlayoffs.tsx";
 import type { View } from "../../../common/types.ts";
 import { useState } from "react";
+import { onEnterOrSpace } from "../../util/onEnterOrSpace.ts";
 
 const ExpandableNote = ({ note }: { note: string | undefined }) => {
 	const [expand, setExpand] = useState(false);
@@ -10,21 +11,32 @@ const ExpandableNote = ({ note }: { note: string | undefined }) => {
 		return null;
 	}
 
+	const toggle = () => {
+		setExpand(!expand);
+	};
+
 	// Would be nice to use a button rather than a div, but I couldn't get text-truncate to work there
 	return (
 		<div
 			className={clsx("cursor-pointer", expand ? undefined : "text-truncate")}
 			style={expand ? { whiteSpace: "pre-line" } : undefined}
-			onClick={() => {
-				setExpand(!expand);
-			}}
+			role="button"
+			tabIndex={0}
+			aria-expanded={expand}
+			onClick={toggle}
+			onKeyDown={onEnterOrSpace(toggle)}
 		>
 			{note}
 		</div>
 	);
 };
 
-const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
+const Seasons = ({
+	history,
+	userSeasons,
+}: Pick<View<"teamHistory">, "history" | "userSeasons">) => {
+	const userSeasonsSet = new Set(userSeasons);
+
 	const numTeamNames = new Set(
 		history.map((h) => h.name).filter((name) => name !== undefined),
 	).size;
@@ -50,6 +62,7 @@ const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 		let newName;
 		if (h.name && prevName !== h.name) {
 			newName = h.name;
+			// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 			prevName = h.name;
 		}
 
@@ -61,13 +74,33 @@ const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 				{newName ? (
 					<h4 className={i > 0 ? "mt-2" : undefined}>{newName}</h4>
 				) : null}
-				{recordAndPlayoffs}
+				<div>
+					{userSeasonsSet.has(h.season) ? (
+						<span
+							className="table-info legend-square me-1"
+							title="You were the GM"
+						/>
+					) : null}
+					{recordAndPlayoffs}
+				</div>
 				<ExpandableNote note={h.note} />
 			</div>
 		);
 	});
 
-	return <>{historySeasons}</>;
+	return (
+		<>
+			{historySeasons}
+			{userSeasons.length > 0 ? (
+				<p className="mt-2 text-body-secondary">
+					Seasons when you were the GM are prefixed{" "}
+					<span className="text-nowrap">
+						with <span className="table-info legend-square" />
+					</span>
+				</p>
+			) : null}
+		</>
+	);
 };
 
 export default Seasons;

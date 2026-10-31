@@ -1,7 +1,5 @@
-import { isSport } from "./sportFunctions.ts";
-
 export const getPeriodName = (numPeriods: number, short?: boolean) => {
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		return short ? "Inn" : "inning";
 	}
 

@@ -10,6 +10,7 @@ import type { View } from "../../common/types.ts";
 import { shuffle } from "../../common/random.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { useLocal } from "../util/local.ts";
+import { assertDefined } from "../../common/utils.ts";
 
 const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 	const [sortedTids, setSortedTids] = useState(() => teams.map((t) => t.tid));
@@ -44,9 +45,7 @@ const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
 	const teamsSorted = sortedTids.map((tid) => {
 		const found = teams.find((t) => t.tid === tid);
-		if (!found) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(found);
 		return found;
 	});
 
@@ -68,11 +67,11 @@ const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 		<>
 			<p>
 				In a "fantasy draft", all non-retired players are put into one big pool
-				and teams take turns drafting players, similar to a fantasy{" "}
-				{process.env.SPORT} draft. At the beginning of the draft, the order of
-				picks is randomized. During the draft, the order of picks snakes
-				(reverses every other round). For example, the team that picks first in
-				the first round picks last in the second round.
+				and teams take turns drafting players, similar to a fantasy {__SPORT}{" "}
+				draft. At the beginning of the draft, the order of picks is randomized.
+				During the draft, the order of picks snakes (reverses every other
+				round). For example, the team that picks first in the first round picks
+				last in the second round.
 			</p>
 
 			<p>
@@ -98,11 +97,11 @@ const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 				nonfluid
 				sortableRows={{
 					highlightHandle: ({ row }) => userTids.includes(row.key as number),
-					onChange: async ({ oldIndex, newIndex }) => {
+					onChange: ({ oldIndex, newIndex }) => {
 						const newSortedTids = arrayMove(sortedTids, oldIndex, newIndex);
 						setSortedTids(newSortedTids);
 					},
-					onSwap: async (index1, index2) => {
+					onSwap: (index1, index2) => {
 						const newSortedTids = [...sortedTids];
 						newSortedTids[index1] = sortedTids[index2]!;
 						newSortedTids[index2] = sortedTids[index1]!;

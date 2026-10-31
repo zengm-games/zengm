@@ -3,14 +3,19 @@ import type { PlayerContract } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { useLocal } from "../util/local.ts";
 
-type ContractPlayer = {
+// Contract amount doesn't need exp, which may be undefined for a range of seasons
+type ContractAmountPlayer = {
 	draft: {
 		year: number;
 	};
+	contract: Pick<PlayerContract, "amount" | "rookie">;
+};
+
+type ContractPlayer = ContractAmountPlayer & {
 	contract: PlayerContract;
 };
 
-const useJustDrafted = (p: ContractPlayer) => {
+const useJustDrafted = (p: ContractAmountPlayer) => {
 	const { phase, season } = useLocal(["phase", "season"]);
 
 	return helpers.justDrafted(p, phase, season);
@@ -23,7 +28,7 @@ export const ContractAmount = ({
 	p,
 	override,
 }: {
-	p: ContractPlayer;
+	p: ContractAmountPlayer;
 	override?: number;
 }) => {
 	const justDrafted = useJustDrafted(p);
@@ -38,7 +43,10 @@ export const ContractAmount = ({
 	);
 };
 
-export const wrappedContractAmount = (p: ContractPlayer, override?: number) => {
+export const wrappedContractAmount = (
+	p: ContractAmountPlayer,
+	override?: number,
+) => {
 	const formatted = helpers.formatCurrency(override ?? p.contract.amount, "M");
 
 	return {

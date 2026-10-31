@@ -178,9 +178,13 @@ const FreeAgents = ({
 		"Mood",
 		askingForText,
 		"Exp",
-		"Negotiate",
+		"Actions",
 	];
-	const cols = getCols(colKeys);
+	const cols = getCols(colKeys, {
+		Actions: {
+			width: "1px",
+		},
+	});
 
 	const showShowPlayersAffordButton = salaryCapType !== "none";
 
@@ -235,7 +239,7 @@ const FreeAgents = ({
 		freeAgencySeason +
 		(season === "current" && phase < PHASE.FREE_AGENCY ? 1 : 0);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -271,23 +275,28 @@ const FreeAgents = ({
 				wrappedContractAmount(p, p.contract.amount),
 				wrappedContractExp(p),
 				p.freeAgentType === "available"
-					? {
-							value: (
-								<NegotiateButtons
-									canGoOverCap={salaryCapType === "none"}
-									capSpace={capSpace}
-									disabled={gameSimInProgress}
-									minContract={minContract}
-									onNegotiate={async () => {
-										await negotiationModal.negotiate(p.pid);
-									}}
-									spectator={spectator}
-									p={p}
-									willingToNegotiate={p.mood.user.willing}
-								/>
-							),
-							searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
-						}
+					? spectator
+						? null
+						: {
+								value: (
+									<NegotiateButtons
+										canGoOverCap={salaryCapType === "none"}
+										capSpace={capSpace}
+										disabled={gameSimInProgress}
+										minContract={minContract}
+										onNegotiate={async () => {
+											await negotiationModal.negotiate(p.pid);
+										}}
+										spectator={spectator}
+										p={p}
+										willingToNegotiate={p.mood.user.willing}
+									/>
+								),
+								classNames: "d-flex align-items-center gap-2",
+								searchValue: p.mood.user.willing
+									? "Negotiate Sign"
+									: "Refuses!",
+							}
 					: signedFreeAgentWrapped(
 							p.freeAgentTransaction,
 							freeAgencySeason,

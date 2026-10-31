@@ -39,7 +39,7 @@ const Summary = ({
 
 	const mostStat = orderBy(
 		players,
-		(p) => p.careerStats[summaryStat],
+		(p) => p.careerStats[summaryStat] ?? -Infinity,
 		"desc",
 	).slice(0, 3);
 
@@ -61,7 +61,7 @@ const Summary = ({
 	if (roys.length > 0) {
 		summaryRows.push(
 			<>
-				<b>Rookie of the Year:</b>{" "}
+				<b>{helpers.plural("Rookie", roys.length)} of the Year:</b>{" "}
 				{roys.map((p, i) => (
 					<Fragment key={p.pid}>
 						<a href={helpers.leagueUrl(["player", p.pid])}>
@@ -132,7 +132,10 @@ const Summary = ({
 	for (const { key, title } of awards) {
 		const filtered = orderBy(
 			players.filter((p) => p.awardCounts[key] > 0),
-			[(p) => p.awardCounts[key], (p) => p.careerStats[summaryStat]],
+			[
+				(p) => p.awardCounts[key],
+				(p) => p.careerStats[summaryStat] ?? -Infinity,
+			],
 			["desc", "desc"],
 		);
 		const count = filtered.length;
@@ -159,15 +162,15 @@ const Summary = ({
 					{excess > 0 ? (
 						<>
 							,{" "}
-							<a
-								href="#"
-								onClick={(event) => {
-									event.preventDefault();
+							<button
+								type="button"
+								className="btn btn-link p-0 border-0 align-baseline"
+								onClick={() => {
 									setExpanded([...expanded, key]);
 								}}
 							>
 								{excess} more
-							</a>
+							</button>
 						</>
 					) : null}
 				</>,
@@ -283,7 +286,7 @@ const DraftHistory = ({
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
 
 		return {

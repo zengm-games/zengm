@@ -7,13 +7,14 @@ import type { Settings } from "../../../worker/views/settings.ts";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { settings } from "../Settings/settings.tsx";
+import { getSettingsShown } from "../Settings/getSettingsShown.ts";
 import SettingsForm from "../Settings/SettingsForm.tsx";
 import type { Key } from "../Settings/types.ts";
-import ExportButton from "./ExportButton.tsx";
-import ImportButton from "./ImportButton.tsx";
+import { ExportButton } from "./ExportButton.tsx";
+import { ImportButton } from "./ImportButton.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
@@ -41,28 +42,7 @@ const DefaultNewLeagueSettings = ({
 			return [];
 		}
 
-		const keys = helpers.keys(newOverrides);
-
-		// Handle adding parent of hidden key
-		return keys.flatMap((key) => {
-			const setting = settingsByKey.get(key as Key)?.[0];
-
-			if (!setting) {
-				// Remove any non-Key elements
-				return [];
-			}
-
-			if (setting.hidden) {
-				const partner = settings.find((setting) =>
-					setting?.partners?.includes(key as Key),
-				);
-				if (partner) {
-					return [key, partner.key];
-				}
-			}
-
-			return key;
-		}) as Key[];
+		return getSettingsShown(helpers.keys(newOverrides));
 	};
 
 	const [settingsShown, setSettingsShown] = useState<Key[]>(() =>
@@ -277,12 +257,11 @@ const DefaultNewLeagueSettings = ({
 						}
 
 						if (godModeKeys.length > 0) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: `The following settings require God Mode to be enabled to be changed:<br>- ${godModeKeys.join(
 									"<br>- ",
 								)}`,
-								saveToDb: false,
 								persistent: true,
 							});
 						}
@@ -296,10 +275,9 @@ const DefaultNewLeagueSettings = ({
 
 					setDirty(false);
 
-					logEvent({
+					showNotification({
 						type: "success",
 						text: "New league default settings successfully updated.",
-						saveToDb: false,
 					});
 				}}
 				onCancel={() => {

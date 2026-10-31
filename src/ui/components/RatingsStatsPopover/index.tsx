@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { type Ref, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RatingsStats } from "./RatingsStats.tsx";
 import { WatchBlock } from "../WatchBlock.tsx";
 import { helpers } from "../../util/helpers.ts";
@@ -30,24 +30,17 @@ const PlayerNote = ({
 	);
 };
 
-const Icon = ({
-	onClick,
-	ref,
-	watch,
-}: {
-	onClick?: () => void;
-	ref?: Ref<HTMLSpanElement>;
-	watch: number;
-}) => {
+const Icon = ({ onClick, watch }: { onClick?: () => void; watch: number }) => {
 	return (
-		<span
-			ref={ref}
+		<button
+			type="button"
 			className={clsx(
-				"glyphicon glyphicon-stats watch",
+				"icon-button glyphicon glyphicon-stats watch",
 				watch === 0 ? undefined : `watch-active-${watch}`,
 			)}
 			data-no-row-highlight="true"
 			title="View ratings and stats"
+			aria-label="View ratings and stats"
 			onClick={onClick}
 		/>
 	);
@@ -85,9 +78,7 @@ export const RatingsStatsPopover = ({
 			endu: number;
 			season: number;
 		};
-		stats?: {
-			[key: string]: number;
-		};
+		stats?: Record<string, unknown>;
 		pid: number;
 		type?: "career" | "current" | "draft" | number;
 		note?: string;
@@ -97,11 +88,17 @@ export const RatingsStatsPopover = ({
 
 	const [watch, setWatch] = useState(defaultWatch ?? 0);
 	useEffect(() => {
+		let cancelled = false;
+
 		if (defaultWatch === undefined) {
 			// Need to fetch initial value
 			(async () => {
 				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
-				setWatch(newLocalWatch);
+
+				// Ignore the result if pid changed while waiting for it
+				if (!cancelled) {
+					setWatch(newLocalWatch);
+				}
 			})();
 		} else {
 			// This happens when switching to a new pid but defaultWatch is supplied
@@ -109,13 +106,16 @@ export const RatingsStatsPopover = ({
 		}
 
 		// Need to listen for bulk action updates
-		const unbind = crossTabEmitter.on("updateWatch", async (watchByPid) => {
+		const unbind = crossTabEmitter.on("updateWatch", (watchByPid) => {
 			const newWatch = watchByPid[pid];
 			if (newWatch !== undefined) {
 				setWatch(newWatch);
 			}
 		});
-		return unbind;
+		return () => {
+			cancelled = true;
+			unbind();
+		};
 	}, [defaultWatch, pid]);
 
 	// Object.is to handle NaN
@@ -229,13 +229,9 @@ export const RatingsStatsPopover = ({
 		</div>
 	);
 
-	const renderTarget = ({
-		forwardedRef,
-		onClick,
-	}: {
-		forwardedRef?: Ref<HTMLSpanElement>;
-		onClick?: () => void;
-	}) => <Icon ref={forwardedRef} onClick={onClick} watch={watch} />;
+	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
+		<Icon onClick={onClick} watch={watch} />
+	);
 
 	return (
 		<ResponsivePopover

@@ -3,6 +3,14 @@ import { orderBy } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 
+const getDraftSeason = () => {
+	return g.get("phase") === PHASE.FANTASY_DRAFT
+		? "fantasy"
+		: g.get("phase") === PHASE.EXPANSION_DRAFT
+			? "expansion"
+			: g.get("season");
+};
+
 /**
  * Retrieve the current remaining draft order.
  *
@@ -10,12 +18,7 @@ import { g } from "../../util/index.ts";
  * @return {Promise} Resolves to an ordered array of pick objects.
  */
 const getOrder = async () => {
-	const season =
-		g.get("phase") === PHASE.FANTASY_DRAFT
-			? "fantasy"
-			: g.get("phase") === PHASE.EXPANSION_DRAFT
-				? "expansion"
-				: g.get("season");
+	const season = getDraftSeason();
 	const draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
 		season,

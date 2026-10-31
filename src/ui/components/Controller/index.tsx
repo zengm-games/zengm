@@ -1,5 +1,5 @@
 import { LazyMotion } from "framer-motion";
-import { memo, useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect, type ReactNode } from "react";
 import { localActions, useLocal } from "../../util/local.ts";
 import { CommandPalette } from "../CommandPalette/index.tsx";
 import { Footer } from "./Footer.tsx";
@@ -13,7 +13,6 @@ import { SideBar } from "./SideBar.tsx";
 import { Skyscraper } from "./Skyscraper.tsx";
 import { TitleBar } from "./TitleBar.tsx";
 import { useViewData } from "../../util/viewManager.tsx";
-import { isSport } from "../../../common/sportFunctions.ts";
 import api from "../../api/index.ts";
 import { ErrorBoundary } from "../ErrorBoundary.tsx";
 
@@ -31,7 +30,7 @@ const minWidth0 = {
 };
 
 type KeepPreviousRenderWhileUpdatingProps = {
-	children: any;
+	children: ReactNode;
 	updating: boolean;
 };
 const KeepPreviousRenderWhileUpdating = memo(
@@ -79,20 +78,21 @@ export const Controller = () => {
 		idLoaded,
 		inLeague,
 		loading: updating,
-		scrollToTop,
+		scrollToTopCount,
 	} = state;
 
 	// Optimistically use idLoading before it renders, for UI responsiveness in the sidebar
 	const sidebarPageID = idLoading ?? idLoaded;
 
-	const pathname = isSport("baseball") ? document.location.pathname : undefined;
+	const pathname =
+		__SPORT === "baseball" ? document.location.pathname : undefined;
 
-	// Scroll to top if this load came from user clicking a link to a new page
+	// Scroll to top each time a load says it should, see ViewManager.processUpdate
 	useEffect(() => {
-		if (scrollToTop) {
-			window.scrollTo(window.pageXOffset, 0);
+		if (scrollToTopCount > 0) {
+			window.scrollTo(window.scrollX, 0);
 		}
-	}, [idLoaded, scrollToTop]);
+	}, [scrollToTopCount]);
 
 	return (
 		<LazyMotion strict features={loadFramerMotionFeatures}>

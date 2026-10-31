@@ -9,9 +9,8 @@ import type {
 	Player,
 	PlayerContract,
 	PlayerStats,
-	UpdateEvents,
-	ViewInput,
 } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { player, team } from "../core/index.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { idb } from "../db/index.ts";
@@ -21,6 +20,13 @@ import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { last } from "../../common/utils.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+
+const processInputs = (params: RouteParams<"tradeSummary">) => {
+	return {
+		eid: params.eid ? Number.parseInt(params.eid) : Number.NaN,
+	};
+};
 
 const findRatingsRow = (
 	allRatings: NonEmptyArray<MinimalPlayerRatings>,
@@ -100,14 +106,12 @@ const findStatSum = (
 	let statSum = 0;
 	let statSumTeam = 0;
 	let seenOtherTeam = false;
-	for (let i = 0; i < allStats.length; i++) {
-		const row = allStats[i];
-
+	for (const [i, row] of allStats.entries()) {
 		const stat = bySport({
-			baseball: row.war,
-			basketball: row.ows + row.dws,
-			football: row.av,
-			hockey: row.ops + row.dps + row.gps,
+			baseball: row.war ?? 0,
+			basketball: (row.ows ?? 0) + (row.dws ?? 0),
+			football: row.av ?? 0,
+			hockey: (row.ops ?? 0) + (row.dps ?? 0) + (row.gps ?? 0),
 		});
 
 		// Only after trade - undefined means traded draft pick, -1 means traded while stats array was empty (so all is after trade)
@@ -347,13 +351,7 @@ const getSeasonsToPlot = async (
 			},
 		];
 		for (const [j, tid] of tids.entries()) {
-			const teamSeason = await idb.getCopy.teamSeasons(
-				{
-					season: i,
-					tid,
-				},
-				"noCopyCache",
-			);
+			const teamSeason = await idb.merged.teamSeasons.getByTidSeason(tid, i);
 
 			if (
 				teamSeason &&
@@ -463,7 +461,7 @@ export const processAssets = async (
 
 	for (const asset of event.teams[i].assets) {
 		if (assetIsPlayer(asset)) {
-			const p = await idb.getCopy.players({ pid: asset.pid }, "noCopyCache");
+			const p = await idb.merged.players.get(asset.pid);
 			const common = {
 				pid: asset.pid,
 				contract: asset.contract,
@@ -548,91 +546,88 @@ export const processAssets = async (
 	return assets;
 };
 
-const updateTradeSummary = async (
-	{ eid }: ViewInput<"tradeSummary">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
-		updateEvents.includes("playerMovement") ||
-		eid !== state.eid
-	) {
-		const event = await idb.getCopy.events({ eid }, "noCopyCache");
+export default defineView({
+	id: "tradeSummary",
+	processInputs,
+	load: async ({ inputs: { eid }, updateEvents, prevInputs }) => {
 		if (
-			!event ||
-			event.type !== "trade" ||
-			!event.teams ||
-			event.phase === undefined
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase") ||
+			updateEvents.has("playerMovement") ||
+			eid !== prevInputs?.eid
 		) {
-			// https://stackoverflow.com/a/59923262/786644
-			const returnValue = {
-				errorMessage: "Trade not found.",
-			};
-			return returnValue;
-		}
-
-		const teams = [];
-
-		const statSumsBySeason: StatSumsBySeasons = [{}, {}];
-
-		for (const i of [0, 1] as const) {
-			const tid = event.tids[i];
-			const teamInfo = await getTeamInfoBySeason(tid, event.season);
-			if (!teamInfo) {
-				throw new Error("teamInfo not found");
+			const event = await idb.merged.events.get(eid);
+			if (
+				!event ||
+				event.type !== "trade" ||
+				!event.teams ||
+				event.phase === undefined
+			) {
+				// https://stackoverflow.com/a/59923262/786644
+				const returnValue = {
+					errorMessage: "Trade not found.",
+				};
+				return returnValue;
 			}
 
-			const assets = await processAssets(event, i, statSumsBySeason);
+			const teams = [];
 
-			let statSum = 0;
-			let statSumTeam = 0;
-			for (const asset of assets) {
-				// https://github.com/microsoft/TypeScript/issues/21732
-				if (asset.type === "player" || asset.type === "realizedPick") {
-					statSum += asset.stat;
-					statSumTeam += asset.statTeam;
+			const statSumsBySeason: StatSumsBySeasons = [{}, {}];
+
+			for (const i of [0, 1] as const) {
+				const tid = event.tids[i];
+				const teamInfo = await getTeamInfoBySeason(tid, event.season);
+				if (!teamInfo) {
+					throw new Error("teamInfo not found");
 				}
+
+				const assets = await processAssets(event, i, statSumsBySeason);
+
+				let statSum = 0;
+				let statSumTeam = 0;
+				for (const asset of assets) {
+					// https://github.com/microsoft/TypeScript/issues/21732
+					if (asset.type === "player" || asset.type === "realizedPick") {
+						statSum += asset.stat;
+						statSumTeam += asset.statTeam;
+					}
+				}
+
+				teams.push({
+					abbrev: teamInfo.abbrev,
+					region: teamInfo.region,
+					name: teamInfo.name,
+					tid,
+					assets,
+					statSum,
+					statSumTeam,
+				});
 			}
 
-			teams.push({
-				abbrev: teamInfo.abbrev,
-				region: teamInfo.region,
-				name: teamInfo.name,
-				tid,
-				assets,
-				statSum,
-				statSumTeam,
-			});
+			const seasonsToPlot = await getSeasonsToPlot(
+				event.season,
+				event.phase,
+				event.tids,
+				statSumsBySeason,
+			);
+
+			const pointsFormula = g.get("pointsFormula");
+			const usePts = pointsFormula !== "";
+
+			return {
+				teams,
+				season: event.season,
+				phase: event.phase,
+				stat: bySport({
+					baseball: "WAR",
+					basketball: "WS",
+					football: "AV",
+					hockey: "PS",
+				}),
+				seasonsToPlot,
+				usePts,
+			};
 		}
-
-		const seasonsToPlot = await getSeasonsToPlot(
-			event.season,
-			event.phase,
-			event.tids as [number, number],
-			statSumsBySeason,
-		);
-
-		const pointsFormula = g.get("pointsFormula");
-		const usePts = pointsFormula !== "";
-
-		return {
-			eid,
-			teams,
-			season: event.season,
-			phase: event.phase,
-			stat: bySport({
-				baseball: "WAR",
-				basketball: "WS",
-				football: "AV",
-				hockey: "PS",
-			}),
-			seasonsToPlot,
-			usePts,
-		};
-	}
-};
-
-export default updateTradeSummary;
+	},
+});

@@ -5,6 +5,7 @@ import { type ReplaceInfo } from "./replace.ts";
 import { bySport } from "../lib/bySport.ts";
 import { getBannerAdsCode } from "./getBannerAdsCode.ts";
 import type { Sport } from "../lib/getSport.ts";
+import { LOGO_SPINNERS } from "../logo-spinners/render/constants.ts";
 
 const genModulepreloads = async (modulepreloadPaths: string[]) => {
 	const infos = [];
@@ -81,6 +82,14 @@ export const buildIndexHtml = async ({
 			replaceValue: versionNumber,
 		},
 		{
+			searchValue: "LOGO_SPINNER_FRAMES",
+			replaceValue: String(LOGO_SPINNERS[sport].frames),
+		},
+		{
+			searchValue: "LOGO_SPINNER_DURATION",
+			replaceValue: `${LOGO_SPINNERS[sport].duration}s`,
+		},
+		{
 			searchValue: "BANNER_ADS_CODE",
 			replaceValue: getBannerAdsCode(sport),
 		},
@@ -90,15 +99,6 @@ export const buildIndexHtml = async ({
 				basketball: "G-8MW4G9YRJK",
 				football: "G-B5MWX6ZDK2",
 				default: "G-27QV0377Q1",
-			}),
-		},
-		{
-			searchValue: "BUGSNAG_API_KEY",
-			replaceValue: bySport(sport, {
-				baseball: "37b1fd32d021f7716dc0e1d4a3e619bc",
-				basketball: "c10b95290070cb8888a7a79cc5408555",
-				football: "fed8957cbfca2d1c80997897b840e6cf",
-				hockey: "449e8ed576f7cbccf5c7649e936ab9ff",
 			}),
 		},
 		{

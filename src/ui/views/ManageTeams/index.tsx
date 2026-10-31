@@ -1,12 +1,12 @@
 import { Fragment, useCallback, useReducer, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import AddRemove from "./AddRemove.tsx";
 import type { Phase, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
-import TeamForm from "./TeamForm.tsx";
+import TeamForm, { getNumTeamsByDid } from "./TeamForm.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { useLocal } from "../../util/local.ts";
 
@@ -171,16 +171,14 @@ const ManageTeams = (props: View<"manageTeams">) => {
 				text += `<br /><br />${nextSeasonWarning}`;
 			}
 
-			logEvent({
+			showNotification({
 				type: "success",
 				text,
-				saveToDb: false,
 			});
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 		}
@@ -206,6 +204,10 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	const { saving, teams } = state;
 
 	const uniqueAbbrevsErrorMessage = getUniqueAbbrevsErrorMessage(teams);
+
+	const numTeamsByDid = getNumTeamsByDid(
+		teams.filter((t) => !t.disabled).map((t) => t.did),
+	);
 
 	return (
 		<>
@@ -305,6 +307,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 								disableStatus={disableStatus}
 								disableStadiumCapacity={!godMode}
 								moveButton
+								numTeamsByDid={numTeamsByDid}
 								t={t}
 							/>
 							<div className="col-12 d-lg-none" style={{ marginTop: -12 }}>

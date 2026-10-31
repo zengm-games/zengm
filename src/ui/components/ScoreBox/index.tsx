@@ -9,7 +9,7 @@ import { PlayerNameLabels } from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
 import { getCol } from "../../../common/getCol.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -23,7 +23,7 @@ type Team = {
 	lost?: number;
 	tied?: number;
 	otl?: number;
-	players?: any[];
+	players?: unknown[];
 	playoffs?: {
 		seed: number;
 		won: number;
@@ -58,8 +58,7 @@ const getRecord = (t: Team) => {
 		return "";
 	}
 
-	// @ts-expect-error
-	return helpers.formatRecord(t);
+	return helpers.formatRecord({ ...t, won: t.won, lost: t.lost });
 };
 
 const smallStyle = {
@@ -305,7 +304,7 @@ export const ScoreBox = memo(
 							let teamName;
 							let rosterURL;
 							if (allStarGame) {
-								imgURL = `https://zengm.com/files/logo-${process.env.SPORT}.svg`;
+								imgURL = `https://zengm.com/files/logo-${__SPORT}.svg`;
 								teamName = small
 									? `AS${i === 0 ? 2 : 1}`
 									: `All-Stars ${i === 0 ? 2 : 1}`;
@@ -347,9 +346,9 @@ export const ScoreBox = memo(
 											}`,
 											basketball: `${
 												!challengeNoRatings ? ", " : ""
-											}${p.stats.pts.toFixed(1)} / ${p.stats.trb.toFixed(
-												1,
-											)} / ${p.stats.ast.toFixed(1)}`,
+											}${(p.stats.pts ?? 0).toFixed(1)} / ${(
+												p.stats.trb ?? 0
+											).toFixed(1)} / ${(p.stats.ast ?? 0).toFixed(1)}`,
 											football: null,
 											hockey: `${!challengeNoRatings && p.stats.keyStats ? ", " : ""}${
 												p.stats.keyStats
@@ -366,7 +365,7 @@ export const ScoreBox = memo(
 
 										let title = col.title;
 										// Add back in prefix for some football ones
-										if (isSport("football")) {
+										if (__SPORT === "football") {
 											if (!stat.startsWith("def")) {
 												title = helpers.upperCaseFirstLetter(stat);
 											}

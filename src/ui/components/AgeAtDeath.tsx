@@ -15,8 +15,6 @@ const AgeAtDeath = ({
 	return age;
 };
 
-export default AgeAtDeath;
-
 export const wrappedAgeAtDeath = (age: number, ageAtDeath: number | null) => {
 	const searchSortValue = shouldUseAgeAtDeath(age, ageAtDeath)
 		? ageAtDeath

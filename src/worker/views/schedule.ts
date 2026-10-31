@@ -1,12 +1,7 @@
 import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	Game,
-	PlayerInjury,
-} from "../../common/types.ts";
+import type { Game, PlayerInjury } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
 import { groupByUnique, last, orderBy } from "../../common/utils.ts";
 import {
@@ -19,8 +14,16 @@ import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
 import playThroughInjuriesFactor from "../../common/playThroughInjuriesFactor.ts";
 import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
 import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
+import { defineView, keepType, type ViewArgs } from "../util/defineView.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"schedule">) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, tid };
+};
 
 export const getUpcoming = async ({
 	cid,
@@ -86,22 +89,31 @@ export const getUpcoming = async ({
 		return [];
 	}
 
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["playThroughInjuries", "tid"],
-			seasonAttrs: ["won", "lost", "tied", "otl"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["playThroughInjuries", "tid"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
+		season: g.get("season"),
+		active: true,
+	});
 	const teamsByTid = groupByUnique(teams, "tid");
 
-	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-		0, // Active players have tid >= 0
-		Infinity,
-	]);
-	const players = await idb.getCopies.playersPlus(playersRaw, {
+	// Only load players on teams that are actually needed, since often this is just for one game (such as updating the user's next game after every day of the regular season). Active players have tid >= 0
+	const tidsNeeded = new Set<number>();
+	for (const game of filteredSchedule) {
+		if (game.homeTid >= 0) {
+			tidsNeeded.add(game.homeTid);
+		}
+		if (game.awayTid >= 0) {
+			tidsNeeded.add(game.awayTid);
+		}
+	}
+	const playersRaw = [];
+	for (const tid of tidsNeeded) {
+		playersRaw.push(
+			...(await idb.cache.players.indexGetAll("playersByTid", tid)),
+		);
+	}
+	const players = await player.formatAll(playersRaw, {
 		attrs: ["injury", "pid", "value", "tid"],
 		ratings: ["ovr", "pos", "ovrs"],
 		season: g.get("season"),
@@ -153,7 +165,7 @@ export const getUpcoming = async ({
 						won: series.home.won,
 						lost: series.away ? series.away.won : 0,
 					};
-				} else if (series.away && series.away.tid === tid) {
+				} else if (series.away?.tid === tid) {
 					playoffs = {
 						seed: series.away.seed,
 						won: series.away.won,
@@ -212,7 +224,7 @@ export const getTopPlayers = async <T extends any[]>(
 	// On daily schedule, for baseball SP calculation, we don't need to look at any games beyond the requested day
 	targetDay?: number,
 ) => {
-	const playersPlusOptions = (tid: number) => {
+	const formatOptions = (tid: number) => {
 		return {
 			attrs: ["pid", "name", "injury", "abbrev", "tid"],
 			ratings: ["ovr", "pos"],
@@ -222,12 +234,12 @@ export const getTopPlayers = async <T extends any[]>(
 				basketball: ["pts", "trb", "ast"],
 				football: undefined, // football keyStats is too long
 				hockey: ["keyStats"],
-			}),
+			} as const),
 			showNoStats: true,
 			showRookies: true,
 			tid,
 			fuzz: true,
-		};
+		} as const;
 	};
 
 	if (
@@ -246,7 +258,7 @@ export const getTopPlayers = async <T extends any[]>(
 		const playersByPid = groupByUnique(players, "pid");
 		const teams = await idb.cache.teams.getAll();
 		const processedPlayersByTid: Record<number, any[]> = {};
-		const processedPlayersByPid: Record<number, any> = {};
+		const processedPlayersByPid: Record<number, unknown> = {};
 
 		// Need to keep track of injury without mutating player objects (since injuries are shown in UI), to predict future day starters. Might as well track pFatigue here too, for clarity.
 		const extraInfo: Record<
@@ -294,22 +306,23 @@ export const getTopPlayers = async <T extends any[]>(
 					pFatigue: p.pFatigue ?? 0,
 					numConsecutiveGamesG: p.numConsecutiveGamesG ?? 0,
 					compositeRating: {
-						goalkeeping: isSport("hockey")
-							? player.compositeRating(
-									ratings,
-									COMPOSITE_WEIGHTS.goalkeeping!.ratings,
-									COMPOSITE_WEIGHTS.goalkeeping!.weights,
-									false,
-								)
-							: 0,
+						goalkeeping:
+							__SPORT === "hockey"
+								? player.compositeRating(
+										ratings,
+										COMPOSITE_WEIGHTS.goalkeeping!.ratings,
+										COMPOSITE_WEIGHTS.goalkeeping!.weights,
+										false,
+									)
+								: 0,
 					},
 					pos: ratings.pos,
 				};
 			}
 
-			const depthPlayersProcessed = await idb.getCopies.playersPlus(
+			const depthPlayersProcessed = await player.formatAll(
 				depthPlayers,
-				playersPlusOptions(t.tid),
+				formatOptions(t.tid),
 			);
 			for (const p of depthPlayersProcessed) {
 				processedPlayersByPid[p.pid] = p;
@@ -343,13 +356,13 @@ export const getTopPlayers = async <T extends any[]>(
 					const injuryFactor = playThroughInjuriesFactor(
 						info.injury.gamesRemaining,
 					);
-					if (isSport("baseball")) {
+					if (__SPORT === "baseball") {
 						return {
 							...p,
 							injured: info.injury.gamesRemaining > 0,
 							pFatigue: info.pFatigue,
 						};
-					} else if (isSport("hockey")) {
+					} else if (__SPORT === "hockey") {
 						return {
 							...p,
 							injured: info.injury.gamesRemaining > 0,
@@ -370,11 +383,11 @@ export const getTopPlayers = async <T extends any[]>(
 				});
 			};
 
-			const getStarter = async (players: any[]) => {
+			const getStarter = async (players: unknown[]) => {
 				const augmentedPlayers = await addExtraInfo(players);
-				if (isSport("baseball")) {
+				if (__SPORT === "baseball") {
 					return getStartingPitcher(augmentedPlayers, false);
-				} else if (isSport("hockey")) {
+				} else if (__SPORT === "hockey") {
 					return getStartingAndBackupGoalies(augmentedPlayers)[0];
 				}
 
@@ -417,9 +430,9 @@ export const getTopPlayers = async <T extends any[]>(
 
 					for (const starter of [p0, p1]) {
 						const info = extraInfo[starter.pid]!;
-						if (isSport("baseball")) {
+						if (__SPORT === "baseball") {
 							info.pFatigue = P_FATIGUE_DAILY_REDUCTION * 5;
-						} else if (isSport("hockey")) {
+						} else if (__SPORT === "hockey") {
 							info.numConsecutiveGamesG += 1;
 
 							for (const p of processedPlayersByTid[starter.tid]!) {
@@ -459,10 +472,7 @@ export const getTopPlayers = async <T extends any[]>(
 				.slice(0, numPerTeam)
 				.reverse();
 
-			const players = await idb.getCopies.playersPlus(
-				playersRaw,
-				playersPlusOptions(tid),
-			);
+			const players = await player.formatAll(playersRaw, formatOptions(tid));
 
 			topPlayers[tid] = players as T;
 		}
@@ -474,17 +484,17 @@ export const getTopPlayers = async <T extends any[]>(
 	}
 };
 
-const updateUpcoming = async (
-	inputs: ViewInput<"schedule">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
+const updateUpcoming = async ({
+	inputs,
+	updateEvents,
+	prevInputs,
+}: ViewArgs<typeof processInputs>) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameAttributes") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
-		inputs.abbrev !== state.abbrev
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameAttributes") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("newPhase") ||
+		inputs.abbrev !== prevInputs?.abbrev
 	) {
 		const upcoming = await getUpcoming({
 			tid: inputs.tid,
@@ -514,16 +524,18 @@ const updateUpcoming = async (
 	}
 };
 
+const keepPrevOutput = {
+	completed: keepType<Game[]>(),
+};
+
 // Based on views.gameLog.updateGamesList
-const updateCompleted = async (
-	inputs: ViewInput<"schedule">,
-	updateEvents: UpdateEvents,
-	state: {
-		abbrev: string;
-		completed: Game[];
-	},
-) => {
-	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
+const updateCompleted = async ({
+	inputs,
+	updateEvents,
+	prevInputs,
+	prevOutput,
+}: ViewArgs<typeof processInputs, typeof keepPrevOutput>) => {
+	if (updateEvents.has("firstRun") || inputs.abbrev !== prevInputs?.abbrev) {
 		// Load all games in list
 		const completed = await getProcessedGames({
 			tid: inputs.tid,
@@ -536,14 +548,14 @@ const updateCompleted = async (
 		};
 	}
 
-	if (updateEvents.includes("gameSim")) {
+	if (updateEvents.has("gameSim")) {
 		// Partial update of only new games
-		const completed = Array.isArray(state.completed) ? state.completed : [];
+		const completed = prevOutput.completed ?? [];
 
 		const games = await getProcessedGames({
 			tid: inputs.tid,
 			season: g.get("season"),
-			loadedGames: state.completed,
+			loadedGames: prevOutput.completed,
 			includeAllStarGame: true,
 		});
 
@@ -557,14 +569,15 @@ const updateCompleted = async (
 	}
 };
 
-export default async (
-	inputs: ViewInput<"schedule">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	return Object.assign(
-		{},
-		await updateUpcoming(inputs, updateEvents, state),
-		await updateCompleted(inputs, updateEvents, state),
-	);
-};
+export default defineView({
+	id: "schedule",
+	processInputs,
+	keepPrevOutput,
+	load: async (args) => {
+		return Object.assign(
+			{},
+			await updateUpcoming(args),
+			await updateCompleted(args),
+		);
+	},
+});

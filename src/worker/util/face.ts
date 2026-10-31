@@ -4,7 +4,8 @@ import type { PlayerWithoutKey, Race } from "../../common/types.ts";
 import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import g from "./g.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
+import { registerGlobal } from "../../common/registerGlobal.ts";
 
 export const generateFace = (
 	options:
@@ -13,7 +14,7 @@ export const generateFace = (
 ) => {
 	let overrides: any;
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		const [jersey, accessory] = DEFAULT_JERSEY.split(":");
 		overrides = {
 			jersey: {
@@ -31,7 +32,7 @@ export const generateFace = (
 		};
 	}
 
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		overrides.glasses = {
 			id: "none",
 		};
@@ -56,7 +57,7 @@ export const generateFace = (
 
 	while (
 		// Baseball hat is only for baseball
-		(!isSport("baseball") && face.accessories.id.startsWith("hat")) ||
+		(__SPORT !== "baseball" && face.accessories.id.startsWith("hat")) ||
 		(!allowEyeBlack && face.accessories.id === "eye-black") ||
 		face.accessories.id === "santa-hat"
 	) {
@@ -78,3 +79,9 @@ export const upgradeFace = async (p: PlayerWithoutKey) => {
 		await idb.cache.players.put(p);
 	}
 };
+
+registerGlobal({
+	face: {
+		generate: generateFace,
+	},
+});

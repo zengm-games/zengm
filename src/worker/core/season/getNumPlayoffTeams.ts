@@ -39,10 +39,11 @@ const getNumPlayoffTeams = async (season: number) => {
 		byConf,
 	});
 
-	const playoffSeries = await idb.getCopy.playoffSeries(
-		{ season },
-		"noCopyCache",
-	);
+	// A future season has no playoff series yet
+	const playoffSeries =
+		season > g.get("season")
+			? undefined
+			: await idb.merged.playoffSeries.get(season);
 	const playIn = playoffSeries ? !!playoffSeries.playIns : g.get("playIn");
 
 	return getNumPlayoffTeamsRaw({

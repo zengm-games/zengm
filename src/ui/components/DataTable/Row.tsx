@@ -1,7 +1,11 @@
 import clsx from "clsx";
 import { use, type MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable.tsx";
-import type { DataTableRow, DataTableRowMetadata } from "./index.tsx";
+import type {
+	DataTableRow,
+	MetadataType,
+	DataTableRowMetadata,
+} from "./index.tsx";
 import {
 	SortableHandle,
 	SortableTableContext,
@@ -9,7 +13,7 @@ import {
 } from "./sortableRows.tsx";
 import { DataTableContext } from "./contexts.ts";
 
-type MyRow = Omit<DataTableRow, "data"> & {
+type MyRow = Omit<DataTableRow<MetadataType>, "data"> & {
 	data: any[];
 };
 
@@ -141,6 +145,7 @@ const Row = ({
 
 				if (value?.colSpanToEnd) {
 					props.colSpan = row.data.length - i;
+					// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 					seenColSpanToEnd = true;
 				}
 				if (value?.style) {

@@ -54,7 +54,7 @@ const PlayerList = ({
 	season,
 }: {
 	challengeNoRatings: boolean;
-	players: any[];
+	players: View<"newTeam">["teams"][number]["players"];
 	season: number;
 }) => {
 	if (players.length === 0) {

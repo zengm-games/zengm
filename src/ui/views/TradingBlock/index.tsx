@@ -83,6 +83,7 @@ const OfferPlayers = ({
 
 		let sumContracts = 0;
 		const rows = players.map((p) => {
+			// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 			sumContracts += p.contract.amount;
 			return {
 				key: p.pid,
@@ -615,7 +616,7 @@ const TradingBlock = ({
 		}));
 	};
 
-	const clear = async (type: "all" | "lookingFor" | "assets") => {
+	const clear = (type: "all" | "lookingFor" | "assets") => {
 		if (type === "all" || type === "lookingFor") {
 			resetLookingForState();
 		}
@@ -706,17 +707,23 @@ const TradingBlock = ({
 	);
 
 	const rows = userRoster.map((p) => {
+		const checked = state.pids.includes(p.pid);
+
 		return {
 			key: p.pid,
 			data: [
-				<input
-					className="form-check-input"
-					type="checkbox"
-					checked={state.pids.includes(p.pid)}
-					disabled={p.untradable}
-					onChange={() => handleChangeAsset("pids", p.pid)}
-					title={p.untradableMsg}
-				/>,
+				{
+					title: p.untradableMsg,
+					value: (
+						<input
+							className="form-check-input"
+							type="checkbox"
+							checked={checked}
+							disabled={p.untradable}
+							onChange={() => handleChangeAsset("pids", p.pid)}
+						/>
+					),
+				},
 				wrappedPlayerNameLabels({
 					pid: p.pid,
 					injury: p.injury,
@@ -735,6 +742,9 @@ const TradingBlock = ({
 				wrappedContractExp(p),
 				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 			],
+			classNames: {
+				"table-danger": p.untradable && !checked,
+			},
 		};
 	});
 
@@ -868,7 +878,7 @@ const TradingBlock = ({
 									</>
 								),
 								searchValue: offer.players
-									.map((p) => `${p.name} ${p.ratings.pos}`)
+									.map((p) => `${p.firstName} ${p.lastName} ${p.ratings.pos}`)
 									.join(" "),
 								sortValue: playerScore(offer.players),
 							},

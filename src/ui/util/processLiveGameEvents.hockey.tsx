@@ -206,8 +206,8 @@ const processLiveGameEvents = ({
 
 		const eAny = e as any;
 
-		// Swap teams order, so home team is at bottom in box score
-		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
+		const eventT: 0 | 1 | undefined =
+			eAny.t === 0 || eAny.t === 1 ? eAny.t : undefined;
 
 		if (
 			e.type !== "init" &&
@@ -255,9 +255,9 @@ const processLiveGameEvents = ({
 		if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
+				const ptsQtrs = boxScore.teams[eventT!].ptsQtrs;
 				ptsQtrs[ptsQtrs.length - 1] += e.amt;
-				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
+				boxScore.teams[eventT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
@@ -267,11 +267,11 @@ const processLiveGameEvents = ({
 					(p as any)[e.s] += e.amt;
 				}
 			}
-			if (boxScore.teams[actualT!][e.s] !== undefined) {
-				boxScore.teams[actualT!][e.s] += e.amt;
+			if (boxScore.teams[eventT!][e.s] !== undefined) {
+				boxScore.teams[eventT!][e.s] += e.amt;
 			}
 		} else if (e.type === "playersOnIce") {
-			for (const p of boxScore.teams[actualT!].players) {
+			for (const p of boxScore.teams[eventT!].players) {
 				p.inGame = e.pids.includes(p.pid);
 			}
 		} else if (e.type !== "init") {
@@ -290,7 +290,7 @@ const processLiveGameEvents = ({
 			}
 
 			text = getText(e, boxScore);
-			t = actualT;
+			t = eventT;
 			textOnly =
 				e.type === "gameOver" ||
 				e.type === "quarter" ||
@@ -301,8 +301,8 @@ const processLiveGameEvents = ({
 
 			if (Object.hasOwn(newPossessionTypes, eAny.type)) {
 				boxScore.possession = newPossessionTypes[eAny.type]
-					? actualT
-					: actualT === 0
+					? eventT
+					: eventT === 0
 						? 1
 						: 0;
 			}
@@ -313,9 +313,6 @@ const processLiveGameEvents = ({
 		//  Handle filtering of scoringSummary
 		const scoringSummaryEvent = formatScoringSummaryEvent(e);
 		if (scoringSummaryEvent) {
-			// Swap rather than using actualT in case it's a score for the other team
-			(scoringSummaryEvent as any).t =
-				(scoringSummaryEvent as any).t === 0 ? 1 : 0;
 			boxScore.scoringSummary = [
 				...boxScore.scoringSummary,
 				scoringSummaryEvent,

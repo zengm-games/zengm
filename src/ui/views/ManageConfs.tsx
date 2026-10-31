@@ -1,7 +1,7 @@
 import { useReducer, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocal } from "../util/local.ts";
 import type { Conf, Div, NonEmptyArray, View } from "../../common/types.ts";
@@ -19,7 +19,7 @@ import {
 import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
 import type { NewLeagueTeamWithoutRank } from "./NewLeague/types.ts";
 import { Modal } from "../components/Modal.tsx";
-import TeamForm from "./ManageTeams/TeamForm.tsx";
+import TeamForm, { getNumTeamsByDid } from "./ManageTeams/TeamForm.tsx";
 import {
 	nextSeasonWarning,
 	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
@@ -32,12 +32,14 @@ const EditTeamModal = ({
 	divs,
 	onCancel,
 	onSave,
+	teams,
 }: {
 	t: NewLeagueTeamWithoutRank | undefined;
 	confs: NonEmptyArray<Conf>;
 	divs: NonEmptyArray<Div>;
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
+	teams: NewLeagueTeamWithoutRank[];
 }) => {
 	const { godMode, phase } = useLocal(["godMode", "phase"]);
 
@@ -80,6 +82,12 @@ const EditTeamModal = ({
 
 	const disableStatus =
 		!godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.has(phase);
+
+	// Use the division from the form for the team being edited
+	const numTeamsByDid = getNumTeamsByDid([
+		...teams.filter((t2) => t2.tid !== t.tid).map((t2) => t2.did),
+		Number.parseInt(controlledTeam.did),
+	]);
 
 	const save = () => {
 		const did = Number.parseInt(controlledTeam.did);
@@ -161,6 +169,7 @@ const EditTeamModal = ({
 							disablePop={!godMode}
 							disableStatus={disableStatus}
 							disableStadiumCapacity={!godMode}
+							numTeamsByDid={numTeamsByDid}
 							t={controlledTeam}
 						/>
 					</div>
@@ -243,17 +252,16 @@ const ManageConfs = ({
 
 			<StickyBottomButtons>
 				<form
-					className="btn-group ms-auto"
+					className="ms-auto"
 					onSubmit={async (event) => {
 						event.preventDefault();
 
 						if (abbrevsUsedMultipleTimes.length > 0) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
 									", ",
 								)}`,
-								saveToDb: false,
 							});
 							return;
 						}
@@ -282,10 +290,9 @@ const ManageConfs = ({
 							text += `<br /><br />${nextSeasonWarning}`;
 						}
 
-						logEvent({
+						showNotification({
 							type: "success",
 							text,
-							saveToDb: false,
 						});
 
 						setDirty(false);
@@ -315,6 +322,7 @@ const ManageConfs = ({
 				onCancel={() => {
 					setEditTeam(undefined);
 				}}
+				teams={teams}
 			/>
 		</>
 	);

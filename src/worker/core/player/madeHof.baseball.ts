@@ -18,7 +18,7 @@ const madeHof = (p: PlayerWithoutKey): boolean => {
 			earliestSeason = ps.season;
 		}
 
-		return ps.war;
+		return ps.war ?? 0;
 	});
 
 	// Calculate career WAR and "dominance factor" DF (top 5 years WAR - 50)

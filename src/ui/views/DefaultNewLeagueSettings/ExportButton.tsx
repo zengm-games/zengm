@@ -6,7 +6,7 @@ import { confirm } from "../../util/confirm.tsx";
 import { downloadFile } from "../../util/downloadFile.ts";
 import { toWorker } from "../../util/toWorker.ts";
 
-const ExportButton = ({ dirty }: { dirty?: boolean }) => (
+export const ExportButton = ({ dirty }: { dirty?: boolean }) => (
 	<button
 		className="btn btn-light-bordered"
 		onClick={async () => {
@@ -43,5 +43,3 @@ const ExportButton = ({ dirty }: { dirty?: boolean }) => (
 		Export
 	</button>
 );
-
-export default ExportButton;

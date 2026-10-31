@@ -1,26 +1,25 @@
 import clsx from "clsx";
 import { useEffect, useState, type ReactNode, type SubmitEvent } from "react";
 import { ACCOUNT_API_URL, EMAIL_ADDRESS } from "../../common/constants.ts";
+import { ActionButton } from "../components/ActionButton.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { localActions } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
-
-type State = {
-	globalMessage?: ReactNode;
-	errorMessageOverall?: string;
-	errorMessagePassword?: string;
-	errorMessagePassword2?: string;
-	showForm: boolean;
-};
+import {
+	type FieldErrors,
+	getFieldErrors,
+} from "./LoginOrRegister/getFieldErrors.ts";
 
 const ResetPassword = ({ token }: View<"resetPassword">) => {
-	const [state, setState] = useState<State>({
-		globalMessage: "Validating token...", // Because on initial page load you need AJAX request to see if it's valid
-		showForm: false,
-	});
+	// Starts as "checking" because on initial page load you need an AJAX request to see if the token is valid
+	const [tokenStatus, setTokenStatus] = useState<
+		"checking" | "valid" | "invalid" | "error"
+	>("checking");
+	const [submitting, setSubmitting] = useState(false);
+	const [errors, setErrors] = useState<FieldErrors>({});
 
 	useEffect(() => {
 		const checkToken = async () => {
@@ -28,7 +27,6 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 				return;
 			}
 
-			// First, see if this is a valid token
 			try {
 				const data = await fetchWrapper({
 					url: `${ACCOUNT_API_URL}/reset_password.php`,
@@ -36,63 +34,27 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 					data: {
 						action: "check_token",
 						token,
-						sport: process.env.SPORT,
+						sport: __SPORT,
 					},
 					credentials: "include",
 				});
 
-				if (data.success) {
-					setState((state2) => ({
-						...state2,
-						globalMessage: undefined,
-						showForm: true,
-					}));
-				} else {
-					setState((state2) => ({
-						...state2,
-						globalMessage: (
-							<>
-								Invalid password reset token.{" "}
-								<a href="/account/lost_password">
-									Request another and try again.
-								</a>
-							</>
-						),
-						showForm: false,
-					}));
-				}
-			} catch {
-				setState((state2) => ({
-					...state2,
-					globalMessage: <span className="text-danger">{ajaxErrorMsg}</span>,
-					showForm: false,
-				}));
+				setTokenStatus(data.success ? "valid" : "invalid");
+			} catch (error) {
+				console.error(error);
+				setTokenStatus("error");
 			}
 		};
 
 		checkToken();
 	}, [token]);
 
-	const handleSubmit = async (event: SubmitEvent) => {
+	const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		setSubmitting(true);
+		setErrors({});
 
-		setState({
-			...state,
-			errorMessageOverall: undefined,
-			errorMessagePassword: undefined,
-			errorMessagePassword2: undefined,
-		});
-
-		const element = document.getElementById("resetpw");
-		if (!(element instanceof HTMLFormElement)) {
-			setState((state2) => ({
-				...state2,
-				errorMessageOverall: "resetpw element not found",
-			}));
-			throw new Error("resetpw element not found");
-		}
-
-		const formData = new FormData(element);
+		const formData = new FormData(event.currentTarget);
 
 		try {
 			const data = await fetchWrapper({
@@ -107,95 +69,93 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 
 				realtimeUpdate([], "/account");
 			} else {
-				const updatedState = {
-					...state,
-				};
-
-				for (const error of Object.keys(data.errors)) {
-					if (error === "password") {
-						updatedState.errorMessagePassword = data.errors[error];
-					} else if (error === "password2") {
-						updatedState.errorMessagePassword2 = data.errors[error];
-					} else if (error === "passwords") {
-						updatedState.errorMessagePassword =
-							updatedState.errorMessagePassword === undefined
-								? ""
-								: updatedState.errorMessagePassword; // So it gets highlighted too
-						updatedState.errorMessagePassword2 = data.errors[error];
-					}
+				setSubmitting(false);
+				if (data.errors) {
+					setErrors(getFieldErrors(data.errors));
+				} else {
+					// No errors means the token is no longer valid, like if it expired since the page was loaded
+					setTokenStatus("invalid");
 				}
-
-				setState(updatedState);
 			}
-		} catch {
-			setState({
-				...state,
-				errorMessageOverall: ajaxErrorMsg,
-			});
+		} catch (error) {
+			console.error(error);
+			setSubmitting(false);
+			setErrors({ overall: ajaxErrorMsg });
 		}
 	};
 
 	useTitleBar({ title: "Reset Password", hideNewWindow: true });
 
-	const form = (
-		<div className="row">
-			<div className="col-lg-4 col-md-5 col-sm-6">
-				<p>Enter a new password for your account below.</p>
-				<form id="resetpw" onSubmit={handleSubmit}>
-					<input type="hidden" name="sport" value={process.env.SPORT} />
-					<input type="hidden" name="action" value="reset_password" />
-					<input type="hidden" name="token" value={token} />
-					<div
-						className={clsx("mb-3", {
-							"text-danger": state.errorMessagePassword !== undefined,
-						})}
-					>
-						<label className="col-form-label" htmlFor="resetpw-password">
-							Password
-						</label>
-						<input
-							type="password"
-							className={clsx("form-control", {
-								"is-invalid": state.errorMessagePassword !== undefined,
-							})}
-							id="resetpw-password"
-							name="password"
-							required
-						/>
-						<span className="form-text">{state.errorMessagePassword}</span>
-					</div>
-					<div
-						className={clsx("mb-3", {
-							"text-danger": state.errorMessagePassword2 !== undefined,
-						})}
-					>
-						<label className="col-form-label" htmlFor="resetpw-password2">
-							Repeat Password
-						</label>
-						<input
-							type="password"
-							className={clsx("form-control", {
-								"is-invalid": state.errorMessagePassword2 !== undefined,
-							})}
-							id="resetpw-password2"
-							name="password2"
-							required
-						/>
-						<span className="form-text">{state.errorMessagePassword2}</span>
-					</div>
-					<button type="submit" className="btn btn-primary">
-						Reset Password
-					</button>
-					<p className="text-danger mt-3">{state.errorMessageOverall}</p>
-				</form>
+	let content: ReactNode;
+	if (tokenStatus === "checking") {
+		content = <p>Validating token...</p>;
+	} else if (tokenStatus === "invalid") {
+		content = (
+			<p>
+				Invalid password reset token.{" "}
+				<a href="/account/lost_password">Request another and try again.</a>
+			</p>
+		);
+	} else if (tokenStatus === "error") {
+		content = <p className="text-danger">{ajaxErrorMsg}</p>;
+	} else {
+		content = (
+			<div className="row">
+				<div className="col-lg-4 col-md-5 col-sm-6">
+					<p>Enter a new password for your account below.</p>
+					<form className="mb-3" onSubmit={handleSubmit}>
+						<input type="hidden" name="sport" value={__SPORT} />
+						<input type="hidden" name="action" value="reset_password" />
+						<input type="hidden" name="token" value={token} />
+						<div className="mb-3">
+							<label className="col-form-label" htmlFor="resetpw-password">
+								Password
+							</label>
+							<input
+								type="password"
+								className={clsx("form-control", {
+									"is-invalid": errors.password !== undefined,
+								})}
+								id="resetpw-password"
+								name="password"
+								autoComplete="new-password"
+								required
+							/>
+							{errors.password ? (
+								<div className="form-text text-danger">{errors.password}</div>
+							) : null}
+						</div>
+						<div className="mb-3">
+							<label className="col-form-label" htmlFor="resetpw-password2">
+								Repeat Password
+							</label>
+							<input
+								type="password"
+								className={clsx("form-control", {
+									"is-invalid": errors.password2 !== undefined,
+								})}
+								id="resetpw-password2"
+								name="password2"
+								autoComplete="new-password"
+								required
+							/>
+							{errors.password2 ? (
+								<div className="form-text text-danger">{errors.password2}</div>
+							) : null}
+						</div>
+						<ActionButton type="submit" processing={submitting}>
+							Reset password
+						</ActionButton>
+					</form>
+				</div>
 			</div>
-		</div>
-	);
+		);
+	}
 
 	return (
 		<>
-			{state.showForm ? form : null}
-			{state.globalMessage ? <p>{state.globalMessage}</p> : null}
+			{content}
+			{errors.overall ? <p className="text-danger">{errors.overall}</p> : null}
 			<p>
 				If you are having trouble with this, please{" "}
 				<a href={`mailto:${EMAIL_ADDRESS}`}>email {EMAIL_ADDRESS}</a>.

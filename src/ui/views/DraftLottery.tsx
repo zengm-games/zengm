@@ -235,13 +235,14 @@ const Row = ({
 
 	let revealedPickNumber = null;
 	const pickCols = range(NUM_PICKS).map((j) => {
-		const prob = probs[i]![j]!;
+		const prob = probs[i]![j];
 		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
 
 		let highlighted = false;
 
 		if (pick !== undefined) {
 			highlighted = pick === j + 1;
+			// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 			revealedPickNumber = pick;
 		} else if (NUM_PICKS - 1 - j <= indRevealed) {
 			// Has this round been revealed?
@@ -509,7 +510,10 @@ const DraftLotteryTable = (props: Props) => {
 	const numLeftToReveal = useRef(0); // Like indRevealed
 	const revealState = useRef<State["revealState"]>("init");
 
-	const timeoutID = useRef<number | undefined>(undefined);
+	// ReturnType rather than number because bbgm-rosters type checks this with Node types
+	const timeoutID = useRef<ReturnType<typeof setTimeout> | undefined>(
+		undefined,
+	);
 
 	const [state, dispatch] = useReducer(reducer, {
 		draftLotteryResult: props.draftLotteryResult,
@@ -675,6 +679,7 @@ const DraftLotteryTable = (props: Props) => {
 				{otherDraftPicksToShow.map((dp, i) => {
 					const showRoundHeader = seenRound !== dp.round;
 					if (showRoundHeader) {
+						// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 						seenRound = dp.round;
 					}
 
@@ -924,7 +929,7 @@ const ColaTable = ({
 							It shows the exact current values. The table above shows either
 							the values from this season's completed draft lottery, or the
 							projected values for the upcoming draft lottery (possibly
-							including the projected {COLA_ALPHA} bonus lottery teams recieve
+							including the projected {COLA_ALPHA} bonus lottery teams receive
 							each year).
 						</li>
 					</ol>

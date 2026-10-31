@@ -6,6 +6,7 @@ import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
 import getRookieContractLength from "./getRookieContractLength.ts";
 import { last } from "../../../common/utils.ts";
+import { canBeDrafted } from "./canBeDrafted.ts";
 
 /**
  * Select a player for the current drafting team.
@@ -15,7 +16,7 @@ import { last } from "../../../common/utils.ts";
  * @memberOf core.draft
  * @param {object} dp Pick object, like from getOrder, that contains information like the team, round, etc.
  * @param {number} pid Integer player ID for the player to be drafted.
- * @return {Promise}
+ * @return {Promise<boolean>} false if the player is not available to be drafted, like if the user double clicked on a player who was already picked.
  */
 const selectPlayer = async (dp: DraftPick, pid: number) => {
 	if (dp.pick <= 0) {
@@ -26,6 +27,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	const p = await idb.cache.players.get(pid);
 	if (!p) {
 		throw new Error("Invalid pid");
+	}
+	if (!canBeDrafted(p)) {
+		return false;
 	}
 	const prevTid = p.tid;
 	p.tid = dp.tid;
@@ -205,6 +209,8 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		const onlyNewPlayers = t ? !t.keepRosterSorted : false;
 		await team.rosterAutoSort(dp.tid, onlyNewPlayers);
 	}
+
+	return true;
 };
 
 export default selectPlayer;

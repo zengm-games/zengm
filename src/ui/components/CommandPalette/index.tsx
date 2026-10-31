@@ -17,8 +17,9 @@ import type {
 	MenuItemText,
 } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
+import { focusOnMount } from "../../util/refCallbacks.ts";
 import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { Modal } from "../Modal.tsx";
@@ -30,8 +31,8 @@ import {
 import { menuItems } from "../../util/menuItems.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 import { local, useLocal } from "../../util/local.ts";
-import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { relativeTime } from "../../util/relativeTime.ts";
+import { router } from "../../router/index.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -191,7 +192,7 @@ const getResultsGroupedDefault = ({
 						toWorker("playMenu", option.id as any, undefined);
 					}
 				},
-			} as AnchorProps,
+			},
 		})),
 	);
 
@@ -246,7 +247,7 @@ const getResultsGroupedTeams = ({
 			anchorProps: {
 				href: helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`]),
 				onClick: onHide,
-			} as AnchorProps,
+			},
 		}))
 		.filter((t) => !hideDisabledTeams || !t.disabled);
 
@@ -409,7 +410,7 @@ const getResultsGroupedPlayers = async ({
 				anchorProps: {
 					href: helpers.leagueUrl(["player", p.pid]),
 					onClick: onHide,
-				} as AnchorProps,
+				},
 			};
 		},
 	);
@@ -693,6 +694,7 @@ const SearchResults = memo(
 								{results.map((result, j) => {
 									const active = activeIndex === index;
 									const highlightedResult = highlightedResults[index];
+									// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 									index += 1;
 
 									return (
@@ -743,15 +745,7 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	);
 };
 
-const CommandPaletteInner = ({
-	show,
-	onHide,
-}: {
-	show: boolean;
-	onHide: () => void;
-}) => {
-	const searchInputRef = useRef<HTMLInputElement | null>(null);
-
+const CommandPaletteInner = ({ onHide }: { onHide: () => void }) => {
 	const {
 		challengeNoRatings,
 		godMode,
@@ -819,28 +813,14 @@ const CommandPaletteInner = ({
 	]);
 
 	useEffect(() => {
-		if (show) {
-			if (searchInputRef.current) {
-				searchInputRef.current.focus();
-			}
-
-			saveLastUsed();
-		} else {
-			setSearchTextInput("");
-			setMode(undefined);
-			setActiveIndex(undefined);
-		}
-	}, [show]);
+		saveLastUsed();
+	}, []);
 
 	useKeyboardShortcuts({
 		category: "commandPallete",
 		actions: KEYBOARD_SHORTCUT_KEYS_OTHER,
 		callback: useCallback(
 			(action) => {
-				if (!show) {
-					return;
-				}
-
 				if (action === "up") {
 					setActiveIndex((index) => {
 						if (index === undefined) {
@@ -867,19 +847,15 @@ const CommandPaletteInner = ({
 					});
 				}
 			},
-			[count, setActiveIndex, show],
+			[count, setActiveIndex],
 		),
 
 		// This is so it works while search box is active
 		disableWhileEditing: false,
 	});
 
-	if (!show) {
-		return null;
-	}
-
 	return (
-		<Modal show={show} onHide={onHide} scrollable>
+		<Modal show onHide={onHide} scrollable>
 			<Modal.Header className="ps-3 pe-0 py-1">
 				<span
 					className="glyphicon glyphicon-search"
@@ -905,7 +881,9 @@ const CommandPaletteInner = ({
 											if (result.anchorProps.target) {
 												window.open(result.anchorProps.href);
 											} else {
-												realtimeUpdate([], result.anchorProps.href);
+												void router.navigate(result.anchorProps.href, {
+													scrollToTop: true,
+												});
 											}
 										}
 
@@ -927,7 +905,7 @@ const CommandPaletteInner = ({
 							</span>
 						) : null}
 						<input
-							ref={searchInputRef}
+							ref={focusOnMount}
 							className="form-control shadow-none border-0 ps-1 pe-0"
 							type="text"
 							placeholder={`Search ${mode?.description ?? "pages"}...`}
@@ -1017,11 +995,10 @@ export const CommandPalette = () => {
 				local.getState().keyboardShortcuts,
 			);
 			if (formatted !== undefined) {
-				logEvent({
+				showNotification({
 					extraClass: "",
 					type: "info",
 					text: `Pro tip: press ${formatted} to open the command palette, which allows easy keyboard navigation of your league.`,
-					saveToDb: false,
 					persistent: true,
 				});
 			}
@@ -1030,7 +1007,7 @@ export const CommandPalette = () => {
 	}, []);
 
 	if (show) {
-		return <CommandPaletteInner show={show} onHide={onHide} />;
+		return <CommandPaletteInner onHide={onHide} />;
 	}
 
 	return null;

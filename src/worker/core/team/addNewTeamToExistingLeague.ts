@@ -7,6 +7,7 @@ import { draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { last } from "../../../common/utils.ts";
+import { getTeamInfoCache } from "./getTeamInfoCache.ts";
 
 const addNewTeamToExistingLeague = async (
 	teamInfo: {
@@ -82,14 +83,7 @@ const addNewTeamToExistingLeague = async (
 	await league.setGameAttributes({
 		numActiveTeams: allTeams.filter((t) => !t.disabled).length,
 		numTeams: allTeams.length,
-		teamInfoCache: allTeams.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		})),
+		teamInfoCache: getTeamInfoCache(allTeams),
 	});
 
 	await draft.genPicks();
@@ -115,10 +109,7 @@ const addNewTeamToExistingLeague = async (
 	// Manually adding a new team can mess with scheduled events, because they are indexed on tid. Let's try to adjust them.
 	if (!fromScheduledEvent && !prevT) {
 		// This means a new team was added, with a newly generated tid. Increment tids in future scheduled events to account for this
-		const scheduledEvents = await idb.getCopies.scheduledEvents(
-			undefined,
-			"noCopyCache",
-		);
+		const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 		for (const scheduledEvent of scheduledEvents) {
 			if (scheduledEvent.season < g.get("season")) {
 				await idb.cache.scheduledEvents.delete(scheduledEvent.id);
@@ -134,11 +125,22 @@ const addNewTeamToExistingLeague = async (
 					await idb.cache.scheduledEvents.put(scheduledEvent);
 				}
 			} else if (
-				scheduledEvent.type == "contraction" ||
+				scheduledEvent.type === "contraction" ||
 				scheduledEvent.type === "teamInfo"
 			) {
 				if (t.tid <= scheduledEvent.info.tid) {
 					scheduledEvent.info.tid += 1;
+					await idb.cache.scheduledEvents.put(scheduledEvent);
+				}
+			} else if (scheduledEvent.type === "confsDivs") {
+				let updated;
+				for (const t2 of scheduledEvent.info.teams) {
+					if (t.tid <= t2.tid) {
+						t2.tid += 1;
+						updated = true;
+					}
+				}
+				if (updated) {
 					await idb.cache.scheduledEvents.put(scheduledEvent);
 				}
 			}

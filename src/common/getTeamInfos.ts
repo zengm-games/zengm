@@ -1,9 +1,9 @@
 import teamInfos from "./teamInfos.ts";
 
 // export for bbgm-rosters
-export const noSmallLogo = new Set(["LAE", "VAN"]);
+const noSmallLogo = new Set(["LAE", "VAN"]);
 
-export const abbrevRewrites: Record<string, string> = {
+const abbrevRewrites: Record<string, string> = {
 	LAC: "LAE",
 	LAL: "LA",
 	GS: "SF",

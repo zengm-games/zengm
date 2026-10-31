@@ -1,7 +1,7 @@
 import {
+	useEffectEvent,
 	useLayoutEffect,
 	useMemo,
-	useRef,
 	useState,
 	type Dispatch,
 	type SetStateAction,
@@ -31,8 +31,9 @@ import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { PlusMinus } from "../components/PlusMinus.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { getCol } from "../../common/getCol.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
+import type { advancedPlayerSearch } from "../../worker/api/advancedPlayerSearch.ts";
+import { assertDefined } from "../../common/utils.ts";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -68,9 +69,7 @@ type AdvancedPlayerSearchFilterEditing = Omit<
 
 const getFilterInfo = (category: string, key: string) => {
 	const info = allFilters[category]!.options[key];
-	if (!info) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(info);
 	return info;
 };
 
@@ -142,7 +141,7 @@ const ValueInput = ({
 				inputMode={type === "numeric" ? "numeric" : undefined}
 				value={value}
 				onChange={(event) => {
-					onChange(event.target.value as any);
+					onChange(event.target.value);
 				}}
 				style={{
 					width: 150,
@@ -172,9 +171,9 @@ const SelectTeam = ({
 	return (
 		<select
 			className="form-select"
-			value={value as any}
+			value={value}
 			onChange={(event) => {
-				onChange(event.target.value as any);
+				onChange(event.target.value);
 			}}
 			style={{
 				width: 308,
@@ -260,14 +259,14 @@ const Filters = ({
 		{ key: "ratings", value: "Ratings" },
 		...Object.entries(PLAYER_STATS_TABLES).map(([key, info]) => {
 			const value =
-				key === "regular" && isSport("basketball")
+				key === "regular" && __SPORT === "basketball"
 					? "Traditional Stats"
 					: info.name;
 			return { key, value };
 		}),
 	];
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		statTypes = statTypes.filter((row) => row.key !== "fielding");
 	}
 
@@ -288,7 +287,7 @@ const Filters = ({
 										className="form-select"
 										value={filter.category}
 										onChange={(event) => {
-											const newCategory = event.target.value as any;
+											const newCategory = event.target.value;
 											const newKey = Object.keys(
 												allFilters[newCategory]!.options,
 											)[0]!;
@@ -382,6 +381,7 @@ const Filters = ({
 									});
 								}}
 								title="Delete filter"
+								aria-label="Delete filter"
 								style={{ fontSize: 20, marginTop: 3 }}
 								type="button"
 							>
@@ -418,7 +418,7 @@ const ShowStatTypes = ({
 	const allStatTypes = [
 		{ key: "bio", value: "Bio" },
 		{ key: "ratings", value: "Ratings" },
-		...(isSport("basketball")
+		...(__SPORT === "basketball"
 			? [
 					{ key: "regular", value: "Traditional Stats" },
 					...dropdownOptions.filter(
@@ -428,7 +428,7 @@ const ShowStatTypes = ({
 							row.key !== "totals",
 					),
 				]
-			: isSport("baseball")
+			: __SPORT === "baseball"
 				? dropdownOptions.filter((row) => row.key !== "fielding")
 				: dropdownOptions),
 	];
@@ -501,6 +501,18 @@ const formatSeasonRange = (seasonStart: number, seasonEnd: number) => {
 	return `${seasonStart}-${seasonEnd}`;
 };
 
+const DEFAULT_COLS = [
+	"Name",
+	"Pos",
+	"Team",
+	"Age",
+	"Contract",
+	"Exp",
+	"Season",
+	"Ovr",
+	"Pot",
+];
+
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const { challengeNoRatings, season: currentSeason } = useLocal([
 		"challengeNoRatings",
@@ -521,7 +533,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	const [showStatTypes, setShowStatTypes] = useState(props.showStatTypes);
 
 	const [rendered, setRendered] = useState({
-		players: undefined as any[] | undefined,
+		players: undefined as
+			| Awaited<ReturnType<typeof advancedPlayerSearch>>
+			| undefined,
 		seasonStart,
 		seasonEnd,
 		singleSeason,
@@ -564,29 +578,20 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		title: "Advanced Player Search",
 	});
 
-	useLayoutEffect(() => {
+	const loadInitialPlayers = useEffectEvent(() => {
 		// If URL has some paramters in it, load initial players
 		if (!location.pathname.endsWith("/advanced_player_search")) {
 			updatePlayers();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	});
+
+	useLayoutEffect(() => {
+		loadInitialPlayers();
 	}, []);
 
 	const seasons = useDropdownOptions("seasons");
 	const playoffsOptions = useDropdownOptions("playoffsCombined");
 	const statTypes = useDropdownOptions("statTypesStrict");
-
-	const defaultCols = useRef([
-		"Name",
-		"Pos",
-		"Team",
-		"Age",
-		"Contract",
-		"Exp",
-		"Season",
-		"Ovr",
-		"Pot",
-	]);
 
 	const { uniqueColFiltersWithInfo, uniqueStatTypeInfos } = useMemo(() => {
 		const renderedFiltersWithInfos = rendered.filters
@@ -594,12 +599,12 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				const info = getFilterInfo(filter.category, filter.key);
 				return {
 					filter,
-					info: info!,
+					info,
 				};
 			})
 			.filter((row) => !!row.info);
 
-		const seenCols = new Set(defaultCols.current);
+		const seenCols = new Set(DEFAULT_COLS);
 		const uniqueColFiltersWithInfo = renderedFiltersWithInfos.filter(
 			(filter) => {
 				if (seenCols.has(filter.info.colKey)) {
@@ -649,7 +654,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	}, [rendered.filters, rendered.showStatTypes]);
 
 	const cols = getCols([
-		...defaultCols.current,
+		...DEFAULT_COLS,
 		...uniqueColFiltersWithInfo.map((filter) => filter.info.colKey),
 		...uniqueStatTypeInfos.map((row) => row.colKey),
 	]);
@@ -659,9 +664,12 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		rendered.seasonStart === currentSeason;
 
 	// useMemo because this is slow, don't want to run it on every unrelated state change
-	const rows = useMemo<DataTableRow[] | undefined>(() => {
+	const rows = useMemo<DataTableRow<"player">[] | undefined>(() => {
 		return rendered.players?.map((p, i) => {
 			const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
+			// exp is only undefined for a range of seasons, which is never currentSeasonOnly
+			const { exp } = p.contract;
 
 			return {
 				key: i,
@@ -697,8 +705,11 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						? wrappedAgeAtDeath(p.age, p.ageAtDeath)
 						: p.age,
 					p.contract.amount > 0 ? wrappedContractAmount(p) : null,
-					p.contract.amount > 0 && currentSeasonOnly
-						? wrappedContractExp(p)
+					p.contract.amount > 0 && currentSeasonOnly && exp !== undefined
+						? wrappedContractExp({
+								draft: p.draft,
+								contract: { ...p.contract, exp },
+							})
 						: null,
 					p.stats.seasonStart !== undefined && p.stats.seasonEnd !== undefined
 						? formatSeasonRange(p.stats.seasonStart, p.stats.seasonEnd)
@@ -716,7 +727,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							return showRatings ? value : null;
 						} else {
 							if (
-								isSport("basketball") &&
+								__SPORT === "basketball" &&
 								(info.key === "pm100" || info.key === "onOff100")
 							) {
 								return <PlusMinus>{value as number}</PlusMinus>;
@@ -821,7 +832,13 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							className="form-select"
 							value={singleSeason}
 							onChange={(event) => {
-								setSingleSeason(event.target.value as any);
+								const newSingleSeason = event.target.value;
+								if (
+									newSingleSeason === "singleSeason" ||
+									newSingleSeason === "totals"
+								) {
+									setSingleSeason(newSingleSeason);
+								}
 							}}
 						>
 							<option value="singleSeason">Single season</option>
@@ -844,7 +861,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						</select>
 					</div>
 
-					{isSport("basketball") ? (
+					{__SPORT === "basketball" ? (
 						<div className="col-12 col-sm-6">
 							<select
 								className="form-select"
@@ -883,7 +900,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			) : (
 				<DataTable
 					cols={cols}
-					defaultSort={[defaultCols.current.length, "desc"]}
+					defaultSort={[DEFAULT_COLS.length, "desc"]}
 					defaultStickyCols={window.mobile ? 0 : 1}
 					name="AdvancedPlayerSearch"
 					pagination

@@ -12,6 +12,7 @@ import deleteUnreadMessages from "./deleteUnreadMessages.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { choice } from "../../../common/random.ts";
+import { getTeamInfoCache } from "./getTeamInfoCache.ts";
 
 const disable = async (tid: number) => {
 	const t = await idb.cache.teams.get(tid);
@@ -55,13 +56,13 @@ const disable = async (tid: number) => {
 
 	// Delete draft picks, and return traded ones to original owner
 	await draft.genPicks();
-	const draftPicks = await idb.cache.draftPicks.getAll();
+	const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
+		(dp) => dp.tid === t.tid,
+	);
 	for (const dp of draftPicks) {
-		if (dp.tid === t.tid) {
-			dp.tid = dp.originalTid;
-			await idb.cache.draftPicks.put(dp);
-		}
+		dp.tid = dp.originalTid;
 	}
+	await idb.cache.draftPicks.putAll(draftPicks);
 
 	// Make all players free agents
 	const players = await idb.cache.players.indexGetAll("playersByTid", t.tid);
@@ -70,8 +71,6 @@ const disable = async (tid: number) => {
 		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
 		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-		await idb.cache.players.put(p);
-
 		logEvent({
 			text: `The <a href="${helpers.leagueUrl([
 				"roster",
@@ -90,6 +89,7 @@ const disable = async (tid: number) => {
 			score: 0,
 		});
 	}
+	await idb.cache.players.putAll(players);
 
 	// In preseason, need to delete teamSeason and teamStats
 	if (actualPhase() < PHASE.PLAYOFFS) {
@@ -98,10 +98,10 @@ const disable = async (tid: number) => {
 			[t.tid, g.get("season")],
 		);
 		if (teamSeason) {
-			idb.cache.teamSeasons.delete(teamSeason.rid);
+			await idb.cache.teamSeasons.delete(teamSeason.rid);
 		}
 
-		const teamStats = await idb.cache.teamSeasons.indexGet(
+		const teamStats = await idb.cache.teamStats.indexGet(
 			"teamStatsByPlayoffsTid",
 			[false, t.tid],
 		);
@@ -116,14 +116,7 @@ const disable = async (tid: number) => {
 	await league.setGameAttributes({
 		numActiveTeams: allTeams.filter((t) => !t.disabled).length,
 		numTeams: allTeams.length,
-		teamInfoCache: allTeams.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		})),
+		teamInfoCache: getTeamInfoCache(allTeams),
 	});
 
 	logEvent({

@@ -1,5 +1,6 @@
 import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common/constants.ts";
 import afterPicks from "./afterPicks.ts";
+import { canBeDrafted } from "./canBeDrafted.ts";
 import getOrder from "./getOrder.ts";
 import selectPlayer from "./selectPlayer.ts";
 import { idb } from "../../db/index.ts";
@@ -12,6 +13,7 @@ import type {
 import { player, team } from "../index.ts";
 import { last } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
+import { prepareWholeRoster } from "../team/ovr.ts";
 
 export const getTeamOvrDiffs = (
 	teamPlayers: PlayerWithoutKey[],
@@ -24,7 +26,6 @@ export const getTeamOvrDiffs = (
 	const teamPlayers2 = teamPlayers.map((p) => {
 		const ratings = last(p.ratings);
 		return {
-			pid: p.pid,
 			injury: p.injury,
 			value: p.value,
 			ratings: {
@@ -35,30 +36,29 @@ export const getTeamOvrDiffs = (
 		};
 	});
 
-	const baseline = team.ovr(teamPlayers2, {
-		wholeRoster: true,
-	});
+	const prepared = prepareWholeRoster?.(teamPlayers2);
+	const baseline =
+		prepared?.baseline ??
+		team.ovr(teamPlayers2, {
+			wholeRoster: true,
+		});
 
 	return players.map((p) => {
 		const ratings = last(p.ratings);
-		const newOvr = team.ovr(
-			[
-				...teamPlayers2,
-				{
-					pid: p.pid,
-					injury: p.injury,
-					value: p.value,
-					ratings: {
-						ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
-						ovrs: player.fuzzOvrs(ratings.ovrs, ratings.fuzz),
-						pos: ratings.pos,
-					},
-				},
-			],
-			{
-				wholeRoster: true,
+		const p2 = {
+			injury: p.injury,
+			value: p.value,
+			ratings: {
+				ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
+				ovrs: player.fuzzOvrs(ratings.ovrs, ratings.fuzz),
+				pos: ratings.pos,
 			},
-		);
+		};
+		const newOvr =
+			prepared?.withPlayer(p2) ??
+			team.ovr([...teamPlayers2, p2], {
+				wholeRoster: true,
+			});
 
 		return newOvr - baseline;
 	});
@@ -103,14 +103,14 @@ const runPicks = async (
 	} else if (expansionDraft.phase === "draft") {
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
-		).filter((p) => expansionDraft.availablePids.includes(p.pid));
+		).filter(canBeDrafted);
 	} else {
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
 				[g.get("season")],
 				[g.get("season"), Infinity],
 			])
-		).filter((p) => p.tid === PLAYER.UNDRAFTED);
+		).filter(canBeDrafted);
 	}
 	playersAll.sort((a, b) => b.value - a.value);
 

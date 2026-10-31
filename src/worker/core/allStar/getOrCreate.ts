@@ -32,7 +32,7 @@ const getOrCreate = async (season: number) => {
 		return allStars;
 	}
 
-	const allStars = await idb.getCopy.allStars({ season }, "noCopyCache");
+	const allStars = await idb.merged.allStars.get(season);
 	return allStars;
 };
 

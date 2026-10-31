@@ -1,13 +1,16 @@
 import { bySport } from "../../common/sportFunctions.ts";
-import processPlayerStatsBaseball from "../../common/processPlayerStats.baseball.ts";
-import processPlayerStatsBasketball from "../../common/processPlayerStats.basketball.ts";
-import processPlayerStatsFootball from "../../common/processPlayerStats.football.ts";
-import processPlayerStatsHockey from "../../common/processPlayerStats.hockey.ts";
-import type { PlayerStats, PlayerStatType } from "../../common/types.ts";
+import { processStats as processPlayerStatsBaseball } from "../../common/processPlayerStats.baseball.ts";
+import { processStats as processPlayerStatsBasketball } from "../../common/processPlayerStats.basketball.ts";
+import { processStats as processPlayerStatsFootball } from "../../common/processPlayerStats.football.ts";
+import { processStats as processPlayerStatsHockey } from "../../common/processPlayerStats.hockey.ts";
+import type {
+	PlayerStatsToProcess,
+	PlayerStatType,
+} from "../../common/types.ts";
 import { local } from "./local.ts";
 
 export const processPlayerStats = (
-	ps: PlayerStats,
+	ps: PlayerStatsToProcess,
 	stats: string[],
 	statType?: PlayerStatType,
 	bornYear?: number,

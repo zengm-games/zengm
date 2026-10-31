@@ -26,10 +26,11 @@ const Schedule = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { gameSimInProgress, godMode, phase } = useLocal([
+	const { gameSimInProgress, godMode, phase, userTid } = useLocal([
 		"gameSimInProgress",
 		"godMode",
 		"phase",
+		"userTid",
 	]);
 
 	const [forcingAll, setForcingAll] = useState(false);
@@ -94,6 +95,10 @@ const Schedule = ({
 											canWatch
 												? {
 														disabled: gameSimInProgress,
+														highlight:
+															tid !== userTid &&
+															(game.teams[0].tid === userTid ||
+																game.teams[1].tid === userTid),
 														text: (
 															<>
 																Watch
@@ -106,6 +111,10 @@ const Schedule = ({
 													}
 												: {
 														disabled: gameSimInProgress,
+														highlight:
+															tid !== userTid &&
+															(game.teams[0].tid === userTid ||
+																game.teams[1].tid === userTid),
 														text: (
 															<>
 																Sim

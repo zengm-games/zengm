@@ -68,6 +68,7 @@ export const MultiTeamMenu = () => {
 				className="btn btn-link text-black p-0 mb-1"
 				onClick={prev}
 				title="Previous team"
+				aria-label="Previous team"
 			>
 				<span className="glyphicon glyphicon-menu-left" />
 			</button>
@@ -88,6 +89,7 @@ export const MultiTeamMenu = () => {
 				className="btn btn-link text-black p-0 mb-1"
 				onClick={next}
 				title="Next team"
+				aria-label="Next team"
 			>
 				<span className="glyphicon glyphicon-menu-right" />
 			</button>

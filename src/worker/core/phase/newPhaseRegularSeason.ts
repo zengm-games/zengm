@@ -1,4 +1,4 @@
-import { season } from "../index.ts";
+import { season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
 import type { Conditions, Game, PhaseReturn } from "../../../common/types.ts";
@@ -9,7 +9,7 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../../common/constants.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
+import { getMetaAttribute, putMetaAttribute } from "../../db/metaAttributes.ts";
 
 class GameHasYourTeamCache {
 	cache: Record<number, boolean> = {};
@@ -139,17 +139,14 @@ const deleteOldBoxScores = async () => {
 const newPhaseRegularSeason = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["cid", "did"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did"],
+		season: g.get("season"),
+		active: true,
+	});
 
-	await season.setSchedule(await season.newSchedule(teams));
+	await season.setSchedule(season.newSchedule(teams));
 
 	await deleteOldBoxScores();
 
@@ -164,13 +161,8 @@ const newPhaseRegularSeason = async (
 		if (g.get("season") > g.get("startingSeason") && Math.random() < 0.1) {
 			await toUI("requestPersistentStorage", [], conditions);
 		} else {
-			let naggedMailingList = await idb.meta.get(
-				"attributes",
-				"naggedMailingList",
-			);
-			if (typeof naggedMailingList !== "number") {
-				naggedMailingList = 0;
-			}
+			const naggedMailingList =
+				(await getMetaAttribute("naggedMailingList")) ?? 0;
 			if (
 				!local.mailingList &&
 				g.get("season") === g.get("startingSeason") + 3 &&
@@ -178,11 +170,7 @@ const newPhaseRegularSeason = async (
 				(naggedMailingList === 0 ||
 					(naggedMailingList === 1 && Math.random() < 0.01))
 			) {
-				await idb.meta.put(
-					"attributes",
-					naggedMailingList + 1,
-					"naggedMailingList",
-				);
+				await putMetaAttribute("naggedMailingList", naggedMailingList + 1);
 				logEvent({
 					extraClass: "",
 					persistent: true,
@@ -191,14 +179,14 @@ const newPhaseRegularSeason = async (
 					type: "info",
 				});
 			} else {
-				const nagged = (await idb.meta.get("attributes", "nagged")) as number;
+				const nagged = await getMetaAttribute("nagged");
 
 				if (
 					g.get("season") === g.get("startingSeason") + 3 &&
 					g.get("lid") > 3 &&
 					(nagged === 0 || nagged === undefined)
 				) {
-					await idb.meta.put("attributes", 1, "nagged");
+					await putMetaAttribute("nagged", 1);
 					await idb.cache.messages.add({
 						read: false,
 						from: "The Commissioner",
@@ -210,7 +198,7 @@ const newPhaseRegularSeason = async (
 						(nagged === 1 && Math.random() < 0.125) ||
 						(nagged >= 2 && Math.random() < 0.0125)
 					) {
-						await idb.meta.put("attributes", 2, "nagged");
+						await putMetaAttribute("nagged", 2);
 						await idb.cache.messages.add({
 							read: false,
 							from: "The Commissioner",
@@ -218,13 +206,13 @@ const newPhaseRegularSeason = async (
 							text: `<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/${TWITTER_HANDLE}">Follow ${GAME_NAME} on Twitter</a></p><p><a href="https://www.facebook.com/${FACEBOOK_USERNAME}">Like ${GAME_NAME} on Facebook</a></p><p><a href="http://www.reddit.com/r/${SUBREDDIT_NAME}/">Discuss ${GAME_NAME} on Reddit</a></p><p><a href="https://zengm.com/discord/">Chat with ${GAME_NAME} players and devs on Discord</a></p><p>The more people that play ${GAME_NAME}, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:${EMAIL_ADDRESS}">email me</a>.</p>`,
 						});
 					} else if (
-						isSport("basketball") &&
+						__SPORT === "basketball" &&
 						nagged >= 2 &&
 						nagged <= 3 &&
 						Math.random() < 0.5
 					) {
 						// Skipping 3, obsolete
-						await idb.meta.put("attributes", 4, "nagged");
+						await putMetaAttribute("nagged", 4);
 						await idb.cache.messages.add({
 							read: false,
 							from: "The Commissioner",

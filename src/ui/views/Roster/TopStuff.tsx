@@ -35,13 +35,14 @@ const TeamRating = ({
 
 	return (
 		<>
-			<a
-				className="cursor-pointer"
+			<button
+				type="button"
+				className="btn btn-link p-0 border-0 align-baseline"
 				title={title}
 				onClick={() => setShowCurrent(!showCurrent)}
 			>
 				<span className={className}>{rating}</span>/100
-			</a>
+			</button>
 		</>
 	);
 };
@@ -122,13 +123,7 @@ const PayrollAndPenalties = ({
 			}
 			rootClose
 		>
-			<button
-				className="btn btn-link p-0 border-0 text-danger"
-				style={{
-					// Without this, alignment is a bit off compared to the text version
-					verticalAlign: "baseline",
-				}}
-			>
+			<button className="btn btn-link p-0 border-0 align-baseline text-danger">
 				{payrollString}
 			</button>
 		</OverlayTrigger>
@@ -260,7 +255,7 @@ const TopStuff = ({
 								<div>
 									{helpers.ordinal(t.rank)} in{" "}
 									{playoffsByConf ? "conference" : "league"}
-									{t.gb > 0 ? (
+									{t.gb >= 0 && t.rank > 1 ? (
 										<>
 											, {t.gb}{" "}
 											{usePts ? (
@@ -269,7 +264,16 @@ const TopStuff = ({
 												<span title="Games Back">GB</span>
 											)}
 										</>
-									) : null}
+									) : (
+										<>
+											, {-t.gb}{" "}
+											{usePts ? (
+												<span title="Points Ahead">PA</span>
+											) : (
+												<span title="Games Ahead">GA</span>
+											)}
+										</>
+									)}
 								</div>
 							) : null}
 							{!challengeNoRatings ? (

@@ -1,16 +1,21 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	TeamSeason,
-	Player,
-} from "../../common/types.ts";
+import type { TeamSeason, Player } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
+import { DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
+
+const processInputs = (params: RouteParams<"teamHistory">) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, tid };
+};
 
 type PlayoffsByConfBySeason = Awaited<
 	ReturnType<typeof getPlayoffsByConfBySeason>
@@ -38,6 +43,9 @@ export const getHistoryTeam = (
 		tid: number;
 		abbrev: string;
 		note?: string;
+		colors: [string, string, string];
+		imgURL?: string;
+		imgURLSmall?: string;
 	}[] = [];
 
 	let totalWon = 0;
@@ -74,8 +82,14 @@ export const getHistoryTeam = (
 					: undefined,
 			tid: teamSeason.tid,
 			abbrev:
-				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]!.abbrev,
+				teamSeason.abbrev ?? g.get("teamInfoCache")[teamSeason.tid]!.abbrev,
 			note: teamSeason.note,
+			colors: teamSeason.colors ?? DEFAULT_TEAM_COLORS,
+			imgURLSmall:
+				teamSeason.imgURLSmall ??
+				teamSeason.imgURL ??
+				g.get("teamInfoCache")[teamSeason.tid]?.imgURLSmall ??
+				g.get("teamInfoCache")[teamSeason.tid]?.imgURL,
 		});
 		totalWon += teamSeason.won;
 		totalLost += teamSeason.lost;
@@ -149,22 +163,20 @@ export const getHistoryTeam = (
 	};
 };
 
-export const getHistory = async (
+export const historyStats = bySport({
+	baseball: ["gp", "keyStats", "war"],
+	basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
+	football: ["gp", "keyStats", "av"],
+	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+} as const);
+
+// Returns a function that turns a player into a row of the players table, or undefined if the player should not be shown. The player's stats should already be filtered to only teamSeasons. The returned function is synchronous, so it can be used in the map function of idb.merged.players.getAll, and then the full player objects are not all held in memory at once.
+export const getHistoryPlayerProcessor = (
 	teamSeasons: TeamSeason[],
-	playersAll: Player[],
-	playoffsByConfBySeason: PlayoffsByConfBySeason,
-	gmHistory?: boolean,
+	history: ReturnType<typeof getHistoryTeam>["history"],
+	gmHistory: boolean,
 ) => {
-	const teamHistory = getHistoryTeam(teamSeasons, playoffsByConfBySeason);
-
-	const stats = bySport({
-		baseball: ["gp", "keyStats", "war"],
-		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
-
-	let players = await idb.getCopies.playersPlus(playersAll, {
+	const formatOptions = {
 		attrs: [
 			"pid",
 			"firstName",
@@ -175,187 +187,268 @@ export const getHistory = async (
 			"watch",
 			"jerseyNumber",
 			"awards",
-			"retirableJerseyNumbers",
 		],
 		ratings: ["pos", "season"],
-		stats: ["season", "abbrev", ...stats],
-	});
-
-	// Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
-	players = players.filter((p) => p.careerStats.gp > 0);
-
-	players = addFirstNameShort(players);
+		stats: ["season", "abbrev", ...historyStats],
+	} as const;
+	// Stats are already filtered to these team seasons, so they're the only ones that abbrevs are needed for
+	const abbrevs = player.abbrevsFromTeamSeasons(teamSeasons);
+	const formatPlayer = player.createFormatter(formatOptions, abbrevs);
 
 	const champSeasons = new Set(
-		teamHistory.history
+		history
 			.filter((row) => row.playoffRoundsWon >= row.numPlayoffRounds)
 			.map((row) => row.season),
 	);
 
-	for (const p of players) {
-		p.lastYr = "";
-		if (p.stats.length > 0) {
-			p.lastYr = p.stats.at(-1).season.toString();
+	return (pRaw: Player) => {
+		const pFormatted = formatPlayer(pRaw);
+		if (!pFormatted) {
+			return;
+		}
+
+		// Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
+		if ((pFormatted.careerStats.gp ?? 0) <= 0) {
+			return;
+		}
+
+		const { awards, ratings, stats: playerStats, ...p } = pFormatted;
+
+		let lastYr = "";
+		const lastStats = playerStats.at(-1);
+		if (lastStats) {
+			lastYr = lastStats.season.toString();
 			if (gmHistory) {
-				p.lastYr += ` ${p.stats.at(-1).abbrev}`;
+				lastYr += ` ${lastStats.abbrev}`;
 			}
 		}
 
-		p.numRings = p.awards.filter(
-			(award: Player["awards"][number]) =>
+		const numRings = awards.filter(
+			(award) =>
 				award.type === "Won Championship" && champSeasons.has(award.season),
 		).length;
-		delete p.awards;
 
-		// undefined as 2nd argument because we have already filtered stats before getting here
-		p.pos = getBestPos(p, undefined);
+		return {
+			...p,
+			lastYr,
+			numRings,
 
-		delete p.ratings;
-		delete p.stats;
-	}
-
-	return {
-		...teamHistory,
-		players,
-		stats,
+			// undefined as 2nd argument because we have already filtered stats before getting here
+			pos: getBestPos({ ratings, stats: playerStats }, undefined),
+		};
 	};
 };
 
-const updateTeamHistory = async (
-	inputs: ViewInput<"teamHistory">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("retiredJerseys") ||
-		updateEvents.includes("gameAttributes") ||
-		inputs.abbrev !== state.abbrev
-	) {
-		const t = await idb.cache.teams.get(inputs.tid);
-		if (!t) {
-			throw new Error("Invalid team ID number");
-		}
+export default defineView({
+	id: "teamHistory",
+	processInputs,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("retiredJerseys") ||
+			updateEvents.has("gameAttributes") ||
+			inputs.abbrev !== prevInputs?.abbrev
+		) {
+			const t = await idb.cache.teams.get(inputs.tid);
+			if (!t) {
+				throw new Error("Invalid team ID number");
+			}
 
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
+			const teamSeasons = await idb.merged.teamSeasons.getAll({
 				tid: inputs.tid,
-			},
-			"noCopyCache",
-		);
+			});
 
-		const retiredJerseyNumbers = await Promise.all(
-			(t.retiredJerseyNumbers ?? []).map(async (row) => {
-				const ts = teamSeasons.find((ts) => ts.season === row.seasonTeamInfo);
-				const teamInfo = {
-					colors: ts ? ts.colors : t.colors,
-					name: ts ? ts.name : t.name,
-					region: ts ? ts.region : t.region,
-				};
+			const retiredJerseyNumbers = await Promise.all(
+				(t.retiredJerseyNumbers ?? []).map(async (row) => {
+					const ts = teamSeasons.find((ts) => ts.season === row.seasonTeamInfo);
+					const teamInfo = {
+						colors: ts ? ts.colors : t.colors,
+						name: ts ? ts.name : t.name,
+						region: ts ? ts.region : t.region,
+					};
 
-				let firstName;
-				let lastName;
-				let pos;
-				let lastSeasonWithTeam = -Infinity;
-				if (row.pid !== undefined) {
-					const p = await idb.getCopy.players({ pid: row.pid }, "noCopyCache");
-					if (p) {
-						firstName = p.firstName;
-						lastName = p.lastName;
-						pos = getBestPos(p, inputs.tid);
-						for (const row of p.stats) {
-							if (row.tid === inputs.tid && row.season > lastSeasonWithTeam) {
-								lastSeasonWithTeam = row.season;
+					let firstName;
+					let lastName;
+					let pos;
+					let lastSeasonWithTeam = -Infinity;
+					if (row.pid !== undefined) {
+						const p = await idb.merged.players.get(row.pid);
+						if (p) {
+							firstName = p.firstName;
+							lastName = p.lastName;
+							pos = getBestPos(p, inputs.tid);
+							for (const row of p.stats) {
+								if (row.tid === inputs.tid && row.season > lastSeasonWithTeam) {
+									lastSeasonWithTeam = row.season;
+								}
 							}
 						}
 					}
+
+					return {
+						...row,
+						teamInfo,
+						firstName,
+						lastName,
+						pos,
+						lastSeasonWithTeam,
+					};
+				}),
+			);
+
+			const retiredByPid: Record<number, Set<string>> = {};
+			for (const { pid, number } of retiredJerseyNumbers) {
+				if (pid !== undefined) {
+					if (!retiredByPid[pid]) {
+						retiredByPid[pid] = new Set();
+					}
+					retiredByPid[pid].add(number);
+				}
+			}
+
+			const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
+			const teamHistory = getHistoryTeam(teamSeasons, playoffsByConfBySeason);
+
+			// Seasons when the user was the GM of this team
+			let userTeamSeasons = teamSeasons.filter(
+				(ts) =>
+					ts.season >= g.get("startingSeason") &&
+					g.get("userTid", ts.season) === inputs.tid,
+			);
+
+			// If the user was the GM for every season of this team and never controlled any other team, the user-specific UI would just duplicate the normal UI, so hide it. Checking for other userTid entries prevents it from being hidden for some teams but not others in the same league.
+			if (
+				userTeamSeasons.length === teamSeasons.length &&
+				g.getRaw("userTid").length === 1
+			) {
+				userTeamSeasons = [];
+			}
+			const userSeasons = userTeamSeasons.map((ts) => ts.season);
+			const userSeasonsSet = new Set(userSeasons);
+			let userTotals;
+			let processUserPlayer:
+				| ReturnType<typeof getHistoryPlayerProcessor>
+				| undefined;
+			if (userTeamSeasons.length > 0) {
+				// history is not returned, since it's a subset of teamHistory.history
+				const { history, ...userHistory } = getHistoryTeam(
+					userTeamSeasons,
+					playoffsByConfBySeason,
+				);
+				userTotals = {
+					...userHistory,
+					numSeasons: history.length,
+				};
+				processUserPlayer = getHistoryPlayerProcessor(
+					userTeamSeasons,
+					history,
+					false,
+				);
+			}
+
+			const processPlayer = getHistoryPlayerProcessor(
+				teamSeasons,
+				teamHistory.history,
+				false,
+			);
+
+			// Same as players, but only counting stats from userSeasons
+			const userPlayers: (NonNullable<ReturnType<typeof processPlayer>> & {
+				retirableJerseyNumbers: Record<string, number[]>;
+			})[] = [];
+
+			const players = addFirstNameShort(
+				(
+					await idb.merged.players.getAll(
+						{ statsTid: inputs.tid },
+						{
+							map: (pRaw) => {
+								// Only stats for this team. This makes a new object, so the player in the cache is not changed.
+								const stats = pRaw.stats.filter(
+									(row) => row.tid === inputs.tid,
+								);
+
+								const row = processPlayer({ ...pRaw, stats });
+								if (!row) {
+									return;
+								}
+
+								const retirableJerseyNumbers: Record<string, number[]> = {};
+								for (const { gp, jerseyNumber, playoffs, season } of stats) {
+									if (
+										!playoffs &&
+										(gp ?? 0) > 0 &&
+										jerseyNumber !== undefined &&
+										!retiredByPid[pRaw.pid]?.has(jerseyNumber)
+									) {
+										retirableJerseyNumbers[jerseyNumber] ??= [];
+										retirableJerseyNumbers[jerseyNumber].push(season);
+									}
+								}
+
+								if (processUserPlayer) {
+									const userRow = processUserPlayer({
+										...pRaw,
+										stats: stats.filter((row) =>
+											userSeasonsSet.has(row.season),
+										),
+									});
+									if (userRow) {
+										// Jersey retirement is still based on all seasons with this team
+										userPlayers.push({
+											...userRow,
+											retirableJerseyNumbers,
+										});
+									}
+								}
+
+								return {
+									...row,
+									retirableJerseyNumbers,
+								};
+							},
+						},
+					)
+				).filter((p) => p !== undefined),
+			);
+
+			const playersByPid = groupByUnique(players, "pid");
+			const retiredJerseyNumbers2 = retiredJerseyNumbers.map((row) => {
+				let numRings = 0;
+				if (row.pid !== undefined) {
+					numRings = playersByPid[row.pid]?.numRings ?? 0;
 				}
 
 				return {
-					...row,
-					teamInfo,
-					firstName,
-					lastName,
-					pos,
-					lastSeasonWithTeam,
+					firstName: row.firstName,
+					lastName: row.lastName,
+					number: row.number,
+					pid: row.pid,
+					pos: row.pos,
+					score: row.score,
+					lastSeasonWithTeam: row.lastSeasonWithTeam,
+					seasonRetired: row.seasonRetired,
+					seasonTeamInfo: row.seasonTeamInfo,
+					teamInfo: row.teamInfo,
+					text: row.text,
+					numRings,
 				};
-			}),
-		);
+			});
 
-		const retiredByPid: Record<number, Set<string>> = {};
-		for (const { pid, number } of retiredJerseyNumbers) {
-			if (pid !== undefined) {
-				if (!retiredByPid[pid]) {
-					retiredByPid[pid] = new Set();
-				}
-				retiredByPid[pid].add(number);
-			}
+			return {
+				...teamHistory,
+				players,
+				stats: historyStats,
+				abbrev: inputs.abbrev,
+				tid: inputs.tid,
+				retiredJerseyNumbers: retiredJerseyNumbers2,
+				userPlayers: processUserPlayer
+					? addFirstNameShort(userPlayers)
+					: undefined,
+				userSeasons,
+				userTotals,
+			};
 		}
-
-		const players = (
-			await idb.getCopies.players({
-				statsTid: inputs.tid,
-			})
-		).map((p) => {
-			const stats = p.stats.filter((row) => row.tid === inputs.tid);
-			const retirableJerseyNumbers: Record<string, string[]> = {};
-			for (const { gp, jerseyNumber, playoffs, season } of stats) {
-				if (
-					!playoffs &&
-					gp > 0 &&
-					jerseyNumber !== undefined &&
-					!retiredByPid[p.pid]?.has(jerseyNumber)
-				) {
-					retirableJerseyNumbers[jerseyNumber] ??= [];
-					retirableJerseyNumbers[jerseyNumber].push(season);
-				}
-			}
-
-			return {
-				...p,
-				stats,
-				retirableJerseyNumbers,
-			};
-		});
-
-		const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
-		const history = await getHistory(
-			teamSeasons,
-			players,
-			playoffsByConfBySeason,
-		);
-
-		const playersByPid = groupByUnique(history.players, "pid");
-		const retiredJerseyNumbers2 = retiredJerseyNumbers.map((row) => {
-			let numRings = 0;
-			if (row.pid !== undefined) {
-				numRings = playersByPid[row.pid]?.numRings ?? 0;
-			}
-
-			return {
-				firstName: row.firstName,
-				lastName: row.lastName,
-				number: row.number,
-				pid: row.pid,
-				pos: row.pos,
-				score: row.score,
-				lastSeasonWithTeam: row.lastSeasonWithTeam,
-				seasonRetired: row.seasonRetired,
-				seasonTeamInfo: row.seasonTeamInfo,
-				teamInfo: row.teamInfo,
-				text: row.text,
-				numRings,
-			};
-		});
-
-		return {
-			...history,
-			abbrev: inputs.abbrev,
-			tid: inputs.tid,
-			retiredJerseyNumbers: retiredJerseyNumbers2,
-		};
-	}
-};
-
-export default updateTeamHistory;
+	},
+});

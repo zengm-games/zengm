@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { range } from "../../common/utils.ts";
 import { PlayoffMatchup } from "../components/PlayoffMatchup.tsx";
@@ -129,6 +129,40 @@ const Playoffs = ({
 		}
 	}
 
+	// Championship banner is placed with position relative, which overflows the ResponsiveTableWrapper in some cases unless this height is manually specified
+	const tableRef = useRef<HTMLTableElement>(null);
+	const [minTableHeight, setMinTableHeight] = useState(0);
+	{
+		let showingBanner = false;
+		if (numRounds === numGamesPlayoffSeries.length) {
+			const finals = series.at(-1)?.[0];
+			if (finals) {
+				const toWin = numGamesToWinSeries.at(-1);
+				const homeWon = !finals.away || finals.home.won === toWin;
+				const awayWon = finals.away?.won === toWin;
+				if (homeWon || awayWon) {
+					showingBanner = true;
+				}
+			}
+		}
+		useLayoutEffect(() => {
+			const updateHeight = () => {
+				if (tableRef.current) {
+					const tableHeight = tableRef.current.scrollHeight;
+					setMinTableHeight(tableHeight);
+				} else {
+					setMinTableHeight(0);
+				}
+			};
+			updateHeight();
+
+			window.addEventListener("optimizedResize", updateHeight);
+			return () => {
+				window.removeEventListener("optimizedResize", updateHeight);
+			};
+		}, [season, showingBanner]);
+	}
+
 	if (numRounds === 0) {
 		return finalMatchups ? (
 			<p>There were no playoffs this season.</p>
@@ -229,15 +263,21 @@ const Playoffs = ({
 				</h2>
 			) : null}
 
-			<ResponsiveTableWrapper className={showFooter ? "mb-1" : "mb-3"}>
-				<table className="table-sm w-100">
+			<ResponsiveTableWrapper
+				className={showFooter ? "mb-1" : "mb-3"}
+				style={{ minHeight: minTableHeight, overflowY: "clip" }}
+			>
+				<table className="table-sm w-100" ref={tableRef}>
 					<tbody>
 						{matchups.map((row, i) => (
 							<tr key={i}>
 								{row.map((m, j) => {
 									if (j + 1 > maxNumCols) {
+										// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 										maxNumCols = j + 1;
 									}
+									const finals =
+										m.matchup[0] === numGamesPlayoffSeries.length - 1;
 
 									const [round, matchupIndex] = m.matchup;
 									const playoffSeriesMatchup = series[round]![matchupIndex];
@@ -245,6 +285,7 @@ const Playoffs = ({
 									return (
 										<td key={j} rowSpan={m.rowspan} style={tdStyle}>
 											<PlayoffMatchup
+												bannerForWinner={finals}
 												numGamesToWinSeries={numGamesToWinSeries[round]}
 												season={season}
 												series={playoffSeriesMatchup}

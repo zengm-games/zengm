@@ -1,4 +1,4 @@
-import { randInt } from "../../../common/random.ts";
+import { choice } from "../../../common/random.ts";
 import { g } from "../../util/index.ts";
 
 const getPlayerFakeAge = <
@@ -49,20 +49,13 @@ const getPlayerFakeAge = <
 	const youngPlayers = players
 		.filter((p) => g.get("season") - p.born.year <= 22)
 		.filter((p) => !p.real);
-	const weights = youngPlayers.map((p) => {
-		return highRiskCountries.includes(p.born.loc) ? 40 : 1;
-	});
-	const sum = weights.reduce((total, current) => current + total, 0);
-	const randVal = randInt(0, sum - 1);
-	let runningSum = 0;
-
-	for (const [i, weight] of weights.entries()) {
-		runningSum += weight;
-
-		if (randVal < runningSum) {
-			return youngPlayers[i]!;
-		}
+	if (youngPlayers.length === 0) {
+		return;
 	}
+
+	return choice(youngPlayers, (p) =>
+		highRiskCountries.includes(p.born.loc) ? 40 : 1,
+	);
 };
 
 export default getPlayerFakeAge;

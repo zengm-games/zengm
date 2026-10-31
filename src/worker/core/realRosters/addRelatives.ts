@@ -63,7 +63,7 @@ const addRelatives = (
 		if (relatives2.length > 0) {
 			// Due to the possibility of having individual real teams in a random players league, addRelatives winds up being called a second time with just active players. In that case, merge the relatives lists.
 			if (p.relatives) {
-				const seenKeys = new Set();
+				const seenKeys = new Set<string>();
 				p.relatives = [...p.relatives, ...relatives2].filter((relative) => {
 					const key = JSON.stringify([
 						relative.type,

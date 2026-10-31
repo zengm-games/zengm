@@ -1,0 +1,488 @@
+import { team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import type {
+	Team,
+	TeamAttr,
+	TeamFiltered,
+	TeamSeasonAttr,
+	TeamStatAttr,
+	TeamStatType,
+	TeamStats,
+} from "../../../common/types.ts";
+import { DEFAULT_POINTS_FORMULA } from "../../../common/constants.ts";
+import { orderBy } from "../../../common/utils.ts";
+
+const processAttrs = <
+	Attrs extends Readonly<TeamAttr[]>,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined,
+>(
+	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
+	t: Team,
+	attrs: Attrs,
+) => {
+	for (const attr of attrs) {
+		if (attr === "budget") {
+			output.budget = helpers.deepCopy(t.budget);
+		} else {
+			// @ts-expect-error
+			output[attr] = t[attr];
+		}
+	}
+};
+
+const processSeasonAttrs = async <
+	Attrs extends Readonly<TeamAttr[]> | undefined,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined,
+>(
+	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
+	t: Team,
+	seasonAttrs: SeasonAttrs,
+	addDummySeason: boolean,
+	season: Season,
+) => {
+	let seasons;
+
+	if (season === undefined) {
+		// All seasons
+		seasons = await idb.merged.teamSeasons.getAll({
+			tid: t.tid,
+		});
+	} else {
+		// Single season, from database
+		seasons = await idb.merged.teamSeasons.getAll({
+			season,
+			tid: t.tid,
+		});
+	}
+
+	// If a season is requested but not in the database, make a fake season so at least some dummy values are returned
+	if (season !== undefined && seasons.length === 0 && addDummySeason) {
+		const dummySeason = team.genSeasonRow(t);
+		dummySeason.season = season;
+		seasons = [dummySeason];
+	}
+
+	// 2020-05-02 - these were moved into TeamSeason, but I'm wary of doing an IDB upgrade, so here we are.
+	const copyFromTeamIfUndefined = [
+		"cid",
+		"did",
+		"region",
+		"name",
+		"abbrev",
+		"imgURL",
+		"colors",
+	];
+
+	// @ts-expect-error
+	output.seasonAttrs = [];
+	for (const ts of seasons) {
+		const row: any = {};
+
+		const revenue = helpers
+			.keys(ts.revenues)
+			.reduce((memo, rev) => memo + ts.revenues[rev], 0);
+		const expense = helpers
+			.keys(ts.expenses)
+			.reduce((memo, rev) => memo + ts.expenses[rev], 0);
+
+		for (const temp of seasonAttrs) {
+			const attr: string = temp;
+			if (attr === "winp") {
+				row.winp = helpers.calcWinp(ts);
+			} else if (attr === "att") {
+				row.att = ts.gpHome > 0 ? ts.att / ts.gpHome : 0;
+			} else if (attr === "cash") {
+				row.cash = ts.cash / 1000; // [millions of dollars]
+			} else if (attr === "revenue") {
+				row.revenue = revenue / 1000; // [millions of dollars]
+			} else if (attr === "profit") {
+				row.profit = (revenue - expense) / 1000; // [millions of dollars]
+			} else if (attr === "salaryPaid") {
+				row.salaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
+			} else if (attr === "payroll") {
+				if (season === g.get("season")) {
+					row.payroll = (await team.getPayroll(t.tid)) / 1000;
+				} else {
+					row.payroll = undefined;
+				}
+			} else if (attr === "payrollOrSalaryPaid") {
+				if (season === g.get("season")) {
+					row.payrollOrSalaryPaid = (await team.getPayroll(t.tid)) / 1000;
+				} else {
+					row.payrollOrSalaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
+				}
+			} else if (attr === "lastTen") {
+				let lastTenWon = 0;
+				let lastTenLost = 0;
+				let lastTenOTL = 0;
+				let lastTenTied = 0;
+				for (const x of ts.lastTen) {
+					if (x === 1) {
+						lastTenWon += 1;
+					} else if (x === 0) {
+						lastTenLost += 1;
+					} else if (x === "OTL") {
+						lastTenOTL += 1;
+					} else if (x === -1) {
+						lastTenTied += 1;
+					}
+				}
+				row.lastTen = `${lastTenWon}-${lastTenLost}`;
+
+				if (lastTenOTL > 0) {
+					row.lastTen += `-${lastTenOTL}`;
+				}
+				if (lastTenTied > 0) {
+					row.lastTen += `-${lastTenTied}`;
+				}
+			} else if (attr === "streak") {
+				// For standings
+				if (ts.streak === 0) {
+					row.streak = "None";
+				} else if (ts.streak > 0) {
+					row.streak = `Won ${ts.streak}`;
+				} else if (ts.streak < 0) {
+					row.streak = `Lost ${Math.abs(ts.streak)}`;
+				}
+			} else if (attr === "pts") {
+				row.pts = team.evaluatePointsFormula(ts, {
+					season: ts.season,
+				});
+			} else if (attr === "ptsMax") {
+				row.ptsMax = team.ptsMax(ts);
+			} else if (attr === "ptsPct") {
+				row.ptsPct = team.ptsPct(ts);
+			} else if (attr === "ptsDefault") {
+				row.ptsDefault = team.evaluatePointsFormula(ts, {
+					formula: DEFAULT_POINTS_FORMULA,
+					season: ts.season,
+				});
+			} else if (attr === "avgAge") {
+				// Will be undefined if not cached, in which case will need to be dynamically computed elsewhere
+				row.avgAge = ts[attr];
+			} else if (attr === "expenseLevels") {
+				if (ts.season === g.get("season")) {
+					// For current season, we want the current values, not what we spent this season. That's what we want on League Finances at least, which is the only place this is used for now.
+					row.expenseLevels = {
+						coaching: t.budget.coaching,
+						facilities: t.budget.facilities,
+						health: t.budget.health,
+						scouting: t.budget.scouting,
+					};
+				} else {
+					const gp = helpers.getTeamSeasonGp(ts);
+					if (gp > 0) {
+						row.expenseLevels = {
+							coaching: Math.round(ts.expenseLevels.coaching / gp),
+							facilities: Math.round(ts.expenseLevels.facilities / gp),
+							health: Math.round(ts.expenseLevels.health / gp),
+							scouting: Math.round(ts.expenseLevels.scouting / gp),
+						};
+					} else {
+						row.expenseLevels = {
+							coaching: 0,
+							facilities: 0,
+							health: 0,
+							scouting: 0,
+						};
+					}
+				}
+			} else if (attr === "gp") {
+				row.gp = ts.won + ts.lost + (ts.tied ?? 0) + (ts.otl ?? 0);
+			} else {
+				// @ts-expect-error
+				row[attr] = ts[attr];
+			}
+
+			if (row[attr] === undefined && copyFromTeamIfUndefined.includes(attr)) {
+				// @ts-expect-error
+				row[attr] = t[attr];
+			}
+		}
+
+		output.seasonAttrs.push(row);
+	}
+
+	if (season !== undefined) {
+		// @ts-expect-error
+		output.seasonAttrs = output.seasonAttrs[0];
+	}
+};
+
+// Indexes can't handle playoffs/regularSeason and different ones can come back inconsistently sorted
+const filterOrderStats = (
+	stats: TeamStats[],
+	playoffs: boolean,
+	regularSeason: boolean,
+): TeamStats[] => {
+	return orderBy(
+		stats.filter((ts) => {
+			if (playoffs && ts.playoffs) {
+				return true;
+			}
+
+			if (regularSeason && !ts.playoffs) {
+				return true;
+			}
+
+			return false;
+		}),
+		["season", "playoffs", "rid"],
+	);
+};
+
+const processStats = async <
+	Attrs extends Readonly<TeamAttr[]> | undefined,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]>,
+	Season extends number | undefined,
+>(
+	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
+	t: Team,
+	stats: StatAttrs,
+	playoffs: boolean,
+	regularSeason: boolean,
+	statType: TeamStatType,
+	addDummySeason: boolean,
+	showNoStats: boolean,
+	season: Season | undefined,
+) => {
+	let teamStats = await idb.merged.teamStats.getAll({ tid: t.tid, season });
+
+	// Handle playoffs/regularSeason
+	teamStats = filterOrderStats(teamStats, playoffs, regularSeason);
+
+	if (teamStats.length === 0 && (addDummySeason || showNoStats)) {
+		teamStats.push({});
+	}
+
+	// @ts-expect-error
+	output.stats = teamStats.map((ts) => {
+		return team.processStats(ts, stats, playoffs, statType);
+	});
+
+	if (
+		season !== undefined &&
+		((playoffs && !regularSeason) || (!playoffs && regularSeason))
+	) {
+		// @ts-expect-error
+		output.stats = output.stats[0];
+	}
+};
+
+const processTeam = async <
+	Attrs extends Readonly<TeamAttr[]> | undefined,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined,
+>(
+	t: Team,
+	{
+		season,
+		attrs,
+		seasonAttrs,
+		stats,
+		playoffs,
+		regularSeason,
+		statType,
+		addDummySeason,
+		showNoStats,
+	}: {
+		season?: number;
+		attrs?: Attrs;
+		seasonAttrs?: SeasonAttrs;
+		stats?: StatAttrs;
+		playoffs: boolean;
+		regularSeason: boolean;
+		statType: TeamStatType;
+		addDummySeason: boolean;
+		showNoStats: boolean;
+	},
+) => {
+	// @ts-expect-error
+	const output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season> = {};
+
+	if (attrs) {
+		// @ts-expect-error
+		processAttrs(output, t, attrs);
+	}
+
+	if (seasonAttrs) {
+		await processSeasonAttrs(
+			// @ts-expect-error
+			output,
+			t,
+			seasonAttrs,
+			addDummySeason,
+			season,
+		);
+	}
+
+	if (stats) {
+		await processStats(
+			// @ts-expect-error
+			output,
+			t,
+			stats,
+			playoffs,
+			regularSeason,
+			statType,
+			addDummySeason,
+			showNoStats,
+			season,
+		);
+	}
+
+	if (seasonAttrs && (output as never as any).seasonAttrs === undefined) {
+		return;
+	}
+	if (stats && (output as never as any).stats === undefined) {
+		return;
+	}
+
+	return output;
+};
+
+/**
+ * Retrieve a filtered copy of a team object, or an array of all team objects.
+ *
+ * This can be used to retrieve information about a certain season, compute average statistics from the raw data, etc.
+ *
+ * If you request just one season (so, explicitly set season and then only one of playoffs and regularSeason is true), then stats and seasonAttrs will be returned as an object. Otherwise, they will be arrays of objects.
+ *
+ * @memberOf core.team
+ * @param {Object} options Options, as described below.
+ * @param {number=} options.tid Team ID. Set this if you want to return only one team object. If undefined, an array of all teams is returned, ordered by tid.
+ * @param {number=} options.season Season to retrieve stats/seasonAttrs for. If undefined, all seasons will be returned.
+ * @param {Array.<string>=} options.attrs List of team attributes to include in output (e.g. region, abbrev, name, ...).
+ * @param {Array.<string>=} options.seasonAttrs List of seasonal team attributes to include in output (e.g. won, lost, payroll, ...).
+ * @param {Array.<string=>} options.stats List of team stats to include in output (e.g. fg, orb, ast, blk, ...).
+ * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false.
+ * @param {boolean=} options.regularSeason Boolean representing whether to return playoff stats or not; default is false.
+ * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
+ * @param {boolean=} options.addDummySeason If season is specified, should we return data for this team if it is missing a TeamStats or TeamSeasons entry?
+ * @param {boolean=} options.showNoStats If season is specified, should we return data for this team if it is missing a TeamStats entry, but has a TeamSeason entry? Since TeamStats is now lazily created, this is needed to return anything in preseason or regular season before games are played.
+ * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
+ */
+export async function getFormattedAll<
+	Attrs extends Readonly<TeamAttr[]> | undefined,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined = undefined,
+>({
+	tid,
+	season,
+	attrs,
+	seasonAttrs,
+	stats,
+	playoffs = false,
+	regularSeason = true,
+	statType = "perGame",
+	addDummySeason = false,
+	active,
+	showNoStats = false,
+}: {
+	tid?: number;
+	season?: Season;
+	attrs?: Attrs;
+	seasonAttrs?: SeasonAttrs;
+	stats?: StatAttrs;
+	playoffs?: boolean;
+	regularSeason?: boolean;
+	statType?: TeamStatType;
+	addDummySeason?: boolean;
+	active?: boolean;
+	showNoStats?: boolean;
+} = {}): Promise<TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>[]> {
+	const options = {
+		season,
+		attrs,
+		seasonAttrs,
+		stats,
+		playoffs,
+		regularSeason,
+		statType,
+		addDummySeason,
+		showNoStats,
+	};
+
+	if (tid === undefined) {
+		let teams = await idb.cache.teams.getAll();
+		if (active) {
+			if (season !== undefined && season !== g.get("season")) {
+				throw new Error(
+					"Don't call getFormattedAll with active=true for any season other than the current season",
+				);
+			}
+			teams = teams.filter((t) => !t.disabled);
+		}
+
+		const output = [];
+		for (const t of teams) {
+			const processed = await processTeam(t, options);
+			if (processed !== undefined) {
+				output.push(processed);
+			}
+		}
+
+		// @ts-expect-error
+		return output;
+	}
+
+	const t = await idb.cache.teams.get(tid);
+	if (t) {
+		const val = await processTeam(t, options);
+		if (val) {
+			// @ts-expect-error
+			return [val];
+		}
+	}
+
+	return [];
+}
+
+// Like getFormattedAll, but for a single team. Returns undefined if the team doesn't exist.
+export const getFormatted = async <
+	Attrs extends Readonly<TeamAttr[]> | undefined,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined = undefined,
+>({
+	tid,
+	season,
+	attrs,
+	seasonAttrs,
+	stats,
+	playoffs,
+	regularSeason,
+	statType,
+	addDummySeason,
+}: {
+	tid: number;
+	season?: Season;
+	attrs?: Attrs;
+	seasonAttrs?: SeasonAttrs;
+	stats?: StatAttrs;
+	playoffs?: boolean;
+	regularSeason?: boolean;
+	statType?: TeamStatType;
+	addDummySeason?: boolean;
+}) => {
+	const result = await getFormattedAll<Attrs, SeasonAttrs, StatAttrs, Season>({
+		tid,
+		season,
+		attrs,
+		seasonAttrs,
+		stats,
+		playoffs,
+		regularSeason,
+		statType,
+		addDummySeason,
+	});
+	return result[0];
+};

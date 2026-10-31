@@ -8,8 +8,8 @@ import {
 	expansionDraft,
 	team,
 } from "../index.ts";
-import { g } from "../../util/index.ts";
-import type { Conditions } from "../../../common/types.ts";
+import { g, local, lock } from "../../util/index.ts";
+import type { Conditions, Phase } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { choice } from "../../../common/random.ts";
 
@@ -96,7 +96,7 @@ const autoPlay = async (conditions: Conditions = {}) => {
 	} else if (currentPhase === PHASE.RESIGN_PLAYERS) {
 		await phase.newPhase(PHASE.FREE_AGENCY, conditions);
 	} else if (currentPhase === PHASE.FREE_AGENCY) {
-		// Purposely call without await, to break up the promise chain. Otherwise (at least in Chrome 85) causes a memory leak after playing like 50 seasons.
+		// Purposely call without await, to break up the promise chain. Otherwise the promise chain uses too much memory after many seasons (like 50+)
 		freeAgents.play(g.get("daysLeft"), conditions);
 	} else {
 		throw new Error(`Unknown phase: ${currentPhase}`);
@@ -104,3 +104,51 @@ const autoPlay = async (conditions: Conditions = {}) => {
 };
 
 export default autoPlay;
+
+export const cleanupAutoPlay = (error?: Error) => {
+	if (local.autoPlayUntil) {
+		if (error) {
+			local.autoPlayUntil.reject(error);
+		} else {
+			local.autoPlayUntil.resolve();
+		}
+		local.autoPlayUntil = undefined;
+		void lock.updateWorkerBusy();
+	}
+};
+
+// Whether auto play should stop when it reaches this season and phase
+export const autoPlayStopsAt = (
+	autoPlayUntil: NonNullable<typeof local.autoPlayUntil>,
+	season: number,
+	phase: Phase,
+) => {
+	return (
+		autoPlayUntil.season < season ||
+		(autoPlayUntil.season === season && autoPlayUntil.phase <= phase)
+	);
+};
+
+export const startAutoPlay = (
+	season: number,
+	phase: Phase,
+	conditions: Conditions,
+) => {
+	cleanupAutoPlay();
+
+	const { promise, reject, resolve } = Promise.withResolvers<void>();
+
+	local.autoPlayUntil = {
+		reject,
+		resolve,
+		phase,
+		season,
+		start: Date.now(),
+	};
+	void lock.updateWorkerBusy();
+
+	autoPlay(conditions);
+
+	// Do this rather than awaiting autoPlay because autoPlay promise chain gets too big (see freeAgents.play call)
+	return promise;
+};

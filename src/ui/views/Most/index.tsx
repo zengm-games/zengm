@@ -72,7 +72,7 @@ const Most = ({
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map((p, i) => {
+	const rows: DataTableRow<"player">[] = players.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
 
 		const draftPick =
@@ -184,8 +184,10 @@ const Most = ({
 			{type === "goat" || type === "goat_season" ? (
 				<GOATFormula
 					key={type}
-					awards={extraProps.awards}
+					customAwards={extraProps.customAwards}
 					formula={extraProps.formula}
+					oldAwards={extraProps.oldAwards}
+					simpleAwards={extraProps.simpleAwards}
 					stats={extraProps.stats}
 					type={type === "goat_season" ? "season" : "career"}
 				/>

@@ -11,6 +11,7 @@ import { formatClock } from "../../common/formatClock.ts";
 import type { PlayerInjury } from "../../common/types.ts";
 import { formatLiveGameStat } from "./formatLiveGameStat.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
+import { assertDefined } from "../../common/utils.ts";
 type BoxScorePlayer = {
 	name: string;
 	pid: number;
@@ -61,6 +62,8 @@ export type SportState = {
 		countsTowardsYards: boolean;
 		tagOverride: string | undefined;
 		subPlay: boolean; // subPlay is like a kick return or turnover return
+		// Part of yards that came from an accepted penalty, drawn in yellow
+		penaltyYards: number;
 
 		// Team with the ball after the play ends
 		t: 0 | 1;
@@ -516,6 +519,31 @@ export const getText = (event: PlayByPlayEventOutput, numPeriods: number) => {
 	return text;
 };
 
+/**
+ * Split a play bar's net yards into the play's own part and the penalty's
+ * part, as lengths to draw (the penalty goes at the far end). When the two
+ * point opposite ways only one can show: the penalty if it decides which way
+ * the ball moved, otherwise the play -- the flag icon still marks the penalty.
+ */
+export const penaltySegments = (yards: number, penaltyYards: number) => {
+	if (penaltyYards === 0) {
+		return { play: Math.abs(yards), penalty: 0 };
+	}
+
+	const playYards = yards - penaltyYards;
+	if (playYards === 0 || Math.sign(playYards) === Math.sign(penaltyYards)) {
+		return { play: Math.abs(playYards), penalty: Math.abs(penaltyYards) };
+	}
+
+	// Opposite directions
+	if (yards === 0) {
+		return { play: 0, penalty: 0 };
+	}
+	return Math.sign(yards) === Math.sign(penaltyYards)
+		? { play: 0, penalty: Math.abs(yards) }
+		: { play: Math.abs(yards), penalty: 0 };
+};
+
 // Mutates boxScore!!!
 const processLiveGameEvents = ({
 	events,
@@ -568,16 +596,11 @@ const processLiveGameEvents = ({
 
 		const eAny = e as any;
 
-		// Swap teams order, so home team is at bottom in box score
-		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
-		const otherT = actualT === 0 ? 1 : 0;
+		const eventT: 0 | 1 | undefined =
+			eAny.t === 0 || eAny.t === 1 ? eAny.t : undefined;
+		const otherT = eventT === 0 ? 1 : 0;
 
 		const scoringSummaryEvent = formatScoringSummaryEvent(e, quarters.length);
-		if (scoringSummaryEvent) {
-			// Swap rather than using actualT in case it's a score for the other team
-			(scoringSummaryEvent as any).t =
-				(scoringSummaryEvent as any).t === 0 ? 1 : 0;
-		}
 
 		let quarterText;
 		if (quarters.length === 0) {
@@ -633,10 +656,8 @@ const processLiveGameEvents = ({
 			subPlay: boolean;
 			tOverride?: 0 | 1;
 		}) => {
-			const t = tOverride ?? actualT;
-			if (t === undefined) {
-				throw new Error("Should never happen");
-			}
+			const t = tOverride ?? eventT;
+			assertDefined(t);
 			sportState.plays.push({
 				t,
 				down,
@@ -652,6 +673,7 @@ const processLiveGameEvents = ({
 				countsTowardsYards: false,
 				tagOverride: undefined,
 				subPlay,
+				penaltyYards: 0,
 			});
 		};
 
@@ -668,14 +690,16 @@ const processLiveGameEvents = ({
 			sportState.awaitingShootout = true;
 			sportState.scrimmage = 1;
 			sportState.toGo = 10;
-			sportState.t = 0;
+
+			// Away team
+			sportState.t = 1;
 			addNewPlay({
 				down: 1,
 				toGo: 10,
 				scrimmage: 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
-				tOverride: 0,
+				tOverride: 1,
 			});
 		}
 
@@ -715,7 +739,8 @@ const processLiveGameEvents = ({
 			addNewPlay({
 				down: 1,
 				toGo: 10,
-				scrimmage: actualT === 1 ? 33 : 100 - 33,
+				// Home team is kicking in the opposite direction
+				scrimmage: eventT === 0 ? 33 : 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
 			});
@@ -733,7 +758,7 @@ const processLiveGameEvents = ({
 				} else {
 					const fieldPos = scrimmageToFieldPos(
 						e.scrimmage,
-						boxScore.teams[actualT!].abbrev,
+						boxScore.teams[eventT!].abbrev,
 						boxScore.teams[otherT].abbrev,
 					);
 
@@ -742,7 +767,7 @@ const processLiveGameEvents = ({
 						fieldPos,
 					);
 				}
-				t = actualT;
+				t = eventT;
 
 				text = (
 					<>
@@ -759,10 +784,10 @@ const processLiveGameEvents = ({
 			}
 
 			if (
-				actualT !== undefined &&
-				(awaitingKickoff || sportState.t !== actualT)
+				eventT !== undefined &&
+				(awaitingKickoff || sportState.t !== eventT)
 			) {
-				sportState.t = actualT;
+				sportState.t = eventT;
 				sportState.plays = [];
 			}
 			sportState.awaitingAfterTouchdown = e.awaitingAfterTouchdown;
@@ -796,18 +821,18 @@ const processLiveGameEvents = ({
 				}
 			}
 
-			boxScore.possession = actualT;
+			boxScore.possession = eventT;
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const { ptsQtrs } = boxScore.teams[actualT!];
+				const { ptsQtrs } = boxScore.teams[eventT!];
 				// eslint-disable-next-line unicorn/prefer-at
 				ptsQtrs[ptsQtrs.length - 1]! += e.amt;
-				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
+				boxScore.teams[eventT!].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
-			if (boxScore.teams[actualT!][e.s] !== undefined && e.s !== "min") {
+			if (boxScore.teams[eventT!][e.s] !== undefined && e.s !== "min") {
 				if (e.pid != undefined) {
 					const p = playersByPid[e.pid] as any;
 					if (e.s.endsWith("Lng")) {
@@ -816,9 +841,9 @@ const processLiveGameEvents = ({
 						p[e.s] += e.amt;
 					}
 				}
-				let stat = boxScore.teams[actualT!][e.s] as number;
+				let stat = boxScore.teams[eventT!][e.s] as number;
 				stat += e.amt;
-				boxScore.teams[actualT!][e.s] = stat;
+				boxScore.teams[eventT!][e.s] = stat;
 			}
 		} else if (e.type === "removeLastScore") {
 			// This happens a tick after sportState is updated, which I think is okay
@@ -833,14 +858,11 @@ const processLiveGameEvents = ({
 				sportState.plays = [];
 			}
 		} else if (e.type === "timeouts") {
-			// Reversed for actualT
-			boxScore.teams[0].timeouts = e.timeouts[1];
-			boxScore.teams[1].timeouts = e.timeouts[0];
+			boxScore.teams[0].timeouts = e.timeouts[0];
+			boxScore.teams[1].timeouts = e.timeouts[1];
 		} else if (e.type !== "init") {
 			let play = sportState.plays.at(-1);
-			if (!play) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(play);
 
 			if (e.type === "interception") {
 				// Interceptions are always turnovers, so set it here. But for fumbles we need to wait for the recovery, done elsewhere
@@ -860,7 +882,7 @@ const processLiveGameEvents = ({
 				text = initialText;
 				boxScore.time = formatClock(e.clock);
 				stop = true;
-				t = actualT;
+				t = eventT;
 				textOnly =
 					e.type === "twoMinuteWarning" ||
 					e.type === "gameOver" ||
@@ -912,18 +934,15 @@ const processLiveGameEvents = ({
 				const accept = e.decision === "accept";
 				if (accept) {
 					/*// Penalty could have changed possession
-					const actualT2 = e.possessionAfter === 0 ? 1 : 0;
-					if (play.t !== actualT2) {
-						play.t = actualT2;
+					if (play.t !== e.possessionAfter) {
+						play.t = e.possessionAfter;
 					}*/
 
 					removeLastScoreOrTurnoversOrPuntReturnIfNecessary();
 
 					// play might have been removed by removeLastScoreOrTurnoversIfNecessary
 					play = sportState.plays.at(-1);
-					if (!play) {
-						throw new Error("Should never happen");
-					}
+					assertDefined(play);
 
 					// For penalties before the snap, still count them (except awaitingAfterTouchdown, where these should never be true)
 					if (!sportState.awaitingAfterTouchdown) {
@@ -936,6 +955,13 @@ const processLiveGameEvents = ({
 					if (reversedField) {
 						scrimmageAfter = 100 - scrimmageAfter;
 					}
+
+					// A foul added on after the play keeps the play's own yards; any
+					// other accepted foul wipes the play out, so all of it is penalty
+					const penaltyBase = e.tackOn
+						? play.scrimmage + play.yards
+						: play.scrimmage;
+					play.penaltyYards = scrimmageAfter - penaltyBase;
 					play.yards = scrimmageAfter - play.scrimmage;
 				}
 
@@ -946,7 +972,7 @@ const processLiveGameEvents = ({
 					const flagIndex = flagPlay.flags.indexOf(null);
 					if (flagIndex >= 0) {
 						flagPlay.flags[flagIndex] = {
-							text: text!,
+							text,
 							accept,
 						};
 
@@ -962,14 +988,13 @@ const processLiveGameEvents = ({
 
 				// play might have been removed by removeLastScoreOrTurnoversIfNecessary
 				play = sportState.plays.at(-1);
-				if (!play) {
-					throw new Error("Should never happen");
-				}
+				assertDefined(play);
 
 				// Offsetting penalties don't make it this far in the penalty event, because they have are filtered out above. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
 				// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
 				play.countsTowardsNumPlays = false;
 				play.yards = 0;
+				play.penaltyYards = 0;
 
 				play.flags = play.flags.map(() => {
 					return {
@@ -1057,7 +1082,9 @@ const processLiveGameEvents = ({
 				e.type === "fieldGoal" ||
 				e.type === "extraPoint" ||
 				(e as any).safety ||
-				(e as any).twoPointConversionTeam !== undefined;
+				(e as any).twoPointConversionTeam !== undefined ||
+				// Needed for failed 2 point conversions that end with an event without twoPointConversionTeam, like an incomplete pass
+				e.type === "twoPointConversionFailed";
 
 			if (
 				e.type === "puntReturn" ||
@@ -1065,7 +1092,7 @@ const processLiveGameEvents = ({
 				e.type === "interception" ||
 				(e.type === "fumbleRecovery" && e.lost)
 			) {
-				boxScore.possession = actualT;
+				boxScore.possession = eventT;
 			} else if (e.type === "turnoverOnDowns") {
 				boxScore.possession = otherT;
 			}

@@ -14,6 +14,12 @@ import {
 import type { Conditions, Phase, PhaseReturn } from "../../../common/types.ts";
 import { getGlobalSettings } from "../../util/getGlobalSettings.ts";
 import { processScheduledEvents } from "./processScheduledEvents.ts";
+import { autoPlayStopsAt, cleanupAutoPlay } from "../league/autoPlay.ts";
+
+const save = async () => {
+	await updateStatus("Saving...");
+	await idb.cache.flush();
+};
 
 /**
  * Common tasks run after a new phrase is set.
@@ -31,24 +37,32 @@ const finalize = async (
 	conditions: Conditions,
 	{ redirect, updateEvents = [] }: PhaseReturn,
 ) => {
-	await updateStatus("Saving...");
-
 	// Set phase before saving to database
 	await league.setGameAttributes({
 		phase,
 	});
 
-	// Fill only in preseason, because not much changes before then
-	await idb.cache.flush();
-
+	let saved = false;
 	if (phase === PHASE.PRESEASON) {
+		// Fill only in preseason, because not much changes before then
+		await save();
+		saved = true;
 		await idb.cache.fill();
+	} else if (!local.autoPlayUntil && phase !== PHASE.AFTER_TRADE_DEADLINE) {
+		// Flush on other phase changes only outside of auto play, except never for trade deadline one cause who cares
+		await save();
+		saved = true;
 	}
 
 	await lock.set("newPhase", false);
 	await updatePhase();
-	await updatePlayMenu();
-	await updateStatus();
+
+	// If we're still simming games during a trade deadline phase change, no need to update status/menu because the next game will invalidate it. This removes some flicker
+	if (phase !== PHASE.AFTER_TRADE_DEADLINE || !lock.get("gameSim")) {
+		await updatePlayMenu();
+		await updateStatus();
+	}
+
 	updateEvents.push("newPhase");
 
 	if (
@@ -87,8 +101,22 @@ const finalize = async (
 		}
 	}
 
-	if (local.autoPlayUntil) {
-		await league.autoPlay(conditions);
+	// Save a reference, since local.autoPlayUntil might be cleared during an await below, if the user stops auto play
+	const autoPlayUntil = local.autoPlayUntil;
+	if (autoPlayUntil) {
+		if (autoPlayStopsAt(autoPlayUntil, g.get("season"), phase)) {
+			if (!saved) {
+				await save();
+				await updateStatus();
+			}
+			console.log(
+				`Auto play done in ${(Date.now() - autoPlayUntil.start) / 1000} seconds`,
+			);
+			cleanupAutoPlay();
+			await updatePlayMenu();
+		} else {
+			await league.autoPlay(conditions);
+		}
 	}
 };
 

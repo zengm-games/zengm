@@ -7,11 +7,12 @@ import type {
 	PlayerContract,
 	GameAttributesLeague,
 	RelativeType,
+	ByConf,
 } from "./types.ts";
 import getTeamInfos from "./getTeamInfos.ts";
-import { isSport } from "./sportFunctions.ts";
 import { PHASE } from "./constants.ts";
 import { orderBy } from "./utils.ts";
+import type { LeagueUrlParts } from "../ui/router/types.ts";
 
 const getPopRanks = (
 	teamSeasons: {
@@ -114,7 +115,7 @@ const gameScoreBaseball = (
 
 const getTeamsDefault = (): TeamBasic[] => {
 	let teams: TeamBasic[];
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		teams = getTeamInfos([
 			{
 				tid: 0,
@@ -297,7 +298,7 @@ const getTeamsDefault = (): TeamBasic[] => {
 				abbrev: "WAS",
 			},
 		]);
-	} else if (isSport("basketball")) {
+	} else if (__SPORT === "basketball") {
 		teams = getTeamInfos([
 			{
 				tid: 0,
@@ -510,7 +511,7 @@ const getTeamsDefault = (): TeamBasic[] => {
 				abbrev: "WAS",
 			},
 		]);
-	} else if (isSport("hockey")) {
+	} else if (__SPORT === "hockey") {
 		teams = getTeamInfos([
 			{
 				tid: 0,
@@ -931,10 +932,7 @@ const deepCopy = <T>(obj: T): T => {
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
  * @return {string} URL
  */
-const leagueUrlBase = (
-	lid: number,
-	components: (number | string | undefined)[],
-) => {
+const leagueUrlBase = (lid: number, components: Readonly<LeagueUrlParts>) => {
 	let url = `/l/${lid}`;
 
 	for (let i = 0; i < components.length; i++) {
@@ -1057,12 +1055,22 @@ const localeParseFloat = (string: string) => {
 	);
 };
 
+const DEFAULT_MAXIMUM_FRACTION_DIGITS = 10;
+
+const numberWithCommasFormatter = new Intl.NumberFormat("en-US", {
+	maximumFractionDigits: DEFAULT_MAXIMUM_FRACTION_DIGITS,
+});
+
 // Format a number as an integer with commas in the thousands places.
 const numberWithCommas = (
 	x: number | string,
-	maximumFractionDigits: number = 10,
+	maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS,
 ): string => {
 	const y = typeof x === "string" ? localeParseFloat(x) : x;
+
+	if (maximumFractionDigits === DEFAULT_MAXIMUM_FRACTION_DIGITS) {
+		return numberWithCommasFormatter.format(y);
+	}
 
 	return y.toLocaleString("en-US", { maximumFractionDigits });
 };
@@ -1088,6 +1096,15 @@ const upperCaseFirstLetter = <T extends string>(string: T) => {
 // https://medium.com/@_achou/dont-give-up-and-use-suppressimplicitanyindexerrors-ca6b208b9365
 const keys = <O extends object>(obj: O): Array<keyof O> => {
 	return Object.keys(obj) as Array<keyof O>;
+};
+
+// Distributes over keys, so each key is paired only with its own value type, like ["a", number] | ["b", string] rather than ["a" | "b", number | string]
+type Entries<O> = Array<
+	keyof O extends infer K ? (K extends keyof O ? [K, O[K]] : never) : never
+>;
+
+const entries = <O extends object>(obj: O): Entries<O> => {
+	return Object.entries(obj) as Entries<O>;
 };
 
 const states = new Set([
@@ -1280,7 +1297,7 @@ const getJerseyNumber = (
 			return lastStats.jerseyNumber;
 		}
 
-		// None found? Return undefind. This happens for players who have never been on a team during the season
+		// None found? Return undefined. This happens for players who have never been on a team during the season
 		return;
 	}
 
@@ -1376,7 +1393,7 @@ const overtimeText = (
 	let overtimes = "";
 
 	if (numOvertimes !== undefined && numOvertimes > 0) {
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			overtimes = `${(numPeriods ?? 0) + numOvertimes}`;
 		} else {
 			if (numOvertimes === 1) {
@@ -1390,6 +1407,7 @@ const overtimeText = (
 	return overtimes;
 };
 
+// This can't be replaced by Math.sumPrecise because this ignores undefined, like for byPos stats
 const sum = (values: (number | undefined)[]) => {
 	let total = 0;
 	for (const value of values) {
@@ -1406,7 +1424,7 @@ const justDrafted = (
 		draft: {
 			year: number;
 		};
-		contract: PlayerContract;
+		contract: Pick<PlayerContract, "rookie">;
 	},
 	phase: Phase,
 	season: number,
@@ -1480,9 +1498,16 @@ const getRecordNumericValue = (record: string | null) => {
 		return -Infinity;
 	}
 
-	let [won = 0, lost = 0, otl, tied] = record
+	let [won, lost, otl, tied] = record
 		.split("-")
 		.map((num) => Number.parseInt(num));
+
+	if (won === undefined) {
+		won = 0;
+	}
+	if (lost === undefined) {
+		lost = 0;
+	}
 
 	// Technically, if only one of "tied" or "otl" is present, we can't distinguish. Assume it's tied, in that case.
 	if (typeof otl === "number" && typeof tied !== "number") {
@@ -1513,6 +1538,55 @@ const plural = (text: string, amount: number, textPluralOverride?: string) => {
 	return textPluralOverride ?? `${text}s`;
 };
 
+const playoffRoundName = (
+	currentRound: number, // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
+	numPlayoffRounds: number,
+	playoffsByConf: ByConf,
+) => {
+	if (currentRound === -1) {
+		return "play-in tournament";
+	}
+
+	if (currentRound === numPlayoffRounds - 1) {
+		return "finals" as const;
+	}
+
+	// Put this early so as to not glorify just making the playoffs with some fancier text
+	if (currentRound === 0) {
+		return "1st round" as const;
+	}
+
+	const confChampionshipRound =
+		playoffsByConf === false
+			? undefined
+			: numPlayoffRounds - Math.log2(playoffsByConf);
+
+	if (confChampionshipRound !== undefined) {
+		if (currentRound === confChampionshipRound - 1) {
+			return "conference finals";
+		}
+		if (currentRound === confChampionshipRound - 2) {
+			return "conference semifinals";
+		}
+	}
+
+	if (currentRound === numPlayoffRounds - 2) {
+		return "semifinals";
+	}
+
+	if (currentRound === numPlayoffRounds - 3) {
+		return "quarterfinals";
+	}
+
+	if (currentRound >= 1) {
+		return `${ordinal(currentRound + 1)} round` as const;
+	}
+
+	throw new Error(
+		`Invalid roundIndex ${currentRound} ${numPlayoffRounds} ${playoffsByConf}`,
+	);
+};
+
 export const helpers = {
 	addPopRank,
 	getPopRanks,
@@ -1533,6 +1607,7 @@ export const helpers = {
 	roundWinp,
 	upperCaseFirstLetter,
 	keys,
+	entries,
 	ratio,
 	percentage,
 	formatRecord,
@@ -1543,4 +1618,5 @@ export const helpers = {
 	pronoun,
 	getRecordNumericValue,
 	localeParseFloat,
+	playoffRoundName,
 };

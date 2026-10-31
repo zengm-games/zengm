@@ -14,6 +14,7 @@ import { last, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
+import { autoPlayStopsAt } from "../league/autoPlay.ts";
 
 export const FREE_AGENCY_DAYS = 30;
 
@@ -54,10 +55,11 @@ const newPhaseResignPlayers = async (
 
 	const numPlayersTradedAwayNormalized =
 		await getNumPlayersTradedAwayNormalizedAll();
-	for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
+	const playersToMakeFreeAgents = [...existingFreeAgents, ...undraftedPlayers];
+	for (const p of playersToMakeFreeAgents) {
 		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-		await idb.cache.players.put(p);
 	}
+	await idb.cache.players.putAll(playersToMakeFreeAgents);
 
 	// Re-sign players on user's team, and some AI players
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
@@ -174,7 +176,12 @@ const newPhaseResignPlayers = async (
 
 		if (
 			g.get("userTids").includes(p.tid) &&
-			!local.autoPlayUntil &&
+			(!local.autoPlayUntil ||
+				autoPlayStopsAt(
+					local.autoPlayUntil,
+					g.get("season"),
+					PHASE.RESIGN_PLAYERS,
+				)) &&
 			!g.get("spectator")
 		) {
 			const tid = p.tid;
@@ -319,8 +326,8 @@ const newPhaseResignPlayers = async (
 			p.born.year += 1;
 			last(p.ratings).season += 1;
 			await player.updateValues(p);
-			await idb.cache.players.put(p);
 		}
+		await idb.cache.players.putAll(draftProspects);
 	} else {
 		// Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
 		for (const p of draftProspects) {

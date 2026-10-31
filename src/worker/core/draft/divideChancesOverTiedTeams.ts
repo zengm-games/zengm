@@ -24,14 +24,14 @@ const divideChancesOverTiedTeams = (
 	let tc = 0;
 
 	for (const wp of wps) {
-		let val = wp[1]!;
+		let val = wp[1];
 
 		if (val > 1) {
 			if (tc + val >= chances.length) {
 				val -= tc + val - chances.length; // Do not exceed 14, as the chances are only for lottery teams.
 			}
 
-			const total = chances.slice(tc, tc + val).reduce((a, b) => a + b);
+			const total = Math.sumPrecise(chances.slice(tc, tc + val));
 			let remainder = isFinal ? total % val : 0;
 			const newVal = (total - remainder) / val;
 			let i;

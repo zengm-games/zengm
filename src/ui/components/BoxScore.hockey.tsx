@@ -1,22 +1,20 @@
-import {
-	Fragment,
-	type MouseEvent,
-	type ReactNode,
-	useState,
-	useMemo,
-} from "react";
+import { Fragment, type ReactNode, useMemo } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.hockey.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
-import updateSortBys from "./DataTable/updateSortBys.ts";
+import { useBoxScoreSortBys } from "./useBoxScoreSortBys.ts";
 import type { SortBy } from "./DataTable/index.tsx";
 import { formatClock } from "../../common/formatClock.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../util/boxScoreDisplayOrder.ts";
 
 type Team = {
 	abbrev: string;
@@ -56,23 +54,12 @@ const StatsTable = ({
 	const stats = PLAYER_GAME_STATS[type].stats;
 	const cols = getCols(stats.map((stat) => `stat:${stat}`));
 
-	const [sortBys, setSortBys] = useState(() => {
-		return PLAYER_GAME_STATS[type].sortBy.map(
+	const { onClick, sortBys } = useBoxScoreSortBys({
+		cols,
+		defaultSortBys: PLAYER_GAME_STATS[type].sortBy.map(
 			(stat) => [stats.indexOf(stat), "desc"] as SortBy,
-		);
+		),
 	});
-
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(
-			(prevSortBys) =>
-				updateSortBys({
-					cols,
-					event,
-					i,
-					prevSortBys,
-				}) ?? [],
-		);
-	};
 
 	const allStarGame = t.tid === -1 || t.tid === -2;
 	const players = t.players
@@ -152,7 +139,7 @@ const StatsTable = ({
 									<th key={stat}>
 										{stat === "pm"
 											? null
-											: helpers.roundStat(sumsByStat[stat]!, stat, true)}
+											: helpers.roundStat(sumsByStat[stat], stat, true)}
 									</th>
 								))}
 							</tr>
@@ -233,6 +220,7 @@ const ScoringSummary = ({
 					const currentPeriod =
 						event.type === "shootoutShot" ? "Shootout" : event.quarter;
 					if (currentPeriod !== prevQuarter) {
+						// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 						prevQuarter = currentPeriod;
 
 						let quarterText;
@@ -266,19 +254,19 @@ const ScoringSummary = ({
 							<tr>
 								<td>{teams[event.t].abbrev}</td>
 								<td>
-									{event.score.map((pts, i) => {
+									{TEAM_NUMS_DISPLAY_ORDER.map((t, i) => {
 										return (
-											<Fragment key={i}>
+											<Fragment key={t}>
 												<span
 													className={
-														!event.noPoints && event.t === i
+														!event.noPoints && event.t === t
 															? "fw-bold"
-															: event.noPoints && event.t === i
+															: event.noPoints && event.t === t
 																? "text-danger"
 																: "text-body-secondary"
 													}
 												>
-													{pts}
+													{event.score[t]}
 												</span>
 												{i === 0 ? "-" : null}
 											</Fragment>
@@ -335,7 +323,7 @@ const BoxScore = ({
 }: {
 	boxScore: BoxScore;
 	forceRowUpdate: boolean;
-	Row: any;
+	Row: unknown;
 }) => {
 	const processedEvents = useMemo(
 		() => processEvents(boxScore.scoringSummary),
@@ -352,21 +340,20 @@ const BoxScore = ({
 				teams={boxScore.teams}
 			/>
 
-			{boxScore.teams.map((t, i) => {
+			{teamsInDisplayOrder(boxScore.teams).map((t, i) => {
 				return (
 					<div
 						key={t.abbrev}
 						id={i === 0 ? "scroll-team-1" : "scroll-team-2"}
 						style={{
-							scrollMarginTop: 136,
+							scrollMarginTop: 76,
 						}}
 					>
 						<h2>
 							{t.season !== undefined ? `${t.season} ` : null}
 							{t.region} {t.name}
 						</h2>
-						{helpers.keys(PLAYER_GAME_STATS).map((type) => {
-							const info = PLAYER_GAME_STATS[type];
+						{helpers.entries(PLAYER_GAME_STATS).map(([type, info]) => {
 							return (
 								<StatsTable
 									key={type}

@@ -1,9 +1,9 @@
-import { assert, test } from "vitest";
+import { assert, describe, test } from "vitest";
 import { RouteNotFoundError, router } from "./index.ts";
 import type { Context } from "./index.ts";
 
 const counts: Record<string, number> = {};
-const countCallback = async (context: Context) => {
+const countCallback = (context: Context) => {
 	// This is to remove the query string that vitest adds to the URL
 	const { pathname } = new URL(context.path, window.location.origin);
 
@@ -21,11 +21,11 @@ const routes = {
 	"/1": countCallback,
 	"/2": countCallback,
 	"/3/:foo": countCallback,
-	"/error": async (context: Context) => {
+	"/error": (context: Context) => {
 		countCallback(context);
 		throw new Error("runtime error");
 	},
-	"/state": async (context: Context) => {
+	"/state": (context: Context) => {
 		countCallback(context);
 		assert.deepStrictEqual(context.state, { custom: 123 });
 	},
@@ -65,13 +65,14 @@ test("navigates", async () => {
 	assert.strictEqual(counts["/0"], countBefore + 1);
 });
 
+// This is to wait for the asynchronous effect of window.history.back() and window.history.forward() to occur
+const waitForPopstate = () => {
+	return new Promise((resolve) => {
+		window.addEventListener("popstate", resolve, { once: true });
+	});
+};
+
 test("handles back/forward navigation", async () => {
-	// This is to wait for the asynchronous effect of window.history.back() and window.history.forward() to occur
-	const waitForPopstate = () => {
-		return new Promise((resolve) => {
-			window.addEventListener("popstate", resolve, { once: true });
-		});
-	};
 	let promise;
 
 	await router.navigate("/");
@@ -104,13 +105,14 @@ test("fires routematched event", async () => {
 	const { promise, resolve, reject } = Promise.withResolvers<void>();
 
 	const countBefore = counts["/2"] ?? 0;
-	const callback = (arg: any) => {
+	const callback = (arg: unknown) => {
 		try {
 			assert.strictEqual(counts["/2"] ?? 0, countBefore); // Hasn't navigated yet
 			assert.deepStrictEqual(arg, {
 				context: {
 					params: {},
 					path: "/2",
+					scrollToTop: undefined,
 					state: {},
 				},
 			});
@@ -132,7 +134,7 @@ test("fires navigationend event", async () => {
 	const { promise, resolve, reject } = Promise.withResolvers<void>();
 
 	const countBefore = counts["/3/:foo"] ?? 0;
-	const callback = (arg: any) => {
+	const callback = (arg: unknown) => {
 		try {
 			assert.strictEqual(counts["/3/:foo"], countBefore + 1);
 			assert.deepStrictEqual(arg, {
@@ -141,6 +143,7 @@ test("fires navigationend event", async () => {
 						foo: "bar",
 					},
 					path: "/3/bar",
+					scrollToTop: undefined,
 					state: {},
 				},
 				error: null,
@@ -226,4 +229,126 @@ test("shouldBlock false allows navigation", async () => {
 
 	await router.navigate("/");
 	assert.strictEqual(window.location.pathname, "/");
+});
+
+test("shouldBlock true restores URL after blocked back/forward navigation", async () => {
+	router.shouldBlock = undefined;
+	await router.navigate("/1");
+	await router.navigate("/2");
+	await router.navigate("/0");
+	const countBefore = counts["/1"];
+
+	// Go back two entries, to make sure it returns to the right place
+	router.shouldBlock = () => true;
+	let promise = waitForPopstate();
+	window.history.go(-2);
+	await promise;
+	assert.strictEqual(window.location.pathname, "/1");
+	assert.strictEqual(router.location.pathname, "/0");
+
+	// Blocked, so the router goes forward again
+	await waitForPopstate();
+	assert.strictEqual(window.location.pathname, "/0");
+	assert.strictEqual(counts["/1"], countBefore);
+
+	// History is intact, so unblocked back navigation works normally
+	router.shouldBlock = undefined;
+	promise = waitForPopstate();
+	window.history.back();
+	await promise;
+	assert.strictEqual(window.location.pathname, "/2");
+
+	// Blocked forward navigation
+	router.shouldBlock = () => true;
+	promise = waitForPopstate();
+	window.history.forward();
+	await promise;
+	assert.strictEqual(window.location.pathname, "/0");
+	await waitForPopstate();
+	assert.strictEqual(window.location.pathname, "/2");
+
+	router.shouldBlock = undefined;
+});
+
+test("tracks history entries created by hash links", async () => {
+	await router.navigate("/1");
+
+	let promise = waitForPopstate();
+	window.location.hash = "foo";
+	await promise;
+	await router.navigate("/2");
+
+	// Go back past the hash entry, and get blocked
+	router.shouldBlock = () => true;
+	promise = waitForPopstate();
+	window.history.go(-2);
+	await promise;
+	assert.strictEqual(window.location.pathname, "/1");
+	assert.strictEqual(window.location.hash, "");
+	await waitForPopstate();
+	assert.strictEqual(window.location.pathname, "/2");
+
+	router.shouldBlock = undefined;
+});
+
+describe("scrollToTop", () => {
+	const getScrollToTop = (navigate: () => void) => {
+		const { promise, resolve } = Promise.withResolvers<boolean | undefined>();
+		callbacks.navigationEnd = ({ context }) => {
+			callbacks.navigationEnd = undefined;
+			resolve(context.scrollToTop);
+		};
+		navigate();
+		return promise;
+	};
+
+	const clickLink = (path: string, noScrollReset: boolean) => {
+		const a = document.createElement("a");
+		a.href = path;
+		if (noScrollReset) {
+			a.setAttribute("data-no-scroll-reset", "");
+		}
+		document.body.append(a);
+		a.click();
+		a.remove();
+	};
+
+	test("scrollToTop is passed through from navigate", async () => {
+		assert.strictEqual(
+			await getScrollToTop(() => {
+				void router.navigate("/1", { scrollToTop: true });
+			}),
+			true,
+		);
+	});
+
+	test("scrollToTop is true when clicking a link", async () => {
+		assert.strictEqual(
+			await getScrollToTop(() => {
+				clickLink("/2", false);
+			}),
+			true,
+		);
+		assert.strictEqual(window.location.pathname, "/2");
+	});
+
+	test("scrollToTop is false when clicking a link with data-no-scroll-reset", async () => {
+		assert.strictEqual(
+			await getScrollToTop(() => {
+				clickLink("/0", true);
+			}),
+			false,
+		);
+		assert.strictEqual(window.location.pathname, "/0");
+	});
+
+	test("scrollToTop is false for back/forward navigation", async () => {
+		assert.strictEqual(
+			await getScrollToTop(() => {
+				window.history.back();
+			}),
+			false,
+		);
+		assert.strictEqual(window.location.pathname, "/2");
+	});
 });

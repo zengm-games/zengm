@@ -1,4 +1,5 @@
 import { csvFormat, csvFormatRows } from "d3-dsv";
+import type { PlayerStatAttr } from "../../common/types.ts";
 import {
 	GAME_ACRONYM,
 	PHASE,
@@ -8,17 +9,19 @@ import {
 	RATINGS,
 	DEFAULT_JERSEY,
 	POSITIONS,
-	GRACE_PERIOD,
 	LEAGUE_DATABASE_VERSION,
 	REAL_PLAYERS_INFO,
+	getPlayerStatsTableStats,
+	DEFAULT_REAL_DRAFT_RATINGS,
 } from "../../common/constants.ts";
+import { isGoldActive } from "../../common/isGoldActive.ts";
 import actions from "./actions.ts";
+import * as awardSettings from "./awardSettings.ts";
 import leagueFileUpload, {
 	decompressStreamIfNecessary,
 	emitProgressStream,
 	parseJSON,
 } from "./leagueFileUpload.ts";
-import processInputs from "./processInputs.ts";
 import {
 	allStar,
 	contractNegotiation,
@@ -35,6 +38,7 @@ import {
 	season,
 } from "../core/index.ts";
 import { idb } from "../db/index.ts";
+import { getActiveSeasonSelector } from "../db/merged/players.ts";
 import {
 	achievement,
 	g,
@@ -56,6 +60,7 @@ import {
 	type LockName,
 	type Player,
 	type PlayerWithoutKey,
+	type UpdateEvent,
 	type UpdateEvents,
 	type TradeTeams,
 	type MinimalPlayerRatings,
@@ -74,15 +79,10 @@ import {
 	type League,
 	type View,
 	type NonEmptyArray,
-	RealPlayerPhotosSchema,
-	RealTeamInfoSchema,
+	realPlayerPhotosSchema,
+	realTeamInfoSchema,
+	type Awards,
 } from "../../common/types.ts";
-import {
-	addSimpleAndTeamAwardsToAwardsByPlayer,
-	type AwardsByPlayer,
-	deleteAwardsByPlayer,
-	saveAwardsByPlayer,
-} from "../core/season/awards.ts";
 import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula.ts";
@@ -97,7 +97,6 @@ import getRandomTeams from "./getRandomTeams.ts";
 import { withState } from "../core/player/name.ts";
 import { initDefaults, loadNames } from "../util/loadNames.ts";
 import type { PlayerRatings } from "../../common/types.basketball.ts";
-import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject.ts";
 import type { IDBPIndex, IDBPObjectStore } from "@dumbmatter/idb";
 import {
 	upgradeGamesVersion65,
@@ -106,6 +105,14 @@ import {
 } from "../db/connectLeague.ts";
 import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
+import eightyTwoZeroDraft from "./eightyTwoZeroDraft.ts";
+import {
+	addScheduledEventsUndo,
+	deleteScheduledEvent,
+	getPlayersForScheduledEvents,
+	normalizeScheduledEventsAfterChange,
+	upsertScheduledEvent,
+} from "./scheduledEvents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
@@ -116,6 +123,7 @@ import {
 	omit,
 	orderBy,
 	range,
+	assertDefined,
 } from "../../common/utils.ts";
 import { getScheduledGamesForSeries } from "../core/season/playoffSchedule.ts";
 import {
@@ -142,6 +150,7 @@ import { getPlayer } from "../views/player.ts";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 import { beforeLeague, beforeNonLeague } from "../util/beforeView.ts";
 import loadData from "../core/realRosters/loadData.basketball.ts";
+import loadStatsBasketball from "../core/realRosters/loadStats.basketball.ts";
 import formatPlayerFactory from "../core/realRosters/formatPlayerFactory.ts";
 import { applyRealPlayerPhotos } from "../core/league/processPlayerNewLeague.ts";
 import { actualPhase } from "../util/actualPhase.ts";
@@ -154,7 +163,7 @@ import type { NewLeagueSettings } from "../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { generateContractOptions } from "../core/contractNegotiation/generateContractOptions.ts";
 import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
 import * as z from "zod";
@@ -171,6 +180,14 @@ import { recomputeLocalUITeamOvrs } from "../util/recomputeLocalUITeamOvrs.ts";
 import { initUILocalGames } from "../util/initUILocalGames.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { GenOrderResult } from "../core/draft/genOrder.ts";
+import undoLog from "./undoLog.ts";
+import {
+	getAwardsByPlayer,
+	updatePlayerAwards,
+} from "../core/awards/awardsByPlayer.ts";
+import { registerGlobal } from "../../common/registerGlobal.ts";
+import { getTeamInfoCache } from "../core/team/getTeamInfoCache.ts";
+import { getMetaAttribute, putMetaAttribute } from "../db/metaAttributes.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -186,14 +203,26 @@ const acceptContractNegotiation = async ({
 		return negotiation;
 	}
 
-	const result = await contractNegotiation.accept({ negotiation, amount, exp });
+	const response = await contractNegotiation.accept({
+		negotiation,
+		amount,
+		exp,
+		dryRun: false,
+	});
 
-	if (result === undefined) {
-		// Only do this if there was no error, and don't await because it makes the UI slow
-		void contractNegotiation.afterAccept(negotiation.tid);
+	// string response is an error message
+	if (typeof response === "string") {
+		return response;
 	}
 
-	return result;
+	// Only do this if there was no error, and don't await because it makes the UI slow
+	void contractNegotiation.afterAccept(negotiation.tid);
+
+	return local.undoLog.add(response, [
+		"advanceDay",
+		"leagueChange",
+		"newPhase",
+	]);
 };
 
 const addTeam = async () => {
@@ -221,8 +250,8 @@ const addTeam = async () => {
 		did: t.did,
 		disabled: t.disabled,
 		jersey: t.jersey ?? DEFAULT_JERSEY,
-		pop: t.pop!, // See comment in types.ts about upgrade
-		stadiumCapacity: t.stadiumCapacity!, // See comment in types.ts about upgrade
+		pop: t.pop, // See comment in types.ts about upgrade
+		stadiumCapacity: t.stadiumCapacity, // See comment in types.ts about upgrade
 		colors: t.colors,
 	};
 };
@@ -304,22 +333,28 @@ const allStarDraftSetPlayers = async (
 		const pidsToDelete = prevPids.filter((pid) => !newPids.includes(pid));
 
 		// Delete old awards
-		const awardsByPlayerToDelete = pidsToDelete.map((pid) => ({
+		const awardsToDelete = pidsToDelete.map((pid) => ({
 			pid,
-			type: "All-Star",
+			award: { type: "All-Star" },
 		}));
-		await deleteAwardsByPlayer(awardsByPlayerToDelete, g.get("season"));
 
 		// Add new awards
-		const awardsByPlayer = newPlayers
+		const awardsToSave = newPlayers
 			.filter((p) => !prevPids.includes(p.pid))
 			.map((p) => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: p.name,
-				type: "All-Star",
+				award: { type: "All-Star" },
 			}));
-		await saveAwardsByPlayer(awardsByPlayer, conditions);
+		await updatePlayerAwards({
+			awardsToDelete,
+			awardsToSave,
+			logEventInfo: {
+				conditions,
+			},
+			season: g.get("season"),
+		});
 
 		// Save new All-Stars
 		allStars.teams = players.teams;
@@ -341,7 +376,7 @@ const allStarDraftSetPlayers = async (
 const allStarGameNow = async () => {
 	const currentPhase = g.get("phase");
 	if (
-		currentPhase != PHASE.REGULAR_SEASON &&
+		currentPhase !== PHASE.REGULAR_SEASON &&
 		currentPhase !== PHASE.AFTER_TRADE_DEADLINE
 	) {
 		return;
@@ -374,9 +409,7 @@ const allStarGameNow = async () => {
 	});
 
 	await idb.cache.schedule.clear();
-	for (const game of schedule) {
-		await idb.cache.schedule.add(game);
-	}
+	await idb.cache.schedule.addAll(schedule);
 
 	await initUILocalGames();
 	await updatePlayMenu();
@@ -431,9 +464,23 @@ const beforeView = async (
 };
 
 const cancelContractNegotiation = async (pid: number) => {
-	const result = await contractNegotiation.cancel(pid);
+	await contractNegotiation.cancel(pid);
+
+	const tid = g.get("userTid");
+
 	await toUI("realtimeUpdate", [["playerMovement"]]);
-	return result;
+
+	return local.undoLog.add(async () => {
+		await idb.cache.negotiations.add({
+			pid,
+			tid,
+			resigning: true,
+		});
+
+		void toUI("realtimeUpdate", [["playerMovement"]]);
+
+		return true;
+	}, ["advanceDay", "leagueChange", "newPhase"]);
 };
 
 const checkAccount2 = (param: unknown, conditions: Conditions) =>
@@ -458,30 +505,29 @@ const checkParticipationAchievement = async (
 };
 
 const clearInjuries = async (pids: number[] | "all") => {
-	const players =
+	const players = (
 		pids === "all"
 			? await idb.cache.players.getAll()
-			: await idb.getCopies.players({ pids }, "noCopyCache");
+			: await idb.merged.players.getAll({ pids })
+	).filter((p) => p.injury.gamesRemaining > 0);
 
 	for (const p of players) {
-		if (p.injury.gamesRemaining > 0) {
-			// Adjust injuries log
-			const lastInjuriesEntry = p.injuries.at(-1);
-			if (lastInjuriesEntry?.type === p.injury.type) {
-				lastInjuriesEntry.games -= p.injury.gamesRemaining;
-				if (lastInjuriesEntry.games <= 0) {
-					// Injury was cleared before any days were simmed
-					p.injuries.pop();
-				}
+		// Adjust injuries log
+		const lastInjuriesEntry = p.injuries.at(-1);
+		if (lastInjuriesEntry?.type === p.injury.type) {
+			lastInjuriesEntry.games -= p.injury.gamesRemaining;
+			if (lastInjuriesEntry.games <= 0) {
+				// Injury was cleared before any days were simmed
+				p.injuries.pop();
 			}
-
-			p.injury = {
-				type: "Healthy",
-				gamesRemaining: 0,
-			};
-			await idb.cache.players.put(p);
 		}
+
+		p.injury = {
+			type: "Healthy",
+			gamesRemaining: 0,
+		};
 	}
+	await idb.cache.players.putAll(players);
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 	await recomputeLocalUITeamOvrs();
@@ -496,19 +542,53 @@ const noteUpdateEvents: Record<NoteInfo["type"], UpdateEvents> = {
 
 const clearNotes = async (type: NoteInfo["type"]) => {
 	const storeName = `${type}s` as const;
-	const rows = await idb.getCopies[storeName](
+	const rows = await idb.merged[storeName].getAll({
+		note: true,
+	});
+
+	const primaryKeyField = (
 		{
-			note: true,
-		},
-		"noCopyCache",
-	);
+			draftPicks: "dpid",
+			games: "gid",
+			players: "pid",
+			teamSeasons: "rid",
+		} as const
+	)[storeName];
+	const toUndo = new Map<number, string>();
+
 	for (const row of rows) {
+		toUndo.set((row as any)[primaryKeyField], row.note!);
+
 		delete row.note;
 		delete row.noteBool;
 		await idb.cache[storeName].put(row as any);
 	}
 
 	await toUI("realtimeUpdate", [noteUpdateEvents[type]]);
+
+	return local.undoLog.add(async () => {
+		for (const [key, note] of toUndo) {
+			let row;
+			if (storeName === "draftPicks") {
+				row = await idb.cache[storeName].get(key);
+			} else if (storeName === "games") {
+				row = await idb.merged.games.get(key);
+			} else if (storeName === "players") {
+				row = await idb.merged.players.get(key);
+			} else {
+				row = await idb.merged.teamSeasons.get(key);
+			}
+			if (row) {
+				row.note = note;
+				row.noteBool = 1;
+				await idb.cache[storeName].put(row as any);
+			}
+		}
+
+		void toUI("realtimeUpdate", [noteUpdateEvents[type]]);
+
+		return true;
+	}, ["leagueChange"]);
 };
 
 const getUpdateWatch = (players: Player[]) => {
@@ -520,14 +600,13 @@ const getUpdateWatch = (players: Player[]) => {
 };
 
 const clearWatchList = async (type: "all" | number) => {
-	const players = await idb.getCopies.players(
-		{
-			watch: true,
-		},
-		"noCopyCache",
-	);
+	const players = await idb.merged.players.getAll({ watch: true });
+
+	const toUndo = new Map<number, number>();
+
 	for (const p of players) {
 		if (type === "all" || p.watch === type) {
+			toUndo.set(p.pid, p.watch!);
 			delete p.watch;
 			await idb.cache.players.put(p);
 		}
@@ -537,11 +616,27 @@ const clearWatchList = async (type: "all" | number) => {
 		toUI("crossTabEmit", [["updateWatch", getUpdateWatch(players)]]),
 		toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
 	]);
-};
 
-const countNegotiations = async () => {
-	const negotiations = await idb.cache.negotiations.getAll();
-	return negotiations.length;
+	return local.undoLog.add(async () => {
+		const players = await idb.merged.players.getAll({
+			pids: Array.from(toUndo.keys()),
+		});
+
+		for (const p of players) {
+			const watch = toUndo.get(p.pid);
+			if (watch !== undefined) {
+				p.watch = watch;
+				await idb.cache.players.put(p);
+			}
+		}
+
+		void Promise.all([
+			toUI("crossTabEmit", [["updateWatch", getUpdateWatch(players)]]),
+			toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
+		]);
+
+		return true;
+	}, ["leagueChange"]);
 };
 
 const createLeague = async (
@@ -610,119 +705,117 @@ const createLeague = async (
 
 	setLeagueCreationStatus("Initializing...");
 
-	let actualTid = tid;
-	let stream: ReadableStream | undefined;
-	if (getLeagueOptions) {
-		const realLeague = await realRosters.getLeague(getLeagueOptions);
+	try {
+		let actualTid = tid;
+		let leagueData: ReadableStream | Record<string, unknown>;
+		if (getLeagueOptions) {
+			const realLeague = await realRosters.getLeague(getLeagueOptions);
 
-		if (getLeagueOptions.type === "real") {
-			if (getLeagueOptions.realStats === "all") {
-				keys.add("awards");
-				keys.add("playoffSeries");
+			if (getLeagueOptions.type === "real") {
+				if (getLeagueOptions.realStats === "all") {
+					keys.add("awards");
+					keys.add("playoffSeries");
+				}
+
+				if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
+					keys.add("awards");
+					keys.add("draftLotteryResults");
+					keys.add("draftPicks");
+					keys.add("playoffSeries");
+				}
 			}
 
-			if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
-				keys.add("awards");
-				keys.add("draftLotteryResults");
-				keys.add("draftPicks");
-				keys.add("playoffSeries");
+			// Since inactive teams are included if realStats=="all", need to translate tid and overwrite fromFile.teams
+			if (
+				getLeagueOptions.type === "real" &&
+				getLeagueOptions.realStats === "all"
+			) {
+				const srID = fromFile.teams![tid].srID;
+				actualTid = realLeague.teams.findIndex((t) => t.srID === srID);
+				if (!srID || actualTid < 0) {
+					throw new Error("Error finding tid");
+				}
 			}
-		}
 
-		// Since inactive teams are included if realStats=="all", need to translate tid and overwrite fromFile.teams
-		if (
-			getLeagueOptions.type === "real" &&
-			getLeagueOptions.realStats === "all"
-		) {
-			const srID = fromFile.teams![tid].srID;
-			actualTid = realLeague.teams.findIndex((t) => t.srID === srID);
-			if (!srID || actualTid < 0) {
-				throw new Error("Error finding tid");
+			// Definitley need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
+			fromFile.gameAttributes = realLeague.gameAttributes;
+			fromFile.startingSeason = realLeague.startingSeason;
+			fromFile.teams = realLeague.teams;
+
+			leagueData = realLeague;
+		} else if (file || url) {
+			let baseStream: ReadableStream;
+			let sizeInBytes: number | undefined;
+			if (file) {
+				baseStream = file.stream();
+				sizeInBytes = file.size;
+			} else {
+				const response = await fetch(url!);
+				if (!response.ok) {
+					throw new Error(`HTTP error ${response.status}`);
+				}
+				baseStream = response.body as ReadableStream;
+				const size = response.headers.get("content-length");
+				if (size) {
+					sizeInBytes = Number(size);
+				}
 			}
-		}
 
-		// Definitley need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
-		fromFile.gameAttributes = realLeague.gameAttributes;
-		fromFile.startingSeason = realLeague.startingSeason;
-		fromFile.teams = realLeague.teams;
+			const stream0 = baseStream;
 
-		stream = createStreamFromLeagueObject(realLeague);
-	} else if (file || url) {
-		let baseStream: ReadableStream;
-		let sizeInBytes: number | undefined;
-		if (file) {
-			baseStream = file.stream();
-			sizeInBytes = file.size;
-		} else {
-			const response = await fetch(url!);
-			if (!response.ok) {
-				throw new Error(`HTTP error ${response.status}`);
-			}
-			baseStream = response.body as ReadableStream;
-			const size = response.headers.get("content-length");
-			if (size) {
-				sizeInBytes = Number(size);
-			}
-		}
+			// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
+			self.stream0 = stream0;
 
-		const stream0 = baseStream;
-
-		// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
-		(self as any).stream0 = stream0;
-
-		stream = (
-			await decompressStreamIfNecessary(
-				stream0.pipeThrough(
-					emitProgressStream(leagueCreationID, sizeInBytes, conditions),
-				),
+			leagueData = (
+				await decompressStreamIfNecessary(
+					stream0.pipeThrough(
+						emitProgressStream(leagueCreationID, sizeInBytes, conditions),
+					),
+				)
 			)
-		)
-			.pipeThrough(new TextDecoderStream())
-			.pipeThrough(parseJSON());
-	} else {
-		stream = createStreamFromLeagueObject({});
+				.pipeThrough(new TextDecoderStream())
+				.pipeThrough(parseJSON());
+		} else {
+			leagueData = {};
+		}
+
+		const lid = importLid ?? (await getNewLeagueLid());
+
+		await league.createStream(leagueData, {
+			conditions,
+			confs,
+			divs,
+			fromFile,
+			getLeagueOptions,
+			lid,
+			keptKeys: keys,
+			name,
+			setLeagueCreationStatus,
+			settings,
+			shuffleRosters,
+			startingSeasonFromInput,
+			teamsFromInput,
+			tid: actualTid,
+		});
+
+		if (settings.giveMeWorstRoster) {
+			await league.swapWorstRoster(false);
+		}
+
+		return lid;
+	} finally {
+		delete self.stream0;
+
+		toUI(
+			"updateLocal",
+			[
+				{
+					leagueCreation: undefined,
+				},
+			],
+			conditions,
+		);
 	}
-
-	if (!stream) {
-		throw new Error("No stream");
-	}
-
-	const lid = importLid ?? (await getNewLeagueLid());
-
-	await league.createStream(stream, {
-		conditions,
-		confs,
-		divs,
-		fromFile,
-		getLeagueOptions,
-		lid,
-		keptKeys: keys,
-		name,
-		setLeagueCreationStatus,
-		settings,
-		shuffleRosters,
-		startingSeasonFromInput,
-		teamsFromInput,
-		tid: actualTid,
-	});
-
-	delete (self as any).stream0;
-
-	if (settings.giveMeWorstRoster) {
-		await league.swapWorstRoster(false);
-	}
-
-	toUI(
-		"updateLocal",
-		[
-			{
-				leagueCreation: undefined,
-			},
-		],
-		conditions,
-	);
-
-	return lid;
 };
 
 const deleteOldData = async (options: {
@@ -735,7 +828,7 @@ const deleteOldData = async (options: {
 	playerStatsUnnotable: boolean;
 	playerStats: boolean;
 }) => {
-	const transaction = idb.league.transaction(
+	const tx = idb.league.transaction(
 		[
 			"allStars",
 			"draftLotteryResults",
@@ -751,27 +844,27 @@ const deleteOldData = async (options: {
 	);
 
 	if (options.boxScores) {
-		transaction.objectStore("games").clear();
+		tx.objectStore("games").clear();
 	}
 
 	if (options.teamHistory) {
-		for await (const cursor of transaction.objectStore("teamSeasons")) {
+		for await (const cursor of tx.objectStore("teamSeasons")) {
 			if (cursor.value.season < g.get("season")) {
 				await cursor.delete();
 			}
 		}
 
-		transaction.objectStore("draftLotteryResults").clear();
+		tx.objectStore("draftLotteryResults").clear();
 
-		transaction.objectStore("headToHeads").clear();
+		tx.objectStore("headToHeads").clear();
 
-		for await (const cursor of transaction.objectStore("allStars")) {
+		for await (const cursor of tx.objectStore("allStars")) {
 			if (cursor.value.season < g.get("season")) {
 				await cursor.delete();
 			}
 		}
 
-		for await (const cursor of transaction.objectStore("teams")) {
+		for await (const cursor of tx.objectStore("teams")) {
 			const t = cursor.value;
 			t.retiredJerseyNumbers = [];
 			await cursor.update(t);
@@ -779,7 +872,7 @@ const deleteOldData = async (options: {
 	}
 
 	if (options.teamStats) {
-		for await (const cursor of transaction.objectStore("teamStats")) {
+		for await (const cursor of tx.objectStore("teamStats")) {
 			if (cursor.value.season < g.get("season")) {
 				await cursor.delete();
 			}
@@ -787,14 +880,14 @@ const deleteOldData = async (options: {
 	}
 
 	if (options.retiredPlayers) {
-		for await (const cursor of transaction
+		for await (const cursor of tx
 			.objectStore("players")
 			.index("tid")
 			.iterate(PLAYER.RETIRED)) {
 			await cursor.delete();
 		}
 	} else if (options.retiredPlayersUnnotable) {
-		for await (const cursor of transaction
+		for await (const cursor of tx
 			.objectStore("players")
 			.index("tid")
 			.iterate(PLAYER.RETIRED)) {
@@ -863,7 +956,7 @@ const deleteOldData = async (options: {
 	};
 
 	if (options.playerStats) {
-		for await (const cursor of transaction.objectStore("players")) {
+		for await (const cursor of tx.objectStore("players")) {
 			const p = cursor.value;
 			const p2 = deletePlayerStats(p);
 			if (p2) {
@@ -871,7 +964,7 @@ const deleteOldData = async (options: {
 			}
 		}
 	} else if (options.playerStatsUnnotable) {
-		for await (const cursor of transaction.objectStore("players")) {
+		for await (const cursor of tx.objectStore("players")) {
 			const p = cursor.value;
 			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
 				const p2 = deletePlayerStats(p);
@@ -883,10 +976,10 @@ const deleteOldData = async (options: {
 	}
 
 	if (options.events) {
-		transaction.objectStore("events").clear();
+		tx.objectStore("events").clear();
 	}
 
-	await transaction.done;
+	await tx.done;
 
 	// Without this, cached values will still exist
 	await idb.cache.fill();
@@ -945,10 +1038,10 @@ const deleteFromTeamInfoScheduledEvent = async (
 };
 
 const deleteScheduledEvents = async (type: string) => {
-	const scheduledEvents = await idb.getCopies.scheduledEvents(
-		undefined,
-		"noCopyCache",
-	);
+	const scheduledEvents = await idb.merged.scheduledEvents.getAll();
+
+	// Copy because some events are edited in place below
+	const before = helpers.deepCopy(scheduledEvents);
 
 	const deletedExpansionTIDs: number[] = [];
 
@@ -971,6 +1064,10 @@ const deleteScheduledEvents = async (type: string) => {
 			if (event.type === "contraction") {
 				await idb.cache.scheduledEvents.delete(event.id);
 			}
+		} else if (type === "retirePlayer") {
+			if (event.type === "retirePlayer") {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
 		} else if (type === "unretirePlayer") {
 			if (event.type === "unretirePlayer") {
 				await idb.cache.scheduledEvents.delete(event.id);
@@ -987,6 +1084,10 @@ const deleteScheduledEvents = async (type: string) => {
 
 			if (event.type === "gameAttributes") {
 				await deleteFromGameAttributesScheduledEvent(["confs", "divs"], event);
+			}
+
+			if (event.type === "confsDivs") {
+				await idb.cache.scheduledEvents.delete(event.id);
 			}
 		} else if (type === "finance") {
 			if (event.type === "gameAttributes") {
@@ -1041,10 +1142,21 @@ const deleteScheduledEvents = async (type: string) => {
 					event,
 				);
 			}
+		} else if (type === "awards") {
+			if (event.type === "gameAttributes") {
+				await deleteFromGameAttributesScheduledEvent(["awards"], event);
+			}
+
+			if (event.type === "awards") {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
 		}
 	}
 
-	await toUI("realtimeUpdate", [["scheduledEvents"]]);
+	// Deleting some events can make others invalid. This also updates the UI.
+	await normalizeScheduledEventsAfterChange();
+
+	return addScheduledEventsUndo(before);
 };
 
 const discardUnsavedProgress = async () => {
@@ -1069,9 +1181,11 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	const dp = draftPicks[0];
 
 	if (dp && g.get("userTids").includes(dp.tid)) {
-		draftPicks.shift();
-		await draft.selectPlayer(dp, pid);
-		await draft.afterPicks(draftPicks.length === 0, conditions);
+		const selected = await draft.selectPlayer(dp, pid);
+		if (selected) {
+			draftPicks.shift();
+			await draft.afterPicks(draftPicks.length === 0, conditions);
+		}
 	}
 };
 
@@ -1282,57 +1396,19 @@ const evalOnWorker = async (code: string) => {
 // exportPlayerAveragesCsv(2015) - just 2015 stats
 // exportPlayerAveragesCsv("all") - all stats
 const exportPlayerAveragesCsv = async (season: number | "all") => {
-	let players: Player[];
-
-	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		players = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-	} else if (season === "all") {
-		players = await idb.getCopies.players(
-			{
-				activeAndRetired: true,
-			},
-			"noCopyCache",
-		);
-	} else {
-		players = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
-	}
-
-	// Array of seasons in stats, either just one or all of them
-	let seasons;
-
-	if (season === "all") {
-		seasons = Array.from(
-			new Set(players.flatMap((p) => p.ratings).map((pr) => pr.season)),
-		);
-	} else {
-		seasons = [season];
-	}
-
 	const ratings = [...RATINGS, ...extraRatings];
 
-	let stats: string[] = [];
+	let stats: PlayerStatAttr[] = [];
 
 	for (const table of Object.values(PLAYER_STATS_TABLES)) {
 		if (table) {
 			stats.push(
-				...table.stats.filter((stat) => {
+				...getPlayerStatsTableStats(table.stats).filter((stat) => {
 					if (stat.endsWith("Max")) {
 						return false;
 					}
 
-					if (isSport("baseball")) {
-						if (stat === "pos") {
-							return false;
-						}
-
+					if (__SPORT === "baseball") {
 						if (
 							statsBaseball.byPos &&
 							statsBaseball.byPos.includes(stat as any)
@@ -1350,7 +1426,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 	// Ugh
 	const shotLocationsGetCols = (cols: string[]) => {
 		const colNames: string[] = [];
-		const overrides = {
+		const overrides: Record<string, string> = {
 			"stat:fgAtRim": "AtRimFG",
 			"stat:fgaAtRim": "AtRimFGA",
 			"stat:fgpAtRim": "AtRimFGP",
@@ -1362,9 +1438,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 			"stat:fgpMidRange": "MidRangeFGP",
 		};
 		for (const col of cols) {
-			// @ts-expect-error
 			if (overrides[col]) {
-				// @ts-expect-error
 				colNames.push(overrides[col]);
 			} else {
 				const col2 = getCol(col);
@@ -1399,42 +1473,90 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				: [],
 		).map((col) => col.title),
 	];
-	const rows: any[] = [];
+	const formatOptions = {
+		attrs: ["pid", "name", "age", "draft", "salary"],
+		ratings: ["pos", "ovr", "pot", ...ratings],
+		stats: ["abbrev", ...stats],
+		mergeStats: "totOnly",
+	} as const;
 
-	for (const s of seasons) {
-		console.log(s, new Date());
-		const players2 = await idb.getCopies.playersPlus(players, {
-			attrs: ["pid", "name", "age", "draft", "salary"],
-			ratings: ["pos", "ovr", "pot", ...ratings],
-			stats: ["abbrev", ...stats],
-			season: s,
-			mergeStats: "totOnly",
-		});
+	// One set of abbrevs, shared by the formatters for every season
+	const abbrevs = await player.loadAbbrevs(
+		season === "all" ? formatOptions : { ...formatOptions, season },
+	);
+	const createSeasonFormatter = (season2: number) =>
+		player.createFormatter({ ...formatOptions, season: season2 }, abbrevs);
+	const seasonFormatters = new Map<
+		number,
+		ReturnType<typeof createSeasonFormatter>
+	>();
 
-		for (const p of players2) {
-			rows.push([
-				p.pid,
-				p.name,
-				p.ratings.pos,
-				p.draft.round > 0 && p.draft.pick > 0
-					? (p.draft.round - 1) * 30 + p.draft.pick
-					: "",
-				p.age,
-				p.salary,
-				p.stats.abbrev,
+	// One row for each season the player has stats in. This runs while reading players, so the full player objects are not all held in memory at once.
+	const getRows = (pRaw: Player) => {
+		const seasons =
+			season === "all"
+				? new Set(pRaw.stats.map((row) => row.season))
+				: [season];
+
+		const rows = [];
+		for (const s of seasons) {
+			const formatPlayer = seasonFormatters.getOrInsertComputed(
 				s,
-				...stats.map((stat) => p.stats[stat]),
-				p.ratings.ovr,
-				p.ratings.pot,
-				...RATINGS.map((rating) => p.ratings[rating]),
-				...(extraRatings.length
-					? ["ovrs", "pots"].flatMap((type) =>
-							POSITIONS.map((pos) => p.ratings[type][pos]),
-						)
-					: []),
-			]);
+				createSeasonFormatter,
+			);
+			const p = formatPlayer(pRaw);
+			if (!p) {
+				continue;
+			}
+
+			rows.push({
+				season: s,
+				row: [
+					p.pid,
+					p.name,
+					p.ratings.pos,
+					p.draft.round > 0 && p.draft.pick > 0
+						? (p.draft.round - 1) * 30 + p.draft.pick
+						: "",
+					p.age,
+					p.salary,
+					p.stats.abbrev,
+					s,
+					...stats.map((stat) => p.stats[stat]),
+					p.ratings.ovr,
+					p.ratings.pot,
+					...RATINGS.map((rating) => p.ratings[rating]),
+					...(extraRatings.length
+						? (["ovrs", "pots"] as const).flatMap((type) =>
+								// In sports with extraRatings, POSITIONS are the keys of ovrs/pots
+								(POSITIONS as (keyof typeof p.ratings.ovrs)[]).map(
+									(pos) => p.ratings[type][pos],
+								),
+							)
+						: []),
+				],
+			});
+		}
+		return rows;
+	};
+
+	const rowsByPlayer = await idb.merged.players.getAll(
+		season === "all"
+			? { activeAndRetired: true }
+			: getActiveSeasonSelector(season),
+		{ map: getRows },
+	);
+
+	// Group rows by season
+	const rowsBySeason = new Map<number, any[][]>();
+	for (const playerRows of rowsByPlayer) {
+		for (const { season, row } of playerRows) {
+			rowsBySeason.getOrInsert(season, []).push(row);
 		}
 	}
+	const rows = Array.from(rowsBySeason)
+		.sort(([a], [b]) => a - b)
+		.flatMap(([, seasonRows]) => seasonRows);
 
 	return csvFormatRows([columns, ...rows]);
 };
@@ -1587,7 +1709,7 @@ const getExportFilename = async (type: "league" | "players") => {
 								} else {
 									filename += "_bye";
 								}
-							} else if (series.away && series.away.tid === userTid) {
+							} else if (series.away?.tid === userTid) {
 								filename += `_${series.away.won}-${series.home.won}`;
 							}
 						}
@@ -1618,7 +1740,7 @@ const exportDraftClass = async ({
 				g.get("phase") >= 0 &&
 				g.get("phase") <= PHASE.DRAFT_LOTTERY));
 
-	let players = await idb.getCopies.players(
+	let players = await idb.merged.players.getAll(
 		retiredPlayers
 			? {
 					retiredYear: season,
@@ -1626,7 +1748,6 @@ const exportDraftClass = async ({
 			: {
 					draftYear: season,
 				},
-		"noCopyCache",
 	);
 
 	// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
@@ -1707,7 +1828,7 @@ const getAutoPos = (ratings: any) => {
 };
 
 const getBornLoc = async (pid: number) => {
-	const p = await idb.getCopy.players({ pid });
+	const p = await idb.merged.players.get(pid);
 	if (p) {
 		return p.born.loc;
 	}
@@ -1718,16 +1839,28 @@ const getDefaultInjuries = () => {
 };
 
 const getDefaultNewLeagueSettings = async () => {
-	const overrides = (await idb.meta.get(
-		"attributes",
-		"defaultSettingsOverrides",
-	)) as Partial<Settings> | undefined;
+	const overrides = await getMetaAttribute("defaultSettingsOverrides");
 
 	return overrides ?? {};
 };
 
 const getDefaultTragicDeaths = () => {
 	return defaultTragicDeaths;
+};
+
+const getEightyTwoZeroDraftPlayer = (pid: number) => {
+	const draft = local.eightyTwoZeroDraft;
+	if (!draft) {
+		return;
+	}
+
+	const hasPid = ({ p }: { p: PlayerWithoutKey }) => {
+		return p.pid === pid;
+	};
+
+	return (
+		draft.currentTeam?.players.find(hasPid)?.p ?? draft.picks.find(hasPid)?.p
+	);
 };
 
 const getDiamondInfo = async (pid: number) => {
@@ -1797,17 +1930,24 @@ const getJerseyNumberConflict = async ({
 	};
 };
 
-const getLeagueInfo = async (
+const getLeagueInfo = (
 	options: Parameters<typeof realRosters.getLeagueInfo>[0],
 ) => {
 	return realRosters.getLeagueInfo(options);
+};
+
+// Start downloading real player stats before the user clicks "Create League", since it's a big file. Not awaited by the UI, and errors are ignored here because they will be handled when the stats are actually needed
+const prefetchRealPlayerStats = () => {
+	if (__SPORT === "basketball") {
+		loadStatsBasketball().catch(() => {});
+	}
 };
 
 const getLeagueName = () => {
 	return league.getName();
 };
 
-const getLeagues = async () => {
+const getLeagues = () => {
 	return idb.meta.getAll("leagues");
 };
 
@@ -1820,10 +1960,19 @@ const getNegotiationProps = async (pid: number) => {
 	}
 
 	const p2 = await idb.cache.players.get(negotiation.pid);
-	let p;
+	let pFiltered;
 	if (p2) {
-		p = await idb.getCopy.playersPlus(p2, {
-			attrs: ["pid", "name", "age", "contract", "face", "imgURL", "watch"],
+		pFiltered = await player.format(p2, {
+			attrs: [
+				"pid",
+				"tid",
+				"name",
+				"age",
+				"contract",
+				"face",
+				"imgURL",
+				"watch",
+			],
 			ratings: ["ovr", "pot"],
 			season: g.get("season"),
 			showNoStats: true,
@@ -1833,12 +1982,15 @@ const getNegotiationProps = async (pid: number) => {
 	}
 
 	// This can happen if a negotiation is somehow started with a retired player, or a player was deleted
-	if (!p || !p2) {
+	if (!pFiltered || !p2) {
 		await contractNegotiation.cancel(negotiation.pid);
 		return "Invalid negotiation. Please try again.";
 	}
 
-	p.mood = await player.moodInfos(p2);
+	const p = {
+		...pFiltered,
+		mood: await player.moodInfos(p2),
+	};
 
 	const contractOptions = await generateContractOptions(
 		negotiation,
@@ -1866,13 +2018,11 @@ const getNegotiationProps = async (pid: number) => {
 
 	const payroll = await team.getPayroll(userTid);
 
-	const t = await idb.getCopy.teamsPlus({
+	const t = await team.getFormatted({
 		tid: g.get("userTid"),
 		attrs: ["colors", "jersey"],
 	});
-	if (!t) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(t);
 
 	return {
 		capSpace: (g.get("salaryCap") - payroll) / 1000,
@@ -1982,7 +2132,7 @@ const getPlayersCommandPalette = async () => {
 		Infinity,
 	]);
 
-	return idb.getCopies.playersPlus(playersAll, {
+	return player.formatAll(playersAll, {
 		attrs: ["pid", "firstName", "lastName", "abbrev", "age"],
 		ratings: ["pos", "ovr", "pot"],
 		season: g.get("season"),
@@ -1992,7 +2142,7 @@ const getPlayersCommandPalette = async () => {
 	});
 };
 
-const getLocal = async (name: keyof Local) => {
+const getLocal = (name: keyof Local) => {
 	return local[name];
 };
 
@@ -2005,12 +2155,7 @@ const getPlayerRangeFooterStats = async ({
 	pid: number;
 	seasonRange: [number, number];
 }) => {
-	const pRaw = await idb.getCopy.players(
-		{
-			pid,
-		},
-		"noCopyCache",
-	);
+	const pRaw = await idb.merged.players.get(pid);
 	if (!pRaw) {
 		return;
 	}
@@ -2039,13 +2184,16 @@ const getPlayerWatch = async (pid: number) => {
 			return 0;
 		}
 	} else {
-		p = await idb.cache.players.get(pid);
+		p = getEightyTwoZeroDraftPlayer(pid);
+		if (!p) {
+			p = await idb.cache.players.get(pid);
+		}
 	}
 
 	if (p) {
 		return p.watch ?? 0;
 	}
-	const p2 = await idb.getCopy.players({ pid }, "noCopyCache");
+	const p2 = await idb.merged.players.get(pid);
 	if (p2) {
 		return p2.watch ?? 0;
 	}
@@ -2167,9 +2315,7 @@ const getRandomRatings = async ({
 			break;
 		}
 	}
-	if (!p) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(p);
 
 	await player.develop(p, age - 19);
 
@@ -2240,7 +2386,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		return [];
 	}
 
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["abbrev", "region", "name", "strategy", "tid"],
 		seasonAttrs: ["won", "lost", "tied", "otl"],
 		season: g.get("season"),
@@ -2252,7 +2398,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 		football: ["gp", "keyStats", "av"],
 		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+	} as const);
 
 	// Take the pids and dpids in each offer and get the info needed to display the offer
 	return Promise.all(
@@ -2264,12 +2410,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 			}
 
 			const formatPicks = async (tid: number, dpids: number[]) => {
-				let picks = await idb.getCopies.draftPicks(
-					{
-						tid,
-					},
-					"noCopyCache",
-				);
+				let picks = await idb.merged.draftPicks.getAll({ tid });
 				picks = picks.filter((dp) => dpids.includes(dp.dpid));
 
 				return await Promise.all(
@@ -2291,7 +2432,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 					(p) => pids.includes(p.pid) && !isUntradable(p).untradable,
 				);
 				return addFirstNameShort(
-					await idb.getCopies.playersPlus(playersAll, {
+					await player.formatAll(playersAll, {
 						attrs: [
 							"pid",
 							"firstName",
@@ -2370,8 +2511,7 @@ const getTradingBlockOffers = async ({
 	let saveLookingFor;
 	let positionAndNotDraftPicks = false;
 	let draftPicksAndNothingElse = lookingFor.assets.draftPicks;
-	for (const type of helpers.keys(lookingFor)) {
-		const obj = lookingFor[type];
+	for (const [type, obj] of helpers.entries(lookingFor)) {
 		for (const [key, value] of Object.entries(obj)) {
 			if (value) {
 				saveLookingFor = true;
@@ -2423,7 +2563,7 @@ const getTradingBlockOffers = async ({
 	return augmentOffers(offers);
 };
 
-const ping = async () => {
+const ping = () => {
 	return;
 };
 
@@ -2500,7 +2640,11 @@ const handleUploadedDraftClass = async ({
 	await player.remove(toRemove);
 
 	// Add new players to database
+	const addedPlayers = [];
+	const newPidsByOldPid = new Map<number, number>();
 	for (const p of players) {
+		const oldPid = p.pid;
+
 		// Adjust age and seasons
 		p.ratings[0].season = draftYear;
 
@@ -2541,7 +2685,7 @@ const handleUploadedDraftClass = async ({
 			uploadedFile.version,
 		);
 		p2.draft.year = draftYear;
-		p2.ratings.at(-1)!.season = draftYear;
+		last(p2.ratings).season = draftYear;
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (Object.hasOwn(p2, "pid")) {
@@ -2552,6 +2696,34 @@ const handleUploadedDraftClass = async ({
 		await player.updateValues(p2);
 
 		await idb.cache.players.add(p2);
+
+		addedPlayers.push(p2);
+		if (typeof oldPid === "number") {
+			newPidsByOldPid.set(oldPid, p2.pid);
+		}
+	}
+
+	// pids are different after importing, so relatives can only be kept if they were imported too
+	for (const p of addedPlayers) {
+		if (p.relatives.length === 0) {
+			continue;
+		}
+
+		const relatives = [];
+		for (const relative of p.relatives) {
+			const pid = newPidsByOldPid.get(relative.pid);
+			if (pid !== undefined) {
+				relatives.push({
+					...relative,
+					pid,
+				});
+			}
+		}
+
+		if (relatives.length > 0) {
+			p.relatives = relatives;
+			await idb.cache.players.put(p);
+		}
 	}
 
 	// "Top off" the draft class if not enough players imported
@@ -2762,7 +2934,7 @@ const importPlayersGetReal = async (param: unknown, conditions: Conditions) => {
 			phase: g.get("phase"),
 			randomDebuts: false,
 			randomDebutsKeepCurrent: false,
-			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
+			realDraftRatings: g.get("realDraftRatings") ?? DEFAULT_REAL_DRAFT_RATINGS,
 			realStats: "all", // Maybe should default to "none" on mobile, but then I'd need a UI to change it, and most people probably want "all"  if they are using this feature
 			includePlayers: true,
 		},
@@ -2835,10 +3007,9 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		})();
 	} else {
 		// No need to run checkAccount and make another HTTP request
-		const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 		await toUI("updateLocal", [
 			{
-				gold: local.goldUntil < Infinity && currentTimestamp <= local.goldUntil,
+				gold: local.goldUntil < Infinity && isGoldActive(local.goldUntil),
 				email: local.email,
 				username: local.username,
 			},
@@ -2849,15 +3020,20 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		})();
 	}
 
-	// Send options to all new tabs
-	const attributesStore = (await idb.meta.transaction("attributes")).store;
-	const options = ((await attributesStore.get("options")) ?? {}) as Options;
-	const keyboardShortcuts = (await attributesStore.get(
-		"keyboardShortcuts",
-	)) as KeyboardShortcutsLocal;
+	// Send options and current state to all new tabs
+	const options = (await getMetaAttribute("options")) ?? {};
+	const keyboardShortcuts = await getMetaAttribute("keyboardShortcuts");
 	await toUI(
 		"updateLocal",
-		[{ fullNames: options.fullNames, keyboardShortcuts, units: options.units }],
+		[
+			{
+				fullNames: options.fullNames,
+				gameSimInProgress: lock.get("gameSim"),
+				keyboardShortcuts,
+				units: options.units,
+				workerBusy: lock.isWorkerBusy(),
+			},
+		],
 		conditions,
 	);
 };
@@ -2867,24 +3043,9 @@ const initGold = async () => {
 };
 
 const loadRetiredPlayers = async () => {
-	const players = await idb.cache.players.getAll();
-	const playersByPid = groupByUnique(players, "pid");
-
-	const playerNames: {
-		pid: number;
-		firstName: string;
-		lastName: string;
-		firstSeason: number;
-		lastSeason: number;
-	}[] = [];
-
-	for await (const { value: pTemp } of idb.league.transaction("players")
-		.store) {
-		// Make sure we have latest version of this player
-		const p = playersByPid[pTemp.pid] ?? pTemp;
-
-		playerNames.push(formatPlayerRelativesList(p));
-	}
+	const playerNames = await idb.merged.players.getAll(undefined, {
+		map: formatPlayerRelativesList,
+	});
 
 	return finalizePlayersRelativesList(playerNames);
 };
@@ -2893,7 +3054,7 @@ const lockSet = async ([name, value]: [LockName, boolean]) => {
 	await lock.set(name, value);
 };
 
-const ovr = async ({
+const ovr = ({
 	ratings,
 	pos,
 }: {
@@ -2911,9 +3072,15 @@ const ratingsStatsPopoverInfo = async ({
 	season?: number;
 }) => {
 	const blankObj = {
+		abbrev: undefined,
+		age: undefined,
+		jerseyNumber: undefined,
 		name: undefined,
+		note: undefined,
 		ratings: undefined,
 		stats: undefined,
+		tid: undefined,
+		type: undefined,
 	};
 
 	if (Number.isNaN(pid) || typeof pid !== "number") {
@@ -2921,19 +3088,18 @@ const ratingsStatsPopoverInfo = async ({
 	}
 
 	let p;
+	let eightyTwoZeroDraftPlayer = false;
 	if (local.exhibitionGamePlayers) {
 		p = local.exhibitionGamePlayers[pid];
 	} else if (local.liveSimRatingsStatsPopoverPlayers) {
 		p = local.liveSimRatingsStatsPopoverPlayers[pid];
+	} else {
+		p = getEightyTwoZeroDraftPlayer(pid);
+		eightyTwoZeroDraftPlayer = p !== undefined;
 	}
 
 	if (!p) {
-		p = await idb.getCopy.players(
-			{
-				pid,
-			},
-			"noCopyCache",
-		);
+		p = await idb.merged.players.get(pid);
 	}
 
 	if (!p) {
@@ -2944,7 +3110,10 @@ const ratingsStatsPopoverInfo = async ({
 
 	let actualSeason: number | undefined;
 	let draftProspect = false;
-	if (local.exhibitionGamePlayers && p.stats.length > 0) {
+	if (
+		(local.exhibitionGamePlayers || eightyTwoZeroDraftPlayer) &&
+		p.stats.length > 0
+	) {
 		actualSeason = p.stats.at(-1)!.season;
 	} else {
 		if (season !== undefined) {
@@ -2990,46 +3159,105 @@ const ratingsStatsPopoverInfo = async ({
 		],
 		football: ["keyStats"],
 		hockey: ["keyStatsWithGoalieGP"],
-	});
+	} as const);
 
-	const attrs = ["name", "jerseyNumber", "tid", "age", "note"];
-	const ratings = ["pos", "ovr", "pot", "season", "tid", ...RATINGS];
-	if (!local.exhibitionGamePlayers) {
-		attrs.push("abbrev");
-		ratings.push("abbrev");
-	}
+	const includeAbbrev =
+		!local.exhibitionGamePlayers && !eightyTwoZeroDraftPlayer;
+	const attrs = [
+		"name",
+		"jerseyNumber",
+		"tid",
+		"age",
+		"note",
+		...(includeAbbrev ? (["abbrev"] as const) : []),
+	] as const;
+	const ratings = [
+		"pos",
+		"ovr",
+		"pot",
+		"season",
+		"tid",
+		...RATINGS,
+		...(includeAbbrev ? (["abbrev"] as const) : []),
+	] as const;
 
-	const p2 = await idb.getCopy.playersPlus(p, {
+	const formatOptions = {
 		attrs,
 		ratings,
 		stats: ["tid", "season", "playoffs", ...stats],
-		season: actualSeason,
 		showNoStats: true,
 		showRetired: true,
 		oldStats: true,
 		fuzz: true,
-	});
-	if (actualSeason === undefined) {
-		if (draftProspect) {
-			p2.ratings = p2.ratings[0];
-		} else {
-			// Peak ratings
-			p2.ratings = maxBy(p.ratings, "ovr");
-		}
-		p2.age = p2.ratings.season - p.born.year;
+	} as const;
 
-		p2.stats = p2.careerStats;
-		delete p2.careerStats;
+	let info;
+	if (actualSeason === undefined) {
+		// Career stats
+		const p2 = await player.format(p, formatOptions);
+		if (!p2) {
+			return blankObj;
+		}
+
+		const { careerStats, ratings: allRatings, stats: allStats, ...rest } = p2;
+
+		// Draft prospect ratings, or peak ratings
+		const ratingsRow = draftProspect
+			? allRatings[0]
+			: (maxBy(allRatings, (row) => row.ovr) ?? last(allRatings));
+
+		info = {
+			...rest,
+			age: ratingsRow.season - p.born.year,
+			ratingsRow,
+			statsRow: careerStats,
+		};
+	} else {
+		const p2 = await player.format(p, {
+			...formatOptions,
+			season: actualSeason,
+		});
+		if (!p2) {
+			return blankObj;
+		}
+
+		const { ratings: ratingsRow, stats: statsRow, ...rest } = p2;
+		info = {
+			...rest,
+			ratingsRow,
+			statsRow,
+		};
 	}
-	if (actualSeason === undefined || actualSeason < currentSeason) {
-		p2.abbrev = p2.ratings.abbrev;
-		p2.tid = p2.ratings.tid;
+
+	// abbrev and tid in ratings/stats are only used to determine the team for past seasons, so remove them from the output
+	const {
+		abbrev: ratingsAbbrev,
+		tid: ratingsTid,
+		...ratingsOutput
+	} = info.ratingsRow;
+	const {
+		playoffs: statsPlayoffs,
+		season: statsSeason,
+		tid: statsTid,
+		...statsOutput
+	} = info.statsRow;
+	const {
+		ratingsRow,
+		statsRow,
+		abbrev: currentAbbrev,
+		tid: currentTid,
+		...rest
+	} = info;
+
+	let abbrev: string | undefined = currentAbbrev;
+	let tid: number | undefined = currentTid;
+	if (
+		!eightyTwoZeroDraftPlayer &&
+		(actualSeason === undefined || actualSeason < currentSeason)
+	) {
+		abbrev = ratingsAbbrev;
+		tid = ratingsTid;
 	}
-	delete p2.ratings.abbrev;
-	delete p2.ratings.tid;
-	delete p2.stats.playoffs;
-	delete p2.stats.season;
-	delete p2.stats.tid;
 
 	let type: "career" | "current" | "draft" | number;
 	if (draftProspect) {
@@ -3042,7 +3270,11 @@ const ratingsStatsPopoverInfo = async ({
 		type = actualSeason;
 	}
 	return {
-		...p2,
+		...rest,
+		abbrev,
+		tid,
+		ratings: ratingsOutput,
+		stats: statsOutput,
 		type,
 	};
 };
@@ -3086,17 +3318,14 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 };
 
 const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["cid", "did", "abbrev"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did", "abbrev"],
+		season: g.get("season"),
+		active: true,
+	});
 
-	const tids = await season.newSchedule(teams, conditions);
+	const tids = season.newSchedule(teams, conditions);
 
 	const schedule = season.addDaysToSchedule(
 		tids.map(([homeTid, awayTid]) => ({
@@ -3113,13 +3342,18 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		return;
 	}
 
-	const players = await idb.getCopies.players({ pids });
+	const players = await idb.merged.players.getAll({ pids });
 	if (players.length !== pids.length) {
 		return "Player not found";
 	}
 
-	if (players.some((p) => p.tid !== g.get("userTid"))) {
-		return "You aren't allowed to do this";
+	// Could happen if the UI hasn't updated yet after a player was released or traded
+	const notOnTeam = players.filter((p) => p.tid !== g.get("userTid"));
+	if (notOnTeam.length === 1) {
+		const p = notOnTeam[0]!;
+		return `${p.firstName} ${p.lastName} is no longer on your team.`;
+	} else if (notOnTeam.length > 1) {
+		return `${notOnTeam.length} players are no longer on your team.`;
 	}
 
 	for (const p of players) {
@@ -3162,8 +3396,8 @@ const removeLastTeam = async () => {
 		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
 		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-		await idb.cache.players.put(p);
 	}
+	await idb.cache.players.putAll(players);
 
 	// Delete draft picks, and return traded ones to original owner
 	await draft.genPicks();
@@ -3212,10 +3446,7 @@ const removeLastTeam = async () => {
 
 	// Manually removing a new team can mess with scheduled events, because they are indexed on tid. Let's try to adjust them.
 	// Delete future scheduledEvents for the deleted team, and decrement future tids for new teams
-	const scheduledEvents = await idb.getCopies.scheduledEvents(
-		undefined,
-		"noCopyCache",
-	);
+	const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 	for (const scheduledEvent of scheduledEvents) {
 		if (scheduledEvent.season < g.get("season")) {
 			await idb.cache.scheduledEvents.delete(scheduledEvent.id);
@@ -3242,13 +3473,35 @@ const removeLastTeam = async () => {
 				await idb.cache.scheduledEvents.put(scheduledEvent);
 			}
 		} else if (
-			scheduledEvent.type == "contraction" ||
+			scheduledEvent.type === "contraction" ||
 			scheduledEvent.type === "teamInfo"
 		) {
 			if (tid === scheduledEvent.info.tid) {
 				await idb.cache.scheduledEvents.delete(scheduledEvent.id);
 			} else if (tid < scheduledEvent.info.tid) {
 				scheduledEvent.info.tid -= 1;
+				await idb.cache.scheduledEvents.put(scheduledEvent);
+			}
+		} else if (scheduledEvent.type === "confsDivs") {
+			let updated;
+			let hasTid;
+			for (const t2 of scheduledEvent.info.teams) {
+				if (tid < t2.tid) {
+					t2.tid -= 1;
+					updated = true;
+				} else if (tid === t2.tid) {
+					hasTid = true;
+				}
+			}
+
+			if (hasTid) {
+				scheduledEvent.info.teams = scheduledEvent.info.teams.filter(
+					(t2) => t2.tid !== tid,
+				);
+				updated = true;
+			}
+
+			if (updated) {
 				await idb.cache.scheduledEvents.put(scheduledEvent);
 			}
 		}
@@ -3348,17 +3601,14 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 const resetPlayingTime = async (tids: number[] | undefined) => {
 	const tids2 = tids ?? [g.get("userTid")];
 
-	const players = await idb.cache.players.indexGetAll("playersByTid", [
-		0,
-		Infinity,
-	]);
+	const players = (
+		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
+	).filter((p) => tids2.includes(p.tid) && p.ptModifier !== 1);
 
 	for (const p of players) {
-		if (tids2.includes(p.tid)) {
-			p.ptModifier = 1;
-			await idb.cache.players.put(p);
-		}
+		p.ptModifier = 1;
 	}
+	await idb.cache.players.putAll(players);
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
@@ -3415,7 +3665,7 @@ const retiredJerseyNumberUpsert = async ({
 	let playerText = "";
 	let score: number | undefined;
 	if (info.pid !== undefined) {
-		const p = await idb.getCopy.players({ pid: info.pid }, "noCopyCache");
+		const p = await idb.merged.players.get(info.pid);
 		if (p) {
 			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 				p.firstName
@@ -3496,55 +3746,71 @@ const runBefore = async (
 		params,
 		ctxBBGM,
 		updateEvents,
-		prevData,
+		prevOutput,
+		prevInputs,
 	}: {
 		viewId: string;
-		params: any;
-		ctxBBGM: any;
-		updateEvents: UpdateEvents;
-		prevData: any;
+		params: unknown;
+		ctxBBGM: unknown;
+		updateEvents: ReadonlySet<UpdateEvent>;
+		prevOutput: unknown;
+		prevInputs: unknown;
 	},
 	conditions: Conditions,
 ): Promise<void | {
-	[key: string]: any;
+	data: {
+		[key: string]: any;
+	};
+
+	// Sent back as prevInputs next time, if this page is still loaded
+	inputs?: unknown;
+
+	// Next time, prevOutput only needs to contain these properties
+	keepPrevOutputKeys?: string[];
 }> => {
 	// Special case for errors, so that the condition right below (when league is loading) does not cause no update
 	if (viewId === "error") {
-		return {};
+		return { data: {} };
 	}
 
 	if (typeof g.get("lid") === "number" && !local.leagueLoaded) {
 		return;
 	}
 
-	let inputs;
-	if (Object.hasOwn(processInputs, viewId)) {
-		// https://github.com/microsoft/TypeScript/issues/21732
-		// @ts-expect-error
-		inputs = processInputs[viewId](params, ctxBBGM);
-	}
-	if (inputs === undefined) {
-		// Return empty object rather than undefined
-		inputs = {};
-	}
-
-	if (typeof inputs.redirectUrl === "string") {
-		// Short circuit from processInputs alone
-		return {
-			redirectUrl: inputs.redirectUrl,
-		};
-	}
-
 	// https://github.com/microsoft/TypeScript/issues/21732
 	// @ts-expect-error
 	const view = views[viewId];
 
-	if (view) {
-		const data = await view(inputs, updateEvents, prevData, conditions);
-		return data ?? {};
+	// Return empty object rather than undefined
+	const inputs = view?.processInputs?.(params, ctxBBGM) ?? {};
+
+	if (typeof inputs.redirectUrl === "string") {
+		// Short circuit from processInputs alone
+		return {
+			data: {
+				redirectUrl: inputs.redirectUrl,
+			},
+		};
 	}
 
-	return {};
+	if (view) {
+		const data = await lock.runView(() =>
+			view.load({
+				inputs,
+				updateEvents,
+				prevInputs,
+				prevOutput,
+				conditions,
+			}),
+		);
+		return {
+			data: data ?? {},
+			inputs,
+			keepPrevOutputKeys: view.keepPrevOutputKeys,
+		};
+	}
+
+	return { data: {}, inputs };
 };
 
 const setForceWin = async ({
@@ -3570,12 +3836,10 @@ const setForceWinAll = async ({
 	tid: number;
 	type: "none" | "win" | "lose" | "tie";
 }) => {
-	const games = await idb.cache.schedule.getAll();
+	const games = (await idb.cache.schedule.getAll()).filter(
+		(game) => game.homeTid === tid || game.awayTid === tid,
+	);
 	for (const game of games) {
-		if (game.homeTid !== tid && game.awayTid !== tid) {
-			continue;
-		}
-
 		if (type === "win") {
 			game.forceWin = tid;
 		} else if (type === "lose") {
@@ -3585,9 +3849,8 @@ const setForceWinAll = async ({
 		} else {
 			delete game.forceWin;
 		}
-
-		await idb.cache.schedule.put(game);
 	}
+	await idb.cache.schedule.putAll(games);
 
 	await toUI("realtimeUpdate", [["gameSim"]]);
 };
@@ -3708,29 +3971,13 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 		object = await idb.cache.draftPicks.get(info.dpid);
 	} else if (info.type === "game") {
 		cacheStore = idb.cache.games;
-		object = await idb.getCopy.games(
-			{
-				gid: info.gid,
-			},
-			"noCopyCache",
-		);
+		object = await idb.merged.games.get(info.gid);
 	} else if (info.type === "player") {
 		cacheStore = idb.cache.players;
-		object = await idb.getCopy.players(
-			{
-				pid: info.pid,
-			},
-			"noCopyCache",
-		);
+		object = await idb.merged.players.get(info.pid);
 	} else {
 		cacheStore = idb.cache.teamSeasons;
-		object = await idb.getCopy.teamSeasons(
-			{
-				tid: info.tid,
-				season: info.season,
-			},
-			"noCopyCache",
-		);
+		object = await idb.merged.teamSeasons.getByTidSeason(info.tid, info.season);
 	}
 
 	if (object) {
@@ -3758,25 +4005,39 @@ const reSignAll = async (players: any[]) => {
 		(negotiation) => negotiation.tid === userTid,
 	);
 
+	const undoFunctions: (() => Promise<boolean>)[] = [];
+
 	if (negotiations.length > 0) {
 		for (const negotiation of negotiations) {
 			const p = players.find((p) => p.pid === negotiation.pid);
 
 			if (p && p.mood.user.willing) {
-				const errorMsg = await contractNegotiation.accept({
+				const response = await contractNegotiation.accept({
 					negotiation,
 					amount: p.mood.user.contractAmount,
 					exp: p.contract.exp,
+					dryRun: false,
 				});
 
-				if (errorMsg !== undefined && errorMsg) {
-					return errorMsg;
+				if (typeof response === "string") {
+					// Undo any signings that already happened, so a partial failure doesn't leave some players signed with no way to undo it
+					for (const undo of undoFunctions.toReversed()) {
+						await undo();
+					}
+					return response;
+				} else {
+					undoFunctions.push(response);
 				}
 			}
 		}
 
 		await contractNegotiation.afterAccept(userTid);
 	}
+
+	return local.undoLog.add(async () => {
+		const values = await Promise.all(undoFunctions.map((undo) => undo()));
+		return values.every((value) => value === true);
+	}, ["advanceDay", "leagueChange", "newPhase"]);
 };
 
 const updateExpansionDraftSetup = async (changes: {
@@ -3875,7 +4136,7 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 	const userTid = g.get("userTid");
 	if (userTid !== tid) {
 		await team.switchTo(tid);
-		await updateStatus("Idle");
+		await updateStatus();
 		await updatePlayMenu();
 	}
 
@@ -3883,7 +4144,7 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 		await league.setGameAttributes({
 			otherTeamsWantToHire: false,
 		});
-		await updateStatus("Idle");
+		await updateStatus();
 		await updatePlayMenu();
 	}
 
@@ -3965,10 +4226,9 @@ const updateDefaultSettingsOverrides = async (
 	if (Object.keys(defaultSettingsOverrides).length === 0) {
 		await idb.meta.delete("attributes", "defaultSettingsOverrides");
 	} else {
-		await idb.meta.put(
-			"attributes",
-			defaultSettingsOverrides,
+		await putMetaAttribute(
 			"defaultSettingsOverrides",
+			defaultSettingsOverrides,
 		);
 	}
 };
@@ -4019,7 +4279,7 @@ const updateGameAttributesGodMode = async (
 	// Check schedule, unless it'd be too slow
 	const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 	if (teams.length < TOO_MANY_TEAMS_TOO_SLOW) {
-		await season.newSchedule(
+		season.newSchedule(
 			teams.map((t) => ({
 				tid: t.tid,
 				seasonAttrs: {
@@ -4047,14 +4307,12 @@ const updateGameAttributesGodMode = async (
 		(gameAttributes.realPlayerDeterminism !== undefined &&
 			currentRealPlayerDeterminism !== gameAttributes.realPlayerDeterminism)
 	) {
-		const players = await idb.cache.players.getAll();
+		const players = (await idb.cache.players.getAll()).filter((p) => p.real);
 		for (const p of players) {
-			if (p.real) {
-				await player.develop(p, 0);
-				await player.updateValues(p);
-				await idb.cache.players.put(p);
-			}
+			await player.develop(p, 0);
+			await player.updateValues(p);
 		}
+		await idb.cache.players.putAll(players);
 	}
 
 	await idb.cache.flush();
@@ -4082,10 +4340,7 @@ const updateKeepRosterSorted = async ({
 const updateKeyboardShortcuts = async (
 	keyboardShortcuts: NonNullable<KeyboardShortcutsLocal>,
 ) => {
-	const attributesStore = (
-		await idb.meta.transaction("attributes", "readwrite")
-	).store;
-	await attributesStore.put(keyboardShortcuts, "keyboardShortcuts");
+	await putMetaAttribute("keyboardShortcuts", keyboardShortcuts);
 	await toUI("updateLocal", [{ keyboardShortcuts }]);
 };
 
@@ -4128,7 +4383,7 @@ const updateOptions = async (
 			throw new Error("Invalid JSON in real player photos");
 		}
 
-		const result = RealPlayerPhotosSchema.safeParse(parsedJson);
+		const result = realPlayerPhotosSchema.safeParse(parsedJson);
 		if (result.success) {
 			realPlayerPhotos = result.data;
 		} else {
@@ -4146,7 +4401,7 @@ const updateOptions = async (
 			throw new Error("Invalid JSON in real team info");
 		}
 
-		const result = RealTeamInfoSchema.safeParse(parsedJson);
+		const result = realTeamInfoSchema.safeParse(parsedJson);
 		if (result.success) {
 			realTeamInfo = result.data;
 		} else {
@@ -4214,25 +4469,32 @@ const updatePlayerWatch = async ({
 	watch: number;
 }) => {
 	let p;
+	let eightyTwoZeroDraftPlayer = false;
 	if (local.exhibitionGamePlayers) {
 		p = local.exhibitionGamePlayers[pid];
 		if (!p) {
 			return;
 		}
 	} else {
-		p = await idb.getCopy.players({ pid }, "noCopyCache");
+		p = getEightyTwoZeroDraftPlayer(pid);
+		eightyTwoZeroDraftPlayer = p !== undefined;
+		if (!p) {
+			p = await idb.merged.players.get(pid);
+		}
 	}
 
 	if (p) {
 		if (
 			watch < 1 ||
-			(!local.exhibitionGamePlayers && watch > g.get("numWatchColors"))
+			(!local.exhibitionGamePlayers &&
+				!eightyTwoZeroDraftPlayer &&
+				watch > g.get("numWatchColors"))
 		) {
 			delete p.watch;
 		} else {
 			p.watch = watch;
 		}
-		if (!local.exhibitionGamePlayers) {
+		if (!local.exhibitionGamePlayers && !eightyTwoZeroDraftPlayer) {
 			await idb.cache.players.put(p);
 			await Promise.all([
 				toUI("crossTabEmit", [["updateWatch", getUpdateWatch([p])]]),
@@ -4272,10 +4534,9 @@ const updatePlayersWatch = async ({
 	watch?: number;
 }) => {
 	// Need to get all players to see what the new watch value should be!
-	const players = await idb.getCopies.players(
-		{ pids: Array.from(new Set(pids)) },
-		"noCopyCache",
-	);
+	const players = await idb.merged.players.getAll({
+		pids: Array.from(new Set(pids)),
+	});
 
 	if (players.length === 0) {
 		return;
@@ -4318,6 +4579,8 @@ const updatePlayingTime = async ({
 	}
 	p.ptModifier = ptModifier;
 	await idb.cache.players.put(p);
+
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const updatePlayoffTeams = async (
@@ -4415,20 +4678,16 @@ const updateTeamInfo = async ({
 
 	const newTeamsByTid = groupByUnique(newTeams, "tid");
 
-	const newTeamsIncludingDisabled = [];
-
 	for (const t of teams) {
 		const newTeam = newTeamsByTid[t.tid];
 		if (!newTeam) {
 			// manageConfs doesn't include disabled teams, on purpose
 			if (from === "manageConfs" && t.disabled) {
-				newTeamsIncludingDisabled.push(t);
 				continue;
 			} else {
 				throw new Error(`New team not found for tid ${t.tid}`);
 			}
 		}
-		newTeamsIncludingDisabled.push(newTeam);
 
 		if (newTeam.did !== undefined) {
 			const divs = g.get("divs");
@@ -4536,18 +4795,11 @@ const updateTeamInfo = async ({
 	}
 
 	await league.setGameAttributes({
-		teamInfoCache: orderBy(newTeamsIncludingDisabled, "tid").map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall === "" ? undefined : t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		})),
+		teamInfoCache: getTeamInfoCache(teams),
 
 		// numActiveTeams is only needed when enabling a disabled team, and numTeams should never be needed. But might as well do these every time just to be sure, because it's easy.
-		numActiveTeams: newTeamsIncludingDisabled.filter((t) => !t.disabled).length,
-		numTeams: newTeamsIncludingDisabled.length,
+		numActiveTeams: teams.filter((t) => !t.disabled).length,
+		numTeams: teams.length,
 	});
 
 	await league.updateMeta();
@@ -4599,30 +4851,38 @@ const updateConfsDivs = async ({
 };
 
 const updateAwards = async (
-	awards: any,
+	newAwards: Pick<Awards, "awards" | "season">,
 	conditions: Conditions,
 ): Promise<any> => {
-	const awardsInitial = await idb.getCopy.awards(
-		{
-			season: awards.season,
-		},
-		"noCopyCache",
-	);
+	const oldAwards = await idb.merged.awards.get(newAwards.season);
 
-	if (!awardsInitial) {
-		throw new Error("awardsInitial not found");
+	if (!oldAwards) {
+		throw new Error("oldAwards not found");
 	}
 
-	// Delete old awards
-	const awardsByPlayerToDelete: AwardsByPlayer = [];
-	addSimpleAndTeamAwardsToAwardsByPlayer(awardsInitial, awardsByPlayerToDelete);
-	await deleteAwardsByPlayer(awardsByPlayerToDelete, awards.season);
+	const playersAll = await idb.merged.players.getAll({
+		activeSeason: newAwards.season,
+	});
+	const players = await player.formatAll(playersAll, {
+		attrs: ["name", "pid"],
+	});
 
-	// Add new awards
-	const awardsByPlayer: AwardsByPlayer = [];
-	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);
-	await idb.cache.awards.put(awards);
-	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season, false);
+	const awardsToDelete = getAwardsByPlayer(oldAwards.awards, players);
+	const awardsToSave = getAwardsByPlayer(newAwards.awards, players);
+
+	await idb.cache.awards.put({
+		...oldAwards,
+		...newAwards,
+	});
+
+	await updatePlayerAwards({
+		awardsToDelete,
+		awardsToSave,
+		logEventInfo: {
+			conditions,
+		},
+		season: newAwards.season,
+	});
 };
 
 const upgrade65Estimate = async () => {
@@ -4817,12 +5077,7 @@ const upsertCustomizedPlayer = async (
 	};
 
 	for (const rel of p.relatives) {
-		const p2 = await idb.getCopy.players(
-			{
-				pid: rel.pid,
-			},
-			"noCopyCache",
-		);
+		const p2 = await idb.merged.players.get(rel.pid);
 
 		if (p2) {
 			rel.name = p2.firstName;
@@ -4840,9 +5095,7 @@ const upsertCustomizedPlayer = async (
 	p.relatives = relatives;
 
 	const prevPlayer =
-		p.pid !== undefined
-			? await idb.getCopy.players({ pid: p.pid }, "noCopyCache")
-			: undefined;
+		p.pid !== undefined ? await idb.merged.players.get(p.pid) : undefined;
 	if (prevPlayer) {
 		// Any relation in here that is no longer in p should be deleted in the corresponding player too
 		for (const prevRel of prevPlayer.relatives) {
@@ -4851,12 +5104,7 @@ const upsertCustomizedPlayer = async (
 			);
 			if (!currentRel) {
 				// prevRel has been deleted!
-				const p2 = await idb.getCopy.players(
-					{
-						pid: prevRel.pid,
-					},
-					"noCopyCache",
-				);
+				const p2 = await idb.merged.players.get(prevRel.pid);
 				if (p2) {
 					p2.relatives = p2.relatives.filter(
 						(rel) =>
@@ -4944,12 +5192,7 @@ const upsertCustomizedPlayer = async (
 
 	// Only after pid is known - update current relatives
 	for (const rel of p.relatives) {
-		const p2 = await idb.getCopy.players(
-			{
-				pid: rel.pid,
-			},
-			"noCopyCache",
-		);
+		const p2 = await idb.merged.players.get(rel.pid);
 
 		if (p2) {
 			await ensureRelationExists(p as Player, p2, rel.type);
@@ -4976,57 +5219,28 @@ const createTrade = async (teams: TradeTeams) => {
 };
 
 const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
-	const { teams } = await trade.get();
-	const dv = await new ValueChangeCalculator().evaluate({
-		tid: teams[1].tid,
-		pidsAdd: teams[0].pids,
-		pidsRemove: teams[1].pids,
-		dpidsAdd: teams[0].dpids,
-		dpidsRemove: teams[1].dpids,
-		tradingPartnerTid: g.get("userTid"),
-	});
-	const aiWillAcceptTrade = dv > 0;
-	if (
-		aiWillAcceptTrade &&
-		teams[1].pids.length === 0 &&
-		teams[1].dpids.length === 0
-	) {
-		let assetsText;
-		const numAssets = teams[0].pids.length + teams[0].dpids.length;
-		if (teams[0].pids.length === 0) {
-			assetsText = helpers.plural("Pick", numAssets);
-		} else if (teams[0].dpids.length === 0) {
-			assetsText = helpers.plural("Player", numAssets);
-		} else {
-			assetsText = helpers.plural("Asset", numAssets);
-		}
+	const { accepted, message, undo } = await trade.propose(forceTrade);
+	await toUI("realtimeUpdate", []);
 
-		const proceed = await toUI(
-			"confirm",
-			[
-				"Are you sure you want to propose a trade where you receive nothing?",
-				{
-					okText: `Give Away ${assetsText}`,
-				},
-			],
-			conditions,
-		);
-
-		if (!proceed) {
-			return;
-		}
+	let undoKey;
+	if (undo) {
+		undoKey = local.undoLog.add(undo, [
+			"advanceDay",
+			"leagueChange",
+			"newPhase",
+		]);
 	}
 
-	const output = await trade.propose(forceTrade);
-	await toUI("realtimeUpdate", []);
-	return output;
+	return {
+		accepted,
+		message,
+		undoKey,
+	};
 };
 
 const toggleColaOptOut = async () => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
-	if (!t) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(t);
 
 	if (t.draftLottery?.type === "cola") {
 		if (t.draftLottery.optOut) {
@@ -5087,7 +5301,7 @@ const updateTrade = async (teams: TradeTeams) => {
 	await toUI("realtimeUpdate", []);
 };
 
-const validatePointsFormula = async (pointsFormula: string) => {
+const validatePointsFormula = (pointsFormula: string) => {
 	if (pointsFormula !== "") {
 		new PointsFormulaEvaluator(pointsFormula);
 	}
@@ -5198,24 +5412,33 @@ const setScheduleFromEditor = async ({
 	}
 
 	await idb.cache.schedule.clear();
-
-	for (const game of schedule) {
-		if (game.type === "placeholder" || game.type === "completed") {
-			continue;
-		}
-		await idb.cache.schedule.add(omit(game, ["gid", "type"]));
-	}
+	await idb.cache.schedule.addAll(
+		schedule
+			.filter(
+				(game) => game.type !== "placeholder" && game.type !== "completed",
+			)
+			.map((game) => omit(game, ["gid", "type"])),
+	);
 
 	// This is needed in case the upcoming game was edited/deleted
 	await initUILocalGames();
 };
 
-export default {
+// Marks the worker as busy (which spins the logo in the UI) while function runs. For slow things.
+const whileWorkerBusy =
+	<Args extends unknown[], Return>(cb: (...args: Args) => Promise<Return>) =>
+	(...args: Args) =>
+		lock.whileWorkerBusy(() => cb(...args));
+
+const api = {
 	actions,
+	awardSettings,
+	eightyTwoZeroDraft,
 	exhibitionGame,
 	leagueFileUpload,
 	playMenu,
 	toolsMenu,
+	undoLog,
 	main: {
 		acceptContractNegotiation,
 		addTeam,
@@ -5236,10 +5459,10 @@ export default {
 		clearNotes,
 		clearTrade,
 		clearWatchList,
-		countNegotiations,
-		createLeague,
+		createLeague: whileWorkerBusy(createLeague),
 		createTrade,
-		deleteOldData,
+		deleteOldData: whileWorkerBusy(deleteOldData),
+		deleteScheduledEvent,
 		deleteScheduledEvents,
 		discardUnsavedProgress,
 		draftLottery,
@@ -5281,10 +5504,12 @@ export default {
 		getRandomName,
 		getRandomRatings,
 		getRandomTeams,
+		getPlayersForScheduledEvents,
 		getSavedTrade,
 		getTeamGraphStat,
 		getTradingBlockOffers,
 		ping,
+		prefetchRealPlayerStats,
 		handleUploadedDraftClass,
 		idbCacheFlush,
 		importPlayers,
@@ -5304,7 +5529,7 @@ export default {
 		releasePlayer,
 		expandVote,
 		relocateVote,
-		cloneLeague,
+		cloneLeague: whileWorkerBusy(cloneLeague),
 		removeLeague,
 		removePlayers,
 		reorderDepthDrag,
@@ -5357,7 +5582,14 @@ export default {
 		upgrade65,
 		upgrade65Estimate,
 		upsertCustomizedPlayer,
+		upsertScheduledEvent,
 		validatePointsFormula,
 		validatePlayoffSettings,
 	},
 };
+
+export default api;
+
+export type WorkerAPICategory = keyof typeof api;
+
+registerGlobal({ api });

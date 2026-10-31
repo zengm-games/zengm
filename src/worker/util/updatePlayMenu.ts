@@ -15,7 +15,7 @@ import { idb } from "../db/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
 const updatePlayMenu = async () => {
-	if (process.env.NODE_ENV === "test") {
+	if (__NODE_ENV === "test") {
 		return;
 	}
 
@@ -52,10 +52,6 @@ const updatePlayMenu = async () => {
 				ALL_STAR_GAME_ONLY ? ["all_star", "teams"] : ["all_star"],
 			),
 			label: `All-Star ${ALL_STAR_GAME_ONLY ? "teams" : "events"}`,
-		},
-		viewSlam: {
-			url: helpers.leagueUrl(["slam"]),
-			label: "Slam dunk contest",
 		},
 		untilPlayoffs: {
 			label: "Until playoffs",
@@ -359,16 +355,8 @@ const updatePlayMenu = async () => {
 	}
 
 	const someOptions: Option[] = keys.map((id) => {
-		let code;
-		// @ts-expect-error
-		if (allOptions[id].key) {
-			// @ts-expect-error
-			code = `Key${allOptions[id].key.toUpperCase()}`;
-		}
-
 		return {
 			...allOptions[id],
-			code,
 			id,
 		};
 	});

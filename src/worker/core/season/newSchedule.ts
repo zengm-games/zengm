@@ -3,9 +3,8 @@ import type { Conditions } from "../../../common/types.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import { getRealSchedule } from "./getRealSchedule.football.ts";
 import newScheduleGood from "./newScheduleGood.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
-const newSchedule = async (
+const newSchedule = (
 	teams: {
 		seasonAttrs: {
 			cid: number;
@@ -15,8 +14,8 @@ const newSchedule = async (
 	}[],
 	conditions?: Conditions,
 ) => {
-	if (isSport("football")) {
-		const tids = await getRealSchedule(teams);
+	if (__SPORT === "football") {
+		const tids = getRealSchedule(teams);
 		if (tids) {
 			return tids;
 		}

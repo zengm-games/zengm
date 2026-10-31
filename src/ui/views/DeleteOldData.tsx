@@ -1,7 +1,7 @@
 import { useState, type SubmitEvent, type ChangeEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 
@@ -32,10 +32,9 @@ const DeleteOldData = () => {
 
 		await toWorker("main", "deleteOldData", state);
 
-		logEvent({
+		showNotification({
 			type: "success",
 			text: "Data successfully deleted.",
-			saveToDb: false,
 		});
 		setDeleting(false);
 	};

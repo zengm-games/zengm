@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { useState, type SubmitEvent, useEffect } from "react";
+import { useState, type ReactNode, type SubmitEvent, useEffect } from "react";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { localActions } from "../../util/local.ts";
 import { settings } from "./settings.tsx";
@@ -12,6 +12,7 @@ import type {
 	GameAttributesLeague,
 	InjuriesSetting,
 	PlayerBioInfo,
+	RealDraftRatings,
 	TragicDeaths,
 } from "../../../common/types.ts";
 import SettingsFormOptions from "./SettingsFormOptions.tsx";
@@ -87,7 +88,7 @@ export const encodeDecodeFunctions = {
 	},
 	string: {},
 	jsonString: {
-		stringify: (value: any) => JSON.stringify(value),
+		stringify: (value: unknown) => JSON.stringify(value),
 		parse: (value: string) => JSON.parse(value),
 	},
 	rangePercent: {
@@ -126,7 +127,7 @@ const GodModeSettingsButton = ({
 	disabled,
 	onClick,
 }: {
-	children: any;
+	children: ReactNode;
 	className?: string;
 	godMode: boolean;
 	disabled?: boolean;
@@ -221,7 +222,7 @@ type SpecialStateBoolean = (typeof SPECIAL_STATE_BOOLEANS)[number];
 type SpecialStateAll = (typeof SPECIAL_STATE_ALL)[number];
 
 export type State = Record<
-	Exclude<Key, SpecialStateAll | "saveOldBoxScores">,
+	Exclude<Key, SpecialStateAll | "saveOldBoxScores" | "realDraftRatings">,
 	string
 > &
 	Record<SpecialStateBoolean, boolean> & {
@@ -233,6 +234,10 @@ export type State = Record<
 			"pastSeasons"
 		> & {
 			pastSeasons: string;
+		};
+		realDraftRatings: {
+			mode: RealDraftRatings | "custom";
+			weights: Record<RealDraftRatings, string>;
 		};
 	};
 
@@ -254,7 +259,8 @@ const SettingsForm = ({
 	hasPlayers,
 	newLeague,
 	realPlayers,
-	saveText = "Save Settings",
+	saveDisabled,
+	saveText = "Save settings",
 	initialSettings,
 	settingsShown,
 	hideShortcuts,
@@ -270,6 +276,7 @@ const SettingsForm = ({
 	hasPlayers?: boolean;
 	newLeague?: boolean;
 	realPlayers?: boolean;
+	saveDisabled?: boolean;
 	saveText?: string;
 	initialSettings: Settings;
 	hideShortcuts?: boolean;
@@ -309,7 +316,7 @@ const SettingsForm = ({
 	});
 
 	const handleGodModeToggle = async () => {
-		let proceed: any = true;
+		let proceed: unknown = true;
 		if (
 			!state.godMode &&
 			!state.godModeInPast &&
@@ -341,18 +348,27 @@ const SettingsForm = ({
 
 	const [filterText, setFilterText] = useState("");
 
+	const isShown = (key: Key) => !settingsShown || settingsShown.includes(key);
+
 	// Filter out the new league only ones when appropriate
-	const filteredSettings = settings.filter((setting) => {
+	const contextSettings = settings.filter((setting) => {
 		return (
-			(!settingsShown || settingsShown.includes(setting.key)) &&
-			(!setting.showOnlyIf ||
-				setting.showOnlyIf({
-					hasPlayers,
-					newLeague,
-					realPlayers,
-				}))
+			!setting.showOnlyIf ||
+			setting.showOnlyIf({
+				hasPlayers,
+				newLeague,
+				realPlayers,
+			})
 		);
 	});
+	const filteredSettings = contextSettings.filter((setting) =>
+		isShown(setting.key),
+	);
+
+	// Includes settings not in the form if they depend on settings that are
+	const validatedSettings = contextSettings.filter(
+		(setting) => isShown(setting.key) || setting.validateWith?.some(isShown),
+	);
 
 	// filteredSettings - removes ones not appropriate for this context, like new league only settings
 	// filteredSettings2 - handles the filter/search bar in the UI
@@ -396,7 +412,7 @@ const SettingsForm = ({
 		event.preventDefault();
 		setSubmitting(true);
 
-		const output = {} as unknown as Settings;
+		const output = {} as Settings;
 		for (const primaryOption of filteredSettings) {
 			const options = [primaryOption];
 			if (primaryOption.partners) {
@@ -423,10 +439,9 @@ const SettingsForm = ({
 					output[key] = parse ? parse(value) : value;
 				} catch (error) {
 					setSubmitting(false);
-					logEvent({
+					showNotification({
 						type: "error",
 						text: `${name}: ${error.message}`,
-						saveToDb: false,
 						persistent: true,
 					});
 					return;
@@ -438,29 +453,29 @@ const SettingsForm = ({
 			output[key] = state[key];
 		}
 
-		// Run validation functions at the end, so all values are available
-		for (const option of filteredSettings) {
-			const { key, name, validator } = option;
+		let totalOutput = output;
+		if (defaultNewLeagueSettings) {
+			totalOutput = {
+				// Passing initialSettings here is because from DefaultNewLeagueSettings, output will only contain a subset of settings
+				...initialSettings,
+				...output,
+			};
+		}
 
-			let totalOutput = output;
-			if (defaultNewLeagueSettings) {
-				totalOutput = {
-					// Passing initialSettings here is because from DefaultNewLeagueSettings, output will only contain a subset of settings
-					...initialSettings,
-					...output,
-				};
-			}
+		// Run validation functions at the end, so all values are available
+		for (const option of validatedSettings) {
+			const { key, name, validator } = option;
 
 			try {
 				if (validator) {
-					await validator(output[key], totalOutput, initialSettings);
+					// totalOutput rather than output, for settings that are only validated due to validateWith
+					await validator(totalOutput[key], totalOutput, initialSettings);
 				}
 			} catch (error) {
 				setSubmitting(false);
-				logEvent({
+				showNotification({
 					type: "error",
 					text: `${name}: ${error.message}`,
-					saveToDb: false,
 					persistent: true,
 				});
 				return;
@@ -472,10 +487,9 @@ const SettingsForm = ({
 		} catch (error) {
 			console.error(error);
 			setSubmitting(false);
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;
@@ -611,7 +625,7 @@ const SettingsForm = ({
 				<StickyBottomButtons isInsideModal={isInsideModal}>
 					<div className="d-flex justify-content-between w-100">
 						{!hideGodModeToggle ? (
-							<div className="btn-group">
+							<div className="d-flex gap-2">
 								<button
 									className={clsx(
 										"btn text-nowrap",
@@ -647,7 +661,7 @@ const SettingsForm = ({
 							}}
 						/>
 
-						<div className="btn-group">
+						<div className="d-flex gap-2">
 							{onCancel ? (
 								<button
 									className="btn btn-secondary text-nowrap"
@@ -661,7 +675,7 @@ const SettingsForm = ({
 							<ActionButton
 								className="text-nowrap"
 								type="submit"
-								disabled={submitting}
+								disabled={submitting || saveDisabled}
 								processing={!!newLeague && submitting}
 							>
 								{saveText}

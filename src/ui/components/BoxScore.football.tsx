@@ -1,24 +1,22 @@
-import {
-	memo,
-	Fragment,
-	type MouseEvent,
-	type ReactNode,
-	useState,
-	type CSSProperties,
-} from "react";
+import { memo, Fragment, type ReactNode, type CSSProperties } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { getCols } from "../../common/getCols.ts";
 import { helpers } from "../util/helpers.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.football.ts";
 import type { Col, SortBy } from "./DataTable/index.tsx";
-import updateSortBys from "./DataTable/updateSortBys.ts";
-import { getSortClassName } from "./DataTable/Header.tsx";
+import { useBoxScoreSortBys } from "./useBoxScoreSortBys.ts";
+import {
+	getSortableHeaderProps,
+	getSortClassName,
+} from "./DataTable/Header.tsx";
+import type { SortEvent } from "./DataTable/updateSortBys.ts";
 import clsx from "clsx";
 import {
 	formatDownAndDistance,
 	getScoreInfo,
 	getScoreInfoOld,
 	getText,
+	penaltySegments,
 	scrimmageToFieldPos,
 	type SportState,
 } from "../util/processLiveGameEvents.football.tsx";
@@ -27,6 +25,10 @@ import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/Pl
 import { range } from "../../common/utils.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../util/boxScoreDisplayOrder.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 
@@ -61,7 +63,7 @@ export const StatsHeader = ({
 	sortable,
 }: {
 	cols: Col[];
-	onClick: (b: MouseEvent, a: number) => void;
+	onClick: (b: SortEvent, a: number) => void;
 	sortBys: SortBy[];
 	sortable: boolean;
 }) => {
@@ -70,20 +72,25 @@ export const StatsHeader = ({
 			{cols.map((col, i) => {
 				const { desc, title } = col;
 
+				const onSort = (event: SortEvent) => {
+					onClick(event, i);
+				};
+
 				let className: string | undefined;
+				let sortableHeaderProps;
 
 				if (sortable) {
 					className = getSortClassName(sortBys, i);
+					sortableHeaderProps = getSortableHeaderProps(sortBys, i, onSort);
 				}
 
 				return (
 					<th
 						className={className}
 						key={i}
-						onClick={(event) => {
-							onClick(event, i);
-						}}
+						onClick={onSort}
 						title={desc}
+						{...sortableHeaderProps}
 					>
 						{title}
 					</th>
@@ -139,23 +146,12 @@ const StatsTableIndividual = ({
 	const stats = PLAYER_GAME_STATS[type].stats;
 	const cols = getCols(stats.map((stat) => `stat:${stat}`));
 
-	const [sortBys, setSortBys] = useState(() => {
-		return PLAYER_GAME_STATS[type].sortBy.map(
+	const { onClick, sortBys } = useBoxScoreSortBys({
+		cols,
+		defaultSortBys: PLAYER_GAME_STATS[type].sortBy.map(
 			(stat) => [stats.indexOf(stat), "desc"] as SortBy,
-		);
+		),
 	});
-
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(
-			(prevSortBys) =>
-				updateSortBys({
-					cols,
-					event,
-					i,
-					prevSortBys,
-				}) ?? [],
-		);
-	};
 
 	const allStarGame = t.tid === -1 || t.tid === -2;
 	const players = t.players
@@ -216,13 +212,13 @@ const StatsTable = ({
 	boxScore,
 	type,
 }: {
-	Row: any;
+	Row: unknown;
 	boxScore: BoxScore;
 	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
 	return (
 		<>
-			{boxScore.teams.map((t, i) => (
+			{teamsInDisplayOrder(boxScore.teams).map((t, i) => (
 				<StatsTableIndividual
 					key={i}
 					Row={Row}
@@ -359,6 +355,7 @@ const ScoringSummary = memo(
 						const currentQuarter =
 							event.scoreType === "SH" ? "SH" : event.quarter;
 						if (currentQuarter !== prevQuarter) {
+							// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 							prevQuarter = currentQuarter;
 
 							let quarterText = "???";
@@ -400,19 +397,19 @@ const ScoringSummary = memo(
 									<td>{teams[event.t].abbrev}</td>
 									<td>{event.scoreType === "SH" ? "FG" : event.scoreType}</td>
 									<td>
-										{event.score.map((pts, i) => {
+										{TEAM_NUMS_DISPLAY_ORDER.map((t, i) => {
 											return (
-												<Fragment key={i}>
+												<Fragment key={t}>
 													<span
 														className={
-															!event.noPoints && event.t === i
+															!event.noPoints && event.t === t
 																? "fw-bold"
-																: event.noPoints && event.t === i
+																: event.noPoints && event.t === t
 																	? "text-danger"
 																	: "text-body-secondary"
 														}
 													>
-														{pts}
+														{event.score[t]}
 													</span>
 													{i === 0 ? "-" : null}
 												</Fragment>
@@ -452,7 +449,7 @@ const FieldBackground = ({
 }) => {
 	let midfieldLogo;
 	if (neutralSite) {
-		midfieldLogo = `https://zengm.com/files/logo-${process.env.SPORT}.svg`;
+		midfieldLogo = `https://zengm.com/files/logo-${__SPORT}.svg`;
 	} else {
 		midfieldLogo = t2.imgURLSmall ?? t2.imgURL;
 	}
@@ -572,7 +569,7 @@ const VerticalLine = ({
 };
 
 const blue = "#80bdff";
-const yellow = "#ffc107";
+const yellow = "#ffcd00"; // https://www.reddit.com/r/Football_GM/comments/1wnjflv/version_202609220930_when_penalties_add_yards_to/pdbksew/?context=3
 const lightGreen = "lightgreen";
 const darkGreen = "#1e7e34";
 const lightGray = "#adb5bd";
@@ -631,6 +628,20 @@ const PlayBar = ({
 	const yardsPercent = yardsToPercent(play.yards);
 
 	const showTag = !play.subPlay;
+
+	// Yards from an accepted penalty, in yellow at the far end of the bar. The
+	// fill takes whatever width is left after the tags -- which is exactly the
+	// bar's yardage -- and splits it between play and penalty by yards.
+	const segments = penaltySegments(play.yards, play.penaltyYards);
+	const penaltyFill =
+		segments.penalty > 0 ? (
+			<div
+				className={`d-flex flex-grow-1${barGoingLeft ? " flex-row-reverse" : ""}`}
+			>
+				<div style={{ flexGrow: segments.play }} />
+				<div style={{ flexGrow: segments.penalty, backgroundColor: yellow }} />
+			</div>
+		) : null;
 
 	// Extra 2px is to account for border
 	let margin;
@@ -740,6 +751,7 @@ const PlayBar = ({
 				{...props}
 			>
 				{score && barGoingLeft ? scoreTag : null}
+				{barGoingLeft ? penaltyFill : null}
 				{showTag ? (
 					<div
 						className={`${
@@ -772,6 +784,7 @@ const PlayBar = ({
 				) : (
 					<>&nbsp;</>
 				)}
+				{!barGoingLeft ? penaltyFill : null}
 			</div>
 			{score && !barGoingLeft ? scoreTag : null}
 			{driveDirection ? flags : null}
@@ -803,8 +816,10 @@ const FieldAndDrive = ({
 	const latestPlay = sportState.plays.at(-1);
 	const latestText = latestPlay?.texts.at(-1);
 
-	// true means the drive is going from left to right, left means the opposite
-	const driveDirection = sportState.t === 0;
+	const [leftT, rightT] = TEAM_NUMS_DISPLAY_ORDER;
+
+	// true means the drive is going from left to right, left means the opposite. The team on the left (the away team) drives to the right.
+	const driveDirection = sportState.t === leftT;
 
 	return (
 		<div className="mb-3">
@@ -815,8 +830,8 @@ const FieldAndDrive = ({
 				}}
 			>
 				<FieldBackground
-					t={boxScore.teams[0]}
-					t2={boxScore.teams[1]}
+					t={boxScore.teams[leftT]}
+					t2={boxScore.teams[rightT]}
 					neutralSite={boxScore.neutralSite}
 				/>
 				{!sportState.newPeriodText ? (
@@ -916,7 +931,7 @@ const BoxScore = ({
 }: {
 	boxScore: BoxScore;
 	sportState: SportState;
-	Row: any;
+	Row: unknown;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
@@ -937,8 +952,7 @@ const BoxScore = ({
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>
-			{helpers.keys(PLAYER_GAME_STATS).map((type) => {
-				const info = PLAYER_GAME_STATS[type];
+			{helpers.entries(PLAYER_GAME_STATS).map(([type, info]) => {
 				return (
 					<Fragment key={type}>
 						<h2>{info.name}</h2>

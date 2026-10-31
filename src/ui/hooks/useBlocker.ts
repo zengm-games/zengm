@@ -1,4 +1,10 @@
-import { useEffect, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	type SetStateAction,
+} from "react";
 import { router } from "../router/index.ts";
 import { confirm } from "../util/confirm.tsx";
 
@@ -13,7 +19,21 @@ export const useBlocker = ({
 	cancelText?: string;
 	initialDirty?: boolean;
 } = {}) => {
-	const [dirty, setDirty] = useState(initialDirty);
+	const [dirty, setDirtyState] = useState(initialDirty);
+	const dirtyRef = useRef(initialDirty);
+
+	const setDirty = useCallback((value: SetStateAction<boolean>) => {
+		const next = typeof value === "function" ? value(dirtyRef.current) : value;
+
+		dirtyRef.current = next;
+		setDirtyState(next);
+
+		// Do this here using a ref rather than in useEffect that setDirty(false) immediate clears the blocker, so you can immediately navigate away if you want, like in EditAwardWinners.
+		// This does mean that setDirty(true) does not immediately set the blocker. I could fix that by setting the block function here, but then setDirty will need to depend on the inputs to that, and I'd rather have setDirty never change. Also currently it just doesn't matter. Like why would I set a blocker and then immediately navigate? I could
+		if (!next) {
+			router.shouldBlock = undefined;
+		}
+	}, []);
 
 	useEffect(() => {
 		if (dirty) {

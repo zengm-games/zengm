@@ -1,9 +1,11 @@
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { local, localActions } from "../util/local.ts";
-import { showEvent } from "../util/logEvent.ts";
+import {
+	showNotification,
+	type ShowNotificationOptions,
+} from "../util/showNotification.ts";
 import type {
 	LocalStateUI,
-	LogEventShowOptions,
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types.ts";
@@ -12,9 +14,11 @@ import { ads } from "../util/ads.ts";
 import { analyticsEvent } from "../util/analyticsEvent.ts";
 import { autoPlayDialog } from "../util/autoPlayDialog.tsx";
 import { confirmDeleteAllLeagues } from "../util/confirmDeleteAllLeagues.tsx";
-import { requestPersistentStorage } from "../util/requestPersistentStorage.ts";
+import { requestPersistentStorage } from "../util/requestPersistentStorage.tsx";
 import { confirm } from "../util/confirm.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
+import Bugsnag from "@bugsnag/browser";
+import { registerGlobal } from "../../common/registerGlobal.ts";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
 	ads.setLoadingDone(type);
@@ -65,8 +69,8 @@ const setGameAttributes = (
 	localActions.updateGameAttributes(gameAttributes, flagOverrides);
 };
 
-const showEvent2 = (options: LogEventShowOptions) => {
-	showEvent(options);
+const showNotification2 = (options: ShowNotificationOptions) => {
+	showNotification(options);
 };
 
 const showModal = () => {
@@ -100,51 +104,29 @@ const updateLocal = (obj: Partial<LocalStateUI>) => {
 	localActions.update(obj);
 };
 
-const updateTeamOvrs = (ovrs: number[]) => {
-	const games = local.getState().games;
-
-	// Find upcoming game, it's the only one that needs updating because it's the only one displayed in a ScoreBox in LeagueTopBar
-	const gameIndex = games.findIndex((game) => game.teams[0].pts === undefined);
-	if (gameIndex >= 0) {
-		const { teams } = games[gameIndex]!;
-		if (
-			teams[0].ovr !== ovrs[teams[0].tid] ||
-			teams[1].ovr !== ovrs[teams[1].tid]
-		) {
-			games[gameIndex] = {
-				...games[gameIndex]!,
-			};
-			teams[0].ovr = ovrs[teams[0].tid];
-			teams[1].ovr = ovrs[teams[1].tid];
-
-			localActions.update({
-				games: games.slice(),
-			});
-		}
-	}
-};
-
 const crossTabEmit = (
 	parameters: Parameters<(typeof crossTabEmitter)["emit"]>,
 ) => {
 	crossTabEmitter.emit(...parameters);
 };
 
-/*const bugsnagNotify = (
+const bugsnagNotify = (
 	error: Error,
-	metadata: Record<string, Record<string, string>>,
+	metadata?: Record<string, Record<string, string>>,
 ) => {
 	Bugsnag.notify(error, (event) => {
-		for (const [name, object] of Object.entries(metadata)) {
-			event.addMetadata(name, object);
+		if (metadata) {
+			for (const [name, object] of Object.entries(metadata)) {
+				event.addMetadata(name, object);
+			}
 		}
 	});
-};*/
+};
 
-export default {
+const api = {
 	analyticsEvent,
 	autoPlayDialog,
-	//bugsnagNotify,
+	bugsnagNotify,
 	confirm,
 	confirmDeleteAllLeagues,
 	crossTabEmit,
@@ -157,8 +139,11 @@ export default {
 	requestPersistentStorage,
 	resetLeague,
 	setGameAttributes,
-	showEvent: showEvent2,
+	showNotification: showNotification2,
 	showModal,
 	updateLocal,
-	updateTeamOvrs,
 };
+
+export default api;
+
+registerGlobal({ api });

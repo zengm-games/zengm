@@ -1,13 +1,48 @@
 import { g } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	EventBBGM,
-	LogEventType,
-} from "../../common/types.ts";
+import type { EventBBGM, LogEventType } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { idb } from "../db/index.ts";
 import type { FaceConfig } from "facesjs";
 import { formatEventText } from "../util/formatEventText.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
+
+const processInputs = (params: RouteParams<"news">) => {
+	const season = validateSeason(params.season);
+	let level: "all" | "normal" | "big";
+	if (params.level === "all") {
+		level = "all";
+	} else if (params.level === "normal") {
+		level = "normal";
+	} else {
+		level = "big";
+	}
+
+	const order: "oldest" | "newest" =
+		params.order === "oldest" ? "oldest" : "newest";
+
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		level,
+		order,
+		season,
+		tid,
+	};
+};
 
 const IGNORE_EVENT_TYPES = ["retiredList", "newTeam"];
 
@@ -28,29 +63,41 @@ const getTid = (event: { tids?: number[]; type: LogEventType }) => {
 	return event.tids[0];
 };
 
+export const getWatchPids = async () => {
+	const watchPlayers = await idb.merged.players.getAll({ watch: true });
+	return new Set(watchPlayers.map((p) => p.pid));
+};
+
 export const processEvents = async (
 	eventsAll: EventBBGM[],
 	{
 		level = "big",
 		limit = Infinity,
 		tid,
+		watchOnly,
 	}: {
 		level?: "all" | "big" | "normal";
 		limit?: number;
 		tid?: number;
+		watchOnly?: boolean;
 	} = {},
 ) => {
+	const watchPids = watchOnly ? await getWatchPids() : undefined;
+
 	let numKept = 0;
 	const events = eventsAll
 		.filter((event) => {
+			if (tid !== undefined && event.tids && !event.tids.includes(tid)) {
+				return false;
+			}
+
 			if (
-				tid !== undefined &&
-				event.tids &&
-				event.tids.length > 0 &&
-				!event.tids.includes(tid)
+				watchPids &&
+				(!event.pids || !event.pids.some((pid) => watchPids.has(pid)))
 			) {
 				return false;
 			}
+
 			return !IGNORE_EVENT_TYPES.includes(event.type);
 		})
 		.map((event) => {
@@ -59,11 +106,12 @@ export const processEvents = async (
 				event.tids &&
 				event.tids.includes(g.get("userTid"))
 			) {
-				if (event.type === "madePlayoffs" || event.type === "draft") {
-					event.score += 20;
-				} else {
-					event.score += 10;
-				}
+				const bonus =
+					event.type === "madePlayoffs" || event.type === "draft" ? 20 : 10;
+				return {
+					...event,
+					score: event.score + bonus,
+				};
 			}
 
 			return event;
@@ -120,10 +168,7 @@ export const processEvents = async (
 
 	for (const event of eventsWithPlayers) {
 		if (event.pids && event.pids.length > 0) {
-			const player = await idb.getCopy.players(
-				{ pid: event.pids[0] },
-				"noCopyCache",
-			);
+			const player = await idb.merged.players.get(event.pids[0]);
 			if (player) {
 				event.p = {
 					imgURL: player.imgURL,
@@ -136,37 +181,38 @@ export const processEvents = async (
 	return eventsWithPlayers;
 };
 
-const updateNews = async (
-	{ abbrev, level, order, season, tid }: ViewInput<"news">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
-		state.season !== season ||
-		state.level !== level ||
-		state.abbrev !== abbrev ||
-		state.order !== order
-	) {
-		const eventsAll = await idb.getCopies.events({
-			season,
-		});
+export default defineView({
+	id: "news",
+	processInputs,
+	load: async ({
+		inputs: { abbrev, level, order, season, tid },
+		updateEvents,
+		prevInputs,
+	}) => {
+		if (
+			updateEvents.has("firstRun") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("newPhase") ||
+			prevInputs?.season !== season ||
+			prevInputs?.level !== level ||
+			prevInputs?.abbrev !== abbrev ||
+			prevInputs?.order !== order
+		) {
+			const eventsAll = await idb.merged.events.getAll({ season });
 
-		if (order === "newest") {
-			eventsAll.reverse();
-		}
+			if (order === "newest") {
+				eventsAll.reverse();
+			}
 
-		const events = await processEvents(eventsAll, {
-			level,
-			tid,
-		});
+			const events = await processEvents(eventsAll, {
+				level,
+				tid,
+				watchOnly: abbrev === "watch",
+			});
 
-		const teams = (
-			await idb.getCopies.teamsPlus(
-				{
+			const teams = (
+				await team.getFormattedAll({
 					seasonAttrs: [
 						"abbrev",
 						"colors",
@@ -177,20 +223,17 @@ const updateNews = async (
 					],
 					season,
 					addDummySeason: true,
-				},
-				"noCopyCache",
-			)
-		).map((t) => t.seasonAttrs);
+				})
+			).map((t) => t.seasonAttrs);
 
-		return {
-			abbrev,
-			events,
-			level,
-			order,
-			season,
-			teams,
-		};
-	}
-};
-
-export default updateNews;
+			return {
+				abbrev,
+				events,
+				level,
+				order,
+				season,
+				teams,
+			};
+		}
+	},
+});

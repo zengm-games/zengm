@@ -1,4 +1,4 @@
-import { finances, realRosters, season, team } from "../index.ts";
+import { finances, player, realRosters, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { achievement, g, helpers, local, logEvent } from "../../util/index.ts";
 import type {
@@ -67,9 +67,10 @@ const newPhasePlayoffs = async (
 
 	const tidAll = new Set([...tidPlayoffs, ...tidPlayIn]);
 
+	const teamStatsToSave = [];
 	for (const teamSeason of teamSeasons) {
 		if (tidAll.has(teamSeason.tid)) {
-			await idb.cache.teamStats.add(team.genStatsRow(teamSeason.tid, true));
+			teamStatsToSave.push(team.genStatsRow(teamSeason.tid, true));
 
 			// Play-in teams have not made the playoffs yet, technically
 			if (tidPlayoffs.includes(teamSeason.tid)) {
@@ -89,7 +90,7 @@ const newPhasePlayoffs = async (
 			"playersByTid",
 			teamSeason.tid,
 		);
-		const players = await idb.getCopies.playersPlus(playersRaw, {
+		const players = await player.formatAll(playersRaw, {
 			attrs: ["age", "injury", "value", "pid"],
 			fuzz: true,
 			stats: ["gp", "min"],
@@ -99,18 +100,9 @@ const newPhasePlayoffs = async (
 		});
 		teamSeason.avgAge = team.avgAge(players);
 		teamSeason.ovrEnd = team.ovr(players);
-
-		await idb.cache.teamSeasons.put(teamSeason);
 	}
-
-	// Add row to player stats
-	for (const tid of tidAll) {
-		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-
-		for (const p of players) {
-			await idb.cache.players.put(p);
-		}
-	}
+	await idb.cache.teamStats.addAll(teamStatsToSave);
+	await idb.cache.teamSeasons.putAll(teamSeasons);
 
 	await finances.assessPayrollMinLuxury();
 	await season.newSchedulePlayoffsDay();

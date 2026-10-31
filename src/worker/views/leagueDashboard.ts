@@ -1,22 +1,19 @@
 import { PHASE, PLAYER } from "../../common/constants.ts";
-import { season, team } from "../core/index.ts";
+import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
+import type { Player } from "../../common/types.ts";
+import { defineView, type ViewArgs } from "../util/defineView.ts";
 import { processEvents } from "./news.ts";
 import { getMaxPlayoffSeed } from "./standings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { orderTeams } from "../util/orderTeams.ts";
+import { getNumericStat } from "../../common/statValue.ts";
 
-const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
-		const messages = await idb.getCopies.messages(
-			{
-				limit: 2,
-			},
-			"noCopyCache",
-		);
+const updateInbox = async ({ updateEvents }: ViewArgs) => {
+	if (updateEvents.has("firstRun") || updateEvents.has("newPhase")) {
+		const messages = await idb.merged.messages.getAll({ limit: 2 });
 		messages.reverse();
 		return {
 			messages: messages.map((message) => ({
@@ -29,20 +26,18 @@ const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateTeam = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
-		const [t, latestSeason] = await Promise.all([
-			idb.cache.teams.get(g.get("userTid")),
-			idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
-				g.get("season"),
-				g.get("userTid"),
-			]),
-		]);
+		const t = await idb.cache.teams.get(g.get("userTid"));
+		const latestSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsBySeasonTid",
+			[g.get("season"), g.get("userTid")],
+		);
 
 		const playoffRoundsWon = latestSeason?.playoffRoundsWon ?? -1;
 		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
@@ -69,11 +64,8 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updatePayroll = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement")
-	) {
+const updatePayroll = async ({ updateEvents }: ViewArgs) => {
+	if (updateEvents.has("firstRun") || updateEvents.has("playerMovement")) {
 		const payroll = await team.getPayroll(g.get("userTid"));
 		return {
 			payroll, // [millions of dollars]
@@ -81,12 +73,12 @@ const updatePayroll = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateTeams = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
 		const stats = bySport({
 			baseball: ["pts", "oppPts", "ops", "era"] as const,
@@ -105,36 +97,33 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			football: ["Points", "Allowed", "PssYds", "RusYds"],
 			hockey: ["Goals", "Allowed"],
 		});
-		const teams = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"otl",
-					"tied",
-					"winp",
-					"pts",
-					"att",
-					"revenue",
-					"profit",
-					"cid",
-					"did",
-					"wonDiv",
-					"lostDiv",
-					"tiedDiv",
-					"otlDiv",
-					"wonConf",
-					"lostConf",
-					"tiedConf",
-					"otlConf",
-				],
-				stats: ["pts", "oppPts", "gp", ...stats] as const,
-				season: g.get("season"),
-				showNoStats: true,
-			},
-			"noCopyCache",
-		);
+		const teams = await team.getFormattedAll({
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"otl",
+				"tied",
+				"winp",
+				"pts",
+				"att",
+				"revenue",
+				"profit",
+				"cid",
+				"did",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+			],
+			stats: ["pts", "oppPts", "gp", ...stats] as const,
+			season: g.get("season"),
+			showNoStats: true,
+		});
 		const t = teams.find((t2) => t2.tid === g.get("userTid"));
 		const cid = t !== undefined ? t.seasonAttrs.cid : undefined;
 		let att = 0;
@@ -189,7 +178,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 						if (
 							stat.startsWith("opp") ||
-							(isSport("baseball") && stat === "era")
+							(__SPORT === "baseball" && stat === "era")
 						) {
 							entry.rank = teams.length + 1 - entry.rank;
 						}
@@ -210,32 +199,32 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updatePlayers = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("newPhase")
 	) {
 		const startersStats = bySport({
 			baseball: ["war", "hr", "ba", "ops", "era", "ip"],
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
+		} as const);
 		const leaderStats = bySport({
 			baseball: ["hr", "h", "w"],
 			basketball: ["pts", "trb", "ast"],
 			football: ["pssYds", "rusYds", "recYds"],
 			hockey: ["g", "a", "pts"],
-		});
+		} as const);
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
 			Infinity,
 		]);
 
 		// League leaders
-		const leaderPlayers = await idb.getCopies.playersPlus(playersAll, {
+		const leaderPlayers = await player.formatAll(playersAll, {
 			attrs: ["pid", "firstName", "lastName", "abbrev", "tid"],
 			stats: leaderStats,
 			season: g.get("season"),
@@ -255,8 +244,12 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		for (const stat of leaderStats) {
-			if (leaderPlayers.length > 0) {
-				leaderPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
+			if (leaderPlayers[0]) {
+				leaderPlayers.sort(
+					(a, b) =>
+						(getNumericStat(b.stats[stat]) ?? 0) -
+						(getNumericStat(a.stats[stat]) ?? 0),
+				);
 				leagueLeaders.push({
 					abbrev: leaderPlayers[0].abbrev,
 					firstName: leaderPlayers[0].firstName,
@@ -264,7 +257,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					pid: leaderPlayers[0].pid,
 					stat,
 					tid: leaderPlayers[0].tid,
-					value: leaderPlayers[0].stats[stat],
+					value: getNumericStat(leaderPlayers[0].stats[stat]) ?? 0,
 				});
 			} else {
 				leagueLeaders.push({
@@ -280,7 +273,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		const userPlayers = addFirstNameShort(
-			await idb.getCopies.playersPlus(
+			await player.formatAll(
 				playersAll.filter((p) => p.tid === g.get("userTid")),
 				{
 					attrs: [
@@ -296,6 +289,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						"injury",
 						"watch",
 						"jerseyNumber",
+						"awards",
 					],
 					ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
 					stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
@@ -307,6 +301,11 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				},
 			),
 		);
+		for (const p of userPlayers) {
+			p.awards = p.awards.filter(
+				(award: Player["awards"][number]) => award.season === g.get("season"),
+			);
+		}
 
 		// Team leaders
 		const teamLeaders: {
@@ -319,15 +318,19 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		for (const stat of leaderStats) {
-			if (userPlayers.length > 0) {
-				userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
+			if (userPlayers[0]) {
+				userPlayers.sort(
+					(a, b) =>
+						(getNumericStat(b.stats[stat]) ?? 0) -
+						(getNumericStat(a.stats[stat]) ?? 0),
+				);
 				teamLeaders.push({
 					firstName: userPlayers[0].firstName,
 					firstNameShort: userPlayers[0].firstNameShort,
 					lastName: userPlayers[0].lastName,
 					pid: userPlayers[0].pid,
 					stat,
-					value: userPlayers[0].stats[stat],
+					value: getNumericStat(userPlayers[0].stats[stat]) ?? 0,
 				});
 			} else {
 				teamLeaders.push({
@@ -345,10 +348,10 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// Find starters or top 5 players
 		let starters;
 		const numPlayersOnCourt = g.get("numPlayersOnCourt");
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder);
 			starters = userPlayers.slice(0, Math.max(5, numPlayersOnCourt));
-		} else if (isSport("hockey")) {
+		} else if (__SPORT === "hockey") {
 			const t = await idb.cache.teams.get(g.get("userTid"));
 			if (t) {
 				const depth = t.depth as any;
@@ -382,24 +385,21 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updatePlayoffs = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
-		(updateEvents.includes("newPhase") &&
+		updateEvents.has("firstRun") ||
+		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.has("gameSim")) ||
+		(updateEvents.has("newPhase") &&
 			(g.get("phase") === PHASE.PLAYOFFS || g.get("phase") === PHASE.PRESEASON))
 	) {
-		const playoffSeries = await idb.getCopy.playoffSeries({
-			season: g.get("season"),
-		});
+		const playoffSeries = await idb.merged.playoffSeries.get(g.get("season"));
 		let foundSeries;
 		let seriesTitle = "";
 		let showPlayoffSeries = false;
 		let numGamesToWinSeries = 4;
 
 		if (playoffSeries !== undefined && playoffSeries.series.length > 0) {
-			const series = playoffSeries.series;
-			await helpers.augmentSeries(series);
+			const series = await helpers.augmentSeries(playoffSeries.series);
 
 			// Find the latest playoff series with the user's team in it
 
@@ -427,9 +427,7 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 							seriesTitle = helpers.upperCaseFirstLetter(
 								helpers.playoffRoundName(rnd, numPlayoffRounds, playoffsByConf),
 							);
-							numGamesToWinSeries = helpers.numGamesToWinSeries(
-								g.get("numGamesPlayoffSeries", "current")[rnd],
-							);
+							numGamesToWinSeries = helpers.numGamesToWinRound(rnd);
 							break;
 						}
 					}
@@ -440,9 +438,8 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 			}
 
-			const playIns = playoffSeries.playIns;
-			if (!found && playIns) {
-				await helpers.augmentSeries(playIns);
+			if (!found && playoffSeries.playIns) {
+				const playIns = await helpers.augmentPlayIns(playoffSeries.playIns);
 				for (const playIn of playIns) {
 					for (let i = playIn.length - 1; i >= 0; i--) {
 						const { away, home } = playIn[i]!;
@@ -456,7 +453,7 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 							seriesTitle = "Play-in tournament";
 
-							numGamesToWinSeries = 1;
+							numGamesToWinSeries = helpers.numGamesToWinRound(-1);
 							break;
 						}
 					}
@@ -477,40 +474,37 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
-		const teams = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"wonDiv",
-					"lostDiv",
-					"tiedDiv",
-					"otlDiv",
-					"wonConf",
-					"lostConf",
-					"tiedConf",
-					"otlConf",
-					"winp",
-					"pts",
-					"cid",
-					"did",
-					"abbrev",
-					"region",
-					"clinchedPlayoffs",
-					"imgURL",
-					"imgURLSmall",
-				],
-				stats: ["pts", "oppPts", "gp"],
-				season: g.get("season"),
-				showNoStats: true,
-			},
-			"noCopyCache",
-		);
+const updateStandings = async ({ updateEvents }: ViewArgs) => {
+	if (updateEvents.has("firstRun") || updateEvents.has("gameSim")) {
+		const teams = await team.getFormattedAll({
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+				"winp",
+				"pts",
+				"cid",
+				"did",
+				"abbrev",
+				"region",
+				"clinchedPlayoffs",
+				"imgURL",
+				"imgURLSmall",
+			],
+			stats: ["pts", "oppPts", "gp"],
+			season: g.get("season"),
+			showNoStats: true,
+		});
 
 		// Find user's conference
 		const userTid = g.get("userTid");
@@ -579,17 +573,17 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateNewsFeed = async ({ updateEvents }: ViewArgs) => {
 	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
+		updateEvents.has("firstRun") ||
+		updateEvents.has("playerMovement") ||
+		updateEvents.has("gameSim") ||
+		updateEvents.has("newPhase")
 	) {
 		const NUM_EVENTS = 8;
 
 		// Load all events from this season, and last season too if more are needed
-		const eventsAll = await idb.getCopies.events({
+		const eventsAll = await idb.merged.events.getAll({
 			season: g.get("season"),
 		});
 		eventsAll.reverse();
@@ -598,7 +592,7 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			limit: NUM_EVENTS,
 		});
 		if (events.length < NUM_EVENTS) {
-			const eventsAll2 = await idb.getCopies.events({
+			const eventsAll2 = await idb.merged.events.getAll({
 				season: g.get("season") - 1,
 			});
 			eventsAll2.reverse();
@@ -609,21 +603,18 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		const teams = (
-			await idb.getCopies.teamsPlus(
-				{
-					seasonAttrs: [
-						"abbrev",
-						"colors",
-						"jersey",
-						"imgURL",
-						"imgURLSmall",
-						"region",
-					],
-					season: g.get("season"),
-					addDummySeason: true,
-				},
-				"noCopyCache",
-			)
+			await team.getFormattedAll({
+				seasonAttrs: [
+					"abbrev",
+					"colors",
+					"jersey",
+					"imgURL",
+					"imgURLSmall",
+					"region",
+				],
+				season: g.get("season"),
+				addDummySeason: true,
+			})
 		).map((t) => t.seasonAttrs);
 
 		return {
@@ -633,25 +624,28 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-export default async (inputs: unknown, updateEvents: UpdateEvents) => {
-	// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
-	const part1 = Object.assign(
-		{},
-		await updateInbox(inputs, updateEvents),
-		await updateTeam(inputs, updateEvents),
-		await updatePayroll(inputs, updateEvents),
-	);
-	const part2 = Object.assign(
-		{},
-		await updateTeams(inputs, updateEvents),
-		await updateNewsFeed(inputs, updateEvents),
-	);
-	const part3 = Object.assign(
-		{},
-		await updatePlayers(inputs, updateEvents),
-		await updatePlayoffs(inputs, updateEvents),
-		await updateStandings(inputs, updateEvents),
-	);
+export default defineView({
+	id: "leagueDashboard",
+	load: async (args) => {
+		// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
+		const part1 = Object.assign(
+			{},
+			await updateInbox(args),
+			await updateTeam(args),
+			await updatePayroll(args),
+		);
+		const part2 = Object.assign(
+			{},
+			await updateTeams(args),
+			await updateNewsFeed(args),
+		);
+		const part3 = Object.assign(
+			{},
+			await updatePlayers(args),
+			await updatePlayoffs(args),
+			await updateStandings(args),
+		);
 
-	return Object.assign({}, part1, part2, part3);
-};
+		return Object.assign({}, part1, part2, part3);
+	},
+});

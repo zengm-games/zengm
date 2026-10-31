@@ -19,12 +19,11 @@ import { processTeam } from "../core/game/loadTeams.ts";
 import { gameSimToBoxScore } from "../core/game/writeGameStats.ts";
 import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball.ts";
 import { connectLeague, idb } from "../db/index.ts";
-import { getPlayersActiveSeason } from "../db/getCopies/players.ts";
+import { getPlayersActiveSeason } from "../db/merged/players.ts";
 import { g, helpers, local, toUI } from "../util/index.ts";
 import { boxScoreToLiveSim } from "../views/liveGame.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { randInt } from "../../common/random.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
@@ -46,11 +45,14 @@ export const getSeasons = async (lid: number) => {
 
 	league.close();
 
-	if (!season || typeof season.value !== "number") {
-		throw new Error("Invalid season");
-	}
-	if (!startingSeason || typeof startingSeason.value !== "number") {
-		throw new Error("Invalid startingSeason");
+	// League database might be missing or corrupted, in which case it can't be used
+	if (
+		!season ||
+		typeof season.value !== "number" ||
+		!startingSeason ||
+		typeof startingSeason.value !== "number"
+	) {
+		return;
 	}
 
 	return {
@@ -84,7 +86,7 @@ const getSeasonInfoLeague = async ({
 				[key]: value,
 			},
 			key,
-		) as any;
+		);
 	};
 
 	const gameAttributes: Partial<GameAttributesLeague> = {};
@@ -111,6 +113,9 @@ const getSeasonInfoLeague = async ({
 
 	let pid = pidOffset;
 
+	// g.season might not be set yet (fresh worker), but it's needed by addStatsRow and player.updateValues below
+	g.setWithoutSavingToDB("season", season);
+
 	const players = (await getPlayersActiveSeason(league, season)).filter((p) => {
 		// Keep players who ended the season on this team. Not perfect, will miss released players. Second check is for players added to the team in God Mode during the playoffs.
 		let seasonStats =
@@ -135,7 +140,8 @@ const getSeasonInfoLeague = async ({
 
 		return true;
 	});
-	const playersByTid = Map.groupBy(players, (p) => p.stats[0].tid);
+	// stats always has one row, from the filter above
+	const playersByTid = Map.groupBy(players, (p) => p.stats[0]!.tid);
 
 	const playoffSeries = await league
 		.transaction("playoffSeries")
@@ -172,11 +178,15 @@ const getSeasonInfoLeague = async ({
 				pid += 1;
 
 				// No fatigue in exhibition game
-				if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+				if (
+					__SPORT === "baseball" &&
+					p.pFatigue !== undefined &&
+					p.pFatigue > 0
+				) {
 					p.pFatigue = 0;
 				}
 				if (
-					isSport("hockey") &&
+					__SPORT === "hockey" &&
 					p.numConsecutiveGamesG !== undefined &&
 					p.numConsecutiveGamesG > 0
 				) {
@@ -185,7 +195,7 @@ const getSeasonInfoLeague = async ({
 
 				// Reset to default, because we don't know what it should be
 				if (!isCurrentOngoingSeason) {
-					if (isSport("basketball")) {
+					if (__SPORT === "basketball") {
 						p.ptModifier = 1;
 					}
 
@@ -198,7 +208,6 @@ const getSeasonInfoLeague = async ({
 
 			if (!isCurrentOngoingSeason) {
 				// Update player values, since it will be needed for either depth chart or rosterOrder
-				g.setWithoutSavingToDB("season", season);
 				g.setWithoutSavingToDB("numActiveTeams", 2);
 				local.playerOvrMean = 48;
 				local.playerOvrStd = 10;
@@ -209,7 +218,7 @@ const getSeasonInfoLeague = async ({
 				}
 
 				// Reset rosterOrder for past seasons, since we don't store it
-				if (isSport("basketball")) {
+				if (__SPORT === "basketball") {
 					const rosterOrderByPid = getRosterOrderByPid(
 						teamPlayers.map((p) => ({
 							pid: p.pid,
@@ -223,7 +232,10 @@ const getSeasonInfoLeague = async ({
 						false,
 					);
 					for (const p of teamPlayers) {
-						p.rosterOrder = rosterOrderByPid.get(p.pid);
+						const rosterOrder = rosterOrderByPid.get(p.pid);
+						if (rosterOrder !== undefined) {
+							p.rosterOrder = rosterOrder;
+						}
 					}
 				}
 			}
@@ -234,7 +246,7 @@ const getSeasonInfoLeague = async ({
 				}
 
 				for (const [key, pids] of Object.entries(depth)) {
-					if (isSport("baseball") && (key === "L" || key === "LP")) {
+					if (__SPORT === "baseball" && (key === "L" || key === "LP")) {
 						// These are not actually pids
 						continue;
 					}
@@ -323,6 +335,7 @@ export const getSeasonInfo = async (
 
 		// Some value here is needed for ratingsStatsPopoverInfo and game sim
 		g.setWithoutSavingToDB("season", 0);
+		g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 		g.setWithoutSavingToDB("numActiveTeams", 2);
 	}
 
@@ -399,7 +412,7 @@ export const simExhibitionGame = async (
 			let depth: Team["depth"];
 			if (t.depth) {
 				depth = t.depth;
-			} else if (!isSport("basketball")) {
+			} else if (__SPORT !== "basketball") {
 				depth = await team.genDepth(t.players);
 			}
 
@@ -418,7 +431,6 @@ export const simExhibitionGame = async (
 					did: 0,
 				},
 				t.players,
-				true,
 			);
 		}),
 	)) as [any, any];
@@ -462,8 +474,7 @@ export const simExhibitionGame = async (
 		teamSeasonOverrides: teams,
 	});
 	for (const i of [0, 1] as const) {
-		const j = i === 0 ? 1 : 0;
-		liveSim.initialBoxScore.teams[i].season = teams[j].season;
+		liveSim.initialBoxScore.teams[i].season = teams[i].season;
 	}
 
 	liveSim.initialBoxScore.exhibition = true;

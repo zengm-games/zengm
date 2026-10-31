@@ -1,13 +1,15 @@
 import { createNanoEvents } from "nanoevents";
+import type { ReactNode } from "react";
+import type { LogEventType } from "../../common/types.ts";
 
 export type Message = {
 	id: number;
-	message: string;
+	message: ReactNode;
 	title?: string;
 	extraClass?: string;
-	htmlIsSafe?: boolean;
 	onClose?: () => void;
 	persistent: boolean;
+	type: LogEventType;
 };
 
 export const emitter = createNanoEvents<{
@@ -17,28 +19,28 @@ export const emitter = createNanoEvents<{
 let id = 0;
 
 export const notify = (
-	message: string,
-	title?: string,
+	message: ReactNode,
+	title: string | undefined,
 	{
 		extraClass,
-		htmlIsSafe,
 		onClose,
 		persistent = false,
+		type,
 	}: {
 		extraClass?: string;
-		htmlIsSafe?: boolean;
 		onClose?: () => void;
 		persistent?: boolean;
-	} = {},
+		type: LogEventType;
+	},
 ) => {
 	emitter.emit("notification", {
 		id,
 		message,
 		title,
 		extraClass,
-		htmlIsSafe,
 		onClose,
 		persistent,
+		type,
 	});
 
 	id += 1;

@@ -683,6 +683,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					alwaysShowCountry: {
 						type: "boolean",
 					},
+					pomymarket: {
+						type: "boolean",
+					},
 					autoExpand: {
 						type: "object",
 						properties: {

@@ -593,6 +593,7 @@ export type GameAttributesLeague = {
 	allStarDunk: boolean;
 	allStarThree: boolean;
 	alwaysShowCountry: boolean;
+	pomymarket: boolean;
 	autoExpand:
 		| {
 				phase: "vote";

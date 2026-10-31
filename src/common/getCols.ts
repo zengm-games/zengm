@@ -3527,6 +3527,11 @@ const cols: {
 	"Three-Point Winner": {
 		desc: "Three-Point Contest Winner",
 	},
+	"Title Odds": {
+		desc: "Chance of Winning the Title",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Titles: {
 		desc: "Championships Won",
 		sortSequence: ["desc", "asc"],

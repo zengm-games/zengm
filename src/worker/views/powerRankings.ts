@@ -3,6 +3,7 @@ import { g } from "../util/index.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { player, team } from "../core/index.ts";
+import { isTitleOddsAvailable } from "../core/team/getTitleOdds.ts";
 import {
 	NOT_REAL_POSITIONS,
 	POSITIONS,
@@ -279,6 +280,7 @@ export default defineView({
 				season,
 				teams: teamsWithRankings,
 				ties: hasTies(season) || ties,
+				titleOddsAvailable: isTitleOddsAvailable(season),
 				otl: g.get("otl", season) || otl,
 			};
 		}

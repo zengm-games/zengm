@@ -160,6 +160,7 @@ export type Key =
 	| "autoRelocateRebrand"
 	| "autoRelocateRealign"
 	| "alwaysShowCountry"
+	| "pomymarket"
 	| "neutralSite"
 	| "rpdPot"
 	| "saveOldBoxScores"

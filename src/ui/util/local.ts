@@ -50,6 +50,7 @@ if (showTemp === "true") {
 const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 	(set, get) => ({
 		alwaysShowCountry: false,
+		pomymarket: false,
 		budget: defaultGameAttributes.budget,
 		challengeNoRatings: false,
 		challengeNoTrades: false,
@@ -152,6 +153,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 			resetLeague() {
 				set({
 					alwaysShowCountry: false,
+					pomymarket: false,
 					challengeNoRatings: false,
 					games: [],
 					godMode: false,

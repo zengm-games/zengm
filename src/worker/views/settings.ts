@@ -172,6 +172,7 @@ type Key =
 	| "autoRelocateRealign"
 	| "autoRelocateRebrand"
 	| "alwaysShowCountry"
+	| "pomymarket"
 	| "neutralSite"
 	| "rpdPot"
 	| "saveOldBoxScores"
@@ -391,6 +392,7 @@ export const getInitialSettings = (): Settings => {
 		autoRelocateRealign: g.get("autoRelocateRealign"),
 		autoRelocateRebrand: g.get("autoRelocateRebrand"),
 		alwaysShowCountry: g.get("alwaysShowCountry"),
+		pomymarket: g.get("pomymarket"),
 		neutralSite: g.get("neutralSite"),
 		rpdPot: g.get("rpdPot"),
 		saveOldBoxScores: g.get("saveOldBoxScores"),

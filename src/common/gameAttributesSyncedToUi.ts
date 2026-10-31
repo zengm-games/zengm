@@ -22,6 +22,7 @@ export const gameAttributesSyncedToUi = [
 	"numPeriods",
 	"numWatchColors",
 	"phase",
+	"pomymarket",
 	"quarterLength",
 	"salaryCap",
 	"salaryCapType",

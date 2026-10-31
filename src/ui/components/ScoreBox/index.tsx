@@ -4,16 +4,22 @@ import { helpers } from "../../util/helpers.ts";
 import { useLocal } from "../../util/local.ts";
 import React, { memo, type ReactNode } from "react";
 import { TeamLogoInline } from "../TeamLogoInline.tsx";
-import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import { PlayerNameLabels } from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
 import { getCol } from "../../../common/getCol.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-
-const roundHalf = (x: number) => {
-	return Math.round(x * 2) / 2;
-};
+import {
+	formatGameSpreads,
+	getGameSpread,
+} from "../../../common/getGameSpread.ts";
+import {
+	getWinModelInputs,
+	getWinProbability,
+	roundWinPercents,
+} from "../../../common/winProbability.ts";
+import { PomymarketBar, PomymarketPercent } from "../PomymarketOdds.tsx";
+import { TEAM_NUMS_DISPLAY_ORDER } from "../../util/boxScoreDisplayOrder.ts";
 
 type Team = {
 	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
@@ -105,6 +111,7 @@ export const ScoreBox = memo(
 			neutralSite,
 			numPeriods,
 			phase,
+			pomymarket,
 			quarterLength,
 			season,
 			teamInfoCache,
@@ -115,6 +122,7 @@ export const ScoreBox = memo(
 			"neutralSite",
 			"numPeriods",
 			"phase",
+			"pomymarket",
 			"quarterLength",
 			"season",
 			"teamInfoCache",
@@ -135,69 +143,32 @@ export const ScoreBox = memo(
 			userTid === game.teams[0].tid || userTid === game.teams[1].tid;
 
 		let spreads: [string | undefined, string | undefined] | undefined;
+		let winPercents: ReturnType<typeof roundWinPercents> | undefined;
 		if (
 			game.teams[0].ovr !== undefined &&
 			game.teams[1].ovr !== undefined &&
 			(!small || !final)
 		) {
-			let actualHomeCourtAdvantage;
-			if (game.neutralSite) {
-				// Completed game at neutral site
-				actualHomeCourtAdvantage = 0;
-			} else if (neutralSite === "finals" && game.finals) {
-				// Upcoming game at neutral site
-				actualHomeCourtAdvantage = 0;
-			} else if (neutralSite === "playoffs" && phase === PHASE.PLAYOFFS) {
-				// Upcoming game at neutral site
-				actualHomeCourtAdvantage = 0;
+			// game.neutralSite is for completed games, the others are for upcoming games
+			const neutral =
+				!!game.neutralSite ||
+				(neutralSite === "finals" && !!game.finals) ||
+				(neutralSite === "playoffs" && phase === PHASE.PLAYOFFS);
+
+			const gameInfo = {
+				homeCourtAdvantage,
+				neutral,
+				numPeriods,
+				ovrs: [game.teams[0].ovr, game.teams[1].ovr],
+				quarterLength,
+			} as const;
+
+			if (pomymarket) {
+				winPercents = roundWinPercents(
+					getWinProbability(getWinModelInputs(gameInfo)),
+				);
 			} else {
-				// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
-				// Default homeCourtAdvantage is 1
-				actualHomeCourtAdvantage =
-					bySport({
-						baseball: 1,
-						basketball: 3.3504,
-						football: 3,
-						hockey: 0.25,
-					}) * homeCourtAdvantage;
-			}
-
-			const ovr0 = game.teams[0].ovr;
-			const ovr1 = game.teams[1].ovr;
-			let spread = bySport({
-				baseball: () => (1 / 10) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
-
-				basketball: () => (15 / 50) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
-
-				football: () => (3 / 10) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
-
-				hockey: () => (1.8 / 100) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
-			})();
-
-			// Adjust for game length
-			spread *=
-				(numPeriods * quarterLength) /
-				(defaultGameAttributes.numPeriods *
-					defaultGameAttributes.quarterLength);
-
-			spread = roundHalf(spread);
-
-			if (spread > 0) {
-				spreads = [
-					(-spread).toLocaleString("en-US", {
-						maximumFractionDigits: 1,
-					}),
-					undefined,
-				];
-			} else if (spread < 0) {
-				spreads = [
-					undefined,
-					spread.toLocaleString("en-US", {
-						maximumFractionDigits: 1,
-					}),
-				];
-			} else {
-				spreads = [undefined, "PK"];
+				spreads = formatGameSpreads(getGameSpread(gameInfo));
 			}
 		}
 
@@ -440,6 +411,16 @@ export const ScoreBox = memo(
 															</span>
 														</>
 													) : null}
+													{winPercents ? (
+														<>
+															,{" "}
+															<PomymarketPercent
+																i={i}
+																preGame={final}
+																winPercents={winPercents}
+															/>
+														</>
+													) : null}
 													{spreads?.[i] ? (
 														<>
 															,{" "}
@@ -458,9 +439,13 @@ export const ScoreBox = memo(
 												</div>
 											) : null}
 										</div>
-										{spreads && small ? (
+										{(spreads || winPercents) && small ? (
 											<div className="text-end score-box-score me-2">
-												{spreads[i]}
+												{winPercents ? (
+													<PomymarketPercent i={i} winPercents={winPercents} />
+												) : (
+													spreads?.[i]
+												)}
 											</div>
 										) : null}
 										{final ? (
@@ -563,6 +548,12 @@ export const ScoreBox = memo(
 							);
 						})
 					)}
+					{winPercents && !small && !final ? (
+						<PomymarketBar
+							order={TEAM_NUMS_DISPLAY_ORDER}
+							winPercents={winPercents}
+						/>
+					) : null}
 				</div>
 				{small && overtimes ? (
 					<div

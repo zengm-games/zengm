@@ -431,6 +431,7 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"alwaysShowCountry",
 		),
+		pomymarket: unwrapGameAttribute(defaultGameAttributes, "pomymarket"),
 		neutralSite: unwrapGameAttribute(defaultGameAttributes, "neutralSite"),
 		rpdPot: unwrapGameAttribute(defaultGameAttributes, "rpdPot"),
 		saveOldBoxScores: unwrapGameAttribute(

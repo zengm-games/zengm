@@ -1,6 +1,9 @@
 import clsx from "clsx";
 import { POMYMARKET_NAME } from "../../common/constants.ts";
-import type { roundWinPercents } from "../../common/winProbability.ts";
+import { roundWinPercents } from "../../common/winProbability.ts";
+import { TEAM_NUMS_DISPLAY_ORDER } from "../util/boxScoreDisplayOrder.ts";
+import { getLiveWinp } from "../util/getLiveWinp.ts";
+import { useLocal } from "../util/local.ts";
 
 type WinPercents = ReturnType<typeof roundWinPercents>;
 
@@ -65,6 +68,55 @@ export const PomymarketBar = ({
 					style={{ width: `${winPercents.percents[i]}%` }}
 				/>
 			))}
+		</div>
+	);
+};
+
+export const PomymarketLive = ({
+	boxScore,
+	quarterLength,
+	sportState,
+}: {
+	boxScore: any;
+	quarterLength: number;
+	sportState: any;
+}) => {
+	const { homeCourtAdvantage, pomymarket } = useLocal([
+		"homeCourtAdvantage",
+		"pomymarket",
+	]);
+
+	if (!pomymarket || boxScore.exhibition) {
+		return null;
+	}
+
+	const liveWinp = getLiveWinp({
+		boxScore,
+		homeCourtAdvantage,
+		quarterLength,
+		sportState,
+	});
+	if (!liveWinp) {
+		return null;
+	}
+
+	const winPercents = roundWinPercents(liveWinp.prob, liveWinp.resolved);
+
+	return (
+		<div className="mx-auto mt-1 small" style={{ maxWidth: 300 }}>
+			<div className="d-flex justify-content-between">
+				{TEAM_NUMS_DISPLAY_ORDER.map((i) => (
+					<div key={i}>
+						{boxScore.teams[i].abbrev}{" "}
+						<PomymarketPercent i={i} winPercents={winPercents} />
+					</div>
+				))}
+			</div>
+			<PomymarketBar
+				order={TEAM_NUMS_DISPLAY_ORDER}
+				winPercents={winPercents}
+			/>
+			{liveWinp.tied ? <div className="text-center">Tied</div> : null}
 		</div>
 	);
 };

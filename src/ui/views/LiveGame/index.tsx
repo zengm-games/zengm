@@ -19,6 +19,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { getSeconds } from "../../../common/formatClock.ts";
+import { PomymarketLive } from "../../components/PomymarketOdds.tsx";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../../util/processLiveGameEvents.football.tsx";
@@ -989,6 +990,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 								<HeadlineScoreLive
 									boxScore={boxScore.current}
 									isStuck={isStuck}
+								/>
+								<PomymarketLive
+									boxScore={boxScore.current}
+									quarterLength={props.quarterLength}
+									sportState={sportState.current}
 								/>
 								<div className="d-flex align-items-center d-md-none pt-2">
 									<PlayPauseNext

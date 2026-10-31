@@ -1,6 +1,10 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
-import { awardSettingsSchema, type View } from "../../../common/types.ts";
+import {
+	awardSettingsSchema,
+	type GameAttributesLeague,
+	type View,
+} from "../../../common/types.ts";
 import { Fragment, useEffect, useEffectEvent, useId, useState } from "react";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
@@ -28,6 +32,7 @@ import { IMPORT_FILE_STYLE } from "../../components/ImportFileButton.tsx";
 import { Dropdown } from "react-bootstrap";
 import { resetFileInput } from "../../util/resetFileInput.ts";
 import { Documentation } from "./Documentation.tsx";
+import { ImportModal } from "./ImportModal.tsx";
 
 const MARGIN = 14;
 
@@ -79,6 +84,15 @@ const AwardSettings = ({
 	const [status, setStatus] = useState<"loading" | "saving" | "idle">("idle");
 	const { setDirty } = useBlocker();
 	const formId = useId();
+
+	// Awards loaded from a file, waiting for the user to select which ones to import
+	const [importing, setImporting] = useState<{
+		awards: GameAttributesLeague["awards"];
+		show: boolean;
+	}>({ awards: [], show: false });
+	const closeImportModal = () => {
+		setImporting((prev) => ({ ...prev, show: false }));
+	};
 
 	const [scrollToAwardId, setScrollToAwardId] = useState<string | undefined>();
 	useEffect(() => {
@@ -382,18 +396,7 @@ const AwardSettings = ({
 											basicInfo.gameAttributes.awards,
 										);
 										if (result.success) {
-											const newAwards = await toWorker(
-												"awardSettings",
-												"getAwardCandidates",
-												{ type: "custom", season, awards: result.data },
-											);
-											if (newAwards.errorMessages) {
-												showErrorMessages(newAwards.errorMessages);
-											}
-											setAwardsState(
-												awardsToEditingState(newAwards.awardCandidates),
-											);
-											setDirty(true);
+											setImporting({ awards: result.data, show: true });
 										} else {
 											const uniqueErrorMessages = getUniqueErrorMessages(
 												zodErrorsToErrorMessages(result.error),
@@ -426,6 +429,43 @@ const AwardSettings = ({
 					Save settings
 				</ActionButton>
 			</StickyBottomButtons>
+
+			<ImportModal
+				awards={importing.awards}
+				onCancel={closeImportModal}
+				onImport={async ({ awards, deleteExisting }) => {
+					try {
+						const newAwards = await toWorker(
+							"awardSettings",
+							"getAwardCandidates",
+							{
+								type: "custom",
+								season,
+								awards,
+							},
+						);
+						if (newAwards.errorMessages) {
+							showErrorMessages(newAwards.errorMessages);
+						}
+						const newAwardsState = awardsToEditingState(
+							newAwards.awardCandidates,
+						);
+						setAwardsState((oldState) =>
+							deleteExisting
+								? newAwardsState
+								: [...oldState, ...newAwardsState],
+						);
+						setDirty(true);
+						closeImportModal();
+					} catch (error) {
+						showNotification({
+							type: "error",
+							text: error.message,
+						});
+					}
+				}}
+				show={importing.show}
+			/>
 		</>
 	);
 };

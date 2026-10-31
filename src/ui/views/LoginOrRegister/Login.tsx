@@ -7,6 +7,7 @@ import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { localActions } from "../../util/local.ts";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";
 import { fetchWrapper } from "../../../common/fetchWrapper.ts";
+import { getLoginErrorMessage } from "./getLoginErrorMessage.ts";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	const [submitting, setSubmitting] = useState(false);
@@ -52,7 +53,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				analyticsEvent("login");
 			} else {
 				setSubmitting(false);
-				setErrorMessage("Invalid username or password.");
+				setErrorMessage(getLoginErrorMessage(data));
 			}
 		} catch (error) {
 			console.error(error);
@@ -68,7 +69,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				<input type="hidden" name="sport" value={__SPORT} />
 				<div className="mb-3">
 					<label className="form-label" htmlFor="login-username">
-						Username
+						Username or Email Address
 					</label>
 					<input
 						type="text"

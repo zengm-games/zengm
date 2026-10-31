@@ -1,5 +1,9 @@
 import { season, team } from "../core/index.ts";
 import { InvalidPlayoffSettingsError } from "../core/season/genPlayoffSeries.ts";
+import {
+	getScheduledGamesForSeries,
+	seriesIsNotOver,
+} from "../core/season/playoffSchedule.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayoffSeries } from "../../common/types.ts";
@@ -18,6 +22,11 @@ type TeamToEdit = {
 	record: string;
 };
 
+type ForceSeriesInfo = {
+	forceWin?: number;
+	numGames: number;
+};
+
 export default defineView({
 	id: "playoffs",
 	processInputs: validateSeasonOnly,
@@ -34,6 +43,7 @@ export default defineView({
 					matchup: [number, number];
 					rowspan: number;
 				}[][];
+				forceSeries: (ForceSeriesInfo | undefined)[][];
 				numGamesPlayoffSeries: number[];
 				numGamesToWinSeries: number[];
 				playIns: Awaited<ReturnType<typeof helpers.augmentPlayIns>> | undefined;
@@ -125,6 +135,46 @@ export default defineView({
 			);
 
 			const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
+
+			const forceSeries: (ForceSeriesInfo | undefined)[][] = series.map((row) =>
+				row.map(() => undefined),
+			);
+			if (
+				finalMatchups &&
+				g.get("godMode") &&
+				inputs.season === g.get("season") &&
+				playoffSeries &&
+				playoffSeries.currentRound >= 0
+			) {
+				const round = playoffSeries.currentRound;
+				const numGamesToWin = helpers.numGamesToWinRound(round);
+				const schedule = await idb.cache.schedule.getAll();
+				for (const [i, matchup] of series[round]!.entries()) {
+					if (
+						matchup.away &&
+						seriesIsNotOver(matchup.home, matchup.away, numGamesToWin)
+					) {
+						const games = getScheduledGamesForSeries(
+							schedule,
+							matchup.home.tid,
+							matchup.away.tid,
+						);
+
+						if (games.length > 0) {
+							const forceWins = new Set(games.map((game) => game.forceWin));
+							const forceWin =
+								forceWins.size === 1
+									? forceWins.values().next().value
+									: undefined;
+
+							forceSeries[round]![i] = {
+								forceWin: typeof forceWin === "number" ? forceWin : undefined,
+								numGames: games.length,
+							};
+						}
+					}
+				}
+			}
 
 			let canEdit =
 				finalMatchups && g.get("godMode") && inputs.season === g.get("season");
@@ -219,6 +269,7 @@ export default defineView({
 				canEdit,
 				confNames,
 				finalMatchups,
+				forceSeries,
 				matchups,
 				numGamesPlayoffSeries,
 				numGamesToWinSeries: numGamesPlayoffSeries.map((numGames, round) =>

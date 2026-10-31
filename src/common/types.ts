@@ -653,6 +653,10 @@ export type GameAttributesLeague = {
 	foulsNeededToFoulOut: number;
 	foulsUntilBonus: [number, number, number];
 	foulRateFactor: number;
+	firedTids: {
+		tid: number;
+		season: number;
+	}[];
 	gameOver: boolean;
 	gender: "female" | "male";
 	goatFormula?: string;

@@ -64,6 +64,20 @@ describe("getWinProbability", () => {
 		assert.strictEqual(getWinProbability({ ...input, frac: 0, margin: -1 }), 0);
 	});
 
+	test("the better team is favored more in a longer game", () => {
+		const prob = (quarterLength: number) =>
+			getWinProbability(
+				getWinModelInputs({
+					homeCourtAdvantage: 1,
+					neutral: true,
+					numPeriods: 4,
+					ovrs: [60, 50],
+					quarterLength,
+				}),
+			);
+		assert.isAbove(prob(24), prob(12));
+	});
+
 	test("quarterLength of 0 is even", () => {
 		assert.strictEqual(
 			getWinProbability(

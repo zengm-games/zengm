@@ -6,6 +6,7 @@ import { g, helpers } from "../../util/index.ts";
 import { PHASE } from "../../../common/constants.ts";
 import {
 	getTeamStrength,
+	getTitleOdds,
 	isTitleOddsAvailable,
 	simTitleOdds,
 } from "./getTitleOdds.ts";
@@ -286,6 +287,88 @@ describe("playoffs", () => {
 			assert.deepEqual(odds[2], { prob: 0, resolved: true });
 			assert.isUndefined(odds[4]!.resolved);
 		});
+
+		test("winning the lower game does not win the third game", async () => {
+			const playoffSeries = makeSeries(
+				[
+					[
+						{
+							home: seriesTeam(0, 1),
+							away: { ...seriesTeam(3, 4), pendingPlayIn: true },
+						},
+						{
+							home: seriesTeam(1, 2),
+							away: { ...seriesTeam(2, 3), pendingPlayIn: true },
+						},
+					],
+					[],
+				],
+				-1,
+				[
+					[
+						{ home: seriesTeam(2, 3), away: seriesTeam(3, 4) },
+						{ home: seriesTeam(4, 5), away: seriesTeam(5, 6, 1) },
+					],
+				] as any,
+			);
+			const odds = (await sim({ numSims: 3000, playoffSeries }))!;
+
+			// Teams 2 and 3 get the winner's slot, and the loser of their game is still alive for team 5's slot
+			assert.isAbove(odds[2]!.prob + odds[3]!.prob, odds[5]!.prob * 2);
+		});
+	});
+
+	test("a neutral site takes away home court", async () => {
+		g.setWithoutSavingToDB("numGamesPlayoffSeries", [1, 1] as any);
+		const getOdds = () => sim({ numSims: 3000, playoffSeries: makeBracket() });
+
+		const notNeutral = (await getOdds())!;
+		g.setWithoutSavingToDB("neutralSite", "playoffs");
+		const neutral = (await getOdds())!;
+		g.setWithoutSavingToDB("neutralSite", "never");
+		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7] as any);
+
+		assert.isBelow(neutral[0]!.prob, notNeutral[0]!.prob - 0.02);
+	});
+});
+
+describe("getTitleOdds", () => {
+	const season = 2025;
+
+	beforeAll(async () => {
+		g.setWithoutSavingToDB("season", season);
+		g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
+		const teams = helpers.getTeamsDefault();
+		await resetCache({
+			teams: teams.map((t) => ({
+				...t,
+				disabled: t.tid === 1,
+				playThroughInjuries: [0, 4],
+			})),
+			teamSeasons: getTeams().map(({ teamSeason }) => ({
+				...teamSeason,
+				clinchedPlayoffs: teamSeason.tid === 0 ? "o" : undefined,
+				season,
+			})),
+		});
+	});
+
+	afterAll(async () => {
+		resetG();
+		await resetCache({});
+	});
+
+	test("maps eliminated teams and skips disabled teams", async () => {
+		const odds = (await getTitleOdds())!;
+		assert.deepEqual(odds[0], { prob: 0, resolved: true });
+		assert.isUndefined(odds[1]);
+		assert.isDefined(odds[2]);
+	});
+
+	test("returns undefined in the playoffs with no bracket", async () => {
+		g.setWithoutSavingToDB("phase", PHASE.PLAYOFFS);
+		assert.isUndefined(await getTitleOdds());
+		g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	});
 });
 

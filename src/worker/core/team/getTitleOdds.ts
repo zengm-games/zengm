@@ -184,7 +184,12 @@ const simPlayIns = (bracket: Bracket, info: SimInfo): Matchup[] => {
 		const [game0, game1, game2] = playIn;
 		const [winner0, loser0] = playGame(game0);
 		const [winner1] = playGame(game1);
-		const [winner2] = playGame(game2 ?? { home: loser0, away: winner1 });
+		const [winner2] = playGame(
+			game2 ?? {
+				home: { ...loser0, won: 0 },
+				away: { ...winner1, won: 0 },
+			},
+		);
 
 		// Same as in updatePlayoffSeries, these are the placeholder tids in the first round of the playoffs
 		winnersBySlot.set(game0.home.tid, winner0);
@@ -388,15 +393,13 @@ export const simTitleOdds = async ({
 
 	const recordScores = new Map<number, number>();
 	for (const { teamSeason } of teams) {
-		recordScores.set(
-			teamSeason.tid,
-			helpers.calcWinp({
-				lost: teamSeason.lost ?? 0,
-				otl: teamSeason.otl ?? 0,
-				tied: teamSeason.tied ?? 0,
-				won: teamSeason.won ?? 0,
-			}),
-		);
+		const { pts, winp } = getHypotheticalTeam({
+			teamSeason,
+			won: 0,
+			lost: 0,
+			usePts,
+		}).seasonAttrs;
+		recordScores.set(teamSeason.tid, usePts ? pts : winp);
 	}
 
 	const counts = new Map<number, number>();
@@ -464,6 +467,7 @@ export const simTitleOdds = async ({
 				season,
 				skipTiebreakers: true,
 			});
+			info.byConf = generated.byConf;
 			bracket = {
 				currentRound: generated.playIns ? -1 : 0,
 				playIns: generated.playIns,

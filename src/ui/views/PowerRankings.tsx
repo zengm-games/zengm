@@ -102,6 +102,7 @@ const PowerRankings = ({
 
 	// undefined means still loading, and null means there are no odds to show
 	const [titleOdds, setTitleOdds] = useState<TitleOdds | null>();
+	const [titleOddsLoading, setTitleOddsLoading] = useState(false);
 
 	// Not in the worker view, because that runs after every day of a sim. phase is here because the sim ends before the phase changes to the playoffs.
 	useEffect(() => {
@@ -110,6 +111,7 @@ const PowerRankings = ({
 		}
 
 		let stale = false;
+		setTitleOddsLoading(true);
 		const load = async () => {
 			let newTitleOdds;
 			try {
@@ -119,6 +121,7 @@ const PowerRankings = ({
 			}
 			if (!stale) {
 				setTitleOdds(newTitleOdds ?? null);
+				setTitleOddsLoading(false);
 			}
 		};
 		load();
@@ -219,7 +222,7 @@ const PowerRankings = ({
 		return {
 			value: (
 				<TitleOddsCell
-					dimmed={gameSimInProgress}
+					dimmed={gameSimInProgress || titleOddsLoading}
 					prob={odds?.prob}
 					text={text}
 				/>

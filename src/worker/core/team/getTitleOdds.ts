@@ -503,6 +503,15 @@ export const getTeamStrength = (
 	});
 };
 
+// Cheap enough to call when loading a view. If this is true, title odds may still be undefined for invalid playoff settings.
+export const isTitleOddsAvailable = (season: number) => {
+	return (
+		season === g.get("season") &&
+		g.get("phase") >= PHASE.PRESEASON &&
+		g.get("numGamesPlayoffSeries", season).length > 0
+	);
+};
+
 // Returns undefined if title odds can't be computed
 export const getTitleOdds = async () => {
 	const season = g.get("season");

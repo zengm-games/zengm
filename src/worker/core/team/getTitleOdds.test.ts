@@ -3,7 +3,12 @@ import { mockIDBLeague, resetCache, resetG } from "../../../test/helpers.ts";
 import type { PlayoffSeries } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import { getTeamStrength, simTitleOdds } from "./getTitleOdds.ts";
+import { PHASE } from "../../../common/constants.ts";
+import {
+	getTeamStrength,
+	isTitleOddsAvailable,
+	simTitleOdds,
+} from "./getTitleOdds.ts";
 
 const NUM_SIMS = 300;
 
@@ -282,6 +287,29 @@ describe("playoffs", () => {
 			assert.isUndefined(odds[4]!.resolved);
 		});
 	});
+});
+
+test("isTitleOddsAvailable", () => {
+	const season = g.get("season");
+
+	for (const phase of [
+		PHASE.REGULAR_SEASON,
+		PHASE.PLAYOFFS,
+		PHASE.DRAFT_LOTTERY,
+	]) {
+		g.setWithoutSavingToDB("phase", phase);
+		assert.isTrue(isTitleOddsAvailable(season));
+	}
+
+	assert.isFalse(isTitleOddsAvailable(season - 1));
+
+	g.setWithoutSavingToDB("phase", PHASE.FANTASY_DRAFT);
+	assert.isFalse(isTitleOddsAvailable(season));
+
+	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
+	g.setWithoutSavingToDB("numGamesPlayoffSeries", [] as any);
+	assert.isFalse(isTitleOddsAvailable(season));
+	resetG();
 });
 
 test("a season-ending injury lowers strength, but one that heals in time does not", () => {

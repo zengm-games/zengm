@@ -1,6 +1,6 @@
 import { idb } from "../../db/index.ts";
 import { helpers } from "../../util/index.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { last, range } from "../../../common/utils.ts";
 import type { NonEmptyArray } from "../../../common/types.ts";
 import { choice } from "../../../common/random.ts";
@@ -9,7 +9,7 @@ import { choice } from "../../../common/random.ts";
 const VALID_JERSEY_NUMBERS = range(1, 100).map(String);
 
 // Basketball also gets 0 and 00
-if (isSport("basketball")) {
+if (__SPORT === "basketball") {
 	VALID_JERSEY_NUMBERS.push("0", "00");
 }
 
@@ -367,7 +367,9 @@ const genFootballWeightFunction = (boost: number[]) => {
 	};
 };
 
-const weightFunctionsByPosition = bySport({
+const weightFunctionsByPosition = bySport<
+	Record<string, (jerseyNumber: string) => number> | undefined
+>({
 	football: {
 		QB: genFootballWeightFunction(range(1, 20)),
 		RB: genFootballWeightFunction([...range(1, 50), ...range(80, 90)]),
@@ -489,8 +491,8 @@ const genJerseyNumber = async (
 
 	if (weightFunctionsByPosition) {
 		const pos = last(p.ratings).pos;
-		if ((weightFunctionsByPosition as any)[pos]) {
-			return choice(candidates, (weightFunctionsByPosition as any)[pos]);
+		if (weightFunctionsByPosition[pos]) {
+			return choice(candidates, weightFunctionsByPosition[pos]);
 		}
 		return choice(candidates);
 	}

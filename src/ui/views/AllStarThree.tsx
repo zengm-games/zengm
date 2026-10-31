@@ -4,7 +4,6 @@ import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
 import { useEffect, useState } from "react";
-import { isSport } from "../../common/sportFunctions.ts";
 import {
 	ContestantProfiles,
 	EditContestants,
@@ -13,6 +12,7 @@ import {
 import clsx from "clsx";
 import { range } from "../../common/utils.ts";
 import { useLocal } from "../util/local.ts";
+import LogoSpinner from "../components/LogoSpinner.tsx";
 
 const NUM_BALLS_PER_RACK = 5;
 
@@ -45,30 +45,24 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 									{shotResult === undefined ? (
 										<div style={{ width: 18, height: 18 }} />
 									) : (
-										<img
+										<LogoSpinner
 											alt={`${shotResult ? "Make" : "Miss"} (${
 												moneyball ? "moneyball" : "normal"
 											})`}
 											title={`${shotResult ? "Make" : "Miss"} (${
 												moneyball ? "moneyball" : "normal"
 											})`}
-											className="spin"
-											width="18"
-											height="18"
-											src={
-												moneyball && shotResult
-													? "/ico/logo-gold.png"
-													: "/ico/logo.png"
-											}
-											style={{
-												animationPlayState: spin ? "running" : "paused",
-												...(!shotResult
+											gold={moneyball && shotResult}
+											size={18}
+											spinning={spin}
+											style={
+												!shotResult
 													? {
 															filter: "grayscale(100%)",
 															opacity: 0.7,
 														}
-													: undefined),
-											}}
+													: undefined
+											}
 										/>
 									)}
 								</div>
@@ -104,7 +98,7 @@ const AllStarThree = ({
 	started,
 	three,
 }: View<"allStarThree">) => {
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		throw new Error("Not implemented");
 	}
 

@@ -43,6 +43,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
 	SavedTradingBlock,
+	Awards,
 } from "../../common/types.ts";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
@@ -51,8 +52,9 @@ import { actualPhase } from "../util/actualPhase.ts";
 import { getNumPlayersTradedAwayNormalized } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { migrate73 } from "./migrations/73/migrate.ts";
+import { migrate74 } from "./migrations/74/migrate.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -61,7 +63,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	awards: {
 		key: number;
-		value: any;
+		value: Awards;
 	};
 	draftLotteryResults: {
 		key: number;
@@ -191,7 +193,7 @@ export interface LeagueDB extends DBSchema {
 
 export type LeagueDBStoreNames = StoreNames<LeagueDB>;
 
-type VersionChangeTransaction = IDBPTransaction<
+export type VersionChangeTransaction = IDBPTransaction<
 	LeagueDB,
 	LeagueDBStoreNames[],
 	"versionchange"
@@ -468,7 +470,7 @@ export const upgradeGamesVersion65 = async ({
 	const LIMIT_PLAYOFF_SERIES = 1000;
 	const LIMIT_PLAYER_FEATS = 10000;
 
-	const tooMany = async () => {
+	const tooMany = () => {
 		logEvent({
 			type: "error",
 			text: `<div class="mt-2">League upgrade is taking too long, so skipping some stuff doesn't matter unless you want to save box scores from finals games or games with statistical feats.</div><div class="mt-2">If you want to finish the upgrade and use those features, <a href="/l/${lid}/upgrade65">click here</a>.</div>`,
@@ -689,7 +691,7 @@ const migrate = async ({
 		});
 	};
 
-	if (isSport("basketball") || isSport("football")) {
+	if (__SPORT === "basketball" || __SPORT === "football") {
 		if (oldVersion < 16) {
 			throw new Error(`League is too old to upgrade (version ${oldVersion})`);
 		}
@@ -757,7 +759,7 @@ const migrate = async ({
 		if (oldVersion < 20) {
 			// New best records format in awards
 			for await (const cursor of transaction.objectStore("awards")) {
-				const a = cursor.value;
+				const a = cursor.value as any;
 				if (a.bre && a.brw) {
 					a.bestRecordConfs = [a.bre, a.brw];
 					a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
@@ -1308,7 +1310,7 @@ const migrate = async ({
 
 	if (oldVersion < 52) {
 		// Non-basketball sports may have had a basketball pace stored in gameAttributes if they were created before gameAttributesKeysSportSpecific
-		if (!isSport("basketball")) {
+		if (__SPORT !== "basketball") {
 			const store = transaction.objectStore("gameAttributes");
 			const pace = await store.get("pace");
 
@@ -1515,13 +1517,14 @@ const migrate = async ({
 	}
 
 	if (oldVersion < 61) {
-		if (isSport("hockey")) {
+		if (__SPORT === "hockey") {
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
 				for (const row of p.stats) {
-					if (row.gp > 0) {
+					const gp = row.gp ?? 0;
+					if (gp > 0) {
 						// Glitchy because a goalie generally plays the whole game but a skater doesn't. Maybe `60 * row.gpGoalie` would have been better. https://discord.com/channels/290013534023057409/290015591216054273/1252453706679582741
-						row.gMin = (row.min * row.gpGoalie) / row.gp;
+						row.gMin = ((row.min ?? 0) * (row.gpGoalie ?? 0)) / gp;
 					} else {
 						row.gMin = 0;
 					}
@@ -1733,6 +1736,15 @@ const migrate = async ({
 				await cursor.update(t);
 			}
 		}
+	}
+
+	if (oldVersion < 73) {
+		slowUpgrade();
+		await migrate73(transaction);
+	}
+
+	if (oldVersion < 74) {
+		await migrate74(transaction);
 	}
 
 	// Next update - do similar to `oldVersion < 71` above for numPlayoffRounds and draftType, from loadGameAttributes

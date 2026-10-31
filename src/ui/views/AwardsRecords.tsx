@@ -35,15 +35,17 @@ const formatYearString = (year: YearInfo) => {
 
 const AwardsRecords = ({
 	awardType,
-	awardTypeVal,
+	awardTypeOptions,
 	awardsRecords,
-	playerCount,
 }: View<"awardsRecords">) => {
 	useTitleBar({
 		title: "Awards Records",
 		dropdownView: "awards_records",
 		dropdownFields: {
 			awardType,
+		},
+		dropdownCustomOptions: {
+			awardType: awardTypeOptions,
 		},
 	});
 	const cols = getCols(
@@ -55,7 +57,7 @@ const AwardsRecords = ({
 		},
 	);
 
-	const rows: DataTableRow[] = awardsRecords.map((a) => {
+	const rows: DataTableRow<"player">[] = awardsRecords.map((a) => {
 		const yearsGrouped = Object.groupBy(a.years, (row) => row.team) as YearInfo;
 
 		return {
@@ -95,10 +97,6 @@ const AwardsRecords = ({
 	return (
 		<>
 			<MoreLinks type="league" page="awards_records" />
-
-			<h4 className="mb-3">
-				{playerCount} players - {awardTypeVal}
-			</h4>
 
 			<DataTable
 				cols={cols}

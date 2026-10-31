@@ -7,7 +7,6 @@ import {
 import finances from "../finances/index.ts";
 import genRandomJersey from "./genRandomJersey.ts";
 import isValidJersey from "./isValidJersey.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 /**
  * Create a new team object.
@@ -72,7 +71,7 @@ const generate = (tm: any): Team => {
 		t.srID = tm.srID;
 	}
 
-	if (isSport("football") && tm.depth === undefined) {
+	if (__SPORT === "football" && tm.depth === undefined) {
 		t.depth = {
 			QB: [],
 			RB: [],
@@ -88,13 +87,13 @@ const generate = (tm: any): Team => {
 			KR: [],
 			PR: [],
 		};
-	} else if (isSport("hockey") && tm.depth === undefined) {
+	} else if (__SPORT === "hockey" && tm.depth === undefined) {
 		t.depth = {
 			F: [],
 			D: [],
 			G: [],
 		};
-	} else if (isSport("baseball") && tm.depth === undefined) {
+	} else if (__SPORT === "baseball" && tm.depth === undefined) {
 		t.depth = {
 			L: [],
 			LP: [],

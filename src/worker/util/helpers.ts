@@ -1,79 +1,123 @@
-import { PLAYER } from "../../common/constants.ts";
+import { DEFAULT_TEAM_COLORS, PLAYER } from "../../common/constants.ts";
 import { helpers as commonHelpers } from "../../common/helpers.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type {
 	ByConf,
 	DraftPick,
+	PlayInTournament,
+	PlayoffSeries,
 	PlayoffSeriesTeam,
+	PlayoffSeriesTeamAugmented,
 } from "../../common/types.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
 import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
-import { isSport } from "../../common/sportFunctions.ts";
+import type { LeagueUrlParts } from "../../ui/router/types.ts";
 
-const augmentSeries = async (
-	series: {
-		away?: PlayoffSeriesTeam;
-		home: PlayoffSeriesTeam;
-	}[][],
-	season: number = g.get("season"),
-) => {
-	const teamSeasons = await idb.getCopies.teamSeasons(
-		{
-			season,
-		},
-		"noCopyCache",
-	);
+const getAugmentTeam = async (season: number) => {
+	const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 
 	const ties = hasTies(season);
+	const otl = g.get("otl", season);
 
-	const setAll = (obj: PlayoffSeriesTeam) => {
-		obj.abbrev = g.get("teamInfoCache")[obj.tid]?.abbrev;
-		obj.region = g.get("teamInfoCache")[obj.tid]?.region;
-		obj.imgURL = g.get("teamInfoCache")[obj.tid]?.imgURL;
-		obj.regularSeason = {
-			won: 0,
-			lost: 0,
-			tied: ties ? 0 : undefined,
-			otl: g.get("otl", season) ? 0 : undefined,
+	return (team: PlayoffSeriesTeam): PlayoffSeriesTeamAugmented => {
+		const t = g.get("teamInfoCache")[team.tid];
+		const teamSeason = teamSeasons.find((ts) => ts.tid === team.tid);
+
+		const info = teamSeason?.abbrev
+			? {
+					abbrev: teamSeason.abbrev,
+					region: teamSeason.region,
+					imgURL: teamSeason.imgURL,
+					imgURLSmall: teamSeason.imgURLSmall,
+				}
+			: {
+					abbrev: t?.abbrev ?? "",
+					region: t?.region ?? "",
+					imgURL: t?.imgURL,
+					imgURLSmall: t?.imgURLSmall || team.imgURLSmall,
+				};
+
+		const regularSeason = teamSeason
+			? {
+					won: teamSeason.won,
+					lost: teamSeason.lost,
+					tied: ties ? teamSeason.tied : undefined,
+					otl: otl ? teamSeason.otl : undefined,
+				}
+			: {
+					won: 0,
+					lost: 0,
+					tied: ties ? 0 : undefined,
+					otl: otl ? 0 : undefined,
+				};
+
+		return {
+			...team,
+			...info,
+			regularSeason,
+			colors:
+				(teamSeason ? teamSeason.colors : team.colors) ?? DEFAULT_TEAM_COLORS,
 		};
+	};
+};
 
-		const imgURLSmall = g.get("teamInfoCache")[obj.tid]?.imgURLSmall;
-		if (imgURLSmall) {
-			obj.imgURLSmall = imgURLSmall;
-		}
+// Returns a copy of series with team info and regular season records added to each team
+const augmentSeries = async (
+	series: PlayoffSeries["series"],
+	season: number = g.get("season"),
+) => {
+	const augmentTeam = await getAugmentTeam(season);
 
-		const teamSeason = teamSeasons.find((ts) => ts.tid === obj.tid);
-		if (teamSeason) {
-			if (teamSeason.abbrev) {
-				obj.abbrev = teamSeason.abbrev;
-				obj.region = teamSeason.region;
-				obj.imgURL = teamSeason.imgURL;
-				obj.imgURLSmall = teamSeason.imgURLSmall;
-			}
-			obj.regularSeason.won = teamSeason.won;
-			obj.regularSeason.lost = teamSeason.lost;
+	return series.map((round) =>
+		round.map(({ away, home, ...matchup }) => {
+			return {
+				...matchup,
+				home: augmentTeam(home),
+				away: away ? augmentTeam(away) : undefined,
+			};
+		}),
+	);
+};
 
-			if (ties) {
-				obj.regularSeason.tied = teamSeason.tied;
-			}
-			if (g.get("otl", season)) {
-				obj.regularSeason.otl = teamSeason.otl;
-			}
-		}
+// Like augmentSeries, but for play-in tournaments
+const augmentPlayIns = async (
+	playIns: PlayInTournament[],
+	season: number = g.get("season"),
+) => {
+	const augmentTeam = await getAugmentTeam(season);
+
+	const augmentMatchup = ({
+		away,
+		home,
+		...matchup
+	}: PlayInTournament[number]) => {
+		return {
+			...matchup,
+			home: augmentTeam(home),
+			away: augmentTeam(away),
+		};
 	};
 
-	for (const round of series) {
-		for (const matchup of round) {
-			if (matchup.away) {
-				setAll(matchup.away);
+	type MatchupAugmented = ReturnType<typeof augmentMatchup>;
+
+	return playIns.map(
+		([matchup0, matchup1, matchup2]):
+			| [MatchupAugmented, MatchupAugmented]
+			| [MatchupAugmented, MatchupAugmented, MatchupAugmented] => {
+			if (matchup2 === undefined) {
+				return [augmentMatchup(matchup0), augmentMatchup(matchup1)];
 			}
 
-			setAll(matchup.home);
-		}
-	}
+			return [
+				augmentMatchup(matchup0),
+				augmentMatchup(matchup1),
+				augmentMatchup(matchup2),
+			];
+		},
+	);
 };
 
 const calcWinp = ({
@@ -176,13 +220,22 @@ const getAbbrev = (tid: number | string): string => {
 	return g.get("teamInfoCache")[tid]!.abbrev;
 };
 
-const leagueUrl = (components: (number | string | undefined)[]): string => {
+const leagueUrl = (components: Readonly<LeagueUrlParts>): string => {
 	return commonHelpers.leagueUrlBase(g.get("lid"), components);
 };
 
-const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
+// Number of wins needed to win a matchup in a playoff round. Round -1 is the play-in tournament, which is single games.
+const numGamesToWinRound = (
+	round: number,
+	season: number | "current" = "current",
+) => {
+	if (round === -1) {
+		return 1;
+	}
+
+	const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", season)[round];
 	if (
-		typeof numGamesPlayoffSeries !== "number" ||
+		numGamesPlayoffSeries === undefined ||
 		Number.isNaN(numGamesPlayoffSeries)
 	) {
 		return 4;
@@ -317,7 +370,7 @@ const sigmoid = (x: number, a: number, b: number): number => {
 
 const effectiveGameLength = () => {
 	let gameLength = g.get("numPeriods") * g.get("quarterLength");
-	if (isSport("basketball") && g.get("elam") && !g.get("elamOvertime")) {
+	if (__SPORT === "basketball" && g.get("elam") && !g.get("elamOvertime")) {
 		gameLength -= g.get("elamMinutes");
 
 		// Assume 2.3 pts per minute
@@ -391,55 +444,6 @@ const formatCurrency = (
 	);
 };
 
-const playoffRoundName = (
-	currentRound: number, // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
-	numPlayoffRounds: number,
-	playoffsByConf: ByConf,
-) => {
-	if (currentRound === -1) {
-		return "play-in tournament";
-	}
-
-	if (currentRound === numPlayoffRounds - 1) {
-		return "finals" as const;
-	}
-
-	// Put this early so as to not glorify just making the playoffs with some fancier text
-	if (currentRound === 0) {
-		return "1st round" as const;
-	}
-
-	const confChampionshipRound =
-		playoffsByConf === false
-			? undefined
-			: numPlayoffRounds - Math.log2(playoffsByConf);
-
-	if (confChampionshipRound !== undefined) {
-		if (currentRound === confChampionshipRound - 1) {
-			return "conference finals";
-		}
-		if (currentRound === confChampionshipRound - 2) {
-			return "conference semifinals";
-		}
-	}
-
-	if (currentRound === numPlayoffRounds - 2) {
-		return "semifinals";
-	}
-
-	if (currentRound === numPlayoffRounds - 3) {
-		return "quarterfinals";
-	}
-
-	if (currentRound >= 1) {
-		return `${commonHelpers.ordinal(currentRound + 1)} round` as const;
-	}
-
-	throw new Error(
-		`Invalid roundIndex ${currentRound} ${numPlayoffRounds} ${playoffsByConf}`,
-	);
-};
-
 const roundsWonText = ({
 	playoffRoundsWon,
 	numPlayoffRounds,
@@ -456,7 +460,7 @@ const roundsWonText = ({
 			return "league champs";
 		}
 
-		const roundName = playoffRoundName(
+		const roundName = commonHelpers.playoffRoundName(
 			playoffRoundsWon,
 			numPlayoffRounds,
 			playoffsByConf,
@@ -496,6 +500,7 @@ const roundsWonText = ({
 
 const helpers = {
 	...commonHelpers,
+	augmentPlayIns,
 	augmentSeries,
 	calcWinp,
 	correctLinkLid,
@@ -506,7 +511,7 @@ const helpers = {
 	getAbbrev,
 	getTeamSeasonGp,
 	leagueUrl,
-	numGamesToWinSeries,
+	numGamesToWinRound,
 	overtimeCounter,
 	pickDesc,
 	quarterLengthFactor,
@@ -516,7 +521,6 @@ const helpers = {
 	daysLeft,
 	gameAndSeasonLengthScaleFactor,
 	stripBbcode,
-	playoffRoundName,
 	roundsWonText,
 };
 

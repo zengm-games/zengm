@@ -2,7 +2,7 @@ import Bugsnag from "@bugsnag/browser";
 import { PWBHost } from "promise-worker-bi";
 
 const workerPath =
-	process.env.NODE_ENV === "production"
+	__NODE_ENV === "production"
 		? `/gen/worker-${window.bbgmVersion}.js`
 		: "/gen/worker.js";
 const worker = window.useSharedWorker
@@ -10,9 +10,24 @@ const worker = window.useSharedWorker
 	: new Worker(workerPath, { type: "module" });
 
 export const promiseWorker = new PWBHost(worker);
-promiseWorker.registerError((error) => {
+
+promiseWorker.addEventListener("error", ({ error }) => {
 	Bugsnag.notify(error);
 
 	console.error("Error from worker:");
 	console.error(error);
+});
+
+// As of Chrome 152 (and possibly somewhat earlier versions), Chrome seems to kill a shared worker processe if it's idle for like 30 minutes, while not doing anything to the main process in the tab (no freeze/discard). This leaves no visible error message, but makes the entire app non functional. This code listens for the worker being killed and schedules a reload for the next time the page becomes visible. In theory could reactivate the worker instead, but state could be in a weird place.
+// This is also helpful in Safari which seems to restart workers in some situations, possibly when a tab is suspended/restored. promise-worker-bi 6.0.4 also emits a "close" event in that case.
+promiseWorker.addEventListener("close", () => {
+	if (document.visibilityState === "visible") {
+		window.location.reload();
+	} else {
+		document.addEventListener("visibilitychange", () => {
+			if (document.visibilityState === "visible") {
+				window.location.reload();
+			}
+		});
+	}
 });

@@ -2,7 +2,7 @@ import {
 	type IndividualRealTeamInfo,
 	type Team,
 	type RealTeamInfo,
-	IndividualRealTeamInfoSchema,
+	individualRealTeamInfoSchema,
 } from "./types.ts";
 
 const POTENTIAL_OVERRIDES = [
@@ -90,7 +90,7 @@ export const applyRealTeamInfo = (
 	}
 
 	// Merge prior seasons, in case there is a partial one and applyToObject above applied something from the root (like updating imgURLSmall without updating imgURL, would default to root imgURL otherwise)
-	const realInfoMerged = IndividualRealTeamInfoSchema.parse(
+	const realInfoMerged = individualRealTeamInfoSchema.parse(
 		Object.assign(
 			{},
 			realInfoRoot,

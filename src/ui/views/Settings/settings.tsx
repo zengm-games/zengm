@@ -2,6 +2,7 @@ import {
 	COURT,
 	DIFFICULTY,
 	GAME_NAME,
+	REAL_DRAFT_RATINGS,
 	REAL_PLAYERS_INFO,
 	TIEBREAKERS,
 	WEBSITE_ROOT,
@@ -19,10 +20,55 @@ import type { HandleChange, HandleChangeRaw } from "./SettingsFormOptions.tsx";
 import type { State } from "./SettingsForm.tsx";
 import RowsEditor from "./RowsEditor.tsx";
 import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
-import type { GameAttributesLeague } from "../../../common/types.ts";
+import type {
+	GameAttributesLeague,
+	RealDraftRatings,
+} from "../../../common/types.ts";
 import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
 import { getDraftTypeDescription } from "../DraftLottery.tsx";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
+
+const REAL_DRAFT_RATINGS_INFO: Record<
+	RealDraftRatings,
+	{
+		name: string;
+		shortName: string;
+	}
+> = {
+	rookie: {
+		name: "Based on rookie season stats",
+		shortName: "Rookie season stats",
+	},
+	draft: {
+		name: "Based on draft position",
+		shortName: "Draft position",
+	},
+	peak: {
+		name: "Based on peak performance",
+		shortName: "Peak performance",
+	},
+	career: {
+		name: "Based on career performance",
+		shortName: "Career performance",
+	},
+	random: {
+		name: "Random",
+		shortName: "Random",
+	},
+};
+
+const mapRealDraftRatings = <T,>(
+	callback: (mode: RealDraftRatings) => T,
+): Record<RealDraftRatings, T> => ({
+	rookie: callback("rookie"),
+	draft: callback("draft"),
+	peak: callback("peak"),
+	career: callback("career"),
+	random: callback("random"),
+});
+
+const getSingleModeWeights = (selectedMode: RealDraftRatings) =>
+	mapRealDraftRatings((mode) => (mode === selectedMode ? "1" : "0"));
 
 export const descriptions = {
 	difficulty:
@@ -46,6 +92,9 @@ type Setting = {
 		output: any,
 		initialSettings: Settings,
 	) => void | Promise<void>;
+
+	// Other settings that the validator depends on. If any of these are displayed in the form, the validator runs even if this setting is not displayed in the form, like when a scheduled event only changes some settings.
+	validateWith?: Key[];
 
 	// For form fields that render one box for two keys, put any of the associated hidden keys here.
 	partners?: Key[];
@@ -252,11 +301,110 @@ export const settings: Setting[] = (
 				newLeague &&
 				((hasPlayers && realPlayers) ||
 					(REAL_PLAYERS_INFO && !hasPlayers && !realPlayers)),
-			type: "string",
-			values: [
-				{ key: "rookie", value: "Based on rookie season stats" },
-				{ key: "draft", value: "Based on draft position" },
-			],
+			type: "custom",
+			customForm: ({ disabled, handleChangeRaw, id, inputStyle, state }) => {
+				const realDraftRatings = state.realDraftRatings;
+				const selectedMode = realDraftRatings.mode;
+				const custom = selectedMode === "custom";
+
+				// Outside of custom mode, show the weights for the selected mode
+				const weights = custom
+					? realDraftRatings.weights
+					: getSingleModeWeights(selectedMode);
+
+				const myHandleChange = handleChangeRaw("realDraftRatings");
+
+				return (
+					<div className="d-flex flex-column gap-1">
+						<select
+							id={id}
+							disabled={disabled}
+							className="form-select align-self-end"
+							style={inputStyle}
+							value={selectedMode}
+							onChange={(event) => {
+								myHandleChange({
+									mode: event.target.value as State["realDraftRatings"]["mode"],
+
+									// When switching to custom, start from the weights that were just shown
+									weights,
+								});
+							}}
+						>
+							{REAL_DRAFT_RATINGS.map((mode) => (
+								<option key={mode} value={mode}>
+									{REAL_DRAFT_RATINGS_INFO[mode].name}
+								</option>
+							))}
+							<option value="custom">Custom</option>
+						</select>
+						{REAL_DRAFT_RATINGS.map((mode) => (
+							<div
+								key={mode}
+								className="d-flex align-items-center justify-content-end gap-2"
+							>
+								<div>{REAL_DRAFT_RATINGS_INFO[mode].shortName}</div>
+								<input
+									disabled={disabled || !custom}
+									type="text"
+									className="form-control form-control-sm"
+									inputMode="decimal"
+									style={{ width: 50 }}
+									value={weights[mode]}
+									onChange={(event) => {
+										myHandleChange({
+											...realDraftRatings,
+											weights: {
+												...weights,
+												[mode]: event.target.value,
+											},
+										});
+									}}
+								/>
+							</div>
+						))}
+					</div>
+				);
+			},
+			stringify: (
+				value: Settings["realDraftRatings"],
+			): State["realDraftRatings"] => {
+				if (typeof value === "string") {
+					return {
+						mode: value,
+
+						weights: getSingleModeWeights(value),
+					};
+				}
+
+				return {
+					mode: "custom",
+					weights: mapRealDraftRatings((mode) => String(value[mode])),
+				};
+			},
+			parse: (
+				value: State["realDraftRatings"],
+			): Settings["realDraftRatings"] => {
+				if (value.mode !== "custom") {
+					return value.mode;
+				}
+
+				const weights = mapRealDraftRatings((mode) => {
+					const weight = helpers.localeParseFloat(value.weights[mode]);
+					if (Number.isNaN(weight) || weight < 0) {
+						throw new Error(
+							`Invalid weight for "${REAL_DRAFT_RATINGS_INFO[mode].shortName}" - should be a number greater than or equal to 0`,
+						);
+					}
+					return weight;
+				});
+
+				if (Object.values(weights).every((weight) => weight === 0)) {
+					throw new Error("At least one weight must be greater than 0");
+				}
+
+				return weights;
+			},
 			descriptionLong: (
 				<>
 					<p>
@@ -275,6 +423,29 @@ export const settings: Setting[] = (
 						will have a high rating, even if in reality he was a bust. Every
 						late pick will have a low rating, even if in reality he became a
 						star.
+					</p>
+					<p>
+						<b>Based on peak performance:</b> Player ratings for real draft
+						prospects are based on the best ratings they had at any point in
+						their careers, scaled down to the level of a draft prospect. For
+						active players, their peak is projected based on what happened to
+						similar players in the past.
+					</p>
+					<p>
+						<b>Based on career performance:</b> Similar to peak performance, but
+						based on the value of an entire career, so players with long careers
+						will rate higher than players who were only good for a few seasons.
+					</p>
+					<p>
+						<b>Random:</b> Real draft prospects keep their names, heights, and
+						other bio info, but their ratings are generated like random draft
+						prospects, so their real careers tell you nothing about how good
+						they will be.
+					</p>
+					<p>
+						<b>Custom:</b> Combine any of the options above. Each option gets a
+						weight, and a player's rating is the weighted average of what each
+						option would give them.
 					</p>
 				</>
 			),
@@ -309,6 +480,7 @@ export const settings: Setting[] = (
 			name: "# Games Per Season",
 			godModeRequired: "always",
 			type: "int",
+			validateWith: ["numGamesDiv", "numGamesConf"],
 			validator: (value, output) => {
 				if (value < 0) {
 					throw new Error("Must not be negative");
@@ -365,7 +537,7 @@ export const settings: Setting[] = (
 					hockey: 12,
 				});
 				if (value < cutoff) {
-					if (isSport("basketball")) {
+					if (__SPORT === "basketball") {
 						throw new Error(`Value cannot be less than # Players On ${COURT}`);
 					} else {
 						throw new Error(`Value must be at least ${cutoff}`);
@@ -400,6 +572,7 @@ export const settings: Setting[] = (
 				</>
 			),
 			type: "jsonString",
+			validateWith: ["numPlayoffByes", "playIn", "playoffsByConf"],
 			validator: async (value, output, initialSettings) => {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
@@ -644,7 +817,7 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			validator: async (value) => {
+			validator: (value) => {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
@@ -705,7 +878,7 @@ export const settings: Setting[] = (
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
-				if (value.length != 2) {
+				if (value.length !== 2) {
 					throw new Error("Must have 2 numbers");
 				}
 				if (value[0] > value[1]) {
@@ -818,6 +991,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float1000",
 			decoration: "currency",
+			validateWith: ["minContract"],
 			validator: (value, output) => {
 				if (value < 0) {
 					throw new Error("Value cannot be negative");
@@ -847,6 +1021,7 @@ export const settings: Setting[] = (
 			name: "Max Contract Length",
 			godModeRequired: "always",
 			type: "int",
+			validateWith: ["minContractLength"],
 			validator: (value, output) => {
 				if (value < 1) {
 					throw new Error("Value must be at least 1");
@@ -987,7 +1162,7 @@ export const settings: Setting[] = (
 					<p>
 						The injury rate is the probability that a player is injured per
 						possession.
-						{isSport("basketball") ? (
+						{__SPORT === "basketball" ? (
 							<>
 								{" "}
 								Based on{" "}
@@ -1022,7 +1197,7 @@ export const settings: Setting[] = (
 						The tragic death rate is the probability that a player will die a
 						tragic death on a given regular season day. Yes, this only happens
 						in the regular season.
-						{isSport("basketball")
+						{__SPORT === "basketball"
 							? "  With roughly 100 days in a season, the default is about one death every 50 years, or 1/(50*100) = 0.0002."
 							: null}{" "}
 						If you set it too high and run out of players, then you'll have to
@@ -1053,6 +1228,31 @@ export const settings: Setting[] = (
 						type="tragicDeaths"
 					/>
 				);
+			},
+		},
+		...(__SPORT === "basketball"
+			? [
+					{
+						category: "Events",
+						key: "easterEggPlayers",
+						name: "Easter Egg Players",
+						type: "bool",
+						description:
+							'When enabled there is a very rare chance for an "Easter egg" player to appear, one of a few select notable historical figures.',
+					},
+				]
+			: []),
+		{
+			category: "Events",
+			key: "fakeAgeProb",
+			name: "Fake Age Probability",
+			type: "float",
+			description:
+				"Probability each offseason there will be one player who is revealed to have faked his age to appear like a better prospect.",
+			validator: (value) => {
+				if (value < 0 || value > 1) {
+					throw new Error("Value must be between 0 and 1");
+				}
 			},
 		},
 		{
@@ -1120,7 +1320,7 @@ export const settings: Setting[] = (
 			),
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoExpandProb",
 			name: "Auto Expansion Probability",
 			type: "float",
@@ -1133,7 +1333,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoExpandGeo",
 			name: "Auto Expansion Regions",
 			type: "string",
@@ -1146,7 +1346,7 @@ export const settings: Setting[] = (
 			],
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoExpandNumTeams",
 			name: "Auto Expansion # Teams",
 			type: "int",
@@ -1159,7 +1359,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoExpandMaxNumTeams",
 			name: "Auto Expansion Max Total # Teams",
 			type: "int",
@@ -1172,7 +1372,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoRelocateProb",
 			name: "Auto Relocation Probability",
 			type: "float",
@@ -1185,7 +1385,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoRelocateGeo",
 			name: "Auto Relocation Regions",
 			type: "string",
@@ -1198,13 +1398,13 @@ export const settings: Setting[] = (
 				'"North America first" means teams won\'t relocate outside of North America unless another team is already outside of North America or all of the North American teams are already taken.',
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoRelocateRebrand",
 			name: "Rebrand Teams After Auto Relocation",
 			type: "bool",
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoRelocateRealign",
 			name: "Realign Divs After Auto Relocation",
 			type: "bool",
@@ -1605,8 +1805,9 @@ export const settings: Setting[] = (
 			key: "allStarNum",
 			name: "# Players Per Team",
 			type: "int",
+			validateWith: ["minRosterSize"],
 			validator: (value, output) => {
-				if (isSport("basketball")) {
+				if (__SPORT === "basketball") {
 					if (
 						value < output.minRosterSize &&
 						value < defaultGameAttributes.minRosterSize
@@ -1628,13 +1829,13 @@ export const settings: Setting[] = (
 			name: "Team Assignment",
 			type: "string",
 			values: [
-				...(isSport("basketball") ? [{ key: "draft", value: "Draft" }] : []),
+				...(__SPORT === "basketball" ? [{ key: "draft", value: "Draft" }] : []),
 				{ key: "byConf", value: "By Conference" },
 				{ key: "top", value: "Mixed" },
 			],
 			descriptionLong: (
 				<>
-					{isSport("basketball") ? (
+					{__SPORT === "basketball" ? (
 						<p>
 							<b>Draft:</b> The top two players are captains and draft their
 							teams from the remaining players.
@@ -1683,7 +1884,7 @@ export const settings: Setting[] = (
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
-				if (value.length != 3) {
+				if (value.length !== 3) {
 					throw new Error("Must have 3 numbers");
 				}
 				for (const num of value) {
@@ -1821,9 +2022,10 @@ export const settings: Setting[] = (
 			name: "Steal Tendency Factor",
 			godModeRequired: "always",
 			type: "float",
-			description: isSport("basketball")
-				? "The baseline steal percentage is multiplied by this number."
-				: "The probability of a player attempting a steal is multiplied by this number.",
+			description:
+				__SPORT === "basketball"
+					? "The baseline steal percentage is multiplied by this number."
+					: "The probability of a player attempting a steal is multiplied by this number.",
 		},
 		{
 			category: "Tendencies",
@@ -1846,7 +2048,7 @@ export const settings: Setting[] = (
 		{
 			category: "Tendencies",
 			key: "foulRateFactor",
-			name: `${isSport("basketball") ? "Foul" : "Penalty"} Rate Factor`,
+			name: `${__SPORT === "basketball" ? "Foul" : "Penalty"} Rate Factor`,
 			godModeRequired: "always",
 			type: "float",
 			description: bySport({
@@ -1858,7 +2060,7 @@ export const settings: Setting[] = (
 				hockey: "The baseline rate for penalties is multiplied by this number.",
 			}),
 			validator: (value) => {
-				if (isSport("football") && value > 10) {
+				if (__SPORT === "football" && value > 10) {
 					throw new Error("Value cannot exceed 10");
 				}
 			},
@@ -1993,7 +2195,7 @@ export const settings: Setting[] = (
 			name: "Balk Factor",
 			godModeRequired: "always",
 			type: "float",
-			description: "The probability of a balk is multipled by this number.",
+			description: "The probability of a balk is multiplied by this number.",
 		},
 		{
 			category: "Tendencies",
@@ -2082,9 +2284,10 @@ export const settings: Setting[] = (
 			name: "Hit Factor",
 			godModeRequired: "always",
 			type: "float",
-			description: isSport("hockey")
-				? "The probability of a hit happening is multiplied by this number."
-				: "The probability that a ball in play is a hit is multiplied by this number.",
+			description:
+				__SPORT === "hockey"
+					? "The probability of a hit happening is multiplied by this number."
+					: "The probability that a ball in play is a hit is multiplied by this number.",
 		},
 		{
 			category: "Tendencies",
@@ -2233,6 +2436,7 @@ export const settings: Setting[] = (
 			name: "Minutes Left Trigger",
 			godModeRequired: "always",
 			type: "float",
+			validateWith: ["elam", "elamASG", "elamOvertime", "quarterLength"],
 			validator: (value, output) => {
 				if (
 					(output.elam || output.elamASG) &&
@@ -2251,6 +2455,7 @@ export const settings: Setting[] = (
 			name: "Target Points to Add",
 			godModeRequired: "always",
 			type: "int",
+			validateWith: ["elam", "elamASG"],
 			validator: (value, output) => {
 				if ((output.elam || output.elamASG) && value < 0) {
 					throw new Error("Value must be greater than 0");
@@ -2271,7 +2476,7 @@ export const settings: Setting[] = (
 		{
 			category: "Game Simulation",
 			key: "numPeriods",
-			name: `Number of ${isSport("baseball") ? "Innings" : "Periods"} Per Game`,
+			name: `Number of ${__SPORT === "baseball" ? "Innings" : "Periods"} Per Game`,
 			godModeRequired: "always",
 			type: "int",
 			validator: (value) => {
@@ -2336,14 +2541,14 @@ export const settings: Setting[] = (
 				category: "Game Simulation",
 				key,
 				name: `Max # ${
-					isSport("baseball") ? "Extra Innings" : "Overtime Periods"
+					__SPORT === "baseball" ? "Extra Innings" : "Overtime Periods"
 				}${playoffs ? " (Playoffs)" : ""}`,
 				type: "intOrNull",
 				descriptionLong: (
 					<>
 						<p>
 							If a{playoffs ? " playoff" : ""} game is still tied after this
-							many {isSport("baseball") ? "extra innings" : "overtimes"}, the
+							many {__SPORT === "baseball" ? "extra innings" : "overtimes"}, the
 							game ends in a{" "}
 							{playoffs
 								? "shootout (Shootout Rounds must be >0, there can be no ties in the playoffs)"
@@ -2352,8 +2557,9 @@ export const settings: Setting[] = (
 						</p>
 						<p>
 							Set to 0 to disable{" "}
-							{isSport("baseball") ? "extra innings" : "overtime"}. Leave blank
-							for infinite {isSport("baseball") ? "extra innings" : "overtimes"}
+							{__SPORT === "baseball" ? "extra innings" : "overtime"}. Leave
+							blank for infinite{" "}
+							{__SPORT === "baseball" ? "extra innings" : "overtimes"}
 							{playoffs ? "" : " and no ties"}.
 						</p>
 					</>
@@ -2406,15 +2612,15 @@ export const settings: Setting[] = (
 		),
 		...(["shootoutRounds", "shootoutRoundsPlayoffs"] as const).map((key) => {
 			const playoffs = key === "shootoutRoundsPlayoffs";
-			const overtimePeriods = isSport("baseball")
-				? "extra innings"
-				: "overtime periods";
+			const overtimePeriods =
+				__SPORT === "baseball" ? "extra innings" : "overtime periods";
 
 			const setting: Setting = {
 				category: "Game Simulation",
 				key,
 				name: `# Shootout Rounds ${playoffs ? " (Playoffs)" : ""}`,
 				type: "int",
+				validateWith: playoffs ? ["maxOvertimesPlayoffs"] : undefined,
 				descriptionLong: (
 					<>
 						<p>
@@ -2424,7 +2630,7 @@ export const settings: Setting[] = (
 						<p>
 							{bySport({
 								baseball:
-									"For baseball, that means a home run derby! This setting specifies the # of swings/strikes your best hitter will get againts a pitcher from your own team throwing meatballs. If the game is still tied after both teams go, then it's repeated until someone wins.",
+									"For baseball, that means a home run derby! This setting specifies the # of swings/strikes your best hitter will get against a pitcher from your own team throwing meatballs. If the game is still tied after both teams go, then it's repeated until someone wins.",
 								basketball:
 									"For basketball, that means a three-point contest! This setting specifies the # of shots your best shooter will get. If the game is still tied after both teams go, then it's repeated until someone wins.",
 								football:
@@ -2541,8 +2747,8 @@ export const settings: Setting[] = (
 								onChange={handleChange("stopOnInjury", "bool")}
 								id={id + "2"}
 								value={state[key2]}
+								aria-label="Enable stop on injury"
 							/>
-							<label className="form-check-label" htmlFor={id + "2"} />
 						</div>
 						<div className="input-group">
 							<input
@@ -2641,9 +2847,7 @@ export const settings: Setting[] = (
 						myHandleChange({
 							...saveOldBoxScores,
 							[key]:
-								event.target.value === "none"
-									? undefined
-									: (event.target.value as any),
+								event.target.value === "none" ? undefined : event.target.value,
 						});
 					};
 

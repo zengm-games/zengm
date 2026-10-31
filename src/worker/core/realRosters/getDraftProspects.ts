@@ -4,7 +4,6 @@ import type {
 	GetLeagueOptionsReal,
 	ScheduledEventWithoutKey,
 } from "../../../common/types.ts";
-import { orderBy } from "../../../common/utils.ts";
 import formatPlayerFactory from "./formatPlayerFactory.ts";
 import type { Basketball } from "./loadData.basketball.ts";
 
@@ -72,7 +71,7 @@ const getDraftProspects = async (
 		options.phase > PHASE.DRAFT ? options.season + 1 : options.season;
 
 	const seenSlugs = new Set(activePlayers.map((p) => p.srID));
-	const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
+	const draftProspects = basketball.ratings
 		.filter((ratings) => {
 			// Only keep rookie seasons
 			const seen = seenSlugs.has(ratings.slug);

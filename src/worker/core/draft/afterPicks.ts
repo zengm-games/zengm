@@ -58,8 +58,8 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					await getNumPlayersTradedAwayNormalizedAll();
 				for (const p of playersUndrafted) {
 					player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-					await idb.cache.players.put(p);
 				}
+				await idb.cache.players.putAll(playersUndrafted);
 				await freeAgents.normalizeContractDemands({
 					type: "freeAgentsOnly",
 				});
@@ -69,39 +69,34 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					"playersByTid",
 					PLAYER.UNDRAFTED_FANTASY_TEMP,
 				);
-
 				for (const p of players) {
 					p.tid = PLAYER.UNDRAFTED;
-					await idb.cache.players.put(p);
 				}
-
-				// Refresh draft results without redirecting away
-				await toUI("realtimeUpdate", [["playerMovement"]]);
-
-				local.fantasyDraftResults = [];
-				await league.setGameAttributes({
-					phase: g.get("nextPhase"),
-					nextPhase: undefined,
-				});
-			} else if (currentPhase === PHASE.EXPANSION_DRAFT) {
-				// Refresh draft results without redirecting away
-				await toUI("realtimeUpdate", [["playerMovement"]]);
-
-				local.fantasyDraftResults = [];
-				await league.setGameAttributes({
-					phase: g.get("nextPhase"),
-					nextPhase: undefined,
-				});
-
-				await expansionDraft.finalize();
+				await idb.cache.players.putAll(players);
 			}
 		} finally {
 			await lock.set("newPhase", false);
 
+			// Refresh draft results without redirecting away
+			await toUI("realtimeUpdate", [["playerMovement"]]);
+
+			// After refreshing, clear results
+			local.fantasyDraftResults = [];
+
+			// This is a bit of a race condition. Should not be changing g.get("phase") outside of newPhase lock, cause user taking some action (nagivating to a new page or whatever) could see weird results. But it's needed currently for updating the UI with the results of the fantasy/expansion draft.
+			await league.setGameAttributes({
+				phase: g.get("nextPhase"),
+				nextPhase: undefined,
+			});
+
+			if (currentPhase === PHASE.EXPANSION_DRAFT) {
+				await expansionDraft.finalize();
+			}
+
 			// Do this after unlocking newPhase or it messes up the menu
 			await updatePhase();
 			await updatePlayMenu();
-			await updateStatus("Idle");
+			await updateStatus();
 		}
 	} else {
 		await updatePlayMenu();

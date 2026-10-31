@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common/constants.ts";
-import { season, team } from "../index.ts";
+import { player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { GameResults } from "../../../common/types.ts";
@@ -11,7 +11,7 @@ import {
 import { levelToAmount } from "../../../common/budgetLevels.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
@@ -119,7 +119,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 			// Only different for hockey
 			let salaryCapFactor2;
-			if (isSport("hockey")) {
+			if (__SPORT === "hockey") {
 				// Legacy, should probably adjust other params
 				salaryCapFactor2 = salaryCap / 90000;
 			} else {
@@ -220,7 +220,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// 5% bonus for easy, 5% penalty for hard, 20% penalty for insane
 		const fudgeFactor = g.get("userTids").includes(results.team[t1].id)
-			? helpers.bound(1 - 0.2 * g.get("difficulty"), 0, Infinity)
+			? helpers.bound(1 - 0.2 * g.get("difficulty"), 0.1, Infinity)
 			: 1;
 
 		// Globally adjust revenue based on the number of games in the season and playoffs
@@ -311,7 +311,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 			teamStats[key] ??= 0;
 
-			if (isSport("football") && key.endsWith("Lng")) {
+			if (__SPORT === "football" && key.endsWith("Lng")) {
 				if (results.team[t1].stat[key] > teamStats[key]) {
 					teamStats[key] = results.team[t1].stat[key];
 				}
@@ -332,7 +332,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 				// Deal with upgraded leagues, and some stats that don't have opp versions
 				if (teamStats[oppKey] !== undefined) {
-					if (isSport("football") && key.endsWith("Lng")) {
+					if (__SPORT === "football" && key.endsWith("Lng")) {
 						if (results.team[t2].stat[key] > teamStats[oppKey]) {
 							teamStats[oppKey] = results.team[t2].stat[key];
 						}
@@ -352,7 +352,7 @@ const writeTeamStats = async (results: GameResults) => {
 		}
 
 		// Track this separately, because a team can get a shutout with multiple goalies, and then there is no player shutout
-		if (isSport("hockey")) {
+		if (__SPORT === "hockey") {
 			if (results.team[t2].stat.pts === 0) {
 				teamStats.so += 1;
 			}
@@ -448,7 +448,7 @@ const writeTeamStats = async (results: GameResults) => {
 				"playersByTid",
 				teamSeason.tid,
 			);
-			const players = await idb.getCopies.playersPlus(playersRaw, {
+			const players = await player.formatAll(playersRaw, {
 				attrs: ["pid", "injury", "value"],
 				fuzz: true,
 				ratings: ["ovr", "pos", "ovrs"],

@@ -73,9 +73,9 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 					fromTid: oldTid,
 				});
 			}
-
-			await idb.cache.players.put(p);
 		}
+
+		await idb.cache.players.putAll(players);
 	}
 
 	// Check for retired jersey numbers (would be more efficient to get retiredJerseyNumbers once per team and check before calling genJerseyNumber, but oh well)

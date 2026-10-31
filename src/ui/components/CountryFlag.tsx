@@ -307,7 +307,6 @@ export const CountryFlag = ({
 		return (
 			<span
 				className={clsx(`fi fi-${code}`, className)}
-				data-no-row-highlight="true"
 				title={countryCodes[country] ? country : country2}
 				style={style}
 			></span>

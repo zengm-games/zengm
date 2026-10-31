@@ -1,3 +1,4 @@
+import { last } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player, Relative, RelativeType } from "../../../common/types.ts";
@@ -60,12 +61,7 @@ const getRelatives = async (
 	const pids = p.relatives
 		.filter((rel) => rel.type === type)
 		.map((rel) => rel.pid);
-	const players = await idb.getCopies.players(
-		{
-			pids,
-		},
-		"noCopyCache",
-	);
+	const players = await idb.merged.players.getAll({ pids });
 
 	return players.filter((p2) => !!p2);
 };
@@ -98,9 +94,7 @@ const makeSimilarJerseyNumber = async (
 	}
 
 	if (JERSEY_NUMBERS_BY_POSITION) {
-		if (
-			existingRelative.ratings.at(-1)!.pos !== newRelative.ratings.at(-1)!.pos
-		) {
+		if (last(existingRelative.ratings).pos !== last(newRelative.ratings).pos) {
 			return;
 		}
 	}
@@ -183,12 +177,7 @@ export const makeSon = async (p: Player) => {
 	);
 	const draftYear = p.draft.year - randInt(21, maxYearsAgo);
 	const possibleFathers = (
-		await idb.getCopies.players(
-			{
-				draftYear,
-			},
-			"noCopyCache",
-		)
+		await idb.merged.players.getAll({ draftYear })
 	).filter(
 		(father) =>
 			typeof father.diedYear !== "number" || father.diedYear >= p.born.year,
@@ -241,7 +230,6 @@ export const makeSon = async (p: Player) => {
 				pid: p.pid,
 				name: `${p.firstName} ${p.lastName}`,
 			});
-			await idb.cache.players.put(existingSon);
 
 			// Add existing brothers to new son
 			addRelative(p, {
@@ -250,6 +238,7 @@ export const makeSon = async (p: Player) => {
 				name: `${existingSon.firstName} ${existingSon.lastName}`,
 			});
 		}
+		await idb.cache.players.putAll(existingSons);
 	}
 
 	const relFather: Relative = {
@@ -305,12 +294,7 @@ export const makeBrother = async (p: Player) => {
 	const draftYear = p.draft.year - randInt(0, 5);
 	const existingRelativePids = p.relatives.map((rel) => rel.pid);
 	const possibleBrothers = (
-		await idb.getCopies.players(
-			{
-				draftYear,
-			},
-			"noCopyCache",
-		)
+		await idb.merged.players.getAll({ draftYear })
 	).filter((p2) => {
 		if (p2.pid === p.pid) {
 			return false;
@@ -348,7 +332,6 @@ export const makeBrother = async (p: Player) => {
 					pid: brother2.pid,
 					name: `${brother2.firstName} ${brother2.lastName}`,
 				});
-				await idb.cache.players.put(otherBrother);
 
 				// Add other brother to brother
 				addRelative(brother2, {
@@ -357,6 +340,7 @@ export const makeBrother = async (p: Player) => {
 					name: `${otherBrother.firstName} ${otherBrother.lastName}`,
 				});
 			}
+			await idb.cache.players.putAll(brothers);
 		}
 
 		// Handle case where one brother already has a father

@@ -1,13 +1,31 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	ViewInput,
-	AllStars,
-	Game,
-} from "../../common/types.ts";
+import type { AllStars, Game } from "../../common/types.ts";
+import {
+	defineView,
+	keepType,
+	type ViewArgs,
+	type ViewInput,
+} from "../util/defineView.ts";
 import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/constants.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { validateSeason } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"gameLog">) => {
+	const [tid, abbrev] =
+		params.abbrev === "special"
+			? [-1, "special"]
+			: validateAbbrev(params.abbrev);
+
+	return {
+		gid: params.gid !== undefined ? Number.parseInt(params.gid) : -1,
+		season: validateSeason(params.season),
+		tid,
+		abbrev,
+	};
+};
 
 export type TeamSeasonOverride = {
 	region?: string;
@@ -32,7 +50,7 @@ export const setTeamInfo = async (
 			t.region = "";
 			t.name = allStars.teamNames[ind];
 		} else {
-			// Covers type==="draft" and undefind type, from when draft was the only option
+			// Covers type==="draft" and undefined type, from when draft was the only option
 			t.region = "Team";
 			t.name = allStars.teamNames[ind].replace("Team ", "");
 		}
@@ -127,23 +145,21 @@ export const makeAbbrevsUnique = <T extends { abbrev: string }>(
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
 const boxScore = async (gid: number) => {
-	const game = await idb.getCopy.games({ gid });
+	const gameRaw = await idb.merged.games.get(gid);
 
 	// If game doesn't exist (bad gid or deleted box scores), show nothing
-	if (!game) {
+	if (!gameRaw) {
 		return { gid: -1 };
 	}
+
+	// Copy because team info is added to the game below
+	const game = helpers.deepCopy(gameRaw);
 
 	const allStarGame = game.teams[0].tid === -1 || game.teams[1].tid === -1;
 	let allStars: AllStars | undefined;
 
 	if (allStarGame) {
-		allStars = await idb.getCopy.allStars(
-			{
-				season: game.season,
-			},
-			"noCopyCache",
-		);
+		allStars = await idb.merged.allStars.get(game.season);
 
 		if (!allStars) {
 			return { gid: -1 };
@@ -211,19 +227,10 @@ const boxScore = async (gid: number) => {
 		},
 	};
 
-	// Swap teams order, so home team is at bottom in box score
-	game2.teams.reverse();
-
-	if (game2.scoringSummary) {
-		for (const event of game2.scoringSummary) {
-			event.t = event.t === 0 ? 1 : 0;
-		}
-	}
-
 	return game2;
 };
 
-const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
+const updateTeamSeason = (inputs: ViewInput<typeof processInputs>) => {
 	return {
 		// Needed for dropdown
 		abbrev: inputs.abbrev,
@@ -240,16 +247,12 @@ const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
  * @memberOf views.gameLog
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
-const updateBoxScore = async (
-	{ gid }: ViewInput<"gameLog">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		!state.boxScore ||
-		gid !== state.boxScore.gid
-	) {
+const updateBoxScore = async ({
+	inputs: { gid },
+	updateEvents,
+	prevInputs,
+}: ViewArgs<typeof processInputs>) => {
+	if (updateEvents.has("firstRun") || gid !== prevInputs?.gid) {
 		const game = await boxScore(gid);
 		return { boxScore: game };
 	}
@@ -264,9 +267,7 @@ export const loadAbbrevs = async (season: number) => {
 
 	// For historical seasons, look up old abbrevs
 	if (g.get("season") !== season || g.get("phase") >= PHASE.PLAYOFFS) {
-		const teamSeasons = await idb.getCopies.teamSeasons({
-			season,
-		});
+		const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 		if (teamSeasons.length > 0) {
 			for (const row of teamSeasons) {
 				abbrevs[row.tid] = row.abbrev;
@@ -286,6 +287,16 @@ export const loadAbbrevs = async (season: number) => {
 	return abbrevs;
 };
 
+// The list of games is added to incrementally, rather than being recomputed every time
+const keepPrevOutput = {
+	gamesList: keepType<{
+		abbrevs: Record<number, string>;
+		games: Game[];
+		tid: number;
+		season: number;
+	}>(),
+};
+
 /**
  * Update the game log list, as necessary.
  *
@@ -296,26 +307,17 @@ export const loadAbbrevs = async (season: number) => {
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
-const updateGamesList = async (
-	{ season, tid }: ViewInput<"gameLog">,
-	updateEvents: UpdateEvents,
-	{
-		gamesList,
-	}: {
-		gamesList?: {
-			abbrevs: Record<number, string>;
-			games: Game[];
-			tid: number;
-			season: number;
-		};
-	},
-) => {
+const updateGamesList = async ({
+	inputs: { season, tid },
+	updateEvents,
+	prevOutput: { gamesList },
+}: ViewArgs<typeof processInputs, typeof keepPrevOutput>) => {
 	if (
-		updateEvents.includes("firstRun") ||
+		updateEvents.has("firstRun") ||
 		!gamesList ||
 		tid !== gamesList.tid ||
 		season !== gamesList.season ||
-		(updateEvents.includes("gameSim") && season === g.get("season"))
+		(updateEvents.has("gameSim") && season === g.get("season"))
 	) {
 		let games: Game[];
 		let abbrevs: Record<number, string>;
@@ -359,15 +361,16 @@ const updateGamesList = async (
 	}
 };
 
-export default async (
-	inputs: ViewInput<"gameLog">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	return Object.assign(
-		{},
-		await updateBoxScore(inputs, updateEvents, state),
-		await updateGamesList(inputs, updateEvents, state),
-		await updateTeamSeason(inputs),
-	);
-};
+export default defineView({
+	id: "gameLog",
+	processInputs,
+	keepPrevOutput,
+	load: async (args) => {
+		return Object.assign(
+			{},
+			await updateBoxScore(args),
+			await updateGamesList(args),
+			await updateTeamSeason(args.inputs),
+		);
+	},
+});

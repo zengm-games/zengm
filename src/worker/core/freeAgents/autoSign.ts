@@ -4,7 +4,6 @@ import getBest from "./getBest.ts";
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
 import { orderBy } from "../../../common/utils.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 
 /**
@@ -47,7 +46,7 @@ const autoSign = async () => {
 		}
 
 		let probSkip;
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			probSkip = t.strategy === "rebuilding" ? 0.9 : 0.75;
 		} else {
 			probSkip = 0.5;

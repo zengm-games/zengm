@@ -5,7 +5,6 @@ import makeItWork from "./makeItWork.ts";
 import processTrade from "./processTrade.ts";
 import summary from "./summary.ts";
 import type { TradeTeams } from "../../../common/types.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { choice } from "../../../common/random.ts";
 import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
 
@@ -136,9 +135,7 @@ const attempt = async (valueChangeCalculator: ValueChangeCalculator) => {
 	}
 
 	const finalTids: [number, number] = [teams[0].tid, teams[1].tid];
-	const finalPids: [number[], number[]] = [teams[0].pids, teams[1].pids];
-	const finalDpids: [number[], number[]] = [teams[0].dpids, teams[1].dpids];
-	await processTrade(finalTids, finalPids, finalDpids);
+	await processTrade(teams, undefined);
 
 	return finalTids;
 };
@@ -153,7 +150,7 @@ const betweenAiTeams = async () => {
 	// If aiTradesFactor is not an integer, use the fractional part as a probability. Like for 3.5, 50% of the times it will be 3, and 50% will be 4.
 	// Also scale so there are fewer trade attempts if there are fewer teams.
 	let float = g.get("aiTradesFactor");
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		float *= 0.25;
 	}
 	if (g.get("numActiveTeams") < DEFAULT_NUM_TEAMS) {
@@ -166,7 +163,8 @@ const betweenAiTeams = async () => {
 	}
 
 	if (numAttempts > 0) {
-		const valueChangeCalculator = new ValueChangeCalculator();
+		// This runs every day when simulating games, so it needs to be fast
+		const valueChangeCalculator = new ValueChangeCalculator({ quick: true });
 
 		for (let i = 0; i < numAttempts; i++) {
 			const tradeTids = await attempt(valueChangeCalculator);

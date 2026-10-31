@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
 import { Modal } from "../components/Modal.tsx";
 import { PHASE, PHASE_TEXT } from "../../common/constants.ts";
 import { helpers } from "./helpers.ts";
+import { selectOnMount } from "./refCallbacks.ts";
 
 const Confirm = confirmable<
 	{
@@ -17,14 +18,6 @@ const Confirm = confirmable<
 >(({ show, proceed, currentSeason, forceHistoricalRosters, repeatSeason }) => {
 	const [phase, setPhase] = useState(String(PHASE.PRESEASON));
 	const [season, setSeason] = useState(String(currentSeason + 1));
-
-	const inputRef = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		if (inputRef.current) {
-			inputRef.current.select();
-		}
-	}, []);
 
 	const cancel = () => proceed(null);
 	const ok = () => proceed({ season, phase });
@@ -78,7 +71,7 @@ const Confirm = confirmable<
 					<div className="row gx-2">
 						<div className="col">
 							<input
-								ref={inputRef}
+								ref={selectOnMount}
 								type="number"
 								className="form-control"
 								placeholder="Season"

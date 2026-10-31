@@ -19,7 +19,10 @@ import { TeamLogoInline } from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { useLocal } from "../util/local.ts";
-import { isSport } from "../../common/sportFunctions.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../util/boxScoreDisplayOrder.ts";
 
 const TeamNameLink = ({
 	children,
@@ -93,6 +96,22 @@ const TeamLogo = ({
 	) : null;
 };
 
+// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering (winner first), but live games won't, so for them show the away team first. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll change in the future.
+const getHeadlineTeams = (boxScore: any) => {
+	if (boxScore.won?.name !== undefined) {
+		return {
+			t0: boxScore.won,
+			t1: boxScore.lost,
+		};
+	}
+
+	const [t0Num, t1Num] = TEAM_NUMS_DISPLAY_ORDER;
+	return {
+		t0: boxScore.teams[t0Num],
+		t1: boxScore.teams[t1Num],
+	};
+};
+
 const TeamNameAndScore = ({
 	boxScore,
 	live,
@@ -123,7 +142,9 @@ const TeamNameAndScore = ({
 			{t.playoffs ? (
 				<div
 					className="text-body-secondary fs-5 align-self-end"
-					style={{ paddingBottom: STARTING_NUM_TIMEOUTS !== undefined ? 8 : 1 }}
+					style={{
+						paddingBottom: live && STARTING_NUM_TIMEOUTS !== undefined ? 8 : 1,
+					}}
 				>
 					{t.playoffs.seed}.&nbsp;
 				</div>
@@ -185,13 +206,7 @@ export const HeadlineScoreLive = ({
 	boxScore: any;
 	isStuck: boolean;
 }) => {
-	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
-	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
-	// change in the future.
-	const t0 =
-		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
-	const t1 =
-		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
+	const { t0, t1 } = getHeadlineTeams(boxScore);
 
 	const shootout = t0.sPts !== undefined;
 
@@ -199,7 +214,7 @@ export const HeadlineScoreLive = ({
 		? "F"
 		: boxScore.elamTarget !== undefined
 			? `Target: ${boxScore.elamTarget} pts`
-			: isSport("baseball")
+			: __SPORT === "baseball"
 				? `${
 						boxScore.teams[0].ptsQtrs.length ===
 						boxScore.teams[1].ptsQtrs.length
@@ -216,7 +231,7 @@ export const HeadlineScoreLive = ({
 				<div className="d-flex h2 mb-0">
 					<TeamNameAndScore
 						boxScore={boxScore}
-						possessionNum={0}
+						possessionNum={TEAM_NUMS_DISPLAY_ORDER[0]}
 						live
 						shootout={shootout}
 						t={t0}
@@ -225,7 +240,7 @@ export const HeadlineScoreLive = ({
 				<div className="d-flex h2 mb-0 ms-3">
 					<TeamNameAndScore
 						boxScore={boxScore}
-						possessionNum={1}
+						possessionNum={TEAM_NUMS_DISPLAY_ORDER[1]}
 						live
 						shootout={shootout}
 						t={t1}
@@ -249,13 +264,7 @@ export const HeadlineScoreLive = ({
 };
 
 const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
-	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
-	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
-	// change in the future.
-	const t0 =
-		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
-	const t1 =
-		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
+	const { t0, t1 } = getHeadlineTeams(boxScore);
 
 	const shootout = t0.sPts !== undefined;
 
@@ -265,7 +274,7 @@ const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 				<div className="d-flex">
 					<TeamNameAndScore
 						boxScore={boxScore}
-						possessionNum={0}
+						possessionNum={TEAM_NUMS_DISPLAY_ORDER[0]}
 						live={false}
 						shootout={shootout}
 						t={t0}
@@ -274,7 +283,7 @@ const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 				<div className="d-flex">
 					<TeamNameAndScore
 						boxScore={boxScore}
-						possessionNum={1}
+						possessionNum={TEAM_NUMS_DISPLAY_ORDER[1]}
 						live={false}
 						shootout={shootout}
 						t={t1}
@@ -650,29 +659,26 @@ const NextButton = ({
 
 	useEffect(() => {
 		let mounted = true;
-		const whatever = async () => {
-			if (autoGoToNext && nextGid !== undefined) {
-				setAutoGoToNext(false);
-				// Hack, because otherwise the updateEvent with "gameSim" comes before this one, but doesn't finish yet, so in updatePage this update gets canceled even though it's a new URL (because it's the same page)
-				setTimeout(() => {
-					realtimeUpdate(
-						[],
-						helpers.leagueUrl([
-							"game_log",
-							`${abbrev}_${tid}`,
-							boxScore.season,
-							nextGid,
-						]),
-					);
 
-					if (mounted) {
-						setClickedGoToNext(false);
-					}
-				}, 10);
-			}
-		};
+		if (autoGoToNext && nextGid !== undefined) {
+			setAutoGoToNext(false);
+			// Hack, because otherwise the updateEvent with "gameSim" comes before this one, but doesn't finish yet, so in updatePage this update gets canceled even though it's a new URL (because it's the same page)
+			setTimeout(() => {
+				realtimeUpdate(
+					[],
+					helpers.leagueUrl([
+						"game_log",
+						`${abbrev}_${tid}`,
+						boxScore.season,
+						nextGid,
+					]),
+				);
 
-		whatever();
+				if (mounted) {
+					setClickedGoToNext(false);
+				}
+			}, 10);
+		}
 
 		return () => {
 			mounted = false;
@@ -716,6 +722,7 @@ const NextButton = ({
 						boxScore.season,
 						nextGid,
 					])}
+					data-no-scroll-reset
 				>
 					Next
 				</a>
@@ -818,9 +825,12 @@ const DetailedScore = ({
 	sportState: any;
 	tid?: number;
 }) => {
-	// Quarter/overtime labels
+	const teams = teamsInDisplayOrder(boxScore.teams as [any, any]);
+
+	// Quarter/overtime labels. Check both teams because in baseball the home team may have fewer innings
 	const numPeriods = Math.max(
 		boxScore.teams[0].ptsQtrs.length,
+		boxScore.teams[1].ptsQtrs.length,
 		boxScore.numPeriods ?? 0,
 	);
 	const qtrs: {
@@ -830,13 +840,13 @@ const DetailedScore = ({
 	}[] = range(numPeriods).map((i) => {
 		return {
 			label:
-				i < boxScore.numPeriods || isSport("baseball")
+				i < boxScore.numPeriods || __SPORT === "baseball"
 					? `${i + 1}`
 					: `OT${i - boxScore.numPeriods + 1}`,
 		};
 	});
 
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		qtrs.push(
 			{
 				label: "R",
@@ -891,6 +901,7 @@ const DetailedScore = ({
 							boxScore.season,
 							prevGid,
 						])}
+						data-no-scroll-reset
 					>
 						Prev
 					</a>
@@ -914,7 +925,7 @@ const DetailedScore = ({
 							</tr>
 						</thead>
 						<tbody>
-							{boxScore.teams.map((t: any) => (
+							{teams.map((t) => (
 								<tr key={t.abbrev}>
 									<th>
 										{t.tid >= 0 ? (
@@ -938,7 +949,7 @@ const DetailedScore = ({
 										<td key={i}>-</td>
 									))}
 									<th>{t.pts}</th>
-									{isSport("baseball") ? (
+									{__SPORT === "baseball" ? (
 										<>
 											<th>{t.h}</th>
 											<th>
@@ -957,24 +968,24 @@ const DetailedScore = ({
 						</tbody>
 					</table>
 				</div>
-				{isSport("baseball") && liveGameSim ? (
+				{__SPORT === "baseball" && liveGameSim ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-start">
 						<BaseballDiamond {...sportState} />
 					</div>
 				) : null}
-				{isSport("basketball") ? (
+				{__SPORT === "basketball" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
-						<FourFactors teams={boxScore.teams} />
+						<FourFactors teams={teams} />
 					</div>
 				) : null}
-				{isSport("football") ? (
+				{__SPORT === "football" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
-						<FourFactorsFootball teams={boxScore.teams} />
+						<FourFactorsFootball teams={teams} />
 					</div>
 				) : null}
-				{isSport("hockey") ? (
+				{__SPORT === "hockey" ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-center">
-						<FourFactorsHockey teams={boxScore.teams} />
+						<FourFactorsHockey teams={teams} />
 					</div>
 				) : null}
 			</div>
@@ -1088,9 +1099,9 @@ export const BoxScoreWrapper = ({
 	playIndex?: number;
 	prevGid?: number;
 	showNextPrev?: boolean;
-	sportState: any;
+	sportState: unknown;
 	tid?: number;
-	Row: any;
+	Row: unknown;
 }) => {
 	const prevPlayIndex = useRef(playIndex);
 	useEffect(() => {
@@ -1137,13 +1148,7 @@ export const BoxScoreWrapper = ({
 		),
 	});
 
-	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
-	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
-	// change in the future.
-	const t0 =
-		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
-	const t1 =
-		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
+	const { t0, t1 } = getHeadlineTeams(boxScore);
 
 	let forcedWinText = null;
 	if (boxScore.forceWin !== undefined) {

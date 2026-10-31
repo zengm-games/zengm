@@ -41,7 +41,7 @@ const RelativesForm = ({
 		field: string,
 		event: {
 			target: {
-				value: any;
+				value: unknown;
 			};
 		},
 	) => void;
@@ -71,20 +71,24 @@ const RelativesForm = ({
 		field: "pid" | "type" | "add" | "delete",
 		value?: string,
 	) => {
+		const newRelatives = [...relatives];
 		if (field === "delete") {
-			relatives.splice(index, 1);
+			newRelatives.splice(index, 1);
 		} else if (field === "add") {
-			relatives.push({
+			newRelatives.push({
 				name: "",
 				pid: 0,
 				type: "brother",
 			});
 		} else {
-			relatives[index]![field] = value!;
+			newRelatives[index] = {
+				...newRelatives[index]!,
+				[field]: value!,
+			};
 		}
 		handleChange("root", "relatives", {
 			target: {
-				value: relatives,
+				value: newRelatives,
 			},
 		});
 	};
@@ -97,8 +101,9 @@ const RelativesForm = ({
 				return (
 					<div className="d-flex align-items-end mb-3" key={i}>
 						<div className="me-3 flex-shrink-0">
-							{i === 0 ? <label className="form-label">Type</label> : null}
+							{i === 0 ? <div className="form-label">Type</div> : null}
 							<select
+								aria-label="Type"
 								className="form-select"
 								onChange={(event) => {
 									handleRelativesChange(i, "type", event.target.value);
@@ -118,8 +123,9 @@ const RelativesForm = ({
 							</select>
 						</div>
 						<div className="me-2 flex-grow-1">
-							{i === 0 ? <label className="form-label">Player</label> : null}
+							{i === 0 ? <div className="form-label">Player</div> : null}
 							<SelectMultiple
+								ariaLabel="Player"
 								value={playersByPid[pid]}
 								options={candidateRelatives}
 								onChange={(p) => {
@@ -140,6 +146,7 @@ const RelativesForm = ({
 									handleRelativesChange(i, "delete");
 								}}
 								title="Delete"
+								aria-label="Delete"
 								style={{ fontSize: 20 }}
 								disabled={!godMode}
 								type="button"

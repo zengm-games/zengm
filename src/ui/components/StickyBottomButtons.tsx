@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../common/constants.ts";
 import { useLocal } from "../util/local.ts";
 
@@ -5,7 +6,7 @@ export const StickyBottomButtons = ({
 	children,
 	isInsideModal,
 }: {
-	children: any;
+	children: ReactNode;
 	isInsideModal?: boolean;
 }) => {
 	const { stickyFooterAd } = useLocal(["stickyFooterAd"]);

@@ -58,7 +58,6 @@ const PlayerList = ({
 				<input
 					className="form-check-input"
 					type="checkbox"
-					title={p.untradableMsg}
 					checked={protectedPids.includes(p.pid)}
 					disabled={numRemaining <= 0 && !protectedPids.includes(p.pid)}
 					onChange={() => {
@@ -111,10 +110,10 @@ const PlayerList = ({
 				<br />
 				Max number of selected players per existing team: {numPerTeam ?? "???"}
 			</p>
-			<div className="btn-group">
+			<div className="d-flex gap-2">
 				<button
 					type="button"
-					className="btn btn-light-bordered"
+					className="btn btn-primary"
 					onClick={async () => {
 						await toWorker("main", "autoProtect", tid);
 					}}
@@ -123,7 +122,7 @@ const PlayerList = ({
 				</button>
 				<button
 					type="button"
-					className="btn btn-light-bordered"
+					className="btn btn-secondary"
 					onClick={() => {
 						updateProtectedPids([]);
 					}}
@@ -303,7 +302,7 @@ const ProtectPlayers = ({
 
 				<button
 					type="button"
-					className="btn btn-light-bordered ms-2"
+					className="btn btn-secondary ms-2"
 					disabled={saving}
 					onClick={handleCancel}
 				>

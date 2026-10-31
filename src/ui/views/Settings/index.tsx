@@ -1,7 +1,7 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import type { View } from "../../../common/types.ts";
 import SettingsForm from "./SettingsForm.tsx";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 
@@ -21,10 +21,9 @@ const Settings = ({ initialSettings }: View<"settings">) => {
 
 				setDirty(false);
 
-				logEvent({
+				showNotification({
 					type: "success",
 					text: "League settings successfully updated.",
-					saveToDb: false,
 				});
 			}}
 		/>

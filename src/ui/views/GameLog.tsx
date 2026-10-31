@@ -4,14 +4,21 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { View, Game } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import getWinner from "../../common/getWinner.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import { BoxScoreWrapper } from "../components/BoxScoreWrapper.tsx";
 import { BoxScoreRow } from "../components/BoxScoreRow.tsx";
 import { useLocal } from "../util/local.ts";
 
-const StatsRow = ({ p, ...props }: { i: number; p: any; season: number }) => {
+const StatsRow = ({
+	p,
+	...props
+}: {
+	i: number;
+	p: unknown;
+	season: number;
+}) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	const classes = clsx({
@@ -109,7 +116,7 @@ const GamesList = ({
 						const overtimes =
 							overtimeText === ""
 								? ""
-								: isSport("baseball")
+								: __SPORT === "baseball"
 									? ` (${overtimeText})`
 									: ` ${overtimeText}`;
 
@@ -128,7 +135,7 @@ const GamesList = ({
 								className={gm.gid === gid ? "table-info" : undefined}
 							>
 								<td className="game-log-cell">
-									<a href={url}>
+									<a href={url} data-no-scroll-reset>
 										{gm.neutralSite || home ? "" : "@"}
 										{oppAbbrev}
 									</a>
@@ -136,6 +143,7 @@ const GamesList = ({
 								<td className={clsx("game-log-cell")}>
 									<a
 										href={url}
+										data-no-scroll-reset
 										className={
 											gm.forceWin !== undefined ? "alert-god-mode" : undefined
 										}
@@ -144,7 +152,7 @@ const GamesList = ({
 									</a>
 								</td>
 								<td className="game-log-cell">
-									<a href={url}>
+									<a href={url} data-no-scroll-reset>
 										{formatScoreWithShootout(gm.teams[user], gm.teams[other])}
 										{overtimes}
 									</a>
@@ -182,7 +190,7 @@ const GameLog = ({
 		dropdownCustomURL: (fields) => {
 			return helpers.leagueUrl([
 				"game_log",
-				fields[dropdownTeamsKey],
+				fields[dropdownTeamsKey]!,
 				fields.seasons,
 				boxScore.gid,
 			]);

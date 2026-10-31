@@ -5,6 +5,7 @@ import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import type {
 	GetLeagueOptions,
 	NonEmptyArray,
+	PlayerAward,
 	PlayerContract,
 	PlayerInjury,
 } from "../../../common/types.ts";
@@ -12,10 +13,14 @@ import getOnlyRatings, { type OnlyRatings } from "./getOnlyRatings.ts";
 import type { Basketball, Ratings } from "./loadData.basketball.ts";
 import nerfDraftProspect from "./nerfDraftProspect.ts";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
-import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition.ts";
+import { setDraftProspectRatings } from "./setDraftProspectRatings.ts";
 import { getEWA } from "../../util/advStats.basketball.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { helpers } from "../../util/index.ts";
+import {
+	formatPlayerAward,
+	getDefaultAwardsByShortName,
+} from "./formatPlayerAward.ts";
 
 const MINUTES_PER_GAME = 48;
 
@@ -55,6 +60,8 @@ const formatPlayerFactory = async (
 	if (options.type === "real" && options.realStats !== "none") {
 		basketballStats = await loadStatsBasketball();
 	}
+
+	const defaultAwardsByShortName = getDefaultAwardsByShortName();
 
 	const tidCache: Record<string, number | undefined> = {};
 	const getTidNormal = (abbrev?: string): number | undefined => {
@@ -100,6 +107,8 @@ const formatPlayerFactory = async (
 			throw new Error(`No bio found for "${slug}"`);
 		}
 
+		const teamsRows = basketball.teams[slug];
+
 		// For alexnoob draft prospects who already have their draft ratings set for the correct season, as opposed to other rookies who need them set based on their rookie ratings
 		const draftRatingsAlreadySet = bio.draftYear === ratings.season;
 
@@ -119,7 +128,8 @@ const formatPlayerFactory = async (
 						: ratings.season - 1,
 			};
 		} else {
-			const draftTid = getDraftTid(teams, bio.draftAbbrev!);
+			// Same as getDraftTid, but cached
+			const draftTid = getTidNormal(bio.draftAbbrev) ?? -1;
 			draft = {
 				tid: draftTid,
 				originalTid: draftTid,
@@ -140,24 +150,23 @@ const formatPlayerFactory = async (
 		} else {
 			tid = PLAYER.FREE_AGENT;
 			let statsRow;
-			if (options.type === "real" && options.phase >= PHASE.PLAYOFFS) {
-				// Search backwards - last team a player was on that season
-				for (let i = basketball.teams.length - 1; i >= 0; i--) {
-					const row = basketball.teams[i]!;
-					if (
-						row.slug === slug &&
-						row.season === ratings.season &&
-						(row.phase === undefined || options.phase >= row.phase)
-					) {
-						statsRow = row;
-						break;
+			if (teamsRows) {
+				if (options.type === "real" && options.phase >= PHASE.PLAYOFFS) {
+					// Search backwards - last team a player was on that season
+					for (let i = teamsRows.length - 1; i >= 0; i--) {
+						const row = teamsRows[i]!;
+						if (
+							row.season === ratings.season &&
+							(row.phase === undefined || options.phase >= row.phase)
+						) {
+							statsRow = row;
+							break;
+						}
 					}
+				} else {
+					// Search forwards - first team a player was on that season
+					statsRow = teamsRows.find((row) => row.season === ratings.season);
 				}
-			} else {
-				// Search forwards - first team a player was on that season
-				statsRow = basketball.teams.find(
-					(row) => row.slug === slug && row.season === ratings.season,
-				);
 			}
 			const abbrev = statsRow ? statsRow.abbrev : ratings.abbrev_if_new_row;
 
@@ -180,7 +189,8 @@ const formatPlayerFactory = async (
 				});
 				tid = team ? team.tid : PLAYER.FREE_AGENT;
 			} else {
-				const newTid = getTidNormal(abbrev);
+				const newTid =
+					typeof abbrev === "number" ? abbrev : getTidNormal(abbrev);
 				if (newTid !== undefined) {
 					tid = newTid;
 				}
@@ -189,7 +199,7 @@ const formatPlayerFactory = async (
 
 		if (jerseyNumber === undefined && tid !== PLAYER.RETIRED) {
 			// Fallback (mostly for draft prospects) - pick first number in database
-			const statsRow2 = basketball.teams.find((row) => row.slug === slug);
+			const statsRow2 = teamsRows?.[0];
 			if (statsRow2) {
 				jerseyNumber = statsRow2.jerseyNumber;
 			}
@@ -213,7 +223,7 @@ const formatPlayerFactory = async (
 		}
 
 		let contract: PlayerContract | undefined;
-		let awards;
+		let awards: PlayerAward[] | undefined;
 		let salaries;
 		if (options.type === "legends") {
 			contract = {
@@ -221,11 +231,7 @@ const formatPlayerFactory = async (
 				exp: season + 3,
 			};
 		} else if (!options.randomDebuts || options.randomDebutsKeepCurrent) {
-			const salaryRows = basketball.salaries.filter((row) => {
-				if (row.slug !== slug) {
-					return false;
-				}
-
+			const salaryRows = basketball.salaries[slug]?.filter((row) => {
 				// Auto-apply extensions, otherwise will feel weird
 				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
 					return true;
@@ -234,17 +240,11 @@ const formatPlayerFactory = async (
 				return row.start <= season;
 			});
 
-			if (salaryRows.length > 0 && !draftProspect) {
+			if (salaryRows && salaryRows.length > 0 && !draftProspect) {
 				// Complicated stuff rather than just taking last entry because these can be out of order, particularly due to merging data sources. But still search backwards
-				let salaryRow;
-				for (let i = salaryRows.length - 1; i >= 0; i--) {
-					const row = salaryRows[i]!;
-
-					if (row.start <= season && row.exp >= season) {
-						salaryRow = row;
-						break;
-					}
-				}
+				let salaryRow = salaryRows.findLast(
+					(row) => row.start <= season && row.exp >= season,
+				);
 				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
 					// Auto-apply extensions, otherwise will feel weird
 					const salaryRowExtension = salaryRows.find(
@@ -299,20 +299,30 @@ const formatPlayerFactory = async (
 				options.type === "real" && options.phase > PHASE.PLAYOFFS
 					? season + 1
 					: season;
+
 			awards =
 				allAwards && !draftProspect
-					? helpers.deepCopy(
-							allAwards.filter(
-								(award) =>
-									award.season < awardsCutoffSeason ||
-									(options.type === "real" &&
-										options.phase === PHASE.PLAYOFFS &&
-										award.season < awardsCutoffSeason + 1 &&
-										(award.type.includes("All-Star") ||
-											award.type === "Slam Dunk Contest Winner" ||
-											award.type === "Three-Point Contest Winner")),
-							),
-						)
+					? helpers
+							.deepCopy(
+								allAwards.filter(
+									(award) =>
+										award.season < awardsCutoffSeason ||
+										(options.type === "real" &&
+											options.phase === PHASE.PLAYOFFS &&
+											award.season < awardsCutoffSeason + 1 &&
+											((award.type !== undefined &&
+												award.type.includes("All-Star")) ||
+												award.type === "Slam Dunk Contest Winner" ||
+												award.type === "Three-Point Contest Winner")),
+								),
+							)
+							.map((award) => {
+								if (award.type !== undefined) {
+									return award;
+								}
+
+								return formatPlayerAward(award, defaultAwardsByShortName);
+							})
 					: undefined;
 		}
 
@@ -350,16 +360,25 @@ const formatPlayerFactory = async (
 				nerfDraftProspect(currentRatings);
 			}
 
-			if (options.type === "real" && options.realDraftRatings === "draft") {
-				const age = currentRatings.season! - bornYear;
-				setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, bio);
+			if (options.type === "real") {
+				setDraftProspectRatings({
+					age: currentRatings.season! - bornYear,
+					basketball,
+					draft: {
+						round: bio.draftRound,
+						pick: bio.draftPick,
+					},
+					ratings: currentRatings,
+					realDraftRatings: options.realDraftRatings,
+					slug,
+				});
 			}
 		}
 
 		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
 
 		type StatsRow = Omit<
-			BasketballStats["stats"][number],
+			BasketballStats["stats"][string][number],
 			"slug" | "abbrev" | "playoffs"
 		> & {
 			playoffs: boolean;
@@ -373,73 +392,73 @@ const formatPlayerFactory = async (
 		};
 		let stats: StatsRow[] | undefined;
 		if (options.type === "real" && basketballStats) {
-			let statsTemp: BasketballStats["stats"] | undefined;
+			const statsRows = basketballStats.stats[slug];
+			if (statsRows) {
+				let statsTemp: BasketballStats["stats"][string] | undefined;
 
-			const statsSeason =
-				options.phase > PHASE.REGULAR_SEASON
-					? options.season
-					: options.season - 1;
-			const includePlayoffs = options.phase !== PHASE.PLAYOFFS;
+				const statsSeason =
+					options.phase > PHASE.REGULAR_SEASON
+						? options.season
+						: options.season - 1;
+				const includePlayoffs = options.phase !== PHASE.PLAYOFFS;
 
-			if (options.realStats === "lastSeason") {
-				statsTemp = basketballStats.stats.filter(
-					(row) =>
-						row.slug === slug &&
-						row.season === statsSeason &&
-						(includePlayoffs || !row.playoffs),
-				);
-			} else if (
-				options.realStats === "allActiveHOF" ||
-				options.realStats === "allActive" ||
-				options.realStats === "all"
-			) {
-				statsTemp = basketballStats.stats.filter(
-					(row) =>
-						row.slug === slug &&
-						row.season <= statsSeason &&
-						(includePlayoffs || !row.playoffs || row.season < statsSeason),
-				);
-			}
+				if (options.realStats === "lastSeason") {
+					statsTemp = statsRows.filter(
+						(row) =>
+							row.season === statsSeason && (includePlayoffs || !row.playoffs),
+					);
+				} else if (
+					options.realStats === "allActiveHOF" ||
+					options.realStats === "allActive" ||
+					options.realStats === "all"
+				) {
+					statsTemp = statsRows.filter(
+						(row) =>
+							row.season <= statsSeason &&
+							(includePlayoffs || !row.playoffs || row.season < statsSeason),
+					);
+				}
 
-			if (statsTemp && statsTemp.length > 0) {
-				stats = statsTemp.map((row) => {
-					let tid = getTidNormal(row.abbrev);
-					if (tid === undefined) {
-						// Team was disbanded
-						tid = PLAYER.DOES_NOT_EXIST;
-					}
-
-					const newRow: StatsRow = {
-						...row,
-						playoffs: !!row.playoffs,
-						tid,
-						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
-					};
-					delete (newRow as any).slug;
-					delete (newRow as any).abbrev;
-
-					// EWA is not in raw data, so we need to compute it when possible
-					if (newRow.per !== undefined && newRow.min !== undefined) {
-						newRow.ewa = getEWA(newRow.per, newRow.min, bio.pos, 1);
-					}
-
-					// Set these to explicitly 0 for seasons since the relevant stats (ast/trb, and blk/stl) were tracked
-					if (newRow.season >= 1951) {
-						if (newRow.qd === undefined) {
-							newRow.qd = 0;
+				if (statsTemp && statsTemp.length > 0) {
+					stats = statsTemp.map((row) => {
+						let tid = getTidNormal(row.abbrev);
+						if (tid === undefined) {
+							// Team was disbanded
+							tid = PLAYER.DOES_NOT_EXIST;
 						}
 
-						// Ideally this would be in the raw data, but it seems they use null rather than 0 for some seasons/players
-						if (newRow.td === undefined) {
-							newRow.td = 0;
-						}
-					}
-					if (newRow.season >= 1975 && newRow.fxf === undefined) {
-						newRow.fxf = 0;
-					}
+						// Use rest rather than delete to remove abbrev, because delete makes objects slow in V8
+						const { abbrev: _abbrev, ...rowWithoutAbbrev } = row;
+						const newRow: StatsRow = {
+							...rowWithoutAbbrev,
+							playoffs: !!row.playoffs,
+							tid,
+							minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
+						};
 
-					return newRow;
-				});
+						// EWA is not in raw data, so we need to compute it when possible
+						if (newRow.per !== undefined && newRow.min !== undefined) {
+							newRow.ewa = getEWA(newRow.per, newRow.min, bio.pos, 1);
+						}
+
+						// Set these to explicitly 0 for seasons since the relevant stats (ast/trb, and blk/stl) were tracked
+						if (newRow.season >= 1951) {
+							if (newRow.qd === undefined) {
+								newRow.qd = 0;
+							}
+
+							// Ideally this would be in the raw data, but it seems they use null rather than 0 for some seasons/players
+							if (newRow.td === undefined) {
+								newRow.td = 0;
+							}
+						}
+						if (newRow.season >= 1975 && newRow.fxf === undefined) {
+							newRow.fxf = 0;
+						}
+
+						return newRow;
+					});
+				}
 			}
 		}
 

@@ -7,6 +7,7 @@ import type { View } from "../../common/types.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import { useLocal } from "../util/local.ts";
+import type { LeagueUrlParts } from "../router/types.ts";
 
 const HeadToHead = ({
 	abbrev,
@@ -77,13 +78,11 @@ const HeadToHead = ({
 	};
 
 	const rows = teams.map((t) => {
-		const urlParts: (string | number)[] = [
+		const urlParts: LeagueUrlParts = [
 			"roster",
 			`${t.seasonAttrs.abbrev}_${t.tid}`,
+			season === "all" ? undefined : season,
 		];
-		if (season !== "all") {
-			urlParts.push(season);
-		}
 
 		return {
 			key: t.tid,

@@ -11,7 +11,7 @@ const pos = (ratings: MinimalPlayerRatings) => {
 		basketball: posBasketball,
 		football: posFootball,
 		hockey: posHockey,
-	})(ratings as any);
+	})(ratings);
 };
 
 export default pos;

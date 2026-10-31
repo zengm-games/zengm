@@ -1,46 +1,43 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, type MouseEvent } from "react";
 
-const IGNORED_ELEMENTS = new Set(["A", "BUTTON", "INPUT", "SELECT"]);
+const IGNORED_ELEMENTS_SELECTOR = [
+	"A",
+	"BUTTON",
+	"INPUT",
+	"SELECT",
+	"TEXTAREA",
+
+	// data-no-row-highlight is a hack and ideally would be removed
+	"[data-no-row-highlight]",
+].join(",");
 
 const useClickable = () => {
 	const [clicked, setClicked] = useState(false);
 
-	const toggleClicked = useCallback((event: any) => {
-		// Purposely using event.target instead of event.currentTarget because we do want check what internal element was clicked on, not the row itself
+	const toggleClicked = useCallback(
+		(event: MouseEvent<HTMLTableRowElement>) => {
+			// Purposely using event.target instead of event.currentTarget because we do want check what internal element was clicked on, not the row itself
 
-		// Don't toggle the row if a link was clicked.
-		if (event.target.nodeName && IGNORED_ELEMENTS.has(event.target.nodeName)) {
-			return;
-		}
-
-		if (event.target.dataset?.noRowHighlight) {
-			return;
-		}
-
-		// This handles modals, where for some reason an event is triggered for any click on or outside the modal, even though the modal is not a child of the actual clickable element (event.currentTarget)
-		if (!event.currentTarget.contains(event.target)) {
-			return;
-		}
-
-		// Search up tree a bit, in case there was like a span inside a button or something
-		let currentElement = event.target as HTMLElement | null | undefined;
-		for (let i = 0; i < 5; i++) {
-			currentElement = currentElement?.parentElement;
-			if (!currentElement) {
-				break;
-			}
-
-			if (currentElement.tagName === "TD" || currentElement.tagName === "TH") {
-				break;
-			}
-
-			if (IGNORED_ELEMENTS.has(currentElement.tagName)) {
+			// I think this is not actually needed, just for TypeScript
+			const target = event.target;
+			if (!(target instanceof Element)) {
 				return;
 			}
-		}
 
-		setClicked((prevClicked) => !prevClicked);
-	}, []);
+			// This handles modals, where for some reason an event is triggered for any click on or outside the modal, even though the modal is not a child of the actual clickable element (event.currentTarget)
+			if (!event.currentTarget.contains(target)) {
+				return;
+			}
+
+			// Don't toggle the row if a link/button/etc was clicked. closest checks the target itself and its ancestors, in case there was like a span inside a button or something
+			if (target.closest(IGNORED_ELEMENTS_SELECTOR)) {
+				return;
+			}
+
+			setClicked((prevClicked) => !prevClicked);
+		},
+		[],
+	);
 
 	return {
 		clicked,

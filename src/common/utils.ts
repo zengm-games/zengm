@@ -82,13 +82,11 @@ export const minBy = maxMinByFactory("min");
 
 export const omit = <T extends Record<string, unknown>, U extends (keyof T)[]>(
 	object: T,
-	remove: U,
+	keys: U,
 ) => {
-	const output: any = {};
-	for (const key of Object.keys(object)) {
-		if (!remove.includes(key)) {
-			output[key] = object[key];
-		}
+	const output = { ...object };
+	for (const key of keys) {
+		delete output[key];
 	}
 	return output as Omit<T, U[number]>;
 };
@@ -120,7 +118,8 @@ const createSortFunction = <Item, Key extends OrderByKey<Item>>(
 	const ordersArray = typeof orders === "string" ? [orders] : orders;
 
 	return (a: Item, b: Item) => {
-		for (const [i, key] of keysArray.entries()) {
+		for (let i = 0; i < keysArray.length; i++) {
+			const key = keysArray[i]!;
 			const order = ordersArray?.[i];
 
 			const valueA = getValueByIteratee(key, a) ?? Infinity;
@@ -180,3 +179,9 @@ export const chunk = <T>(array: T[], chunkSize: number): T[][] => {
 export const last = <T>(array: NonEmptyArray<T>) => {
 	return array.at(-1)!;
 };
+
+export function assertDefined<T>(value: T): asserts value is NonNullable<T> {
+	if (value === undefined || value === null) {
+		throw new Error("Should never happen");
+	}
+}

@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useRef } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
+import { onEnterOrSpace } from "../util/onEnterOrSpace.ts";
 
 const getValidTeamColors = (t?: { colors: unknown }) => {
 	const colors: [string, string, string] = [...DEFAULT_TEAM_COLORS];
@@ -103,6 +104,7 @@ export const JerseyNumber = ({
 					fontSize,
 				}}
 				role={onClick ? "button" : undefined}
+				tabIndex={onClick ? 0 : undefined}
 				onClick={
 					onClick
 						? () => {
@@ -114,6 +116,7 @@ export const JerseyNumber = ({
 							}
 						: undefined
 				}
+				onKeyDown={onClick ? onEnterOrSpace(onClick) : undefined}
 			>
 				{number}
 			</div>

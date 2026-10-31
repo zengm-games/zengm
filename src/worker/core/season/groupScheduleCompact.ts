@@ -12,7 +12,7 @@ const groupScheduleCompact = (tids: [number, number][]) => {
 	const allTids = new Set(tids.flat());
 
 	while (remainingMatchups.size > 0) {
-		const tidsUsed = new Set();
+		const tidsUsed = new Set<number>();
 
 		const matchupsToday: [number, number][] = [];
 		dailyMatchups.push(matchupsToday);

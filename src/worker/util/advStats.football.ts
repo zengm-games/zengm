@@ -1,14 +1,15 @@
 import { PHASE } from "../../common/constants.ts";
-import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
-import { getPlayers, getTopPlayers } from "../core/season/awards.ts";
-import { dpoyScore, makeTeams } from "../core/season/doAwards.football.ts";
-import advStatsSave from "./advStatsSave.ts";
-import { groupByUnique, last } from "../../common/utils.ts";
-import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { advStatsSave, getPlayers } from "./advStatsCommon.ts";
+import { groupByUnique, last, assertDefined } from "../../common/utils.ts";
+import {
+	defaultAwards,
+	defaultGameAttributes,
+} from "../../common/defaultGameAttributes.ts";
 import helpers from "./helpers.ts";
-import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
+import { processAwards } from "../core/awards/processAwards.ts";
+import { team } from "../core/index.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -146,9 +147,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		const t = teamsByTid[p.tid];
 
-		if (t === undefined) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(t);
 
 		// Need to add this up, otherwise it doesn't get computed right at the team level
 		t.stats.olScore += olScore(p.stats, league, p.ratings.pos);
@@ -191,9 +190,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		const t = teamsByTid[p.tid];
 
-		if (t === undefined) {
-			throw new Error("Should never happen");
-		}
+		assertDefined(t);
 
 		const pInidivudalPoints = individualPts[i]!;
 
@@ -300,70 +297,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 const advStats = async () => {
 	const playoffs = PHASE.PLAYOFFS === g.get("phase");
 
-	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-		0, // Active players have tid >= 0
-		Infinity,
-	]);
-	const players = (
-		await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["pid", "tid"],
-			stats: [
-				"gp",
-				"gs",
-				"pss",
-				"pssYds",
-				"pssAdjYdsPerAtt",
-				"rus",
-				"rusYds",
-				"rusYdsPerAtt",
-				"rec",
-				"recYds",
-				"defSk",
-				"defFmbRec",
-				"defFmbFrc",
-				"defInt",
-				"defPssDef",
-				"defIntTD",
-				"defFmbTD",
-				"defTck",
-				"prTD",
-				"krTD",
-				"fg0",
-				"fg20",
-				"fg30",
-				"fg40",
-				"fg50",
-				"fga0",
-				"fga20",
-				"fga30",
-				"fga40",
-				"fga50",
-				"xp",
-				"xpa",
-				"pnt",
-				"pntYds",
-				"pntBlk",
-				"pbw",
-				"pba",
-				"pbwr",
-				"rbw",
-				"rba",
-				"rbwr",
-
-				// For statsRowIsCurrenet
-				"tid",
-				"season",
-				"playoffs",
-			],
-			ratings: ["pos"],
-			season: g.get("season"),
-			playoffs,
-			regularSeason: !playoffs,
-		})
-	).filter((p) => {
-		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
-		return statsRowIsCurrent(p.stats, p.tid, playoffs);
-	});
+	const { players, playersRaw } = await getPlayers(playoffs);
 
 	const teamStats = [
 		"gp",
@@ -400,18 +334,15 @@ const advStats = async () => {
 		"rbw",
 		"rba",
 	] as const;
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			stats: teamStats,
-			season: g.get("season"),
-			playoffs,
-			regularSeason: !playoffs,
-			addDummySeason: true,
-			active: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		stats: teamStats,
+		season: g.get("season"),
+		playoffs,
+		regularSeason: !playoffs,
+		addDummySeason: true,
+		active: true,
+	});
 	const league: any = teams.reduce((memo: any, t) => {
 		for (const key of teamStats) {
 			if (Object.hasOwn(memo, key)) {
@@ -438,36 +369,38 @@ const advStats = async () => {
 	league.pbwr = league.pbw / league.pba;
 	league.rbwr = league.rbw / league.rba;
 
-	const updatedStats = { ...calculateAV(players, teams, league) };
-	await advStatsSave(players, playersRaw, updatedStats);
-
-	// Hackily account for AV of award winners, for OL and defense. These will not exactly correspond to the "real" AV formulas, they're just intended to be simple and good enough.
+	// Hackily account for AV of award winners, for defense only - we can do this without saving first because the formula does not use AV
 	if (!playoffs) {
-		const players2 = await getPlayers(g.get("season"));
-		const dpoyPlayers = getTopPlayers(
-			{
-				amount: Infinity,
-				score: dpoyScore,
-			},
-			players2,
-		);
-		// Can pass dpoyPlayers for all because the offensive/OL players don't matter
-		const allLeague = makeTeams(dpoyPlayers, dpoyPlayers, dpoyPlayers);
+		const { realizedAwards } = await processAwards({
+			awards: [defaultAwards.all],
+			extraStatRanges: [],
+			extraStats: [],
+			numPlayersPerIndividualAward: 1,
+			season: g.get("season"),
+			statOverridesByMatchup: undefined,
+		});
+		const allLeagueTeams = realizedAwards[0]?.[0];
+		if (allLeagueTeams?.numTeams !== undefined) {
+			const playersByPid = groupByUnique(players, "pid");
 
-		for (let i = 0; i < allLeague.length; i++) {
-			for (const p2 of allLeague[i].players) {
-				if (p2 && DEFENSIVE_POSITIONS.has(p2.pos)) {
-					const p = players.find((p3) => p3.pid === p2.pid);
-					if (p) {
-						p.allLeagueTeam = i;
+			for (let i = 0; i < 2; i++) {
+				const team = allLeagueTeams.winner[i];
+				if (team) {
+					for (const p of team) {
+						if (p.pid !== undefined) {
+							const pid = p.pid;
+							if (playersByPid[pid]) {
+								playersByPid[pid].allLeagueTeam = i;
+							}
+						}
 					}
 				}
 			}
 		}
-
-		const updatedStats = { ...calculateAV(players, teams, league) };
-		await advStatsSave(players, playersRaw, updatedStats);
 	}
+
+	const updatedStats = calculateAV(players, teams, league);
+	await advStatsSave(players, playersRaw, updatedStats);
 };
 
 export default advStats;

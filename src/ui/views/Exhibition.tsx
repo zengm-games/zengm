@@ -1,4 +1,10 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+	useEffectEvent,
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { Modal } from "../components/Modal.tsx";
 import {
 	COURT,
@@ -26,7 +32,7 @@ import { choice, randInt } from "../../common/random.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
-import { isSport } from "../../common/sportFunctions.ts";
+import { showNotification } from "../util/showNotification.ts";
 
 export type ExhibitionTeam = {
 	season: number;
@@ -101,20 +107,27 @@ export type ExhibitionLeagueWithSeasons =
 			seasonEnd: number;
 	  };
 
-const PlayerStatsSummary = ({ stats }: { stats: Player["stats"][number] }) => {
+export const corruptedLeagueMessage =
+	"Unable to load seasons from this league. Its data may be missing or corrupted.";
+
+const PlayerStatsSummary = ({
+	stats,
+}: {
+	stats: Player["stats"][number] | undefined;
+}) => {
 	if (!stats || stats.gp === undefined || stats.gp === 0) {
 		return <br />;
 	}
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		return (
 			<>
-				{helpers.roundStat(stats.pts / stats.gp, "pts")} pts /{" "}
+				{helpers.roundStat((stats.pts ?? 0) / stats.gp, "pts")} pts /{" "}
 				{helpers.roundStat(
 					((stats.trb ?? 0) + (stats.drb ?? 0) + (stats.orb ?? 0)) / stats.gp,
 					"trb",
 				)}{" "}
-				trb / {helpers.roundStat(stats.ast / stats.gp, "ast")} ast
+				trb / {helpers.roundStat((stats.ast ?? 0) / stats.gp, "ast")} ast
 			</>
 		);
 	}
@@ -129,6 +142,7 @@ const SelectTeam = ({
 	initialTeam,
 	leagues,
 	onChange,
+	onNoUsableLeagues,
 	realTeamInfo,
 }: {
 	disabled: boolean;
@@ -140,6 +154,7 @@ const SelectTeam = ({
 		t: ExhibitionTeam | undefined,
 		gameAttributes: ExhibitionGameAttributes,
 	) => void;
+	onNoUsableLeagues: () => void;
 	realTeamInfo: RealTeamInfo | undefined;
 }) => {
 	const [league, setLeague] = useState<
@@ -161,16 +176,14 @@ const SelectTeam = ({
 				seasonEnd: REAL_PLAYERS_INFO?.MAX_SEASON ?? 0,
 			};
 		} else {
-			const { seasonStart, seasonEnd } = await toWorker(
-				"exhibitionGame",
-				"getSeasons",
-				lid,
-			);
+			const seasons = await toWorker("exhibitionGame", "getSeasons", lid);
+			if (!seasons) {
+				return;
+			}
 			newLeague = {
 				type: "league",
 				lid,
-				seasonStart,
-				seasonEnd,
+				...seasons,
 			};
 		}
 
@@ -228,17 +241,17 @@ const SelectTeam = ({
 
 		const newGameAttributes = getGameAttributes(newInfo.gameAttributes);
 
-		setTeams(newTeams as any);
+		setTeams(newTeams);
 		setTid(newTeam.tid);
 		setGameAttributes(newGameAttributes);
 		setLoadingTeams(false);
 
-		onChange(league, newTeam as any, newGameAttributes);
+		onChange(league, newTeam, newGameAttributes);
 	};
 
 	const awaitingInitialLoad = useRef(true);
-	useLayoutEffect(() => {
-		const run = async () => {
+	const loadInitialTeam = useEffectEvent(
+		async (leagues: ExhibitionLeague[]) => {
 			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
 			if (
 				!awaitingInitialLoad.current ||
@@ -252,24 +265,36 @@ const SelectTeam = ({
 				if (initialTeam) {
 					const lid = initialTeam.type === "real" ? "real" : initialTeam.lid;
 					const league = await loadLeague(lid);
-					setSeason(initialTeam.season);
-					await loadTeams(league, initialTeam.season, initialTeam.tid);
-					return;
+					if (league) {
+						setSeason(initialTeam.season);
+						await loadTeams(league, initialTeam.season, initialTeam.tid);
+						return;
+					}
 				}
 			} catch (error) {
 				console.error(error);
 			}
 
-			const league = await loadLeague(
-				REAL_PLAYERS_INFO ? "real" : leagues[0]!.lid,
-			);
-			const randomSeason = randInt(league.seasonStart, league.seasonEnd);
-			setSeason(randomSeason);
-			await loadTeams(league, randomSeason, "random");
-		};
+			// Use the first league that loads, skipping any with missing/corrupted data
+			const lids = REAL_PLAYERS_INFO
+				? (["real"] as const)
+				: leagues.map((league) => league.lid);
+			for (const lid of lids) {
+				const league = await loadLeague(lid);
+				if (league) {
+					const randomSeason = randInt(league.seasonStart, league.seasonEnd);
+					setSeason(randomSeason);
+					await loadTeams(league, randomSeason, "random");
+					return;
+				}
+			}
 
-		run();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+			onNoUsableLeagues();
+		},
+	);
+
+	useLayoutEffect(() => {
+		loadInitialTeam(leagues);
 	}, [leagues]);
 
 	const t = teams.find((t) => t.tid === tid);
@@ -295,6 +320,13 @@ const SelectTeam = ({
 							const value = event.target.value;
 							const lid = value === "real" ? value : Number.parseInt(value);
 							const league = await loadLeague(lid);
+							if (!league) {
+								showNotification({
+									type: "error",
+									text: corruptedLeagueMessage,
+								});
+								return;
+							}
 							setSeason(league.seasonEnd);
 							await loadTeams(league, league.seasonEnd);
 						}}
@@ -338,7 +370,7 @@ const SelectTeam = ({
 							const newTid = Number.parseInt(event.target.value);
 							setTid(newTid);
 							const newTeam = teams.find((t) => t.tid === newTid);
-							onChange(league!, newTeam as any, gameAttributes);
+							onChange(league!, newTeam, gameAttributes);
 						}}
 						disabled={loadingTeams || disabled || !league}
 					>
@@ -489,7 +521,8 @@ const useLeagues = () => {
 
 const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	// Default state comes from cache of last exhibition game, if possible
-	const defaultState = useMemo(() => {
+	// https://tkdodo.eu/blog/use-state-for-one-time-initializations
+	const [defaultState] = useState(() => {
 		let settings: CachedSettings | undefined;
 		try {
 			const json = safeLocalStorage.getItem(CACHE_KEY);
@@ -518,8 +551,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			swapHomeAway: false,
 			teams: undefined,
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	});
 
 	const leagues = useLeagues();
 	const [teams, setTeams] = useState<
@@ -539,6 +571,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	const [gameAttributesInfo, setGameAttributesInfo] =
 		useState<GameAttributesInfo>(defaultState.gameAttributesInfo);
 	const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+	const [noUsableLeagues, setNoUsableLeagues] = useState(false);
 
 	const loadingTeams = teams[0] === undefined || teams[1] === undefined;
 
@@ -623,8 +656,18 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	if (!REAL_PLAYERS_INFO && leagues?.length === 0) {
 		return (
 			<p>
-				You need to <a href="/new_league">create some leagues</a> before you
-				play an exhibition game.
+				You need to <a href="/new_league">create a league</a> before you play an
+				exhibition game.
+			</p>
+		);
+	}
+
+	if (noUsableLeagues) {
+		return (
+			<p>
+				Unable to load any of your leagues. Their data may be missing or
+				corrupted. You need to <a href="/new_league">create a new league</a>{" "}
+				before you play an exhibition game.
 			</p>
 		);
 	}
@@ -646,6 +689,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						onChange={(league, t, gameAttributes) => {
 							setTeam(1, league, t, gameAttributes);
 						}}
+						onNoUsableLeagues={() => {
+							setNoUsableLeagues(true);
+						}}
 					/>
 				</div>
 				<div className="col-12 col-sm-6 mt-3 mt-sm-0">
@@ -658,6 +704,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						realTeamInfo={realTeamInfo}
 						onChange={(league, t, gameAttributes) => {
 							setTeam(0, league, t, gameAttributes);
+						}}
+						onNoUsableLeagues={() => {
+							setNoUsableLeagues(true);
 						}}
 					/>
 				</div>
@@ -725,7 +774,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 							id="gameAttributesSelect"
 							className="form-select"
 							value={gameAttributesInfo.type}
-							onChange={async (event) => {
+							onChange={(event) => {
 								const type = event.target.value;
 
 								if (type === "custom") {
@@ -784,7 +833,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 							</label>
 						</div>
 
-						{isSport("basketball") ? (
+						{__SPORT === "basketball" ? (
 							<div className="form-check">
 								<input
 									className="form-check-input"

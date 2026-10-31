@@ -10,11 +10,12 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { isSport } from "../../common/sportFunctions.ts";
 import helpers from "./helpers.ts";
 
 const BINARY_MINUS = "-";
 const UNARY_MINUS = "#";
+const FUNCTION_PREFIX = "@";
+const PROPERTY_PREFIX = ".";
 
 const regexEncode = (string: string) => {
 	// eslint-disable-next-line no-useless-escape
@@ -25,15 +26,23 @@ const regexSort = (a: string, b: string) => {
 	return a.length - b.length;
 };
 
-const operators: Record<
-	string,
-	{
-		operands: number;
-		precedence: number;
-		associativity: "l" | "r";
-		func: (a: number, b: number) => number;
-	}
-> = {
+type UnaryOperator = {
+	operands: 1;
+	precedence: number;
+	associativity: "l" | "r";
+	func: (a: number) => number;
+};
+
+type BinaryOperator = {
+	operands: 2;
+	precedence: number;
+	associativity: "l" | "r";
+	func: (a: number, b: number) => number;
+};
+
+type Operator = UnaryOperator | BinaryOperator;
+
+const operators: Record<string, Operator> = {
 	"+": {
 		operands: 2,
 		precedence: 1,
@@ -62,7 +71,7 @@ const operators: Record<
 		operands: 2,
 		precedence: 4,
 		associativity: "r",
-		func: (a, b) => Math.pow(a, b),
+		func: (a, b) => a ** b,
 	},
 	"#": {
 		operands: 1,
@@ -72,10 +81,58 @@ const operators: Record<
 	},
 };
 
+type FormulaFunction = {
+	arity: number;
+	func: (...params: number[]) => number;
+};
+
+const functions: Record<string, FormulaFunction> = {
+	abs: {
+		arity: 1,
+		func: Math.abs,
+	},
+	max: {
+		arity: 2,
+		func: Math.max,
+	},
+	min: {
+		arity: 2,
+		func: Math.min,
+	},
+};
+
 const operatorsString = Object.keys(operators)
 	.map(regexEncode)
 	.sort(regexSort)
 	.join("|");
+
+type ParsedVariable =
+	| {
+			type: "variable";
+			name: string;
+	  }
+	| {
+			type: "nestedVariable";
+			name: string;
+			property: string;
+	  };
+
+const parseVariable = (token: string): ParsedVariable => {
+	const dotIndex = token.indexOf(PROPERTY_PREFIX);
+
+	if (dotIndex === -1) {
+		return {
+			type: "variable",
+			name: token,
+		};
+	}
+
+	return {
+		type: "nestedVariable",
+		name: token.slice(0, dotIndex),
+		property: token.slice(dotIndex + 1),
+	};
+};
 
 const parseUnaryMinus = (string: string) => {
 	return string
@@ -94,8 +151,14 @@ const parseUnaryMinus = (string: string) => {
 const shuntingYard = (string: string) => {
 	const tokens = string.match(
 		new RegExp(
-			String.raw`\d+(?:[\.]\d+)?(?:[eE]\d+)?|[()]` +
-				String.raw`|${operatorsString}|[a-zA-Z\d]+`,
+			// A number must start with a digit and contain only characters
+			// that can actually be part of a number. Variables can also
+			// contain digits, including at the beginning.
+			String.raw`\d+(?:\.\d+)?(?:[eE][+-]?\d+)?(?![a-zA-Z\d])` +
+				// Property access, such as x.y
+				String.raw`|[a-zA-Z\d]+(?:\.[a-zA-Z\d]+)?` +
+				String.raw`|[(),]` +
+				String.raw`|${operatorsString}`,
 			"g",
 		),
 	);
@@ -105,7 +168,10 @@ const shuntingYard = (string: string) => {
 	const output: string[] = [];
 
 	if (tokens) {
-		for (const token of tokens) {
+		for (let i = 0; i < tokens.length; i++) {
+			const token = tokens[i]!;
+			const nextToken = tokens[i + 1];
+
 			if (token === ",") {
 				while (stack.length > 0 && stack.at(-1) !== "(") {
 					output.push(stack.pop()!);
@@ -115,6 +181,9 @@ const shuntingYard = (string: string) => {
 						"A separator (,) was misplaced or parentheses were mismatched",
 					);
 				}
+			} else if (functions[token] !== undefined && nextToken === "(") {
+				// Keep the function on the stack until its closing parenthesis.
+				stack.push(`${FUNCTION_PREFIX}${token}`);
 			} else if (operators[token]) {
 				const operator = operators[token];
 				while (
@@ -136,6 +205,12 @@ const shuntingYard = (string: string) => {
 				if (aux !== "(") {
 					throw new Error("Mismatched parentheses");
 				}
+
+				// If this parenthesized expression was a function call,
+				// emit the function after its arguments.
+				if (stack.at(-1)?.startsWith(FUNCTION_PREFIX)) {
+					output.push(stack.pop()!);
+				}
 			} else {
 				output.push(token);
 			}
@@ -145,36 +220,50 @@ const shuntingYard = (string: string) => {
 			if ("(" === aux || ")" === aux) {
 				throw new Error("Mismatched parentheses");
 			}
+
 			output.push(aux);
 		}
-	}
-
-	// Hack for 2b and 3b in baseball
-	if (isSport("baseball")) {
-		const output2 = [];
-		for (let i = 0; i < output.length; i++) {
-			if (
-				(output[i] === "2" || output[i] === "3") &&
-				output[i + 1]?.startsWith("b")
-			) {
-				output2.push(`${output[i]}${output[i + 1]}`);
-				i += 1;
-			} else {
-				output2.push(output[i]!);
-			}
-		}
-		return output2;
 	}
 
 	return output;
 };
 
-class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
-	private symbols: Symbols;
-	private tokens: (string | number)[];
+export class InvalidVariableError extends Error {
+	public invalidVariables: string[];
 
-	constructor(equation: string, symbols: Symbols) {
-		this.symbols = symbols;
+	constructor(invalidVariables: string[]) {
+		super(
+			`Invalid ${helpers.plural("variable", invalidVariables.length)}: ${invalidVariables.join(", ")}`,
+		);
+		this.invalidVariables = invalidVariables;
+	}
+}
+
+type VariableValue = number | Record<string, number>;
+
+type Token =
+	| { type: "number"; value: number }
+	| { type: "operator"; value: string }
+	| { type: "function"; name: string }
+	| ParsedVariable;
+
+export class FormulaEvaluator<
+	Variables extends ReadonlyArray<string>,
+	NestedVariables extends Variables[number][],
+> {
+	private variables: Set<Variables[number]>;
+	private nestedVariables: Set<Variables[number]>;
+	private tokens: Token[];
+	public usedVariables = new Set<Variables[number]>();
+	private usedNestedVariables = new Set<Variables[number]>();
+
+	constructor(
+		equation: string,
+		variables: Variables,
+		nestedVariables: NestedVariables,
+	) {
+		this.variables = new Set(variables);
+		this.nestedVariables = new Set(nestedVariables);
 		this.tokens = this.partiallyEvaluate(
 			shuntingYard(parseUnaryMinus(equation)),
 		);
@@ -182,51 +271,141 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		if (this.tokens.length === 0) {
 			throw new Error("Formula cannot be empty");
 		}
+
+		// Test with dummy values for variables, to hopefully ensure that this.evaluate never throws
+		const dummyValues: Record<string, VariableValue> = {};
+		for (const variable of this.usedVariables) {
+			dummyValues[variable] = 0;
+		}
+		for (const variable of this.usedNestedVariables) {
+			// Overwrite 0
+			dummyValues[variable] = {};
+		}
+		this.evaluate(dummyValues);
 	}
 
 	private partiallyEvaluate(tokens: string[]) {
-		const processed: (string | number)[] = [];
+		const processed: Token[] = [];
+
+		const invalidTokens = new Set<string>();
 
 		for (const token of tokens) {
-			if (this.symbols.includes(token as any)) {
-				processed.push(token);
+			const variable = parseVariable(token);
+
+			if (this.variables.has(variable.name)) {
+				const shouldBeNested = this.nestedVariables.has(variable.name);
+				const nested = variable.type === "nestedVariable";
+
+				if (nested && !shouldBeNested) {
+					throw new Error(
+						`Cannot use variable "${variable.name}" with nesting (like "${variable.name}.foo")`,
+					);
+				}
+
+				if (!nested && shouldBeNested) {
+					throw new Error(
+						`Cannot use variable "${variable.name}" without nesting (like "${variable.name}.foo")`,
+					);
+				}
+
+				this.usedVariables.add(variable.name);
+
+				if (nested) {
+					this.usedNestedVariables.add(variable.name);
+				}
+
+				processed.push(variable);
 			} else if (operators[token] !== undefined) {
-				processed.push(token);
+				processed.push({ type: "operator", value: token });
+			} else if (
+				token.startsWith(FUNCTION_PREFIX) &&
+				functions[token.slice(FUNCTION_PREFIX.length)] !== undefined
+			) {
+				processed.push({
+					type: "function",
+					name: token.slice(FUNCTION_PREFIX.length),
+				});
 			} else {
 				const float = helpers.localeParseFloat(token);
 				if (Number.isNaN(float)) {
-					throw new Error(`Invalid variable "${token}"`);
+					invalidTokens.add(token);
 				}
-				processed.push(float);
+				processed.push({ type: "number", value: float });
 			}
+		}
+
+		if (invalidTokens.size > 0) {
+			throw new InvalidVariableError(Array.from(invalidTokens));
 		}
 
 		return processed;
 	}
 
-	evaluate(symbols: Record<Symbols[number], number>) {
+	evaluate(variables: Record<Variables[number], VariableValue>) {
 		const stack: number[] = [];
 
 		for (const token of this.tokens) {
-			const operator = operators[token];
-			if (operator !== undefined) {
+			if (token.type === "operator") {
+				const operator = operators[token.value]!;
 				if (stack.length < operator.operands) {
 					throw new Error("Insufficient values in the expression");
 				}
-				const args = stack.splice(-operator.operands, operator.operands);
-				stack.push((operator.func as any)(...args));
-			} else if (typeof token === "number") {
-				stack.push(token);
+
+				if (operator.operands === 1) {
+					stack.push(operator.func(stack.pop() ?? 0));
+				} else {
+					const b = stack.pop() ?? 0;
+					const a = stack.pop() ?? 0;
+					stack.push(operator.func(a, b));
+				}
+			} else if (token.type === "function") {
+				const func = functions[token.name]!;
+
+				if (stack.length < func.arity) {
+					throw new Error(
+						`${token.name} requires exactly ${func.arity} ${helpers.plural("parameter", func.arity)}`,
+					);
+				}
+
+				const params = [];
+				while (params.length < func.arity) {
+					params.push(stack.pop() ?? 0);
+				}
+				stack.push(func.func(...params));
+			} else if (token.type === "number") {
+				stack.push(token.value);
 			} else {
-				stack.push((symbols as any)[token]);
+				let value;
+				if (token.type === "variable") {
+					value = (variables as any)[token.name];
+				} else {
+					const object = (variables as any)[token.name];
+
+					if (typeof object !== "object" || object === null) {
+						throw new Error(
+							`Variable "${token.name}" must be an object to access property "${token.property}"`,
+						);
+					}
+
+					value = object[token.property];
+				}
+
+				// ?? 0 is needed for historical seasons where some stats don't exist and are undefined
+				const value2 = value ?? 0;
+
+				if (typeof value2 !== "number") {
+					throw new Error(`Variable "${token.name}" must be a number`);
+				}
+
+				stack.push(value2);
 			}
 		}
+
+		// Would be nice to explicitly track functions so we know which one it is...
 		if (stack.length !== 1) {
-			throw new Error("Too many values in the expression");
+			throw new Error("Invalid expression: too many values");
 		}
 
 		return stack.pop()!;
 	}
 }
-
-export default FormulaEvaluator;

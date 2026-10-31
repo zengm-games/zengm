@@ -4,9 +4,10 @@ import { team, player, draft } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
-import { last, orderBy } from "../../../common/utils.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { choice, randInt, shuffle, uniform } from "../../../common/random.ts";
+import { countBy, last, orderBy } from "../../../common/utils.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
+import { randInt, shuffle, uniform } from "../../../common/random.ts";
+import { getCumulativeWeights } from "./getCumulativeWeights.ts";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
@@ -50,28 +51,6 @@ const getExpiration = (
 	return g.get("season") + years + offset;
 };
 
-const stableSoftmax = (values: number[], param: number) => {
-	let maxValue = -Infinity;
-	for (const value of values) {
-		if (value > maxValue) {
-			maxValue = value;
-		}
-	}
-
-	const numerators = Array(values.length);
-	let denominator = 0;
-	for (const [i, value] of values.entries()) {
-		// Divide rather than subtract, because sometimes maxX was so large that this was getting rounded to 0
-		numerators[i] = Math.exp((param * value) / maxValue);
-		denominator += numerators[i];
-	}
-
-	if (maxValue === 0 || denominator === 0) {
-		return numerators.map(() => 1);
-	}
-	return numerators.map((numerator) => numerator / denominator);
-};
-
 // "includeExpiringContracts" - use this at the start of re-signing phase
 // "freeAgentsOnly" - use this at the start of free agency phase
 // "dummyExpiringContracts" - use this at beginning of regular season, or during season (like when releasing a player)
@@ -91,6 +70,8 @@ const normalizeContractDemands = async ({
 	if (pids && pids.length === 0) {
 		return;
 	}
+
+	const pidsSet = pids ? new Set(pids) : undefined;
 
 	// Higher means more unequal salaries
 	const PARAM = bySport({
@@ -144,8 +125,8 @@ const normalizeContractDemands = async ({
 	// Store contracts here, so they can be edited without editing player object (for including dummy players in pool)
 	const playerInfos = players.map((p) => {
 		let dummy = false;
-		if (pids) {
-			dummy = !pids.includes(p.pid);
+		if (pidsSet) {
+			dummy = !pidsSet.has(p.pid);
 		} else if (
 			type === "dummyExpiringContracts" &&
 			p.tid !== PLAYER.FREE_AGENT
@@ -153,10 +134,14 @@ const normalizeContractDemands = async ({
 			dummy = true;
 		}
 
+		const value = (p.value < 0 ? -1 : 1) * p.value ** 2;
+
 		return {
 			pid: p.pid,
 			dummy,
-			value: (p.value < 0 ? -1 : 1) * p.value ** 2,
+			value,
+			softmaxValue: value * TEMP,
+			numBids: 0,
 			contractAmount: helpers.bound(
 				p.contract.amount,
 				minContract,
@@ -184,7 +169,7 @@ const normalizeContractDemands = async ({
 		}));
 	for (const t of teams) {
 		const contracts = (await team.getContracts(t.tid)).filter((contract) => {
-			if (pids && pids.includes(contract.pid)) {
+			if (pidsSet?.has(contract.pid)) {
 				return false;
 			}
 
@@ -205,7 +190,9 @@ const normalizeContractDemands = async ({
 		const SCALE_UP = 1.0 + OFFSET;
 		const SCALE_DOWN = 1.0 - OFFSET;
 
-		const bids = new Map<number, number>();
+		for (const p of playerInfosCurrent) {
+			p.numBids = 0;
+		}
 		shuffle(randTeams);
 		for (const t of randTeams) {
 			let capSpace = salaryCap - t.payroll;
@@ -219,38 +206,35 @@ const normalizeContractDemands = async ({
 				}
 			}
 
-			const availablePlayers = new Set(
-				playerInfosCurrent.filter(
-					(p) =>
-						p.contractAmount <= capSpace &&
-						(bids.get(p.pid) ?? 0) < NUM_BIDS_BEFORE_REMOVED,
-				),
+			const availablePlayers = playerInfosCurrent.filter(
+				(p) =>
+					p.contractAmount <= capSpace && p.numBids < NUM_BIDS_BEFORE_REMOVED,
 			);
-			while (capSpace > minContract && availablePlayers.size > 0) {
-				const availablePlayersArray = Array.from(availablePlayers);
-				const probs = stableSoftmax(
-					availablePlayersArray.map((p) => p.value * TEMP),
-					PARAM,
-				);
-				const p = choice(availablePlayersArray, probs);
-				availablePlayers.delete(p);
+			while (capSpace > minContract && availablePlayers.length > 0) {
+				const weights = getCumulativeWeights(availablePlayers, PARAM);
+				const draw = Math.random() * weights.at(-1)!;
+				const p =
+					availablePlayers[weights.findIndex((weight) => weight >= draw)]!;
 
-				bids.set(p.pid, (bids.get(p.pid) ?? 0) + 1);
+				p.numBids += 1;
 				capSpace -= p.contractAmount;
 				if (capSpace > minContract) {
-					for (const p of availablePlayers) {
-						if (p.contractAmount > capSpace) {
-							availablePlayers.delete(p);
+					// Preserve the order used by weighted choice while removing unavailable players.
+					let count = 0;
+					for (const candidate of availablePlayers) {
+						if (candidate !== p && !(candidate.contractAmount > capSpace)) {
+							availablePlayers[count++] = candidate;
 						}
 					}
+					availablePlayers.length = count;
 				}
 			}
 		}
 
 		// Players adjust expectations
 		for (const p of playerInfosCurrent) {
-			const playerBids = bids.get(p.pid);
-			if (playerBids === undefined) {
+			const playerBids = p.numBids;
+			if (playerBids === 0) {
 				// Got 0 bids - decrease demands
 				if (p.contractAmount >= minContract) {
 					p.contractAmount = helpers.bound(
@@ -305,7 +289,7 @@ const normalizeContractDemands = async ({
 		}
 	}
 	if (
-		isSport("football") &&
+		__SPORT === "football" &&
 		numRounds === 0 &&
 		type === "freeAgentsOnly" &&
 		maxContract !== minContract
@@ -327,17 +311,12 @@ const normalizeContractDemands = async ({
 				"desc",
 			);
 
-			let numPlayersOnTeams = 0;
-			for (const p of playersAll) {
-				if (p.tid >= 0) {
-					numPlayersOnTeams += 1;
-				}
+			let numOpenRosterSpots = 0;
+			const numPlayersByTid = countBy(playersAll, (p) => p.tid);
+			for (const t of teams) {
+				const numPlayers = numPlayersByTid[t.tid] ?? 0;
+				numOpenRosterSpots += Math.max(0, g.get("maxRosterSize") - numPlayers);
 			}
-			const numTotalRosterSpots = teams.length * g.get("maxRosterSize");
-			const numOpenRosterSpots = Math.max(
-				0,
-				numTotalRosterSpots - numPlayersOnTeams,
-			);
 
 			// For the top free agents (up to the available number of roster spots), adjust their contract demands up/down based on available cap space. Anyone beyond the available number of roster spots, set to a min contract
 			let topPlayersAmountSum = 0;
@@ -427,9 +406,9 @@ const normalizeContractDemands = async ({
 		if (labelAsRookieContract) {
 			p.contract.rookie = true;
 		}
-
-		await idb.cache.players.put(p);
 	}
+
+	await idb.cache.players.putAll(playerInfosToUpdate.map((info) => info.p));
 };
 
 export default normalizeContractDemands;

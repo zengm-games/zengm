@@ -4,7 +4,6 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
@@ -17,7 +16,7 @@ export const formatStatGameHigh = (
 	stat: string,
 	statType?: string,
 ) => {
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		// Catcher-only fielding stats
 		if (
 			ps.pos !== "C" &&
@@ -55,7 +54,7 @@ export const formatStatGameHigh = (
 		);
 	}
 
-	if (isSport("basketball") && (stat === "pm100" || stat === "onOff100")) {
+	if (__SPORT === "basketball" && (stat === "pm100" || stat === "onOff100")) {
 		return <PlusMinus>{ps[stat]}</PlusMinus>;
 	}
 
@@ -86,6 +85,7 @@ const PlayerStats = ({
 	const { userTid } = useLocal(["userTid"]);
 
 	const cols = getCols([
+		"#",
 		"Name",
 		"Pos",
 		"Age",
@@ -105,45 +105,29 @@ const PlayerStats = ({
 	}
 
 	let sortCol = cols.length - 1;
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		if (statType === "passing") {
-			sortCol = 9;
+			sortCol = 10;
 		} else if (statType === "rushing") {
 			sortCol = cols.length - 3;
 		} else if (statType === "defense") {
-			sortCol = 16;
+			sortCol = 17;
 		} else if (statType === "kicking") {
 			sortCol = cols.length - 11;
 		} else if (statType === "returns") {
-			sortCol = 12;
+			sortCol = 13;
 		}
 	}
 
-	let statsProperty:
-		| "careerStats"
-		| "careerStatsPlayoffs"
-		| "careerStatsCombined"
-		| "stats";
-	if (season === "career") {
-		statsProperty =
-			playoffs === "playoffs"
-				? "careerStatsPlayoffs"
-				: playoffs === "combined"
-					? "careerStatsCombined"
-					: "careerStats";
-	} else {
-		statsProperty = "stats";
-	}
-
-	if (isSport("baseball") && statType === "fielding") {
+	if (__SPORT === "baseball" && statType === "fielding") {
 		players = expandFieldingStats({
 			rows: players,
 			stats,
-			statsProperty,
+			statsProperty: "stats",
 		});
 	}
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		// HACKS to show right stats, info
 		let actualAbbrev;
 		let actualTid;
@@ -154,17 +138,15 @@ const PlayerStats = ({
 			actualAbbrev = p.stats.abbrev;
 			actualTid = p.stats.tid;
 		}
-		if (statsProperty !== "stats") {
-			p.stats = p[statsProperty];
-		}
-
 		const statsRow = stats.map((stat) =>
 			formatStatGameHigh(p.stats, stat, statType),
 		);
 
 		let key;
-		if (isSport("baseball") && statType === "fielding") {
-			key = `${p.pid}-${p.stats.season}-${p.stats.pos}`;
+		if (__SPORT === "baseball" && statType === "fielding") {
+			// pos is added by expandFieldingStats
+			const pos = "pos" in p.stats ? p.stats.pos : undefined;
+			key = `${p.pid}-${p.stats.season}-${pos}`;
 		} else if (season === "all") {
 			key = `${p.pid}-${p.stats.season}`;
 		} else {
@@ -182,11 +164,12 @@ const PlayerStats = ({
 				playoffs,
 			},
 			data: [
+				null,
 				wrappedPlayerNameLabels({
 					pid: p.pid,
 					injury: p.injury,
 					season: numericSeason,
-					skills: p.ratings.skills,
+					skills: p.skills,
 					jerseyNumber: p.stats.jerseyNumber,
 					defaultWatch: p.watch,
 					firstName: p.firstName,
@@ -206,7 +189,7 @@ const PlayerStats = ({
 					href={helpers.leagueUrl([
 						"roster",
 						`${actualAbbrev}_${actualTid}`,
-						...(season === "career" ? [] : [p.stats.season]),
+						season === "career" ? undefined : p.stats.season,
 					])}
 				>
 					{actualAbbrev}
@@ -243,8 +226,9 @@ const PlayerStats = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[sortCol, "desc"]}
-				defaultStickyCols={window.mobile ? 0 : 1}
+				defaultStickyCols={window.mobile ? 0 : 2}
 				name={`PlayerStats${statType}`}
+				rankCol={0}
 				rows={rows}
 				superCols={superCols}
 				pagination

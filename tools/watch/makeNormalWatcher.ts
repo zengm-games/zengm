@@ -40,8 +40,9 @@ export const makeNormalWatcher = ({
 			}
 		};
 
-		const watcher = watch(watchFiles, {});
-		watcher.on("change", async () => {
+		// "all" rather than "change" so adding/deleting files triggers a build too. ignoreInitial because otherwise there is an "add" event for every existing file on startup.
+		const watcher = watch(watchFiles, { ignoreInitial: true });
+		watcher.on("all", async () => {
 			await buildWrapped(currentSport);
 		});
 		eventEmitter.on("newSport", async (sport) => {

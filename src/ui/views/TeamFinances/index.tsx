@@ -10,7 +10,7 @@ import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
@@ -257,10 +257,9 @@ const FinancesForm = ({
 			autoTicketPrice: state.autoTicketPrice,
 		});
 
-		logEvent({
+		showNotification({
 			type: "success",
 			text: "Saved team finance settings.",
-			saveToDb: false,
 		});
 
 		setState((state2) => ({

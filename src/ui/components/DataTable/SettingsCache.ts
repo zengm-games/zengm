@@ -10,7 +10,7 @@ class SettingsCache {
 		this.disabled = disabled;
 	}
 
-	set(key: string, value: any) {
+	set(key: string, value: unknown) {
 		if (this.disabled) {
 			return;
 		}

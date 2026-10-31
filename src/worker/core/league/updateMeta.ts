@@ -7,15 +7,15 @@ const updateMeta = async (
 	lidInput?: number,
 	noExtraStuff?: boolean,
 ) => {
-	if (process.env.NODE_ENV === "test") {
+	if (__NODE_ENV === "test") {
 		return;
 	}
 
 	if (local.autoSave) {
-		const transation = await idb.meta.transaction("leagues", "readwrite");
+		const tx = await idb.meta.transaction("leagues", "readwrite");
 
 		const lid = lidInput ?? g.get("lid");
-		const l = await transation.store.get(lid);
+		const l = await tx.store.get(lid);
 		if (!l) {
 			throw new Error(`No league with lid ${lid} found`);
 		}
@@ -37,7 +37,7 @@ const updateMeta = async (
 						if (g.get("userTids").length > 1) {
 							l.teamName = "Multi Team Mode";
 							l.teamRegion = "";
-							l.imgURL = `https://zengm.com/files/logo-${process.env.SPORT}.svg`;
+							l.imgURL = `https://zengm.com/files/logo-${__SPORT}.svg`;
 						} else {
 							l.teamName = teamInfo.name;
 							l.teamRegion = teamInfo.region;
@@ -50,8 +50,7 @@ const updateMeta = async (
 			}
 		}
 
-		await transation.store.put(l);
-		await transation.done;
+		await Promise.all([tx.store.put(l), tx.done]);
 	}
 };
 

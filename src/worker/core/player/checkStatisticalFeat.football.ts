@@ -129,7 +129,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 		statArr["rushing/receiving TDs"] = p.stat.rusTD + p.stat.recTD;
 		touchdownFeatFound = true;
 		score += 10;
-		if (!touchdownFeatFound && p.stat.rusTD + p.stat.recTD >= FIVE) {
+		if (p.stat.rusTD + p.stat.recTD >= FIVE) {
 			score += 10;
 		}
 	}
@@ -161,7 +161,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 		statArr["rushing/receiving yds"] = p.stat.rusYds + p.stat.recYds;
 		rusRecYdsFeatFound = true;
 		score += 10;
-		if (!rusRecYdsFeatFound && p.stat.rusYds + p.stat.recYds >= THREE_HUNDRED) {
+		if (p.stat.rusYds + p.stat.recYds >= THREE_HUNDRED) {
 			score += 10;
 		}
 	}

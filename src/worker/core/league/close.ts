@@ -1,10 +1,11 @@
 import { idb } from "../../db/index.ts";
 import { g, local, lock, updateStatus } from "../../util/index.ts";
+import { cleanupAutoPlay } from "../league/autoPlay.ts";
 
 // Flush cache, disconnect from league database, and unset g.get("lid")
 const close = async (disconnect?: boolean) => {
 	const gameSim = lock.get("gameSim");
-	local.autoPlayUntil = undefined;
+	cleanupAutoPlay();
 	await lock.set("stopGameSim", true);
 	await lock.set("gameSim", false);
 
@@ -22,7 +23,7 @@ const close = async (disconnect?: boolean) => {
 		if (local.leagueLoaded && idb.cache._dirty) {
 			await updateStatus("Saving...");
 			await idb.cache.flush();
-			await updateStatus("Idle");
+			await updateStatus();
 		}
 
 		if (disconnect) {

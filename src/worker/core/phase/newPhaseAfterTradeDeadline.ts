@@ -1,6 +1,6 @@
 import type { PhaseReturn } from "../../../common/types.ts";
 
-const newPhaseAfterTradeDeadline = async (): Promise<PhaseReturn> => {
+const newPhaseAfterTradeDeadline = (): PhaseReturn => {
 	return {};
 };
 

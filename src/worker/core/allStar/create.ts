@@ -1,19 +1,113 @@
-import { awardStats, saveAwardsByPlayer } from "../season/awards.ts";
+import { updatePlayerAwards } from "../awards/awardsByPlayer.ts";
 import { g } from "../../util/index.ts";
 import type {
 	AllStars,
 	Conditions,
-	PlayerFiltered,
 	AllStarPlayer,
 } from "../../../common/types.ts";
 import { PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
-import { last, orderBy, range } from "../../../common/utils.ts";
-import { getPosByGpF } from "../season/doAwards.baseball.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { mvpScore } from "../season/doAwards.football.ts";
+import { last, orderBy, range, assertDefined } from "../../../common/utils.ts";
+import { getPosByGpF } from "../player/getPosByGpF.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
+import { player } from "../index.ts";
+
+// This is from the old football awards sytem. Eventually should make All-Star teams use the same formulas as the default All-League awards...
+// Football players from player.formatAll, with currentStats added in create
+const mvpScoreStats = [
+	"defSk",
+	"defTckLoss",
+	"defTckAst",
+	"defTckSolo",
+	"defFmbFrc",
+	"defFmbRec",
+	"defInt",
+	"defPssDef",
+	"rusYds",
+	"rusTD",
+	"fmbLost",
+	"recYds",
+	"recTD",
+	"pssYds",
+	"pssTD",
+	"pssInt",
+	"pba",
+	"rba",
+	"pbw",
+	"rbw",
+	"prTD",
+	"krTD",
+] as const;
+
+type PlayerWithCurrentStats = {
+	currentStats: Record<(typeof mvpScoreStats)[number], number>;
+};
+
+// Stats can be missing in historical data, treat that the same as 0
+const getCurrentStats = (
+	stats: Record<(typeof mvpScoreStats)[number], number | undefined>,
+) => {
+	const currentStats = {} as PlayerWithCurrentStats["currentStats"];
+	for (const stat of mvpScoreStats) {
+		currentStats[stat] = stats[stat] ?? 0;
+	}
+	return currentStats;
+};
+
+const dpoyScore = (p: PlayerWithCurrentStats) => {
+	const s = p.currentStats;
+
+	return (
+		s.defSk * 4 +
+		s.defTckLoss * 0.4 +
+		s.defTckAst * 0.2 +
+		s.defTckSolo * 0.4 +
+		s.defFmbFrc * 3 +
+		s.defFmbRec * 3 +
+		s.defInt * 6 +
+		s.defPssDef * 2
+	);
+};
+const opoyScore = (p: PlayerWithCurrentStats) => {
+	const s = p.currentStats;
+	let rushing = s.rusYds * 0.125 + s.rusTD * 6 - s.fmbLost * 2;
+	const receiving = s.recYds * 0.0975 + s.recTD * 6;
+
+	// Penalty for rushing QBs
+	if (s.pssYds > s.rusYds) {
+		rushing *= 0.5;
+	}
+
+	return rushing + receiving;
+};
+const offScore = (p: PlayerWithCurrentStats) => {
+	const s = p.currentStats;
+	const passing = s.pssYds * 0.04 + s.pssTD * 4 - s.pssInt * 2.5;
+	const rushingReceiving = opoyScore(p);
+
+	return 1.1 * passing + rushingReceiving;
+};
+const poyScore = (p: PlayerWithCurrentStats) => {
+	const s = p.currentStats;
+	const attempts = s.pba + s.rba;
+	if (attempts === 0) {
+		return 0;
+	}
+
+	// Account for rate and volume
+	return ((s.pbw + s.rbw) / attempts) * Math.sqrt(attempts);
+};
+const mvpScore = (p: PlayerWithCurrentStats) => {
+	const s = p.currentStats;
+	const offense = offScore(p);
+	const defense = 2.25 * dpoyScore(p);
+	const returns = (s.prTD + s.krTD) * 6;
+	const blocking = 4 * poyScore(p);
+
+	return offense + defense + returns + blocking;
+};
 
 const MIN_PLAYERS_CONTEST = 2;
 
@@ -30,7 +124,7 @@ const create = async (conditions: Conditions) => {
 		PLAYER.FREE_AGENT,
 		Infinity,
 	]);
-	const players = await idb.getCopies.playersPlus(playersAll, {
+	const players = await player.formatAll(playersAll, {
 		attrs: ["pid", "firstName", "name", "tid", "injury"],
 		ratings: ["pos", "ovr"],
 		stats: bySport({
@@ -41,7 +135,48 @@ const create = async (conditions: Conditions) => {
 				"gpF",
 			],
 			basketball: ["ewa", "ws"],
-			football: awardStats,
+			football: [
+				"keyStats",
+				"pntYds",
+				"fg",
+				"krTD",
+				"krYds",
+				"prTD",
+				"prYds",
+				"pssYds",
+				"pssTD",
+				"pssInt",
+				"rusYds",
+				"rusTD",
+				"recYds",
+				"recTD",
+				"fmbLost",
+				"prTD",
+				"krTD",
+				"ydsFromScrimmage",
+				"season",
+				"abbrev",
+				"tid",
+				"jerseyNumber",
+				"defIntTD",
+				"defFmbTD",
+				"defSft",
+				"defSk",
+				"defInt",
+				"defPssDef",
+				"defFmbFrc",
+				"defFmbRec",
+				"defTckSolo",
+				"defTckAst",
+				"defTckLoss",
+				"totTD",
+				"pbw",
+				"pba",
+				"pbwr",
+				"rbw",
+				"rba",
+				"rbwr",
+			],
 			hockey: ["ps"],
 		}),
 		season: g.get("season"),
@@ -53,20 +188,13 @@ const create = async (conditions: Conditions) => {
 
 	const allStarNum = g.get("allStarNum");
 
-	const score = (p: PlayerFiltered) =>
+	const score = (p: (typeof players)[number]) =>
 		bySport({
-			baseball: p.stats.war,
-			football: mvpScore(p),
-			basketball: 2.5 * p.stats.ewa + p.stats.ws,
-			hockey: p.stats.ps,
+			baseball: p.stats.war ?? 0,
+			football: mvpScore({ currentStats: getCurrentStats(p.stats) }),
+			basketball: 2.5 * (p.stats.ewa ?? 0) + (p.stats.ws ?? 0),
+			hockey: p.stats.ps ?? 0,
 		});
-
-	if (isSport("football")) {
-		// For mvpScore
-		for (const p of players) {
-			p.currentStats = p.stats;
-		}
-	}
 
 	const sortedPlayers = orderBy(
 		players,
@@ -76,14 +204,14 @@ const create = async (conditions: Conditions) => {
 
 	let allStarType = g.get("allStarType");
 	const confs = g.get("confs");
-	if (!isSport("basketball") && allStarType === "draft") {
+	if (__SPORT !== "basketball" && allStarType === "draft") {
 		allStarType = "byConf";
 	}
 	if (allStarType === "byConf" && confs.length !== 2) {
 		allStarType = "top";
 	}
 
-	let healthyPids = new Set();
+	let healthyPids = new Set<number>();
 	let pickedAllStars = false;
 
 	const pickAllStars = (
@@ -129,7 +257,7 @@ const create = async (conditions: Conditions) => {
 			shuffle(positions);
 
 			const playersByPos = Object.groupBy(candidates, (p) => {
-				if (isSport("baseball")) {
+				if (__SPORT === "baseball") {
 					// Find actual played position based on highest gpF value
 					const pos = getPosByGpF(p.stats.gpF);
 					if (pos !== undefined) {
@@ -304,15 +432,22 @@ const create = async (conditions: Conditions) => {
 	}
 
 	// Do awards first, before picking captains, so remaining has all players
-	const awardsByPlayer = allStars.remaining.map((p: any) => {
+	const awardsByPlayer = allStars.remaining.map((p) => {
 		return {
 			pid: p.pid,
 			tid: p.tid,
 			name: p.name,
-			type: "All-Star",
+			award: { type: "All-Star" },
 		};
 	});
-	await saveAwardsByPlayer(awardsByPlayer, conditions);
+	await updatePlayerAwards({
+		awardsToDelete: [],
+		awardsToSave: awardsByPlayer,
+		logEventInfo: {
+			conditions,
+		},
+		season: g.get("season"),
+	});
 
 	const assignTopPlayerToTeam = (team: (typeof allStars)["teams"][number]) => {
 		const ind = allStars.remaining.findIndex(({ pid }) => healthyPids.has(pid));
@@ -326,12 +461,16 @@ const create = async (conditions: Conditions) => {
 			assignTopPlayerToTeam(team);
 		}
 
-		// @ts-expect-error
-		allStars.teamNames = allStars.teams.map((teamPlayers) => {
-			const captainPID = teamPlayers[0]!.pid;
+		const getTeamName = (teamPlayers: (typeof allStars)["teams"][number]) => {
+			const captainPID = teamPlayers[0]?.pid;
 			const p = players.find((p2) => p2.pid === captainPID);
+			assertDefined(p);
 			return `Team ${p.firstName}`;
-		});
+		};
+		allStars.teamNames = [
+			getTeamName(allStars.teams[0]),
+			getTeamName(allStars.teams[1]),
+		];
 
 		if (allStars.teamNames[0] === allStars.teamNames[1]) {
 			allStars.teamNames[1] += " 2";
@@ -369,13 +508,8 @@ const create = async (conditions: Conditions) => {
 
 	allStars.type = allStarType;
 
-	if (isSport("basketball")) {
-		const lastYear = await idb.getCopy.allStars(
-			{
-				season: g.get("season") - 1,
-			},
-			"noCopyCache",
-		);
+	if (__SPORT === "basketball") {
+		const lastYear = await idb.merged.allStars.get(g.get("season") - 1);
 		let prevWinnerDunk: number | undefined;
 		if (lastYear?.dunk?.winner !== undefined) {
 			prevWinnerDunk = lastYear.dunk.players[lastYear.dunk.winner]!.pid;

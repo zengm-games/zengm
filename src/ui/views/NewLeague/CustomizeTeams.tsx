@@ -1,4 +1,4 @@
-import { useEffect, useId, useReducer, useRef, useState } from "react";
+import { useId, useReducer, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import type {
@@ -12,8 +12,9 @@ import clsx from "clsx";
 import { arrayMove } from "@dnd-kit/sortable";
 import UpsertTeamModal from "./UpsertTeamModal.tsx";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
+import { selectOnMount } from "../../util/refCallbacks.ts";
 import confirmDeleteWithChildren from "./confirmDeleteWithChildren.tsx";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { applyRealTeamInfos } from "./index.tsx";
@@ -518,6 +519,7 @@ const PlayersButton = ({
 			<button
 				className="ms-2 btn btn-link p-0 border-0 text-reset"
 				title="Players"
+				aria-label="Players"
 				type="button"
 			>
 				<span className="glyphicon glyphicon-user" />
@@ -532,6 +534,7 @@ const EditButton = ({ onClick }: { onClick: () => void }) => {
 			className="ms-2 btn btn-link p-0 border-0 text-reset"
 			onClick={onClick}
 			title="Edit"
+			aria-label="Edit"
 			type="button"
 		>
 			<span className="glyphicon glyphicon-edit" />
@@ -555,6 +558,7 @@ const DeleteButton = ({
 			disabled={disabled}
 			onClick={onClick}
 			title="Delete"
+			aria-label="Delete"
 			type="button"
 		>
 			<span className="glyphicon glyphicon-remove" />
@@ -585,13 +589,6 @@ const CardHeader = ({
 }) => {
 	const [renaming, setRenaming] = useState(false);
 	const [controlledName, setControlledName] = useState(name);
-	const inputRef = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		if (renaming && inputRef.current) {
-			inputRef.current.select();
-		}
-	}, [renaming]);
 
 	return (
 		<div className={clsx("card-header", renaming ? "p-1" : "px-2")}>
@@ -606,7 +603,7 @@ const CardHeader = ({
 					style={{ maxWidth: 300 }}
 				>
 					<input
-						ref={inputRef}
+						ref={selectOnMount}
 						type="text"
 						className="form-control me-2"
 						value={controlledName}
@@ -620,7 +617,8 @@ const CardHeader = ({
 				</form>
 			) : (
 				<div className="d-flex">
-					<div
+					<button
+						type="button"
 						className={clsx(
 							"btn btn-link p-0 border-0 text-reset text-decoration-none",
 							alignButtonsRight ? "me-auto" : "me-2",
@@ -630,10 +628,11 @@ const CardHeader = ({
 						}}
 					>
 						{name}
-					</div>
+					</button>
 					<button
 						className="ms-2 btn btn-link p-0 border-0 text-reset"
 						title="Move Up"
+						aria-label="Move Up"
 						type="button"
 						onClick={onMoveUp}
 						disabled={disableMoveUp}
@@ -643,6 +642,7 @@ const CardHeader = ({
 					<button
 						className="ms-2 btn btn-link p-0 border-0 text-reset"
 						title="Move Down"
+						aria-label="Move Down"
 						type="button"
 						onClick={onMoveDown}
 						disabled={disableMoveDown}
@@ -1184,26 +1184,24 @@ const CustomizeTeams = ({
 					Randomize...
 				</button>
 				<form
-					className="btn-group ms-auto"
+					className="ms-auto"
 					onSubmit={(event) => {
 						event.preventDefault();
 
 						if (abbrevsUsedMultipleTimes.length > 0) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
 									", ",
 								)}`,
-								saveToDb: false,
 							});
 							return;
 						}
 
 						if (teams.length < 2) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: "Your league must have at least 2 teams in it.",
-								saveToDb: false,
 							});
 							return;
 						}
@@ -1220,7 +1218,7 @@ const CustomizeTeams = ({
 						Cancel
 					</button>
 					<button
-						className="btn btn-primary me-2"
+						className="btn btn-primary mx-2"
 						type="submit"
 						disabled={randomizingState === "modal"}
 					>
@@ -1239,9 +1237,13 @@ const CustomizeTeams = ({
 
 			<UpsertTeamModal
 				key={
-					addEditTeamInfo.type === "edit"
-						? addEditTeamInfo.tidEdit
-						: addEditTeamInfo.type
+					// key needs to distinguish anything that needs to trigger a new controlledTeam
+					JSON.stringify([
+						addEditTeamInfo.type,
+						addEditTeamInfo.type === "edit"
+							? addEditTeamInfo.tidEdit
+							: addEditTeamInfo.addType,
+					])
 				}
 				addEditTeamInfo={addEditTeamInfo}
 				setAddEditTeamInfo={setAddEditTeamInfo}

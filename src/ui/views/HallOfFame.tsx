@@ -14,7 +14,7 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 	const superCols = [
 		{
 			title: "",
-			colspan: 6,
+			colspan: 8,
 		},
 		{
 			title: "Best Season",
@@ -33,13 +33,15 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 		"Retired",
 		"Pick",
 		"Peak Ovr",
+		"MVP",
+		"Titles",
 		"Year",
 		"Team",
 		...stats.map((stat) => `stat:${stat}`),
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -60,6 +62,8 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 				p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				p.peakOvr,
+				p.countMvp,
+				p.countTitles,
 				p.bestStats.season,
 				<a
 					href={helpers.leagueUrl([

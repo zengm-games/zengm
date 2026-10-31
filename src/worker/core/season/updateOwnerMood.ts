@@ -2,6 +2,8 @@ import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
 import type { OwnerMood } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { assertDefined } from "../../../common/utils.ts";
+import { team } from "../index.ts";
 
 /**
  * Update teamSeason.ownerMood based on performance this season, only for user's team.
@@ -27,14 +29,11 @@ const updateOwnerMood = async (): Promise<
 		return;
 	}
 
-	const t = await idb.getCopy.teamsPlus(
-		{
-			seasonAttrs: ["won", "playoffRoundsWon", "profit"],
-			season: g.get("season"),
-			tid: g.get("userTid"),
-		},
-		"noCopyCache",
-	);
+	const t = await team.getFormatted({
+		seasonAttrs: ["won", "playoffRoundsWon", "profit"],
+		season: g.get("season"),
+		tid: g.get("userTid"),
+	});
 
 	if (!t) {
 		return;
@@ -102,9 +101,7 @@ const updateOwnerMood = async (): Promise<
 
 	// This is just for TypeScript
 	const ownerMood = teamSeason.ownerMood;
-	if (!ownerMood) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(ownerMood);
 
 	// Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
 	const cappedDeltas = { ...deltas };

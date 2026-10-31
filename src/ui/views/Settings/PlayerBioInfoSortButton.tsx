@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Dropdown } from "react-bootstrap";
 import { helpers } from "../../util/helpers.ts";
 import type { PLAYER_BIO_INFO_SORT_DEFAULT } from "./PlayerBioInfo.tsx";
@@ -16,6 +17,8 @@ const SortButton = <Type extends "names" | "colleges" | "countries">({
 	type: Type;
 }) => {
 	const nameKey = type === "countries" ? "country" : "name";
+
+	const id = useId();
 
 	const handleClick = (
 		field: PlayerBioInfoSortDefault[Type][0],
@@ -44,7 +47,7 @@ const SortButton = <Type extends "names" | "colleges" | "countries">({
 			<Dropdown.Toggle
 				className="btn-light-bordered btn-light-bordered-group-right"
 				variant="foo"
-				id={`dropdown-sort-${type}`}
+				id={id}
 			>
 				Sort
 			</Dropdown.Toggle>

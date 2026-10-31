@@ -17,6 +17,9 @@ import { InjuryIcon } from "../../components/InjuryIcon.tsx";
 import { SkillsBlock } from "../../components/SkillsBlock.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { useLocal } from "../../util/local.ts";
+import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
+import { last, orderBy } from "../../../common/utils.ts";
+import type { LeagueUrlParts } from "../../router/types.ts";
 
 const Player2 = ({
 	bestPos,
@@ -58,12 +61,12 @@ const Player2 = ({
 			if (player.stats.length > 0) {
 				gameLogSeason = player.stats.at(-1)!.season;
 			} else if (player.ratings.length > 0) {
-				gameLogSeason = player.ratings.at(-1)!.season;
+				gameLogSeason = last(player.ratings).season;
 			} else {
 				gameLogSeason = currentSeason;
 			}
 
-			const parts =
+			const parts: LeagueUrlParts =
 				fields.playerProfile === "gameLog"
 					? ["player_game_log", player.pid, gameLogSeason]
 					: ["player", player.pid];
@@ -81,6 +84,16 @@ const Player2 = ({
 			break;
 		}
 	}
+
+	const awardsBySeason = Map.groupBy(
+		orderBy(
+			player.awards.filter(
+				(award) => award.type === undefined || award.type === "All-Star",
+			),
+			(award) => (award.type === undefined ? 0 : 1),
+		),
+		(award) => award.season,
+	);
 
 	return (
 		<>
@@ -102,6 +115,7 @@ const Player2 = ({
 
 			{statTables.map(({ name, onlyShowIf, stats, superCols }) => (
 				<StatsTable
+					awardsBySeason={awardsBySeason}
 					key={name}
 					name={name}
 					onlyShowIf={onlyShowIf}
@@ -127,6 +141,7 @@ const Player2 = ({
 						"Pot",
 						...ratings.map((rating) => `rating:${rating}`),
 						"Skills",
+						"Awards",
 					])}
 					defaultSort={[0, "asc"]}
 					defaultStickyCols={2}
@@ -177,11 +192,15 @@ const Player2 = ({
 								...ratings.map((rating) =>
 									showRatings ? (
 										<MaybeBold bold={leaders[r.season]?.ratings.has(rating)}>
-											{(r as any)[rating]}
+											{r[rating]}
 										</MaybeBold>
 									) : null,
 								),
 								<SkillsBlock className="skills-alone" skills={r.skills} />,
+								wrappedSeasonAwards({
+									awards: awardsBySeason.get(r.season),
+									season: r.season,
+								}),
 							],
 						};
 					})}
@@ -199,7 +218,8 @@ const Player2 = ({
 											<tr key={i}>
 												<td>
 													{a.count > 1 ? `${a.count}x ` : null}
-													{a.type} ({a.seasons.join(", ")})
+													{a.type} ({Object.values(a.seasons).flat().join(", ")}
+													)
 												</td>
 											</tr>
 										);

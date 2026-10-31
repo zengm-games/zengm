@@ -69,4 +69,13 @@ describe("choice", () => {
 			assert(helpers.keys(values).includes(selected));
 		}
 	});
+
+	test("works with seed", () => {
+		const seed = 5;
+		const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		const num = choice(array, undefined, seed);
+		for (let i = 0; i < 1000; i++) {
+			assert.equal(num, choice(array, undefined, seed));
+		}
+	});
 });

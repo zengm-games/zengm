@@ -207,20 +207,16 @@ type PlayEvent =
 	  }
 	| {
 			type: "possessionChange";
+			subtype: "kickoff" | "punt" | "missedFg" | "turnover";
 			yds: number;
-			kickoff?: boolean;
-			scrimmageAtLeastTouchback?: undefined;
-	  }
-	| {
-			type: "possessionChange";
-			yds: number;
-			kickoff?: undefined;
-			scrimmageAtLeastTouchback?: boolean;
 	  }
 	| {
 			type: "tck";
 			tacklers: Set<PlayerGameSim>;
 			loss: boolean;
+	  }
+	| {
+			type: "newDrive";
 	  };
 
 type PlayType = PlayEvent["type"];
@@ -240,6 +236,7 @@ type PlayState = Pick<
 	| "awaitingKickoff"
 	| "awaitingAfterSafety"
 	| "awaitingAfterTouchdown"
+	| "currentDrive"
 	| "overtimeState"
 	| "overtimeType"
 	| "playUntimedPossession"
@@ -257,6 +254,7 @@ export class State {
 	awaitingKickoff: PlayState["awaitingKickoff"];
 	awaitingAfterSafety: PlayState["awaitingAfterSafety"];
 	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
+	currentDrive: PlayState["currentDrive"];
 	overtimeState: PlayState["overtimeState"];
 	overtimeType: PlayState["overtimeType"];
 	playUntimedPossession: PlayState["playUntimedPossession"];
@@ -301,6 +299,7 @@ export class State {
 		this.awaitingKickoff = gameSim.awaitingKickoff;
 		this.awaitingAfterSafety = gameSim.awaitingAfterSafety;
 		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
+		this.currentDrive = gameSim.currentDrive;
 		this.overtimeState = gameSim.overtimeState;
 		this.overtimeType = gameSim.overtimeType;
 		this.playUntimedPossession = gameSim.playUntimedPossession;
@@ -659,6 +658,11 @@ class Play {
 						statChanges.push([state.o, p, "pbw"]);
 					}
 				}
+			} else if (event.type === "newDrive") {
+				statChanges.push(
+					[state.o, undefined, "drives"],
+					[state.o, undefined, "totStartYds", state.scrimmage],
+				);
 			}
 		}
 
@@ -727,17 +731,21 @@ class Play {
 			state.possessionChange();
 
 			if (
-				event.scrimmageAtLeastTouchback &&
+				event.subtype === "missedFg" &&
 				state.scrimmage < SCRIMMAGE_TOUCHBACK
 			) {
 				state.scrimmage = SCRIMMAGE_TOUCHBACK;
 			}
 
-			if (event.kickoff) {
+			if (event.subtype === "kickoff") {
 				state.awaitingKickoff = undefined;
 				state.awaitingAfterSafety = false;
 
 				afterKickoff();
+			}
+
+			if (event.subtype !== "turnover") {
+				state.currentDrive = undefined;
 			}
 		} else if (event.type === "k" || event.type === "onsideKick") {
 			state.scrimmage = 100 - event.kickTo;
@@ -824,6 +832,8 @@ class Play {
 				// Stops if fumbled out of bounds
 				state.isClockRunning = Math.random() > 0.05;
 			}
+		} else if (event.type === "newDrive") {
+			state.currentDrive = state.o;
 		}
 
 		if (event.type.endsWith("TD")) {
@@ -909,6 +919,13 @@ class Play {
 			} else if ((event.type === "fg" || event.type === "xp") && !event.made) {
 				// Missed FG/XP while losing
 				const losing = state.pts[state.o] < state.pts[state.d];
+				if (losing) {
+					state.overtimeState = "over";
+				}
+			} else if (event.type === "twoPointConversionDone" && !event.made) {
+				// Failed 2 point conversion while losing. Use event.t rather than state.o because possession may have changed during the attempt
+				const t2 = event.t === 0 ? 1 : 0;
+				const losing = state.pts[event.t] < state.pts[t2];
 				if (losing) {
 					state.overtimeState = "over";
 				}
@@ -1242,6 +1259,11 @@ class Play {
 						// No state changes for offsetting penalties
 						if (offsetStatus === "offset") {
 							state.isClockRunning = false;
+
+							// Same as a defensive penalty, the down is replayed even if time expired. Not if they were both after a change of possession, since then the down is not replayed.
+							if (timeExpiredAtEndOfHalf && state.numPossessionChanges === 0) {
+								state.playUntimedPossession = true;
+							}
 						} else {
 							this.updateState(state, penalty.event);
 
@@ -1396,6 +1418,7 @@ class Play {
 			"awaitingKickoff",
 			"awaitingAfterSafety",
 			"awaitingAfterTouchdown",
+			"currentDrive",
 			"overtimeState",
 			"playUntimedPossession",
 		] as const;

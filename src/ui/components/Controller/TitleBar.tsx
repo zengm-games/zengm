@@ -4,9 +4,10 @@ import { helpers } from "../../util/helpers.ts";
 import { useLocal } from "../../util/local.ts";
 import type { MenuItemHeader } from "../../../common/types.ts";
 import { useCallback } from "react";
+import type { LeagueUrlParts } from "../../router/types.ts";
 
 type Props = {
-	parts?: (number | string)[];
+	parts?: LeagueUrlParts;
 };
 
 const NewWindowLink = ({ parts }: Props) => {
@@ -42,14 +43,6 @@ const NewWindowLink = ({ parts }: Props) => {
 			<path d="M10 263h213M1 60h60M213 220v46" strokeWidth="20" />
 		</svg>
 	);
-};
-
-const genPath = (parts: string[], season: string | undefined) => {
-	if (season !== undefined) {
-		return [...parts, season];
-	}
-
-	return parts;
 };
 
 export const TitleBar = () => {
@@ -103,67 +96,67 @@ export const TitleBar = () => {
 				{
 					type: "link",
 					league: true,
-					path: genPath(["standings"], season),
+					path: ["standings", season],
 					text: "Standings",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["playoffs"], season),
+					path: ["playoffs", season],
 					text: "Playoffs",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["history"], season),
+					path: ["history", season],
 					text: "Season Summary",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["league_finances"], season),
+					path: ["league_finances", season],
 					text: "Finances",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["news", "all"], season),
+					path: ["news", "all", season],
 					text: "News Feed",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["draft_history"], season),
+					path: ["draft_history", season],
 					text: "Draft",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["leaders"], season),
+					path: ["leaders", season],
 					text: "Leaders",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["team_stats"], season),
+					path: ["team_stats", season],
 					text: "Team Stats",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["player_ratings", "all"], season),
+					path: ["player_ratings", "all", season],
 					text: "Player Ratings",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["player_stats", "all"], season),
+					path: ["player_stats", "all", season],
 					text: "Player Stats",
 				},
 				{
 					type: "link",
 					league: true,
-					path: genPath(["player_bios", "all"], season),
+					path: ["player_bios", "all", season],
 					text: "Player Bios",
 				},
 			],

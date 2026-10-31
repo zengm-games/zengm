@@ -1,7 +1,6 @@
 import type { FaceConfig } from "facesjs";
 import { Face } from "facesjs/react";
 import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 
 const isChristmas = () => {
 	const now = new Date();
@@ -20,7 +19,7 @@ export const MyFace = ({
 	lazy?: boolean;
 }) => {
 	let overrides;
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		const [jerseyId, accessoryId] = jersey.split(":");
 		overrides = {
 			teamColors: colors,

@@ -8,6 +8,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { SafeHtml } from "../components/SafeHtml.tsx";
 import { useLocal } from "../util/local.ts";
+import { last } from "../../common/utils.ts";
 
 const TragicDeaths = ({ players, stats }: View<"tragicDeaths">) => {
 	useTitleBar({ title: "Tragic Deaths", customMenu: frivolitiesMenu });
@@ -51,8 +52,8 @@ const TragicDeaths = ({ players, stats }: View<"tragicDeaths">) => {
 		"Details",
 	]);
 
-	const rows: DataTableRow[] = players.map((p, i) => {
-		const lastRatings = p.ratings.at(-1);
+	const rows: DataTableRow<"player">[] = players.map((p, i) => {
+		const lastRatings = last(p.ratings);
 		const lastStats = p.stats.at(-1);
 
 		return {
@@ -80,7 +81,7 @@ const TragicDeaths = ({ players, stats }: View<"tragicDeaths">) => {
 						href={helpers.leagueUrl([
 							"roster",
 							`${lastStats.abbrev}_${lastStats.tid}`,
-							p.diedYear,
+							p.diedYear ?? undefined,
 						])}
 					>
 						{lastStats.abbrev}

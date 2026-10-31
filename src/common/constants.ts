@@ -4,10 +4,21 @@ import * as constantsBaseball from "./constants.baseball.ts";
 import * as constantsBasketball from "./constants.basketball.ts";
 import * as constantsFootball from "./constants.football.ts";
 import * as constantsHockey from "./constants.hockey.ts";
-import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types.ts";
+import type {
+	CompositeWeights,
+	Phase,
+	DraftType,
+	MoodTrait,
+	Award,
+	PlayerRatingKey,
+	PlayerStatAttr,
+	PlayerStatsTables,
+	PlayerSummary,
+	RealDraftRatings,
+} from "./types.ts";
 
 export const ACCOUNT_API_URL =
-	process.env.NODE_ENV === "development"
+	__NODE_ENV === "development"
 		? "http://account.basketball-gm.test"
 		: bySport({
 				basketball: "https://account.basketball-gm.com",
@@ -29,7 +40,7 @@ export const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-export const LEAGUE_DATABASE_VERSION = 72;
+export const LEAGUE_DATABASE_VERSION = 74;
 
 export const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
 	"freeAgents",
@@ -75,7 +86,7 @@ export const PLAYER = {
 	// THESE ARE OBSOLETE!
 	UNDRAFTED_2: -4, // Next year's draft class
 	UNDRAFTED_3: -5, // Next next year's draft class
-};
+} as const;
 
 export const PHASE_TEXT = {
 	"-2": "expansion draft",
@@ -96,7 +107,7 @@ export const PHASE_TEXT = {
 };
 
 export const STRIPE_PUBLISHABLE_KEY =
-	process.env.NODE_ENV === "development"
+	__NODE_ENV === "development"
 		? "pk_test_Qbz0froGmHLp0dPCwHoYFY08"
 		: "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
@@ -120,39 +131,28 @@ export const PLAYER_GAME_STATS = bySport<{
 	hockey: constantsHockey.PLAYER_GAME_STATS,
 });
 
-export const PLAYER_SUMMARY = bySport<{
-	[key: string]: {
-		name: string;
-		onlyShowIf?: string[];
-		stats: string[];
-		superCols?: {
-			colspan: number;
-			desc: string;
-			title: string;
-		}[];
-	};
-}>({
+export const PLAYER_SUMMARY = bySport<PlayerSummary>({
 	baseball: constantsBaseball.PLAYER_SUMMARY,
 	basketball: constantsBasketball.PLAYER_SUMMARY,
 	football: constantsFootball.PLAYER_SUMMARY,
 	hockey: constantsHockey.PLAYER_SUMMARY,
 });
 
-export const PLAYER_STATS_TABLES = bySport<{
-	[key: string]: {
-		name: string;
-		onlyShowIf?: string[];
-		stats: string[];
-		superCols?: SuperCol[];
-	};
-}>({
+export const PLAYER_STATS_TABLES = bySport<PlayerStatsTables>({
 	baseball: constantsBaseball.PLAYER_STATS_TABLES,
 	basketball: constantsBasketball.PLAYER_STATS_TABLES,
 	football: constantsFootball.PLAYER_STATS_TABLES,
 	hockey: constantsHockey.PLAYER_STATS_TABLES,
 });
 
-export const RATINGS = bySport<any[]>({
+// Stats from PLAYER_STATS_TABLES, without "pos" which is only a column in the table and not an actual stat
+export const getPlayerStatsTableStats = (
+	stats: PlayerStatsTables[string]["stats"],
+) => {
+	return stats.filter((stat): stat is PlayerStatAttr => stat !== "pos");
+};
+
+export const RATINGS = bySport<PlayerRatingKey[]>({
 	baseball: constantsBaseball.RATINGS,
 	basketball: constantsBasketball.RATINGS,
 	football: constantsFootball.RATINGS,
@@ -200,20 +200,6 @@ export const MOOD_TRAITS: Record<MoodTrait, string> = {
 	$: "Money",
 	W: "Winning",
 };
-
-export const SIMPLE_AWARDS = bySport<Readonly<string[]>>({
-	baseball: constantsBaseball.SIMPLE_AWARDS,
-	basketball: constantsBasketball.SIMPLE_AWARDS,
-	football: constantsFootball.SIMPLE_AWARDS,
-	hockey: constantsHockey.SIMPLE_AWARDS,
-});
-
-export const AWARD_NAMES = bySport<Record<string, string>>({
-	baseball: constantsBaseball.AWARD_NAMES,
-	basketball: constantsBasketball.AWARD_NAMES,
-	football: constantsFootball.AWARD_NAMES,
-	hockey: constantsHockey.AWARD_NAMES,
-});
 
 export const DEFAULT_CONFS = bySport({
 	baseball: constantsBaseball.DEFAULT_CONFS,
@@ -284,8 +270,8 @@ export const REAL_PLAYERS_INFO = bySport({
 		legends: true,
 		FIRST_SEASON_WITH_ALEXNOOB_ROSTERS: 2020,
 		MIN_SEASON: 1947,
-		MAX_SEASON: 2026,
-		MAX_PHASE: PHASE.PLAYOFFS as Phase,
+		MAX_SEASON: 2027,
+		MAX_PHASE: PHASE.PRESEASON as Phase,
 	},
 	football: undefined,
 	hockey: undefined,
@@ -305,8 +291,16 @@ export const WEBSITE_ROOT = bySport({
 	hockey: "zengm.com/hockey",
 });
 
-// For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
-export const GRACE_PERIOD = 60 * 60 * 24 * 3;
+export const REAL_DRAFT_RATINGS = [
+	"rookie",
+	"draft",
+	"peak",
+	"career",
+	"random",
+] as const;
+
+// Default for new leagues, and also used when the setting is undefined in an existing league
+export const DEFAULT_REAL_DRAFT_RATINGS: RealDraftRatings = "rookie";
 
 export const TIEBREAKERS = {
 	commonOpponentsRecord: "Common opponents record",
@@ -565,9 +559,20 @@ export const SKILLS = bySport<Record<string, string>>({
 	},
 });
 
+// These positions can never be a player's main position
 export const NOT_REAL_POSITIONS = new Set(
 	bySport({
 		baseball: ["DH"],
+		basketball: [],
+		football: ["KR", "PR"],
+		hockey: [],
+	}),
+);
+
+// ...but getPosByGpF can return DH, so that can show up as a player's position some places, including awards
+export const NOT_REAL_POSITIONS_AWARDS = new Set(
+	bySport({
+		baseball: [],
 		basketball: [],
 		football: ["KR", "PR"],
 		hockey: [],
@@ -583,3 +588,73 @@ export const ERROR_MESSAGE_ONE_TAB =
 export const ERROR_MESSAGE_UNDEFINED_SEASON =
 	"Undefined season - an error may have occurred while creating this league";
 export const ERROR_MESSSAGE_LEAGUE_NOT_FOUND = "League not found.";
+
+export const TEAM_AWARD_INFO:
+	| {
+			byPos: false;
+			numPlayersPerTeam: number;
+	  }
+	| {
+			byPos: true;
+			positions: Partial<Record<Award["showStats"], string[]>> &
+				Record<"default", string[]>;
+	  } = bySport({
+	baseball: {
+		byPos: true,
+		positions: {
+			offense: ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DH_OR_P"],
+			defense: ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "P"],
+			default: [
+				"C",
+				"1B",
+				"2B",
+				"3B",
+				"SS",
+				"LF",
+				"CF",
+				"RF",
+				"DH_IF_EXISTS",
+				"P",
+			],
+		},
+	},
+	basketball: {
+		byPos: false,
+		numPlayersPerTeam: 5,
+	},
+	football: {
+		byPos: true,
+		positions: {
+			default: [
+				"QB",
+				"RB",
+				"RB",
+				"WR",
+				"WR",
+				"TE",
+				"OL",
+				"OL",
+				"OL",
+				"OL",
+				"OL",
+				"DL",
+				"DL",
+				"DL",
+				"DL",
+				"LB",
+				"LB",
+				"LB",
+				"S",
+				"S",
+				"CB",
+				"CB",
+				"K",
+				"P",
+			],
+		},
+	},
+	hockey: {
+		byPos: true,
+		positions: { default: ["C", "W", "W", "D", "D", "G"] },
+	},
+});

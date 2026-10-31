@@ -88,7 +88,7 @@ const roundProbWilling = (probWilling: number) => {
 	return Math.round(probWilling * 100);
 };
 
-export const processComponents = (components: MoodComponents) => {
+const processComponents = (components: MoodComponents) => {
 	const componentsRounded = {
 		...components,
 	};
@@ -122,7 +122,9 @@ type Props = {
 	p: {
 		pid: number;
 		name: string;
-		mood: {
+
+		// undefined for players who have no mood, like retired players, in which case nothing is rendered
+		mood?: {
 			user: PlayerMood;
 			current?: PlayerMood;
 		};
@@ -148,11 +150,15 @@ export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 	]);
 
 	const playerIsOnUsersTeam = userTid === p.tid;
-	const canShowCurrent = p.mood.current && !playerIsOnUsersTeam;
+	const canShowCurrent = p.mood?.current && !playerIsOnUsersTeam;
 	const initialType =
 		defaultType === "current" && canShowCurrent ? "current" : "user";
 
 	const [type, setType] = useState<"user" | "current">(initialType);
+
+	if (!p.mood) {
+		return null;
+	}
 
 	const mood = p.mood[type];
 	const initialMood = p.mood[initialType];
@@ -201,31 +207,33 @@ export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 				) : null}
 				<ul className="nav nav-tabs mb-2">
 					<li className="nav-item">
-						<a
+						<button
+							type="button"
 							className={clsx("nav-link", {
 								active: type === "user",
 							})}
-							onClick={(event) => {
-								event.preventDefault();
+							aria-current={type === "user" ? true : undefined}
+							onClick={() => {
 								setType("user");
 							}}
 						>
 							{teamInfoCache[userTid]?.abbrev}
-						</a>
+						</button>
 					</li>
 					{canShowCurrent ? (
 						<li className="nav-item">
-							<a
+							<button
+								type="button"
 								className={clsx("nav-link", {
 									active: type === "current",
 								})}
-								onClick={(event) => {
-									event.preventDefault();
+								aria-current={type === "current" ? true : undefined}
+								onClick={() => {
 									setType("current");
 								}}
 							>
 								{teamInfoCache[p.tid]?.abbrev}
-							</a>
+							</button>
 						</li>
 					) : null}
 				</ul>
@@ -306,19 +314,13 @@ export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 			>
 				<span
 					className={`text-end ${highlightColor(sum)}`}
-					data-no-row-highlight="true"
 					style={plusMinusStyle}
 				>
 					{plusMinus(sum)}
 				</span>
-				<div className="ms-1 me-auto" data-no-row-highlight="true">
-					{initialMood.traits.join(" ")}
-				</div>
+				<div className="ms-1 me-auto">{initialMood.traits.join(" ")}</div>
 				{showProbWilling ? (
-					<span
-						className="text-body-secondary ms-1"
-						data-no-row-highlight="true"
-					>
+					<span className="text-body-secondary ms-1">
 						{roundedProbWilling}%
 					</span>
 				) : null}

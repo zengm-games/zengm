@@ -1,5 +1,4 @@
 import { GAME_NAME } from "../../common/constants.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 
 const reasons = [
 	"SPECIAL_CLUE",
@@ -56,7 +55,7 @@ const reasons = [
 	"PLAYER_NAME accidentally shot himself in the head after slipping on a banana peel while walking down the stairs.",
 ];
 
-if (isSport("basketball")) {
+if (__SPORT === "basketball") {
 	reasons.push(
 		"PLAYER_NAME died from a skull fracture after hitting PRONOUN_his head on the rim while practicing for a dunk contest.",
 		"PLAYER_NAME fell to PRONOUN_his death after slapping the backboard of a hoop inexplicably placed in front of a flimsy window on the 3rd floor of a building.",

@@ -19,7 +19,10 @@ const useTradeOffersSwitch = () => {
 					style={{ width: 100 }}
 					value={value}
 					onChange={(event) => {
-						setValue(event.target.value as any);
+						const newValue = event.target.value;
+						if (newValue === "list" || newValue === "table") {
+							setValue(newValue);
+						}
 					}}
 				>
 					<option value="list">List</option>

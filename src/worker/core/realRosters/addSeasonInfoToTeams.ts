@@ -103,14 +103,34 @@ const addSeasonInfoToTeams = async <
 			return p2;
 		});
 
-	g.setWithoutSavingToDB("season", options.season);
-	g.setWithoutSavingToDB("numActiveTeams", 2);
-	local.playerOvrMean = 48;
-	local.playerOvrStd = 10;
-	local.playerOvrMeanStdStale = false;
-	for (const p of players) {
-		await player.develop(p, 0);
-		await player.updateValues(p);
+	const oldInfo = options.preservePlayerOvrContext
+		? {
+				season: g.get("season"),
+				numActiveTeams: g.get("numActiveTeams"),
+				playerOvrMean: local.playerOvrMean,
+				playerOvrStd: local.playerOvrStd,
+				playerOvrMeanStdStale: local.playerOvrMeanStdStale,
+			}
+		: undefined;
+
+	try {
+		g.setWithoutSavingToDB("season", options.season);
+		g.setWithoutSavingToDB("numActiveTeams", 2);
+		local.playerOvrMean = 48;
+		local.playerOvrStd = 10;
+		local.playerOvrMeanStdStale = false;
+		for (const p of players) {
+			await player.develop(p, 0);
+			await player.updateValues(p);
+		}
+	} finally {
+		if (oldInfo) {
+			g.setWithoutSavingToDB("season", oldInfo.season);
+			g.setWithoutSavingToDB("numActiveTeams", oldInfo.numActiveTeams);
+			local.playerOvrMean = oldInfo.playerOvrMean;
+			local.playerOvrStd = oldInfo.playerOvrStd;
+			local.playerOvrMeanStdStale = oldInfo.playerOvrMeanStdStale;
+		}
 	}
 
 	const playersByTid = Map.groupBy(players, (t) => t.tid);
@@ -142,7 +162,7 @@ const addSeasonInfoToTeams = async <
 
 					roundsWonText = helpers.roundsWonText({
 						playoffRoundsWon,
-						numPlayoffRounds: gameAttributes.numGamesPlayoffSeries!.length,
+						numPlayoffRounds: gameAttributes.numGamesPlayoffSeries.length,
 						playoffsByConf: gameAttributes.confs.length === 2 ? 2 : false,
 						showMissedPlayoffs: true,
 					});

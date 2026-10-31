@@ -5,9 +5,10 @@ import {
 } from "../../../common/constants.baseball.ts";
 import { choice } from "../../../common/random.ts";
 import type { Position } from "../../../common/types.baseball.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../../common/utils.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher.ts";
+import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import type { PlayerGameSim, TeamGameSim } from "./types.ts";
 
 type GamePositions<DH extends boolean> =
@@ -19,20 +20,30 @@ type PlayerInGame<DH extends boolean> = {
 	p: PlayerGameSim;
 	battingOrder: number;
 	pos: GamePositions<DH>;
+	injuryRate?: number; // Gets filled in by rebuildIndexes
 };
 
 const NUM_BATTERS_PER_SIDE = 9;
 
 type Depth = Record<"pitchers" | "batters", PlayerGameSim[]>;
 
+type PitcherCandidate = {
+	starter: boolean;
+	p: PlayerGameSim;
+	index: number;
+	value: number;
+};
+
 class Team<DH extends boolean> {
 	t: TeamGameSim;
 	dh: DH;
 	allStarGame: boolean;
 	playoffs: boolean;
+	baseInjuryRate: number;
 	playersByPid: Record<number, PlayerGameSim>;
 	playersInGame: Record<number, PlayerInGame<DH>>;
 	playersInGameByPos: Record<GamePositions<DH>, PlayerInGame<DH>>;
+	fielders: PlayerInGame<DH>[] = [];
 	playersInGameByBattingOrder: [
 		PlayerInGame<DH>,
 		PlayerInGame<DH>,
@@ -52,11 +63,18 @@ class Team<DH extends boolean> {
 	// Depth chart, but adjusted to remove injured players and capped at the number of active players
 	depth: Depth;
 
-	constructor(t: TeamGameSim, dh: DH, allStarGame: boolean, playoffs: boolean) {
+	constructor(
+		t: TeamGameSim,
+		dh: DH,
+		allStarGame: boolean,
+		playoffs: boolean,
+		baseInjuryRate: number,
+	) {
 		this.t = t;
 		this.dh = dh;
 		this.allStarGame = allStarGame;
 		this.playoffs = playoffs;
+		this.baseInjuryRate = baseInjuryRate;
 
 		this.playersInGame = {};
 
@@ -65,10 +83,7 @@ class Team<DH extends boolean> {
 		this.atBat = -1;
 		this.subIndex = -1;
 
-		this.playersByPid = {};
-		for (const p of this.t.player) {
-			this.playersByPid[p.id] = p;
-		}
+		this.playersByPid = groupByUnique(this.t.player, "id");
 
 		this.playersInGameByPos = {} as any;
 		this.playersInGameByBattingOrder = [] as any;
@@ -249,7 +264,20 @@ class Team<DH extends boolean> {
 
 			// If players can switch positions mid game, this doens't make sense. Would need to store an array to track all positions
 			playerInGame.p.pos = playerInGame.pos;
+
+			// Age and the existing injury's duration stay fixed during a game.
+			playerInGame.injuryRate ??= getInjuryRate(
+				this.baseInjuryRate,
+				playerInGame.p.age,
+				playerInGame.p.injury.gamesRemaining > 0,
+			);
 		}
+
+		// Keep the position insertion order used by injury checks. Replacing this
+		// array lets a check finish with its original players after a substitution.
+		this.fielders = Object.values(this.playersInGameByPos).filter(
+			(playerInGame) => playerInGame.pos !== "DH",
+		);
 	}
 
 	getBatter() {
@@ -288,8 +316,14 @@ class Team<DH extends boolean> {
 			}
 		}
 
-		const availablePitchers = this.depth.pitchers
-			.map((p, i) => ({
+		const availablePitchers: PitcherCandidate[] = [];
+		const healthyPitchers = [];
+		for (const [i, p] of this.depth.pitchers.entries()) {
+			if (p.subIndex !== undefined) {
+				continue;
+			}
+
+			const candidate = {
 				starter: i < numStartingPitchers,
 				p,
 				index: i,
@@ -298,13 +332,15 @@ class Team<DH extends boolean> {
 						p.pFatigue + p.stat.pc,
 						p.compositeRating.workhorsePitcher,
 					) * p.compositeRating.pitcher,
-			}))
-			.filter((p) => p.p.subIndex === undefined);
+			};
+			availablePitchers.push(candidate);
+			if (!p.injured) {
+				healthyPitchers.push(candidate);
+			}
+		}
 
 		const choiceWeight = (p: (typeof availablePitchers)[number]) =>
 			0.01 + p.value ** 2;
-
-		const healthyPitchers = availablePitchers.filter((p) => !p.p.injured);
 
 		if (this.allStarGame) {
 			return healthyPitchers[0];
@@ -340,8 +376,13 @@ class Team<DH extends boolean> {
 		}
 
 		// No pitchers available, go to position players
-		const availablePitchers2 = this.depth.batters
-			.map((p, i) => ({
+		const availablePitchers2 = [];
+		for (const [i, p] of this.depth.batters.entries()) {
+			if (p.subIndex !== undefined) {
+				continue;
+			}
+
+			availablePitchers2.push({
 				starter: false,
 				p,
 				index: i,
@@ -350,8 +391,8 @@ class Team<DH extends boolean> {
 						p.pFatigue + p.stat.pc,
 						p.compositeRating.workhorsePitcher,
 					) * p.compositeRating.pitcher,
-			}))
-			.filter((p) => p.p.subIndex === undefined);
+			});
+		}
 
 		return choice(availablePitchers2, choiceWeight);
 	}
@@ -359,13 +400,12 @@ class Team<DH extends boolean> {
 	getInjuryReplacement(
 		pos: Exclude<Position, "SP" | "RP">,
 	): PlayerGameSim | undefined {
-		const availablePlayers = this.depth.batters.filter(
-			(p) => p.subIndex === undefined,
-		);
-
 		let replacement;
 		let maxOvr = -Infinity;
-		for (const p of availablePlayers) {
+		for (const p of this.depth.batters) {
+			if (p.subIndex !== undefined) {
+				continue;
+			}
 			const ovr = p.ovrs[pos];
 			if (ovr > maxOvr) {
 				maxOvr = ovr;

@@ -1,12 +1,12 @@
-import { idb } from "../db/index.ts";
-import type { Options } from "../../common/types.ts";
 import { DEFAULT_PHASE_CHANGE_REDIRECTS } from "../../common/constants.ts";
+import { getMetaAttribute } from "../db/metaAttributes.ts";
 
 export const getGlobalSettings = async () => {
-	const globalSettings = ((await idb.meta.get("attributes", "options")) ??
-		{}) as unknown as Options;
+	const globalSettings = (await getMetaAttribute("options")) ?? {};
 
-	globalSettings.phaseChangeRedirects ??= DEFAULT_PHASE_CHANGE_REDIRECTS;
-
-	return globalSettings;
+	return {
+		...globalSettings,
+		phaseChangeRedirects:
+			globalSettings.phaseChangeRedirects ?? DEFAULT_PHASE_CHANGE_REDIRECTS,
+	};
 };

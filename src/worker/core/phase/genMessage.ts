@@ -46,13 +46,10 @@ export const genMessage = async (
 		g.get("season"),
 		Math.max(g.get("gracePeriodEnd") - 2, g.get("season") - 9),
 	);
-	const teamSeasons = await idb.getCopies.teamSeasons(
-		{
-			tid: g.get("userTid"),
-			seasons: [minSeason, g.get("season")],
-		},
-		"noCopyCache",
-	);
+	const teamSeasons = await idb.merged.teamSeasons.getAll({
+		tid: g.get("userTid"),
+		seasons: [minSeason, g.get("season")],
+	});
 	const moods = teamSeasons.map((ts) => {
 		return (
 			ts.ownerMood ?? {

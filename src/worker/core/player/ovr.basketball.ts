@@ -1,13 +1,6 @@
-import type { PlayerRatings } from "../../../common/types.basketball.ts";
+import type { RatingKey } from "../../../common/types.basketball.ts";
 
-/**
- * Calculates the overall rating by averaging together all the other ratings.
- *
- * @memberOf core.player
- * @param {Object.<string, number>} ratings Player's ratings object.
- * @return {number} Overall rating.
- */
-const ovr = (ratings: PlayerRatings): number => {
+const ovr = (ratings: Record<RatingKey, number>): number => {
 	// See analysis/player-ovr-basketball
 	const r =
 		0.159 * (ratings.hgt - 47.5) +

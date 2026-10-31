@@ -12,5 +12,5 @@
 			"wicg-file-system-access"
 		]
 	},
-	"include": ["src"]
+	"include": ["common", "src"]
 }

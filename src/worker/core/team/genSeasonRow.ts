@@ -92,9 +92,7 @@ const genSeasonRow = (
 		newSeason.imgURLSmall = t.imgURLSmall;
 	}
 
-	// @ts-expect-error
-	if (typeof t.stadiumCapacity === "number") {
-		// @ts-expect-error
+	if ("stadiumCapacity" in t && typeof t.stadiumCapacity === "number") {
 		newSeason.stadiumCapacity = t.stadiumCapacity;
 	}
 
@@ -105,8 +103,7 @@ const genSeasonRow = (
 		if (t.pop === undefined) {
 			newSeason.pop = prevSeason.pop;
 		}
-		// @ts-expect-error
-		if (t.stadiumCapacity === undefined) {
+		if (!("stadiumCapacity" in t) || t.stadiumCapacity === undefined) {
 			newSeason.stadiumCapacity = prevSeason.stadiumCapacity;
 		}
 

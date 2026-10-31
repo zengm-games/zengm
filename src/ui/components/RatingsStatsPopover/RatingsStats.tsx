@@ -7,7 +7,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 
 export const RatingsStats = (props: {
 	ratings: any;
-	stats: any;
+	stats: unknown;
 	type?: "career" | "current" | "draft" | number;
 }) => {
 	const { challengeNoRatings } = useLocal(["challengeNoRatings"]);

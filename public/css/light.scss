@@ -139,6 +139,11 @@ $flag-icon-css-path: "/img/flags";
 	}
 }
 
+html {
+	// Navbar
+	scroll-padding-top: 60px;
+}
+
 h1 {
 	font-size: 24px;
 }
@@ -175,22 +180,12 @@ h5 {
 	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
 	height: 35px;
 
-	img {
+	.logo-spinner {
 		vertical-align: -3px;
 	}
 
-	span {
+	.logo-text {
 		padding-left: 5px;
-	}
-}
-
-.spin {
-	animation: spin 4s linear infinite;
-}
-
-@keyframes spin {
-	100% {
-		transform: rotate(360deg);
 	}
 }
 
@@ -376,6 +371,14 @@ a.god-mode.active {
 
 .negotiation-team-amount {
 	width: 180px;
+}
+
+// A <button> that looks like the bare icon inside it. Defined before .help-icon and .watch so their colors take precedence.
+.icon-button {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
 }
 
 .help-icon {
@@ -951,14 +954,16 @@ tr.table-warning:hover > td {
 	top: 42px;
 	left: 20px;
 }
-.chart-line {
-	fill: none;
+
+// Text drawn inside charts (stars, labels, axes) is not selectable, which also stops the cursor from turning into a text cursor over it
+.ts-chart-host svg text {
+	-webkit-user-select: none;
+	user-select: none;
 }
-.fill-white {
-	fill: $white;
-}
-.fill-yellow {
-	fill: $yellow;
+
+// No focus outline when clicking a chart, only when reaching it with the keyboard
+.ts-chart-host svg:focus:not(:focus-visible) {
+	outline: none;
 }
 
 .cursor-default {
@@ -1075,9 +1080,6 @@ $league-top-bar-toggle-width: 15px;
 			height: 0 !important;
 		}
 	}
-}
-.league-top-bar-safari {
-	margin-right: $league-top-bar-toggle-width + 8px;
 }
 .league-top-bar-toggle {
 	border-top-right-radius: 0 !important;
@@ -1328,8 +1330,9 @@ button.fast-forward {
 .settings-buttons {
 	position: sticky;
 
-	// To make it go over the Bootstrap custom form controls, like switch
-	z-index: 2;
+	// Needs to be 2 to make it go over the Bootstrap custom form controls, like switch
+	// Needs to be 10 to go over a sticky column in a table
+	z-index: 10;
 }
 @include media-breakpoint-down(lg) {
 	.settings-buttons {
@@ -1341,13 +1344,6 @@ button.fast-forward {
 
 .alert-bg-color {
 	background-color: var(--bs-alert-bg);
-}
-
-a.anchor {
-	display: block;
-	position: relative;
-	top: -60px;
-	visibility: hidden;
 }
 
 .settings-wrapper {
@@ -1499,10 +1495,6 @@ hr.my-hr {
 	.dark-select__group-heading {
 		font-size: 90%;
 	}
-
-	.dark-select__menu {
-		z-index: 3; // Above .settings-buttons
-	}
 }
 
 // Make same height as other form controls
@@ -1536,6 +1528,7 @@ hr.my-hr {
 .dark-select__menu {
 	margin-top: 0 !important;
 	margin-bottom: 0 !important;
+	z-index: 11 !important; // Above .settings-buttons
 }
 
 $sticky-cols: (
@@ -1688,6 +1681,9 @@ tr.text-body-secondary {
 	cursor: pointer;
 
 	display: block;
+	width: 100%;
+	background: none;
+	border: 0;
 	font-weight: 500;
 	color: $black;
 

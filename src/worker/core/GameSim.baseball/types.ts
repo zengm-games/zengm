@@ -31,7 +31,7 @@ export type TeamGameSim = {
 	cid: number;
 	stat: any;
 	player: PlayerGameSim[];
-	compositeRating: any;
+	compositeRating: unknown;
 	depth: Record<"L" | "LP" | "D" | "DP" | "P", PlayerGameSim[]>;
 	synergy: {
 		reb: number;

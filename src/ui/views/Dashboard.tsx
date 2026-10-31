@@ -6,9 +6,12 @@ import {
 	REAL_PLAYERS_INFO,
 	WEBSITE_PLAY,
 } from "../../common/constants.ts";
-import { DataTable } from "../components/DataTable/index.tsx";
+import {
+	DataTable,
+	type DataTableRow,
+} from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
@@ -17,6 +20,8 @@ import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 import { confirm } from "../util/confirm.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
 import { relativeTime } from "../util/relativeTime.ts";
+import { helpers } from "../util/helpers.ts";
+import type { BulkAction } from "../components/DataTable/BulkActions.tsx";
 
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
 const randomOtherSport = bySport({
@@ -139,23 +144,28 @@ const Star = ({ lid, starred }: { lid: number; starred?: boolean }) => {
 
 	if (actuallyStarred) {
 		return (
-			<span
-				className="glyphicon glyphicon-star p-1 text-primary"
-				data-no-row-highlight="true"
+			<button
+				className="btn btn-link p-0 border-0"
 				onClick={toggle}
 				style={glyphiconStyle}
-			/>
+				title="Unstar"
+				aria-label="Unstar"
+			>
+				<span className="glyphicon glyphicon-star p-1 text-primary" />
+			</button>
 		);
 	}
 
 	return (
-		<span
-			className="glyphicon glyphicon-star-empty p-1 text-body-secondary"
-			data-no-row-highlight="true"
+		<button
+			className="btn btn-link p-0 border-0"
 			onClick={toggle}
 			style={glyphiconStyle}
 			title="Star"
-		/>
+			aria-label="Star"
+		>
+			<span className="glyphicon glyphicon-star-empty p-1 text-body-secondary" />
+		</button>
 	);
 };
 
@@ -226,7 +236,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		},
 	);
 
-	const rows = leagues.map((league) => {
+	const rows: DataTableRow<"league">[] = leagues.map((league) => {
 		const disabled =
 			deletingLID !== undefined ||
 			loadingLID !== undefined ||
@@ -234,6 +244,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		const throbbing = loadingLID === league.lid;
 		return {
 			key: league.lid,
+			metadata: {
+				type: "league",
+				lid: league.lid,
+			},
 			data: [
 				<PlayButton
 					lid={league.lid}
@@ -295,16 +309,15 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					className={window.mobile ? "dropdown-mobile" : undefined}
 				>
 					<Dropdown.Toggle
-						as="span"
 						bsPrefix="no-caret"
 						id={`dashboard-actions-${league.lid}`}
 						style={glyphiconStyle}
 						title="Actions"
+						aria-label="Actions"
+						variant="link"
+						className="p-0 border-0"
 					>
-						<span
-							className="glyphicon glyphicon-option-vertical text-body-secondary p-2"
-							data-no-row-highlight="true"
-						/>
+						<span className="glyphicon glyphicon-option-vertical text-body-secondary p-2" />
 					</Dropdown.Toggle>
 					{!disabled ? (
 						<Dropdown.Menu>
@@ -339,11 +352,9 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<Dropdown.Item
 								onClick={async () => {
 									try {
-										logEvent({
+										showNotification({
 											type: "info",
 											text: `Cloning league "${league.name}". This may take a little while if it's a large league.`,
-											saveToDb: false,
-											showNotification: true,
 										});
 
 										setCloningLID(league.lid);
@@ -354,17 +365,14 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 										);
 										setCloningLID(undefined);
 
-										logEvent({
+										showNotification({
 											type: "info",
 											text: `Clone complete! Your new league is named "${name}".`,
-											saveToDb: false,
-											showNotification: true,
 										});
 									} catch (error) {
-										logEvent({
+										showNotification({
 											type: "error",
 											text: error.message,
-											saveToDb: false,
 										});
 									}
 								}}
@@ -374,9 +382,9 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<Dropdown.Item
 								onClick={async () => {
 									const proceed = await confirm(
-										`Are you absolutely sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
+										`Are you sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
 										{
-											okText: "Delete League",
+											okText: "Delete league",
 										},
 									);
 
@@ -398,9 +406,40 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	const pagination = rows.length > 100;
 
+	const extraBulkActions: BulkAction<"league">[] = [
+		{
+			onClick: async (selectedRows) => {
+				const lids = Array.from(selectedRows.map.values()).map(
+					(metadata) => metadata.lid,
+				);
+
+				const proceed = await confirm(
+					`Are you sure you want to delete ${helpers.numberWithCommas(lids.length)} ${helpers.plural("league", lids.length)}? You will permanently lose any record of all seasons, players, and games from ${lids.length === 1 ? "this league" : "these leagues"}.`,
+					{
+						okText: helpers.plural("Delete league", lids.length),
+					},
+				);
+
+				if (proceed) {
+					try {
+						for (const lid of lids) {
+							setDeletingLID(lid);
+							await toWorker("main", "removeLeague", lid);
+						}
+					} finally {
+						setDeletingLID(undefined);
+						selectedRows.clear();
+					}
+				}
+			},
+			text: "Delete",
+			textLong: "Delete leagues",
+		},
+	];
+
 	return (
 		<>
-			{location.host.indexOf("beta") === 0 ? (
+			{location.host.startsWith("beta") ? (
 				<p
 					className="alert alert-warning d-inline-block"
 					style={{ maxWidth: 840 }}
@@ -501,6 +540,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				<DataTable
 					cols={cols}
 					disableSettingsCache
+					extraBulkActions={extraBulkActions}
 					defaultSort={[7, "desc"]}
 					defaultStickyCols={1}
 					name="Dashboard"

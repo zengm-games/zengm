@@ -1,7 +1,7 @@
 import Bugsnag from "@bugsnag/browser";
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent, useRef } from "react";
 import { NextPrevButtons } from "../../components/NextPrevButtons.tsx";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import type { LeagueInfo } from "./types.ts";
 import { choice } from "../../../common/random.ts";
 
@@ -42,10 +42,9 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 		} catch (error) {
 			console.error(error);
 			Bugsnag.notify(error);
-			logEvent({
+			showNotification({
 				type: "error",
 				text: `Error loading real team data: ${error.message}`,
-				saveToDb: false,
 				persistent: true,
 			});
 		}
@@ -54,10 +53,14 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 		}
 	};
 
+	const handleInitialValue = useEffectEvent(() => {
+		handleNewValue(value, value2);
+	});
+
 	// Handle initial value
 	useEffect(() => {
-		handleNewValue(value, value2);
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+		handleInitialValue();
+	}, []);
 
 	return (
 		<>
@@ -96,10 +99,7 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 					className="form-select"
 					value={value}
 					onChange={async (event) => {
-						await handleNewValue(
-							event.target.value as unknown as Value,
-							value2,
-						);
+						await handleNewValue(event.target.value as Value, value2);
 					}}
 				>
 					{values.map(({ key, value }) => {

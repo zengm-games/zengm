@@ -16,11 +16,7 @@ export const getAuthenticationUrl = async (lid: number) => {
 	const redirectUri = `${window.location.origin}/dropbox`;
 	const state = `${lid}`;
 
-	// Type cast because https://github.com/dropbox/dropbox-sdk-js/issues/1125
-	const authUrl = (await dropboxAuth.getAuthenticationUrl(
-		redirectUri,
-		state,
-	)) as string;
+	const authUrl = await dropboxAuth.getAuthenticationUrl(redirectUri, state);
 
 	return authUrl;
 };
@@ -199,7 +195,7 @@ const handleStreamError = async (
 };
 
 // Based on https://github.com/dropbox/dropbox-sdk-js/blob/b75b1e3bfedcf4b00f613489c5291d3235f052db/examples/javascript/upload/index.html
-export const dropboxStream = async ({
+export const dropboxStream = ({
 	accessToken,
 	filename,
 	lid,

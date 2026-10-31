@@ -32,6 +32,7 @@ export const ActionButton = ({
 	children,
 	className,
 	disabled,
+	form,
 	maintainWidth = true,
 	onClick,
 	processing,
@@ -50,12 +51,12 @@ export const ActionButton = ({
 	processingText?: string;
 	ref?: Ref<HTMLButtonElement>;
 	size?: "lg";
-	type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
 	variant?: "primary" | "secondary" | "god-mode" | "danger" | "light-bordered";
-}) => {
+} & Pick<ButtonHTMLAttributes<HTMLButtonElement>, "form" | "type">) => {
 	// maintainWidth d-inline-grid stuff is from https://x.com/wesbos/status/1834242925401694490
 	return (
 		<button
+			form={form}
 			type={type}
 			className={clsx(
 				`btn btn-${variant}`,

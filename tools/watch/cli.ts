@@ -20,6 +20,9 @@ await startServer({
 });
 console.log("");
 
+// Incremented on every update for a filename, so an async update can tell if a newer one has happened since it started
+const updateCounts = new Map<string, number>();
+
 const update = (
 	filename: string,
 	info:
@@ -34,11 +37,18 @@ const update = (
 				error: Error;
 		  },
 ) => {
+	const count = (updateCounts.get(filename) ?? 0) + 1;
+	updateCounts.set(filename, count);
+
 	if (info.status === "success") {
 		(async () => {
 			let size;
 			if (filename !== "static files") {
 				size = (await fs.stat(filename)).size;
+			}
+
+			if (updateCounts.get(filename) !== count) {
+				return;
 			}
 
 			spinners.setStatus(filename, {

@@ -2,8 +2,7 @@ import setSchedule from "./setSchedule.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, lock } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
-import { season } from "../index.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
+import { season, team } from "../index.ts";
 import { chunk, groupByUnique } from "../../../common/utils.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
 
@@ -33,34 +32,31 @@ const seriesIsNotOver = (
 ): away is PlayoffSeriesTeam =>
 	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
 
-const getTeamsForOrderTeams = async () => {
-	return idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"winp",
-				"pts",
-				"won",
-				"lost",
-				"otl",
-				"tied",
-				"did",
-				"cid",
-				"wonDiv",
-				"lostDiv",
-				"otlDiv",
-				"tiedDiv",
-				"wonConf",
-				"lostConf",
-				"otlConf",
-				"tiedConf",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+const getTeamsForOrderTeams = () => {
+	return team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"winp",
+			"pts",
+			"won",
+			"lost",
+			"otl",
+			"tied",
+			"did",
+			"cid",
+			"wonDiv",
+			"lostDiv",
+			"otlDiv",
+			"tiedDiv",
+			"wonConf",
+			"lostConf",
+			"otlConf",
+			"tiedConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 };
 
 /**
@@ -134,9 +130,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 	const rnd = playoffSeries.currentRound;
 	const tids: [number, number][] = [];
-	const numGamesToWin = helpers.numGamesToWinSeries(
-		g.get("numGamesPlayoffSeries", "current")[rnd],
-	);
+	const numGamesToWin = helpers.numGamesToWinRound(rnd);
 
 	let minGamesPlayedThisRound = Infinity;
 	for (const { away, home } of series[rnd]!) {
@@ -182,7 +176,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			series[rnd]![0]!.away?.won === 0
 		) {
 			// Make sure we didn't just play the All-Star Game - only schedule once
-			const allStar = await idb.getCopy.allStars({ season: g.get("season") });
+			const allStar = await idb.merged.allStars.get(g.get("season"));
 			if (!allStar?.score) {
 				tids.unshift([-1, -2]);
 			}
@@ -247,7 +241,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		teamsWon.push(teamWon);
 
 		// In hockey, if team won by more than 1 game, goalie fatigue resets
-		if (isSport("hockey")) {
+		if (__SPORT === "hockey") {
 			if (!away || Math.abs(home.won - away.won) > 1) {
 				const players = await idb.cache.players.indexGetAll(
 					"playersByTid",
@@ -372,6 +366,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	await idb.cache.playoffSeries.put(playoffSeries);
 
 	// Update hype for winning a series
+	const teamSeasonsToSave = [];
 	for (const { tid } of teamsWon) {
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsBySeasonTid",
@@ -387,8 +382,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			teamSeason.hype = 1;
 		}
 
-		await idb.cache.teamSeasons.put(teamSeason);
+		teamSeasonsToSave.push(teamSeason);
 	}
+	await idb.cache.teamSeasons.putAll(teamSeasonsToSave);
 
 	// Next time, the schedule for the first day of the next round will be set
 	return newSchedulePlayoffsDay();

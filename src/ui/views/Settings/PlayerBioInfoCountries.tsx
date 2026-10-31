@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ChangeEvent } from "react";
 import { Dropdown } from "react-bootstrap";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
@@ -13,14 +13,16 @@ import {
 	prune,
 } from "./PlayerBioInfo.tsx";
 import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton.tsx";
-import { IMPORT_FILE_STYLE } from "./RowsEditor.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { Modal } from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
-import { WEBSITE_ROOT } from "../../../common/constants.ts";
+import {
+	LEAGUE_DATABASE_VERSION,
+	WEBSITE_ROOT,
+} from "../../../common/constants.ts";
 import { downloadFile } from "../../util/downloadFile.ts";
-import { resetFileInput } from "../../util/resetFileInput.ts";
 import { CountryFlag } from "../../components/CountryFlag.tsx";
+import { ImportFileButton } from "../../components/ImportFileButton.tsx";
 
 export const smallColStyle = {
 	marginLeft: 10,
@@ -44,6 +46,7 @@ export const PlayerBioInfoRowButton = ({
 			onClick={onClick}
 			style={{ fontSize: 20, marginTop: 10 }}
 			title={title}
+			aria-label={title}
 			type="button"
 		>
 			<span className={`glyphicon ${icon}`} />
@@ -51,7 +54,6 @@ export const PlayerBioInfoRowButton = ({
 	);
 };
 
-// https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
 	defaults,
 	setErrorMessage,
@@ -61,54 +63,36 @@ const ImportButton = ({
 	setErrorMessage: (errorMessage?: string) => void;
 	setInfoState: (injuries: PlayerBioInfoState) => void;
 }) => (
-	<button
-		className="btn btn-light-bordered"
-		style={{ position: "relative", overflow: "hidden" }}
-		onClick={() => {}}
-	>
-		Import
-		<input
-			className="cursor-pointer"
-			type="file"
-			accept=".json,.gz,application/json,application/gzip"
-			style={IMPORT_FILE_STYLE}
-			onClick={resetFileInput}
-			onChange={async (event) => {
-				if (!event.target.files) {
-					return;
-				}
-				const file = event.target.files[0];
-				if (!file) {
-					return;
-				}
+	<ImportFileButton
+		accept=".json,.gz,application/json,application/gzip"
+		variant="light-bordered"
+		withFile={async (file) => {
+			setErrorMessage();
 
-				setErrorMessage();
+			try {
+				const { basicInfo } = await toWorker(
+					"leagueFileUpload",
+					"initialCheck",
+					{
+						file,
+					},
+				);
 
-				try {
-					const { basicInfo } = await toWorker(
-						"leagueFileUpload",
-						"initialCheck",
-						{
-							file,
-						},
+				if (basicInfo.gameAttributes) {
+					setInfoState(
+						formatPlayerBioInfoState(
+							basicInfo.gameAttributes.playerBioInfo,
+							defaults,
+						),
 					);
-
-					if (basicInfo.gameAttributes) {
-						setInfoState(
-							formatPlayerBioInfoState(
-								basicInfo.gameAttributes.playerBioInfo,
-								defaults,
-							),
-						);
-					} else {
-						setErrorMessage("League file does not contain any settings.");
-					}
-				} catch (error) {
-					setErrorMessage(error.message);
+				} else {
+					setErrorMessage("League file does not contain any settings.");
 				}
-			}}
-		/>
-	</button>
+			} catch (error) {
+				setErrorMessage(error.message);
+			}
+		}}
+	/>
 );
 
 const ExportButton = ({
@@ -128,7 +112,10 @@ const ExportButton = ({
 				downloadFile(
 					"playerBioInfo.json",
 					JSON.stringify(
-						{ gameAttributes: { playerBioInfo: pruned } },
+						{
+							version: LEAGUE_DATABASE_VERSION,
+							gameAttributes: { playerBioInfo: pruned },
+						},
 						undefined,
 						2,
 					),
@@ -162,6 +149,8 @@ const Controls = ({
 	position: "top" | "bottom";
 	setInfoState: SetInfoState;
 }) => {
+	const id = useId();
+
 	const [importErrorMessage, setImportErrorMessage] = useState<
 		string | undefined
 	>();
@@ -195,14 +184,14 @@ const Controls = ({
 						<Dropdown.Toggle
 							className="btn-light-bordered btn-light-bordered-group-left"
 							variant="foo"
-							id="dropdown-countries-add"
+							id={`${id}-add`}
 						>
 							Add
 						</Dropdown.Toggle>
 
 						<Dropdown.Menu>
 							<Dropdown.Item
-								onClick={async () => {
+								onClick={() => {
 									const newCountry: CountryRow = {
 										id: Math.random(),
 										country: "Country",
@@ -247,14 +236,14 @@ const Controls = ({
 						<Dropdown.Toggle
 							className="btn-light-bordered btn-light-bordered-group-left btn-light-bordered-group-right"
 							variant="foo"
-							id="dropdown-countries-reset"
+							id={`${id}-reset`}
 						>
 							Reset
 						</Dropdown.Toggle>
 
 						<Dropdown.Menu>
 							<Dropdown.Item
-								onClick={async () => {
+								onClick={() => {
 									setInfoState(formatPlayerBioInfoState(undefined, defaults));
 								}}
 							>
@@ -350,9 +339,15 @@ export const CountriesEditor = ({
 }: {
 	defaults: Defaults;
 	defaultsState: PlayerBioInfoState;
-	handleCancel: any;
-	handleChange: any;
-	handleSave: any;
+	handleCancel: () => void;
+	handleChange: (
+		key: "country" | "frequency",
+		i: number,
+	) => (event: ChangeEvent<HTMLInputElement>) => void;
+	handleSave: (event: {
+		preventDefault: () => void;
+		stopPropagation: () => void;
+	}) => void;
 	onSetDefault: (
 		type: "colleges" | "flag" | "names" | "races",
 		i: number,

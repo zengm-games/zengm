@@ -1,10 +1,9 @@
 import { helpers } from "../../util/helpers.ts";
-import type { View } from "../../../common/types.ts";
+import type { TradeTeam, TradeTeams, View } from "../../../common/types.ts";
 import clsx from "clsx";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { ContractAmount, ContractExp } from "../../components/contract.tsx";
 import type { HandleToggle } from "./index.tsx";
-import { isSport } from "../../../common/sportFunctions.ts";
 import type { MissingAsset } from "../../../worker/views/savedTrades.ts";
 import type { Ref } from "react";
 import { orderBy } from "../../../common/utils.ts";
@@ -114,21 +113,45 @@ export const MissingAssets = ({
 	);
 };
 
+const NewAssetIcon = () => {
+	return (
+		<div
+			className="rounded-circle bg-info align-self-center me-1"
+			style={{
+				height: 8,
+				width: 8,
+			}}
+		/>
+	);
+};
+
+type SummaryPlayer = View<"trade">["summary"]["teams"][number]["trade"][number];
+type SummaryPlayerWithInfo =
+	View<"tradeProposals">["offers"][number]["summary"]["teams"][number]["trade"][number];
+
 export const SummaryTeam = ({
 	handleRemove,
 	hideFinanceInfo,
 	hideTeamOvr,
 	missingAssets,
+	prevTeam,
 	showInlinePlayerInfo,
 	summary,
 	t,
-}: Pick<View<"trade">, "summary"> & {
+}: {
+	// Trade proposals and saved trades include age/ratings/stats for each player, for showInlinePlayerInfo
+	summary:
+		| View<"trade">["summary"]
+		| View<"tradeProposals">["offers"][number]["summary"];
 	handleRemove?: (type: "player" | "pick", id: number) => void;
 	hideFinanceInfo?: boolean;
 	hideTeamOvr?: boolean;
 	missingAssets?: MissingAsset[];
 	showInlinePlayerInfo?: boolean;
 	t: View<"trade">["summary"]["teams"][number];
+
+	// Pass this if you want to show a diff compared to a prior version of this trade
+	prevTeam?: TradeTeam;
 }) => {
 	const {
 		challengeNoRatings,
@@ -147,16 +170,22 @@ export const SummaryTeam = ({
 	const payrollColorCutoff =
 		salaryCapType === "none" ? luxuryPayroll : salaryCap;
 
+	const trade: readonly (SummaryPlayer | SummaryPlayerWithInfo)[] =
+		summary.teams[t.other].trade;
+
 	return (
 		<>
 			<h4 className="fw-bold mb-1">{t.name} receive:</h4>
 			<ul className="list-unstyled mb-0">
-				{summary.teams[t.other].trade.map((p) => {
+				{trade.map((p) => {
 					return (
 						<li key={p.pid}>
 							<div className="d-flex">
+								{prevTeam && !prevTeam.pids.includes(p.pid) ? (
+									<NewAssetIcon />
+								) : null}
 								<PlayerNameLabels
-									pos={p.ratings?.pos}
+									pos={"ratings" in p ? p.ratings.pos : undefined}
 									pid={p.pid}
 									legacyName={p.name}
 								/>
@@ -166,7 +195,7 @@ export const SummaryTeam = ({
 								{handleRemove ? (
 									<button
 										type="button"
-										className="btn-close ms-1"
+										className="btn-close ms-auto"
 										title="Remove player from trade"
 										onClick={() => {
 											handleRemove("player", p.pid);
@@ -174,7 +203,7 @@ export const SummaryTeam = ({
 									/>
 								) : undefined}
 							</div>
-							{showInlinePlayerInfo ? (
+							{showInlinePlayerInfo && "age" in p ? (
 								<div className="ms-2">
 									{p.age} <span title="Years Old">yo</span>
 									{!challengeNoRatings ? (
@@ -183,7 +212,7 @@ export const SummaryTeam = ({
 										</>
 									) : null}
 									,{" "}
-									{isSport("basketball") ? (
+									{__SPORT === "basketball" ? (
 										<>
 											{" "}
 											{helpers.roundStat(p.stats.pts, "pts")} pts,{" "}
@@ -201,11 +230,14 @@ export const SummaryTeam = ({
 				{orderBy(summary.teams[t.other].picks, ["round", "pick", "season"]).map(
 					(pick) => (
 						<li key={pick.dpid} className="d-flex">
+							{prevTeam && !prevTeam.dpids.includes(pick.dpid) ? (
+								<NewAssetIcon />
+							) : null}
 							<SafeHtml dirty={pick.desc} />
 							{handleRemove ? (
 								<button
 									type="button"
-									className="btn-close ms-1"
+									className="btn-close ms-auto"
 									title="Remove pick from trade"
 									onClick={() => {
 										handleRemove("pick", pick.dpid);
@@ -270,11 +302,15 @@ export const SummaryTeam = ({
 
 const Summary = ({
 	handleToggle,
+	prevTeams,
 	ref,
 	summary,
 }: Pick<View<"trade">, "summary"> & {
 	handleToggle: HandleToggle;
 	ref?: Ref<HTMLDivElement>;
+
+	// Pass this if you want to show a diff compared to a prior version of this trade
+	prevTeams?: TradeTeams;
 }) => {
 	return (
 		<div className="row trade-items mb-3" ref={ref}>
@@ -293,6 +329,7 @@ const Summary = ({
 								handleToggle(userOrOther, type, "include", id);
 							}}
 							summary={summary}
+							prevTeam={prevTeams?.[i === 0 ? 1 : 0]}
 							t={t}
 						/>
 					</div>

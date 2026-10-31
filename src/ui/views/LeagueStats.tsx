@@ -5,7 +5,6 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 
 export const formatMaybeInteger = (x: number) =>
@@ -93,7 +92,7 @@ const LeagueStats = ({
 	}
 
 	if (
-		isSport("baseball") &&
+		__SPORT === "baseball" &&
 		(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 	) {
 		seasons = expandFieldingStats({
@@ -165,14 +164,14 @@ const LeagueStats = ({
 			: (s.stats.avgAge as number).toFixed(1);
 
 		for (const stat of stats) {
-			data[stat] = helpers.roundStat((s.stats as any)[stat], stat);
+			data[stat] = helpers.roundStat(s.stats[stat], stat);
 		}
 
 		return {
 			key:
-				isSport("baseball") &&
+				__SPORT === "baseball" &&
 				(teamOpponent === "fielding" || teamOpponent === "oppFielding")
-					? `${s.season}-${(s.stats as any).pos}`
+					? `${s.season}-${s.stats.pos}`
 					: s.season,
 			data: Object.values(data),
 		};

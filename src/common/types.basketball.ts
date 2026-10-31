@@ -1,4 +1,7 @@
 import type teamStats from "../worker/core/team/stats.basketball.ts";
+import type playerStats from "../worker/core/player/stats.basketball.ts";
+import type { statFunctions as playerStatFunctions } from "./processPlayerStats.basketball.ts";
+import type { PlayerStatMax } from "./types.ts";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
@@ -44,86 +47,24 @@ export type TeamStatAttr =
 	| "drbp"
 	| "oppFtpFga";
 
-type AwardTeam = {
-	tid: number;
-	abbrev: string;
-	region: string;
-	name: string;
-	won: number;
-	lost: number;
-	tied: number | undefined;
-	otl: number | undefined;
-};
+// Stats row as stored in the database, in p.stats
+export type PlayerStats = Record<
+	(typeof playerStats)["raw"][number] | (typeof playerStats)["derived"][number],
+	number | undefined
+> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax> & {
+		// Only in historical real stats, from before orb/drb were tracked separately
+		trb?: number;
+	};
 
-export type AwardPlayer = {
-	pid: number;
-	name: string;
-	tid: number;
-	pts: number;
-	trb: number;
-	ast: number;
-};
-
-export type AwardPlayerDefense = {
-	pid: number;
-	name: string;
-	tid: number;
-	trb: number;
-	blk: number;
-	stl: number;
-};
-
-export type Awards<
-	PlayerOverride = AwardPlayer,
-	PlayerDefenseOverride = AwardPlayerDefense,
-> = {
-	season: number;
-	bestRecord: AwardTeam;
-
-	// undefined gets turned into null by JSON.stringify
-	bestRecordConfs: (AwardTeam | undefined | null)[];
-
-	// Only in old leagues
-	bre?: AwardTeam;
-	brw?: AwardTeam;
-
-	roy: PlayerOverride | undefined;
-	allRookie: PlayerOverride[];
-	mip: PlayerOverride | undefined;
-	mvp: PlayerOverride | undefined;
-	smoy: PlayerOverride | undefined;
-	allLeague: [
-		{
-			title: "First Team";
-			players: PlayerOverride[];
-		},
-		{
-			title: "Second Team";
-			players: PlayerOverride[];
-		},
-		{
-			title: "Third Team";
-			players: PlayerOverride[];
-		},
-	];
-	dpoy: PlayerDefenseOverride | undefined;
-	allDefensive: [
-		{
-			title: "First Team";
-			players: PlayerDefenseOverride[];
-		},
-		{
-			title: "Second Team";
-			players: PlayerDefenseOverride[];
-		},
-		{
-			title: "Third Team";
-			players: PlayerDefenseOverride[];
-		},
-	];
-	finalsMvp: PlayerOverride | undefined;
-	sfmvp: PlayerOverride[] | undefined;
-};
+// Numeric stats can be undefined in historical data from before a stat was tracked (even gp and min)
+export type PlayerStatsPlus = Record<
+	| (typeof playerStats)["raw"][number]
+	| (typeof playerStats)["derived"][number]
+	| keyof typeof playerStatFunctions,
+	number | undefined
+> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
 
 export type PlayerRatings = {
 	diq: number;

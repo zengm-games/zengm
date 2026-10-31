@@ -132,12 +132,16 @@ const RatingsForm = ({
 													{ratings.map((rating) => {
 														return (
 															<div key={rating} className="mb-3">
-																<label className="form-label">
+																<label
+																	className="form-label"
+																	htmlFor={`customize-player-rating-${rating}`}
+																>
 																	{getCol(`rating:${rating}`).desc}
 																</label>
 																<input
 																	type="text"
 																	className="form-control"
+																	id={`customize-player-rating-${rating}`}
 																	onChange={(event) => {
 																		handleChange("rating", rating, event);
 																	}}

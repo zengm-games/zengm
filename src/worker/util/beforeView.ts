@@ -17,7 +17,8 @@ import {
 import { env } from "./env.ts";
 import { initUILocalGames } from "./initUILocalGames.ts";
 
-let heartbeatIntervalID: number;
+// ReturnType rather than number because bbgm-rosters type checks this with Node types
+let heartbeatIntervalID: ReturnType<typeof setInterval>;
 
 // Heartbeat stuff would be better inside a single transaction, but Firefox doesn't like that.
 
@@ -47,7 +48,7 @@ const startHeartbeat = async (l: Awaited<ReturnType<typeof getLeague>>) => {
 	setTimeout(() => {
 		clearInterval(heartbeatIntervalID); // Shouldn't be necessary, but just in case
 
-		heartbeatIntervalID = self.setInterval(async () => {
+		heartbeatIntervalID = setInterval(async () => {
 			const l2 = await getLeague(lid);
 			await runHeartbeat(l2);
 		}, 1000);
@@ -169,7 +170,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 
 	local.leagueLoaded = true;
 
-	await updateStatus(undefined);
+	await updateStatus();
 	if (loadingNewLid !== newLid) {
 		return;
 	}

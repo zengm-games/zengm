@@ -1,7 +1,7 @@
 import loadDataBasketball, { type Basketball } from "./loadData.basketball.ts";
 import loadStatsBasketball from "./loadStats.basketball.ts";
 import formatScheduledEvents from "./formatScheduledEvents.ts";
-import { orderBy, range } from "../../../common/utils.ts";
+import { orderBy, range, assertDefined } from "../../../common/utils.ts";
 import type {
 	GetLeagueOptions,
 	DraftPickWithoutKey,
@@ -28,22 +28,21 @@ import addRetiredJerseyNumbers from "./addRetiredJerseyNumbers.ts";
 import genPlayoffSeries from "./genPlayoffSeries.ts";
 import getGameAttributes from "./getGameAttributes.ts";
 import getAwards from "./getAwards.ts";
-import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition.ts";
+import { setDraftProspectRatings } from "./setDraftProspectRatings.ts";
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 const FREE_AGENTS_SEASON = 2020;
 
 // Set true after the lottery happens, then false again after the playoffs end
-const INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS = true;
+const INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS = false;
 
 const getLeague = async (options: GetLeagueOptions) => {
-	if (!isSport("basketball")) {
-		throw new Error(`Not supported for ${process.env.SPORT}`);
+	if (__SPORT !== "basketball") {
+		throw new Error(`Not supported for ${__SPORT}`);
 	}
 
 	const basketball = await loadDataBasketball();
@@ -86,7 +85,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		...basketball.scheduledEventsTeams,
 	];
 
-	const hofSlugs = new Set();
+	const hofSlugs = new Set<string>();
 	let players;
 	if (options.type === "real") {
 		const { scheduledEvents, initialGameAttributes, initialTeams } =
@@ -325,17 +324,18 @@ const getLeague = async (options: GetLeagueOptions) => {
 						nerfDraftProspect(currentRatings);
 						p.ratings = [currentRatings];
 						const bio = basketball.bios[p.srID];
-						if (
-							options.type === "real" &&
-							options.realDraftRatings === "draft" &&
-							bio
-						) {
-							const age = p.draft.year + 1 - p.born.year;
-							setDraftProspectRatingsBasedOnDraftPosition(
-								currentRatings,
-								age,
-								bio,
-							);
+						if (bio) {
+							setDraftProspectRatings({
+								age: p.draft.year + 1 - p.born.year,
+								basketball,
+								draft: {
+									round: bio.draftRound,
+									pick: bio.draftPick,
+								},
+								ratings: currentRatings,
+								realDraftRatings: options.realDraftRatings,
+								slug: p.srID,
+							});
 						}
 
 						// Delete stuff that may have been added on, for randomDebutsKeepCurrent if stats are kept
@@ -567,10 +567,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 					for (const [i, round] of seasonPlayoffSeries.series.entries()) {
 						for (const matchup of round) {
-							if (
-								(matchup.away && matchup.away.tid === t.tid) ||
-								matchup.home.tid === t.tid
-							) {
+							if (matchup.away?.tid === t.tid || matchup.home.tid === t.tid) {
 								if (i === 0) {
 									teamSeason.clinchedPlayoffs = "x";
 								}
@@ -705,7 +702,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				options.season < 2021 &&
 				!options.randomDebuts
 			) {
-				const nextSeasonSlugs = new Set();
+				const nextSeasonSlugs = new Set<string>();
 				for (const row of basketball.ratings) {
 					if (row.season === options.season + 1) {
 						nextSeasonSlugs.add(row.slug);
@@ -715,7 +712,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				for (const p of players) {
 					if (p.tid >= 0 && !nextSeasonSlugs.has(p.srID)) {
 						p.tid = PLAYER.RETIRED;
-						(p as any).retiredYear = options.season;
+						p.retiredYear = options.season;
 					}
 				}
 			}
@@ -776,21 +773,23 @@ const getLeague = async (options: GetLeagueOptions) => {
 				options.season < REAL_PLAYERS_INFO!.MAX_SEASON
 			) {
 				const applyRookieContractAndFixRatings = (p: {
+					born: {
+						year: number;
+					};
 					draft: {
 						round: number | undefined;
+						pick: number | undefined;
 					};
 					contract: PlayerContract | undefined;
 					ratings: [OnlyRatings, ...OnlyRatings[]];
 					srID: string;
 				}) => {
 					// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
-					const salaryRow = basketball.salaries.find(
-						(row) => row.start <= options.season + 1 && row.slug === p.srID,
+					const salaryRow = basketball.salaries[p.srID]?.find(
+						(row) => row.start <= options.season + 1,
 					);
 					if (salaryRow) {
-						if (p.draft.round === undefined) {
-							throw new Error("Should never happen");
-						}
+						assertDefined(p.draft.round);
 						let minYears =
 							defaultGameAttributes.rookieContractLengths[p.draft.round - 1] ??
 							defaultGameAttributes.rookieContractLengths.at(-1)!;
@@ -820,6 +819,15 @@ const getLeague = async (options: GetLeagueOptions) => {
 					const currentRatings = p.ratings[0];
 					currentRatings.season = options.season;
 					nerfDraftProspect(currentRatings);
+
+					setDraftProspectRatings({
+						age: currentRatings.season - p.born.year,
+						basketball,
+						draft: p.draft,
+						ratings: currentRatings,
+						realDraftRatings: options.realDraftRatings,
+						slug: p.srID,
+					});
 				};
 
 				const playersBySlug = Object.groupBy(players, (p) => p.srID);
@@ -849,18 +857,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 						};
 
 						applyRookieContractAndFixRatings(p);
-
-						if (
-							options.type === "real" &&
-							options.realDraftRatings === "draft"
-						) {
-							const currentRatings = p.ratings[0];
-							const age = currentRatings.season! - p.born.year;
-							setDraftProspectRatingsBasedOnDraftPosition(currentRatings, age, {
-								draftRound: p.draft.round,
-								draftPick: p.draft.pick,
-							});
-						}
 					}
 				}
 
@@ -875,8 +871,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 						bio.draftRound > 0
 					) {
 						// Search forwards - first team a player was on that season
-						const statsRow = basketball.teams.find(
-							(row) => row.slug === p.srID && row.season === options.season + 1,
+						const statsRow = basketball.teams[p.srID]?.find(
+							(row) => row.season === options.season + 1,
 						);
 
 						if (statsRow) {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import useDropdownOptions, {
 	type ResponsiveOption,
@@ -7,7 +7,7 @@ import { helpers } from "../util/helpers.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { NextPrevButtons } from "./NextPrevButtons.tsx";
 import type { LocalStateUI } from "../../common/types.ts";
-import { sanitize } from "../util/sanitize.ts";
+import type { LeagueUrlParts } from "../router/types.ts";
 
 // This assumes that when val is an array, it is already sorted by minWidth ascending
 export const getResponsiveValue = (
@@ -25,7 +25,7 @@ const getResponsiveValue2 = (val: string | ResponsiveOption[]) => {
 	return getResponsiveValue(val, window.innerWidth);
 };
 
-// Chrome 123, Firefox ?, Safari 26.2 - use this always, get rid of manual width calculation
+// Chrome 123, Firefox 152, Safari 26.2 - use this always, get rid of manual width calculation
 const SUPPORTS_FIELD_SIZING_CONTENT = CSS.supports("field-sizing", "content");
 
 const Select = ({
@@ -40,7 +40,8 @@ const Select = ({
 	value: number | string;
 }) => {
 	const options = useDropdownOptions(field, customOptions);
-	const [width, setWidth] = useState<number | undefined>();
+
+	const selectRef = useRef<HTMLSelectElement>(null);
 
 	const updateWidth = useCallback(() => {
 		if (SUPPORTS_FIELD_SIZING_CONTENT) {
@@ -59,13 +60,16 @@ const Select = ({
 		el.style.display = "inline";
 		el.className = "dropdown-select";
 		const el2 = document.createElement("option");
-		el2.innerHTML = sanitize(getResponsiveValue2(currentValue));
+		el2.textContent = getResponsiveValue2(currentValue);
 		el.append(el2);
 
 		document.body.append(el);
-		setWidth(el.offsetWidth);
-
+		const width = el.offsetWidth;
 		document.body.removeChild(el);
+
+		if (selectRef.current) {
+			selectRef.current.style.width = `${width}px`;
+		}
 	}, [options, value]);
 
 	useLayoutEffect(() => {
@@ -107,13 +111,11 @@ const Select = ({
 		};
 	}, [options, updateWidth]);
 
-	const style: CSSProperties = SUPPORTS_FIELD_SIZING_CONTENT
+	const style: CSSProperties | undefined = SUPPORTS_FIELD_SIZING_CONTENT
 		? {
 				fieldSizing: "content",
 			}
-		: {
-				width,
-			};
+		: undefined;
 
 	if (options.length <= 1) {
 		return null;
@@ -150,6 +152,7 @@ const Select = ({
 				onChange={(event) => {
 					handleChange(event.currentTarget.value);
 				}}
+				ref={selectRef}
 				style={style}
 			>
 				{options.map((opt) => {
@@ -187,7 +190,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 		} else {
 			const newValues = values.slice();
 			newValues[i] = value;
-			const parts = [view, ...newValues];
+			const parts = [view, ...newValues] as LeagueUrlParts;
 			url = helpers.leagueUrl(parts);
 		}
 

@@ -1,5 +1,5 @@
 import type { Col, StickyCols } from "./index.tsx";
-import { type CSSProperties } from "react";
+import { type CSSProperties, useId } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
 	SortableContext,
@@ -93,6 +93,9 @@ const Item = ({
 		);
 	}
 
+	// Not htmlFor, because the label is also the drag handle, and dragging shouldn't toggle the checkbox
+	const labelId = useId();
+
 	return (
 		<div className="form-check" ref={setNodeRef} style={style}>
 			<input
@@ -100,8 +103,10 @@ const Item = ({
 				type="checkbox"
 				checked={!hidden}
 				onChange={onToggleHidden}
+				aria-labelledby={labelId}
 			/>
 			<label
+				id={labelId}
 				className={`form-check-label touch-action-none ${disabled ? "" : isDragged ? " cursor-grabbing" : " cursor-grab"}`}
 				ref={setActivatorNodeRef}
 				style={{

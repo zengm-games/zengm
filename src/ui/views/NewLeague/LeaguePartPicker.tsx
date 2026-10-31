@@ -43,8 +43,14 @@ const LeaguePartPicker = ({
 	keysSorted.push(...allKeys.filter((key) => !keysSorted.includes(key)));
 
 	return (
-		<div className="mb-3">
-			<label className="form-label">Use from selected league:</label>
+		<div
+			className="mb-3"
+			role="group"
+			aria-labelledby="league-part-picker-label"
+		>
+			<div className="form-label" id="league-part-picker-label">
+				Use from selected league:
+			</div>
 
 			{keysSorted.map((key) => (
 				<div key={key} className="form-check">

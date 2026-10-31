@@ -56,7 +56,7 @@ export type LeagueFileUploadOutput = {
 
 type State = {
 	error: Error | null;
-	schemaErrors: any[];
+	schemaErrors: unknown[];
 	status: "initial" | "checking" | "error" | "done";
 };
 
@@ -157,7 +157,7 @@ export const LeagueFileUpload = ({
 		schemaErrors,
 		url,
 	}: LeagueFileUploadOutput & {
-		schemaErrors: any[];
+		schemaErrors: unknown[];
 	}) => {
 		if (schemaErrors.length > 0) {
 			dispatch({

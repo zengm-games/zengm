@@ -52,7 +52,7 @@ const PlayerBios = ({ abbrev, players, season, stats }: View<"playerBios">) => {
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 		const college = p.college && p.college !== "" ? p.college : "None";
 

@@ -1,4 +1,4 @@
-import { g, logEvent } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type {
 	TeamFiltered,
 	PlayoffSeries,
@@ -7,12 +7,12 @@ import type {
 	ByConf,
 } from "../../../common/types.ts";
 import genPlayoffSeeds from "./genPlayoffSeeds.ts";
-import { idb } from "../../db/index.ts";
 import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 import validatePlayoffSettings from "./validatePlayoffSettings.ts";
 import { range } from "../../../common/utils.ts";
 import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
+import { team } from "../index.ts";
 
 type MyTeam = TeamFiltered<
 	["tid"],
@@ -37,6 +37,14 @@ type MyTeam = TeamFiltered<
 	["pts", "oppPts", "gp"],
 	number
 >;
+
+// The playoff settings don't work for the teams. Settings are validated when they change, but this can still happen, like if teams are removed later, or for hypothetical playoffs (see getFirstRoundSlotProbs). This is not logged here, it's up to the caller to handle it, like by showing the message to the user.
+export class InvalidPlayoffSettingsError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = "InvalidPlayoffSettingsError";
+	}
+}
 
 type MinimalTeam = TeamFiltered<["tid"], ["cid", "winp"], any, number>;
 
@@ -76,7 +84,9 @@ export const makeMatchups = (
 		const playInTeams = teams.slice(numPlayoffTeams - 2, numPlayoffTeams + 2);
 
 		if (playInTeams.length < 4) {
-			throw new Error("Not enough teams found for play-in tournament");
+			throw new InvalidPlayoffSettingsError(
+				"Not enough teams found for play-in tournament",
+			);
 		}
 
 		playIn = [
@@ -126,36 +136,47 @@ const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
 const myValidatePlayoffSettings = ({
 	numRounds,
 	numPlayoffByes,
+	numTeams,
 	byConf,
 }: Pick<
 	Parameters<typeof validatePlayoffSettings>[0],
 	"numRounds" | "numPlayoffByes" | "byConf"
->) => {
+> & {
+	numTeams: number;
+}) => {
 	try {
 		validatePlayoffSettings({
 			numRounds,
 			numPlayoffByes,
-			numActiveTeams: g.get("numActiveTeams"),
+			numActiveTeams: numTeams,
 			playIn: g.get("playIn"),
 			byConf,
 		});
 	} catch (error) {
-		logEvent({
-			type: "error",
-			text: error.message,
-			saveToDb: false,
-		});
-
 		// We need to stop executing because otherwise it will somehow have some other error due to invalid settings
-		throw error;
+		throw new InvalidPlayoffSettingsError(error.message);
 	}
 };
 
 export const genPlayoffSeriesFromTeams = async (
 	teams: MyTeam[],
-	orderTeamsOptions?: {
+	{
+		byConf: byConfOverride,
+		divisionRanks,
+		season = g.get("season"),
+		skipTiebreakers,
+	}: {
+		// Pass this to skip looking it up, for when this is called many times
+		byConf?: ByConf;
+
+		// See orderTeams
+		divisionRanks?: Map<number, number>;
+
+		// Use the playoff settings from this season. Teams are whatever is in `teams`, so they need to be the teams for this season too.
+		season?: number;
+
 		skipTiebreakers?: boolean;
-	},
+	} = {},
 ): Promise<{
 	byConf: ByConf;
 	playIns?: PlayoffSeries["playIns"];
@@ -163,7 +184,9 @@ export const genPlayoffSeriesFromTeams = async (
 	tidPlayIn: number[];
 	tidPlayoffs: number[];
 }> => {
-	const numRounds = g.get("numGamesPlayoffSeries", "current").length;
+	const numRounds = g.get("numGamesPlayoffSeries", season).length;
+	const confs = g.get("confs", season);
+	const numTeams = teams.length;
 
 	if (numRounds === 0) {
 		return {
@@ -174,8 +197,9 @@ export const genPlayoffSeriesFromTeams = async (
 		};
 	}
 
-	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
-	let playoffsByConf = await getPlayoffsByConf(g.get("season"));
+	let playoffsByConf = byConfOverride ?? (await getPlayoffsByConf(season));
+
+	const orderTeamsOptions = { divisionRanks, season, skipTiebreakers };
 
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
@@ -184,7 +208,7 @@ export const genPlayoffSeriesFromTeams = async (
 	// We need enough playoff teams to have at least one per conference
 	if (playoffsByConf !== false) {
 		const numPlayoffByes = getNumPlayoffByes({
-			numPlayoffByes: g.get("numPlayoffByes", "current"),
+			numPlayoffByes: g.get("numPlayoffByes", season),
 			byConf: playoffsByConf,
 		});
 
@@ -194,6 +218,7 @@ export const genPlayoffSeriesFromTeams = async (
 		myValidatePlayoffSettings({
 			numRounds,
 			numPlayoffByes,
+			numTeams,
 			byConf,
 		});
 
@@ -208,7 +233,7 @@ export const genPlayoffSeriesFromTeams = async (
 		if (numRounds === numRoundsNeeded) {
 			// Special case - we have just enough teams, meaning every team in the playoffs is a 1 seed from their conference (like 2 conferences with 1 round, or 4 conferences and 2 rounds, or 8 and 3, etc.)
 			let teamsMatchup = [];
-			for (const conf of g.get("confs", "current")) {
+			for (const conf of confs) {
 				const teamsConf = teamsByCid.get(conf.cid);
 
 				if (teamsConf && teamsConf.length >= 1) {
@@ -232,7 +257,7 @@ export const genPlayoffSeriesFromTeams = async (
 				}
 			}
 		} else if (numRounds > numRoundsNeeded) {
-			for (const conf of g.get("confs", "current")) {
+			for (const conf of confs) {
 				const teamsConf = teamsByCid.get(conf.cid);
 
 				if (
@@ -263,13 +288,14 @@ export const genPlayoffSeriesFromTeams = async (
 	// Not an "else" because if the (playoffsByConf) branch fails it sets it to false and runs this as backup
 	if (playoffsByConf === false) {
 		const numPlayoffByes = getNumPlayoffByes({
-			numPlayoffByes: g.get("numPlayoffByes", "current"),
+			numPlayoffByes: g.get("numPlayoffByes", season),
 			byConf: playoffsByConf,
 		});
 
 		myValidatePlayoffSettings({
 			numRounds,
 			numPlayoffByes,
+			numTeams,
 			byConf: playoffsByConf,
 		});
 
@@ -322,33 +348,30 @@ export const genPlayoffSeriesFromTeams = async (
 };
 
 const genPlayoffSeries = async () => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"cid",
-				"did",
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"winp",
-				"pts",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"cid",
+			"did",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"pts",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 
 	return genPlayoffSeriesFromTeams(teams);
 };

@@ -1,7 +1,7 @@
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
@@ -13,12 +13,27 @@ import { SafeHtml } from "../components/SafeHtml.tsx";
 import { NegotiateButtons } from "../components/NegotiateButtons.tsx";
 import { RosterComposition } from "../components/RosterComposition.tsx";
 import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
-import { confirm } from "../util/confirm.tsx";
 import {
 	NegotiationModal,
 	useNegotiaionModal,
 } from "../components/NegotiationModal.tsx";
 import { useLocal } from "../util/local.ts";
+import clsx from "clsx";
+import { showUndoNotification } from "../components/UndoNotification.tsx";
+
+const showReleaseUndo = ({
+	name,
+	undoKey,
+}: {
+	name: string;
+	undoKey: number;
+}) => {
+	showUndoNotification({
+		actionName: "release",
+		undoKey,
+		title: `You released ${name}`,
+	});
+};
 
 const NegotiationList = ({
 	capSpace,
@@ -39,10 +54,11 @@ const NegotiationList = ({
 			"season",
 		]);
 
-	const title =
-		salaryCapType === "hard" || !draftPickAutoContract
-			? "Rookies and Expiring Contracts"
-			: "Re-sign Players";
+	const rookiesNeedSigning = salaryCapType === "hard" || !draftPickAutoContract;
+
+	const title = rookiesNeedSigning
+		? "Rookies and Expiring Contracts"
+		: "Re-sign Players";
 
 	useTitleBar({ title });
 
@@ -52,21 +68,29 @@ const NegotiationList = ({
 		return <p>The AI will handle re-signing players in spectator mode.</p>;
 	}
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Age",
-		"Ovr",
-		"Pot",
-		...stats.map((stat) => `stat:${stat}`),
-		"Acquired",
-		"Mood",
-		"Asking For",
-		"Exp",
-		"Negotiate",
-	]);
+	const cols = getCols(
+		[
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"Pot",
+			...stats.map((stat) => `stat:${stat}`),
+			"Acquired",
+			"Mood",
+			"Old Salary",
+			"Asking For",
+			"Exp",
+			"Actions",
+		],
+		{
+			Actions: {
+				width: "1px",
+			},
+		},
+	);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		const negotiateButtons = (
 			<NegotiateButtons
 				canGoOverCap={salaryCapType === "none" || salaryCapType === "soft"}
@@ -115,23 +139,48 @@ const NegotiationList = ({
 					maxWidth: true,
 					p,
 				}),
+				// Players who have never been paid have no previous salary
+				p.lastSalary === undefined
+					? {
+							value: null,
+							classNames: "text-body-secondary",
+						}
+					: {
+							...wrappedCurrency(p.lastSalary, "M"),
+							classNames: "text-body-secondary",
+						},
 				wrappedCurrency(p.mood.user.contractAmount / 1000, "M"),
 				p.contract.exp,
 				{
 					value: (
-						<div className="d-flex align-items-center">
+						<>
 							{negotiateButtons}
 							<button
 								type="button"
-								className="btn-close ms-2 p-0"
-								title="End negotiation"
+								className={clsx(
+									"btn btn-light-bordered btn-xs",
+									p.mood.user.willing ? undefined : "ms-auto",
+								)}
 								onClick={async () => {
-									await toWorker("main", "cancelContractNegotiation", p.pid);
+									const undoKey = await toWorker(
+										"main",
+										"cancelContractNegotiation",
+										p.pid,
+									);
+									showReleaseUndo({
+										name: `${p.firstName} ${p.lastName}`,
+										undoKey,
+									});
 								}}
-							/>
-						</div>
+							>
+								Release
+							</button>
+						</>
 					),
-					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
+					classNames: "d-flex align-items-center gap-2",
+					searchValue: p.mood.user.willing
+						? "Negotiate Sign Release"
+						: "Refuses! Release",
 				},
 			],
 			classNames: {
@@ -141,6 +190,53 @@ const NegotiationList = ({
 	});
 
 	const hasRookies = players.some((p) => p.contract.rookie);
+
+	// reSignAll skips players who are not willing to sign, so they shouldn't count towards cap space or the number signed
+	const signablePlayers = players.filter((p) => p.mood.user.willing);
+	const signableRookies = signablePlayers.filter((p) => p.contract.rookie);
+
+	let sumSignableContracts = 0;
+	for (const p of signablePlayers) {
+		sumSignableContracts += p.mood.user.contractAmount;
+	}
+	sumSignableContracts /= 1000;
+
+	let sumRookieContracts = 0;
+	for (const p of signableRookies) {
+		sumRookieContracts += p.mood.user.contractAmount;
+	}
+	sumRookieContracts /= 1000;
+
+	// Only check cap space for hard cap, since in a soft cap you can go over the cap to re-sign your own players
+	const overCapAll =
+		salaryCapType === "hard" && sumSignableContracts > capSpace;
+	const overCapRookies =
+		salaryCapType === "hard" &&
+		signableRookies.length > 0 &&
+		sumRookieContracts > capSpace;
+
+	const overCapText = overCapRookies
+		? "You don't have enough cap space to sign all your players or all your rookies."
+		: overCapAll
+			? "You don't have enough cap space to sign all your players."
+			: undefined;
+
+	const signAll = async (playersToSign: typeof players, undoText: string) => {
+		const response = await toWorker("main", "reSignAll", playersToSign);
+
+		if (typeof response === "string") {
+			showNotification({
+				type: "error",
+				text: response,
+			});
+		} else {
+			showUndoNotification({
+				actionName: "signings",
+				undoKey: response,
+				title: undoText,
+			});
+		}
+	};
 
 	return (
 		<>
@@ -180,37 +276,44 @@ const NegotiationList = ({
 				) : null}
 			</p>
 
-			{(salaryCapType !== "hard" || sumContracts < capSpace) &&
-			players.length > 0 ? (
-				<button
-					className="btn btn-secondary mb-3"
-					onClick={async () => {
-						const proceed = await confirm(
-							`Are you sure you want to re-sign all ${
-								players.length
-							} ${helpers.plural("player", players.length)}?`,
-							{
-								okText: "Re-sign all",
-							},
-						);
-						if (!proceed) {
-							return;
-						}
-
-						const errorMsg = await toWorker("main", "reSignAll", players);
-
-						if (errorMsg) {
-							logEvent({
-								type: "error",
-								text: errorMsg,
-								saveToDb: false,
-							});
-						}
-					}}
-				>
-					Re-sign all
-				</button>
+			{players.length > 0 ? (
+				<div className="d-flex gap-2 mb-3">
+					<button
+						className="btn btn-secondary"
+						disabled={signablePlayers.length === 0 || overCapAll}
+						onClick={async () => {
+							await signAll(
+								signablePlayers,
+								`${rookiesNeedSigning ? "Signed" : "Re-signed"} ${signablePlayers.length} ${helpers.plural(
+									"player",
+									signablePlayers.length,
+								)}`,
+							);
+						}}
+					>
+						{rookiesNeedSigning ? "Sign all" : "Re-sign all"}
+					</button>
+					{rookiesNeedSigning ? (
+						<button
+							className="btn btn-secondary"
+							disabled={signableRookies.length === 0 || overCapRookies}
+							onClick={async () => {
+								await signAll(
+									signableRookies,
+									`Signed ${signableRookies.length} ${helpers.plural(
+										"rookie",
+										signableRookies.length,
+									)}`,
+								);
+							}}
+						>
+							Sign all rookies
+						</button>
+					) : null}
+				</div>
 			) : null}
+
+			{overCapText ? <p className="text-danger">{overCapText}</p> : null}
 
 			<DataTable
 				cols={cols}

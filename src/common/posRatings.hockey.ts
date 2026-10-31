@@ -1,4 +1,6 @@
-const posRatings = (pos: string) => {
+import type { RatingKey } from "./types.hockey.ts";
+
+const posRatings = (pos: string): RatingKey[] => {
 	if (pos === "G") {
 		return ["glk"];
 	}

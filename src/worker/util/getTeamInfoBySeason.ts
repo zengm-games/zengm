@@ -12,10 +12,6 @@ export const getTeamInfoBySeason = async (tid: number, season: number) => {
 		};
 	}
 
-	const teamSeasonsIndex = idb.league
-		.transaction("teamSeasons")
-		.store.index("tid, season");
-
 	let ts:
 		| {
 				abbrev: string;
@@ -24,12 +20,13 @@ export const getTeamInfoBySeason = async (tid: number, season: number) => {
 				name: string;
 				region: string;
 		  }
-		| undefined = await teamSeasonsIndex.get([tid, season]);
+		| undefined = await idb.merged.teamSeasons.getByTidSeason(tid, season);
 	if (!ts) {
 		// No team season entry for the requested season... is there an older one, somehow? If so, use the latest one before the requested season. If not, use the first we find (it is the oldest existing one, so assume that applies).
-		for await (const cursor of teamSeasonsIndex.iterate(
-			IDBKeyRange.bound([tid, -Infinity], [tid, Infinity]),
-		)) {
+		for await (const cursor of idb.league
+			.transaction("teamSeasons")
+			.store.index("tid, season")
+			.iterate(IDBKeyRange.bound([tid, -Infinity], [tid, Infinity]))) {
 			if (cursor.value.season > season && ts) {
 				break;
 			}
@@ -52,3 +49,23 @@ export const getTeamInfoBySeason = async (tid: number, season: number) => {
 
 	// Could be an invalid tid, like PLAYER.TOT or PLAYER.DOES_NOT_EXIST
 };
+
+// Make one instance of this per season
+export class CacheTeamInfoSeason {
+	cache = new Map<number, Awaited<ReturnType<typeof getTeamInfoBySeason>>>();
+	season: number;
+
+	constructor(season: number) {
+		this.season = season;
+	}
+
+	async get(tid: number) {
+		if (this.cache.has(tid)) {
+			return this.cache.get(tid);
+		}
+
+		const info = await getTeamInfoBySeason(tid, this.season);
+		this.cache.set(tid, info);
+		return info;
+	}
+}

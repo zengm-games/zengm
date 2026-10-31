@@ -20,9 +20,11 @@ const gameAttributesToUI = async (
 	}
 
 	let flagOverrides: LocalStateUI["flagOverrides"] | undefined;
-	if (gameAttributes.playerBioInfo) {
+	// Check the key rather than the value, so removing playerBioInfo also clears flagOverrides
+	if (Object.hasOwn(gameAttributes, "playerBioInfo")) {
 		flagOverrides = {};
-		const countries = gameAttributes.playerBioInfo.countries;
+		updated = true;
+		const countries = gameAttributes.playerBioInfo?.countries;
 		if (countries) {
 			for (const [country, { flag }] of Object.entries(countries)) {
 				if (flag !== undefined) {

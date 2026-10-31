@@ -3,10 +3,14 @@ import { FATIGUE_POS, POSITIONS } from "../../../common/constants.football.ts";
 import PlayByPlayLogger, {
 	type PlayByPlayEventScore,
 } from "./PlayByPlayLogger.ts";
-import getCompositeFactor from "./getCompositeFactor.ts";
+import {
+	getBlockingFactors,
+	getCompositeFactor,
+	type CompositeFactorParams,
+} from "./getCompositeFactor.ts";
 import getPlayers from "./getPlayers.ts";
 import formations from "./formations.ts";
-import penalties from "./penalties.ts";
+import { penaltiesByPlayType } from "./penalties.ts";
 import type { Position } from "../../../common/types.football.ts";
 import type {
 	CompositeRating,
@@ -41,6 +45,18 @@ const ESTIMATED_SECONDS_PER_KNEEL = 42;
 const ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT = 2;
 const YARDS_NEEDED_TO_KNEEL = 3;
 
+// Teams don't bother with timeouts late in a game when the score difference is this big
+const BLOWOUT_POINTS = 24;
+
+// A ball carrier will go down short of the goal line rather than score a TD to keep the ball and kneel out the clock, if the opponent would still be within 2 max scores (8 points each) after the TD. Any bigger lead and the risk of a comeback is negligible, so it's more realistic to just score
+const GO_DOWN_MAX_LEAD_AFTER_TD = 16;
+
+// A ball carrier going down to kneel out the clock will still advance the ball at least this far, to have plenty of room to kneel
+const GO_DOWN_MIN_SCRIMMAGE = 20;
+
+// Roughly how often 2 point conversions succeed in the game simulation
+const TWO_POINT_CONVERSION_SUCCESS_RATE = 0.5;
+
 const NUM_DOWNS = 4; // Not used everywhere!
 const TWO_MINUTE_WARNING_TIME = 2; // Not used everywhere!
 
@@ -48,6 +64,51 @@ const FEWER_INJURIES_POS = new Set(["QB", "P", "K"]);
 
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;
+
+const COMPOSITE_FACTOR_OPTIONS = {
+	receiving: {
+		positions: ["WR", "TE", "RB"],
+		orderFunc: (p) => p.ovrs.WR,
+		weightsMain: [5, 3, 2],
+		weightsBonus: [0.5, 0.25],
+		valFunc: (p) => p.ovrs.WR / 100,
+	},
+	rushing: {
+		positions: ["RB", "WR", "QB"],
+		orderFunc: (p) => p.ovrs.RB,
+		weightsMain: [1],
+		weightsBonus: [0.1],
+		valFunc: (p) => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
+	},
+	passRushing: {
+		positions: ["DL", "LB"],
+		orderFunc: (p) => p.ovrs.DL,
+		weightsMain: [5, 4, 3, 2, 1],
+		weightsBonus: [],
+		valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
+	},
+	runStopping: {
+		positions: ["DL", "LB", "S"],
+		orderFunc: (p) => p.ovrs.DL,
+		weightsMain: [5, 4, 3, 2, 2, 1, 1],
+		weightsBonus: [0.5, 0.5],
+		valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
+	},
+	passCoverage: {
+		positions: ["CB", "S", "LB"],
+		orderFunc: (p) => p.ovrs.CB,
+		weightsMain: [5, 4, 3, 2, 1, 1],
+		weightsBonus: [0.5, 0.5],
+		valFunc: (p) => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
+	},
+	tackling: {
+		positions: ["DL", "LB", "S"],
+		orderFunc: (p) => p.ovrs.LB,
+		weightsMain: [5, 4, 3, 2, 1],
+		weightsBonus: [],
+		valFunc: (p) => (p.ovrs.LB / 100 + p.compositeRating.tackling) / 2,
+	},
+} satisfies Record<string, CompositeFactorParams>;
 
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
@@ -103,6 +164,11 @@ class GameSim extends GameSimBase {
 	awaitingAfterTouchdown = false;
 
 	awaitingAfterSafety = false;
+
+	// This is used for drive-based team stats such as "drives" and "totStartYds".
+	// Turnover edge cases - two turnovers on the same play means this is not a new drive, but recovering a fumbled punt or an onside kick are new drives.
+	// Set this to undefined in situations where it'll be a new drive for either team (such as after a kickoff/punt) but not when it'll be a new drive only for a new team (fumble/interception).
+	currentDrive: TeamNum | undefined;
 
 	awaitingKickoff: TeamNum | undefined;
 	lastHalfAwaitingKickoff: TeamNum;
@@ -216,7 +282,9 @@ class GameSim extends GameSimBase {
 
 		let numOvertimes = 0;
 		while (
-			this.team[0].stat.pts === this.team[1].stat.pts &&
+			(this.team[0].stat.pts === this.team[1].stat.pts ||
+				// Score is not tied, but the trailing team still gets a possession, like if the first team kicks a field goal and the second team's possession continues past the end of the period
+				(this.overtimeState !== undefined && this.overtimeState !== "over")) &&
 			numOvertimes < this.maxOvertimes
 		) {
 			this.simOvertime();
@@ -370,9 +438,25 @@ class GameSim extends GameSimBase {
 		return this.numPeriods % 2 === 0 && quarter === this.numPeriods / 2 + 1;
 	}
 
+	// Overtime is structured like repeated games of numPeriods periods each, so the 1st period and the period after halftime start with a kickoff, and other periods continue the previous possession
+	overtimePeriodWithinGame(overtimes: number) {
+		return ((overtimes - 1) % this.numPeriods) + 1;
+	}
+
+	overtimeStartsWithKickoff(overtimes: number) {
+		const period = this.overtimePeriodWithinGame(overtimes);
+		return period === 1 || this.isFirstPeriodAfterHalftime(period);
+	}
+
 	kickoffAfterEndOfPeriod(quarter: number) {
+		if (quarter < this.numPeriods) {
+			return this.isFirstPeriodAfterHalftime(quarter + 1);
+		}
+
+		const nextOvertimes = quarter - this.numPeriods + 1;
 		return (
-			this.isFirstPeriodAfterHalftime(quarter + 1) || quarter >= this.numPeriods
+			nextOvertimes > this.maxOvertimes ||
+			this.overtimeStartsWithKickoff(nextOvertimes)
 		);
 	}
 
@@ -432,34 +516,41 @@ class GameSim extends GameSimBase {
 		if (this.overtimeState === undefined) {
 			// Only set this in first overtime
 			this.overtimeState = "initialKickoff";
-
-			// Coin flip in initial overtime
-			this.awaitingKickoff = Math.random() < 0.5 ? 0 : 1;
-			this.lastHalfAwaitingKickoff = this.awaitingKickoff;
-			this.scrimmage = SCRIMMAGE_KICKOFF;
 		}
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
-		this.timeouts = [2, 2];
-		this.logTimeouts();
-		this.twoMinuteWarningHappened = false;
+
+		const startsWithKickoff = this.overtimeStartsWithKickoff(this.overtimes);
+		if (startsWithKickoff) {
+			this.timeouts = [2, 2];
+			this.logTimeouts();
+			this.twoMinuteWarningHappened = false;
+		}
+
 		this.playByPlay.logEvent({
 			type: "overtime",
 			clock: this.clock,
 			overtimes: this.overtimes,
-			startsWithKickoff: this.kickoffAfterEndOfPeriod(
-				this.numPeriods + this.overtimes - 1,
-			),
+			startsWithKickoff,
 		});
 
-		this.d = this.lastHalfAwaitingKickoff === 0 ? 1 : 0;
-		this.o = this.lastHalfAwaitingKickoff;
-		this.awaitingKickoff = this.d;
-		this.lastHalfAwaitingKickoff = this.d;
-		this.scrimmage = SCRIMMAGE_KICKOFF;
+		if (startsWithKickoff) {
+			if (this.overtimes === 1) {
+				// Coin flip in initial overtime, after that alternate like halftime
+				this.lastHalfAwaitingKickoff = Math.random() < 0.5 ? 0 : 1;
+			}
+
+			this.d = this.lastHalfAwaitingKickoff === 0 ? 1 : 0;
+			this.o = this.lastHalfAwaitingKickoff;
+			this.awaitingKickoff = this.d;
+			this.lastHalfAwaitingKickoff = this.d;
+			this.scrimmage = SCRIMMAGE_KICKOFF;
+		}
 
 		while (
-			(this.clock > 0 || this.playUntimedPossession) &&
+			(this.clock > 0 ||
+				this.awaitingAfterTouchdown ||
+				this.playUntimedPossession) &&
 			this.overtimeState !== "over"
 		) {
 			this.simPlay();
@@ -479,7 +570,6 @@ class GameSim extends GameSimBase {
 	probPass() {
 		// Hack!! Basically, we want to see what kind of talent we have before picking if it's a run or pass play, so put the starter (minus fatigue) out there and compute these
 		this.updatePlayersOnField("startersFake");
-		this.updateTeamCompositeRatings();
 
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[0].stat.ptsQtrs.length;
@@ -602,6 +692,134 @@ class GameSim extends GameSimBase {
 		return 0;
 	}
 
+	// Time remaining after each kneel from firstDown (default is the current down) through lastDown, if the defense uses numTimeouts timeouts as early as possible, plus the two minute warning. Before 4th down, a kneel takes the play plus the run-off before the next snap. On 4th down, it only takes the play, since the clock stops for the turnover on downs.
+	getTimeRemainingAfterKneels({
+		nextDown = this.down,
+		lastDown,
+		numTimeouts,
+	}: {
+		nextDown?: number;
+		lastDown: number;
+		numTimeouts: number;
+	}) {
+		let clockStopsRemaining =
+			numTimeouts + (this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
+		let timeRemaining = this.clock;
+		const output = [];
+		for (let down = nextDown; down <= lastDown; down += 1) {
+			if (down < NUM_DOWNS && clockStopsRemaining > 0) {
+				clockStopsRemaining -= 1;
+				timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT / 60;
+			} else if (down < NUM_DOWNS) {
+				timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL / 60;
+			} else {
+				timeRemaining -= ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT / 60;
+			}
+			output.push(timeRemaining);
+		}
+
+		return output;
+	}
+
+	// Number of kneels needed to run out the clock, or undefined if it can't be done
+	getNumKneelsToRunOutClock({
+		nextDown,
+		numTimeouts,
+	}: {
+		nextDown?: number;
+		numTimeouts: number;
+	}) {
+		const timeRemainingAfterKneels = this.getTimeRemainingAfterKneels({
+			nextDown,
+			lastDown: NUM_DOWNS,
+			numTimeouts,
+		});
+
+		// On 4th down, the ball is turned over on downs unless the play itself uses the rest of the time
+		const index = timeRemainingAfterKneels.findIndex(
+			(timeRemaining) => timeRemaining <= 0,
+		);
+		if (index >= 0) {
+			return index + 1;
+		}
+	}
+
+	// Like Play.boundedYds, but late in the game if the winning team can kneel out the clock, it's better to go down somewhere safe rather than scoring a TD, because scoring gives the opponent the ball back with a chance to score
+	boundedYdsBallCarrier(ydsRaw: number) {
+		const yds = this.currentPlay.boundedYds(ydsRaw);
+
+		const state = this.currentPlay.state.current;
+		const scrimmageGoDown = this.getScrimmageToGoDown();
+		if (
+			scrimmageGoDown !== undefined &&
+			state.scrimmage + yds > scrimmageGoDown
+		) {
+			return scrimmageGoDown - state.scrimmage;
+		}
+
+		return yds;
+	}
+
+	// Where the ball carrier should go down to kneel out the clock, or undefined if they should try to score
+	getScrimmageToGoDown() {
+		const quarter = this.team[0].stat.ptsQtrs.length;
+		if (
+			quarter !== this.numPeriods ||
+			this.twoPointConversionTeam !== undefined
+		) {
+			return;
+		}
+
+		const state = this.currentPlay.state.current;
+
+		const lead = state.pts[state.o] - state.pts[state.d];
+		if (lead <= 0 || lead + 6 > GO_DOWN_MAX_LEAD_AFTER_TD) {
+			return;
+		}
+
+		// Same down logic as Play.checkDownAtEndOfPlay
+		let nextDown;
+		let scrimmageGoDown;
+		if (state.numPossessionChanges > 0) {
+			// Just got the ball, so no need to return it
+			nextDown = 1;
+			scrimmageGoDown = state.scrimmage;
+		} else if (state.firstDownLine < 100) {
+			// Go a few yards past the first down line to be sure, unless that's too close to the goal line
+			nextDown = 1;
+			scrimmageGoDown = Math.max(
+				state.scrimmage,
+				Math.min(state.firstDownLine + randInt(3, 6), 99),
+			);
+		} else {
+			// Goal to go, so no first down is possible
+			nextDown = state.downIncremented ? state.down : state.down + 1;
+			scrimmageGoDown = 99;
+		}
+
+		// Make sure there's room to kneel
+		scrimmageGoDown = Math.max(scrimmageGoDown, GO_DOWN_MIN_SCRIMMAGE);
+
+		// Ignores the time this play takes, which is conservative
+		const numKneels = this.getNumKneelsToRunOutClock({
+			nextDown,
+			numTimeouts: this.timeouts[state.d],
+		});
+
+		if (
+			numKneels !== undefined &&
+			scrimmageGoDown > YARDS_NEEDED_TO_KNEEL * numKneels &&
+			Math.random() >= this.probForgetToGoDown()
+		) {
+			return scrimmageGoDown;
+		}
+	}
+
+	// Sometimes the ball carrier forgets to go down and scores anyway
+	probForgetToGoDown() {
+		return 0.1;
+	}
+
 	hurryUp() {
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[0].stat.ptsQtrs.length;
@@ -623,6 +841,14 @@ class GameSim extends GameSimBase {
 		if (this.awaitingAfterTouchdown) {
 			if (!g.get("twoPointConversions")) {
 				return "extraPoint";
+			}
+
+			// If an extra point is less likely to succeed than a 2 point conversion (bad or injured kicker, or league settings), the 2 point conversion is better in every situation. Would be better to be more aware of game situation, because a 2 point conversion is worth twice as much as an XP so usually the cutoff should be much lower, but sometimes (tie game late) you really just want whatever is most likely to get any points.
+			if (
+				this.probMadeFieldGoal(undefined, SCRIMMAGE_EXTRA_POINT) <
+				TWO_POINT_CONVERSION_SUCCESS_RATE
+			) {
+				return "twoPointConversion";
 			}
 
 			if (ptsDown === 2 && Math.random() < 0.7) {
@@ -711,20 +937,14 @@ class GameSim extends GameSimBase {
 		}
 
 		if (quarter >= this.numPeriods && ptsDown < 0) {
-			// Does it make sense to kneel? Depends on clock time and opponent timeouts
-			const numTimeouts =
-				this.timeouts[this.d] + (this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
-			const downsRemaining = NUM_DOWNS - this.down;
-			const timeoutDownsRemaining = Math.min(numTimeouts, downsRemaining);
-			const clockRunningDownsRemaining = downsRemaining - timeoutDownsRemaining;
-			const timeRemainingAfterKeels =
-				this.clock -
-				(ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT * timeoutDownsRemaining +
-					ESTIMATED_SECONDS_PER_KNEEL * clockRunningDownsRemaining) /
-					60;
-
-			if (timeRemainingAfterKeels < 0) {
-				if (this.scrimmage > YARDS_NEEDED_TO_KNEEL * downsRemaining) {
+			// Does it make sense to kneel? Depends on clock time and opponent timeouts, if they'd use them (see the timeout logic in simPlay)
+			const opponentUsesTimeouts = -ptsDown < BLOWOUT_POINTS;
+			const numKneels = this.getNumKneelsToRunOutClock({
+				numTimeouts: opponentUsesTimeouts ? this.timeouts[this.d] : 0,
+			});
+			if (numKneels !== undefined) {
+				// Make sure there's room to lose some yards on each kneel without a safety
+				if (this.scrimmage > YARDS_NEEDED_TO_KNEEL * numKneels) {
 					return "kneel";
 				} else {
 					// We don't have room to kneel, so probably just run
@@ -743,20 +963,15 @@ class GameSim extends GameSimBase {
 
 		let neverPunt = false;
 		if (quarter === this.numPeriods && ptsDown > 0) {
-			// Losing in 4th quarter, maybe don't punt if there's not much time left. Also depends on how many timeouts are left
-			const numTimeouts =
-				this.timeouts[this.o] + (this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
-			const downsRemaining = NUM_DOWNS - 1;
-			const timeoutDownsRemaining = Math.min(numTimeouts, downsRemaining);
-			const clockRunningDownsRemaining = downsRemaining - timeoutDownsRemaining;
-			const timeRemainingAfterKeels =
-				this.clock -
-				(ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT * timeoutDownsRemaining +
-					ESTIMATED_SECONDS_PER_KNEEL * clockRunningDownsRemaining) /
-					60;
+			// Losing in 4th quarter, maybe don't punt if there's not much time left. Depends on how much time the other team can run off by kneeling until 4th down, after getting the ball on 1st down, with us using our timeouts
+			const timeRemainingAfterKneels = this.getTimeRemainingAfterKneels({
+				nextDown: 1,
+				lastDown: NUM_DOWNS - 1,
+				numTimeouts: this.timeouts[this.o],
+			});
 
 			// We want at least 30 seconds after getting the ball back
-			if (timeRemainingAfterKeels < 0.5) {
+			if (timeRemainingAfterKneels.at(-1)! < 0.5) {
 				neverPunt = true;
 			}
 		} else if (quarter > this.numPeriods && ptsDown > 0) {
@@ -806,8 +1021,8 @@ class GameSim extends GameSimBase {
 					(() => {
 						// In overtime, if tied and a field goal would win, try it
 						if (
-							((quarter > this.numPeriods &&
-								this.overtimeType === "suddenDeath") ||
+							quarter > this.numPeriods &&
+							(this.overtimeType === "suddenDeath" ||
 								this.overtimeState !== "firstPossession") &&
 							ptsDown === 0 &&
 							probMadeFieldGoal >= 0.7
@@ -905,6 +1120,21 @@ class GameSim extends GameSimBase {
 			toGo: this.toGo,
 		});
 
+		// Track team drive stats - easier here than directly in Play.ts because we have playType here
+		if (this.o !== this.currentDrive && this.down === 1) {
+			// Ignore play types that are never part of a drive
+			if (
+				playType !== "kickoff" &&
+				playType !== "onsideKick" &&
+				playType !== "extraPoint" &&
+				playType !== "twoPointConversion"
+			) {
+				this.currentPlay.addEvent({
+					type: "newDrive",
+				});
+			}
+		}
+
 		let dt;
 
 		if (playType === "kickoff") {
@@ -948,32 +1178,35 @@ class GameSim extends GameSimBase {
 		dt /= 60;
 		const quarter = this.team[0].stat.ptsQtrs.length;
 
-		const clockAtEndOfPlay = this.clock - dt;
+		// Run the clock for the play before committing it, so anything that happens after the play (penalties, timeouts, etc.) is logged at the time the play ended
+		dt = Math.min(dt, this.clock);
+		this.clock -= dt;
 
 		const timeExpiredAtEndOfHalf =
-			clockAtEndOfPlay <= 0 && this.kickoffAfterEndOfPeriod(quarter);
+			this.clock <= 0 && this.kickoffAfterEndOfPeriod(quarter);
 
 		this.currentPlay.commit(timeExpiredAtEndOfHalf);
+		this.playByPlay.setClockForScores(this.clock);
 
 		// Two minute warning
 		let twoMinuteWarningHappening = false;
 		if (
 			this.kickoffAfterEndOfPeriod(quarter) &&
-			clockAtEndOfPlay <= 2 &&
+			this.clock <= 2 &&
 			!this.twoMinuteWarningHappened
 		) {
 			this.twoMinuteWarningHappened = true;
 			this.isClockRunning = false;
 			this.playByPlay.logEvent({
 				type: "twoMinuteWarning",
-				clock: clockAtEndOfPlay,
+				clock: this.clock,
 			});
 
 			// So we know it happened this possession, and no random timeout should be used
 			twoMinuteWarningHappening = true;
 		}
 
-		if (clockAtEndOfPlay > 0 && !twoMinuteWarningHappening) {
+		if (this.clock > 0 && !twoMinuteWarningHappening) {
 			// Timeouts - small chance at any time
 			if (Math.random() < 0.01) {
 				this.doTimeout(this.o, false);
@@ -988,7 +1221,7 @@ class GameSim extends GameSimBase {
 				const finalPeriod = quarter >= this.numPeriods;
 				if (finalPeriod) {
 					// No point in the 4th quarter of a blowout
-					if (diff < 24) {
+					if (diff < BLOWOUT_POINTS) {
 						if (diff > 0) {
 							// If offense is winning, defense uses timeouts when near the end
 							if (this.clock < 2.5) {
@@ -1018,7 +1251,7 @@ class GameSim extends GameSimBase {
 				dtClockRunning = randInt(5, 13) / 60;
 
 				// Leave some time for a FG attempt!
-				if (this.clock - dt - dtClockRunning < 0) {
+				if (this.clock - dtClockRunning < 0) {
 					dtClockRunning = randInt(0, 4) / 60;
 				}
 			} else {
@@ -1031,7 +1264,7 @@ class GameSim extends GameSimBase {
 		// Check two minute warning again
 		if (
 			this.kickoffAfterEndOfPeriod(quarter) &&
-			clockAtEndOfPlay - dtClockRunning <= 2 &&
+			this.clock - dtClockRunning <= 2 &&
 			!this.twoMinuteWarningHappened
 		) {
 			this.twoMinuteWarningHappened = true;
@@ -1042,19 +1275,13 @@ class GameSim extends GameSimBase {
 			});
 
 			// Clock only runs until it hits 2 minutes exactly
-			dtClockRunning = helpers.bound(clockAtEndOfPlay - 2, 0, Infinity);
+			dtClockRunning = helpers.bound(this.clock - 2, 0, Infinity);
 		}
 
-		// Clock
-		dt += dtClockRunning;
-		this.clock -= dt;
+		dtClockRunning = Math.min(dtClockRunning, this.clock);
+		this.clock -= dtClockRunning;
 
-		if (this.clock < 0) {
-			dt += this.clock;
-			this.clock = 0;
-		}
-
-		this.updatePlayingTime(dt);
+		this.updatePlayingTime(dt + dtClockRunning);
 		if (playType !== "kneel") {
 			this.injuries();
 		}
@@ -1076,14 +1303,6 @@ class GameSim extends GameSimBase {
 
 		// For non-sacks, record tackler(s)
 		if (Math.random() < 0.9) {
-			let playersDefense: PlayerGameSim[] = [];
-
-			for (const playersAtPos of Object.values(this.playersOnField[d])) {
-				if (playersAtPos) {
-					playersDefense = playersDefense.concat(playersAtPos);
-				}
-			}
-
 			// Bias position of tackler based on how far from scrimmage the play is
 			let positions: Position[] | undefined;
 			if (ydsFromScrimmage !== undefined) {
@@ -1134,73 +1353,36 @@ class GameSim extends GameSimBase {
 	}
 
 	updateTeamCompositeRatings() {
-		// Top 3 receivers, plus a bit more for others
-		this.team[this.o].compositeRating.receiving = getCompositeFactor({
-			playersOnField: this.playersOnField[this.o],
-			positions: ["WR", "TE", "RB"],
-			orderFunc: (p) => p.ovrs.WR,
-			weightsMain: [5, 3, 2],
-			weightsBonus: [0.5, 0.25],
-			valFunc: (p) => p.ovrs.WR / 100,
-		});
-		this.team[this.o].compositeRating.rushing = getCompositeFactor({
-			playersOnField: this.playersOnField[this.o],
-			positions: ["RB", "WR", "QB"],
-			orderFunc: (p) => p.ovrs.RB,
-			weightsMain: [1],
-			weightsBonus: [0.1],
-			valFunc: (p) => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
-		});
+		this.team[this.o].compositeRating.receiving = getCompositeFactor(
+			this.playersOnField[this.o],
+			COMPOSITE_FACTOR_OPTIONS.receiving,
+		);
+		this.team[this.o].compositeRating.rushing = getCompositeFactor(
+			this.playersOnField[this.o],
+			COMPOSITE_FACTOR_OPTIONS.rushing,
+		);
+		this.team[this.d].compositeRating.passRushing = getCompositeFactor(
+			this.playersOnField[this.d],
+			COMPOSITE_FACTOR_OPTIONS.passRushing,
+		);
+		this.team[this.d].compositeRating.runStopping = getCompositeFactor(
+			this.playersOnField[this.d],
+			COMPOSITE_FACTOR_OPTIONS.runStopping,
+		);
+		this.team[this.d].compositeRating.passCoverage = getCompositeFactor(
+			this.playersOnField[this.d],
+			COMPOSITE_FACTOR_OPTIONS.passCoverage,
+		);
+		this.team[this.d].compositeRating.tackling = getCompositeFactor(
+			this.playersOnField[this.d],
+			COMPOSITE_FACTOR_OPTIONS.tackling,
+		);
 
-		// Top 5 blockers, plus a bit more from TE/RB if they exist
-		this.team[this.o].compositeRating.passBlocking = getCompositeFactor({
-			playersOnField: this.playersOnField[this.o],
-			positions: ["OL", "TE", "RB"],
-			orderFunc: (p) => p.ovrs.OL,
-			weightsMain: [5, 4, 3, 3, 3],
-			weightsBonus: [1, 0.5],
-			valFunc: (p) => (p.ovrs.OL / 100 + p.compositeRating.passBlocking) / 2,
-		});
-		this.team[this.o].compositeRating.runBlocking = getCompositeFactor({
-			playersOnField: this.playersOnField[this.o],
-			positions: ["OL", "TE", "RB"],
-			orderFunc: (p) => p.ovrs.OL,
-			weightsMain: [5, 4, 3, 3, 3],
-			weightsBonus: [1, 0.5],
-			valFunc: (p) => (p.ovrs.OL / 100 + p.compositeRating.runBlocking) / 2,
-		});
-		this.team[this.d].compositeRating.passRushing = getCompositeFactor({
-			playersOnField: this.playersOnField[this.d],
-			positions: ["DL", "LB"],
-			orderFunc: (p) => p.ovrs.DL,
-			weightsMain: [5, 4, 3, 2, 1],
-			weightsBonus: [],
-			valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
-		});
-		this.team[this.d].compositeRating.runStopping = getCompositeFactor({
-			playersOnField: this.playersOnField[this.d],
-			positions: ["DL", "LB", "S"],
-			orderFunc: (p) => p.ovrs.DL,
-			weightsMain: [5, 4, 3, 2, 2, 1, 1],
-			weightsBonus: [0.5, 0.5],
-			valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
-		});
-		this.team[this.d].compositeRating.passCoverage = getCompositeFactor({
-			playersOnField: this.playersOnField[this.d],
-			positions: ["CB", "S", "LB"],
-			orderFunc: (p) => p.ovrs.CB,
-			weightsMain: [5, 4, 3, 2, 1, 1],
-			weightsBonus: [0.5, 0.5],
-			valFunc: (p) => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
-		});
-		this.team[this.d].compositeRating.tackling = getCompositeFactor({
-			playersOnField: this.playersOnField[this.d],
-			positions: ["DL", "LB", "S"],
-			orderFunc: (p) => p.ovrs.LB,
-			weightsMain: [5, 4, 3, 2, 1],
-			weightsBonus: [],
-			valFunc: (p) => (p.ovrs.LB / 100 + p.compositeRating.tackling) / 2,
-		});
+		const [passBlocking, runBlocking] = getBlockingFactors(
+			this.playersOnField[this.o],
+		);
+		this.team[this.o].compositeRating.passBlocking = passBlocking;
+		this.team[this.o].compositeRating.runBlocking = runBlocking;
 		/*globalThis.valuesPass ??= [];
 		globalThis.valuesPass.push(this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing)
 		globalThis.valuesRun ??= [];
@@ -1250,52 +1432,66 @@ class GameSim extends GameSimBase {
 				// Not sure why this adjustment is needed, but without it, basically only the top 3 WR play. Maybe because formations with fewer than 3 WR let some of them rest, so you'd need 3 WR sets called very frequently to ever get them all tired.
 				const FATIGUE_MODIFIER = pos === "WR" ? 0.75 : 1;
 
-				const players = this.team[t].depth[pos]
-					.filter((p) => !p.injured)
-					.filter((p) => !pidsUsed.has(p.id))
-					.filter((p) => {
-						if (!FATIGUE_POS.has(pos)) {
-							return true;
+				const depth = this.team[t].depth[pos];
+				const players: PlayerGameSim[] = [];
+				if (FATIGUE_POS.has(pos)) {
+					for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
+						if (players.length >= numPlayers) {
+							break;
 						}
 
-						return (
+						const p = depth[depthIndex]!;
+						if (p.injured || pidsUsed.has(p.id)) {
+							continue;
+						}
+
+						if (
 							Math.random() <
 							FATIGUE_MODIFIER * fatigue(p.stat.energy, p.injured)
-						);
-					});
-				this.playersOnField[t][pos] = players.slice(0, numPlayers);
-				for (const p of this.playersOnField[t][pos]) {
-					pidsUsed.add(p.id);
-				}
+						) {
+							players.push(p);
+							pidsUsed.add(p.id);
+						}
+					}
+				} else {
+					for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
+						if (players.length >= numPlayers) {
+							break;
+						}
 
-				if (this.playersOnField[t][pos].length < numPlayers) {
+						const p = depth[depthIndex]!;
+						if (!p.injured && !pidsUsed.has(p.id)) {
+							players.push(p);
+							pidsUsed.add(p.id);
+						}
+					}
+				}
+				this.playersOnField[t][pos] = players;
+
+				if (players.length < numPlayers) {
 					// Retry without ignoring fatigued players
-					const players = this.team[t].depth[pos]
-						.filter((p) => !p.injured)
-						.filter((p) => !pidsUsed.has(p.id));
-					this.playersOnField[t][pos].push(
-						...players.slice(
-							0,
-							numPlayers - this.playersOnField[t][pos].length,
-						),
-					);
-					for (const p of this.playersOnField[t][pos]) {
-						pidsUsed.add(p.id);
+					for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
+						const p = depth[depthIndex]!;
+						if (players.length >= numPlayers) {
+							break;
+						}
+						if (!p.injured && !pidsUsed.has(p.id)) {
+							players.push(p);
+							pidsUsed.add(p.id);
+						}
 					}
 
 					// Retry without ignoring injured players
-					if (this.playersOnField[t][pos].length < numPlayers) {
-						const players = this.team[t].depth[pos].filter(
-							(p) => !pidsUsed.has(p.id),
-						);
-						this.playersOnField[t][pos].push(
-							...players.slice(
-								0,
-								numPlayers - this.playersOnField[t][pos].length,
-							),
-						);
-						for (const p of this.playersOnField[t][pos]) {
-							pidsUsed.add(p.id);
+					if (players.length < numPlayers) {
+						for (let depthIndex = 0; depthIndex < depth.length; depthIndex++) {
+							const p = depth[depthIndex]!;
+							if (players.length >= numPlayers) {
+								break;
+							}
+							if (!pidsUsed.has(p.id)) {
+								players.push(p);
+								pidsUsed.add(p.id);
+							}
 						}
 					}
 				}
@@ -1357,12 +1553,12 @@ class GameSim extends GameSimBase {
 			if (!success) {
 				this.currentPlay.addEvent({
 					type: "possessionChange",
+					subtype: "kickoff",
 					yds: 0,
-					kickoff: true,
 				});
 
 				const rawLength = Math.random() < 0.003 ? 100 : randInt(0, 5);
-				yds = this.currentPlay.boundedYds(rawLength);
+				yds = this.boundedYdsBallCarrier(rawLength);
 				dt += Math.abs(yds) / 8;
 			}
 
@@ -1454,8 +1650,8 @@ class GameSim extends GameSimBase {
 
 			this.currentPlay.addEvent({
 				type: "possessionChange",
+				subtype: "kickoff",
 				yds: 0,
-				kickoff: true,
 			});
 			if (touchback) {
 				this.currentPlay.addEvent({
@@ -1470,7 +1666,7 @@ class GameSim extends GameSimBase {
 					ydsRaw += randInt(0, 109);
 				}
 
-				const returnLength = this.currentPlay.boundedYds(ydsRaw);
+				const returnLength = this.boundedYdsBallCarrier(ydsRaw);
 				dt = Math.abs(returnLength) / 8;
 
 				this.checkPenalties("kickoffReturn", {
@@ -1509,14 +1705,6 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		this.recordStat(this.currentPlay.state.current.o, undefined, "drives");
-		this.recordStat(
-			this.currentPlay.state.current.o,
-			undefined,
-			"totStartYds",
-			this.currentPlay.state.current.scrimmage,
-		);
-
 		return dt;
 	}
 
@@ -1536,13 +1724,24 @@ class GameSim extends GameSimBase {
 
 		const punter = this.getTopPlayerOnField(this.o, "P");
 		const puntReturner = this.getTopPlayerOnField(this.d, "PR");
-		const adjustment = (punter.compositeRating.punting - 0.6) * 20; // 100 ratings - 8 yd bonus. 0 ratings - 12 yard penalty
+		const adjustment = (punter.compositeRating.puntingPower - 0.7) * 20; // 100 ratings - 6 yd bonus. 0 ratings - 14 yard penalty
 
 		const maxDistance = 109 - this.scrimmage;
-		const distance = Math.min(
-			Math.round(truncGauss(44 + adjustment, 8, 25, 90)),
-			maxDistance,
-		);
+		const averageDistance = 50 + adjustment;
+		const sigma = 8;
+
+		// If close to endzone, try to avoid it. Otherwise, kick as far as possible
+		let distance = Math.round(truncGauss(averageDistance, sigma, 25, 90));
+		if (
+			this.scrimmage + distance >= 100 &&
+			Math.random() < punter.compositeRating.puntingAccuracy ** 1.5 * 0.95
+		) {
+			const target = randInt(99, Math.max(81, this.scrimmage));
+			distance = target - this.scrimmage;
+		}
+
+		const distanceAccountingForFieldSize = Math.min(distance, maxDistance);
+
 		let dt = randInt(5, 9);
 
 		this.checkPenalties("punt");
@@ -1550,7 +1749,7 @@ class GameSim extends GameSimBase {
 		const { touchback } = this.currentPlay.addEvent({
 			type: "p",
 			p: punter,
-			yds: distance,
+			yds: distanceAccountingForFieldSize,
 		});
 
 		this.playByPlay.logEvent({
@@ -1564,6 +1763,7 @@ class GameSim extends GameSimBase {
 
 		this.currentPlay.addEvent({
 			type: "possessionChange",
+			subtype: "punt",
 			yds: 0,
 		});
 
@@ -1573,7 +1773,6 @@ class GameSim extends GameSimBase {
 				p: punter,
 			});
 		} else {
-			const maxReturnLength = 100 - this.currentPlay.state.current.scrimmage;
 			const meanYds = 4 + 10 * puntReturner.compositeRating.rushing;
 			let ydsRaw = Math.round(truncGauss(meanYds, 10, -10, 109));
 
@@ -1581,7 +1780,7 @@ class GameSim extends GameSimBase {
 				ydsRaw += randInt(0, 109);
 			}
 
-			const returnLength = helpers.bound(ydsRaw, 0, maxReturnLength);
+			const returnLength = this.boundedYdsBallCarrier(Math.max(ydsRaw, 0));
 			dt += Math.abs(returnLength) / 8;
 			this.checkPenalties("puntReturn", {
 				ballCarrier: puntReturner,
@@ -1618,25 +1817,20 @@ class GameSim extends GameSimBase {
 			});
 		}
 
-		this.recordStat(this.currentPlay.state.current.o, undefined, "drives");
-		this.recordStat(
-			this.currentPlay.state.current.o,
-			undefined,
-			"totStartYds",
-			this.currentPlay.state.current.scrimmage,
-		);
-
 		return dt;
 	}
 
-	probMadeFieldGoal(kickerInput?: PlayerGameSim) {
+	probMadeFieldGoal(
+		kickerInput?: PlayerGameSim,
+		scrimmage: number = this.scrimmage,
+	) {
 		const kicker =
 			kickerInput !== undefined
 				? kickerInput
 				: this.team[this.o].depth.K.find((p) => !p.injured);
 		let baseProb = 0;
 		let distance =
-			100 - this.scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
+			100 - scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
 
 		if (!kicker) {
 			// Would take an absurd amount of injuries to get here, but technically possible
@@ -1781,8 +1975,8 @@ class GameSim extends GameSimBase {
 			if (!made) {
 				this.currentPlay.addEvent({
 					type: "possessionChange",
+					subtype: "missedFg",
 					yds: -7,
-					scrimmageAtLeastTouchback: true,
 				});
 			}
 		}
@@ -1914,11 +2108,12 @@ class GameSim extends GameSimBase {
 		if (lost) {
 			this.currentPlay.addEvent({
 				type: "possessionChange",
+				subtype: "turnover",
 				yds: 0,
 			});
 		}
 
-		const yds = this.currentPlay.boundedYds(ydsRaw);
+		const yds = this.boundedYdsBallCarrier(ydsRaw);
 
 		const { safety, td, touchback } = this.currentPlay.addEvent({
 			type: "fmbRec",
@@ -1987,6 +2182,7 @@ class GameSim extends GameSimBase {
 
 		this.currentPlay.addEvent({
 			type: "possessionChange",
+			subtype: "turnover",
 			yds: ydsPass,
 		});
 
@@ -1996,7 +2192,7 @@ class GameSim extends GameSimBase {
 			ydsRaw += randInt(0, 109);
 		}
 
-		const yds = this.currentPlay.boundedYds(ydsRaw);
+		const yds = this.boundedYdsBallCarrier(ydsRaw);
 		let dt = Math.abs(yds) / 8;
 
 		const { td, touchback } = this.currentPlay.addEvent({
@@ -2308,7 +2504,7 @@ class GameSim extends GameSimBase {
 
 		ydsRaw = Math.round(ydsRaw * g.get("passYdsFactor"));
 
-		const yds = this.currentPlay.boundedYds(ydsRaw);
+		const yds = this.boundedYdsBallCarrier(ydsRaw);
 
 		const defender = this.pickPlayer(d, "passCoverage", undefined, 2);
 		const complete = Math.random() < this.probComplete(qb, target, defender);
@@ -2536,7 +2732,7 @@ class GameSim extends GameSimBase {
 
 		ydsRaw = Math.round(ydsRaw * g.get("rushYdsFactor"));
 
-		const yds = this.currentPlay.boundedYds(ydsRaw);
+		const yds = this.boundedYdsBallCarrier(ydsRaw);
 		const dt = randInt(2, 4) + Math.abs(yds) / 10;
 
 		this.checkPenalties("run", {
@@ -2613,9 +2809,10 @@ class GameSim extends GameSimBase {
 			yds,
 		});
 
+		// At least ESTIMATED_SECONDS_PER_KNEEL, so if getPlayType decided to kneel to run out the clock, it will make the same decision next play
 		const dt = randInt(
-			ESTIMATED_SECONDS_PER_KNEEL - 1,
 			ESTIMATED_SECONDS_PER_KNEEL,
+			ESTIMATED_SECONDS_PER_KNEEL + 1,
 		);
 
 		return dt;
@@ -2651,13 +2848,9 @@ class GameSim extends GameSimBase {
 
 		const foulRateFactor = g.get("foulRateFactor");
 
-		let called = penalties.filter((pen) => {
-			if (!pen.playTypes.includes(playType)) {
-				return false;
-			}
-
-			return Math.random() < pen.probPerPlay * foulRateFactor;
-		});
+		let called = penaltiesByPlayType[playType].filter(
+			(pen) => Math.random() < pen.probPerPlay * foulRateFactor,
+		);
 
 		if (called.length === 0) {
 			// if (called.length === 0 && playType !== "puntReturn") {
@@ -2665,13 +2858,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// Always do multiple penalties for testing
-		/*called = penalties.filter(pen => {
-			if (!pen.playTypes.includes(playType)) {
-				return false;
-			}
-
-			return true;
-		});*/
+		/*called = penaltiesByPlayType[playType].slice();*/
 
 		if (called.length > maxNumPenaltiesAllowed) {
 			shuffle(called);
@@ -2797,22 +2984,16 @@ class GameSim extends GameSimBase {
 				continue;
 			}
 
-			for (const pos of helpers.keys(this.playersOnField[t])) {
+			for (const players of Object.values(this.playersOnField[t])) {
 				// Update minutes (overall, court, and bench)
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-expect-error
-				for (const p of this.playersOnField[t][pos]) {
+				for (const p of players) {
 					onField.add(p.id);
-					this.recordStat(t, p, "min", possessionTime);
-					this.recordStat(t, p, "courtTime", possessionTime);
+					p.stat.min += possessionTime;
+					this.team[t].stat.min += possessionTime;
+					p.stat.courtTime += possessionTime;
 
 					// This used to be 0.04. Increase more to lower PT
-					this.recordStat(
-						t,
-						p,
-						"energy",
-						-0.08 * (1 - p.compositeRating.endurance),
-					);
+					p.stat.energy += -0.08 * (1 - p.compositeRating.endurance);
 
 					if (p.stat.energy < 0) {
 						p.stat.energy = 0;
@@ -2822,8 +3003,8 @@ class GameSim extends GameSimBase {
 
 			for (const p of this.team[t].player) {
 				if (!onField.has(p.id)) {
-					this.recordStat(t, p, "benchTime", possessionTime);
-					this.recordStat(t, p, "energy", 0.5);
+					p.stat.benchTime += possessionTime;
+					p.stat.energy += 0.5;
 
 					if (p.stat.energy > 1) {
 						p.stat.energy = 1;
@@ -2846,10 +3027,8 @@ class GameSim extends GameSimBase {
 
 			const onField = new Set<any>();
 
-			for (const pos of helpers.keys(this.playersOnField[t])) {
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-expect-error
-				for (const p of this.playersOnField[t][pos]) {
+			for (const players of Object.values(this.playersOnField[t])) {
+				for (const p of players) {
 					onField.add(p);
 				}
 			}
@@ -2906,8 +3085,6 @@ class GameSim extends GameSimBase {
 		amt: number = 1,
 		remove?: boolean,
 	) {
-		const qtr = this.team[t].stat.ptsQtrs.length - 1;
-
 		const signedAmount = remove ? -amt : amt;
 
 		const isLng = s.endsWith("Lng");
@@ -2923,20 +3100,16 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		if (
-			s !== "gs" &&
-			s !== "gp" &&
-			s !== "courtTime" &&
-			s !== "benchTime" &&
-			s !== "energy"
-		) {
+		if (s !== "gs" && s !== "gp") {
+			const teamStat = this.team[t].stat;
+
 			if (isLng) {
-				this.team[t].stat[s] = this.lngTracker.log("player", t, s, amt, remove);
+				teamStat[s] = this.lngTracker.log("player", t, s, amt, remove);
 			} else {
-				this.team[t].stat[s] += signedAmount;
+				teamStat[s] += signedAmount;
 			}
 
-			if (p !== undefined && s !== "min") {
+			if (p !== undefined) {
 				const logAmount = isLng ? p.stat[s] : signedAmount;
 				this.playByPlay.logStat(t, p.id, s, logAmount);
 			} else if (
@@ -2951,7 +3124,8 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logStat(t, undefined, s, signedAmount);
 
 				if (s === "pts") {
-					this.team[t].stat.ptsQtrs[qtr] += signedAmount;
+					const qtr = teamStat.ptsQtrs.length - 1;
+					teamStat.ptsQtrs[qtr] += signedAmount;
 				}
 			}
 		}

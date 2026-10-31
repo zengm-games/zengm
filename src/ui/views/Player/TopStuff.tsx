@@ -1,3 +1,4 @@
+import { last } from "../../../common/utils.ts";
 import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
 import { WatchBlock } from "../../components/WatchBlock.tsx";
@@ -7,6 +8,7 @@ import type {
 	GameAttributesLeague,
 	Phase,
 	Player,
+	PlayerStatAttr,
 	View,
 } from "../../../common/types.ts";
 import { PHASE, PLAYER } from "../../../common/constants.ts";
@@ -26,7 +28,7 @@ import { Weight } from "../../components/Weight.tsx";
 import { confirm } from "../../util/confirm.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import {
 	NegotiationModal,
 	useNegotiaionModal,
@@ -65,7 +67,7 @@ const Relatives = ({
 			{numToHide > 0 ? (
 				<>
 					<button
-						className="btn btn-link p-0 m-0 border-0"
+						className="btn btn-link p-0 m-0 border-0 align-baseline"
 						onClick={() => {
 							setShowAll(true);
 						}}
@@ -100,7 +102,7 @@ const StatsSummary = ({
 	position: string;
 	currentSeason: number;
 	season?: number;
-	stats: string[];
+	stats: PlayerStatAttr[];
 }) => {
 	if (onlyShowIf !== undefined) {
 		if (!onlyShowIf.includes(position)) {
@@ -206,7 +208,7 @@ const StatsSummary = ({
 											"table-separator-left": separatorAfter.includes(i),
 										})}
 									>
-										{helpers.roundStat((ps as any)[stat], stat)}
+										{helpers.roundStat(ps[stat], stat)}
 									</td>
 								);
 							})}
@@ -226,7 +228,7 @@ const StatsSummary = ({
 										"table-separator-left": separatorAfter.includes(i),
 									})}
 								>
-									{helpers.roundStat(p.careerStats[stat]!, stat)}
+									{helpers.roundStat(p.careerStats[stat], stat)}
 								</td>
 							);
 						})}
@@ -398,7 +400,7 @@ const TopStuff = ({
 			skills = player.ratings.find((row) => row.season === season)?.skills;
 		}
 		if (!skills) {
-			skills = player.ratings.at(-1)!.skills;
+			skills = last(player.ratings).skills;
 		}
 
 		statusInfo = (
@@ -479,7 +481,7 @@ const TopStuff = ({
 			<ComparePlayerButton
 				pid={player.pid}
 				randomDebutsForeverPids={randomDebutsForeverPids}
-				season={retired ? "career" : player.ratings.at(-1)!.season}
+				season={retired ? "career" : last(player.ratings).season}
 			/>
 		</>
 	);
@@ -573,7 +575,7 @@ const TopStuff = ({
 								relatives={player.relatives}
 							/>
 							{draftInfo}
-							{isSport("hockey") && college === "None" ? null : (
+							{__SPORT === "hockey" && college === "None" ? null : (
 								<>
 									College:{" "}
 									<a
@@ -601,7 +603,7 @@ const TopStuff = ({
 						</div>
 					</div>
 
-					<div className="btn-group mt-2">
+					<div className="d-flex gap-2 mt-2">
 						<a
 							href={helpers.leagueUrl(["customize_player", player.pid])}
 							className={clsx(
@@ -657,7 +659,9 @@ const TopStuff = ({
 					</div>
 					{godMode ? (
 						<div className="mt-2">
-							<div className="btn-group">{buttonsAvailableOutsideGodMode}</div>
+							<div className="d-flex gap-2">
+								{buttonsAvailableOutsideGodMode}
+							</div>
 						</div>
 					) : null}
 					{player.careerStats.gp! > 0 ? (
@@ -667,7 +671,7 @@ const TopStuff = ({
 									key={name}
 									name={name}
 									onlyShowIf={onlyShowIf}
-									position={player.ratings.at(-1)!.pos}
+									position={last(player.ratings).pos}
 									phase={phase}
 									currentSeason={currentSeason}
 									season={season}

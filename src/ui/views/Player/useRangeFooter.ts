@@ -111,7 +111,7 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 				type: "open",
 				seasons,
 				seasonRange,
-				p: p as any,
+				p,
 			});
 		}
 	};

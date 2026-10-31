@@ -19,16 +19,13 @@ const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
 	// For any players who were free agents last year too, reset numPlayersTradedAwayNormalized
 	const numPlayersTradedAwayNormalized =
 		await getNumPlayersTradedAwayNormalizedAll();
-	const players = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		PLAYER.FREE_AGENT,
-	);
+	const players = (
+		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
+	).filter((p) => p.yearsFreeAgent > 0);
 	for (const p of players) {
-		if (p.yearsFreeAgent > 0) {
-			player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-			await idb.cache.players.put(p);
-		}
+		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 	}
+	await idb.cache.players.putAll(players);
 
 	return {
 		redirect: {

@@ -1,6 +1,11 @@
-import { PLAYER_STATS_TABLES, RATINGS } from "./constants.ts";
-import { isSport } from "./sportFunctions.ts";
+import {
+	getPlayerStatsTableStats,
+	PLAYER_STATS_TABLES,
+	RATINGS,
+} from "./constants.ts";
 import type { Col } from "../ui/components/DataTable/index.tsx";
+import type { AdvancedPlayerSearchPlayer } from "../worker/api/advancedPlayerSearch.ts";
+import { getNumericStat } from "./statValue.ts";
 
 type AdvancedPlayerSearchField = {
 	category: string;
@@ -8,17 +13,23 @@ type AdvancedPlayerSearchField = {
 	colKey: string;
 	colOverrides?: Partial<Col>;
 
-	// Used in worker to determine what data to fetch from playersPlus, if it's not just the string value in "key".
+	// Used in worker to determine what data to fetch from player.formatAll, if it's not just the string value in "key".
 	// null means don't fetch anything.
 	workerFieldOverride?: string | null;
 } & (
 	| {
 			valueType: "numeric";
-			getValue: (p: any, singleSeason: "totals" | "singleSeason") => number;
+			getValue: (
+				p: AdvancedPlayerSearchPlayer,
+				singleSeason: "totals" | "singleSeason",
+			) => number | undefined;
 	  }
 	| {
 			valueType: "string";
-			getValue: (p: any, singleSeason: "totals" | "singleSeason") => string;
+			getValue: (
+				p: AdvancedPlayerSearchPlayer,
+				singleSeason: "totals" | "singleSeason",
+			) => string;
 	  }
 );
 
@@ -51,7 +62,7 @@ export const addPrefixForStat = (statType: string, stat: string) => {
 };
 
 const ratingOptions: Record<string, MinimalAdvancedPlayerSearchField> = {};
-for (const key of ["ovr", "pot", ...RATINGS]) {
+for (const key of ["ovr", "pot", ...RATINGS] as const) {
 	ratingOptions[key] = {
 		colKey: addPrefixForStat("ratings", key),
 		valueType: "numeric",
@@ -158,7 +169,7 @@ const allFiltersTemp: Record<
 const processStatsTable = (
 	statsTable: (typeof PLAYER_STATS_TABLES)[string],
 ) => {
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		const index = statsTable.stats.indexOf("qbRec");
 		if (index >= 0) {
 			const stats = [...statsTable.stats];
@@ -169,7 +180,7 @@ const processStatsTable = (
 			};
 		}
 	}
-	if (isSport("hockey")) {
+	if (__SPORT === "hockey") {
 		const index = statsTable.stats.indexOf("gRec");
 		if (index >= 0) {
 			const stats = [...statsTable.stats];
@@ -187,17 +198,20 @@ const processStatsTable = (
 for (const [category, table] of Object.entries(PLAYER_STATS_TABLES)) {
 	const options: Record<string, MinimalAdvancedPlayerSearchField> = {};
 	const processedTable = processStatsTable(table);
-	for (const key of processedTable.stats) {
+
+	for (const key of getPlayerStatsTableStats(processedTable.stats)) {
 		options[key] = {
 			colKey: addPrefixForStat(category, key),
 			valueType: "numeric",
-			getValue:
-				category === "gameHighs"
-					? (p) => {
-							const stat = p.stats[key];
-							return Array.isArray(stat) ? stat[0] : stat;
-						}
-					: (p) => p.stats[key],
+			getValue: (p) => {
+				const stat = p.stats[key];
+
+				const value =
+					category === "gameHighs" && Array.isArray(stat) ? stat[0] : stat;
+
+				// Only numbers can be filtered or displayed, not things like byPos arrays
+				return getNumericStat(value);
+			},
 		};
 	}
 
@@ -221,13 +235,13 @@ for (const [category, { options }] of Object.entries(allFilters)) {
 }
 
 export const getStatsTableByType = (statTypePlus: string) => {
-	if (statTypePlus == "bio" || statTypePlus == "ratings") {
+	if (statTypePlus === "bio" || statTypePlus === "ratings") {
 		return;
 	}
 
 	// Keep in sync with statTypesAdv
 	let table;
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		if (statTypePlus === "advanced") {
 			table = PLAYER_STATS_TABLES.advanced!;
 		} else if (statTypePlus === "shotLocations") {
@@ -247,7 +261,7 @@ export const getStatsTableByType = (statTypePlus: string) => {
 export const getStats = (statTypePlus: string) => {
 	if (statTypePlus === "ratings") {
 		return ["ovr", "pot", ...RATINGS];
-	} else if (statTypePlus == "bio") {
+	} else if (statTypePlus === "bio") {
 		return ["age", "salary", "draftPosition"];
 	} else {
 		const statsTable = getStatsTableByType(statTypePlus);
@@ -255,12 +269,7 @@ export const getStats = (statTypePlus: string) => {
 			throw new Error(`Invalid statType: "${statTypePlus}"`);
 		}
 
-		// Remove pos for fielding stats
-		if (isSport("baseball")) {
-			return statsTable.stats.filter((stat) => stat !== "pos");
-		}
-
-		return [...statsTable.stats];
+		return getPlayerStatsTableStats(statsTable.stats);
 	}
 };
 

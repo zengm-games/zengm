@@ -1,11 +1,11 @@
 import type { Col } from "../ui/components/DataTable/index.tsx";
-import { bySport, isSport } from "./sportFunctions.ts";
+import { bySport } from "./sportFunctions.ts";
 
 type ColTemp = Omit<Col, "title"> & {
 	title?: string;
 };
 
-const gp = isSport("hockey") ? "GP" : "G";
+const gp = __SPORT === "hockey" ? "GP" : "G";
 
 const sportSpecificCols = bySport<{
 	[key: string]: ColTemp;
@@ -2004,11 +2004,23 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "TB",
 		},
+		"stat:pntTBPct": {
+			desc: "Punt Touchbacks per Punt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "TB%",
+		},
 		"stat:pntIn20": {
 			desc: "Punts Inside 20",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "In20",
+		},
+		"stat:pntIn20Pct": {
+			desc: "Punts Inside 20 per Punt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "In20%",
 		},
 		"stat:ko": {
 			desc: "Kickoffs",
@@ -2374,6 +2386,12 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "APY",
+		},
+		"stat:totTD": {
+			desc: "Total Non-Passing TD",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "TD",
 		},
 		"stat:av": {
 			desc: "Approximate Value",
@@ -3039,6 +3057,10 @@ const cols: {
 		sortType: "number",
 		title: "Age",
 	},
+	Awards: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Away: {
 		desc: "Away Team",
 	},
@@ -3281,13 +3303,13 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	Negotiate: {
-		sortSequence: [],
-		width: "1px",
-	},
 	Note: {},
 	Odds: {
 		desc: "Pre-lottery odds of getting this pick",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Old Salary": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -3305,28 +3327,28 @@ const cols: {
 		sortType: "number",
 	},
 	PA: {
-		desc: `${isSport("hockey") ? "Goals" : "Points"} Against`,
+		desc: `${__SPORT === "hockey" ? "Goals" : "Points"} Against`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "GA" : undefined,
+		title: __SPORT === "hockey" ? "GA" : undefined,
 	},
 	PS: {
-		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored`,
+		desc: `${__SPORT === "hockey" ? "Goals" : "Points"} Scored`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "GF" : undefined,
+		title: __SPORT === "hockey" ? "GF" : undefined,
 	},
 	"PA/g": {
-		desc: `${isSport("hockey") ? "Goals" : "Points"} Against Per Game`,
+		desc: `${__SPORT === "hockey" ? "Goals" : "Points"} Against Per Game`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "GA" : undefined,
+		title: __SPORT === "hockey" ? "GA" : undefined,
 	},
 	"PS/g": {
-		desc: `${isSport("hockey") ? "Goals" : "Points"} Scored Per Game`,
+		desc: `${__SPORT === "hockey" ? "Goals" : "Points"} Scored Per Game`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "GF" : undefined,
+		title: __SPORT === "hockey" ? "GF" : undefined,
 	},
 	Payroll: {
 		sortSequence: ["desc", "asc"],
@@ -3593,10 +3615,10 @@ const cols: {
 		title: "#",
 	},
 	"stat:min": {
-		desc: isSport("hockey") ? "Time On Ice" : "Minutes",
+		desc: __SPORT === "hockey" ? "Time On Ice" : "Minutes",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: isSport("hockey") ? "TOI" : "MP",
+		title: __SPORT === "hockey" ? "TOI" : "MP",
 	},
 	"stat:mov": {
 		desc: "Average Margin of Victory",
@@ -3616,179 +3638,41 @@ const cols: {
 		sortType: "number",
 		title: "YWT",
 	},
-	"count:allDefense": {
-		desc: "All-Defensive Team",
+	"stat:score": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "ADT",
+		title: "Score",
 	},
-	"count:allLeague": {
-		desc: "All-League Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ALT",
-	},
-	"count:allRookie": {
-		desc: "All-Rookie Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ART",
-	},
-	"count:allStar": {
+	AS: {
 		desc: "All-Star",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "AS",
 	},
-	"count:allOffense": {
-		desc: "All-Offensive Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "AOT",
-	},
-	"count:allStarMVP": {
+	ASMVP: {
 		desc: "All-Star MVP",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "ASMVP",
 	},
-	"count:bestRecord": {
+	BR: {
 		desc: "Best Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "BR",
 	},
-	"count:bestRecordConf": {
+	BRC: {
 		desc: "Best Conference Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "BRC",
 	},
-	"count:opoy": {
-		desc: "Offensive Player of the Year",
+	BRD: {
+		desc: "Best Division Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "OPOY",
 	},
-	"count:dpoy": {
-		desc: "Defensive Player of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DPOY",
-	},
-	"count:dfoy": {
-		desc: "Defensive Forward of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DFOY",
-	},
-	"count:goy": {
-		desc: "Goalie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "GOY",
-	},
-	"count:mip": {
-		desc: "Most Improved Player",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "MIP",
-	},
-	"count:mvp": {
+	MVP: {
 		desc: "Most Valuable Player",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "MVP",
-	},
-	"count:roy": {
-		desc: "Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ROY",
-	},
-	"count:smoy": {
-		desc: "Sixth Man of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "SMOY",
-	},
-	"count:oroy": {
-		desc: "Offensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "OROY",
-	},
-	"count:droy": {
-		desc: "Defensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DROY",
-	},
-	"count:poy": {
-		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "POY",
-	},
-	"count:rpoy": {
-		desc: "Relief Pitcher of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "RPOY",
-	},
-	"award:opoy": {
-		desc: "Offensive Player of the Year",
-		title: "OPOY",
-	},
-	"award:dpoy": {
-		desc: "Defensive Player of the Year",
-		title: "DPOY",
-	},
-	"award:dfoy": {
-		desc: "Defensive Forward of the Year",
-		title: "DFOY",
-	},
-	"award:goy": {
-		desc: "Goalie of the Year",
-		title: "GOY",
-	},
-	"award:finalsMvp": {
-		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
-		title: `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,
-	},
-	"award:mip": {
-		desc: "Most Improved Player",
-		title: "MIP",
-	},
-	"award:mvp": {
-		desc: "Most Valuable Player",
-		title: "MVP",
-	},
-	"award:roy": {
-		desc: "Rookie of the Year",
-		title: "ROY",
-	},
-	"award:smoy": {
-		desc: "Sixth Man of the Year",
-		title: "SMOY",
-	},
-	"award:poy": {
-		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
-		title: "POY",
-	},
-	"award:rpoy": {
-		desc: "Relief Pitcher of the Year",
-		title: "RPOY",
-	},
-	"award:oroy": {
-		desc: "Offensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		title: "OROY",
-	},
-	"award:droy": {
-		desc: "Defensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		title: "DROY",
 	},
 	Chances: {
 		desc: "Lottery Chances",
@@ -3798,10 +3682,14 @@ const cols: {
 };
 
 export const getCols = (
-	titles: string[],
+	titles: (string | Col)[],
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
 	return titles.map((title) => {
+		if (typeof title !== "string") {
+			return title;
+		}
+
 		if (!Object.hasOwn(cols, title)) {
 			throw new Error(`Unknown column: "${title}"`);
 		}

@@ -1,11 +1,12 @@
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Modal } from "../../components/Modal.tsx";
 import { ACCOUNT_API_URL, GAME_NAME } from "../../../common/constants.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
 import { fetchWrapper } from "../../../common/fetchWrapper.ts";
+import { ActionButton } from "../../components/ActionButton.tsx";
 
 const Dialog = ({
 	username,
@@ -21,23 +22,16 @@ const Dialog = ({
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const [invalidPassword, setInvalidPassword] = useState(false);
-	const [password, setPassword] = useState("");
-
-	useEffect(() => {
-		if (show) {
-			setInvalidPassword(false);
-			setPassword("");
-		}
-	}, [show]);
-
-	useEffect(() => {
-		if (inputRef.current) {
-			inputRef.current.select();
-		}
-	}, []);
+	const [processing, setProcessing] = useState(false);
 
 	const deleteAccount = async () => {
+		const password = inputRef.current?.value;
+		if (password === undefined || processing) {
+			return;
+		}
+
 		setInvalidPassword(false);
+		setProcessing(true);
 
 		let response;
 		try {
@@ -45,7 +39,7 @@ const Dialog = ({
 				url: `${ACCOUNT_API_URL}/delete_account.php`,
 				method: "POST",
 				data: {
-					sport: process.env.SPORT,
+					sport: __SPORT,
 					password,
 				},
 				credentials: "include",
@@ -59,6 +53,7 @@ const Dialog = ({
 		if (response.success) {
 			ok();
 		} else if (response.invalidPassword) {
+			setProcessing(false);
 			setInvalidPassword(true);
 		} else {
 			cancel("Unknown error");
@@ -66,7 +61,24 @@ const Dialog = ({
 	};
 
 	return (
-		<Modal animation show={show} onHide={cancel}>
+		<Modal
+			animation
+			show={show}
+			onHide={() => {
+				cancel();
+			}}
+			onEnter={() => {
+				// Stays mounted while closed so it can animate, so reset state from any previous time it was opened
+				setInvalidPassword(false);
+				setProcessing(false);
+				if (inputRef.current) {
+					inputRef.current.value = "";
+				}
+			}}
+			onEntered={() => {
+				inputRef.current?.focus();
+			}}
+		>
 			<Modal.Header closeButton>
 				<Modal.Title>Delete account</Modal.Title>
 			</Modal.Header>
@@ -90,11 +102,8 @@ const Dialog = ({
 						className={clsx("form-control", {
 							"is-invalid": invalidPassword,
 						})}
-						onChange={(event) => {
-							setPassword(event.target.value);
-						}}
 						placeholder="Password"
-						value={password}
+						autoComplete="current-password"
 					/>
 					{invalidPassword ? (
 						<div className="text-danger form-text">Invalid password</div>
@@ -111,9 +120,14 @@ const Dialog = ({
 				>
 					Cancel
 				</button>
-				<button className="btn btn-danger" onClick={deleteAccount}>
+				<ActionButton
+					variant="danger"
+					onClick={deleteAccount}
+					processing={processing}
+					processingText="Deleting"
+				>
 					Delete account
-				</button>
+				</ActionButton>
 			</Modal.Footer>
 		</Modal>
 	);
@@ -129,20 +143,17 @@ const DeleteAccountForm = ({
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [showDialog, setShowDialog] = useState(false);
 
-	if (showGoldActive) {
-		return (
-			<p>
-				You must cancel your ZenGM Gold subscription before you delete your
-				account. If you're having any trouble with that, please contact{" "}
-				<a href="mailto:jeremy@zengm.com">jeremy@zengm.com</a>.
-			</p>
-		);
-	}
 	return (
 		<>
 			<p>
 				This will delete your account with username <b>{username}</b> for{" "}
 				{GAME_NAME} and all other ZenGM games.
+				{showGoldActive ? (
+					<span className="text-danger">
+						{" "}
+						This will also cancel your ZenGM Gold subscription.
+					</span>
+				) : null}
 			</p>
 			<p>
 				This only affects your achievements, not your leagues. Leagues are
@@ -153,7 +164,8 @@ const DeleteAccountForm = ({
 
 			<button
 				className="btn btn-danger"
-				onClick={async () => {
+				onClick={() => {
+					setErrorMessage(undefined);
 					setShowDialog(true);
 				}}
 			>
@@ -165,8 +177,8 @@ const DeleteAccountForm = ({
 			) : null}
 
 			<Dialog
-				show={showDialog}
 				username={username}
+				show={showDialog}
 				cancel={(errorMessage) => {
 					if (errorMessage) {
 						setErrorMessage(errorMessage);
@@ -174,9 +186,6 @@ const DeleteAccountForm = ({
 					setShowDialog(false);
 				}}
 				ok={async () => {
-					setErrorMessage(undefined);
-					setShowDialog(false);
-
 					await toWorker("main", "checkAccount", undefined);
 					await toWorker("main", "realtimeUpdate", ["account"]);
 					await realtimeUpdate([], "/");

@@ -16,12 +16,10 @@ import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 export const getText = (
 	text: MenuItemLink["text"],
 ): Exclude<ReactNode, null | undefined | number | boolean> => {
-	if (Object.hasOwn(text as any, "side")) {
-		// @ts-expect-error
+	if (typeof text === "object" && "side" in text) {
 		return text.side;
 	}
 
-	// @ts-expect-error
 	return text;
 };
 
@@ -89,7 +87,7 @@ export const makeAnchorProps = (
 		if (menuItem.path.startsWith("http")) {
 			target = "_blank";
 		}
-	} else if (Array.isArray(menuItem.path)) {
+	} else if (menuItem.path !== undefined) {
 		href = helpers.leagueUrl(menuItem.path);
 	}
 

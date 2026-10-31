@@ -1,0 +1,247 @@
+import { makeSeededRandom, realGauss } from "../../../common/random.ts";
+import type { DraftType, PlayInTournament } from "../../../common/types.ts";
+import { g, helpers } from "../../util/index.ts";
+import {
+	genPlayoffSeriesFromTeams,
+	InvalidPlayoffSettingsError,
+} from "../season/genPlayoffSeries.ts";
+import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
+import { getFirstRoundTeams, getNba2027PlayIn } from "./getTeamsByRound.ts";
+import { getDivisionRanks } from "../../util/orderTeams.ts";
+import {
+	getHypotheticalTeam,
+	type TeamSeasonRecord,
+} from "../team/getHypotheticalTeam.ts";
+
+const DEFAULT_NUM_SIMS = 2000;
+
+// Upper bound on play-in games per simulated season (3 per conference)
+const MAX_PLAY_IN_GAMES = 48;
+
+// The random numbers are always the same, so the same inputs always produce the same output. Otherwise the value of a draft pick would change every time it's evaluated.
+let randomNumbersCache:
+	| {
+			numSims: number;
+			numTeams: number;
+			normals: Float64Array;
+			uniforms: Float64Array;
+	  }
+	| undefined;
+const getRandomNumbers = (numSims: number, numTeams: number) => {
+	if (
+		randomNumbersCache?.numSims === numSims &&
+		randomNumbersCache.numTeams === numTeams
+	) {
+		return randomNumbersCache;
+	}
+
+	const random = makeSeededRandom(1);
+
+	const normals = new Float64Array(numSims * numTeams);
+	for (let i = 0; i < normals.length; i++) {
+		normals[i] = realGauss(0, 1, random);
+	}
+
+	const uniforms = new Float64Array(numSims * MAX_PLAY_IN_GAMES);
+	for (let i = 0; i < uniforms.length; i++) {
+		uniforms[i] = random();
+	}
+
+	randomNumbersCache = {
+		numSims,
+		numTeams,
+		normals,
+		uniforms,
+	};
+
+	return randomNumbersCache;
+};
+
+// Simulate the play-in tournament, assuming all games are coin flips. Returns the tids of the 2 teams that make the playoffs, and marks the result of the 7/8 game in playIn the same way a real game would, because nba2027 depends on it
+const simPlayIn = (playIn: PlayInTournament, getUniform: () => number) => {
+	const game78 = playIn[0];
+	const game910 = playIn[1];
+
+	let winner78 = game78.home;
+	let loser78 = game78.away;
+	if (getUniform() < 0.5) {
+		winner78 = game78.away;
+		loser78 = game78.home;
+	}
+	winner78.won = 1;
+
+	const winner910 = getUniform() < 0.5 ? game910.home : game910.away;
+
+	const winnerLast = getUniform() < 0.5 ? loser78 : winner910;
+
+	return [winner78.tid, winnerLast.tid];
+};
+
+/**
+ * Before the regular season is over, we don't know the order of teams going into the draft lottery. This estimates it by simulating the rest of the season many times, using the real rules for playoff qualification and draft order.
+ *
+ * Returns the probability of each team being in each slot of the first round order before the lottery (so index 0 is the team with the best lottery odds). Teams with no draft pick are not included.
+ *
+ * If the playoff settings are not valid for these teams, this assumes there are no playoffs, so the order is just based on record. That can happen because `teams` are not always the teams that those settings were made for. Like in the offseason, the playoff settings for `season` are still in effect, but teams could have already been added or removed for the next season. Or in God Mode, teams can be removed before the playoff settings are fixed.
+ */
+export const getFirstRoundSlotProbs = async ({
+	teams,
+	draftType,
+	numSims = DEFAULT_NUM_SIMS,
+	season,
+}: {
+	teams: {
+		// Results of games already played this season. If this is for a future season, everything should be 0.
+		teamSeason: TeamSeasonRecord;
+
+		// Number of games left to play, which is all of them for a future season
+		gamesLeft: number;
+
+		// Projected winning percentage in those games, and uncertainty (standard deviation) in it
+		winp: number;
+		winpStd: number;
+
+		// For challengeNoDraftPicks. These teams still affect who makes the playoffs, but they are not in the draft order
+		noDraftPick?: boolean;
+	}[];
+	draftType: DraftType;
+	numSims?: number;
+
+	// The season `teams` are for, which determines which settings are used. For a future season, the playoffs are based on the settings for that season, not whatever was used in the past.
+	season: number;
+}) => {
+	const numTeams = teams.length;
+	const usePts = g.get("pointsFormula", season) !== "";
+
+	// Division ranks only matter if division leaders get a seeding boost in the playoffs
+	const needDivisionRanks = g.get("playoffsNumTeamsDiv", season) > 0;
+	const byConf = await getPlayoffsByConf(season);
+	const { normals, uniforms } = getRandomNumbers(numSims, numTeams);
+
+	const numSlots = teams.filter((t) => !t.noDraftPick).length;
+
+	const indexesByTid = new Map<number, number>();
+	const counts: number[][] = [];
+	for (const [i, t] of teams.entries()) {
+		indexesByTid.set(t.teamSeason.tid, i);
+		counts.push(new Array(numSlots).fill(0));
+	}
+
+	// Whether the playoff settings are valid only depends on which teams there are, not on their records. So this only needs to be checked once, and then it will never be a problem in the loop below.
+	let validPlayoffSettings = true;
+	try {
+		await genPlayoffSeriesFromTeams(
+			teams.map((t) =>
+				getHypotheticalTeam({
+					teamSeason: t.teamSeason,
+					won: 0,
+					lost: 0,
+					usePts,
+				}),
+			),
+			{
+				byConf,
+				season,
+				skipTiebreakers: true,
+			},
+		);
+	} catch (error) {
+		if (error instanceof InvalidPlayoffSettingsError) {
+			validPlayoffSettings = false;
+		} else {
+			throw error;
+		}
+	}
+
+	for (let sim = 0; sim < numSims; sim++) {
+		const simTeams = teams.map((t, i) => {
+			const winp = helpers.bound(
+				t.winp + t.winpStd * normals[sim * numTeams + i]!,
+				0,
+				1,
+			);
+			const won = t.gamesLeft * winp;
+
+			const simTeam = getHypotheticalTeam({
+				teamSeason: t.teamSeason,
+				won,
+				lost: t.gamesLeft - won,
+				usePts,
+			});
+
+			return {
+				...simTeam,
+				seasonAttrs: {
+					...simTeam.seasonAttrs,
+
+					// This makes all playoff teams be ordered by record, even in sports where the real draft order depends on playoff results
+					playoffRoundsWon: -1,
+				},
+			};
+		});
+		const simTeamsWithPicks = simTeams.filter((t, i) => !teams[i]!.noDraftPick);
+
+		// Many things below need this, so only compute it once
+		const divisionRanks = needDivisionRanks
+			? await getDivisionRanks(simTeams, simTeams, {
+					season,
+					skipTiebreakers: true,
+				})
+			: undefined;
+
+		let playIns;
+		let tidPlayoffs: number[] = [];
+		if (validPlayoffSettings) {
+			const playoffSeries = await genPlayoffSeriesFromTeams(simTeams, {
+				byConf,
+				divisionRanks,
+				season,
+				skipTiebreakers: true,
+			});
+			playIns = playoffSeries.playIns;
+			tidPlayoffs = playoffSeries.tidPlayoffs;
+		}
+
+		if (playIns) {
+			let uniformIndex = sim * MAX_PLAY_IN_GAMES;
+			const getUniform = () => {
+				const uniform = uniforms[uniformIndex]!;
+				uniformIndex += 1;
+				return uniform;
+			};
+			for (const playIn of playIns) {
+				tidPlayoffs.push(...simPlayIn(playIn, getUniform));
+			}
+		}
+
+		const { firstRound } = await getFirstRoundTeams({
+			allTeams: simTeams,
+			teams: simTeamsWithPicks,
+			draftType,
+			tidPlayoffs,
+			nba2027PlayIn:
+				draftType === "nba2027" ? getNba2027PlayIn(playIns) : undefined,
+			orderTeamsSettings: {
+				divisionRanks,
+				season,
+				skipTiebreakers: true,
+			},
+		});
+
+		for (const [slot, t] of firstRound.entries()) {
+			counts[indexesByTid.get(t.tid)!]![slot]! += 1;
+		}
+	}
+
+	const probs = new Map<number, number[]>();
+	for (const [i, t] of teams.entries()) {
+		if (!t.noDraftPick) {
+			probs.set(
+				t.teamSeason.tid,
+				counts[i]!.map((count) => count / numSims),
+			);
+		}
+	}
+
+	return probs;
+};

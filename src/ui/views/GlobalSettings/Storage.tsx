@@ -92,7 +92,7 @@ const Storage = () => {
 			status === "disabled" ||
 			status === "failed" ? (
 				<button
-					className="btn btn-light-bordered"
+					className="btn btn-secondary"
 					disabled={status === "loading..."}
 					onClick={onClick}
 				>

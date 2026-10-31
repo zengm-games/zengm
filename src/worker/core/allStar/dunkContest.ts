@@ -6,7 +6,7 @@ import type {
 import { dunkInfos, getValidMoves } from "../../../common/dunkContest.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import { saveAwardsByPlayer } from "../season/awards.ts";
+import { updatePlayerAwards } from "../awards/awardsByPlayer.ts";
 import { getNextRoundType } from "./contest.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { choice, randInt, shuffle } from "../../../common/random.ts";
@@ -15,7 +15,6 @@ export const HIGHEST_POSSIBLE_SCORE = 50;
 export const LOWEST_POSSIBLE_SCORE = 5;
 const MISS_SCORE = 0;
 const NUM_ATTEMPTS_PER_DUNK = 3;
-export const NUM_DUNKERS_IN_CONTEST = 4;
 const NUM_DUNKS_PER_ROUND = 2;
 const NUM_DUNKS_PER_TIEBREAKER = 1;
 const MAX_SCORE_DIFFICULTY = 8; // Dunk with this difficulty should get a perfect score
@@ -607,19 +606,23 @@ export const simNextDunkEvent = async (
 
 				const p = dunk.players[dunk.winner]!;
 
-				await saveAwardsByPlayer(
-					[
-						{
-							pid: p.pid,
-							tid: p.tid,
-							name: p.name,
-							type: "Slam Dunk Contest Winner",
-						},
-					],
-					conditions,
-					g.get("season"),
-					true,
-				);
+				const awardsByPlayer = [
+					{
+						pid: p.pid,
+						tid: p.tid,
+						name: p.name,
+						award: { type: "Slam Dunk Contest Winner" },
+					},
+				];
+
+				await updatePlayerAwards({
+					awardsToDelete: [],
+					awardsToSave: awardsByPlayer,
+					logEventInfo: {
+						conditions,
+					},
+					season: g.get("season"),
+				});
 			}
 		}
 	}

@@ -2,7 +2,7 @@ import { bySport } from "./sportFunctions.ts";
 import { processPlayerStats } from "./processPlayerStats.ts";
 import { orderBy } from "./utils.ts";
 
-export const getBestPlayerBoxScore = (players: any[]) => {
+export const getBestPlayerBoxScore = (players: unknown[]) => {
 	if (players.length === 0) {
 		return;
 	}

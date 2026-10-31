@@ -9,6 +9,8 @@ import {
 	helpers,
 } from "../../util/index.ts";
 import league from "../league/index.ts";
+import { assertDefined } from "../../../common/utils.ts";
+import { getTeamInfoCache } from "./getTeamInfoCache.ts";
 
 export const getVoteResult = (userVote: boolean, override: boolean) => {
 	const numActiveTeams = g.get("numActiveTeams");
@@ -54,9 +56,7 @@ const relocateVote = async ({
 	userVote: boolean;
 }) => {
 	const autoRelocate = g.get("autoRelocate");
-	if (!autoRelocate) {
-		throw new Error("Should never happen");
-	}
+	assertDefined(autoRelocate);
 
 	const result = getVoteResult(userVote, override);
 
@@ -120,14 +120,7 @@ const relocateVote = async ({
 
 		const teams = await idb.cache.teams.getAll();
 		await league.setGameAttributes({
-			teamInfoCache: teams.map((t) => ({
-				abbrev: t.abbrev,
-				disabled: t.disabled,
-				imgURL: t.imgURL,
-				imgURLSmall: t.imgURLSmall,
-				name: t.name,
-				region: t.region,
-			})),
+			teamInfoCache: getTeamInfoCache(teams),
 		});
 	} else {
 		eventText = `The <a href="${helpers.leagueUrl([

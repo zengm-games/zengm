@@ -18,6 +18,7 @@ test("no signing non-minimum contracts that cause team to exceed the salary cap"
 		negotiation,
 		amount: g.get("salaryCap"),
 		exp: g.get("season") + 1,
+		dryRun: false,
 	});
 	assert.strictEqual(
 		error2,

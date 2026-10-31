@@ -7,11 +7,26 @@ import type {
 	MenuItemText,
 } from "../../common/types.ts";
 import { GAME_NAME } from "../../common/constants.ts";
-import { isSport } from "../../common/sportFunctions.ts";
+import type { LeagueUrlParts } from "../router/types.ts";
 
 const style = { maxWidth: 1000 };
 
-export const frivolities = {
+type RemovePrefix<T, Prefix> = T extends [Prefix, ...infer Rest] ? Rest : never;
+
+type Category =
+	| "Draft"
+	| "Player Bios"
+	| "Teams"
+	| "Trades"
+	| "Player Rankings";
+
+type FrivolityInfo = {
+	urlParts: RemovePrefix<LeagueUrlParts, "frivolities">;
+	name: string;
+	description: string;
+};
+
+export const frivolities: Record<Category, FrivolityInfo[]> = {
 	Draft: [
 		{
 			urlParts: ["draft_position"],
@@ -175,14 +190,14 @@ export const frivolities = {
 			name: "Hall of Good",
 			description: "The best retired players who didn't make the Hall of Fame.",
 		},
-		...(isSport("basketball")
+		...(__SPORT === "basketball"
 			? [
 					{
 						urlParts: ["most", "hall_of_shame"],
 						name: "Hall of Shame",
 						description:
 							"Worst players who actually got some playing time to show how bad they are.",
-					},
+					} as FrivolityInfo,
 				]
 			: []),
 		{
@@ -289,7 +304,7 @@ const Frivolities = () => {
 		customMenu: frivolitiesMenu,
 	});
 
-	const columns: (keyof typeof frivolities)[][] = [
+	const columns: Category[][] = [
 		["Draft", "Player Bios", "Teams", "Trades"],
 		["Player Rankings"],
 	];

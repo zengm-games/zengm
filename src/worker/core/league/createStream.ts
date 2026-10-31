@@ -9,12 +9,12 @@ import {
 	team,
 } from "../index.ts";
 import {
+	DEFAULT_REAL_DRAFT_RATINGS,
 	DEFAULT_STADIUM_CAPACITY,
 	DEPTH_CHART_NAME,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
-	REAL_PLAYERS_INFO,
 } from "../../../common/constants.ts";
 import type {
 	Conditions,
@@ -69,10 +69,18 @@ import {
 import type { NewLeagueSettings } from "../../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 import { newLeagueGodModeLimits } from "../../util/newLeagueGodModeLimits.ts";
 import { choice, shuffle } from "../../../common/random.ts";
+import {
+	updatePlayerAwards,
+	type AwardByPlayerMigrate73,
+} from "../../db/migrations/73/updatePlayerAwards.ts";
+import { oldAwardsToNewAwards } from "../../db/migrations/73/oldAwardsToNewAwards.ts";
+import { getOldAwardsByPlayer } from "../../db/migrations/73/getOldAwardsByPlayer.ts";
+import { getNewAwardsByPlayer } from "../../db/migrations/73/getNewAwardsByPlayer.ts";
+import { migrateScheduledEvents74 } from "../../db/migrations/74/migrate.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -82,7 +90,7 @@ export type TeamInfo = TeamBasic & {
 };
 
 // Doesn't seem to make a difference no matter what this is, but keeping at 1 makes the progress bar nicer
-export const highWaterMark = 1;
+const highWaterMark = 1;
 
 const addLeagueMeta = async ({
 	lid,
@@ -198,6 +206,12 @@ export type PreProcessParams = {
 	activeTids: number[];
 	averagePopulation: number | undefined;
 	hasRookieContracts: boolean | undefined;
+	migrationData: {
+		73?: {
+			awardsToDelete: AwardByPlayerMigrate73[];
+			awardsToSave: AwardByPlayerMigrate73[];
+		};
+	};
 	noStartingInjuries: boolean;
 	realPlayerPhotos: RealPlayerPhotos | undefined;
 	realTeamInfo: RealTeamInfo | undefined;
@@ -222,6 +236,7 @@ const preProcess = async (
 		activeTids,
 		averagePopulation,
 		hasRookieContracts,
+		migrationData,
 		noStartingInjuries,
 		realPlayerPhotos,
 		realTeamInfo,
@@ -234,13 +249,30 @@ const preProcess = async (
 		delete x[primaryKeyToDelete];
 	}
 
-	if (key === "draftPicks") {
+	if (key === "awards") {
+		// Version 73 upgrade
+		if (version !== undefined && version < 73) {
+			// Quick sanity check in case awards is actually in the new format somehow
+			if (!x.awards) {
+				const newAwards = oldAwardsToNewAwards(x);
+
+				migrationData[73] ??= {
+					awardsToDelete: [],
+					awardsToSave: [],
+				};
+				migrationData[73].awardsToDelete.push(...getOldAwardsByPlayer(x));
+				migrationData[73].awardsToSave.push(...getNewAwardsByPlayer(newAwards));
+
+				x = newAwards;
+			}
+		}
+	} else if (key === "draftPicks") {
 		if (typeof x.pick !== "number") {
 			x.pick = 0;
 		}
 	} else if (key === "games") {
 		// Fix missing +/-, blocks against in boxscore
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			if (x.teams[0].ba === undefined) {
 				x.teams[0].ba = 0;
 				x.teams[1].ba = 0;
@@ -322,7 +354,7 @@ type ExtraFromStream = {
 	teamHasRosterOrder: Set<number>;
 };
 
-const getSaveToDB = async ({
+const getSaveToDB = ({
 	keptKeys,
 	maxGid,
 	preProcessParams,
@@ -347,86 +379,78 @@ const getSaveToDB = async ({
 
 	let currentPid = -1;
 
-	const writableStream = new WritableStream<{
+	const write = async ({
+		key,
+		value,
+	}: {
 		key: LeagueDBStoreNames;
 		value: any;
-	}>(
-		{
-			async write(chunk) {
-				const { key, value } = chunk;
+	}) => {
+		if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
+			// Currently skipped:
+			// - meta because it doesn't get written to DB
+			// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
+			return;
+		}
 
-				if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
-					// Currently skipped:
-					// - meta because it doesn't get written to DB
-					// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.
-					return;
+		if (key !== prevKey) {
+			// console.timeLog("createStream");
+			// console.log("loading", key);
+			setLeagueCreationStatus(`Processing ${key}...`);
+			prevKey = key;
+		}
+
+		// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
+		if (key === "schedule" && keptKeys.has("schedule")) {
+			currentScheduleGid += 1;
+			value.gid = currentScheduleGid;
+		}
+
+		if (key === "events" && keptKeys.has("events")) {
+			extraFromStream.hasEvents = true;
+		}
+
+		const isPlayers = key === "players" && keptKeys.has("players");
+
+		if (isPlayers) {
+			if (value.pid === undefined) {
+				currentPid += 1;
+				value.pid = currentPid;
+			} else if (value.pid > currentPid) {
+				currentPid = value.pid;
+			}
+		}
+
+		if (keptKeys.has(key)) {
+			const processed = await preProcess(key, value, preProcessParams);
+
+			if (
+				isPlayers &&
+				(processed.tid >= PLAYER.UNDRAFTED ||
+					processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
+			) {
+				extraFromStream.activePlayers.push(processed);
+
+				if (__SPORT !== "basketball" || typeof value.rosterOrder === "number") {
+					extraFromStream.teamHasRosterOrder.add(value.tid);
 				}
-
-				if (key !== prevKey) {
-					// console.timeLog("createStream");
-					// console.log("loading", key);
-					setLeagueCreationStatus(`Processing ${key}...`);
-					prevKey = key;
+			} else {
+				buffer.addRow([key, processed]);
+				if (buffer.isFull()) {
+					await buffer.flush();
 				}
+			}
+		}
+	};
 
-				// Overwrite schedule with known safe gid (higher than any game) in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
-				if (key === "schedule" && keptKeys.has("schedule")) {
-					currentScheduleGid += 1;
-					value.gid = currentScheduleGid;
-				}
-
-				if (key === "events" && keptKeys.has("events")) {
-					extraFromStream.hasEvents = true;
-				}
-
-				const isPlayers = key === "players" && keptKeys.has("players");
-
-				if (isPlayers) {
-					if (value.pid === undefined) {
-						currentPid += 1;
-						value.pid = currentPid;
-					} else if (value.pid > currentPid) {
-						currentPid = value.pid;
-					}
-				}
-
-				if (keptKeys.has(key)) {
-					const processed = await preProcess(key, value, preProcessParams);
-
-					if (
-						isPlayers &&
-						(processed.tid >= PLAYER.UNDRAFTED ||
-							processed.tid === PLAYER.UNDRAFTED_FANTASY_TEMP)
-					) {
-						extraFromStream.activePlayers.push(processed);
-
-						if (
-							!isSport("basketball") ||
-							typeof value.rosterOrder === "number"
-						) {
-							extraFromStream.teamHasRosterOrder.add(value.tid);
-						}
-					} else {
-						buffer.addRow([key, processed]);
-						if (buffer.isFull()) {
-							await buffer.flush();
-						}
-					}
-				}
-			},
-
-			async close() {
-				await buffer.finalize();
-			},
-		},
-		new CountQueuingStrategy({
-			highWaterMark,
-		}),
-	);
+	const close = async () => {
+		await buffer.finalize();
+	};
 
 	return {
+		close,
 		extraFromStream,
-		saveToDB: writableStream,
+		write,
 	};
 };
 
@@ -609,6 +633,9 @@ const finalizeDBExceptPlayers = async ({
 		});
 	}
 
+	// Don't await each put individually, since that is slow when there are many rows
+	const promises: Promise<unknown>[] = [];
+
 	// Handle schedule with no "day" property
 	const scheduleStore = tx.objectStore("schedule");
 	const schedule = await scheduleStore.getAll();
@@ -629,29 +656,36 @@ const finalizeDBExceptPlayers = async ({
 			);
 
 			for (const game of updatedSchedule) {
-				await scheduleStore.put(game);
+				promises.push(scheduleStore.put(game));
 			}
 		}
 	}
-
 	const teamsStore = tx.objectStore("teams");
 	for (const t of teams) {
-		await teamsStore.put(t);
+		promises.push(teamsStore.put(t));
 	}
 
 	const teamSeasonsStore = tx.objectStore("teamSeasons");
 	for (const ts of teamSeasons) {
-		await teamSeasonsStore.put(ts);
+		promises.push(teamSeasonsStore.put(ts));
 	}
 
 	const teamStatsStore = tx.objectStore("teamStats");
 	for (const ts of teamStats) {
-		await teamStatsStore.put(ts);
+		promises.push(teamStatsStore.put(ts));
 	}
+
+	promises.push(tx.done);
+
+	await Promise.all(promises);
 };
 
-const confirmSequential = (objs: any, key: string, objectName: string) => {
-	const values = new Set();
+const confirmSequential = <Key extends string>(
+	objs: Record<Key, unknown>[],
+	key: Key,
+	objectName: string,
+) => {
+	const values = new Set<number>();
 
 	for (const obj of objs) {
 		const value = obj[key];
@@ -670,8 +704,6 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 			);
 		}
 	}
-
-	return values;
 };
 
 const processTeamInfos = async ({
@@ -776,7 +808,7 @@ const processTeamInfos = async ({
 	const teamSeasons: TeamSeasonWithoutKey[] = [];
 	const teamStats: TeamStatsWithoutKey[] = [];
 
-	const teamSeasonUniqueKeys = new Set();
+	const teamSeasonUniqueKeys = new Set<string>();
 	const teamSeasonUniqueKeyErrorCounts: Record<string, number> = {};
 
 	let scoutingLevel: number | undefined;
@@ -852,7 +884,7 @@ const processTeamInfos = async ({
 					}
 				}
 
-				// See similar code in teamsPlus
+				// See similar code in team.getFormattedAll
 				const copyFromTeamIfUndefined = [
 					// For upgrades, or manually edited league files
 					"cid",
@@ -979,7 +1011,7 @@ const processTeamInfos = async ({
 		for (const ts of teamStatsLocal) {
 			ts.tid = t.tid;
 
-			if (isSport("basketball")) {
+			if (__SPORT === "basketball") {
 				if (
 					(typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) &&
 					ts.ba !== undefined
@@ -1057,8 +1089,10 @@ const finalizeActivePlayers = async ({
 		}
 
 		await player.updateValues(p);
-		await idb.cache.players.put(p);
 	}
+
+	// players1 are the objects stored in the cache, so mutations above are already visible to cache reads. This just marks them as dirty
+	await idb.cache.players.putAll(players1);
 
 	const pidsToNormalize = players1
 		.filter((p) => p.contract.temp)
@@ -1118,10 +1152,10 @@ const finalizeActivePlayers = async ({
 		}
 
 		delete p.contract.temp;
-
-		// Maybe not needed, but let's be sure
-		await idb.cache.players.put(p);
 	}
+
+	// Maybe not needed, but let's be sure
+	await idb.cache.players.putAll(players);
 };
 
 type CreateStreamProps = {
@@ -1147,6 +1181,12 @@ type CreateStreamProps = {
 	teamsFromInput: NewLeagueTeam[];
 	tid: number;
 };
+
+const isRandomDebuts = (randomization: Settings["randomization"]) =>
+	randomization === "debuts" ||
+	randomization === "debutsKeepCurrent" ||
+	randomization === "debutsForever" ||
+	randomization === "debutsForeverKeepCurrent";
 
 const beforeDBStream = async ({
 	conditions,
@@ -1198,11 +1238,8 @@ const beforeDBStream = async ({
 		divs,
 	};
 
-	// This setting is allowed to be undefined, so make it that way when appropriate
-	if (
-		!REAL_PLAYERS_INFO &&
-		(!getLeagueOptions || getLeagueOptions.type !== "real")
-	) {
+	// This setting is allowed to be undefined, so make it that way when it does nothing - it's only used for real players leagues and random debuts
+	if (getLeagueOptions?.type !== "real" && !isRandomDebuts(randomization)) {
 		delete gameAttributeOverrides.realDraftRatings;
 	}
 
@@ -1273,10 +1310,7 @@ const beforeDBStream = async ({
 			fileHasPlayers:
 				keptKeys.has("players") ||
 				teamInfos.some((t) => t.usePlayers) ||
-				randomization === "debuts" ||
-				randomization === "debutsKeepCurrent" ||
-				randomization === "debutsForever" ||
-				randomization === "debutsForeverKeepCurrent",
+				isRandomDebuts(randomization),
 			fileHasTeams: !!filteredFromFile.teams,
 		},
 		conditions,
@@ -1343,7 +1377,7 @@ const adjustSeasonPlayer = (p: Partial<PlayerWithoutKey>) => {
 		const keys = ["awards", "injuries", "ratings", "salaries"] as const;
 		for (const key of keys) {
 			if (p[key]) {
-				for (const row of p[key]!) {
+				for (const row of p[key]) {
 					row.season += diff;
 				}
 			}
@@ -1365,6 +1399,7 @@ const afterDBStream = async ({
 	gameAttributes,
 	getLeagueOptions,
 	lid,
+	migrationData,
 	noStartingInjuries,
 	randomization,
 	realPlayerPhotos,
@@ -1378,6 +1413,7 @@ const afterDBStream = async ({
 }: {
 	extraFromStream: ExtraFromStream;
 	hasRookieContracts: boolean;
+	migrationData: PreProcessParams["migrationData"];
 	noStartingInjuries: boolean;
 	randomization: Settings["randomization"];
 	realPlayerPhotos: RealPlayerPhotos | undefined;
@@ -1417,8 +1453,9 @@ const afterDBStream = async ({
 			if (p.tid > PLAYER.FREE_AGENT) {
 				p.tid = playerTids.pop()!;
 
-				if (p.stats && p.stats.length > 0) {
-					p.stats.at(-1).tid = p.tid;
+				const lastStats = p.stats?.at(-1);
+				if (lastStats) {
+					lastStats.tid = p.tid;
 
 					if (p.statsTids) {
 						p.statsTids.push(p.tid);
@@ -1463,11 +1500,7 @@ const afterDBStream = async ({
 		}
 	}
 
-	const randomDebuts =
-		randomization === "debuts" ||
-		randomization === "debutsKeepCurrent" ||
-		randomization === "debutsForever" ||
-		randomization === "debutsForeverKeepCurrent";
+	const randomDebuts = isRandomDebuts(randomization);
 
 	let activePlayers = fileHasPlayers
 		? extraFromStream.activePlayers
@@ -1479,7 +1512,7 @@ const afterDBStream = async ({
 			});
 
 	// If players are specified for some team on import (from CustomizeTeams), replace the randomly generated players
-	const replaceTids = new Set();
+	const replaceTids = new Set<number>();
 	const extraActivePlayers: PlayerWithoutKey[] = [];
 	const draftPickAutoContract = g.get("draftPickAutoContract");
 	const rookieSalaries = draftPickAutoContract ? draft.getRookieSalaries() : [];
@@ -1557,16 +1590,17 @@ const afterDBStream = async ({
 
 		const basketball = await loadDataBasketball();
 
-		const draftProspects = await initRandomDebutsForRandomPlayersLeague({
+		const realPlayers = await initRandomDebutsForRandomPlayersLeague({
 			activeTids,
 			players: activePlayers,
 			basketball,
 			numActiveTeams: gameAttributes.numActiveTeams,
-			realDraftRatings: gameAttributes.realDraftRatings ?? "rookie",
+			realDraftRatings:
+				gameAttributes.realDraftRatings ?? DEFAULT_REAL_DRAFT_RATINGS,
 			phase: gameAttributes.phase,
 			season: gameAttributes.season,
 		});
-		for (const p of draftProspects) {
+		for (const p of realPlayers) {
 			const p2 = await processPlayerNewLeague({
 				p,
 				activeTids,
@@ -1576,6 +1610,10 @@ const afterDBStream = async ({
 				scoutingLevel,
 				version: LEAGUE_DATABASE_VERSION,
 			});
+			if (p2.tid !== PLAYER.UNDRAFTED) {
+				// Draft prospects already have ratings season set to their draft year, and need to keep it or their age will be wrong when recomputing pot
+				last(p2.ratings).season = gameAttributes.season;
+			}
 			activePlayers.push(p2);
 		}
 	}
@@ -1598,7 +1636,7 @@ const afterDBStream = async ({
 		}
 
 		// This is redundant for a normal real players league, but oh well, it's not very slow. Can't get rid of it in getLeague because that runs on all players, not just active. Can't get rid of it here because it's needed for other types of leagues
-		addRelatives(activePlayers as unknown as Player[], basketball.relatives);
+		addRelatives(activePlayers as Player[], basketball.relatives);
 	}
 
 	// For random debuts we don't want addDraftProspects to be called, since it will fill in with random players. However this does imply that future pick value is going to be messed up for those transition years between random debuts generations, since getPickValues does not support partial draft classes.
@@ -1610,16 +1648,14 @@ const afterDBStream = async ({
 	}
 
 	// Unless we got strategy from a league file, calculate it here
+	const activePlayersByTid = Object.groupBy(activePlayers, (p) => p.tid);
 	for (const [i, t] of teams.entries()) {
 		if (teamInfos[i].strategy === undefined) {
-			const teamPlayers = activePlayers
-				.filter((p) => p.tid === i)
-				.map((p) => ({
-					pid: p.pid,
-					injury: p.injury,
-					value: p.value,
-					ratings: last(p.ratings),
-				}));
+			const teamPlayers = (activePlayersByTid[i] ?? []).map((p) => ({
+				injury: p.injury,
+				value: p.value,
+				ratings: last(p.ratings),
+			}));
 			const ovr = team.ovr(teamPlayers);
 			t.strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}
@@ -1631,6 +1667,19 @@ const afterDBStream = async ({
 		teamStats,
 		teams,
 	});
+
+	// Version 74 upgrade
+	// Needs to be done after all the scheduled events are in the database, because it depends on the order of them (okay could stream it but that'd be more complex)
+	if (fromFile.version !== undefined && fromFile.version < 74) {
+		await migrateScheduledEvents74({
+			confs: unwrapGameAttribute(gameAttributes, "confs"),
+			divs: unwrapGameAttribute(gameAttributes, "divs"),
+			scheduledEventsStore: idb.league.transaction(
+				"scheduledEvents",
+				"readwrite",
+			).store,
+		});
+	}
 
 	// Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
 	helpers.resetG();
@@ -1657,9 +1706,7 @@ const afterDBStream = async ({
 	delete gameAttributesToUpdate.teamInfoCache;
 
 	// Need this before calling setGameAttributes, so the "cola" draftType can see recent top draft picks
-	for (const p of activePlayers) {
-		await idb.cache.players.put(p);
-	}
+	await idb.cache.players.putAll(activePlayers);
 
 	// Write gameAttributes to DB in special way, to get extra functionality from setGameAttributes and because it's not in the database native format in leagueData (object, not array like others).
 	// BUT - league.setGameAttributes is not expecting gameAttributes with history, so this could break in subtle ways in the future!
@@ -1684,7 +1731,7 @@ const afterDBStream = async ({
 
 	if (!skipNewPhase || realPlayers) {
 		await updatePhase();
-		await updateStatus("Idle");
+		await updateStatus();
 
 		// Auto sort rosters
 		for (const t of teams) {
@@ -1748,7 +1795,7 @@ const afterDBStream = async ({
 	// Memorials
 	if (!fileHasPlayers && !g.get("playerBioInfo")) {
 		let memorials;
-		if (isSport("hockey")) {
+		if (__SPORT === "hockey") {
 			// https://discord.com/channels/@me/896580823057326130
 			memorials = [
 				{
@@ -1796,10 +1843,20 @@ const afterDBStream = async ({
 			lid,
 		});
 	}
+
+	// Version 73 upgrade
+	if (migrationData["73"]) {
+		// Need to do this at the end of afterDBStream because we need all players (including activePlayers) to be in the databse. And then fill is to handle activePlayers already being in the cache
+		await updatePlayerAwards({
+			...migrationData["73"],
+			playerStore: idb.league.transaction("players", "readwrite").store,
+		});
+		await idb.cache.fill();
+	}
 };
 
 const createStream = async (
-	stream: ReadableStream,
+	leagueData: ReadableStream | Record<string, unknown>,
 	{
 		conditions,
 		confs,
@@ -1847,13 +1904,16 @@ const createStream = async (
 	});
 	// console.timeLog("createStream");
 
-	const { extraFromStream, saveToDB } = await getSaveToDB({
+	const migrationData: PreProcessParams["migrationData"] = {};
+
+	const { close, extraFromStream, write } = getSaveToDB({
 		keptKeys,
 		maxGid: fromFile.maxGid,
 		preProcessParams: {
 			activeTids,
 			averagePopulation,
 			hasRookieContracts: fromFile.hasRookieContracts,
+			migrationData,
 			noStartingInjuries,
 			realPlayerPhotos,
 			realTeamInfo,
@@ -1864,31 +1924,62 @@ const createStream = async (
 	});
 	// console.timeLog("createStream");
 
-	await stream.pipeTo(saveToDB);
-	// console.timeLog("createStream");
+	try {
+		if (leagueData instanceof ReadableStream) {
+			await leagueData.pipeTo(
+				new WritableStream(
+					{ write, close },
+					new CountQueuingStrategy({
+						highWaterMark,
+					}),
+				),
+			);
+		} else {
+			// Already in memory (real players leagues, random players leagues), so skip the overhead of streaming it one row at a time
+			for (const [key, rows] of Object.entries(leagueData)) {
+				if (Array.isArray(rows)) {
+					for (const value of rows) {
+						await write({ key: key as LeagueDBStoreNames, value });
+					}
+				}
+			}
+			await close();
+		}
+		// console.timeLog("createStream");
 
-	setLeagueCreationStatus("Finalizing...");
+		setLeagueCreationStatus("Finalizing...");
 
-	await afterDBStream({
-		activeTids,
-		extraFromStream,
-		fromFile,
-		gameAttributes,
-		getLeagueOptions,
-		hasRookieContracts: fromFile.hasRookieContracts,
-		lid,
-		noStartingInjuries,
-		randomization: settings.randomization,
-		realPlayerPhotos,
-		repeatSeason,
-		scoutingLevel,
-		shuffleRosters,
-		teamInfos,
-		teamSeasons,
-		teamStats,
-		teams,
-	});
-	// console.timeEnd("createStream");
+		await afterDBStream({
+			activeTids,
+			extraFromStream,
+			fromFile,
+			gameAttributes,
+			getLeagueOptions,
+			hasRookieContracts: fromFile.hasRookieContracts,
+			lid,
+			migrationData,
+			noStartingInjuries,
+			randomization: settings.randomization,
+			realPlayerPhotos,
+			repeatSeason,
+			scoutingLevel,
+			shuffleRosters,
+			teamInfos,
+			teamSeasons,
+			teamStats,
+			teams,
+		});
+		// console.timeEnd("createStream");
+	} catch (error) {
+		// League was already added to the meta database in beforeDBStream, so delete it rather than leave a broken partial league in the list
+		try {
+			await remove(lid);
+		} catch (error_) {
+			console.error(error_);
+		}
+
+		throw error;
+	}
 };
 
 export default createStream;

@@ -13,13 +13,15 @@ import newPhaseFantasyDraft from "./newPhaseFantasyDraft.ts";
 import newPhaseExpansionDraft from "./newPhaseExpansionDraft.ts";
 import {
 	g,
+	helpers,
 	lock,
 	logEvent,
 	updatePlayMenu,
 	updateStatus,
-	local,
 } from "../../util/index.ts";
 import type { Conditions, Phase } from "../../../common/types.ts";
+import { cleanupAutoPlay } from "../league/autoPlay.ts";
+import { InvalidPlayoffSettingsError } from "../season/genPlayoffSeries.ts";
 
 /**
  * Set a new phase of the game.
@@ -66,26 +68,13 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		);
 	} else {
 		try {
+			// While this lock is held, don't await toUI("realtimeUpdate") from anywhere in the phase change code, or anywhere else that could block setting the newPhase lock to false. Views wait for the newPhase lock to be released before running and newPhase waits for the views to all finish, so that could deadlock.
 			await lock.set("newPhase", true);
 
-			if (
-				local.autoPlayUntil &&
-				(local.autoPlayUntil.season < g.get("season") ||
-					(local.autoPlayUntil.season === g.get("season") &&
-						local.autoPlayUntil.phase <= phase) ||
-					(local.autoPlayUntil.season === g.get("season") + 1 &&
-						local.autoPlayUntil.phase === PHASE.PRESEASON &&
-						phase === PHASE.PRESEASON))
-			) {
-				console.log(
-					`Auto play done in ${
-						(Date.now() - local.autoPlayUntil.start) / 1000
-					} seconds`,
-				);
-				local.autoPlayUntil = undefined;
+			if (phase !== PHASE.AFTER_TRADE_DEADLINE) {
+				// Adter trade deadline is so fast that it's not worth the flicker, maybe applies to others too sometimes
+				await updateStatus("Processing...");
 			}
-
-			await updateStatus("Processing...");
 			await updatePlayMenu();
 
 			if (doPhaseChange[phase]) {
@@ -96,18 +85,42 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 				throw new Error(`Unknown phase number ${phase}`);
 			}
 		} catch (error) {
-			await lock.set("newPhase", false);
-			await updatePlayMenu();
-			logEvent(
-				{
-					type: "error",
+			const handleError = async ({
+				rejectAutoPlay,
+				text,
+			}: {
+				// Rejecting the auto play promise means the error will be logged as unhandled
+				rejectAutoPlay: boolean;
+				text: string;
+			}) => {
+				logEvent(
+					{
+						type: "error",
+						text,
+						saveToDb: false,
+						persistent: true,
+					},
+					conditions,
+				);
+				cleanupAutoPlay(rejectAutoPlay ? error : undefined);
+				await lock.set("newPhase", false);
+				await updatePlayMenu();
+				await updateStatus();
+			};
+
+			if (error instanceof InvalidPlayoffSettingsError) {
+				// Not a bug, the user's settings just don't work for the teams in the league. So tell the user how to fix it, rather than treating it as an unexpected error
+				await handleError({
+					rejectAutoPlay: false,
+					text: `<p>Invalid playoff settings: ${error.message}</p><p>You can change playoff settings on the <a href="${helpers.leagueUrl(["settings"])}">League Settings</a> page.</p>`,
+				});
+			} else {
+				await handleError({
+					rejectAutoPlay: true,
 					text: `<p>Critical error during phase change:</p><p>${error.message}</p><a href="https://${WEBSITE_ROOT}/manual/debugging/"><b>Read this to learn about debugging.</b></a>`,
-					saveToDb: false,
-					persistent: true,
-				},
-				conditions,
-			);
-			throw error;
+				});
+				throw error;
+			}
 		}
 	}
 };

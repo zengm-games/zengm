@@ -1,6 +1,10 @@
-import type { MouseEvent } from "react";
 import type { Col, SortBy } from "./index.tsx";
 import { helpers } from "../../util/helpers.ts";
+
+// Sorting can be triggered by a mouse click or a key press
+export type SortEvent = {
+	shiftKey: boolean;
+};
 
 const updateSortBys = ({
 	cols,
@@ -9,7 +13,7 @@ const updateSortBys = ({
 	prevSortBys,
 }: {
 	cols: Col[];
-	event: MouseEvent;
+	event: SortEvent;
 	i: number;
 	prevSortBys: SortBy[];
 }) => {

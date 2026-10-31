@@ -31,7 +31,7 @@ const genPlayoffSeries = (
 		home: MatchupTeam;
 		away?: MatchupTeam;
 	}[] = [];
-	const firstRoundAbbrevs = new Set();
+	const firstRoundAbbrevs = new Set<string>();
 
 	const genTeam = (
 		abbrev: string,

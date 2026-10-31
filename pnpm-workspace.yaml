@@ -1,2 +1,4 @@
 allowBuilds:
   unrs-resolver: false
+minimumReleaseAgeExclude:
+  - facesjs@5.0.4

@@ -1,8 +1,7 @@
 import stats from "./stats.ts";
 import { helpers } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
-import statsRowIsCurrent from "./statsRowIsCurrent.ts";
+import { statsRowIsCurrent } from "./statsRowIsCurrent.ts";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -43,7 +42,7 @@ const addStatsRow = (
 	}
 
 	for (const key of stats.max) {
-		// Will be set to [max, gid] later. Needs to be null rather than undefined so it persists in JSON, otherwise playersPlus career totals will not know about these fields.
+		// Will be set to [max, gid] later. Needs to be null rather than undefined so it persists in JSON, otherwise player.formatAll career totals will not know about these fields.
 		statsRow[key] = null;
 	}
 
@@ -53,7 +52,7 @@ const addStatsRow = (
 			statsRow[key] = [];
 		}
 	}
-	if (isSport("baseball")) {
+	if (__SPORT === "baseball") {
 		statsRow.rfld = [];
 	}
 

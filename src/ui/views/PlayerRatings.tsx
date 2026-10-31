@@ -63,10 +63,10 @@ const PlayerRatings = ({
 		...ovrsPotsColNames,
 	]);
 
-	const rows: DataTableRow[] = players.map((p) => {
+	const rows: DataTableRow<"player">[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
-		const ovrsPotsRatings: string[] = [];
+		const ovrsPotsRatings: (number | null)[] = [];
 		if (
 			bySport({
 				baseball: true,
@@ -75,8 +75,9 @@ const PlayerRatings = ({
 				hockey: true,
 			})
 		) {
-			for (const pos of POSITIONS) {
-				for (const type of ["ovrs", "pots"]) {
+			// In these sports, POSITIONS are the keys of ovrs/pots
+			for (const pos of POSITIONS as (keyof typeof p.ratings.ovrs)[]) {
+				for (const type of ["ovrs", "pots"] as const) {
 					ovrsPotsRatings.push(showRatings ? p.ratings[type][pos] : null);
 				}
 			}

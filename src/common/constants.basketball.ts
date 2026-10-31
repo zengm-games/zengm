@@ -1,4 +1,11 @@
-import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
+import type {
+	CompositeWeights,
+	Conf,
+	Div,
+	NonEmptyArray,
+	PlayerStatsTables,
+	PlayerSummary,
+} from "./types.ts";
 import type { RatingKey } from "./types.basketball.ts";
 
 export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -171,7 +178,7 @@ export const PLAYER_SUMMARY = {
 			"ws",
 		],
 	},
-};
+} satisfies PlayerSummary;
 
 export const PLAYER_STATS_TABLES = {
 	regular: {
@@ -318,7 +325,7 @@ export const PLAYER_STATS_TABLES = {
 			"gmscMax",
 		],
 	},
-};
+} satisfies PlayerStatsTables;
 
 export const TEAM_STATS_TABLES = {
 	team: {
@@ -532,28 +539,6 @@ export const RATINGS: RatingKey[] = [
 	"pss",
 	"reb",
 ];
-
-export const SIMPLE_AWARDS = [
-	"mvp",
-	"roy",
-	"smoy",
-	"dpoy",
-	"mip",
-	"finalsMvp",
-] as const;
-
-export const AWARD_NAMES = {
-	mvp: "Most Valuable Player",
-	roy: "Rookie of the Year",
-	smoy: "Sixth Man of the Year",
-	dpoy: "Defensive Player of the Year",
-	mip: "Most Improved Player",
-	finalsMvp: "Finals MVP",
-	sfmvp: "Semifinals MVP",
-	allLeague: "All-League",
-	allDefensive: "All-Defensive",
-	allRookie: "All-Rookie Team",
-} as const;
 
 export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{

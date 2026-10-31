@@ -1,10 +1,11 @@
+import { registerGlobal } from "../../common/registerGlobal.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import advStatsBaseball from "./advStats.baseball.ts";
 import advStatsBasketball from "./advStats.basketball.ts";
 import advStatsFootball from "./advStats.football.ts";
 import advStatsHockey from "./advStats.hockey.ts";
 
-const advStats = () => {
+export const advStats = () => {
 	return bySport({
 		baseball: advStatsBaseball(),
 		basketball: advStatsBasketball(),
@@ -13,4 +14,4 @@ const advStats = () => {
 	});
 };
 
-export default advStats;
+registerGlobal({ advStats });

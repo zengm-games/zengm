@@ -1,4 +1,11 @@
-import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
+import type {
+	CompositeWeights,
+	Conf,
+	Div,
+	NonEmptyArray,
+	PlayerStatsTables,
+	PlayerSummary,
+} from "./types.ts";
 import type { Position, PrimaryPosition, RatingKey } from "./types.football.ts";
 
 export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -118,9 +125,13 @@ export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["kac"],
 		weights: [1],
 	},
-	punting: {
-		ratings: ["ppw", "pac"],
-		weights: [1, 1],
+	puntingPower: {
+		ratings: ["ppw"],
+		weights: [1],
+	},
+	puntingAccuracy: {
+		ratings: ["pac"],
+		weights: [1],
 	},
 };
 
@@ -286,7 +297,7 @@ export const PLAYER_SUMMARY = {
 		onlyShowIf: ["DL", "LB", "CB", "S"],
 		stats: ["gp", "av", "defTck", "defSk", "defFmbRec", "defInt"],
 	},
-};
+} satisfies PlayerSummary;
 export const PLAYER_STATS_TABLES = {
 	passing: {
 		name: "Passing",
@@ -440,8 +451,10 @@ export const PLAYER_STATS_TABLES = {
 			"pntYds",
 			"pntYdsPerAtt",
 			"pntLng",
-			"pntIn20",
 			"pntTB",
+			"pntTBPct",
+			"pntIn20",
+			"pntIn20Pct",
 			"pntBlk",
 			"av",
 		],
@@ -466,7 +479,7 @@ export const PLAYER_STATS_TABLES = {
 			"av",
 		],
 	},
-};
+} satisfies PlayerStatsTables;
 export const TEAM_STATS_TABLES = {
 	summary: {
 		name: "Summary",
@@ -618,8 +631,10 @@ export const TEAM_STATS_TABLES = {
 			"pntYds",
 			"pntYdsPerAtt",
 			"pntLng",
-			"pntIn20",
 			"pntTB",
+			"pntTBPct",
+			"pntIn20",
+			"pntIn20Pct",
 			"pntBlk",
 		],
 	},
@@ -928,28 +943,6 @@ export const RATINGS: RatingKey[] = [
 	"ppw",
 	"pac",
 ];
-
-export const SIMPLE_AWARDS = [
-	"mvp",
-	"opoy",
-	"poy",
-	"dpoy",
-	"oroy",
-	"droy",
-	"finalsMvp",
-] as const;
-
-export const AWARD_NAMES = {
-	mvp: "Most Valuable Player",
-	opoy: "Offensive Player of the Year",
-	poy: "Protector of the Year",
-	dpoy: "Defensive Player of the Year",
-	oroy: "Offensive Rookie of the Year",
-	droy: "Defensive Rookie of the Year",
-	finalsMvp: "Finals MVP",
-	allLeague: "All-League",
-	allRookie: "All-Rookie Team",
-} as const;
 
 export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{

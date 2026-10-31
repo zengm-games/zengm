@@ -1,12 +1,15 @@
-import { PHASE, SIMPLE_AWARDS } from "../../common/constants.ts";
+import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
-import { groupByUnique, range } from "../../common/utils.ts";
+import { groupByUnique, last, orderBy, range } from "../../common/utils.ts";
+import { formatAwardNamePrefix } from "../core/awards/prefixes.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { PlayersCache } from "../db/PlayersCache.ts";
+import { defineView } from "../util/defineView.ts";
+import { team } from "../core/index.ts";
 
-const addAbbrev = (
-	award: any,
+const getAbbrev = (
+	tid: number,
 	teams: Record<
 		number,
 		{
@@ -20,40 +23,27 @@ const addAbbrev = (
 	>,
 	season: number,
 ) => {
-	if (!award) {
-		return;
-	}
-
-	const t = teams[award.tid];
+	const t = teams[tid];
 	if (!t) {
-		return {
-			...award,
-			abbrev: "???",
-		};
+		return "???";
 	}
 
 	const seasonAttrs = t.seasonAttrs.find((ts) => ts.season === season);
 	if (!seasonAttrs) {
-		return {
-			...award,
-			abbrev: t.abbrev,
-		};
+		return t.abbrev;
 	}
 
-	return {
-		...award,
-		abbrev: seasonAttrs.abbrev,
-	};
+	return seasonAttrs.abbrev;
 };
 
-const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(updateEvents.includes("newPhase") &&
-			g.get("phase") === PHASE.DRAFT_LOTTERY)
-	) {
-		const teams = await idb.getCopies.teamsPlus(
-			{
+export default defineView({
+	id: "historyAll",
+	load: async ({ updateEvents }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			(updateEvents.has("newPhase") && g.get("phase") === PHASE.DRAFT_LOTTERY)
+		) {
+			const teams = await team.getFormattedAll({
 				attrs: ["tid", "abbrev", "imgURL", "imgURLSmall"],
 				seasonAttrs: [
 					"season",
@@ -69,71 +59,21 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"imgURLSmall",
 				],
 				addDummySeason: true,
-			},
-			"noCopyCache",
-		);
-		const teamsByTid = groupByUnique(teams, "tid");
-
-		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
-		const awardsBySeason = groupByUnique(awards, "season");
-
-		// Start with the oldest season we have team or awards history for
-		const maxSeason =
-			g.get("phase") > PHASE.PLAYOFFS ? g.get("season") : g.get("season") - 1;
-		let minSeason = Infinity;
-		for (const t of teams) {
-			if (t.seasonAttrs.length > 0 && t.seasonAttrs[0]!.season < minSeason) {
-				minSeason = t.seasonAttrs[0]!.season;
-			}
-		}
-		if (awards.length > 0 && awards[0].season < minSeason) {
-			minSeason = awards[0].season;
-		}
-
-		const awardTypes = bySport({
-			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
-			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
-			football: ["finalsMvp", "mvp", "opoy", "poy", "dpoy", "oroy", "droy"],
-			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
-		});
-
-		const seasons: any[] = range(minSeason, maxSeason + 1).map((season) => {
-			const a = awardsBySeason[season];
-
-			const row: any = {
-				season,
-				runnerUp: undefined,
-				champ: undefined,
-			};
-
-			for (const awardType of awardTypes) {
-				row[awardType] = a
-					? addAbbrev(a[awardType], teamsByTid, a.season)
-					: undefined;
-			}
-
-			return row;
-		});
-
-		const playoffSeries = await idb.getCopies.playoffSeries(
-			undefined,
-			"noCopyCache",
-		);
-		const playoffSeriesBySeason = groupByUnique(playoffSeries, "season");
-
-		for (const row of seasons) {
-			const season = row.season;
-
-			// Only check for finals result for seasons that are over
-			const series = playoffSeriesBySeason[season];
+			});
+			const teamsByTid = groupByUnique(teams, "tid");
 
 			type MyTeam = (typeof teams)[number];
-			const formatTeam = (t: MyTeam, seed: number | undefined) => {
+			const formatTeam = (
+				t: MyTeam,
+				season: number,
+				seed: number | undefined,
+			) => {
 				const tid = t.tid;
 
 				const teamSeason = t.seasonAttrs.find((ts) => ts.season === season);
 
 				return {
+					missing: false as const,
 					tid,
 					seed,
 					abbrev: teamSeason
@@ -155,134 +95,262 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					count: 0,
 				};
 			};
-			const formatTeamWrapper = ({
-				seed,
-				tid,
-			}: {
-				seed: number | undefined;
-				tid: number;
-			}) => {
+			const formatTeamWrapper = (
+				{
+					seed,
+					tid,
+				}: {
+					seed: number | undefined;
+					tid: number;
+				},
+				season: number,
+			) => {
 				const t = teamsByTid[tid];
 				if (!t) {
-					throw new Error(`Team not found for tid ${tid}`);
+					// Team no longer exists, which shouldn't happen but has been seen in the error logs.
+					return {
+						missing: true as const,
+						tid,
+						seed,
+						region: g.get("teamInfoCache")[tid]?.region ?? "???",
+						count: 0,
+					};
 				}
 
-				return formatTeam(t, seed);
+				return formatTeam(t, season, seed);
 			};
+			type FormattedTeam = ReturnType<typeof formatTeamWrapper>;
 
-			if (series) {
-				const finalRound = series.series.at(-1);
-				if (!finalRound) {
-					// 0 length numGamesPlayoffSeries, no playoffs
-					const t = teams.find((t) =>
-						t.seasonAttrs.find(
-							(ts) => ts.season === season && ts.playoffRoundsWon === 0,
-						),
+			const awards = await idb.merged.awards.getAll();
+			const awardsBySeason = groupByUnique(awards, "season");
+
+			// Start with the oldest season we have team or awards history for
+			const maxSeason =
+				g.get("phase") > PHASE.PLAYOFFS ? g.get("season") : g.get("season") - 1;
+			let minSeason = Infinity;
+			for (const t of teams) {
+				if (t.seasonAttrs.length > 0 && t.seasonAttrs[0]!.season < minSeason) {
+					minSeason = t.seasonAttrs[0]!.season;
+				}
+			}
+			if (awards[0] && awards[0].season < minSeason) {
+				minSeason = awards[0].season;
+			}
+
+			const awardTypes: {
+				name: string;
+				shortName: string;
+			}[] = [];
+			const seenAwardTypes = new Set();
+
+			// Many players win multiple awards, so cache them rather than always reading from disk
+			const playersCache = new PlayersCache();
+
+			const seasons = [];
+			for (const season of range(maxSeason, minSeason - 1)) {
+				const a = awardsBySeason[season];
+
+				const awards: {
+					abbrev: string;
+					awardName: string;
+					awardShortName: string;
+					count: number;
+					name: string;
+					pid: number;
+					pos: string | undefined;
+					tid: number;
+				}[] = [];
+				if (a) {
+					// Move Finals MVP or Playoffs MVP to the front, so it's next to the championship winer
+					const awardsSorted = orderBy(a.awards, (award) =>
+						award.statRange === -1 ? 0 : award.statRange === "playoffs" ? 1 : 2,
 					);
+					for (const award of awardsSorted) {
+						// Only want individual awards
+						if (award.numTeams !== undefined) {
+							continue;
+						}
 
-					if (t) {
-						row.champ = formatTeam(t, 1);
+						// Also skip any non-finals series MVP since there will be multiple of them
+						if (typeof award.statRange === "number" && award.statRange !== -1) {
+							continue;
+						}
+
+						const winner = award.winner[0];
+						if (winner?.pid === undefined) {
+							continue;
+						}
+						const { pid, tid } = winner;
+
+						const p = await playersCache.get(pid);
+						if (!p) {
+							continue;
+						}
+
+						// Manually add pos, since ratings could have been deleted or something
+						const pos =
+							p.ratings.findLast((row) => row.season === season)?.pos ??
+							last(p.ratings).pos;
+
+						const abbrev = getAbbrev(tid, teamsByTid, season);
+
+						const awardName = formatAwardNamePrefix(award, season);
+						const awardShortName = formatAwardNamePrefix(award, season, true);
+
+						if (!seenAwardTypes.has(awardShortName)) {
+							seenAwardTypes.add(awardShortName);
+							awardTypes.push({
+								name: awardName,
+								shortName: awardShortName,
+							});
+						}
+
+						awards.push({
+							abbrev,
+							awardName,
+							awardShortName,
+							count: 0,
+							name: `${p.firstName} ${p.lastName}`,
+							pid,
+							pos: bySport({
+								baseball: pos,
+								basketball: undefined,
+								football: pos,
+								hockey: pos,
+							}),
+							tid,
+						});
+					}
+				}
+
+				seasons.push({
+					season,
+					runnerUp: undefined as FormattedTeam | undefined,
+					champ: undefined as FormattedTeam | undefined,
+					awards,
+				});
+			}
+
+			const playoffSeries = await idb.merged.playoffSeries.getAll();
+			const playoffSeriesBySeason = groupByUnique(playoffSeries, "season");
+
+			for (const row of seasons) {
+				const season = row.season;
+
+				// Only check for finals result for seasons that are over
+				const series = playoffSeriesBySeason[season];
+
+				if (series) {
+					const finalRound = series.series.at(-1);
+					if (!finalRound) {
+						// 0 length numGamesPlayoffSeries, no playoffs
+						const t = teams.find((t) =>
+							t.seasonAttrs.find(
+								(ts) => ts.season === season && ts.playoffRoundsWon === 0,
+							),
+						);
+
+						if (t) {
+							row.champ = formatTeam(t, season, 1);
+						}
+					} else {
+						const finals = finalRound[0];
+
+						// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+						if (!finals || !finals.away) {
+							continue;
+						}
+
+						let champ;
+						let runnerUp;
+						if (finals.home.won > finals.away.won) {
+							champ = finals.home;
+							runnerUp = finals.away;
+						} else {
+							champ = finals.away;
+							runnerUp = finals.home;
+						}
+
+						row.champ = formatTeamWrapper(champ, season);
+						row.runnerUp = formatTeamWrapper(runnerUp, season);
 					}
 				} else {
-					const finals = finalRound[0];
+					// This is for people with some missing playoffSeries data, either because it was deleted or because it never existed (like adding teamSeasons manually for past years)
+					const teamSeasons = await idb.merged.teamSeasons.getAll({ season });
 
-					// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-					if (!finals || !finals.away) {
-						continue;
-					}
+					const numPlayoffRounds = g.get(
+						"numGamesPlayoffSeries",
+						season,
+					).length;
 
 					let champ;
 					let runnerUp;
-					if (finals.home.won > finals.away.won) {
-						champ = finals.home;
-						runnerUp = finals.away;
-					} else {
-						champ = finals.away;
-						runnerUp = finals.home;
+					for (const row of teamSeasons) {
+						if (row.playoffRoundsWon === numPlayoffRounds) {
+							champ = {
+								seed: undefined,
+								tid: row.tid,
+							};
+						} else if (row.playoffRoundsWon === numPlayoffRounds - 1) {
+							runnerUp = {
+								seed: undefined,
+								tid: row.tid,
+							};
+						}
+
+						if (champ && runnerUp) {
+							break;
+						}
 					}
 
-					row.champ = formatTeamWrapper(champ);
-					row.runnerUp = formatTeamWrapper(runnerUp);
-				}
-			} else {
-				// This is for people with some missing playoffSeries data, either because it was deleted or because it never existed (like adding teamSeasons manually for past years)
-				const teamSeasons = await idb.getCopies.teamSeasons(
-					{ season },
-					"noCopyCache",
-				);
-
-				const numPlayoffRounds = g.get("numGamesPlayoffSeries", season).length;
-
-				let champ;
-				let runnerUp;
-				for (const row of teamSeasons) {
-					if (row.playoffRoundsWon === numPlayoffRounds) {
-						champ = {
-							seed: undefined,
-							tid: row.tid,
-						};
-					} else if (row.playoffRoundsWon === numPlayoffRounds - 1) {
-						runnerUp = {
-							seed: undefined,
-							tid: row.tid,
-						};
+					if (champ) {
+						row.champ = formatTeamWrapper(champ, season);
 					}
-
-					if (champ && runnerUp) {
-						break;
+					if (runnerUp) {
+						row.runnerUp = formatTeamWrapper(runnerUp, season);
 					}
 				}
-
-				if (champ) {
-					row.champ = formatTeamWrapper(champ);
-				}
-				if (runnerUp) {
-					row.runnerUp = formatTeamWrapper(runnerUp);
-				}
-			}
-		}
-
-		// Count up number of championships/awards per tid/pid
-		const counts: Record<string, Record<number, number>> = {
-			runnerUp: {},
-			champ: {},
-		};
-		for (const award of SIMPLE_AWARDS) {
-			counts[award] = {};
-		}
-
-		const teamCategories = ["champ", "runnerUp"];
-		for (const row of seasons) {
-			for (const category of teamCategories) {
-				if (!row[category]) {
-					continue;
-				}
-
-				const tid = row[category].tid;
-				const categoryCounts = counts[category]!;
-				categoryCounts[tid] ??= 0;
-				categoryCounts[tid] += 1;
-				row[category].count = categoryCounts[tid];
 			}
 
-			for (const category of SIMPLE_AWARDS) {
-				if (!row[category]) {
-					continue;
+			// Count up number of championships/awards per tid/pid
+			const counts: {
+				awards: Record<string, Record<number, number>>;
+				champ: Record<number, number>;
+				runnerUp: Record<number, number>;
+			} = {
+				awards: {},
+				champ: {},
+				runnerUp: {},
+			};
+
+			const teamCategories = ["champ", "runnerUp"] as const;
+			for (const row of seasons.toReversed()) {
+				for (const category of teamCategories) {
+					if (!row[category]) {
+						continue;
+					}
+
+					const tid = row[category].tid;
+					const categoryCounts = counts[category];
+					categoryCounts[tid] ??= 0;
+					categoryCounts[tid] += 1;
+					row[category].count = categoryCounts[tid];
 				}
 
-				const pid = row[category].pid;
-				const categoryCounts = counts[category]!;
-				categoryCounts[pid] ??= 0;
-				categoryCounts[pid] += 1;
-				row[category].count = categoryCounts[pid];
+				for (const award of row.awards) {
+					const shortName = award.awardShortName;
+					const pid = award.pid;
+					counts.awards[shortName] ??= {};
+					counts.awards[shortName][pid] ??= 0;
+					counts.awards[shortName][pid] += 1;
+					award.count = counts.awards[shortName][pid];
+				}
 			}
+
+			return {
+				awards: awardTypes,
+				seasons,
+			};
 		}
-
-		return {
-			awards: awardTypes,
-			seasons,
-		};
-	}
-};
-
-export default updateHistory;
+	},
+});

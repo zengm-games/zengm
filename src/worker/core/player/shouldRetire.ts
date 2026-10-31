@@ -5,7 +5,7 @@ import { last, range } from "../../../common/utils.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import realRosters from "../realRosters/index.ts";
 import { idb } from "../../db/index.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { gauss } from "../../../common/random.ts";
 
 const checkForceRetireSeasons = (p: Player) => {
@@ -22,7 +22,7 @@ const checkForceRetireSeasons = (p: Player) => {
 
 	// If a season has games played, it can't be a redshirt season
 	for (const row of p.stats) {
-		if (row.gp > 0) {
+		if ((row.gp ?? 0) > 0) {
 			redshirtSeasons.delete(row.season);
 		}
 	}
@@ -126,7 +126,7 @@ const shouldRetire = async (p: Player): Promise<boolean> => {
 	// Originally this used pot, but pot is about 1.1*value, and value is consistent in leagues with different ratings distributions
 	const pot = 1.1 * p.value;
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		const maxAge = 33;
 		const minPot = 40;
 
@@ -135,7 +135,7 @@ const shouldRetire = async (p: Player): Promise<boolean> => {
 			let ws = 0;
 			for (const stats of p.stats) {
 				if (stats.season === g.get("season") && !stats.playoffs) {
-					ws += stats.dws + stats.ows;
+					ws += (stats.dws ?? 0) + (stats.ows ?? 0);
 				}
 			}
 

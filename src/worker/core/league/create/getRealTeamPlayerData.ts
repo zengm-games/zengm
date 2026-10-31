@@ -1,6 +1,6 @@
 import {
-	RealPlayerPhotosSchema,
-	RealTeamInfoSchema,
+	realPlayerPhotosSchema,
+	realTeamInfoSchema,
 	type Conditions,
 } from "../../../../common/types.ts";
 import { idb } from "../../../db/index.ts";
@@ -23,7 +23,7 @@ const getRealTeamPlayerData = async (
 		if (fileHasPlayers) {
 			const raw = await attributesStore.get("realPlayerPhotos");
 			if (raw !== undefined) {
-				const result = RealPlayerPhotosSchema.safeParse(raw);
+				const result = realPlayerPhotosSchema.safeParse(raw);
 				if (result.success) {
 					realPlayerPhotos = result.data;
 				} else {
@@ -42,7 +42,7 @@ const getRealTeamPlayerData = async (
 		if (fileHasTeams) {
 			const raw = await attributesStore.get("realTeamInfo");
 			if (raw !== undefined) {
-				const result = RealTeamInfoSchema.safeParse(raw);
+				const result = realTeamInfoSchema.safeParse(raw);
 				if (result.success) {
 					realTeamInfo = result.data;
 				} else {

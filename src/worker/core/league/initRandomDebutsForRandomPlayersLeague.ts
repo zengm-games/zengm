@@ -6,7 +6,7 @@ import type {
 import type { Settings } from "../../views/settings.ts";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory.ts";
 import type { Basketball } from "../realRosters/loadData.basketball.ts";
-import { countBy, last, omit, orderBy } from "../../../common/utils.ts";
+import { countBy, last, omit } from "../../../common/utils.ts";
 import { getNumPlayersPerTeam } from "./create/createRandomPlayers.ts";
 import { choice, shuffle } from "../../../common/random.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
@@ -57,10 +57,9 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 	const initialDraftYear = phase > PHASE.DRAFT ? season + 1 : season;
 
 	const seenSlugs = new Set<string>(
-		// @ts-expect-error
-		players.filter((p) => p.srID !== undefined).map((p) => p.srID),
+		players.map((p) => p.srID).filter((srID) => srID !== undefined),
 	);
-	const realPlayers = orderBy(basketball.ratings, ["slug", "season"])
+	const realPlayers = basketball.ratings
 		.filter((ratings) => {
 			// Only keep rookie seasons
 			const seen = seenSlugs.has(ratings.slug);

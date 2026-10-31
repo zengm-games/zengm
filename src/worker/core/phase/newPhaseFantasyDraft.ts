@@ -24,8 +24,8 @@ const newPhaseFantasyDraft = async (
 
 	for (const p of playersUndrafted) {
 		p.tid = PLAYER.UNDRAFTED_FANTASY_TEMP;
-		await idb.cache.players.put(p);
 	}
+	await idb.cache.players.putAll(playersUndrafted);
 
 	// Make all players draftable
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
@@ -47,19 +47,18 @@ const newPhaseFantasyDraft = async (
 				p.stats.pop();
 			}
 		}
-
-		await idb.cache.players.put(p);
 	}
+	await idb.cache.players.putAll(players);
 
 	// Return traded draft picks to original teams
-	const draftPicks = await idb.cache.draftPicks.getAll();
+	const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
+		(dp) => dp.tid !== dp.originalTid,
+	);
 
 	for (const dp of draftPicks) {
-		if (dp.tid !== dp.originalTid) {
-			dp.tid = dp.originalTid;
-			await idb.cache.draftPicks.put(dp);
-		}
+		dp.tid = dp.originalTid;
 	}
+	await idb.cache.draftPicks.putAll(draftPicks);
 
 	return {
 		updateEvents: ["playerMovement"],

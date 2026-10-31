@@ -1,24 +1,26 @@
 import clsx from "clsx";
 import { m, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { emitter, type Message } from "../../util/notify.ts";
 import { SafeHtml } from "../SafeHtml.tsx";
 import { useLocal } from "../../util/local.ts";
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/constants.ts";
+import type { LogEventType } from "../../../common/types.ts";
 
 const MAX_NUM_NOTIFICATIONS = 5;
 
-const NOTIFICATION_TIMEOUT = 8000;
+const NOTIFICATION_TIMEOUT = 8_000;
 
 const Notification = ({
 	extraClass,
-	htmlIsSafe,
 	message,
 	persistent,
 	title,
 	remove,
 }: Message & { remove: () => void }) => {
 	const notificationElement = useRef<HTMLDivElement>(null);
+
+	const onRemove = useEffectEvent(remove);
 
 	useEffect(() => {
 		let timeoutID: number;
@@ -28,8 +30,15 @@ const Notification = ({
 		const element = notificationElement.current;
 
 		const notificationTimeout = () => {
-			timeoutID = setTimeout(remove, timeoutRemaining);
+			timeoutID = setTimeout(() => {
+				onRemove();
+			}, timeoutRemaining);
 			timeoutStart = Date.now();
+		};
+
+		const pauseTimeout = () => {
+			clearTimeout(timeoutID);
+			timeoutRemaining -= Date.now() - timeoutStart;
 		};
 
 		if (!persistent && element) {
@@ -37,20 +46,18 @@ const Notification = ({
 			notificationTimeout();
 
 			// When hovering over, don't count towards timeout
-			element.addEventListener("mouseenter", () => {
-				clearTimeout(timeoutID);
-				timeoutRemaining -= Date.now() - timeoutStart;
-			});
+			element.addEventListener("mouseenter", pauseTimeout);
 			element.addEventListener("mouseleave", notificationTimeout);
 		}
 
 		return () => {
 			window.clearTimeout(timeoutID);
 			if (element) {
+				element.removeEventListener("mouseenter", pauseTimeout);
 				element.removeEventListener("mouseleave", notificationTimeout);
 			}
 		};
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [persistent]);
 
 	return (
 		<div className={clsx("notification", extraClass)} ref={notificationElement}>
@@ -59,7 +66,7 @@ const Notification = ({
 				onClick={remove}
 				title="Dismiss notification"
 			>
-				&times;
+				<CloseIcon />
 			</button>
 			{title ? (
 				<>
@@ -67,7 +74,8 @@ const Notification = ({
 					<br />
 				</>
 			) : null}
-			<SafeHtml dirty={message} htmlIsSafe={htmlIsSafe} />
+
+			{typeof message === "string" ? <SafeHtml dirty={message} /> : message}
 		</div>
 	);
 };
@@ -77,6 +85,23 @@ const initialNotifications: Message[] = [];
 const unbind = emitter.on("notification", (notification) => {
 	initialNotifications.push(notification);
 });
+
+const CloseIcon = () => {
+	// https://iconbuddy.com/rivet-icons/close
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="1em"
+			height="1em"
+			viewBox="0 0 16 16"
+		>
+			<path
+				fill="currentColor"
+				d="m3.5 2.086l4.5 4.5l4.5-4.5L13.914 3.5L9.414 8l4.5 4.5l-1.414 1.414l-4.5-4.5l-4.5 4.5L2.086 12.5l4.5-4.5l-4.5-4.5z"
+			/>
+		</svg>
+	);
+};
 
 export const Notifications = () => {
 	const { stickyFooterAd, stickyFormButtons, userTids } = useLocal([
@@ -90,6 +115,10 @@ export const Notifications = () => {
 	useEffect(() => {
 		unbind();
 
+		const MAX_TO_SHOW_BY_TYPE: Partial<Record<LogEventType, number>> = {
+			undo: 1,
+		};
+
 		const unbind2 = emitter.on("notification", (notification) => {
 			// Non-persistent notifications, only show if page is visible, for performance
 			if (!notification.persistent && document.hidden) {
@@ -98,6 +127,13 @@ export const Notifications = () => {
 
 			setNotifications((currentNotifications) => {
 				let newNotifications = [...currentNotifications, notification];
+
+				const maxToShowByType = MAX_TO_SHOW_BY_TYPE[notification.type];
+				if (maxToShowByType !== undefined) {
+					newNotifications = newNotifications.filter(
+						(x) => x.type !== notification.type || x === notification,
+					);
+				}
 
 				// Limit displayed notifications to 5 - all the persistent ones, plus the newest transient ones
 				let numToDelete = newNotifications.length - MAX_NUM_NOTIFICATIONS;
@@ -174,7 +210,7 @@ export const Notifications = () => {
 						bottom: buttonBottom,
 					}}
 				>
-					&times;
+					<CloseIcon />
 				</button>
 			) : null}
 			<ul

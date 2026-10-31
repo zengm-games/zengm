@@ -1,10 +1,23 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { DraftPick, UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { DraftPick } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 import { getEstPicks } from "../core/team/ValueChangeCalculator.ts";
 import { PLAYER } from "../../common/constants.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+import { team } from "../core/index.ts";
+
+const processInputs = (params: RouteParams<"draftPicks">) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	return {
+		tid,
+		abbrev,
+	};
+};
 
 const adjustProjectedPick = ({
 	projectedPick,
@@ -39,16 +52,13 @@ const adjustProjectedPick = ({
 export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 	const draftPicks = [];
 
-	const teamsRaw = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid", "abbrev", "playThroughInjuries"],
-			seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
-			stats: ["gp", "mov"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teamsRaw = await team.getFormattedAll({
+		attrs: ["tid", "abbrev", "playThroughInjuries"],
+		seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
+		stats: ["gp", "mov"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 
 	const teamsWithRankings = await addPowerRankingsStuffToTeams(
 		teamsRaw,
@@ -74,12 +84,14 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 						};
 					})
 					.sort((a, b) => b.ovr - a.ovr);
-				const { estPicks } = await getEstPicks(teamOvrsSorted);
-				estPicksCache = estPicks;
+				estPicksCache = await getEstPicks(teamOvrsSorted);
 			}
 
 			projectedPick = adjustProjectedPick({
-				projectedPick: estPicksCache[dp.originalTid]!,
+				projectedPick: (dp.season > g.get("season")
+					? estPicksCache.future
+					: estPicksCache
+				).estPicks[dp.originalTid]!,
 				numSeasons: dp.season - g.get("season"),
 				numTeams: teamsWithRankings.length,
 			});
@@ -87,23 +99,23 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 		// Extra filter at the end is for TypeScript
 		const events = (
-			await idb.getCopies.events({
-				dpid: dp.dpid,
-				filter: (event) => event.type === "trade",
-			})
+			await idb.merged.events.getAll(
+				{ dpid: dp.dpid },
+				{ filter: (event) => event.type === "trade" },
+			)
 		).filter((row) => row.type === "trade");
 
 		let trades;
 		if (events.length > 0) {
 			trades = events.map((event) => {
-				let tid = PLAYER.DOES_NOT_EXIST;
+				let tid: number = PLAYER.DOES_NOT_EXIST;
 
 				// Which team traded the pick?
 				if (event.teams) {
 					for (const i of [0, 1] as const) {
 						if (
 							event.teams[i].assets.some(
-								(asset) => (asset as any).dpid === dp.dpid,
+								(asset) => "dpid" in asset && asset.dpid === dp.dpid,
 							)
 						) {
 							tid = event.tids[i];
@@ -140,42 +152,40 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 	return draftPicks;
 };
 
-const updateDraftPicks = async (
-	{ abbrev, tid }: ViewInput<"draftPicks">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("playerMovement") ||
-		updateEvents.includes("newPhase") ||
-		abbrev !== state.abbrev
-	) {
-		const draftPicksRaw = (await idb.cache.draftPicks.getAll()).filter(
-			(dp) => dp.tid === tid || dp.originalTid === tid,
-		);
+export default defineView({
+	id: "draftPicks",
+	processInputs,
+	load: async ({ inputs: { abbrev, tid }, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			updateEvents.has("gameSim") ||
+			updateEvents.has("playerMovement") ||
+			updateEvents.has("newPhase") ||
+			abbrev !== prevInputs?.abbrev
+		) {
+			const draftPicksRaw = (await idb.cache.draftPicks.getAll()).filter(
+				(dp) => dp.tid === tid || dp.originalTid === tid,
+			);
 
-		const draftPicksProcessed = await processDraftPicks(draftPicksRaw);
+			const draftPicksProcessed = await processDraftPicks(draftPicksRaw);
 
-		// Do this after processDraftPicks so processDraftPicks can use the same caches for both
-		const draftPicks = [];
-		const draftPicksOutgoing = [];
-		for (const dp of draftPicksProcessed) {
-			if (dp.tid === tid) {
-				draftPicks.push(dp);
-			} else if (dp.originalTid === tid) {
-				draftPicksOutgoing.push(dp);
+			// Do this after processDraftPicks so processDraftPicks can use the same caches for both
+			const draftPicks = [];
+			const draftPicksOutgoing = [];
+			for (const dp of draftPicksProcessed) {
+				if (dp.tid === tid) {
+					draftPicks.push(dp);
+				} else if (dp.originalTid === tid) {
+					draftPicksOutgoing.push(dp);
+				}
 			}
+
+			return {
+				abbrev,
+				draftPicks,
+				draftPicksOutgoing,
+				tid,
+			};
 		}
-
-		return {
-			abbrev,
-			draftPicks,
-			draftPicksOutgoing,
-			tid,
-		};
-	}
-};
-
-export default updateDraftPicks;
+	},
+});

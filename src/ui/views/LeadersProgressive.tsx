@@ -66,68 +66,70 @@ const LeadersProgressive = ({
 
 	const spacer = <div style={{ width: 20 }} />;
 
-	const rows: DataTableRow[] = allLeaders.map(({ season, ...row }) => {
-		return {
-			key: season,
-			metadata: row.yearByYear
-				? {
-						type: "player",
-						pid: row.yearByYear.pid,
-						season,
-						playoffs,
-					}
-				: undefined,
-			data: [
-				row.linkSeason ? (
-					<a href={helpers.leagueUrl(["history", season])}>{season}</a>
-				) : (
-					season
-				),
-				...leaderTypes.flatMap((type, i) => {
-					const p = row[type];
+	const rows: DataTableRow<"player">[] = allLeaders.map(
+		({ season, ...row }) => {
+			return {
+				key: season,
+				metadata: row.yearByYear
+					? {
+							type: "player",
+							pid: row.yearByYear.pid,
+							season,
+							playoffs,
+						}
+					: undefined,
+				data: [
+					row.linkSeason ? (
+						<a href={helpers.leagueUrl(["history", season])}>{season}</a>
+					) : (
+						season
+					),
+					...leaderTypes.flatMap((type, i) => {
+						const p = row[type];
 
-					let tableRow: any[];
-					if (!p) {
-						tableRow = [undefined, undefined];
-					} else {
-						tableRow = [
-							{
-								...wrappedPlayerNameLabels({
-									pid: p.pid,
-									season,
-									defaultWatch: p.watch,
-									skills: p.skills,
-									jerseyNumber: p.jerseyNumber,
-									firstName: p.firstName,
-									firstNameShort: p.firstNameShort,
-									lastName: p.lastName,
-									count: type === "yearByYear" ? row[type]?.count : undefined,
-								}),
-								classNames: {
-									"table-danger": p.hof,
-									"table-info": p.userTeam,
+						let tableRow: any[];
+						if (!p) {
+							tableRow = [undefined, undefined];
+						} else {
+							tableRow = [
+								{
+									...wrappedPlayerNameLabels({
+										pid: p.pid,
+										season,
+										defaultWatch: p.watch,
+										skills: p.skills,
+										jerseyNumber: p.jerseyNumber,
+										firstName: p.firstName,
+										firstNameShort: p.firstNameShort,
+										lastName: p.lastName,
+										count: type === "yearByYear" ? row[type]?.count : undefined,
+									}),
+									classNames: {
+										"table-danger": p.hof,
+										"table-info": p.userTeam,
+									},
 								},
-							},
-							{
-								value: helpers.roundStat(p.stat, stat, totals),
-								sortValue: p.stat,
-								classNames: {
-									"table-danger": p.hof,
-									"table-info": p.userTeam,
+								{
+									value: helpers.roundStat(p.stat, stat, totals),
+									sortValue: p.stat,
+									classNames: {
+										"table-danger": p.hof,
+										"table-info": p.userTeam,
+									},
 								},
-							},
-						];
-					}
+							];
+						}
 
-					if (i !== 0) {
-						tableRow.unshift(spacer);
-					}
+						if (i !== 0) {
+							tableRow.unshift(spacer);
+						}
 
-					return tableRow;
-				}),
-			],
-		};
-	});
+						return tableRow;
+					}),
+				],
+			};
+		},
+	);
 
 	return (
 		<>

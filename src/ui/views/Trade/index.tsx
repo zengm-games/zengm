@@ -11,6 +11,7 @@ import Summary from "./Summary.tsx";
 import type { TradeTeams, View } from "../../../common/types.ts";
 import clsx from "clsx";
 import { SaveTrade } from "../../components/SaveTrade.tsx";
+import { showUndoNotification } from "../../components/UndoNotification.tsx";
 
 export type HandleToggle = (
 	userOrOther: "other" | "user",
@@ -18,6 +19,33 @@ export type HandleToggle = (
 	includeOrExclude: "include" | "exclude",
 	id: number,
 ) => Promise<void>;
+
+const TradeSideText = ({
+	boldNothing,
+	numPicks,
+	numPlayers,
+}: {
+	boldNothing?: boolean;
+	numPicks: number;
+	numPlayers: number;
+}) => {
+	if (numPlayers === 0 && numPicks === 0) {
+		if (boldNothing) {
+			return <b className="text-danger">nothing</b>;
+		}
+		return "nothing";
+	}
+
+	if (numPlayers === 0) {
+		return `${numPicks} ${helpers.plural("pick", numPicks)}`;
+	}
+
+	if (numPicks === 0) {
+		return `${numPlayers} ${helpers.plural("player", numPlayers)}`;
+	}
+
+	return `${numPlayers} ${helpers.plural("player", numPlayers)} and ${numPicks} ${helpers.plural("pick", numPicks)}`;
+};
 
 const Trade = (props: View<"trade">) => {
 	const [state, setState] = useState({
@@ -221,20 +249,6 @@ const Trade = (props: View<"trade">) => {
 		}));
 	};
 
-	const handleClickPropose = async () => {
-		const output = await toWorker("main", "proposeTrade", state.forceTrade);
-
-		if (output) {
-			const [accepted, message] = output;
-			setState((prevState) => ({
-				...prevState,
-				accepted,
-				message,
-				prevTeams: undefined,
-			}));
-		}
-	};
-
 	const {
 		otherTeamsWantToHire,
 		lost,
@@ -257,11 +271,56 @@ const Trade = (props: View<"trade">) => {
 		userPids,
 		otherDpids,
 		otherPids,
+		resetMessage,
 	} = props;
+
+	const handleClickPropose = async () => {
+		const { accepted, message, undoKey } = await toWorker(
+			"main",
+			"proposeTrade",
+			state.forceTrade,
+		);
+
+		setState((prevState) => ({
+			...prevState,
+			accepted,
+			message,
+			prevTeams: undefined,
+		}));
+
+		if (undoKey !== undefined) {
+			showUndoNotification({
+				actionName: "trade",
+				undoKey,
+				title: (
+					<>
+						You traded{" "}
+						<TradeSideText
+							numPicks={userDpids.length}
+							numPlayers={userPids.length}
+						/>{" "}
+						for{" "}
+						<TradeSideText
+							boldNothing
+							numPicks={otherDpids.length}
+							numPlayers={otherPids.length}
+						/>
+					</>
+				),
+			});
+		}
+	};
 
 	useTitleBar({
 		title: "Trade",
 	});
+
+	if (resetMessage && state.message !== null) {
+		setState((state) => ({
+			...state,
+			message: null,
+		}));
+	}
 
 	const {
 		challengeNoRatings,
@@ -427,6 +486,7 @@ const Trade = (props: View<"trade">) => {
 						<Summary
 							handleToggle={handleChangeAsset}
 							ref={summaryText}
+							prevTeams={state.prevTeams}
 							summary={summary}
 						/>
 

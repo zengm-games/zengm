@@ -8,7 +8,6 @@ import {
 import type { Div, GameAttributesLeague } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings.ts";
 import groupScheduleSeries from "./groupScheduleSeries.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import groupScheduleCompact from "./groupScheduleCompact.ts";
 import { shuffle } from "../../../common/random.ts";
 
@@ -896,7 +895,7 @@ const newSchedule = (
 	if (Object.hasOwn(g, "groupScheduleSeries") && g.get("groupScheduleSeries")) {
 		// Group schedule into series
 		tids = groupScheduleSeries(tids);
-	} else if (isSport("football")) {
+	} else if (__SPORT === "football") {
 		// For football, ideally we'd have explicit bye weeks, but failing that we should at least make the schedule as compact as possible. Whereas the code below makes it only somewhat compact.
 		tids = groupScheduleCompact(tids);
 	} else {

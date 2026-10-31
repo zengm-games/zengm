@@ -8,7 +8,7 @@ import {
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
 import { frivolities } from "../views/Frivolities.tsx";
 import { takeScreenshot } from "./takeScreenshot.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const depthChart: MenuItemLink[] =
 	DEPTH_CHART_NAME !== undefined
@@ -17,7 +17,7 @@ const depthChart: MenuItemLink[] =
 					type: "link",
 					active: (pageID, pathname) =>
 						pageID === "depth" &&
-						(!isSport("baseball") ||
+						(__SPORT !== "baseball" ||
 							!pathname ||
 							(!pathname.includes("/D") && !pathname.includes("/P"))),
 					league: true,
@@ -28,7 +28,7 @@ const depthChart: MenuItemLink[] =
 			]
 		: [];
 
-if (isSport("baseball")) {
+if (__SPORT === "baseball") {
 	depthChart.push(
 		{
 			type: "link",
@@ -50,15 +50,6 @@ if (isSport("baseball")) {
 		},
 	);
 }
-
-const scheduledEvents: MenuItemLink = {
-	type: "link",
-	active: (pageID) => pageID === "scheduledEvents",
-	league: true,
-	commandPalette: true,
-	path: ["scheduled_events"],
-	text: "Scheduled Events",
-};
 
 export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	{
@@ -709,12 +700,12 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: (pageID) => pageID === "editAwards",
+				active: (pageID) => pageID === "editAwardWinners",
 				godMode: true,
 				league: true,
 				commandPalette: true,
-				path: ["edit_awards"],
-				text: "Edit Awards",
+				path: ["edit_award_winners"],
+				text: "Edit Award Winners",
 			},
 			{
 				type: "link",
@@ -748,6 +739,19 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["fantasy_draft"],
 				text: "Fantasy Draft",
 			},
+			...(REAL_PLAYERS_INFO
+				? ([
+						{
+							type: "link",
+							active: (pageID) => pageID === "eightyTwoZeroDraft",
+							godMode: true,
+							league: true,
+							commandPalette: true,
+							path: ["82-0_draft"],
+							text: "82-0 Draft",
+						},
+					] as MenuItemLink[])
+				: []),
 			{
 				type: "link",
 				active: (pageID) => pageID === "frivolities",
@@ -805,7 +809,14 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["schedule_editor"],
 				text: "Schedule Editor",
 			},
-			...(isSport("basketball") ? [scheduledEvents] : []),
+			{
+				type: "link",
+				active: (pageID) => pageID === "scheduledEvents",
+				league: true,
+				commandPalette: true,
+				path: ["scheduled_events"],
+				text: "Scheduled Events",
+			},
 			{
 				type: "link",
 				league: true,
@@ -885,6 +896,14 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: (pageID) => pageID === "awardSettings",
+				league: true,
+				commandPalette: true,
+				path: ["award_settings"],
+				text: "Award Settings",
+			},
+			{
+				type: "link",
 				active: (pageID) => pageID === "dangerZone",
 				league: true,
 				commandPalette: true,
@@ -901,17 +920,14 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		commandPalette: true,
 		commandPaletteOnly: true,
 		children: Object.entries(frivolities).flatMap(([category, rows]) =>
-			rows.map(
-				(row) =>
-					({
-						type: "link",
-						league: true,
-						commandPalette: true,
-						commandPaletteOnly: true,
-						path: ["frivolities", ...row.urlParts],
-						text: `${category} > ${row.name}`,
-					}) as MenuItemLink,
-			),
+			rows.map((row) => ({
+				type: "link",
+				league: true,
+				commandPalette: true,
+				commandPaletteOnly: true,
+				path: ["frivolities", ...row.urlParts],
+				text: `${category} > ${row.name}`,
+			})),
 		),
 	},
 	{

@@ -1,4 +1,4 @@
-import fuzzRating from "./fuzzRating.ts";
+import { applyFuzz, getFuzz } from "./fuzzRating.ts";
 
 const fuzzOvrs = (ovrs: Record<string, number> | undefined, fuzz: number) => {
 	if (ovrs === undefined) {
@@ -7,9 +7,10 @@ const fuzzOvrs = (ovrs: Record<string, number> | undefined, fuzz: number) => {
 
 	const fuzzed = { ...ovrs };
 
-	if (fuzz) {
+	const fuzzValue = getFuzz(fuzz);
+	if (fuzzValue !== 0) {
 		for (const key of Object.keys(fuzzed)) {
-			fuzzed[key] = fuzzRating(fuzzed[key]!, fuzz);
+			fuzzed[key] = applyFuzz(fuzzed[key]!, fuzzValue);
 		}
 	}
 

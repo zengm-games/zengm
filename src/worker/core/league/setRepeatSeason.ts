@@ -52,8 +52,8 @@ const setRepeatSeason = async (
 	// Recompute player values, since with repeatSeason enabled, age and pot are ignored in player value
 	for (const p of allPlayers) {
 		await player.updateValues(p);
-		await idb.cache.players.put(p);
 	}
+	await idb.cache.players.putAll(allPlayers);
 };
 
 export default setRepeatSeason;

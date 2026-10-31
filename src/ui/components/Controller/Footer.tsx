@@ -88,7 +88,7 @@ export const Footer = memo(() => {
 				>
 					<img
 						alt=""
-						src={`https://zengm.com/files/logo-${process.env.SPORT}.svg`}
+						src={`https://zengm.com/files/logo-${__SPORT}.svg`}
 						style={{
 							maxHeight: "100%",
 							maxWidth: "100%",

@@ -14,7 +14,7 @@ const rosterAutoSort = async (
 		basketball: rosterAutoSortBasketball,
 		football: rosterAutoSortFootball,
 		hockey: rosterAutoSortHockey,
-	})(tid, onlyNewPlayers, pos as any);
+	})(tid, onlyNewPlayers, pos);
 };
 
 export default rosterAutoSort;

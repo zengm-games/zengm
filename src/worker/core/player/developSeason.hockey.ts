@@ -143,6 +143,9 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	},
 };
 
+// Cached for performance, since developSeason is called a lot in monteCarloPot
+const ratingsFormulasEntries = helpers.entries(ratingsFormulas);
+
 const calcBaseChange = (age: number, coachingLevel: number): number => {
 	let val: number;
 
@@ -200,10 +203,10 @@ const developSeason = (
 
 	const baseChange = calcBaseChange(age, coachingLevel);
 
-	for (const key of helpers.keys(ratingsFormulas)) {
-		const posCoeff = ratingsFormulas[key].posCoeff(ratings.pos);
-		const ageModifier = ratingsFormulas[key].ageModifier(age);
-		const changeLimits = ratingsFormulas[key].changeLimits(age);
+	for (const [key, formula] of ratingsFormulasEntries) {
+		const posCoeff = formula.posCoeff(ratings.pos);
+		const ageModifier = formula.ageModifier(age);
+		const changeLimits = formula.changeLimits(age);
 
 		ratings[key] = limitRating(
 			ratings[key] +

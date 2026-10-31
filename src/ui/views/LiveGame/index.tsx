@@ -9,14 +9,15 @@ import {
 	useState,
 	type ReactNode,
 	memo,
-	type MutableRefObject,
+	Fragment,
+	type RefObject,
 } from "react";
 import { TeamLogoInline } from "../../components/TeamLogoInline.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../../util/processLiveGameEvents.football.tsx";
@@ -34,6 +35,10 @@ import {
 import { Confetti } from "./Confetti.tsx";
 import { BoxScoreRow } from "../../components/BoxScoreRow.tsx";
 import { getPeriodName } from "../../../common/getPeriodName.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../../util/boxScoreDisplayOrder.ts";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -133,7 +138,7 @@ const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntryInfo }) => {
 		let scoreBlock = null;
 		if (entry.score) {
-			if (isSport("basketball")) {
+			if (__SPORT === "basketball") {
 				scoreBlock = entry.score;
 			} else {
 				scoreBlock = (
@@ -141,7 +146,7 @@ const PlayByPlayEntry = memo(
 						<span
 							className={`fw-bold ${
 								entry.scoreDiff >= 0 &&
-								(!isSport("football") || entry.scoreType !== "Safety")
+								(__SPORT !== "football" || entry.scoreType !== "Safety")
 									? "text-success"
 									: "text-danger"
 							}`}
@@ -194,12 +199,12 @@ const PlayByPlayEntry = memo(
 							{entry.time ? (
 								<div className="text-body-secondary me-auto">{entry.time}</div>
 							) : null}
-							{isSport("basketball") ? scoreBlock : null}
+							{__SPORT === "basketball" ? scoreBlock : null}
 						</div>
 					) : null}
-					{isSport("hockey") ? scoreBlock : null}
+					{__SPORT === "hockey" ? scoreBlock : null}
 					{entry.text}
-					{!isSport("basketball") && !isSport("hockey") ? (
+					{__SPORT !== "basketball" && __SPORT !== "hockey" ? (
 						<div>{scoreBlock}</div>
 					) : null}
 					{entry.outs !== undefined ? (
@@ -219,9 +224,9 @@ const PlayByPlay = ({
 	entries,
 	playByPlayDivRef,
 }: {
-	boxScore: any;
+	boxScore: unknown;
 	entries: PlayByPlayEntryInfo[];
-	playByPlayDivRef: MutableRefObject<HTMLDivElement | null>;
+	playByPlayDivRef: RefObject<HTMLDivElement | null>;
 }) => {
 	useEffect(() => {
 		const setPlayByPlayDivHeight = () => {
@@ -244,15 +249,14 @@ const PlayByPlay = ({
 		return () => {
 			window.removeEventListener("optimizedResize", setPlayByPlayDivHeight);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [playByPlayDivRef]);
 
 	return (
 		<div
 			className="live-game-playbyplay d-flex flex-column gap-3"
 			ref={playByPlayDivRef}
 			style={{
-				scrollMarginTop: 174,
+				scrollMarginTop: 130,
 			}}
 		>
 			{entries.map((entry) => (
@@ -299,7 +303,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 	const quarters = useRef([]);
 	const possessionChange = useRef<boolean | undefined>(undefined);
 	const componentIsMounted = useRef(false);
-	const events = useRef<any[] | undefined>(undefined);
+	const events = useRef<unknown[] | undefined>(undefined);
 	const sportState = useRef(
 		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
 	);
@@ -315,7 +319,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
-		(force?: boolean): number => {
+		function processToNextPauseInner(force?: boolean): number {
 			if (
 				!componentIsMounted.current ||
 				(pausedRef.current && !force) ||
@@ -353,19 +357,19 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			if (text !== undefined) {
 				let outs;
-				if (isSport("baseball") && output.sportState.outs > prevOuts) {
+				if (__SPORT === "baseball" && output.sportState.outs > prevOuts) {
 					outs = output.sportState.outs;
 				}
 
 				// For baseball, always show logo of the batting team, since t is not always sent in output (or maybe never sent)
-				const t = isSport("baseball") ? sportState.current.o : output.t;
+				const t = __SPORT === "baseball" ? sportState.current.o : output.t;
 
 				let score;
 				let scoreType;
 				if (scoreDiff !== 0) {
 					// Swap team for safety
 					const scoreT =
-						isSport("football") &&
+						__SPORT === "football" &&
 						sportState.current.plays.at(-1)?.scoreInfo?.type === "SF"
 							? t === 0
 								? 1
@@ -373,23 +377,24 @@ export const LiveGame = (props: View<"liveGame">) => {
 							: t;
 
 					score =
-						scoreT === 0 ? (
+						scoreT !== undefined ? (
 							<>
-								<b>{boxScore.current.teams[0][ptsKey]}</b>-
-								<span className="text-body-secondary">
-									{boxScore.current.teams[1][ptsKey]}
-								</span>
-							</>
-						) : scoreT === 1 ? (
-							<>
-								<span className="text-body-secondary">
-									{boxScore.current.teams[0][ptsKey]}
-								</span>
-								-<b>{boxScore.current.teams[1][ptsKey]}</b>
+								{TEAM_NUMS_DISPLAY_ORDER.map((t2, i) => (
+									<Fragment key={t2}>
+										{i > 0 ? "-" : null}
+										{t2 === scoreT ? (
+											<b>{boxScore.current.teams[t2][ptsKey]}</b>
+										) : (
+											<span className="text-body-secondary">
+												{boxScore.current.teams[t2][ptsKey]}
+											</span>
+										)}
+									</Fragment>
+								))}
 							</>
 						) : undefined;
 
-					if (isSport("football")) {
+					if (__SPORT === "football") {
 						// If no score type, then it must be a penalty overturning a score
 						scoreType =
 							sportState.current.plays.at(-1)?.scoreInfo?.long ??
@@ -410,7 +415,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					if (shootout && t !== undefined) {
 						time = `Attempt ${boxScore.current.teams[t].sAtt}`;
 					} else if (
-						isSport("basketball") &&
+						__SPORT === "basketball" &&
 						boxScore.current.elamTarget !== undefined
 					) {
 						time = `Target: ${boxScore.current.elamTarget}`;
@@ -435,7 +440,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			if (events.current && events.current.length > 0) {
 				if (!pausedRef.current) {
 					setTimeout(() => {
-						processToNextPause();
+						processToNextPauseInner();
 						setPlayIndex((prev) => prev + 1);
 					}, speedToMs(speedRef.current));
 				}
@@ -510,7 +515,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 	}, []);
 
 	const startLiveGame = useCallback(
-		(events2: any[]) => {
+		(events2: unknown[]) => {
 			events.current = events2;
 			setTimeout(() => {
 				processToNextPause();
@@ -654,7 +659,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 		// elamTarget check is because clock is set to Infinity in Elam ending, so we can't skip ahead minutes
 		let skipMinutes =
-			isSport("baseball") ||
+			__SPORT === "baseball" ||
 			boxScore.current.elamTarget !== undefined ||
 			boxScore.current.shootout
 				? []
@@ -709,7 +714,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 						},
 					}) as FastForward,
 			),
-			...(isSport("baseball")
+			...(__SPORT === "baseball"
 				? !boxScore.current.shootout
 					? ([
 							{
@@ -881,7 +886,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		if (
 			!boxScore.current.elam &&
 			!boxScore.current.shootout &&
-			!isSport("baseball")
+			__SPORT !== "baseball"
 		) {
 			menuItems.push({
 				label: "Last 2 minutes",
@@ -954,6 +959,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		boxScore.current.shootout,
 		quarters.current.length,
 		processToNextPause,
+		props.quarterLength,
 	]);
 
 	const scrollTop = useRef<HTMLDivElement>(null);
@@ -980,7 +986,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					<>
 						{" "}
 						<button
-							className="btn btn-link p-0 border-0"
+							className="btn btn-link p-0 border-0 align-baseline"
 							onClick={() => {
 								setShowWarning(false);
 							}}
@@ -991,13 +997,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				</p>
 			) : null}
 
-			<div
-				className="row"
-				ref={scrollTop}
-				style={{
-					scrollMarginTop: 174,
-				}}
-			>
+			<div className="row" ref={scrollTop}>
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
 						<div className="live-game-sticky mb-3" ref={setLiveGameStickyDiv}>
@@ -1044,30 +1044,23 @@ export const LiveGame = (props: View<"liveGame">) => {
 									>
 										Top
 									</button>
-									{!isSport("football") ? (
-										<>
-											<button
-												className="btn btn-light-bordered"
-												onClick={() => {
-													document
-														.getElementById("scroll-team-1")
-														?.scrollIntoView();
-												}}
-											>
-												{boxScore.current.teams[0].abbrev}
-											</button>
-											<button
-												className="btn btn-light-bordered"
-												onClick={() => {
-													document
-														.getElementById("scroll-team-2")
-														?.scrollIntoView();
-												}}
-											>
-												{boxScore.current.teams[1].abbrev}
-											</button>
-										</>
-									) : null}
+									{__SPORT !== "football"
+										? teamsInDisplayOrder(
+												boxScore.current.teams as [any, any],
+											).map((t, i) => (
+												<button
+													key={i}
+													className="btn btn-light-bordered"
+													onClick={() => {
+														document
+															.getElementById(`scroll-team-${i + 1}`)
+															?.scrollIntoView();
+													}}
+												>
+													{t.abbrev}
+												</button>
+											))
+										: null}
 									<button
 										className="btn btn-light-bordered"
 										onClick={() => {

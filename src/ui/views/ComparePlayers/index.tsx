@@ -138,15 +138,16 @@ const HeaderRow = ({
 	return (
 		<tr>
 			<th colSpan={colSpan} className="table-info p-0">
-				<a
+				<button
+					type="button"
 					className="compare-players-heading"
-					onClick={(event) => {
-						event.preventDefault();
+					aria-expanded={open}
+					onClick={() => {
 						setOpen((prev) => !prev);
 					}}
 				>
 					<CollapseArrow open={open} /> {children}
-				</a>
+				</button>
 			</th>
 		</tr>
 	);
@@ -154,7 +155,8 @@ const HeaderRow = ({
 
 const playersToValues = (
 	players: PlayerInfoAndLegend[],
-	toValue: (p: PlayerInfoAndLegend["p"], i: number) => any,
+	// Not called for the legend column
+	toValue: (p: PlayerInfo["p"], i: number) => unknown,
 ) => {
 	return players.map(({ p }, i) => (p === "legend" ? "legend" : toValue(p, i)));
 };

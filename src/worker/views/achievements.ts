@@ -1,25 +1,17 @@
 import { achievement } from "../util/index.ts";
-import type {
-	Conditions,
-	UpdateEvents,
-	ViewInput,
-} from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { checkAccount } from "../util/checkAccount.ts";
 
-const updateAchievements = async (
-	inputs: ViewInput<"account">,
-	updateEvents: UpdateEvents,
-	state: unknown,
-	conditions: Conditions,
-) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
-		await checkAccount(conditions);
-		const achievements = await achievement.getAll();
+export default defineView({
+	id: "achievements",
+	load: async ({ updateEvents, conditions }) => {
+		if (updateEvents.has("firstRun") || updateEvents.has("account")) {
+			await checkAccount(conditions);
+			const achievements = await achievement.getAll();
 
-		return {
-			achievements,
-		};
-	}
-};
-
-export default updateAchievements;
+			return {
+				achievements,
+			};
+		}
+	},
+});

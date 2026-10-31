@@ -48,7 +48,7 @@ if (showTemp === "true") {
 }
 
 const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
-	(set) => ({
+	(set, get) => ({
 		alwaysShowCountry: false,
 		budget: defaultGameAttributes.budget,
 		challengeNoRatings: false,
@@ -99,6 +99,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 		userTid: 0,
 		userTids: [],
 		username: undefined,
+		workerBusy: false,
 		title: undefined,
 		hideNewWindow: false,
 		jumpTo: false,
@@ -211,7 +212,9 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 
 							email = email.trim().toLowerCase();
 
-							let [username, domain] = email.split("@");
+							const parts = email.split("@");
+							let username = parts[0];
+							const domain = parts[1];
 
 							if (username !== undefined && domain === "gmail.com") {
 								// Remove + and everything after
@@ -269,10 +272,11 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 
 				const updates: Partial<LocalStateUI> = {};
 
+				const state = get();
 				for (const key of gameAttributesSyncedToUi) {
 					if (
 						Object.hasOwn(gameAttributes, key) &&
-						updates[key] !== gameAttributes[key]
+						state[key] !== gameAttributes[key]
 					) {
 						// @ts-expect-error
 						updates[key] = gameAttributes[key];
@@ -282,6 +286,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 
 				if (flagOverrides) {
 					updates.flagOverrides = flagOverrides;
+					update = true;
 				}
 
 				if (update) {
@@ -305,10 +310,9 @@ const useLocal = <Key extends keyof LocalStateUI>(keys: Key[]) => {
 	return useLocalRaw(selector);
 };
 
-// This assumes the actions object never changes!
-const useLocalActions = () => useLocalRaw((state) => state.actions);
-
 const local = useLocalRaw;
+
+// This assumes the actions object never changes!
 const localActions = local.getState().actions;
 
-export { local, localActions, useLocalActions, useLocal };
+export { local, localActions, useLocal };

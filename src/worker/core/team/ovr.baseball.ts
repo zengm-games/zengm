@@ -28,6 +28,5 @@ const scale = (predictedMOV: number) => {
 	return Math.round(rawOVR);
 };
 
-const ovr = ovrByPosFactory(weights, intercept, scale);
-
-export default ovr;
+const { ovr, prepareWholeRoster } = ovrByPosFactory(weights, intercept, scale);
+export { ovr, prepareWholeRoster };

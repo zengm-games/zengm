@@ -31,7 +31,7 @@ export const formatLiveGameStat: FormatLiveGameStat = (
 		let missingStat = false;
 		const output = ` (${stat
 			.map((s, i) => {
-				const inner = getInner((pOrValue as any)[i], s, raw);
+				const inner = getInner(pOrValue[i], s, raw);
 				if (inner === undefined) {
 					missingStat = true;
 				}
@@ -46,5 +46,5 @@ export const formatLiveGameStat: FormatLiveGameStat = (
 	if (pOrValue === undefined) {
 		return "";
 	}
-	return ` (${getInner(pOrValue as any, stat, raw)})`;
+	return ` (${getInner(pOrValue, stat, raw)})`;
 };

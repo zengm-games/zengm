@@ -5,7 +5,6 @@ import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { formatMaybeInteger } from "./LeagueStats.tsx";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
@@ -155,7 +154,7 @@ const TeamStats = ({
 			data[stat] = helpers.roundStat(value, stat);
 		}
 
-		if (isSport("basketball") || isSport("hockey")) {
+		if (__SPORT === "basketball" || __SPORT === "hockey") {
 			const plusMinusCols = [prefixStatOpp(teamOpponent, "mov"), "nrtg"];
 			for (const plusMinusCol of plusMinusCols) {
 				if (Object.hasOwn(data, plusMinusCol)) {
@@ -169,19 +168,18 @@ const TeamStats = ({
 		return data;
 	};
 
-	if (
-		isSport("baseball") &&
+	const expandedTeams =
+		__SPORT === "baseball" &&
 		(teamOpponent === "fielding" || teamOpponent === "oppFielding")
-	) {
-		teams = expandFieldingStats({
-			rows: teams,
-			stats,
-			allPositions: true,
-			statsProperty: "stats",
-		});
-	}
+			? expandFieldingStats({
+					rows: teams,
+					stats,
+					allPositions: true,
+					statsProperty: "stats",
+				})
+			: teams;
 
-	const rows = teams.map((t) => {
+	const rows = expandedTeams.map((t) => {
 		const data = makeRowObject(t.stats, t.seasonAttrs);
 
 		// This is our team.
@@ -197,9 +195,10 @@ const TeamStats = ({
 
 				// Determine our team's percentile for this stat type. Closer to the start is better.
 				const statTypeValue = Object.hasOwn(t.stats, statType)
-					? (t.stats as any)[statType]
-					: (t.seasonAttrs as any)[statType];
-				const rank = teams.length - allStats[statType].indexOf(statTypeValue);
+					? t.stats[statType]
+					: t.seasonAttrs[statType];
+				const rank =
+					expandedTeams.length - allStats[statType].indexOf(statTypeValue);
 
 				data[statType] = {
 					style: gradientStyle(rank),
@@ -211,9 +210,9 @@ const TeamStats = ({
 
 		return {
 			key:
-				isSport("baseball") &&
+				__SPORT === "baseball" &&
 				(teamOpponent === "fielding" || teamOpponent === "oppFielding")
-					? `${t.tid}-${(t.stats as any).pos}`
+					? `${t.tid}-${t.stats.pos}`
 					: t.tid,
 			data: [
 				null,
@@ -233,7 +232,7 @@ const TeamStats = ({
 	const footer =
 		averages &&
 		!(
-			isSport("baseball") &&
+			__SPORT === "baseball" &&
 			(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 		)
 			? {

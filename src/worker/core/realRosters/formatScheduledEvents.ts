@@ -1,5 +1,6 @@
 import { helpers } from "../../util/index.ts";
 import type {
+	Div,
 	ScheduledEventWithoutKey,
 	Team,
 	TeamSeasonWithoutKey,
@@ -19,7 +20,11 @@ const processGameAttributes = (
 	let gameAttributeEvents = [];
 
 	for (const event of events) {
-		if (event.type === "gameAttributes") {
+		if (
+			event.type === "gameAttributes" ||
+			event.type === "awards" ||
+			event.type === "confsDivs"
+		) {
 			gameAttributeEvents.push(event);
 		}
 	}
@@ -39,6 +44,11 @@ const processGameAttributes = (
 		}
 
 		for (const [key, value] of Object.entries(event.info)) {
+			if (event.type === "confsDivs" && key === "teams") {
+				// Handled in processTeams
+				continue;
+			}
+
 			if (
 				!gameAttributesHistory ||
 				!Object.hasOwn(prevState, key) ||
@@ -116,6 +126,9 @@ const processTeams = (
 ) => {
 	let teamEvents = [];
 
+	// confsDivs events are here only to find the divisions of the initial teams. For the future ones, see applyTidOverridesToConfsDivs.
+	const teamAndConfsDivsEvents = [];
+
 	for (const event of events) {
 		if (
 			event.type === "expansionDraft" ||
@@ -123,37 +136,73 @@ const processTeams = (
 			event.type === "contraction"
 		) {
 			teamEvents.push(event);
+			teamAndConfsDivsEvents.push(event);
+		} else if (event.type === "confsDivs") {
+			teamAndConfsDivsEvents.push(event);
 		}
 	}
 
-	let initialTeams: {
-		region: string;
-		name: string;
-		pop: number;
-		colors: [string, string, string];
-		abbrev: string;
-		imgURL: string;
-		imgURLSmall?: string;
-		srID: string;
-		tid: number;
-		cid: number;
-		did: number;
-		disabled?: boolean;
-		firstSeasonAfterExpansion?: number;
-		seasons?: TeamSeasonWithoutKey[];
-		retiredJerseyNumbers?: Team["retiredJerseyNumbers"];
-	}[];
+	// A confsDivs event can include teams from an expansion draft in the same phase, so it needs to come after
+	const teamAndConfsDivsEventsSorted = orderBy(teamAndConfsDivsEvents, [
+		"season",
+		"phase",
+		(event) => (event.type === "confsDivs" ? 1 : 0),
+	]);
+
+	let initialTeams:
+		| {
+				region: string;
+				name: string;
+				pop: number;
+				colors: [string, string, string];
+				abbrev: string;
+				imgURL: string;
+				imgURLSmall?: string;
+				srID: string;
+				tid: number;
+				cid: number;
+				did: number;
+				disabled?: boolean;
+				firstSeasonAfterExpansion?: number;
+				seasons?: TeamSeasonWithoutKey[];
+				retiredJerseyNumbers?: Team["retiredJerseyNumbers"];
+		  }[]
+		| undefined;
+
+	// Team events have did but not cid, so cid comes from the divisions at that time
+	let divs: Div[] | undefined;
+	const setCid = (t: { cid?: number; did?: number }) => {
+		const div = divs?.find((div) => div.did === t.did);
+		if (div) {
+			t.cid = div.cid;
+		}
+	};
 
 	// Keep track of initial teams
 	let prevState: any[] = [];
-	for (const event of teamEvents) {
+	for (const event of teamAndConfsDivsEventsSorted) {
 		if (
 			(event.season > season ||
 				(event.season === season && event.phase > phase)) &&
-			// @ts-expect-error
 			initialTeams === undefined
 		) {
 			initialTeams = helpers.deepCopy(prevState);
+		}
+
+		if (event.type === "confsDivs") {
+			divs = event.info.divs;
+			for (const { tid, did } of event.info.teams) {
+				const t = prevState.find((t) => t.tid === tid);
+				if (t) {
+					t.did = did;
+				}
+			}
+
+			// All teams, because the conference of a division could have changed
+			for (const t of prevState) {
+				setCid(t);
+			}
+			continue;
 		}
 
 		if (event.type === "expansionDraft") {
@@ -167,10 +216,14 @@ const processTeams = (
 						...t,
 					};
 					fixTeam(prevState[ind], t);
+					setCid(prevState[ind]);
 				} else {
-					prevState.push({
+					// The type says did is a string, but it is a number in the real team data
+					const t2: any = {
 						...t,
-					});
+					};
+					setCid(t2);
+					prevState.push(t2);
 				}
 			}
 		} else if (event.type === "teamInfo") {
@@ -185,6 +238,7 @@ const processTeams = (
 				...t,
 			};
 			fixTeam(prevState[ind], t);
+			setCid(prevState[ind]);
 		} else if (event.type === "contraction") {
 			if ((event.season === season && event.phase <= phase) || keepAllTeams) {
 				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs. Also, for realStats=="all".
@@ -210,7 +264,6 @@ const processTeams = (
 	}
 
 	// Handle initialTeams for the last season, where the season + 1 condition above can never be met
-	// @ts-expect-error
 	if (initialTeams === undefined) {
 		initialTeams = helpers.deepCopy(prevState);
 	}
@@ -238,7 +291,7 @@ const processTeams = (
 		if (event.type === "teamInfo" || event.type === "contraction") {
 			const oldTid = event.info.tid;
 			let newTid = tidOverrides[oldTid];
-			if (newTid == undefined) {
+			if (newTid === undefined) {
 				newTid = maxSeenTid + 1;
 				tidOverrides[oldTid] = newTid;
 			}
@@ -272,7 +325,7 @@ const processTeams = (
 
 						const oldTid = t.tid;
 						let newTid = tidOverrides[oldTid];
-						if (newTid == undefined) {
+						if (newTid === undefined) {
 							newTid = maxSeenTid + 1;
 							tidOverrides[oldTid] = newTid;
 						}
@@ -292,7 +345,38 @@ const processTeams = (
 		return event;
 	});
 
-	return { teamEvents, initialTeams };
+	return { teamEvents, initialTeams, tidOverrides };
+};
+
+// Same tid changes as processTeams does to the other types of events. A team with no new tid was removed before the league starts and never comes back.
+const applyTidOverridesToConfsDivs = (
+	events: any[],
+	tidOverrides: Record<number, number>,
+): any[] => {
+	return events.map((event) => {
+		if (event.type !== "confsDivs") {
+			return event;
+		}
+
+		const teams = [];
+		for (const t of event.info.teams) {
+			const tid = tidOverrides[t.tid];
+			if (tid !== undefined) {
+				teams.push({
+					...t,
+					tid,
+				});
+			}
+		}
+
+		return {
+			...event,
+			info: {
+				...event.info,
+				teams,
+			},
+		};
+	});
 };
 
 const formatScheduledEvents = (
@@ -316,7 +400,9 @@ const formatScheduledEvents = (
 			event.type !== "gameAttributes" &&
 			event.type !== "expansionDraft" &&
 			event.type !== "teamInfo" &&
-			event.type !== "contraction"
+			event.type !== "contraction" &&
+			event.type !== "awards" &&
+			event.type !== "confsDivs"
 		) {
 			throw new Error(`Unknown event type: ${event.type}`);
 		}
@@ -324,7 +410,7 @@ const formatScheduledEvents = (
 
 	const eventsSorted = orderBy(events, ["season", "phase", "type"]);
 
-	const { teamEvents, initialTeams } = processTeams(
+	const { teamEvents, initialTeams, tidOverrides } = processTeams(
 		eventsSorted,
 		season,
 		phase,
@@ -347,7 +433,10 @@ const formatScheduledEvents = (
 	);
 
 	return {
-		scheduledEvents: [...gameAttributeEvents, ...teamEvents],
+		scheduledEvents: [
+			...applyTidOverridesToConfsDivs(gameAttributeEvents, tidOverrides),
+			...teamEvents,
+		],
 		initialGameAttributes,
 		initialTeams,
 	};

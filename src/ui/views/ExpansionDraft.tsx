@@ -6,7 +6,7 @@ import {
 } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types.ts";
 import {
@@ -15,7 +15,7 @@ import {
 	DEFAULT_TEAM_COLORS,
 	PHASE,
 } from "../../common/constants.ts";
-import TeamForm from "./ManageTeams/TeamForm.tsx";
+import TeamForm, { getNumTeamsByDid } from "./ManageTeams/TeamForm.tsx";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal.tsx";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld.tsx";
 import { last } from "../../common/utils.ts";
@@ -25,6 +25,7 @@ import { useLocal } from "../util/local.ts";
 const BLANK_TEAM_ABBREV = "_BLANK_TEAM_ABBREV_";
 
 const ExpansionDraft = ({
+	activeTeamDids,
 	builtInTeams,
 	confs,
 	defaultNumProtectedPlayers,
@@ -63,6 +64,11 @@ const ExpansionDraft = ({
 	);
 	const [numPerTeam, setNumPerTeam2] = useState(initialNumPerTeam);
 	const [addTeamAbbrev, setAddTeamAbbrev] = useState(BLANK_TEAM_ABBREV);
+
+	const numTeamsByDid = getNumTeamsByDid([
+		...activeTeamDids,
+		...teams.map((t) => Number.parseInt(t.did)),
+	]);
 
 	const setNumProtectedPlayers = async (newNum: string) => {
 		setNumProtectedPlayers2(newNum);
@@ -176,10 +182,9 @@ const ExpansionDraft = ({
 		);
 
 		if (errors) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: `- ${errors.join("<br>- ")}`,
-				saveToDb: false,
 			});
 			setSaving(false);
 		}
@@ -247,6 +252,7 @@ const ExpansionDraft = ({
 							? []
 							: getGodModeWarnings({ t, godModeLimits });
 						if (godModeWarnings.length > 0) {
+							// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 							godModeWarning = true;
 						}
 
@@ -273,6 +279,7 @@ const ExpansionDraft = ({
 												divs={divs}
 												handleInputChange={handleInputChange(i)}
 												hideStatus
+												numTeamsByDid={numTeamsByDid}
 												t={t}
 											/>
 										</div>

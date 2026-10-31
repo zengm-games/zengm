@@ -1,4 +1,3 @@
-import { isSport } from "../common/sportFunctions.ts";
 import { Cache, idb } from "../worker/db/index.ts";
 import { STORES, type Store } from "../worker/db/Cache.ts";
 import { g, helpers } from "../worker/util/index.ts";
@@ -8,20 +7,27 @@ import {
 } from "../common/defaultGameAttributes.ts";
 
 export const mockIDBLeague = (): any => {
+	const queries = {
+		get() {
+			return undefined;
+		},
+		getAll() {
+			return [];
+		},
+		async *iterate() {},
+		async *[Symbol.asyncIterator]() {},
+	};
+
 	const store = {
+		...queries,
 		index() {
-			return {
-				getAll() {
-					return [];
-				},
-			};
+			return queries;
 		},
 	};
 
 	const league = {
-		getAll() {
-			return [];
-		},
+		get: queries.get,
+		getAll: queries.getAll,
 		transaction() {
 			return {
 				store,
@@ -56,13 +62,16 @@ export function numInArrayEqualTo<T>(array: T[], x: T): number {
 }
 
 export const resetCache = async (
-	data?: Partial<Record<Store, Readonly<any[]>>>,
+	data: Partial<Record<Store, Readonly<any[]>>>,
+	{ stubFlush = true }: { stubFlush?: boolean } = {},
 ) => {
 	idb.cache = new Cache(); // We want these to do nothing while testing, usually
 
 	idb.cache.fill = async () => {};
 
-	idb.cache.flush = async () => {};
+	if (stubFlush) {
+		idb.cache.flush = async () => {};
+	}
 
 	for (const store of STORES) {
 		// This stuff is all needed because a real Cache.fill is not called.
@@ -81,33 +90,23 @@ export const resetCache = async (
 	}
 
 	if (data.players) {
-		for (const obj of data.players) {
-			await idb.cache.players.add(obj);
-		}
+		await idb.cache.players.addAll(data.players);
 	}
 
 	if (data.teams) {
-		for (const obj of data.teams) {
-			await idb.cache.teams.add(obj);
-		}
+		await idb.cache.teams.addAll(data.teams);
 	}
 
 	if (data.teamSeasons) {
-		for (const obj of data.teamSeasons) {
-			await idb.cache.teamSeasons.add(obj);
-		}
+		await idb.cache.teamSeasons.addAll(data.teamSeasons);
 	}
 
 	if (data.teamStats) {
-		for (const obj of data.teamStats) {
-			await idb.cache.teamStats.add(obj);
-		}
+		await idb.cache.teamStats.addAll(data.teamStats);
 	}
 
 	if (data.trade) {
-		for (const obj of data.trade) {
-			await idb.cache.trade.add(obj);
-		}
+		await idb.cache.trade.addAll(data.trade);
 	}
 };
 
@@ -116,7 +115,7 @@ export const resetG = () => {
 	const teams = helpers.getTeamsDefault();
 	Object.assign(g, defaultGameAttributes);
 
-	if (isSport("football")) {
+	if (__SPORT === "football") {
 		Object.assign(g, footballOverrides);
 	}
 

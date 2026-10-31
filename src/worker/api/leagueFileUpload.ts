@@ -4,6 +4,7 @@ import { JSONParseStream, type JSONPath } from "json-web-streams";
 import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util/index.ts";
 import type { Conditions } from "../../common/types.ts";
+import { fetchUserURL } from "../../common/fetchUserURL.ts";
 import {
 	DEFAULT_TEAM_COLORS,
 	LEAGUE_DATABASE_VERSION,
@@ -118,11 +119,11 @@ let validators: ReturnType<typeof makeValidators> | undefined;
 
 export type BasicInfo = {
 	gameAttributes?: any;
-	meta?: any;
+	meta?: unknown;
 	startingSeason?: number;
 	version?: number;
 	teams?: any[];
-	players?: any[]; // Only with includePlayersInBasicInfo
+	players?: unknown[]; // Only with includePlayersInBasicInfo
 	keys: Set<string>;
 	maxGid: number;
 	hasRookieContracts: boolean;
@@ -378,47 +379,7 @@ const initialCheck = async (
 	let stream: ReadableStream;
 	let sizeInBytes: number | undefined;
 	if (typeof file === "string") {
-		let response;
-		try {
-			response = await fetch(file);
-		} catch {
-			throw new Error(
-				"Could be a network error, an invalid URL, or an invalid Access-Control-Allow-Origin header",
-			);
-		}
-
-		if (!response.ok) {
-			let description;
-			switch (response.status) {
-				case 400:
-					description = "bad request";
-					break;
-				case 401:
-					description = "unauthorized";
-					break;
-				case 403:
-					description = "forbidden";
-					break;
-				case 404:
-					description = "file not found";
-					break;
-				case 500:
-					description = "internal server error";
-					break;
-				case 502:
-					description = "bad gateway";
-					break;
-				case 503:
-					description = "service unavailable";
-					break;
-			}
-
-			throw new Error(
-				`server responded with HTTP error code ${response.status}${
-					description ? ` (${description})` : ""
-				}`,
-			);
-		}
+		const response = await fetchUserURL(file);
 
 		if (response.body === null) {
 			throw new Error("Response body is null");
@@ -436,7 +397,7 @@ const initialCheck = async (
 	const stream0 = stream;
 
 	// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
-	(self as any).stream0 = stream0;
+	self.stream0 = stream0;
 
 	const stream2 = (
 		await decompressStreamIfNecessary(
@@ -452,7 +413,7 @@ const initialCheck = async (
 		conditions,
 	});
 
-	delete (self as any).stream0;
+	delete self.stream0;
 
 	return {
 		basicInfo,

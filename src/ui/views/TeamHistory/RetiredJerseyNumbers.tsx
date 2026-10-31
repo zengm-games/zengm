@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from "react";
 import { JerseyNumber } from "../../components/JerseyNumber.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { PLAYER } from "../../../common/constants.ts";
@@ -69,7 +69,7 @@ const RetiredJerseyNumbers = ({
 
 	const sortedPlayers = orderBy(
 		players.filter((p) => p.tid === PLAYER.RETIRED),
-		"name",
+		["lastName", "firstName"],
 	);
 
 	if (editing) {
@@ -111,10 +111,9 @@ const RetiredJerseyNumbers = ({
 
 						setEditing(undefined);
 					} catch (error) {
-						logEvent({
+						showNotification({
 							type: "error",
 							text: error.message,
-							saveToDb: false,
 							persistent: true,
 						});
 					}
@@ -258,8 +257,7 @@ const RetiredJerseyNumbers = ({
 		);
 	}
 
-	const deleteRetiredJersey = async (j: number) => {
-		const i = page * PAGE_SIZE + j;
+	const deleteRetiredJersey = async (i: number) => {
 		const row = retiredJerseyNumbers[i];
 		if (!row) {
 			return;
@@ -276,8 +274,7 @@ const RetiredJerseyNumbers = ({
 		}
 	};
 
-	const editRetiredJersey = (j: number) => {
-		const i = page * PAGE_SIZE + j;
+	const editRetiredJersey = (i: number) => {
 		const row = retiredJerseyNumbers[i];
 		if (!row) {
 			return;
@@ -302,7 +299,7 @@ const RetiredJerseyNumbers = ({
 			seasonRetired: String(season),
 			seasonTeamInfo: String(season),
 			linkToPlayer: "yes",
-			pid: sortedPlayers.length > 0 ? sortedPlayers[0].pid : "",
+			pid: sortedPlayers[0] ? String(sortedPlayers[0].pid) : "",
 			text: "",
 		});
 	};
@@ -381,7 +378,7 @@ const RetiredJerseyNumbers = ({
 
 	const findUnsortedIndex = (sortedIndex: number) => {
 		const target = sortedJerseyNumbers[indexStart + sortedIndex]!;
-		const unsortedIndex = retiredJerseyNumbers.indexOf(target) - indexStart;
+		const unsortedIndex = retiredJerseyNumbers.indexOf(target);
 		if (unsortedIndex < 0) {
 			throw new Error("Should never happen");
 		}
@@ -434,6 +431,9 @@ const RetiredJerseyNumbers = ({
 											setPage(0);
 										}}
 										title={`Sort ${
+											jerseySortDirection === "asc" ? "descending" : "ascending"
+										}`}
+										aria-label={`Sort ${
 											jerseySortDirection === "asc" ? "descending" : "ascending"
 										}`}
 									>
@@ -523,7 +523,7 @@ const RetiredJerseyNumbers = ({
 				)}
 				<div
 					className={clsx("d-flex", {
-						"mb-3": godMode || tid === userTid || pagination,
+						"mb-3": godMode || tid === userTid,
 					})}
 				>
 					{godMode || tid === userTid ? (
@@ -538,7 +538,7 @@ const RetiredJerseyNumbers = ({
 								className="btn btn-light-bordered"
 								disabled={!enablePrevious}
 								onClick={() => {
-									setPage(page - 1);
+									setPage((page) => page - 1);
 								}}
 							>
 								Previous
@@ -547,7 +547,7 @@ const RetiredJerseyNumbers = ({
 								className="btn btn-light-bordered"
 								disabled={!enableNext}
 								onClick={() => {
-									setPage(page + 1);
+									setPage((page) => page + 1);
 								}}
 							>
 								Next

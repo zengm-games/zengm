@@ -8,7 +8,7 @@ import {
 } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { useLocal } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
@@ -26,7 +26,7 @@ import { confirm } from "../../util/confirm.tsx";
 import { csvFormatRows, csvParse } from "d3-dsv";
 import { downloadFile } from "../../util/downloadFile.ts";
 import { resetFileInput } from "../../util/resetFileInput.ts";
-import { IMPORT_FILE_STYLE } from "../Settings/RowsEditor.tsx";
+import { IMPORT_FILE_STYLE } from "../../components/ImportFileButton.tsx";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 
@@ -112,10 +112,9 @@ const notifyPlaceSpecial = (
 ) => {
 	// Without setTimeout, React complains about updating another component when rendering
 	setTimeout(() => {
-		logEvent({
+		showNotification({
 			type: "info",
 			text: `Placed the ${type === "allStarGame" ? ALL_STAR_GAME_LABEL : TRADE_DEADLINE_LABEL} on day ${day}`,
-			saveToDb: false,
 		});
 	});
 };
@@ -612,7 +611,6 @@ const ScheduleEditor = ({
 	const [showRegenerateScheduleModal, setShowRegenerateScheduleModal] =
 		useState(false);
 	const [regenerated, setRegenerated] = useState(false);
-	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleFileUpload = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
@@ -638,25 +636,22 @@ const ScheduleEditor = ({
 						schedule: [...completed, ...uploaded],
 						dirty: true,
 					});
-					logEvent({
+					showNotification({
 						type: "success",
 						text: `Successfully imported ${uploaded.length} games from CSV`,
-						saveToDb: false,
 					});
 				} catch (error) {
-					logEvent({
+					showNotification({
 						type: "error",
 						text: error.message,
-						saveToDb: false,
 					});
 				}
 			};
 
 			reader.onerror = () => {
-				logEvent({
+				showNotification({
 					type: "error",
 					text: "Failed to read CSV file",
-					saveToDb: false,
 				});
 			};
 		},
@@ -1086,10 +1081,9 @@ const ScheduleEditor = ({
 
 									if (errorMessage) {
 										dispatch({ type: "deleteSpecial", special: "allStarGame" });
-										logEvent({
+										showNotification({
 											type: "info",
 											text: errorMessage,
-											saveToDb: false,
 										});
 										return;
 									}
@@ -1119,10 +1113,9 @@ const ScheduleEditor = ({
 											type: "deleteSpecial",
 											special: "tradeDeadline",
 										});
-										logEvent({
+										showNotification({
 											type: "info",
 											text: errorMessage,
-											saveToDb: false,
 										});
 										return;
 									}
@@ -1137,12 +1130,11 @@ const ScheduleEditor = ({
 								Place Trade Deadline in default position
 							</Dropdown.Item>
 							<Dropdown.Item
-								onClick={async () => {
+								onClick={() => {
 									if (!canRegenerateSchedule) {
-										logEvent({
+										showNotification({
 											type: "error",
 											text: "You can only regenerate the schedule at the start of the regular season, when no games have been played.",
-											saveToDb: false,
 										});
 										return;
 									}
@@ -1179,12 +1171,12 @@ const ScheduleEditor = ({
 								Export schedule to CSV
 							</Dropdown.Item>
 							<Dropdown.Item
+								// Like <ImportFileButton>
 								as="div"
 								style={{ position: "relative", overflow: "hidden" }}
 							>
 								Import schedule from CSV
 								<input
-									ref={fileInputRef}
 									className="cursor-pointer"
 									type="file"
 									accept=".csv,text/csv"
@@ -1207,18 +1199,16 @@ const ScheduleEditor = ({
 									schedule,
 								});
 							} catch (error) {
-								logEvent({
+								showNotification({
 									type: "error",
 									text: `Error saving schedule: ${error.message}`,
-									saveToDb: false,
 								});
 								throw error;
 							}
 
-							logEvent({
+							showNotification({
 								type: "success",
 								text: "Saved schedule",
-								saveToDb: false,
 							});
 
 							setDirty(false);

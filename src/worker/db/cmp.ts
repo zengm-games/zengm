@@ -1,4 +1,4 @@
-const getType = (x: any) => {
+const getType = (x: unknown) => {
 	if (typeof x === "number") {
 		return "Number";
 	}

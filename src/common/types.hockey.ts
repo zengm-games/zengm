@@ -1,4 +1,7 @@
 import type teamStats from "../worker/core/team/stats.hockey.ts";
+import type playerStats from "../worker/core/player/stats.hockey.ts";
+import type { statFunctions as playerStatFunctions } from "./processPlayerStats.hockey.ts";
+import type { PlayerStatMax } from "./types.ts";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =
@@ -20,67 +23,27 @@ export type TeamStatAttr =
 	| "oppPpPct"
 	| "oppGaa";
 
-type AwardTeam = {
-	tid: number;
-	abbrev: string;
-	region: string;
-	name: string;
-	won: number;
-	lost: number;
-	tied: number | undefined;
-	otl: number | undefined;
-};
+type PlayerStatAttrString = "keyStats" | "keyStatsWithGoalieGP" | "gRec";
 
-export type AwardPlayer = {
-	pid: number;
-	name: string;
-	tid: number;
-	pos: string;
-	g: number;
-	a: number;
-	pts: number;
-	ops: number;
-	tk: number;
-	hit: number;
-	dps: number;
-	gaa: number;
-	svPct: number;
-	gps: number;
-};
+// Stats row as stored in the database, in p.stats
+export type PlayerStats = Record<
+	(typeof playerStats)["raw"][number] | (typeof playerStats)["derived"][number],
+	number | undefined
+> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
 
-export type Awards = {
-	season: number;
-	bestRecord: AwardTeam;
-
-	// undefined gets turned into null by JSON.stringify
-	bestRecordConfs: (AwardTeam | undefined | null)[];
-
-	// Only in old leagues
-	bre?: AwardTeam;
-	brw?: AwardTeam;
-
-	roy: AwardPlayer | undefined;
-	allRookie: AwardPlayer[];
-	mvp: AwardPlayer | undefined;
-	allLeague: [
-		{
-			title: "First Team";
-			players: AwardPlayer[];
-		},
-		{
-			title: "Second Team";
-			players: AwardPlayer[];
-		},
-		{
-			title: "Third Team";
-			players: AwardPlayer[];
-		},
-	];
-	dpoy: AwardPlayer | undefined;
-	dfoy: AwardPlayer | undefined;
-	goy: AwardPlayer | undefined;
-	finalsMvp: AwardPlayer | undefined;
-};
+// Numeric stats can be undefined in historical data from before a stat was tracked (even gp and min)
+export type PlayerStatsPlus = Record<
+	Exclude<
+		| (typeof playerStats)["raw"][number]
+		| (typeof playerStats)["derived"][number]
+		| keyof typeof playerStatFunctions,
+		PlayerStatAttrString
+	>,
+	number | undefined
+> &
+	Record<PlayerStatAttrString, string> &
+	Record<(typeof playerStats)["max"][number], PlayerStatMax>;
 
 export type Position = "C" | "W" | "D" | "G";
 

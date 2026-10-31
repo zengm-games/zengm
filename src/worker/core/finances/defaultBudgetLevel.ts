@@ -3,7 +3,7 @@ import { gauss } from "../../../common/random.ts";
 import { g, helpers } from "../../util/index.ts";
 
 // Inverse of levelToEffect
-export const effectToLevel = (effect: number) => {
+const effectToLevel = (effect: number) => {
 	const x =
 		effect > 0
 			? Math.atanh(effect / BUDGET_LEVEL_SCALE)

@@ -6,6 +6,7 @@ const Overall = ({
 	bestRecord,
 	championships,
 	finalsAppearances,
+	numSeasons,
 	playoffAppearances,
 	totalLost,
 	totalOtl,
@@ -25,7 +26,9 @@ const Overall = ({
 	| "totalWinp"
 	| "totalWon"
 	| "worstRecord"
->) => {
+> & {
+	numSeasons: number;
+}) => {
 	const record = helpers.formatRecord({
 		won: totalWon,
 		lost: totalLost,
@@ -36,6 +39,12 @@ const Overall = ({
 	return (
 		<>
 			<div className="mb-2">
+				{numSeasons !== undefined ? (
+					<>
+						Seasons: {numSeasons}
+						<br />
+					</>
+				) : null}
 				Record: {record} ({helpers.roundWinp(totalWinp)})
 				<br />
 				Playoff Appearances: {playoffAppearances}

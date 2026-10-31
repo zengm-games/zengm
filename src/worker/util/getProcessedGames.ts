@@ -1,5 +1,4 @@
-import { getAll, idb } from "../db/index.ts";
-import g from "./g.ts";
+import { idb } from "../db/index.ts";
 import type { Game } from "../../common/types.ts";
 
 /**
@@ -31,37 +30,20 @@ export const getProcessedGames = async ({
 		maxGid = -1; // Load all games
 	}
 
-	const gameInfos: Game[] = [];
-	let games;
+	// Only keep new games involving this team, rather than every game this season
+	const games = await idb.merged.games.getAll(
+		{ season },
+		{
+			filter: (gm) =>
+				gm.gid > maxGid &&
+				(gm.teams[0].tid === tid ||
+					gm.teams[1].tid === tid ||
+					(includeAllStarGame &&
+						gm.teams[0].tid === -1 &&
+						gm.teams[1].tid === -2)),
+		},
+	);
 
-	if (season === g.get("season")) {
-		games = await idb.cache.games.getAll();
-	} else {
-		games = await getAll(
-			idb.league.transaction("games").store.index("season"),
-			season,
-		);
-	}
-
-	// Iterate backwards, was more useful back when current season wasn't cached
-	for (let i = games.length - 1; i >= 0; i--) {
-		const gm = games[i]!;
-
-		if (gm.gid <= maxGid) {
-			break;
-		}
-
-		// Check tid
-		if (gm.teams[0].tid === tid || gm.teams[1].tid === tid) {
-			gameInfos.push(gm);
-		} else if (
-			includeAllStarGame &&
-			gm.teams[0].tid === -1 &&
-			gm.teams[1].tid === -2
-		) {
-			gameInfos.push(gm);
-		}
-	}
-
-	return gameInfos;
+	// Newest first
+	return games.reverse();
 };

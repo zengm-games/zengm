@@ -1,4 +1,5 @@
 import { PHASE, PLAYER } from "../../../common/constants.ts";
+import addRatingsRow from "./addRatingsRow.ts";
 import develop, { monteCarloPot } from "./develop.ts";
 import generate from "./generate.ts";
 import heightToRating from "./heightToRating.ts";
@@ -10,7 +11,7 @@ import skills from "./skills.ts";
 import stats from "./stats.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
 
 /**
@@ -172,13 +173,15 @@ const augmentPartialPlayer = async (
 		}
 		p.ratings[0].season ??= currentSeason;
 
-		// Fix improperly-set season in ratings
-		if (
-			p.ratings.length === 1 &&
-			p.ratings[0].season < currentSeason &&
-			p.tid !== PLAYER.RETIRED
-		) {
-			p.ratings[0].season = currentSeason;
+		// Fix improperly-set season in ratings. Active players need a ratings row for the current season, otherwise they get filtered out of many views, like the roster
+		if (p.ratings.at(-1).season < currentSeason) {
+			if (p.ratings.length === 1) {
+				// Probably was a typo
+				p.ratings[0].season = currentSeason;
+			} else {
+				// Keep the old rows as ratings history
+				addRatingsRow(p);
+			}
 		}
 	}
 
@@ -187,7 +190,7 @@ const augmentPartialPlayer = async (
 	}
 
 	// Height rescaling
-	if (isSport("basketball") && (version === undefined || version <= 23)) {
+	if (__SPORT === "basketball" && (version === undefined || version <= 23)) {
 		for (const r of p.ratings) {
 			r.hgt = heightToRating(p.hgt);
 		}
@@ -209,7 +212,7 @@ const augmentPartialPlayer = async (
 	}
 
 	// Rating rescaling
-	if (isSport("basketball") && (version === undefined || version <= 26)) {
+	if (__SPORT === "basketball" && (version === undefined || version <= 26)) {
 		for (const r of p.ratings) {
 			let scaleRatings = false;
 
@@ -307,7 +310,7 @@ const augmentPartialPlayer = async (
 		}
 
 		if (
-			isSport("basketball") &&
+			__SPORT === "basketball" &&
 			(r.pot === undefined || r.pot < r.ovr || appliedFuzz)
 		) {
 			// Only basketball, in case position is not known at this point
@@ -395,7 +398,7 @@ const augmentPartialPlayer = async (
 				ps.yearsWithTeam = yearsWithTeam;
 			}
 
-			if (isSport("baseball") && stats.byPos) {
+			if (__SPORT === "baseball" && stats.byPos) {
 				for (const key of stats.byPos) {
 					if (ps[key]) {
 						for (let i = 0; i < ps[key].length; i++) {
@@ -412,7 +415,7 @@ const augmentPartialPlayer = async (
 		}
 	}
 
-	if (isSport("hockey") && version !== undefined && version <= 60) {
+	if (__SPORT === "hockey" && version !== undefined && version <= 60) {
 		for (const row of p.stats) {
 			if (row.gp > 0) {
 				row.gMin = (row.min * row.gpGoalie) / row.gp;

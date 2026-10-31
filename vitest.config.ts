@@ -6,6 +6,7 @@ import {
 import type { Sport } from "./tools/lib/getSport.ts";
 import type { ProjectConfig } from "vitest/node";
 import { playwright } from "@vitest/browser-playwright";
+import { jsonUrlsDefine } from "./tools/lib/jsonUrls.ts";
 import { sportFunctions } from "./tools/lib/rolldownPlugins/sportFunctions.ts";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
@@ -18,26 +19,59 @@ const makeProject = (
 ): TestProjectInlineConfiguration => {
 	return {
 		define: {
-			"process.env.NODE_ENV": JSON.stringify("test"),
-			"process.env.SPORT": JSON.stringify(sport),
+			__NODE_ENV: JSON.stringify("test"),
+			__SPORT: JSON.stringify(sport),
+			...jsonUrlsDefine(),
 		},
 		plugins: [
-			// @ts-expect-error
-			sportFunctions("production", sport),
+			{
+				...sportFunctions("production", sport),
+
+				configureVitest({ defineCacheKeyGenerator }) {
+					defineCacheKeyGenerator(() => {
+						return sport;
+					});
+				},
+
+				// Need this or Vite runs TypeScript conversion before this plugin runs, resulting in moduleType in the plugin filter being js rather than ts/tsx
+				enforce: "pre",
+			},
 		],
 
 		test: {
 			...projectConfig,
-			setupFiles:
-				environment === "node"
-					? ["./src/test/setup.ts", "./src/worker/index.ts"]
-					: ["./src/test/setup-e2e.ts"],
+			...(environment === "node"
+				? {
+						setupFiles: ["./src/test/setup.ts", "./src/worker/index.ts"],
+					}
+				: {
+						setupFiles: ["./src/test/setup-e2e.ts"],
+						browser: {
+							enabled: true,
+							headless: true,
+							provider: playwright(),
+							instances: [
+								{ browser: "chromium" },
+								// firefox and webkit have been flaky lately...
+								// { browser: "firefox" },
+								// { browser: "webkit" },
+							],
+							screenshotFailures: false,
+						},
+					}),
 		},
 	};
 };
 
+const benchmark = {
+	include: ["**/*.bench.browser.?(c|m)[jt]s?(x)"],
+};
+
 export default defineConfig({
 	test: {
+		fsModuleCache: true,
+		isolate: false,
+		maxWorkers: 3,
 		projects: [
 			makeProject("basketball", "node", {
 				name: "basketball",
@@ -57,20 +91,24 @@ export default defineConfig({
 				include: baseballTests,
 			}),
 			makeProject("basketball", "browser", {
-				name: "browser",
+				name: "browser-basketball",
 				include: ["**/*.test.browser.ts"],
-				browser: {
-					enabled: true,
-					headless: true,
-					provider: playwright(),
-					instances: [
-						{ browser: "chromium" },
-						// firefox and webkit have been flaky lately...
-						// { browser: "firefox" },
-						// { browser: "webkit" },
-					],
-					screenshotFailures: false,
-				},
+				benchmark,
+			}),
+			makeProject("football", "browser", {
+				name: "browser-football",
+				include: [],
+				benchmark,
+			}),
+			makeProject("baseball", "browser", {
+				name: "browser-baseball",
+				include: [],
+				benchmark,
+			}),
+			makeProject("hockey", "browser", {
+				name: "browser-hockey",
+				include: [],
+				benchmark,
 			}),
 		],
 	},

@@ -15,12 +15,9 @@ const updatePlayoffSeries = async (
 		throw new Error("playoffSeries not found");
 	}
 
-	const numGamesToWinSeries =
-		playoffSeries.currentRound === -1
-			? 1
-			: helpers.numGamesToWinSeries(
-					g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
-				);
+	const numGamesToWinSeries = helpers.numGamesToWinRound(
+		playoffSeries.currentRound,
+	);
 
 	for (const result of results) {
 		// Did the home (0) or away (1) team win this game? Here, "home" refers to this game, not the team which has homecourt advantage in the playoffs, which is what series.home refers to below.

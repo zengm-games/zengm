@@ -1,7 +1,7 @@
 export const gameAttributesArrayToObject = (
 	array: {
 		key: string;
-		value: any;
+		value: unknown;
 	}[],
 ) => {
 	const object: Record<string, any> = Object.create(null);

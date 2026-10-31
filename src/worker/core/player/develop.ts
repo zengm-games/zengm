@@ -3,7 +3,11 @@ import {
 	PLAYER,
 	POSITIONS,
 } from "../../../common/constants.ts";
-import developSeason from "./developSeason.ts";
+import {
+	developSeason,
+	developSeasonSync,
+	getRealPlayerDeterminismInfo,
+} from "./developSeason.ts";
 import ovr from "./ovr.ts";
 import pos from "./pos.ts";
 import skills from "./skills.ts";
@@ -16,8 +20,14 @@ import genWeight from "./genWeight.ts";
 import potEstimator from "./potEstimator.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { last } from "../../../common/utils.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
+import { last, assertDefined } from "../../../common/utils.ts";
+
+// ovrs and pots only exist in sports with position-specific ratings, and there they have a value for every position
+const getRatingByPos = (
+	ratingsByPos: Record<string, number> | undefined,
+	pos: string,
+) => ratingsByPos![pos]!;
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
@@ -36,7 +46,7 @@ export const monteCarloPot = async ({
 	usePotEstimator?: boolean;
 }): Promise<number> => {
 	if (age >= 29) {
-		return pos ? ratings.ovrs[pos] : ratings.ovr;
+		return pos ? getRatingByPos(ratings.ovrs, pos) : ratings.ovr;
 	}
 
 	if (
@@ -51,12 +61,12 @@ export const monteCarloPot = async ({
 		let ovr;
 		let pot;
 
-		if (!isSport("basketball")) {
+		if (__SPORT !== "basketball") {
 			if (pos === undefined) {
 				throw new Error("pos is required for potEstimator");
 			}
 
-			ovr = ratings.ovrs[pos];
+			ovr = getRatingByPos(ratings.ovrs, pos);
 			pot = potEstimator(ovr, age, pos);
 		} else {
 			ovr = ratings.ovr;
@@ -72,12 +82,24 @@ export const monteCarloPot = async ({
 
 	const maxOvrs = [];
 
+	// Only do the async part once, rather than in every iteration of the loop
+	const realPlayerDeterminismInfo = await getRealPlayerDeterminismInfo(
+		srID,
+		true,
+	);
+
 	for (let i = 0; i < NUM_SIMULATIONS; i++) {
-		const copiedRatings = helpers.deepCopy(ratings);
-		let maxOvr = pos ? ratings.ovrs[pos] : ratings.ovr;
+		// Shallow copy is sufficient because developSeason (only basketball gets here) only modifies top level numeric ratings
+		const copiedRatings = { ...ratings };
+		let maxOvr = pos ? getRatingByPos(ratings.ovrs, pos) : ratings.ovr;
 
 		for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
-			await developSeason(copiedRatings, ageTemp, srID, DEFAULT_LEVEL, true);
+			developSeasonSync(
+				copiedRatings,
+				ageTemp,
+				DEFAULT_LEVEL,
+				realPlayerDeterminismInfo,
+			);
 
 			const currentOvr = ovr(copiedRatings, pos);
 
@@ -89,7 +111,7 @@ export const monteCarloPot = async ({
 		maxOvrs.push(maxOvr);
 	}
 
-	return maxOvrs.sort((a, b) => a - b)[Math.floor(0.75 * NUM_SIMULATIONS)];
+	return maxOvrs.sort((a, b) => a - b)[Math.floor(0.75 * NUM_SIMULATIONS)]!;
 };
 
 /**
@@ -143,7 +165,7 @@ const develop = async (
 	// years===0 condition is so editing locked player in God Mode will update ovr and pot
 	if (!ratings.locked || years === 0) {
 		// Run these even for players developing 0 seasons
-		if (isSport("basketball")) {
+		if (__SPORT === "basketball") {
 			ratings.ovr = ovr(ratings);
 
 			if (!skipPot) {
@@ -183,23 +205,21 @@ const develop = async (
 				}
 			}
 
-			if (pos === undefined) {
-				throw new Error("Should never happen");
-			}
+			assertDefined(pos);
 
 			if (typeof p.pos === "string") {
 				pos = p.pos;
 			}
 
-			ratings.ovr = ratings.ovrs[pos];
-			ratings.pot = ratings.pots[pos];
+			ratings.ovr = getRatingByPos(ratings.ovrs, pos);
+			ratings.pot = getRatingByPos(ratings.pots, pos);
 			ratings.pos = pos;
 		}
 	}
 
 	if (!ratings.locked && years > 0) {
 		// In the NBA displayed weights seem to never change and seem inaccurate
-		if (isSport("football")) {
+		if (__SPORT === "football") {
 			const newWeight = genWeight(
 				ratings.hgt,
 				(ratings as any).stre,

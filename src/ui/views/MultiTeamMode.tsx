@@ -2,11 +2,11 @@ import { useRef } from "react";
 import { PHASE } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
 
 const handleAutoSort = async (tids: number[]) => {
@@ -27,11 +27,10 @@ const MultiTeamMode = ({ teams }: View<"multiTeamMode">) => {
 
 	const notificationShown = useRef(false);
 
-	const showNotification = () => {
+	const showNotification2 = () => {
 		if (!notificationShown.current) {
 			notificationShown.current = true;
-			logEvent({
-				saveToDb: false,
+			showNotification({
 				text: "Switch between teams you control using the menu below:",
 				type: "info",
 			});
@@ -61,7 +60,7 @@ const MultiTeamMode = ({ teams }: View<"multiTeamMode">) => {
 		await toWorker("main", "updateMultiTeamMode", gameAttributes);
 
 		if (userTids.length === 1 && newUserTids.length > 1) {
-			showNotification();
+			showNotification2();
 		}
 	};
 
@@ -144,7 +143,7 @@ const MultiTeamMode = ({ teams }: View<"multiTeamMode">) => {
 						await toWorker("main", "updateMultiTeamMode", {
 							userTids: teams.map((t) => t.tid),
 						});
-						showNotification();
+						showNotification2();
 					}}
 				>
 					Select all
@@ -201,7 +200,7 @@ const MultiTeamMode = ({ teams }: View<"multiTeamMode">) => {
 				>
 					Auto sort {bySport({ football: "depth charts", default: "rosters" })}
 				</button>
-				{isSport("basketball") ? (
+				{__SPORT === "basketball" ? (
 					<button
 						className="btn btn-secondary"
 						onClick={() => handleResetPT(userTids)}

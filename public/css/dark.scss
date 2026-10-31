@@ -414,17 +414,6 @@ table.table thead .sorting::after {
 	--gradient-base-success: #{derive-rgb-values-from-hex(darken($success, 25%))};
 }
 
-.chart-axis {
-	line,
-	path {
-		stroke: lighten($secondary, 30%);
-	}
-
-	text {
-		fill: lighten($secondary, 30%);
-	}
-}
-
 #basketball-gm_mobile_leaderboard,
 #football-gm_mobile_leaderboard,
 #zen-gm_mobile_leaderboard {

@@ -102,16 +102,19 @@ const Controls = ({
 							</p>
 						</HelpPopover>
 					</div>
-					<a
-						className={clsx("btn btn-sm btn-light-bordered cursor-pointer", {
+					<button
+						type="button"
+						className={clsx("btn btn-sm btn-light-bordered", {
 							active: enableFilters,
 						})}
+						aria-pressed={enableFilters}
 						onClick={onToggleFilters}
 						style={style}
 						title="Filter"
+						aria-label="Filter"
 					>
 						<span className="glyphicon glyphicon-filter" />
-					</a>
+					</button>
 					<input
 						className="form-control form-control-sm datatable-search mb-2"
 						onChange={onSearch}
@@ -132,12 +135,13 @@ const Controls = ({
 						padding: "0 0 0 5px",
 					}}
 					title="Actions"
+					aria-label="Actions"
 					variant="btn-link border-0"
 				>
 					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
-					{metadataType === "player" ? (
+					{metadataType === "player" || metadataType === "league" ? (
 						<Dropdown.Item onClick={onBulkSelectRows}>
 							{bulkSelectRows ? "Hide bulk select" : "Bulk select"}
 							{alwaysShowBulkSelectRows ? " actions" : null}

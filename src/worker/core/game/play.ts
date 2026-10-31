@@ -18,7 +18,6 @@ import writePlayerStats, {
 import writeTeamStats from "./writeTeamStats.ts";
 import { idb } from "../../db/index.ts";
 import {
-	advStats,
 	g,
 	helpers,
 	lock,
@@ -42,8 +41,8 @@ import {
 	getOneUpcomingGame,
 	recomputeLocalUITeamOvrs,
 } from "../../util/recomputeLocalUITeamOvrs.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
+import { advStats } from "../../util/advStats.ts";
 
 /**
  * Play one or more days of games.
@@ -65,13 +64,11 @@ const play = async (
 ) => {
 	// This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
 	const cbNoGames = async (playoffsOver: boolean = false) => {
-		await updateStatus("Saving...");
-		await idb.cache.flush();
-		await updateStatus("Idle");
 		await lock.set("gameSim", false);
 
 		// Check to see if the season is over
 		const schedule = await season.getSchedule();
+		let newPhaseCalled = false;
 		if (g.get("phase") < PHASE.PLAYOFFS) {
 			if (schedule.length === 0) {
 				await phase.newPhase(
@@ -79,6 +76,7 @@ const play = async (
 					conditions,
 					gidOneGame !== undefined,
 				);
+				newPhaseCalled = true;
 			}
 		} else if (playoffsOver) {
 			await phase.newPhase(
@@ -86,7 +84,14 @@ const play = async (
 				conditions,
 				gidOneGame !== undefined,
 			);
+			newPhaseCalled = true;
 		}
+
+		if (!local.autoPlayUntil && !newPhaseCalled) {
+			await updateStatus("Saving...");
+			await idb.cache.flush();
+		}
+		await updateStatus();
 
 		if (schedule.length > 0 && !playoffsOver) {
 			const allStarNext = await allStar.nextGameIsAllStar(schedule);
@@ -126,24 +131,19 @@ const play = async (
 			await writePlayerStats(results, conditions);
 
 		let gameToUi: LocalStateUI["games"][number] | undefined;
-		const gidsFinished = await Promise.all(
-			results.map(async (result) => {
-				const att = await writeTeamStats(result);
 
-				const maybeGameToUi = await writeGameStats(result, att, conditions);
-				if (maybeGameToUi) {
-					gameToUi = maybeGameToUi;
-				}
+		for (const result of results) {
+			const att = await writeTeamStats(result);
 
-				return result.gid;
-			}),
-		);
+			const maybeGameToUi = await writeGameStats(result, att, conditions);
+			if (maybeGameToUi) {
+				gameToUi = maybeGameToUi;
+			}
+		}
 
 		// Delete finished games from schedule
-		for (const gid of gidsFinished) {
-			if (typeof gid === "number") {
-				await idb.cache.schedule.delete(gid);
-			}
+		for (const { gid } of results) {
+			await idb.cache.schedule.delete(gid);
 		}
 
 		// Invalidate leaders cache, if it exists
@@ -186,6 +186,7 @@ const play = async (
 				Infinity,
 			]);
 
+			const playersToSave = [];
 			for (const p of players) {
 				let changed = false;
 
@@ -194,7 +195,11 @@ const play = async (
 					changed = true;
 				}
 
-				if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+				if (
+					__SPORT === "baseball" &&
+					p.pFatigue !== undefined &&
+					p.pFatigue > 0
+				) {
 					p.pFatigue = helpers.bound(
 						p.pFatigue - P_FATIGUE_DAILY_REDUCTION,
 						0,
@@ -251,9 +256,10 @@ const play = async (
 				}
 
 				if (changed) {
-					await idb.cache.players.put(p);
+					playersToSave.push(p);
 				}
 			}
+			await idb.cache.players.putAll(playersToSave);
 
 			if (healedTexts.length > 0) {
 				logEvent(
@@ -365,7 +371,7 @@ const play = async (
 		neutralSite?: boolean;
 	}) => {
 		let dh;
-		if (isSport("baseball")) {
+		if (__SPORT === "baseball") {
 			const dhSetting = g.get("dh");
 			const cidHome = teams[0].cid;
 			dh =
@@ -411,10 +417,10 @@ const play = async (
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
 	const cbSimGames = async (
 		schedule: ScheduleGame[],
-		teams: Record<number, any>,
+		teams: Record<number, unknown>,
 		dayOver: boolean,
 	) => {
-		const results: any[] = [];
+		const results = [];
 
 		for (const game of schedule) {
 			const doPlayByPlay = gidOneGame === game.gid && playByPlay;
@@ -646,7 +652,7 @@ const play = async (
 		} else {
 			await lock.set("gameSim", false); // Counteract auto-start in lock.canStartGames
 			await updatePlayMenu();
-			await updateStatus("Idle");
+			await updateStatus();
 			logEvent(
 				{
 					type: "error",

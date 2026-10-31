@@ -1,10 +1,14 @@
-export interface Params {
+interface Params {
 	[key: string]: string | undefined;
 }
 
 export interface Context {
 	params: Params;
 	path: string;
+
+	// true/false means this navigation should/shouldn't scroll to the top of the page. undefined means it's up to whatever is handling the route.
+	scrollToTop: boolean | undefined;
+
 	state: {
 		[key: string]: any;
 	};
@@ -17,7 +21,7 @@ export class RouteNotFoundError extends Error {
 	}
 }
 
-type RouteCallback = (context: Context) => Promise<void>;
+type RouteCallback = (context: Context) => void | Promise<void>;
 
 interface Route {
 	cb: RouteCallback;
@@ -75,7 +79,7 @@ const match = (route: Route, pathname: string) => {
 	return { matches, params };
 };
 
-export const makeRegex = (path: string) => {
+const makeRegex = (path: string) => {
 	const parts = path
 		.replace(/(^\/+|\/+$)/g, "") // Strip starting and ending slashes
 		.split("/");
@@ -132,13 +136,7 @@ const findAnchor = (
 	return el as HTMLAnchorElement | SVGAElement;
 };
 
-const sameOrigin = (href: string) => {
-	if (!href) {
-		return false;
-	}
-
-	const url = new URL(href, window.location.toString());
-
+const sameOrigin = (url: URL) => {
 	return (
 		window.location.protocol === url.protocol &&
 		window.location.hostname === url.hostname &&
@@ -146,11 +144,17 @@ const sameOrigin = (href: string) => {
 	);
 };
 
-const samePath = (url: HTMLAnchorElement) => {
+const samePath = (url: URL) => {
 	return (
 		url.pathname === window.location.pathname &&
 		url.search === window.location.search
 	);
+};
+
+// Entries in the history stack are numbered so that when back/forward navigation is blocked, we know how far to go to get back to where we were
+const getHistoryIndex = (state: unknown) => {
+	const index = (state as { index?: unknown } | null)?.index;
+	return typeof index === "number" ? index : undefined;
 };
 
 const clickEvent = document.ontouchstart ? "touchstart" : "click";
@@ -160,6 +164,7 @@ class Router {
 	private navigationEnd: NavigationEnd | undefined;
 	private routes: Route[];
 	private lastNavigatedPath: string | undefined;
+	private historyIndex = 0;
 	public shouldBlock:
 		| ((refresh: boolean) => boolean | Promise<boolean>)
 		| undefined;
@@ -178,21 +183,34 @@ class Router {
 		});
 	}
 
+	// URL of the page currently being shown. Use this rather than window.location, which is wrong while back/forward navigation is being blocked, since the browser changes the URL before shouldBlock is called.
+	public get location(): { pathname: string; search: string } {
+		if (this.lastNavigatedPath === undefined) {
+			return window.location;
+		}
+
+		return new URL(this.lastNavigatedPath, window.location.origin);
+	}
+
+	// If return false, then no navigation happened and navigationEnd was not called
 	public async navigate(
 		path: string,
 		{
 			refresh = false,
 			replace = false,
+			scrollToTop,
 			state = {},
 		}: {
 			refresh?: boolean;
 			replace?: boolean;
-			state?: { [key: string]: any };
+			scrollToTop?: boolean;
+			state?: { [key: string]: unknown };
 		} = {},
 	) {
 		const context: Context = {
 			params: {},
 			path,
+			scrollToTop,
 			state,
 		};
 		let error: Error | null = null;
@@ -217,7 +235,7 @@ class Router {
 					if (this.shouldBlock) {
 						const shouldBlock = await this.shouldBlock(refresh);
 						if (shouldBlock) {
-							return;
+							return false;
 						}
 					}
 
@@ -226,23 +244,32 @@ class Router {
 							context,
 						});
 						if (output === false) {
-							return;
+							return false;
 						}
 					}
 
 					if (replace) {
+						// Keep the index of the entry being replaced, which is not this.historyIndex after back/forward navigation
+						this.historyIndex =
+							getHistoryIndex(window.history.state) ?? this.historyIndex;
+
 						// Only do this on replace, not refresh, or Safari can complain about too many calls
 						window.history.replaceState(
 							{
 								path,
+								index: this.historyIndex,
 							},
 							document.title,
 							path,
 						);
 					} else if (!refresh) {
+						// Based on the current entry rather than this.historyIndex, in case some back/forward navigation was not tracked
+						this.historyIndex =
+							(getHistoryIndex(window.history.state) ?? this.historyIndex) + 1;
 						window.history.pushState(
 							{
 								path,
+								index: this.historyIndex,
 							},
 							document.title,
 							path,
@@ -263,11 +290,16 @@ class Router {
 
 		if (!handled) {
 			error = new RouteNotFoundError();
+
+			if (replace) {
+				// On initial load and back/forward navigation, the URL has already changed to this path
+				this.lastNavigatedPath = path;
+			}
 		}
 
 		// HACK! Some ads were including a request for /ads.txt?upapi=true which somehow triggered this code and led to Controller attempting to render multiple pages at once, one of which was outside of the league, leading to beforeViewNonLeague to be called and stop game sim
 		if (error && path.includes("ads.txt")) {
-			return;
+			return false;
 		}
 
 		if (this.navigationEnd) {
@@ -276,6 +308,8 @@ class Router {
 				error,
 			});
 		}
+
+		return true;
 	}
 
 	public async start({
@@ -303,11 +337,14 @@ class Router {
 			this._onclick(e as NonStandardEvent);
 		});
 		window.addEventListener("popstate", (e) => {
-			this._onpopstate(e);
+			void this._onpopstate(e);
 		});
 
 		await this.navigate(location.pathname + location.search + location.hash, {
 			replace: true,
+
+			// Leave the scroll position to the browser, like if it is restoring it after a reload
+			scrollToTop: false,
 		});
 	}
 
@@ -336,12 +373,19 @@ class Router {
 			return;
 		}
 
-		// There are various special cases for SVGs, not everything will work right
+		// In SVG links (like in Player Graphs) href and target are SVGAnimatedString rather than string
 		const svg = anchor instanceof SVGAElement;
+		const href = svg ? anchor.href.baseVal : anchor.href;
+		const target = svg ? anchor.target.baseVal : anchor.target;
+
+		if (!href) {
+			return;
+		}
+		const url = new URL(href, window.location.href);
 
 		// ensure non-hash for the same path
 		const link = anchor.getAttribute("href");
-		if (!svg && samePath(anchor) && (anchor.hash || link === "#")) {
+		if (samePath(url) && (url.hash || link === "#")) {
 			return;
 		}
 
@@ -349,31 +393,25 @@ class Router {
 			return;
 		}
 
-		// string check is needed otherwise links inside an SVG (like in Player Graphs) will always get caught here
-		if (typeof anchor.target === "string" && anchor.target.startsWith("_")) {
+		if (target.startsWith("_")) {
 			return;
 		}
 
-		if (!svg && !sameOrigin(anchor.href)) {
+		if (!sameOrigin(url)) {
 			return;
 		}
 
-		// rebuild path
-		let path;
-		if (svg) {
-			// Special case for SVG links
-			path = anchor.href.baseVal;
-		} else {
-			path = anchor.pathname + anchor.search + (anchor.hash || "");
-			path = path[0] !== "/" ? `/${path}` : path;
-		}
+		const path = url.pathname + url.search + url.hash;
 
 		e.preventDefault();
 
-		this.navigate(path);
+		void this.navigate(path, {
+			// Clicking a link scrolls to the top, even if it's a link to the same type of page (like from one player to another). Links that are more like controls within a page (like tabs) can opt out.
+			scrollToTop: !anchor.hasAttribute("data-no-scroll-reset"),
+		});
 	}
 
-	private _onpopstate(event: Event & { state: any }) {
+	private async _onpopstate(event: Event & { state: any }) {
 		if (document.readyState !== "complete") {
 			return;
 		}
@@ -387,11 +425,37 @@ class Router {
 			this.lastNavigatedPath &&
 			this.lastNavigatedPath.split("#")[0] === path.split("#")[0]
 		) {
-			// Just switching the hash in the URL on the same page, not actually navigation
+			// Just switching the hash in the URL on the same page, not actually navigation. Still need to track the index, and assign one to a new entry created by the browser when following a hash link.
+			const index = getHistoryIndex(event.state);
+			if (index === undefined) {
+				this.historyIndex += 1;
+				window.history.replaceState(
+					{
+						path,
+						index: this.historyIndex,
+					},
+					document.title,
+					path,
+				);
+			} else {
+				this.historyIndex = index;
+			}
 			return;
 		}
 
-		this.navigate(path, { replace: true });
+		const navigated = await this.navigate(path, {
+			replace: true,
+
+			// Leave the scroll position to the browser for back/forward navigation
+			scrollToTop: false,
+		});
+		if (!navigated) {
+			// Navigation was blocked, but the browser already moved to a different history entry, so go back to the one for the page that is still being shown. That fires another popstate event, which is ignored by the lastNavigatedPath check above.
+			const index = getHistoryIndex(window.history.state);
+			if (index !== undefined && index !== this.historyIndex) {
+				window.history.go(this.historyIndex - index);
+			}
+		}
 	}
 }
 

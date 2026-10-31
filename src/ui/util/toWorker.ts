@@ -1,11 +1,12 @@
 import { promiseWorker } from "./promiseWorker.ts";
-import type { WorkerAPICategory } from "../../worker/index.ts";
+import type { WorkerAPICategory } from "../../worker/api/index.ts";
 import type api from "../../worker/api/index.ts";
+import { registerGlobal } from "../../common/registerGlobal.ts";
 
 type API = typeof api;
 
 // https://stackoverflow.com/a/70818666/786644
-type ParametersUnconstrained<T> = T extends (...args: infer P) => any
+type ParametersUnconstrained<T> = T extends (...args: infer P) => unknown
 	? P
 	: never;
 type ReturnTypeUnconstrained<T> = T extends (...args: any) => infer P
@@ -21,5 +22,7 @@ export const toWorker = <
 	name: Name,
 	param: ParametersUnconstrained<Func>[0],
 ): Promise<ReturnTypeUnconstrained<Func>> => {
-	return promiseWorker.postMessage([type, name, param]);
+	return promiseWorker.postMessage([type, name, param]) as any;
 };
+
+registerGlobal({ toWorker });

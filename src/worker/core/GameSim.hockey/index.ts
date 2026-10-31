@@ -17,7 +17,7 @@ import { penalties, penaltyTypes } from "../GameSim.hockey/penalties.ts";
 import PenaltyBox from "./PenaltyBox.ts";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
-import { orderBy, range } from "../../../common/utils.ts";
+import { maxBy, orderBy, range } from "../../../common/utils.ts";
 import { getStartingAndBackupGoalies } from "./getStartingAndBackupGoalies.ts";
 import type { TeamNum } from "../../../common/types.ts";
 import PlayByPlayLogger from "./PlayByPlayLogger.ts";
@@ -26,6 +26,17 @@ import { choice } from "../../../common/random.ts";
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
 const GOALS = new Set(["evG", "ppG", "shG"]);
+
+const DEFENSIVE_COMPOSITE_WEIGHTS = [
+	["D", 1],
+	["W", 0.5],
+	["C", 0.25],
+] as const;
+const OFFENSIVE_COMPOSITE_WEIGHTS = [
+	["C", 1],
+	["W", 0.5],
+	["D", 0.25],
+] as const;
 
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
@@ -58,6 +69,7 @@ class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
 
 	playersOnIce: [PlayersOnIce, PlayersOnIce];
+	playersOnBench?: [PlayerGameSim[], PlayerGameSim[]];
 
 	clock: number;
 
@@ -202,12 +214,14 @@ class GameSim extends GameSimBase {
 			{
 				F: [],
 				D: [],
+				G: [],
 			},
 			{
 				F: [],
 				D: [],
+				G: [],
 			},
-		] as any;
+		];
 
 		for (const t of teamNums) {
 			// First, make sure players listed in the main lines for G/D/F are reserved and not used as injury replacements
@@ -530,11 +544,7 @@ class GameSim extends GameSimBase {
 				eligible = this.team[t].depth.F;
 			}
 
-			return orderBy(
-				this.team[t].depth.F,
-				(p) => p.compositeRating.scoring,
-				"desc",
-			);
+			return orderBy(eligible, (p) => p.compositeRating.scoring, "desc");
 		}) as [PlayerGameSim[], PlayerGameSim[]];
 
 		const goalies = teamNums.map((t) => {
@@ -681,7 +691,7 @@ class GameSim extends GameSimBase {
 		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
 		const target = this.pickPlayer(t2, undefined, ["C", "W", "D"]);
 
-		this.recordStat(t2, target, "energy", -0.5);
+		target.stat.energy += -0.5;
 
 		this.recordStat(t, hitter, "hit", 1);
 		this.playByPlay.logEvent({
@@ -1302,11 +1312,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.hitting = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
+				positions: DEFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.enforcer) / 2,
@@ -1314,35 +1320,15 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.penalties = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
+				positions: DEFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => p.compositeRating.penalties / 2,
 			});
 
-			this.team[t].compositeRating.penalties = getCompositeFactor({
-				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
-				synergyFactor: this.synergyFactor,
-				synergyRatio,
-				valFunc: (p) => p.compositeRating.enforcer / 2,
-			});
-
 			this.team[t].compositeRating.puckControl = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					C: 1,
-					W: 0.5,
-					D: 0.25,
-				},
+				positions: OFFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => p.compositeRating.playmaker,
@@ -1350,11 +1336,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.takeaway = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
+				positions: DEFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.grinder) / 2,
@@ -1362,11 +1344,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.blocking = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					D: 1,
-					W: 0.5,
-					C: 0.25,
-				},
+				positions: DEFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.blocking) / 2,
@@ -1374,11 +1352,7 @@ class GameSim extends GameSimBase {
 
 			this.team[t].compositeRating.scoring = getCompositeFactor({
 				playersOnIce: this.playersOnIce[t],
-				positions: {
-					C: 1,
-					W: 0.5,
-					D: 0.25,
-				},
+				positions: OFFENSIVE_COMPOSITE_WEIGHTS,
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
 				valFunc: (p) => p.compositeRating.scoring,
@@ -1400,8 +1374,10 @@ class GameSim extends GameSimBase {
 
 		if (nextLine.length === 0) {
 			// This could happen if a player gets a penalty while being on the only healthy line remaining due to many injuries
+			// Never use the goalie as a skater, otherwise there would be no goalie to put back in net after pulling him
+			const goalies = this.lines[t].G.flat();
 			let emergencyPlayers = [];
-			for (const existingLines of Object.values(this.lines[t])) {
+			for (const existingLines of [this.lines[t].F, this.lines[t].D]) {
 				for (const existingLine of existingLines) {
 					emergencyPlayers.push(...existingLine);
 				}
@@ -1412,7 +1388,7 @@ class GameSim extends GameSimBase {
 			if (emergencyPlayers.length === 0) {
 				// This could happen if everyone is injured resulting in lines not having players
 				emergencyPlayers = this.team[t].depth[pos].filter(
-					(p) => !playersRemainingOn.includes(p),
+					(p) => !playersRemainingOn.includes(p) && !goalies.includes(p),
 				);
 			}
 			return choice(emergencyPlayers);
@@ -1426,6 +1402,7 @@ class GameSim extends GameSimBase {
 		pos: "F" | "D",
 		playersRemainingOn: PlayerGameSim[],
 	) {
+		this.playersOnBench = undefined;
 		this.minutesSinceLineChange[t][pos] = 0;
 		this.currentLine[t][pos] += 1;
 
@@ -1689,12 +1666,13 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			const currentlyOnIce = Object.values(this.playersOnIce[t]).flat();
-			for (const p of currentlyOnIce) {
-				if (options.type === "starters") {
-					this.recordStat(t, p, "gs");
+			for (const pos of helpers.keys(this.playersOnIce[t])) {
+				for (const p of this.playersOnIce[t][pos]) {
+					if (options.type === "starters") {
+						this.recordStat(t, p, "gs");
+					}
+					this.recordStat(t, p, "gp");
 				}
-				this.recordStat(t, p, "gp");
 			}
 
 			if (substitutions || options.type === "starters") {
@@ -1707,23 +1685,49 @@ class GameSim extends GameSimBase {
 					}
 				}
 
-				this.playByPlay.logEvent({
-					type: "playersOnIce",
-					t,
-					pids: Object.values(this.playersOnIce[t])
-						.flat()
-						.map((p) => p.id),
-				});
+				if (this.playByPlay.active) {
+					this.playByPlay.logEvent({
+						type: "playersOnIce",
+						t,
+						pids: Object.values(this.playersOnIce[t])
+							.flat()
+							.map((p) => p.id),
+					});
+				}
 			}
 		}
 
 		if (substitutions || options.type === "starters") {
 			this.updateTeamCompositeRatings();
+			this.updatePlayersOnBench();
 		}
 	}
 
+	updatePlayersOnBench() {
+		const onField = new Set<number>();
+		const playersOnBench: [PlayerGameSim[], PlayerGameSim[]] = [[], []];
+		for (const t of teamNums) {
+			for (const pos of helpers.keys(this.playersOnIce[t])) {
+				for (const p of this.playersOnIce[t][pos]) {
+					onField.add(p.id);
+				}
+			}
+
+			// Keep the original ID-based membership and team order. For duplicate
+			// imported IDs, the second team's check includes the first team's IDs.
+			for (const p of this.team[t].player) {
+				if (!onField.has(p.id)) {
+					playersOnBench[t].push(p);
+				}
+			}
+		}
+		this.playersOnBench = playersOnBench;
+	}
+
 	updatePlayingTime(possessionTime: number) {
-		const onField = new Set();
+		if (this.playersOnBench === undefined) {
+			this.updatePlayersOnBench();
+		}
 
 		for (const t of teamNums) {
 			const t2 = t === 0 ? 1 : 0;
@@ -1738,21 +1742,25 @@ class GameSim extends GameSimBase {
 
 			for (const pos of helpers.keys(this.playersOnIce[t])) {
 				for (const p of this.playersOnIce[t][pos]) {
-					onField.add(p.id);
-					this.recordStat(t, p, "min", possessionTime);
-					if (strengthType === "pp") {
-						this.recordStat(t, p, "ppMin", possessionTime);
-					} else if (strengthType === "sh") {
-						this.recordStat(t, p, "shMin", possessionTime);
+					p.stat.min += possessionTime;
+					this.team[t].stat.min += possessionTime;
+					if (this.playByPlay.active) {
+						this.playByPlay.logStat(t, p.id, "min", possessionTime);
 					}
-					this.recordStat(t, p, "courtTime", possessionTime);
+
+					if (strengthType === "pp") {
+						p.stat.ppMin += possessionTime;
+					} else if (strengthType === "sh") {
+						p.stat.shMin += possessionTime;
+					}
+					p.stat.courtTime += possessionTime;
 
 					if (pos === "G") {
-						this.recordStat(t, p, "gMin", possessionTime);
+						p.stat.gMin += possessionTime;
 					}
 
 					// This used to be 0.04. Increase more to lower PT
-					this.recordStat(t, p, "energy", -0.25 * possessionTime);
+					p.stat.energy += -0.25 * possessionTime;
 
 					if (p.stat.energy < 0) {
 						p.stat.energy = 0;
@@ -1760,13 +1768,11 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			for (const p of this.team[t].player) {
-				if (!onField.has(p.id)) {
-					this.recordStat(t, p, "benchTime", possessionTime);
+			for (const p of this.playersOnBench![t]) {
+				p.stat.benchTime += possessionTime;
 
-					// Any player on the bench is full strength the next time he comes on
-					p.stat.energy = 1;
-				}
+				// Any player on the bench is full strength the next time he comes on
+				p.stat.energy = 1;
 			}
 		}
 	}
@@ -1898,13 +1904,12 @@ class GameSim extends GameSimBase {
 		rating: CompositeRating,
 		positions: Position[] = POSITIONS,
 	) {
-		const players = orderBy(
+		const p = maxBy(
 			getPlayers(this.playersOnIce[t], positions),
 			(p) => p.compositeRating[rating] * fatigue(p.stat.energy),
-			"desc",
 		);
 
-		return players[0]!;
+		return p!;
 	}
 
 	// Pass undefined as p for some team-only stats
@@ -1914,8 +1919,6 @@ class GameSim extends GameSimBase {
 		s: string,
 		amt: number = 1,
 	) {
-		const qtr = this.team[t].stat.ptsQtrs.length - 1;
-
 		if (p !== undefined) {
 			if (s === "gp") {
 				p.stat[s] = 1;
@@ -1925,23 +1928,11 @@ class GameSim extends GameSimBase {
 		}
 
 		// Filter out stats that don't get saved to box score
-		if (
-			s !== "gs" &&
-			s !== "gp" &&
-			s !== "courtTime" &&
-			s !== "benchTime" &&
-			s !== "energy"
-		) {
+		if (s !== "gs" && s !== "gp") {
 			// Filter out stats that are only for player, not team
-			if (
-				s !== "ppMin" &&
-				s !== "shMin" &&
-				s !== "gpSkater" &&
-				s !== "gpGoalie" &&
-				s !== "ga" &&
-				s !== "gMin"
-			) {
-				this.team[t].stat[s] += amt;
+			if (s !== "gpSkater" && s !== "gpGoalie" && s !== "ga") {
+				const teamStat = this.team[t].stat;
+				teamStat[s] += amt;
 
 				let pts;
 
@@ -1950,8 +1941,10 @@ class GameSim extends GameSimBase {
 				}
 
 				if (pts !== undefined) {
-					this.team[t].stat.pts += pts;
-					this.team[t].stat.ptsQtrs[qtr] += pts;
+					const qtr = teamStat.ptsQtrs.length - 1;
+
+					teamStat.pts += pts;
+					teamStat.ptsQtrs[qtr] += pts;
 					this.playByPlay.logStat(t, undefined, "pts", pts);
 
 					// Power play goals don't count for +/-

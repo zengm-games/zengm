@@ -1,12 +1,14 @@
-import { isSport } from "../../../common/sportFunctions.ts";
-
 const avgAge = (
 	players: {
 		age: number;
-		stats: {
-			min: number;
-			gp: number;
-		};
+
+		// undefined can happen with showRookies and no showNoStats in player.formatAll, treated the same as no minutes played
+		stats:
+			| {
+					min: number | undefined;
+					gp: number | undefined;
+			  }
+			| undefined;
 	}[],
 ) => {
 	if (players.length === 0) {
@@ -17,8 +19,14 @@ const avgAge = (
 	let denominator = 0;
 
 	for (const p of players) {
-		numerator += p.age * p.stats.min * (isSport("basketball") ? p.stats.gp : 1);
-		denominator += p.stats.min * (isSport("basketball") ? p.stats.gp : 1);
+		if (!p.stats) {
+			continue;
+		}
+		// min and gp can be missing in historical data, treated the same as no minutes played
+		const weight =
+			(p.stats.min ?? 0) * (__SPORT === "basketball" ? (p.stats.gp ?? 0) : 1);
+		numerator += p.age * weight;
+		denominator += weight;
 	}
 
 	// Just do raw average if no mins

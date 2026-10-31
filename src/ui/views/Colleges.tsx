@@ -75,7 +75,7 @@ export const genView = (
 			},
 		);
 
-		const rows: DataTableRow[] = infos.map((c) => {
+		const rows: DataTableRow<"player">[] = infos.map((c) => {
 			const p = c.p;
 
 			const abbrev = teamInfoCache[p.legacyTid]?.abbrev;

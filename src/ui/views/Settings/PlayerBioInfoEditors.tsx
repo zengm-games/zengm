@@ -1,7 +1,7 @@
 import { type ChangeEvent, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import clsx from "clsx";
 import { isInvalidNumber, type PlayerBioInfoState } from "./PlayerBioInfo.tsx";
 import {
@@ -45,7 +45,7 @@ export const RacesEditor = ({
 	const [rowsEdited, setRowsEdited] = useState([...rows]);
 	const lastSavedState = useRef<RaceRow[] | undefined>(undefined);
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		// Reset for next time
 		setRowsEdited(lastSavedState.current ?? [...rows]);
 
@@ -64,10 +64,9 @@ export const RacesEditor = ({
 		try {
 			parseAndValidateRaces(rowsEdited);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;
@@ -309,7 +308,7 @@ export const CollegesEditor = ({
 	const [fractionSkipCollegeEdited, setFractionSkipCollegeEdited] =
 		useState(fractionSkipCollege);
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		// Reset for next time
 		setRowsEdited(lastSavedState.current?.rowsEdited ?? [...rows]);
 		setFractionSkipCollegeEdited(
@@ -331,10 +330,9 @@ export const CollegesEditor = ({
 		try {
 			parseAndValidateColleges(rowsEdited, fractionSkipCollegeEdited, defaults);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;
@@ -611,7 +609,7 @@ export const NamesEditor = ({
 	const lastSavedState = useRef<undefined | NameRows>(undefined);
 	const [firstOrLast, setFirstOrLast] = useState<"first" | "last">("first");
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		// Reset for next time
 		setRowsEdited(lastSavedState.current ?? { ...rows });
 
@@ -630,10 +628,9 @@ export const NamesEditor = ({
 		try {
 			parseAndValidateNames(rowsEdited);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;
@@ -684,16 +681,18 @@ export const NamesEditor = ({
 				<ul className="nav nav-tabs mt-3">
 					{(["first", "last"] as const).map((type) => (
 						<li key={type} className="nav-item">
-							<a
+							<button
+								type="button"
 								className={clsx("nav-link", {
 									active: type === firstOrLast,
 								})}
+								aria-current={type === firstOrLast ? true : undefined}
 								onClick={() => {
 									setFirstOrLast(type);
 								}}
 							>
 								{helpers.upperCaseFirstLetter(type)}
-							</a>
+							</button>
 						</li>
 					))}
 				</ul>
@@ -792,7 +791,7 @@ export const FlagEditor = ({
 	const [flagEdited, setFlagEdited] = useState(initialFlag);
 	const lastSavedState = useRef<undefined | string>(undefined);
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		// Reset for next time
 		setFlagEdited(lastSavedState.current ?? initialFlag);
 

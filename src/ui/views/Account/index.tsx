@@ -3,22 +3,62 @@ import type { MouseEvent, ReactNode } from "react";
 import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
-	GAME_NAME,
 } from "../../../common/constants.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import type { View } from "../../../common/types.ts";
-import { GameLinks } from "../../components/GameLinks.tsx";
+import { GoldPitchText } from "../../components/GoldPitchText.tsx";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
 import AccountInfoForm from "./AccountInfoForm.tsx";
 import DeleteAccountForm from "./DeleteAccountForm.tsx";
 import { getScript } from "../../util/getScript.ts";
 import { confirm } from "../../util/confirm.tsx";
 import { fetchWrapper } from "../../../common/fetchWrapper.ts";
+import { TEXT_MAX_WIDTH } from "../AwardSettings/Documentation.tsx";
+import {
+	ActionButton,
+	ProcessingSpinner,
+} from "../../components/ActionButton.tsx";
+
+// Calls one of the gold_*.php APIs and then refreshes the account page to show the result. Resolves after the page has refreshed, so callers can show a processing state until then.
+const goldRequest = async (
+	api: "gold_start" | "gold_cancel",
+	data: Record<string, string>,
+) => {
+	let goldResult;
+	try {
+		goldResult = await fetchWrapper({
+			url: `${ACCOUNT_API_URL}/${api}.php`,
+			method: "POST",
+			data: {
+				sport: __SPORT,
+				...data,
+			},
+			credentials: "include",
+		});
+	} catch (error) {
+		console.error(error);
+		goldResult = {
+			success: false,
+			message: ajaxErrorMsg,
+		};
+	}
+
+	if (api === "gold_start" && goldResult.success) {
+		await toWorker("main", "initGold", undefined);
+	}
+
+	await realtimeUpdate(["account"], "/account", {
+		goldResult,
+	});
+};
 
 const StripeButton = ({ email }: { email: string }) => {
 	const [handler, setHandler] = useState<StripeCheckoutHandler | undefined>();
+
+	// From when Stripe Checkout returns a token until the account page is refreshed with the result, which can take several seconds
+	const [processing, setProcessing] = useState(false);
 
 	useEffect(() => {
 		(async () => {
@@ -31,31 +71,9 @@ const StripeButton = ({ email }: { email: string }) => {
 					key: STRIPE_PUBLISHABLE_KEY,
 					image: "/ico/icon128.png",
 					token: async (token) => {
-						try {
-							const data = await fetchWrapper({
-								url: `${ACCOUNT_API_URL}/gold_start.php`,
-								method: "POST",
-								data: {
-									sport: process.env.SPORT,
-									token: token.id,
-								},
-								credentials: "include",
-							});
-							realtimeUpdate(["account"], "/account", {
-								goldResult: data,
-							});
-							if (data.success) {
-								toWorker("main", "initGold", undefined);
-							}
-						} catch (error) {
-							console.error(error);
-							realtimeUpdate(["account"], "/account", {
-								goldResult: {
-									success: false,
-									message: ajaxErrorMsg,
-								},
-							});
-						}
+						setProcessing(true);
+						await goldRequest("gold_start", { token: token.id });
+						setProcessing(false);
 					},
 				}),
 			);
@@ -77,13 +95,20 @@ const StripeButton = ({ email }: { email: string }) => {
 
 	return (
 		<>
-			<button
-				className="btn btn-lg btn-primary"
+			<ActionButton
+				size="lg"
 				disabled={!handler}
 				onClick={handleClick}
+				processing={processing}
+				processingText="Processing payment"
 			>
 				Subscribe to ZenGM Gold - $5/month
-			</button>
+			</ActionButton>
+			{processing ? (
+				<p className="text-body-secondary mt-2 mb-0">
+					This can take a few seconds, please don't leave this page.
+				</p>
+			) : null}
 			<div className="alert alert-info mt-3 mb-0">
 				If you would rather make a single payment rather than subscribe, send
 				money by{" "}
@@ -95,41 +120,6 @@ const StripeButton = ({ email }: { email: string }) => {
 			</div>
 		</>
 	);
-};
-
-const handleCancel = async (e: MouseEvent) => {
-	e.preventDefault();
-	const result = await confirm(
-		"Are you sure you want to cancel your ZenGM Gold subscription?",
-		{
-			okText: "Cancel subscription",
-			cancelText: "Keep subscription",
-		},
-	);
-
-	if (result) {
-		try {
-			const data = await fetchWrapper({
-				url: `${ACCOUNT_API_URL}/gold_cancel.php`,
-				method: "POST",
-				data: {
-					sport: process.env.SPORT,
-				},
-				credentials: "include",
-			});
-			realtimeUpdate(["account"], "/account", {
-				goldResult: data,
-			});
-		} catch (error) {
-			console.log(error);
-			realtimeUpdate(["account"], "/account", {
-				goldResult: {
-					success: false,
-					message: ajaxErrorMsg,
-				},
-			});
-		}
-	}
 };
 
 const UserInfo = ({
@@ -146,6 +136,7 @@ const UserInfo = ({
 	username?: string;
 }) => {
 	const [logoutError, setLogoutError] = useState<string | undefined>();
+	const [cancelling, setCancelling] = useState(false);
 
 	const handleLogout = async (event: MouseEvent) => {
 		event.preventDefault();
@@ -156,7 +147,7 @@ const UserInfo = ({
 				url: `${ACCOUNT_API_URL}/logout.php`,
 				method: "POST",
 				data: {
-					sport: process.env.SPORT,
+					sport: __SPORT,
 				},
 				credentials: "include",
 			});
@@ -169,6 +160,23 @@ const UserInfo = ({
 		await toWorker("main", "checkAccount", undefined);
 		await toWorker("main", "realtimeUpdate", ["account"]);
 		await realtimeUpdate([], "/");
+	};
+
+	const handleCancel = async (event: MouseEvent) => {
+		event.preventDefault();
+		const result = await confirm(
+			"Are you sure you want to cancel your ZenGM Gold subscription?",
+			{
+				okText: "Cancel subscription",
+				cancelText: "Keep subscription",
+			},
+		);
+
+		if (result) {
+			setCancelling(true);
+			await goldRequest("gold_cancel", {});
+			setCancelling(false);
+		}
 	};
 
 	return (
@@ -186,21 +194,37 @@ const UserInfo = ({
 			) : (
 				<p>
 					Logged in as: <b>{username}</b> (
-					<a href="" onClick={handleLogout}>
+					<button
+						type="button"
+						className="btn btn-link p-0 border-0 align-baseline"
+						onClick={handleLogout}
+					>
 						Logout
-					</a>
+					</button>
 					)
 				</p>
 			)}
 			{logoutError ? <p className="text-danger">{logoutError}</p> : null}
 			{showGoldActive ? (
 				<p>
-					ZenGM Gold: Active, renews for $5 on {goldUntilDateString} (
-					<a href="/account/update_card">Update card</a> or{" "}
-					<a href="" id="gold-cancel" onClick={handleCancel}>
-						cancel
-					</a>
-					)
+					ZenGM Gold: Active, renews for $5 on {goldUntilDateString}{" "}
+					{cancelling ? (
+						<span className="text-warning">
+							<ProcessingSpinner text="Canceling" />
+						</span>
+					) : (
+						<>
+							(<a href="/account/update_card">Update card</a> or{" "}
+							<button
+								type="button"
+								className="btn btn-link p-0 border-0 align-baseline"
+								onClick={handleCancel}
+							>
+								cancel
+							</button>
+							)
+						</>
+					)}
 				</p>
 			) : null}
 			{showGoldCancelled ? (
@@ -232,39 +256,10 @@ const Account = ({
 			<>
 				<h2>ZenGM Gold</h2>
 
-				<div style={{ maxWidth: 648 }}>
-					<p>
-						{GAME_NAME} is completely free. There will never be any{" "}
-						<a href="http://en.wikipedia.org/wiki/Freemium" target="_blank">
-							"freemium"
-						</a>{" "}
-						or{" "}
-						<a href="http://en.wikipedia.org/wiki/Free-to-play" target="_blank">
-							"pay-to-win"
-						</a>{" "}
-						bullshit here. Why? Because if a game charges you money for
-						power-ups, the developer makes more money if they make their game
-						frustratingly annoying to play without power-ups. Because of this,{" "}
-						<b>freemium games always suck</b>.
-					</p>
+				<div style={TEXT_MAX_WIDTH}>
+					<GoldPitchText />
 
-					<p>
-						If you want to support {GAME_NAME} continuing to be a non-sucky
-						game, sign up for ZenGM Gold! It's only <b>$5/month</b>. What do you
-						get? More like, what don't you get? You get no new features, no new
-						improvements, no new anything. Just <b>no more ads</b> on{" "}
-						<GameLinks thisGameText="this game" />. That's it. Why? For
-						basically the same reason I won't make {GAME_NAME} freemium. I don't
-						want the free version to become a crippled advertisement for the pay
-						version. If you agree that the world is a better place when anyone
-						anywhere can play <GameLinks noLinks />, sign up for ZenGM Gold
-						today!
-					</p>
-
-					<p>
-						You can cancel a subscription at any time by clicking "Cancel" on
-						your account page.
-					</p>
+					<p>You can cancel a subscription at any time from this page.</p>
 
 					{!loggedIn ? (
 						<p className="mb-0">
@@ -296,10 +291,10 @@ const Account = ({
 			</div>
 
 			{goldSuccess === true ? (
-				<div className="alert alert-success">{goldMessage}</div>
+				<div className="alert alert-success d-inline-block">{goldMessage}</div>
 			) : null}
 			{goldSuccess === false ? (
-				<div className="alert alert-danger">{goldMessage}</div>
+				<div className="alert alert-danger d-inline-block">{goldMessage}</div>
 			) : null}
 
 			{goldPitchDiv}
@@ -312,7 +307,7 @@ const Account = ({
 
 					<h2 className="mt-5">Delete Account</h2>
 
-					<div style={{ maxWidth: 648 }}>
+					<div style={TEXT_MAX_WIDTH}>
 						<DeleteAccountForm
 							username={username}
 							showGoldActive={showGoldActive}

@@ -65,7 +65,6 @@ const LeagueDashboard = ({
 										expandTeamNames
 										numGamesToWinSeries={numGamesToWinSeries}
 										season={season}
-										// @ts-expect-error
 										series={series}
 										userTid={userTid}
 									/>

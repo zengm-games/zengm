@@ -27,6 +27,7 @@ import { genMessage } from "./genMessage.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import { env } from "../../util/env.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
+import { doAwards } from "../awards/doAwards.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -37,10 +38,7 @@ const INFLATION_GAME_ATTRIBUTES = [
 ] as const;
 
 const upcomingScheduledEventBlocksInflation = async () => {
-	const scheduledEvents = await idb.getCopies.scheduledEvents(
-		undefined,
-		"noCopyCache",
-	);
+	const scheduledEvents = await idb.merged.scheduledEvents.getAll();
 	return scheduledEvents.some((event) => {
 		if (event.type === "gameAttributes") {
 			for (const key of INFLATION_GAME_ATTRIBUTES) {
@@ -124,33 +122,30 @@ const doInflation = async (conditions: Conditions) => {
 };
 
 const setChampNoPlayoffs = async (conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: [
-				"cid",
-				"did",
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"winp",
-				"pts",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-			],
-			stats: ["pts", "oppPts", "gp"],
-			season: g.get("season"),
-			showNoStats: true,
-		},
-		"noCopyCache",
-	);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: [
+			"cid",
+			"did",
+			"won",
+			"lost",
+			"tied",
+			"otl",
+			"winp",
+			"pts",
+			"wonDiv",
+			"lostDiv",
+			"tiedDiv",
+			"otlDiv",
+			"wonConf",
+			"lostConf",
+			"tiedConf",
+			"otlConf",
+		],
+		stats: ["pts", "oppPts", "gp"],
+		season: g.get("season"),
+		showNoStats: true,
+	});
 
 	const ordered = await orderTeams(teams, teams);
 
@@ -238,10 +233,10 @@ const doThanosMode = async (conditions: Conditions) => {
 			await player.retire(p, conditions, {
 				logRetiredEvent: false,
 			});
-			await idb.cache.players.put(p);
 		}
+		await idb.cache.players.putAll(snappedPlayers);
 
-		let text = "A Thanos event has occured! ";
+		let text = "A Thanos event has occurred! ";
 		const numPlayers = userSnappedPlayers.length;
 		if (numPlayers === 0) {
 			text += "Somehow your team did not lose any players.";
@@ -325,16 +320,13 @@ const newPhaseBeforeDraft = async (
 		await setChampNoPlayoffs(conditions);
 	}
 
-	await season.doAwards(conditions);
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["playoffRoundsWon"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
+	await doAwards(conditions);
+	const teams = await team.getFormattedAll({
+		attrs: ["tid"],
+		seasonAttrs: ["playoffRoundsWon"],
+		season: g.get("season"),
+		active: true,
+	});
 
 	// Give award to all players on the championship team
 	const t = teams.find(
@@ -351,8 +343,8 @@ const newPhaseBeforeDraft = async (
 				season: g.get("season"),
 				type: "Won Championship",
 			});
-			await idb.cache.players.put(p);
 		}
+		await idb.cache.players.putAll(players);
 	}
 
 	// Check here after adding awards, for run_it_back
@@ -424,6 +416,7 @@ const newPhaseBeforeDraft = async (
 
 		const retiredPlayersByTeam = new Map<number, Player[]>();
 
+		const playersToSave = [];
 		for (const p of players) {
 			let update = false;
 
@@ -461,9 +454,10 @@ const newPhaseBeforeDraft = async (
 			}
 
 			if (update) {
-				await idb.cache.players.put(p);
+				playersToSave.push(p);
 			}
 		}
+		await idb.cache.players.putAll(playersToSave);
 
 		for (const [tid, retiredPlayers] of retiredPlayersByTeam) {
 			const text = retiredPlayers

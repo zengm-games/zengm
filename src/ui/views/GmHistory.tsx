@@ -6,6 +6,7 @@ import Players from "./TeamHistory/Players.tsx";
 import Seasons from "./TeamHistory/Seasons.tsx";
 import HideableSection from "../components/HideableSection.tsx";
 import { useLocal } from "../util/local.ts";
+import { Championships } from "./TeamHistory/Championships.tsx";
 
 const GmHistory = ({
 	bestRecord,
@@ -50,6 +51,9 @@ const GmHistory = ({
 								bestRecord={bestRecord}
 								championships={championships}
 								finalsAppearances={finalsAppearances}
+								numSeasons={Math.sumPrecise(
+									teamHistories.map((row) => row.history.length),
+								)}
 								playoffAppearances={playoffAppearances}
 								totalLost={totalLost}
 								totalTied={totalTied}
@@ -61,28 +65,33 @@ const GmHistory = ({
 						</HideableSection>
 					) : null}
 
-					{teamHistories.map((teamHistory, i) => (
-						<HideableSection
-							key={i}
-							title={teamHistory.history[0]!.name ?? ""}
-							titleExtraKey={i}
-							className={showOverall ? "mt-3" : undefined}
-						>
-							<Overall
-								bestRecord={teamHistory.bestRecord}
-								championships={teamHistory.championships}
-								finalsAppearances={teamHistory.finalsAppearances}
-								playoffAppearances={teamHistory.playoffAppearances}
-								totalLost={teamHistory.totalLost}
-								totalTied={teamHistory.totalTied}
-								totalOtl={teamHistory.totalOtl}
-								totalWinp={teamHistory.totalWinp}
-								totalWon={teamHistory.totalWon}
-								worstRecord={teamHistory.worstRecord}
-							/>
-							<Seasons history={teamHistory.history} />
-						</HideableSection>
-					))}
+					{teamHistories.map((teamHistory, i) => {
+						const title = teamHistory.history[0]!.name ?? "";
+						const titleKeyOverride = `${title}-${i}`;
+						return (
+							<HideableSection
+								key={i}
+								title={title}
+								titleKeyOverride={titleKeyOverride}
+								className={showOverall ? "mt-3" : undefined}
+							>
+								<Overall
+									bestRecord={teamHistory.bestRecord}
+									championships={teamHistory.championships}
+									finalsAppearances={teamHistory.finalsAppearances}
+									numSeasons={teamHistory.history.length}
+									playoffAppearances={teamHistory.playoffAppearances}
+									totalLost={teamHistory.totalLost}
+									totalTied={teamHistory.totalTied}
+									totalOtl={teamHistory.totalOtl}
+									totalWinp={teamHistory.totalWinp}
+									totalWon={teamHistory.totalWon}
+									worstRecord={teamHistory.worstRecord}
+								/>
+								<Seasons history={teamHistory.history} userSeasons={[]} />
+							</HideableSection>
+						);
+					})}
 				</div>
 				<div className="col-sm-7 col-md-9 mt-3 mt-sm-0">
 					<p>
@@ -102,6 +111,9 @@ const GmHistory = ({
 						If you do change teams in God Mode, the one listed here for a given
 						season will be the team you controlled when the playoffs ended.
 					</p>
+					<Championships
+						history={teamHistories.flatMap((row) => row.history)}
+					/>
 					<HideableSection title="Players">
 						<Players gmHistory players={players} stats={stats} tid={userTid} />
 					</HideableSection>

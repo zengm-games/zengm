@@ -1,14 +1,23 @@
-import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
 } from "../../../common/constants.hockey.ts";
-import type { Position } from "../../../common/types.hockey.ts";
-import type { Player, PlayerFiltered } from "../../../common/types.ts";
+import type { PlayerRatings, Position } from "../../../common/types.hockey.ts";
+import type { Player } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
+import { player } from "../index.ts";
 
-const score = (p: PlayerFiltered, pos: Position) => {
+// Either from player.formatAll, or from the ratings of a Player
+type PlayerForDepth = {
+	pid: number;
+	ratings: {
+		pos: string;
+		ovrs: Record<Position, number>;
+	};
+};
+
+const score = (p: PlayerForDepth, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
@@ -19,7 +28,7 @@ const score = (p: PlayerFiltered, pos: Position) => {
 };
 
 const sortFunction =
-	(pos: Position) => (a: PlayerFiltered, b: PlayerFiltered) => {
+	(pos: Position) => (a: PlayerForDepth, b: PlayerForDepth) => {
 		const diff = score(b, pos) - score(a, pos);
 		if (diff === 0) {
 			// Deterministic order
@@ -28,16 +37,7 @@ const sortFunction =
 		return diff;
 	};
 
-const getPlayersInLines = <
-	T extends {
-		ratings: {
-			ovrs: Record<string, number>;
-			pos: string;
-		};
-	},
->(
-	players: T[],
-) => {
+const getPlayersInLines = <T extends PlayerForDepth>(players: T[]) => {
 	const info = {
 		C: {
 			selected: [] as T[],
@@ -100,12 +100,12 @@ const genDepth = async (
 	}
 	const depth = helpers.deepCopy(initialDepth);
 
-	let players: any[];
+	let players: PlayerForDepth[];
 
-	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
+	// Can't use player.formatAll in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
 		players = playersRaw.map((p) => {
-			const ratings = last(p.ratings);
+			const ratings = last(p.ratings) as PlayerRatings;
 			return {
 				pid: p.pid,
 				ratings: {
@@ -115,7 +115,7 @@ const genDepth = async (
 			};
 		});
 	} else {
-		players = await idb.getCopies.playersPlus(playersRaw, {
+		players = await player.formatAll(playersRaw, {
 			attrs: ["pid"],
 			ratings: ["pos", "ovrs"],
 			season: g.get("season"),
@@ -147,7 +147,7 @@ const genDepth = async (
 					const pScore = score(p, scorePos);
 					let added = false;
 
-					for (let i = 0; i < depth[pos2].length; i++) {
+					for (let i = 0; i < depth[depthPos].length; i++) {
 						const p2 = players.find((p3) => p3.pid === depth[depthPos][i]);
 
 						if (!p2 || pScore > score(p2, scorePos)) {
@@ -193,19 +193,20 @@ const genDepth = async (
 					let added = false;
 
 					for (let line = 0; line < 4; line++) {
-						if (scoreC > scoresStartingC[line]) {
+						// Starting lines are fixed length, so these scores always exist
+						if (scoreC > scoresStartingC[line]!) {
 							startingC.splice(line, 0, p.pid);
 							added = true;
 							break;
 						}
 
-						if (scoreW > scoresStartingW[line * 2]) {
+						if (scoreW > scoresStartingW[line * 2]!) {
 							startingW.splice(line * 2, 0, p.pid);
 							added = true;
 							break;
 						}
 
-						if (scoreW > scoresStartingW[line * 2 + 1]) {
+						if (scoreW > scoresStartingW[line * 2 + 1]!) {
 							startingW.splice(line * 2 + 1, 0, p.pid);
 							added = true;
 							break;
@@ -250,7 +251,7 @@ const genDepth = async (
 					...sorted.filter((p) => !selected.includes(p)).map((p) => p.pid),
 				);
 			} else {
-				const playersUsed = new Set();
+				const playersUsed = new Set<PlayerForDepth>();
 
 				for (let i = 0; i < NUM_LINES[pos2]; i++) {
 					// Find a center

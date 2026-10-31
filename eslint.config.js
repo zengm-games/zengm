@@ -52,26 +52,14 @@ export default defineConfig(
 			"@typescript-eslint/no-unnecessary-type-constraint": "off",
 			"import-x/extensions": ["error", "ignorePackages"],
 			"import-x/no-namespace": "off",
-			"jsx-a11y/anchor-has-content": "off",
-			"jsx-a11y/anchor-is-valid": "off",
-			"jsx-a11y/click-events-have-key-events": "off",
-			"jsx-a11y/label-has-associated-control": "off",
-			"jsx-a11y/no-static-element-interactions": "off",
 			"no-console": "off",
 			"no-empty": "off",
-			"no-extra-parens": "off",
 			"no-self-compare": "error",
 			"no-undef": "error", // TypeScript catches most of these, except worker/browser differences. Would be nice to somehow get TypeScript to place nicely here, but it doens't like my cross-folder imports, even type imports
 			"perfectionist/sort-interfaces": "off",
 			"perfectionist/sort-jsx-props": "off",
 			"perfectionist/sort-objects": "off",
 			"perfectionist/sort-object-types": "off",
-			"prefer-const": [
-				"error",
-				{
-					destructuring: "all",
-				},
-			],
 			"react/display-name": "off",
 			"react/jsx-key": "off", // Too many false positives, like on DataTableRow.data
 			"react/jsx-no-target-blank": "off", // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/noopener  Note: Setting target="_blank" on <a>, <area> and <form> elements implicitly provides the same rel behavior as setting rel="noopener" which does not set window.opener.
@@ -79,11 +67,10 @@ export default defineConfig(
 			"react/no-unescaped-entities": "off",
 
 			// Would be nice to enable these
-			"react-hooks/immutability": "off",
 			"react-hooks/refs": "off",
 			"react-hooks/set-state-in-effect": "off",
 
-			"react-hooks/react-compiler": "off",
+			"require-await": "error",
 			"sort-destructure-keys/sort-destructure-keys": "off",
 			"sort-keys-fix/sort-keys-fix": "off",
 			"typescript-sort-keys/interface": "off",
@@ -91,7 +78,7 @@ export default defineConfig(
 			"unicorn/numeric-separators-style": "off",
 			"unicorn/prefer-string-replace-all": "off", // replaceAll fails in some cases, idk why, but shows up in error logs and someone complained
 			"unicorn/prefer-ternary": "off",
-			"unicorn/prefer-top-level-await": "off", // Chrome 89, Safari ?
+			"unicorn/prefer-top-level-await": "off", // Safari 27
 
 			// Nice for catching if(0){} but too many false positives for object checks that can't be disabled
 			/*"@typescript-eslint/strict-boolean-expressions": ["error", {
@@ -111,7 +98,8 @@ export default defineConfig(
 		languageOptions: {
 			globals: {
 				...globals.browser,
-				process: false,
+				__NODE_ENV: "readonly",
+				__SPORT: "readonly",
 
 				// This is needed for no-undef
 				AlgorithmIdentifier: false,
@@ -137,7 +125,9 @@ export default defineConfig(
 		languageOptions: {
 			globals: {
 				...globals.sharedWorker,
-				process: false,
+				__NODE_ENV: "readonly",
+				__SPORT: "readonly",
+				__JSON_URLS: "readonly",
 
 				// This is needed for no-undef
 				IDBValidKey: false,
@@ -154,7 +144,8 @@ export default defineConfig(
 		languageOptions: {
 			globals: {
 				...commonGlobals,
-				process: false,
+				__NODE_ENV: "readonly",
+				__SPORT: "readonly",
 
 				// This is needed for no-undef
 				HTMLLinkElement: false,

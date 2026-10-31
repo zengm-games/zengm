@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import RealData from "./RealData.tsx";
 import Storage from "./Storage.tsx";
@@ -15,7 +15,6 @@ import { MoreLinks } from "../../components/MoreLinks.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {
@@ -63,6 +62,17 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 			setDirty(true);
 		};
 
+	const handleLoad = (
+		name: "realTeamInfo" | "realPlayerPhotos",
+		json: string,
+	) => {
+		setState((state2) => ({
+			...state2,
+			[name]: json,
+		}));
+		setDirty(true);
+	};
+
 	const handleFormSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
@@ -84,17 +94,15 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				realTeamInfo: state.realTeamInfo,
 				units,
 			});
-			logEvent({
+			showNotification({
 				type: "success",
 				text: "Settings successfully updated.",
-				saveToDb: false,
 			});
 			setDirty(false);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 		}
@@ -171,8 +179,12 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 							<option value="always">Always show full names and skills</option>
 						</select>
 					</div>
-					<div className="col-sm-3 col-6 mb-3">
-						<label className="form-label">
+					<div
+						className="col-sm-3 col-6 mb-3"
+						role="group"
+						aria-labelledby="options-phaseChangeRedirects"
+					>
+						<div className="form-label" id="options-phaseChangeRedirects">
 							Auto UI Redirect{" "}
 							<HelpPopover title="Auto UI Redirect">
 								<p>
@@ -182,7 +194,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 									you find that behavior annoying, you can disable it here.
 								</p>
 							</HelpPopover>
-						</label>
+						</div>
 						{phaseChangeRedirects.map(({ checked, label, phase }) => (
 							<div key={phase} className="form-check">
 								<input
@@ -246,16 +258,17 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 						</div>
 					</div>
 					<div className="col-sm-3 col-6 mb-3">
-						<label className="form-label">Persistent Storage</label>
+						<div className="form-label">Persistent Storage</div>
 						<Storage />
 					</div>
 				</div>
 
-				{isSport("basketball") ? (
+				{__SPORT === "basketball" ? (
 					<>
 						<h2>Team and Player Data for "Real Players" Leagues</h2>
 						<RealData
 							handleChange={handleChange}
+							handleLoad={handleLoad}
 							realPlayerPhotos={state.realPlayerPhotos}
 							realTeamInfo={state.realTeamInfo}
 						/>

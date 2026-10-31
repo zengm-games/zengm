@@ -5,6 +5,7 @@ import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import { mockIDBLeague, resetG } from "../../../test/helpers.ts";
+import { team } from "../index.ts";
 
 beforeAll(async () => {
 	resetG();
@@ -18,7 +19,7 @@ afterAll(() => {
 });
 
 test("distribute combinations to teams with the same record", async () => {
-	const teams = await idb.getCopies.teamsPlus({
+	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
 		seasonAttrs: [
 			"playoffRoundsWon",

@@ -4,7 +4,6 @@ import type {
 	IDBPTransaction,
 	StoreNames,
 } from "@dumbmatter/idb";
-import { isSport } from "../../common/sportFunctions.ts";
 import type {
 	League,
 	Options,
@@ -16,6 +15,18 @@ import connectIndexedDB from "./connectIndexedDB.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 import { env } from "../util/env.ts";
 
+// Value type for each key in the attributes store
+export type MetaAttributes = {
+	defaultSettingsOverrides: Partial<Settings>;
+	keyboardShortcuts: KeyboardShortcutsLocal;
+	lastChangesVersion: string;
+	nagged: number;
+	naggedMailingList: number;
+	options: Partial<Options>;
+	realPlayerPhotos: RealPlayerPhotos;
+	realTeamInfo: RealTeamInfo;
+};
+
 // export is needed just for https://github.com/microsoft/TypeScript/issues/59951
 export interface MetaDB extends DBSchema {
 	achievements: {
@@ -26,23 +37,8 @@ export interface MetaDB extends DBSchema {
 		};
 	};
 	attributes: {
-		value:
-			| number
-			| string
-			| Options
-			| RealPlayerPhotos
-			| RealTeamInfo
-			| Partial<Settings>
-			| KeyboardShortcutsLocal;
-		key:
-			| "lastChangesVersion"
-			| "nagged"
-			| "naggedMailingList"
-			| "options"
-			| "realPlayerPhotos"
-			| "realTeamInfo"
-			| "defaultSettingsOverrides"
-			| "keyboardShortcuts";
+		key: keyof MetaAttributes;
+		value: MetaAttributes[keyof MetaAttributes];
 	};
 	leagues: {
 		value: League;
@@ -84,7 +80,7 @@ const migrate = async ({
 		`Upgrading meta database from version ${oldVersion} to version ${db.version}`,
 	);
 
-	if (isSport("basketball") || isSport("football")) {
+	if (__SPORT === "basketball" || __SPORT === "football") {
 		if (oldVersion < 7) {
 			db.createObjectStore("achievements", {
 				keyPath: "aid",

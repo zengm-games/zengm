@@ -1,8 +1,9 @@
 import { helpers as commonHelpers } from "../../common/helpers.ts";
 import { local } from "./local.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import type { LeagueUrlParts } from "../router/types.ts";
 
-const leagueUrl = (components: (number | string | undefined)[]): string => {
+const leagueUrl = (components: Readonly<LeagueUrlParts>): string => {
 	const lid = local.getState().lid;
 
 	if (typeof lid !== "number") {
@@ -319,7 +320,9 @@ const roundOverrides = bySport<Record<string, RoundType>>({
 		pntYds: "noDecimalPlace",
 		pntLng: "noDecimalPlace",
 		pntIn20: "noDecimalPlace",
+		pntIn20Pct: "oneDecimalPlace",
 		pntTB: "noDecimalPlace",
+		pntTBPct: "oneDecimalPlace",
 		pntBlk: "noDecimalPlace",
 		pr: "noDecimalPlace",
 		prYds: "noDecimalPlace",
@@ -491,21 +494,24 @@ const formatNumber = (value: number, type: RoundType): string => {
 };
 
 const roundStat = (
-	value: number | string,
+	valueInput: unknown,
 	stat: string,
 	totals: boolean = false,
 ): string => {
 	try {
-		if (typeof value === "string") {
-			return value;
+		if (typeof valueInput === "string") {
+			return valueInput;
+		}
+
+		// Missing values (like historical data) or anything else that is not a number
+		if (typeof valueInput !== "number") {
+			return "";
 		}
 
 		// Number of decimals for many stats
 		const decimalPlaces = totals ? 0 : 1;
 
-		if (Number.isNaN(value)) {
-			value = 0;
-		}
+		const value = Number.isNaN(valueInput) ? 0 : valueInput;
 
 		if (value === Infinity) {
 			return "inf";
@@ -537,41 +543,45 @@ const roundStat = (
 	}
 };
 
-const yearRanges = (arrInput: number[]): string[] => {
-	if (arrInput.length <= 1) {
-		return arrInput.map(String);
+const yearRanges = (inputYears: number[]): string[] => {
+	if (inputYears.length <= 1) {
+		return inputYears.map(String);
 	}
 
-	const arr = [...arrInput];
+	const arr = [...inputYears];
 	arr.sort((a, b) => a - b);
 
-	const runArr: string[] = [];
-	const tempArr = [[arr[0]!]];
+	const groups = [[arr[0]!]];
 
 	for (let i = 1; i < arr.length; i++) {
 		// @ts-expect-error
 		if (arr[i] - arr[i - 1] > 1) {
-			tempArr.push([]);
+			groups.push([]);
 		}
 
-		tempArr.at(-1)!.push(arr[i]!);
+		groups.at(-1)!.push(arr[i]!);
 	}
 
-	for (const row of tempArr) {
-		// runs of up to 2 consecutive years are displayed individually
-		if (row.length <= 2) {
-			runArr.push(String(row[0]));
-
-			if (row.length === 2) {
-				runArr.push(String(row[1]));
-			}
+	return groups.map((group) => {
+		if (group.length <= 1) {
+			// If no consective years, display individually
+			return String(group[0]);
 		} else {
-			// runs of 3 or more are displayed as a range
-			runArr.push(`${row[0]}-${row.at(-1)}`);
-		}
-	}
+			// If consecutive, display as a range but with the common prefix removed, like 2019-20 for 2019-2020
+			// Leave at least 2 years at end, like 2005-06 rather than 2005-6
+			// Include whole year if more than 2 digits at end, like 2099-2100 rather than 2099-100
+			const first = String(group[0]);
+			let last = String(group.at(-1));
+			if (first.length === last.length) {
+				const index = first.length - 2;
+				if (first.slice(0, index) === last.slice(0, index)) {
+					last = last.slice(index);
+				}
+			}
 
-	return runArr;
+			return `${first}-${last}`;
+		}
+	});
 };
 
 const formatCurrency = (

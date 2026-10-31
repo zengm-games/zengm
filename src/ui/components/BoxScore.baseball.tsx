@@ -1,18 +1,10 @@
-import {
-	Fragment,
-	type MouseEvent,
-	type ReactNode,
-	useState,
-	useEffect,
-	useMemo,
-} from "react";
+import { Fragment, type ReactNode, useState, useEffect, useMemo } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.baseball.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
-import updateSortBys from "./DataTable/updateSortBys.ts";
-import type { SortBy } from "./DataTable/index.tsx";
+import { useBoxScoreSortBys } from "./useBoxScoreSortBys.ts";
 import {
 	type BoxScorePlayer,
 	getText,
@@ -20,14 +12,19 @@ import {
 	type SportState,
 } from "../util/processLiveGameEvents.baseball.tsx";
 import { PlayerNameLabels } from "./PlayerNameLabels.tsx";
-import processStats, {
+import {
 	outsToInnings,
+	processStats,
 } from "../../common/processPlayerStats.baseball.ts";
 import type {
 	PlayByPlayEventInput,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
 import { orderBy } from "../../common/utils.ts";
+import {
+	TEAM_NUMS_DISPLAY_ORDER,
+	teamsInDisplayOrder,
+} from "../util/boxScoreDisplayOrder.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 
@@ -75,31 +72,7 @@ const StatsTable = ({
 		[...stats, ...seasonStats].map((stat) => `stat:${stat}`),
 	);
 
-	const [sortBys, setSortBys] = useState<SortBy[]>([]);
-
-	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys((prevSortBys) => {
-			const newSortBys =
-				updateSortBys({
-					cols,
-					event,
-					i,
-					prevSortBys,
-				}) ?? [];
-
-			if (
-				newSortBys.length === 1 &&
-				prevSortBys.length === 1 &&
-				newSortBys[0]![0] === prevSortBys[0]![0] &&
-				newSortBys[0]![1] === "desc"
-			) {
-				// User just clicked twice on the same column. Reset sort.
-				return [];
-			}
-
-			return newSortBys;
-		});
-	};
+	const { onClick, sortBys } = useBoxScoreSortBys({ cols });
 
 	const allStarGame = t.tid === -1 || t.tid === -2;
 	let players = t.players
@@ -204,7 +177,7 @@ const StatsTable = ({
 									<th key={stat}>
 										{stat === "gmsc"
 											? null
-											: helpers.roundStat(sumsByStat[stat]!, stat, true)}
+											: helpers.roundStat(sumsByStat[stat], stat, true)}
 									</th>
 								))}
 								{seasonStats.map((stat) => (
@@ -312,6 +285,7 @@ const ScoringSummary = ({
 						event.inning !== prevInning ||
 						(event.t !== prevT && currentPeriod !== "Shootout")
 					) {
+						// eslint-disable-next-line react-hooks/immutability -- https://github.com/react/react/issues/31569
 						prevInning = event.inning;
 						prevT = event.t;
 						quarterHeader = (
@@ -321,7 +295,7 @@ const ScoringSummary = ({
 										"Home run derby"
 									) : (
 										<>
-											{event.t === 0 ? "Top" : "Bottom"}{" "}
+											{event.t === 0 ? "Bottom" : "Top"}{" "}
 											{helpers.ordinal(event.inning)}
 										</>
 									)}
@@ -336,19 +310,19 @@ const ScoringSummary = ({
 							<tr>
 								<td>{teams[event.t].abbrev}</td>
 								<td>
-									{event.score.map((pts, i) => {
+									{TEAM_NUMS_DISPLAY_ORDER.map((t, i) => {
 										return (
-											<Fragment key={i}>
+											<Fragment key={t}>
 												<span
 													className={
-														!event.noPoints && event.t === i
+														!event.noPoints && event.t === t
 															? "fw-bold"
-															: event.noPoints && event.t === i
+															: event.noPoints && event.t === t
 																? "text-danger"
 																: "text-body-secondary"
 													}
 												>
-													{pts}
+													{event.score[t]}
 												</span>
 												{i === 0 ? "-" : null}
 											</Fragment>
@@ -447,7 +421,7 @@ const BoxScore = ({
 	boxScore: BoxScore;
 	forceRowUpdate: boolean;
 	sportState: SportState;
-	Row: any;
+	Row: unknown;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
@@ -475,21 +449,20 @@ const BoxScore = ({
 				teams={boxScore.teams}
 			/>
 
-			{boxScore.teams.map((t, i) => {
+			{teamsInDisplayOrder(boxScore.teams).map((t, i) => {
 				return (
 					<div
 						key={t.abbrev}
 						id={i === 0 ? "scroll-team-1" : "scroll-team-2"}
 						style={{
-							scrollMarginTop: 136,
+							scrollMarginTop: 76,
 						}}
 					>
 						<h2>
 							{t.season !== undefined ? `${t.season} ` : null}
 							{t.region} {t.name}
 						</h2>
-						{helpers.keys(PLAYER_GAME_STATS).map((type) => {
-							const info = PLAYER_GAME_STATS[type];
+						{helpers.entries(PLAYER_GAME_STATS).map(([type, info]) => {
 							return (
 								<StatsTable
 									key={type}

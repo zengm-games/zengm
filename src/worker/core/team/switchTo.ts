@@ -21,7 +21,7 @@ const switchTo = async (tid: number, tids?: number[]) => {
 		otherTeamsWantToHire: false,
 	});
 
-	league.updateMeta();
+	await league.updateMeta();
 
 	// Reset prev and next team mood. Prev handles exporting and then importing with a new team. And next makes sure the new team is always 0 mood.
 	for (const tid2 of [prevTid, tid]) {

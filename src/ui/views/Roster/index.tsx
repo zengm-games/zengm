@@ -5,11 +5,11 @@ import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
-import PlayingTime, { ptModifiers, ptStyles } from "./PlayingTime.tsx";
+import PlayingTime, { ptModifiers } from "./PlayingTime.tsx";
 import TopStuff from "./TopStuff.tsx";
 import type {
 	GameAttributesLeague,
@@ -30,7 +30,7 @@ import { CountryFlag } from "../../components/CountryFlag.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { confirm } from "../../util/confirm.tsx";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -77,10 +77,9 @@ const handleRelease = async (
 			pids: [p.pid],
 		});
 		if (errorMsg) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: errorMsg,
-				saveToDb: false,
 			});
 		}
 	}
@@ -193,7 +192,7 @@ const Roster = ({
 							<table className="mb-3">
 								{ptModifiers.map((info) => {
 									return (
-										<tr key={info.ptModifier} style={ptStyles[info.ptModifier]}>
+										<tr key={info.ptModifier} style={info.style}>
 											<td className="px-1">{info.text}</td>
 											<td className="px-1">{info.title}</td>
 										</tr>
@@ -258,7 +257,7 @@ const Roster = ({
 	// Sort by pos for non-basketball sports
 	const defaultSortCol = 1;
 
-	const rows: DataTableRow[] = playersSorted.map((p, i) => {
+	const rows: DataTableRow<"player">[] = playersSorted.map((p, i) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		return {
@@ -272,15 +271,15 @@ const Roster = ({
 			classNames: ({ isDragged, isFiltered, sortBys }) => ({
 				separator:
 					!isDragged &&
-					(!isFiltered || !isSport("basketball")) &&
+					(!isFiltered || __SPORT !== "basketball") &&
 					(sortBys === undefined ||
-						(!isSport("basketball") &&
+						(__SPORT !== "basketball" &&
 							sortBys.length === 1 &&
 							sortBys[0]![0] === defaultSortCol)) &&
-					((isSport("basketball") &&
+					((__SPORT === "basketball" &&
 						i === numPlayersOnCourt - 1 &&
 						season === currentSeason) ||
-						(!isSport("basketball") &&
+						(__SPORT !== "basketball" &&
 							playersSorted[i + 1] &&
 							p.ratings.pos !== playersSorted[i + 1].ratings.pos)),
 				"table-danger": p.hof,
@@ -419,7 +418,7 @@ const Roster = ({
 					basketball: "disableSort",
 					default: [defaultSortCol, "asc"],
 				})}
-				defaultStickyCols={window.mobile ? 0 : isSport("basketball") ? 2 : 1}
+				defaultStickyCols={window.mobile ? 0 : __SPORT === "basketball" ? 2 : 1}
 				extraBulkActions={[
 					...(showRelease
 						? ([
@@ -435,19 +434,18 @@ const Roster = ({
 											},
 										);
 										if (proceed) {
-											const pids = Array.from(selectedRows.map.values())
-												.filter((metadata) => metadata.type === "player")
-												.map((metadata) => {
+											const pids = Array.from(selectedRows.map.values()).map(
+												(metadata) => {
 													return metadata.pid;
-												});
+												},
+											);
 											const errorMsg = await toWorker("main", "releasePlayer", {
 												pids,
 											});
 											if (errorMsg) {
-												logEvent({
+												showNotification({
 													type: "error",
 													text: errorMsg,
-													saveToDb: false,
 												});
 											} else {
 												// Clear because the selected players are no longer on this team!
@@ -458,7 +456,7 @@ const Roster = ({
 									text: "Release",
 									textLong: "Release players",
 								},
-							] as BulkAction[])
+							] as BulkAction<"player">[])
 						: []),
 					...(showTradeFor || showTradingBlock
 						? ([
@@ -468,7 +466,6 @@ const Roster = ({
 
 										const playersByPid = groupByUnique(players, "pid");
 										const pids = Array.from(selectedRows.map.values())
-											.filter((metadata) => metadata.type === "player")
 											.map((metadata) => {
 												return metadata.pid;
 											})
@@ -482,10 +479,9 @@ const Roster = ({
 											});
 
 										if (numUntradeable > 0) {
-											logEvent({
+											showNotification({
 												type: "error",
 												text: `${numUntradeable} selected ${helpers.plural("player", numUntradeable)} ${helpers.plural("is", numUntradeable, "are")} currently untradeable!`,
-												saveToDb: false,
 											});
 										}
 
@@ -508,7 +504,7 @@ const Roster = ({
 										? "Trade for players"
 										: "Trade away players",
 								},
-							] as BulkAction[])
+							] as BulkAction<"player">[])
 						: []),
 				]}
 				name="Roster"

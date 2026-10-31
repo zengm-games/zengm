@@ -6,10 +6,10 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { NoGamesMessage } from "./GameLog.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
-import { isSport } from "../../common/sportFunctions.ts";
 import clsx from "clsx";
 import { InjuryIcon } from "../components/InjuryIcon.tsx";
 import { useLocal } from "../util/local.ts";
+import type { LeagueUrlParts } from "../router/types.ts";
 
 type DecisionPlayer = {
 	w: number;
@@ -182,7 +182,7 @@ const PlayerGameLog = ({
 			})),
 		},
 		dropdownCustomURL: (fields) => {
-			const parts =
+			const parts: LeagueUrlParts =
 				fields.playerProfile === "gameLog"
 					? ["player_game_log", player.pid, fields.seasons]
 					: ["player", player.pid];
@@ -205,7 +205,7 @@ const PlayerGameLog = ({
 		"Result",
 		"Record",
 		"",
-		...(isSport("baseball") && showDecisionColumn ? ["Decision"] : []),
+		...(__SPORT === "baseball" && showDecisionColumn ? ["Decision"] : []),
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
@@ -270,7 +270,7 @@ const PlayerGameLog = ({
 					searchValue: game.injury.gamesRemaining,
 					classNames: "text-center",
 				},
-				...(isSport("baseball") && showDecisionColumn
+				...(__SPORT === "baseball" && showDecisionColumn
 					? [wrappedBaseballDecision(game.stats as any, allStarGame)]
 					: []),
 				...stats.map((stat) =>

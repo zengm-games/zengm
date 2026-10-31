@@ -1,5 +1,6 @@
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
+import { player } from "../index.ts";
 
 /**
  * Update team strategies (contending or rebuilding) for every team in the league.
@@ -37,7 +38,7 @@ const updateStrategies = async () => {
 			"playersByTid",
 			t.tid,
 		);
-		const players = await idb.getCopies.playersPlus(playersAll, {
+		const players = await player.formatAll(playersAll, {
 			season: g.get("season"),
 			tid: t.tid,
 			attrs: ["age", "value", "contract"],
@@ -50,8 +51,9 @@ const updateStrategies = async () => {
 		let denominator = 0; // Sum of mp
 
 		for (const p of players) {
-			numerator += p.age * p.stats.min;
-			denominator += p.stats.min;
+			const min = p.stats.min ?? 0;
+			numerator += p.age * min;
+			denominator += min;
 
 			// Is a young star about to get a pay raise and eat up all the cap after this season?
 			if (

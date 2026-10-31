@@ -1,14 +1,36 @@
 import { idb } from "../db/index.ts";
-import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import { CacheTeamInfoSeason } from "../util/getTeamInfoBySeason.ts";
 import type {
-	UpdateEvents,
-	ViewInput,
 	DiscriminateUnion,
 	EventBBGM,
 	Phase,
 } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { processAssets } from "./tradeSummary.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
+import { getWatchPids } from "./news.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { validateAbbrev } from "../util/processInputs.ts";
+
+const processInputs = (params: RouteParams<"frivolitiesTrades">) => {
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else if (params.abbrev === "watch") {
+		abbrev = "watch";
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		tid,
+		type: params.type,
+	};
+};
 
 type Most = {
 	value: number;
@@ -39,9 +61,13 @@ type Trade = {
 	most: Most;
 };
 
-const genTeam = async (event: TradeEvent, i: 0 | 1): Promise<Team> => {
-	const tid = event.tids[i]!;
-	const teamInfo = await getTeamInfoBySeason(tid, event.season);
+const genTeam = async (
+	event: TradeEvent,
+	i: 0 | 1,
+	cacheTeamInfoSeason: CacheTeamInfoSeason,
+): Promise<Team> => {
+	const tid = event.tids[i];
+	const teamInfo = await cacheTeamInfoSeason.get(tid);
 	if (!teamInfo) {
 		throw new Error("teamInfo not found");
 	}
@@ -50,10 +76,8 @@ const genTeam = async (event: TradeEvent, i: 0 | 1): Promise<Team> => {
 
 	let statSum = 0;
 	for (const asset of assets) {
-		// https://github.com/microsoft/TypeScript/issues/21732
-		const stat = (asset as any).stat;
-		if (typeof stat === "number") {
-			statSum += stat;
+		if (asset.type === "player" || asset.type === "realizedPick") {
+			statSum += asset.stat;
 		}
 	}
 
@@ -79,46 +103,55 @@ const getMostXRows = async ({
 	const LIMIT = 100;
 	const trades: Trade[] = [];
 
-	const events: TradeEvent[] = [];
-
 	// Would be nice to not read these all into memory, but then would have to pass around the transaction to genTeam and others
-	const store = await idb.league.transaction("events").store;
-	for await (const cursor of store) {
-		const event = cursor.value;
-		if (isTradeEvent(event)) {
-			events.push(event);
-		}
-	}
+	const events = (
+		await idb.merged.events.getAll(undefined, {
+			map: (event) => {
+				if (
+					!isTradeEvent(event) ||
+					event.phase === undefined ||
+					event.teams === undefined ||
+					(filter !== undefined && !filter(event))
+				) {
+					return undefined;
+				}
 
-	for (const event of events) {
-		if (event.phase === undefined || !event.teams) {
-			continue;
-		}
+				return {
+					...event,
+					phase: event.phase,
+					teams: event.teams,
+				};
+			},
+		})
+	).filter((event) => event !== undefined);
 
-		if (filter !== undefined && !filter(event)) {
-			continue;
-		}
+	const eventsBySeason = Map.groupBy(events, (event) => event.season);
 
-		const teams = [await genTeam(event, 0), await genTeam(event, 1)] as [
-			Team,
-			Team,
-		];
+	for (const [season, eventsSeason] of eventsBySeason) {
+		const cache = new CacheTeamInfoSeason(season);
 
-		const most = getValue(teams);
+		for (const event of eventsSeason) {
+			const teams = [
+				await genTeam(event, 0, cache),
+				await genTeam(event, 1, cache),
+			] as [Team, Team];
 
-		trades.push({
-			rank: 0,
-			eid: event.eid,
-			season: event.season,
-			phase: event.phase,
-			teams,
-			most,
-		});
+			const most = getValue(teams);
 
-		trades.sort((a, b) => b.most.value - a.most.value);
+			trades.push({
+				rank: 0,
+				eid: event.eid,
+				season: event.season,
+				phase: event.phase,
+				teams,
+				most,
+			});
 
-		if (trades.length > LIMIT) {
-			trades.pop();
+			trades.sort((a, b) => b.most.value - a.most.value);
+
+			if (trades.length > LIMIT) {
+				trades.pop();
+			}
 		}
 	}
 
@@ -130,77 +163,76 @@ const getMostXRows = async ({
 	return ordered;
 };
 
-const frivolitiesTrades = async (
-	{ abbrev, tid, type }: ViewInput<"frivolitiesTrades">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-	if (
-		updateEvents.includes("firstRun") ||
-		type !== state.type ||
-		abbrev !== state.abbrev
-	) {
-		let filter: Parameters<typeof getMostXRows>[0]["filter"];
-		let getValue: Parameters<typeof getMostXRows>[0]["getValue"];
-		let sortParams: any;
-		let title: string;
-		let description: string | undefined;
+export default defineView({
+	id: "frivolitiesTrades",
+	processInputs,
+	load: async ({ inputs: { abbrev, tid, type }, updateEvents, prevInputs }) => {
+		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
+		if (
+			updateEvents.has("firstRun") ||
+			type !== prevInputs?.type ||
+			abbrev !== prevInputs?.abbrev
+		) {
+			let filter: Parameters<typeof getMostXRows>[0]["filter"];
+			let getValue: Parameters<typeof getMostXRows>[0]["getValue"];
+			let sortParams: any;
+			let title: string;
+			let description: string | undefined;
 
-		if (type === "biggest") {
-			title = "Biggest Trades";
-			description = "Trades involving the best players and prospects.";
+			if (type === "biggest") {
+				title = "Biggest Trades";
+				description = "Trades involving the best players and prospects.";
 
-			getValue = (teams) => {
-				let scoreMax = 0;
-				for (const t of teams) {
-					for (const asset of t.assets) {
-						// https://github.com/microsoft/TypeScript/issues/21732
-						const { ovr, pot } = asset as any;
-						if (typeof ovr === "number" && typeof pot === "number") {
-							const score = ovr + 0.25 * pot;
-							if (score > scoreMax) {
-								scoreMax = score;
+				getValue = (teams) => {
+					let scoreMax = 0;
+					for (const t of teams) {
+						for (const asset of t.assets) {
+							if (asset.type === "player" || asset.type === "realizedPick") {
+								const score = asset.ovr + 0.25 * asset.pot;
+								if (score > scoreMax) {
+									scoreMax = score;
+								}
 							}
 						}
 					}
-				}
-				return { value: scoreMax };
+					return { value: scoreMax };
+				};
+				sortParams = [[(x: any) => x.most.value], ["desc"]];
+			} else if (type === "lopsided") {
+				title = "Most Lopsided Trades";
+				description =
+					"Trades where one team's assets produced a lot more value than the other.";
+
+				getValue = (teams) => {
+					const value = Math.abs(teams[0].statSum - teams[1].statSum);
+
+					return { value };
+				};
+				sortParams = [[(x: any) => x.most.value], ["desc"]];
+			} else {
+				throw new Error(`Unknown type "${type}"`);
+			}
+
+			if (tid !== undefined) {
+				filter = (event) => event.tids.includes(tid);
+			} else if (abbrev === "watch") {
+				const watchPids = await getWatchPids();
+				filter = (event) => event.pids.some((pid) => watchPids.has(pid));
+			}
+
+			const trades = await getMostXRows({
+				filter,
+				getValue,
+				sortParams,
+			});
+
+			return {
+				abbrev,
+				description,
+				title,
+				trades,
+				type,
 			};
-			sortParams = [[(x: any) => x.most.value], ["desc"]];
-		} else if (type === "lopsided") {
-			title = "Most Lopsided Trades";
-			description =
-				"Trades where one team's assets produced a lot more value than the other.";
-
-			getValue = (teams) => {
-				const value = Math.abs(teams[0].statSum - teams[1].statSum);
-
-				return { value };
-			};
-			sortParams = [[(x: any) => x.most.value], ["desc"]];
-		} else {
-			throw new Error(`Unknown type "${type}"`);
 		}
-
-		if (tid >= 0) {
-			filter = (event) => event.tids.includes(tid);
-		}
-
-		const trades = await getMostXRows({
-			filter,
-			getValue,
-			sortParams,
-		});
-
-		return {
-			abbrev,
-			description,
-			title,
-			trades,
-			type,
-		};
-	}
-};
-
-export default frivolitiesTrades;
+	},
+});

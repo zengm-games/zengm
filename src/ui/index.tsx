@@ -25,11 +25,22 @@ import { promiseWorker } from "./util/promiseWorker.ts";
 import { routes } from "./util/routes.ts";
 import { unregisterServiceWorkers } from "./util/unregisterServiceWorkers.ts";
 import { safeLocalStorage } from "./util/safeLocalStorage.ts";
-import { logEvent } from "./util/logEvent.ts";
+import { showNotification } from "./util/showNotification.ts";
 import { toWorker } from "./util/toWorker.ts";
-window.bbgm = { api, logEvent, toWorker };
+import { installTranslationResilience } from "translation-resilience";
 
-const handleVersion = async () => {
+// Browser translation (like Google Translate) modifies the DOM in ways that crash React or prevent text from updating, so this repairs the DOM when that happens. Breadcrumbs make it clear in Bugsnag when an error happened on a translated page. Only log each message once, since some can happen many times and would push other breadcrumbs out.
+const seenTranslationEvents = new Set<string>();
+installTranslationResilience({
+	onEvent: (message) => {
+		if (!seenTranslationEvents.has(message)) {
+			seenTranslationEvents.add(message);
+			Bugsnag.leaveBreadcrumb("translation-resilience", { message }, "log");
+		}
+	},
+});
+
+const handleVersion = () => {
 	window.addEventListener("storage", (e) => {
 		if (e.key === "bbgmVersionConflict") {
 			const bbgmVersionStored = safeLocalStorage.getItem("bbgmVersion");
@@ -38,10 +49,9 @@ const handleVersion = async () => {
 				bbgmVersionStored &&
 				compareVersions(bbgmVersionStored, window.bbgmVersion) === 1
 			) {
-				logEvent({
+				showNotification({
 					type: "error",
 					text: `A newer version of ${GAME_NAME} was just opened in another tab. Please reload this tab to load the same version here.`,
-					saveToDb: false,
 					persistent: true,
 				});
 			}
@@ -70,8 +80,7 @@ const handleVersion = async () => {
 		if (cmpResult === 1) {
 			// This version is newer than another tab's - send a signal to the other tabs
 			let conflictNum = Number.parseInt(
-				// @ts-expect-error
-				safeLocalStorage.getItem("bbgmVersionConflict"),
+				safeLocalStorage.getItem("bbgmVersionConflict") ?? "",
 			);
 
 			if (Number.isNaN(conflictNum)) {
@@ -140,7 +149,7 @@ const getUrlForAnalytics = (path: string) => {
 const setupRoutes = async () => {
 	let initialLoad = true;
 	await router.start({
-		routeMatched: async ({ context }) => {
+		routeMatched: ({ context }) => {
 			if (!context.state.noTrack) {
 				if (initialLoad) {
 					initialLoad = false;
@@ -223,7 +232,7 @@ const setupRoutes = async () => {
 };
 
 (async () => {
-	promiseWorker.register(([name, ...params]) => {
+	promiseWorker.register(([name, ...params]: any) => {
 		if (!Object.hasOwn(api, name)) {
 			throw new Error(
 				`API call to nonexistant UI function "${name}" with params ${JSON.stringify(
@@ -236,11 +245,11 @@ const setupRoutes = async () => {
 		// @ts-expect-error
 		return api[name](...params);
 	});
-	await handleVersion();
+	handleVersion();
 	await setupEnv();
 	render();
 	await setupRoutes();
 
-	const { initServiceWorker } = await import("./util/initServiceWorker.ts");
+	const { initServiceWorker } = await import("./util/initServiceWorker.tsx");
 	await initServiceWorker();
 })();

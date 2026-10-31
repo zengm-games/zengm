@@ -6,34 +6,28 @@ import * as db from "./db/index.ts";
 import * as util from "./util/index.ts";
 import * as random from "../common/random.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
-import { defaultGameAttributes } from "../common/defaultGameAttributes.ts";
+import { registerGlobal } from "../common/registerGlobal.ts";
+import { getCopies, getCopy } from "./db/deprecatedConsoleApi.ts";
 
-self.bbgm = {
+// Old functions that people used from the console. They are added to the idb object itself so bbgm.idb.league etc. still work, but they are not in the type of idb, so the app can't use them.
+Object.assign(db.idb, { getCopies, getCopy });
+
+registerGlobal({
 	...common,
 	...core,
 	...db,
 	...util,
-	api,
-	defaultGameAttributes,
 	random,
-};
+});
 
-if (process.env.NODE_ENV === "development") {
+if (__NODE_ENV === "development") {
 	import("./core/debug/index.ts").then(({ default: debug }) => {
-		self.bbgm.debug = debug;
+		registerGlobal({ debug });
 	});
 }
 
-export type WorkerAPICategory =
-	| "actions"
-	| "exhibitionGame"
-	| "leagueFileUpload"
-	| "main"
-	| "playMenu"
-	| "toolsMenu";
-
 // API functions should have at most 2 arguments. First argument is passed here from toWorker. If you need to pass multiple variables, use an object/array. Second argument is Conditions.
-promiseWorker.register(([type, name, param], hostID) => {
+promiseWorker.register(([type, name, param]: any, hostID) => {
 	const conditions = {
 		hostID,
 	};

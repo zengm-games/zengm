@@ -16,14 +16,15 @@ import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
 import type {
 	Conditions,
 	PhaseReturn,
-	RealTeamInfo,
 	TeamSeason,
 } from "../../../common/types.ts";
 import { groupByUnique, maxBy } from "../../../common/utils.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { choice, randInt, uniform } from "../../../common/random.ts";
 import { env } from "../../util/env.ts";
+import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
+import { getMetaAttribute } from "../../db/metaAttributes.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -49,9 +50,7 @@ const newPhasePreseason = async (
 	const teams = await idb.cache.teams.getAll();
 	const teamsByTid = groupByUnique(teams, "tid");
 
-	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
-		| RealTeamInfo
-		| undefined;
+	const realTeamInfo = await getMetaAttribute("realTeamInfo");
 
 	const popInfo: Record<
 		string,
@@ -143,13 +142,10 @@ const newPhasePreseason = async (
 		// Only need scoutingLevel for the user's team to calculate fuzz when ratings are updated below.
 		// This is done BEFORE a new season row is added.
 		if (t.tid === g.get("userTid")) {
-			const teamSeasons = await idb.getCopies.teamSeasons(
-				{
-					tid: t.tid,
-					seasons: [newSeason - 3, newSeason - 1],
-				},
-				"noCopyCache",
-			);
+			const teamSeasons = await idb.merged.teamSeasons.getAll({
+				tid: t.tid,
+				seasons: [newSeason - 3, newSeason - 1],
+			});
 			scoutingLevel = await finances.getLevelLastThree("scouting", {
 				t,
 				teamSeasons,
@@ -232,14 +228,7 @@ const newPhasePreseason = async (
 
 	if (updatedTeams) {
 		await league.setGameAttributes({
-			teamInfoCache: teams.map((t) => ({
-				abbrev: t.abbrev,
-				disabled: t.disabled,
-				imgURL: t.imgURL,
-				imgURLSmall: t.imgURLSmall,
-				name: t.name,
-				region: t.region,
-			})),
+			teamInfoCache: getTeamInfoCache(teams),
 		});
 	}
 
@@ -249,13 +238,10 @@ const newPhasePreseason = async (
 
 	const coachingLevels: Record<number, number> = {};
 	for (const t of teams) {
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				tid: t.tid,
-				seasons: [newSeason - 3, newSeason - 1],
-			},
-			"noCopyCache",
-		);
+		const teamSeasons = await idb.merged.teamSeasons.getAll({
+			tid: t.tid,
+			seasons: [newSeason - 3, newSeason - 1],
+		});
 		coachingLevels[t.tid] = await finances.getLevelLastThree("coaching", {
 			t,
 			teamSeasons,
@@ -278,7 +264,11 @@ const newPhasePreseason = async (
 	}
 
 	// Small chance that a player was lying about his age!
-	if (!repeatSeason && !forceHistoricalRosters && Math.random() < 0.01) {
+	if (
+		!repeatSeason &&
+		!forceHistoricalRosters &&
+		Math.random() < g.get("fakeAgeProb")
+	) {
 		const p = player.getPlayerFakeAge(players);
 
 		if (p) {
@@ -344,10 +334,10 @@ const newPhasePreseason = async (
 
 	// Loop through all non-retired players
 	for (const p of players) {
-		if (isSport("hockey") && p.numConsecutiveGamesG !== undefined) {
+		if (__SPORT === "hockey" && p.numConsecutiveGamesG !== undefined) {
 			p.numConsecutiveGamesG = 0;
 		}
-		if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+		if (__SPORT === "baseball" && p.pFatigue !== undefined && p.pFatigue > 0) {
 			p.pFatigue = 0;
 		}
 
@@ -496,9 +486,7 @@ const newPhasePreseason = async (
 		}
 	}
 
-	for (const p of players) {
-		await idb.cache.players.put(p);
-	}
+	await idb.cache.players.putAll(players);
 
 	await realRosters.checkDisableForceHistoricalRosters(
 		newSeason,

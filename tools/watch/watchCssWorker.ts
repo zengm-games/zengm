@@ -41,8 +41,9 @@ const myBuildCss = async () => {
 	}
 };
 
-const watcher = watch("public/css", {});
-watcher.on("change", myBuildCss);
+// "all" rather than "change" so adding/deleting files triggers a build too. ignoreInitial because otherwise there is an "add" event for every existing file on startup.
+const watcher = watch("public/css", { ignoreInitial: true });
+watcher.on("all", myBuildCss);
 
 await myBuildCss();
 

@@ -32,17 +32,25 @@ export const Flag = ({
 	onClick?: (event: SyntheticEvent) => void;
 	title?: string;
 }) => {
-	return (
-		<span
-			className={clsx(
-				"glyphicon glyphicon-flag watch",
-				watch !== undefined && watch > 0 ? `watch-active-${watch}` : undefined,
-				className,
-			)}
-			onClick={onClick}
-			title={title}
-		/>
+	const flagClassName = clsx(
+		"glyphicon glyphicon-flag watch",
+		watch !== undefined && watch > 0 ? `watch-active-${watch}` : undefined,
+		className,
 	);
+
+	if (onClick) {
+		return (
+			<button
+				type="button"
+				className={clsx("icon-button", flagClassName)}
+				onClick={onClick}
+				title={title}
+				aria-label={title}
+			/>
+		);
+	}
+
+	return <span className={flagClassName} title={title} />;
 };
 
 export const WatchBlock = memo(
@@ -68,7 +76,7 @@ export const WatchBlock = memo(
 		useEffect(() => {
 			if (defaultWatch !== undefined) {
 				// Need to listen for bulk action updates
-				const unbind = crossTabEmitter.on("updateWatch", async (watchByPid) => {
+				const unbind = crossTabEmitter.on("updateWatch", (watchByPid) => {
 					const newWatch = watchByPid[pid];
 					if (newWatch !== undefined) {
 						setLocalWatch(newWatch);

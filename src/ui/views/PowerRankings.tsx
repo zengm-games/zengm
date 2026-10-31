@@ -7,7 +7,7 @@ import type { View } from "../../common/types.ts";
 import { POSITIONS, RATINGS } from "../../common/constants.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
 
 const Other = ({
@@ -94,16 +94,15 @@ const PowerRankings = ({
 				<>
 					{otherKeysTitle}
 					{currentSeason === season ? (
-						<a
-							className="ms-2"
-							href=""
-							onClick={(event) => {
-								event.preventDefault();
+						<button
+							type="button"
+							className="btn btn-link p-0 border-0 align-baseline fw-bold ms-2"
+							onClick={() => {
 								setShowHealthy((val) => !val);
 							}}
 						>
 							{showHealthy ? "(Show with injuries)" : "(Show without injuries)"}
-						</a>
+						</button>
 					) : null}
 				</>
 			),
@@ -123,14 +122,14 @@ const PowerRankings = ({
 		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
 		"L10",
-		`stat:${isSport("basketball") ? "mov" : "diff"}`,
+		`stat:${__SPORT === "basketball" ? "mov" : "diff"}`,
 		"AvgAge",
 		...otherKeys.map((key) => `${otherKeysPrefix}:${key}`),
 	];
 
 	const cols = getCols(colNames);
 
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		for (const [colName, col] of Iterator.zip([colNames, cols], {
 			mode: "strict",
 		})) {
@@ -172,14 +171,14 @@ const PowerRankings = ({
 				...(ties ? [t.seasonAttrs.tied] : []),
 				t.seasonAttrs.lastTen,
 				wrappedMovOrDiff(
-					isSport("basketball")
+					__SPORT === "basketball"
 						? {
 								pts: t.stats.pts * t.stats.gp,
 								oppPts: t.stats.oppPts * t.stats.gp,
 								gp: t.stats.gp,
 							}
 						: t.stats,
-					isSport("basketball") ? "mov" : "diff",
+					__SPORT === "basketball" ? "mov" : "diff",
 				),
 				t.powerRankings.avgAge?.toFixed(1),
 				...otherKeys.map((key) => ({
@@ -211,7 +210,7 @@ const PowerRankings = ({
 				victory, and team rating. Team rating is based only on the ratings of
 				players on each team.
 			</p>
-			{playoffs === "playoffs" && isSport("basketball") ? (
+			{playoffs === "playoffs" && __SPORT === "basketball" ? (
 				<p>
 					In the playoffs, rotations get shorter and players play harder, so
 					some teams get higher or lower ratings.

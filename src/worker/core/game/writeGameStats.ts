@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common/constants.ts";
-import { saveAwardsByPlayer } from "../season/awards.ts";
+import { updatePlayerAwards } from "../awards/awardsByPlayer.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
@@ -14,7 +14,6 @@ import { headToHead, season } from "../index.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 
 const allStarMVP = async (
 	game: Game,
@@ -24,7 +23,7 @@ const allStarMVP = async (
 	let mvp;
 
 	// Why special case for basketball? No real reason, but it was there before the other sports and seems to work better than getBestPlayer because efficiency gets factored into gmSc.
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		let maxScore = -Infinity;
 
 		for (const t of game.teams) {
@@ -84,20 +83,25 @@ const allStarMVP = async (
 			g.get("teamInfoCache")[p.tid]?.abbrev
 		}</a>) won the All-Star MVP award.`,
 	);
-	await saveAwardsByPlayer(
-		[
-			{
-				pid: mvp.pid,
-				tid: p.tid,
-				name: mvp.name,
-				type: "All-Star MVP",
-			},
-		],
-		conditions,
-		g.get("season"),
-		true,
-		game.gid,
-	);
+
+	const awardsByPlayer = [
+		{
+			pid: mvp.pid,
+			tid: p.tid,
+			name: mvp.name,
+			award: { type: "All-Star MVP" },
+		},
+	];
+
+	await updatePlayerAwards({
+		awardsToDelete: [],
+		awardsToSave: awardsByPlayer,
+		logEventInfo: {
+			allStarGID: game.gid,
+			conditions,
+		},
+		season: g.get("season"),
+	});
 };
 
 export const findSeries = (
@@ -174,12 +178,9 @@ const getPlayoffInfos = async (game: Game) => {
 		},
 	] as const;
 
-	const numGamesToWinSeries =
-		playoffSeries.currentRound === -1
-			? 1
-			: helpers.numGamesToWinSeries(
-					g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
-				);
+	const numGamesToWinSeries = helpers.numGamesToWinRound(
+		playoffSeries.currentRound,
+	);
 
 	return {
 		currentRound: playoffSeries.currentRound,
@@ -250,7 +251,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 
 	for (const t of [0, 1] as const) {
 		for (const key of Object.keys(results.team[t].stat)) {
-			(gameStats.teams[t] as any)[key] = results.team[t].stat[key];
+			gameStats.teams[t][key] = results.team[t].stat[key];
 		}
 
 		if (results.team[t].playerFeat) {
@@ -259,7 +260,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 
 		for (const p0 of results.team[t].player) {
 			// In basketball, players who didn't play are shown in box score. In other sports, they aren't. So only save box score stats for players who actually played
-			if (!isSport("basketball")) {
+			if (__SPORT !== "basketball") {
 				if (p0.stat.gp === 0) {
 					continue;
 				}
@@ -290,7 +291,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 			}
 			p.jerseyNumber = p0.jerseyNumber;
 
-			if (isSport("baseball")) {
+			if (__SPORT === "baseball") {
 				p.seasonStats = p0.seasonStats;
 
 				// These are either integers or undefined
@@ -609,8 +610,7 @@ const writeGameStats = async (
 						: g.get("numGamesPlayoffSeries", "current")[currentRound]!;
 
 				if (numGamesThisRound > 1) {
-					const numGamesToWinSeries =
-						helpers.numGamesToWinSeries(numGamesThisRound);
+					const numGamesToWinSeries = helpers.numGamesToWinRound(currentRound);
 					if (playoffInfos[indTeam].won === numGamesToWinSeries) {
 						endPart += `, winning the ${round}${
 							numGamesToWinSeries > 1

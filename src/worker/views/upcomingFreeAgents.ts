@@ -2,47 +2,59 @@ import { PHASE, PLAYER } from "../../common/constants.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { ViewInput } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { groupByUnique } from "../../common/utils.ts";
+import { addMood } from "./freeAgents.ts";
+import type { RouteParams } from "../../ui/router/types.ts";
+import { actualPhase } from "../util/actualPhase.ts";
+import { validateSeason } from "../util/processInputs.ts";
 
-const updateUpcomingFreeAgents = async (
-	inputs: ViewInput<"upcomingFreeAgents">,
-) => {
-	const stats = bySport({
-		baseball: ["gp", "keyStats", "war"],
-		basketball: ["min", "pts", "trb", "ast", "per"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	});
+const processInputs = (params: RouteParams<"upcomingFreeAgents">) => {
+	let season = validateSeason(params.season);
 
-	const showActualFreeAgents =
-		g.get("phase") === PHASE.RESIGN_PLAYERS &&
-		g.get("season") === inputs.season;
-
-	let players: any[] = showActualFreeAgents
-		? await idb.getCopies.players({
-				tid: PLAYER.FREE_AGENT,
-			})
-		: await idb.getCopies.players({
-				tid: [0, Infinity],
-				filter: (p) => p.contract.exp === inputs.season,
-			});
-
-	// Done before filter so full player object can be passed to player.genContract.
-	for (const p of players) {
-		p.contractDesired = player.genContract(p, false); // No randomization
-		p.contractDesired.exp += inputs.season - g.get("season");
-
-		p.mood = await player.moodInfos(p, {
-			contractAmount: p.contractDesired.amount,
-		});
+	const phase = actualPhase();
+	if (phase >= 0 && phase <= PHASE.RESIGN_PLAYERS) {
+		if (season < g.get("season")) {
+			season = g.get("season");
+		}
+	} else if (season < g.get("season") + 1) {
+		season = g.get("season") + 1;
 	}
 
-	players = addFirstNameShort(
-		await idb.getCopies.playersPlus(players, {
+	return {
+		season,
+	};
+};
+
+export default defineView({
+	id: "upcomingFreeAgents",
+	processInputs,
+	load: async ({ inputs }) => {
+		const stats = bySport({
+			baseball: ["gp", "keyStats", "war"],
+			basketball: ["min", "pts", "trb", "ast", "per"],
+			football: ["gp", "keyStats", "av"],
+			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+		} as const);
+
+		const showActualFreeAgents =
+			g.get("phase") === PHASE.RESIGN_PLAYERS &&
+			g.get("season") === inputs.season;
+
+		const playersRaw = showActualFreeAgents
+			? await idb.merged.players.getAll({ tid: PLAYER.FREE_AGENT })
+			: await idb.merged.players.getAll(
+					{ tid: [0, Infinity] },
+					{ filter: (p) => p.contract.exp === inputs.season },
+				);
+		const playersRawByPid = groupByUnique(playersRaw, "pid");
+
+		const playersFiltered = await player.formatAll(playersRaw, {
 			attrs: [
 				"pid",
+				"name",
 				"firstName",
 				"lastName",
 				"abbrev",
@@ -50,10 +62,8 @@ const updateUpcomingFreeAgents = async (
 				"age",
 				"contract",
 				"injury",
-				"contractDesired",
 				"watch",
 				"jerseyNumber",
-				"mood",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,
@@ -61,26 +71,48 @@ const updateUpcomingFreeAgents = async (
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
-		}),
-	);
+		});
 
-	// Apply mood
-	for (const p of players) {
-		p.contractDesired.amount = p.mood.user.contractAmount / 1000;
-	}
+		const playersWithContractDesired = playersFiltered.map((p) => {
+			const pRaw = playersRawByPid[p.pid];
+			if (!pRaw) {
+				throw new Error(`Raw player not found for pid ${p.pid}`);
+			}
 
-	const projectedPayroll = await team.getPayroll(
-		g.get("userTid"),
-		inputs.season,
-	);
-	const projectedCapSpace = g.get("salaryCap") - projectedPayroll;
+			// Uses the raw player object, since player.genContract needs the full player
+			const contractDesired = player.genContract(pRaw, false); // No randomization
+			contractDesired.exp += inputs.season - g.get("season");
 
-	return {
-		players,
-		projectedCapSpace,
-		season: inputs.season,
-		stats,
-	};
-};
+			return {
+				...p,
+				contractDesired,
+			};
+		});
 
-export default updateUpcomingFreeAgents;
+		const players = addFirstNameShort(
+			await addMood(
+				playersWithContractDesired,
+				playersRaw,
+				(p) => p.contractDesired.amount,
+			),
+		);
+
+		// Apply mood
+		for (const p of players) {
+			p.contractDesired.amount = p.mood.user.contractAmount / 1000;
+		}
+
+		const projectedPayroll = await team.getPayroll(
+			g.get("userTid"),
+			inputs.season,
+		);
+		const projectedCapSpace = g.get("salaryCap") - projectedPayroll;
+
+		return {
+			players,
+			projectedCapSpace,
+			season: inputs.season,
+			stats,
+		};
+	},
+});

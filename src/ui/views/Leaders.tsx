@@ -4,9 +4,10 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { LeagueUrlParts } from "../router/types.ts";
 
 export const LeadersTopText = ({
 	includeHighlight,
@@ -74,7 +75,7 @@ const Leaders = ({
 	const colClassName =
 		season === "all" ? "col-12 col-md-6 col-xl-4" : "col-12 col-sm-6 col-lg-4";
 
-	const totals = statType === "totals" && isSport("basketball");
+	const totals = statType === "totals" && __SPORT === "basketball";
 
 	const noQualifiedLeaders = categories.every(
 		(cat) => cat.leaders.length === 0,
@@ -105,7 +106,7 @@ const Leaders = ({
 						const title = cat.titleOverride ?? statCol.desc ?? "???";
 						const desc = cat.titleOverride ? statCol.desc : undefined;
 
-						const rows: DataTableRow[] = cat.leaders.map((p, j) => {
+						const rows: DataTableRow<"player">[] = cat.leaders.map((p, j) => {
 							const numericSeason =
 								season === "career"
 									? undefined
@@ -113,7 +114,7 @@ const Leaders = ({
 										? p.season
 										: season;
 
-							let teamUrlParts;
+							let teamUrlParts: LeagueUrlParts;
 							if (season === "career") {
 								teamUrlParts = ["team_history", `${p.abbrev}_${p.tid}`];
 							} else {
@@ -149,9 +150,10 @@ const Leaders = ({
 											season={numericSeason}
 											skills={p.skills}
 											defaultWatch={p.watch}
-											firstName={p.firstNameShort}
+											firstName={p.firstName}
 											firstNameShort={p.firstNameShort}
 											lastName={p.lastName}
+											alwaysUseFirstNameShort
 										/>
 										<a href={helpers.leagueUrl(teamUrlParts)} className="mx-2">
 											{p.abbrev}

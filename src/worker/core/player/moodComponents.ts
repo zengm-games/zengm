@@ -6,11 +6,10 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import { getNegotiationPids } from "../../views/negotiationList.ts";
 import { getNumPlayersTradedAwayNormalized } from "./getNumPlayersTradedAwayNormalized.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
-	if (!isSport("basketball")) {
+	if (__SPORT !== "basketball") {
 		return 0;
 	}
 
@@ -22,9 +21,10 @@ const getMinFractionDiff = async (pid: number, tid: number) => {
 		for (const p of playersAll) {
 			let stats;
 			for (let i = p.stats.length - 1; i >= 0; i--) {
-				if (p.stats[i].season === season && !p.stats[i].playoffs) {
-					stats = p.stats[i];
-				} else if (p.stats[i] < season) {
+				const row = p.stats[i]!;
+				if (row.season === season && !row.playoffs) {
+					stats = row;
+				} else if (row.season < season) {
 					break;
 				}
 			}
@@ -37,7 +37,7 @@ const getMinFractionDiff = async (pid: number, tid: number) => {
 						value: p.valueNoPot,
 
 						// Fraction of available minutes that this player played
-						fraction: stats.min / stats.minAvailable,
+						fraction: (stats.min ?? 0) / stats.minAvailable,
 					});
 				}
 			}
@@ -229,7 +229,7 @@ const moodComponents = async (
 					winp += 0.15;
 				}
 
-				if (isSport("hockey")) {
+				if (__SPORT === "hockey") {
 					// 40% to 60% -> -2 to 2
 					components.teamPerformance = -2 + ((winp - 0.4) * 4) / 0.2;
 				} else {
@@ -238,7 +238,7 @@ const moodComponents = async (
 				}
 
 				// Negative matters more
-				if (isSport("basketball") && components.teamPerformance < 0) {
+				if (__SPORT === "basketball" && components.teamPerformance < 0) {
 					components.teamPerformance *= 2;
 				}
 
@@ -276,7 +276,7 @@ const moodComponents = async (
 		}
 
 		if (wantsToReSign) {
-			components.loyalty += isSport("football") ? 5 : 2;
+			components.loyalty += __SPORT === "football" ? 5 : 2;
 		}
 	}
 

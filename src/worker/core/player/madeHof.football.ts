@@ -70,7 +70,7 @@ const madeHof = (
 			// No playoff stats, because AV is scaled strangely there
 			return !ps.playoffs;
 		})
-		.map((ps) => ps.av); // Calculate career WS and "dominance factor" DF (top 5 years WS - 35)
+		.map((ps) => ps.av ?? 0); // Calculate career WS and "dominance factor" DF (top 5 years WS - 35)
 
 	avs.sort((a, b) => b - a); // Descending order
 

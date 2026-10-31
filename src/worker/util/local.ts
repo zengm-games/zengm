@@ -1,10 +1,12 @@
 import type { Local } from "../../common/types.ts";
+import { UndoLog } from "./UndoLog.ts";
 
 // These variables are transient and will be reset every refresh. See lock.js for more.
 const defaultLocal: Local = {
 	autoPlayUntil: undefined,
 	autoSave: true,
 	email: undefined,
+	eightyTwoZeroDraft: undefined,
 	exhibitionGamePlayers: undefined,
 	fantasyDraftResults: [],
 	goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
@@ -21,6 +23,7 @@ const defaultLocal: Local = {
 	seasonLeaders: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
+	undoLog: new UndoLog(),
 	unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
 	username: undefined,
 };
@@ -30,6 +33,7 @@ const local: Local & {
 	autoPlayUntil: defaultLocal.autoPlayUntil,
 	autoSave: defaultLocal.autoSave,
 	email: defaultLocal.email,
+	eightyTwoZeroDraft: defaultLocal.eightyTwoZeroDraft,
 	exhibitionGamePlayers: defaultLocal.exhibitionGamePlayers,
 	fantasyDraftResults: defaultLocal.fantasyDraftResults,
 	goldUntil: defaultLocal.goldUntil,
@@ -47,12 +51,14 @@ const local: Local & {
 	realPlayerActiveSeasons: defaultLocal.realPlayerActiveSeasons,
 	seasonLeaders: defaultLocal.seasonLeaders,
 	statusText: defaultLocal.statusText,
+	undoLog: defaultLocal.undoLog,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
 	username: defaultLocal.username,
 	reset: () => {
 		// These variables will be reset if the user switches leagues
 		local.autoPlayUntil = defaultLocal.autoPlayUntil;
 		local.autoSave = defaultLocal.autoSave;
+		local.eightyTwoZeroDraft = defaultLocal.eightyTwoZeroDraft;
 		local.exhibitionGamePlayers = defaultLocal.exhibitionGamePlayers;
 		local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
 		local.leagueLoaded = defaultLocal.leagueLoaded;
@@ -69,6 +75,8 @@ const local: Local & {
 		local.seasonLeaders = defaultLocal.seasonLeaders;
 		local.statusText = defaultLocal.statusText;
 		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;
+
+		local.undoLog.invalidate("leagueChange");
 
 		// Don't reset email/goldUntil/username because that persists across leagues. Probably it shouldn't be in this file, but should
 		// be somewhere else (like how g used to have some variables not persisted to database).

@@ -49,27 +49,18 @@ const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 	// Shuffle because we only keep one team for each abbrev, so we want them in random order so it's not always the same
 	shuffle(teamInfos);
 
-	// Unique abbrevs - don't have to worry about rewriting due to collision, and how that impacts real team data. Unique regions - just feels right.
-	const abbrevsSeen = new Set();
-
-	// For any team with many duplicates removed, the remaining one should have a pretty high weight;
-	const infosByAbbrev: Record<string, (typeof teamInfos)[number]> = {};
+	// Unique abbrevs - don't have to worry about rewriting due to collision, and how that impacts real team data
+	const keptByAbbrev = new Map<string, (typeof teamInfos)[number]>();
 
 	return teamInfos.filter((t) => {
-		// TODO - This code is mostly doing nothing and infosByAbbrev is probably not needed
-		if (abbrevsSeen.has(t.abbrev)) {
-			const toAdd = [];
-			if (infosByAbbrev[t.abbrev]) {
-				toAdd.push(infosByAbbrev[t.abbrev]!);
-			}
-			for (const t of toAdd) {
-				t.weight += 1 / toAdd.length;
-			}
-
+		const kept = keptByAbbrev.get(t.abbrev);
+		if (kept) {
+			// For any team with many duplicates removed, the remaining one should have a pretty high weight
+			kept.weight += 1;
 			return false;
 		}
-		abbrevsSeen.add(t.abbrev);
-		infosByAbbrev[t.abbrev] = t;
+
+		keptByAbbrev.set(t.abbrev, t);
 		return true;
 	});
 };

@@ -14,6 +14,11 @@ const makeWatcher = (sport: Sport) => {
 	const config = rolldownConfig(sport, name, {
 		nodeEnv: "development",
 		postMessage(message) {
+			// After switching sports, an in-progress build from the old watcher could still finish, and its messages would be confused for ones from the new watcher
+			if (signal.aborted) {
+				return;
+			}
+
 			parentPort?.postMessage(message);
 		},
 	});
@@ -53,7 +58,7 @@ const makeWatcher = (sport: Sport) => {
 
 let abortController = makeWatcher(initialSport);
 
-parentPort?.on("message", async (message) => {
+parentPort?.on("message", (message) => {
 	if (message.type === "switchingSport") {
 		abortController.abort();
 	} else if (message.type === "newSport") {

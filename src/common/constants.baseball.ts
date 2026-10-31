@@ -1,4 +1,11 @@
-import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
+import type {
+	CompositeWeights,
+	Conf,
+	Div,
+	NonEmptyArray,
+	PlayerStatsTables,
+	PlayerSummary,
+} from "./types.ts";
 import type { Position, RatingKey } from "./types.baseball.ts";
 
 export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -183,7 +190,7 @@ export const PLAYER_SUMMARY = {
 			"whip",
 		],
 	},
-};
+} satisfies PlayerSummary;
 
 export const PLAYER_STATS_TABLES = {
 	batting: {
@@ -350,7 +357,7 @@ export const PLAYER_STATS_TABLES = {
 			"gmscMax",
 		],
 	},
-};
+} satisfies PlayerStatsTables;
 
 export const TEAM_STATS_TABLES = {
 	batting: {
@@ -589,25 +596,6 @@ export const RATINGS: RatingKey[] = [
 	"mov",
 	"endu",
 ];
-
-export const SIMPLE_AWARDS = [
-	"mvp",
-	"roy",
-	"poy",
-	"rpoy",
-	"finalsMvp",
-] as const;
-
-export const AWARD_NAMES = {
-	mvp: "Most Valuable Player",
-	roy: "Rookie of the Year",
-	poy: "Pitcher of the Year",
-	rpoy: "Relief Pitcher of the Year",
-	finalsMvp: "Finals MVP",
-	allOffense: "All-Offensive Team",
-	allDefense: "All-Defensive Team",
-	allRookie: "All-Rookie Team",
-} as const;
 
 export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{

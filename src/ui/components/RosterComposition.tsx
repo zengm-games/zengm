@@ -1,6 +1,6 @@
 import { HelpPopover } from "./HelpPopover.tsx";
 import { POSITION_COUNTS } from "../../common/constants.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 type Players = {
 	ratings: {
@@ -38,7 +38,7 @@ export const RosterComposition = ({
 	className?: string;
 	players: Players;
 }) => {
-	if (isSport("basketball")) {
+	if (__SPORT === "basketball") {
 		return null;
 	}
 

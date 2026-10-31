@@ -1,79 +1,71 @@
-import { PHASE, PLAYER, RATINGS } from "../../common/constants.ts";
+import { RATINGS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
+import { getActiveSeasonSelector } from "../db/merged/players.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { defineView } from "../util/defineView.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { validateSeasonOnly } from "../util/processInputs.ts";
+import { player } from "../core/index.ts";
 
-const updatePlayers = async (
-	inputs: ViewInput<"playerRatingDists">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		(inputs.season === g.get("season") &&
-			(updateEvents.includes("gameSim") ||
-				updateEvents.includes("playerMovement"))) ||
-		inputs.season !== state.season
-	) {
-		let players;
-
-		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
-			players = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				Infinity,
-			]);
-		} else {
-			players = await idb.getCopies.players(
-				{
-					activeSeason: inputs.season,
-				},
-				"noCopyCache",
+export default defineView({
+	id: "playerRatingDists",
+	processInputs: validateSeasonOnly,
+	load: async ({ inputs, updateEvents, prevInputs }) => {
+		if (
+			updateEvents.has("firstRun") ||
+			(inputs.season === g.get("season") &&
+				(updateEvents.has("gameSim") || updateEvents.has("playerMovement"))) ||
+			inputs.season !== prevInputs?.season
+		) {
+			const playersRaw = await idb.merged.players.getAll(
+				getActiveSeasonSelector(inputs.season),
 			);
-		}
 
-		const extraRatings = bySport({
-			baseball: ["ovrs", "pots"],
-			basketball: [],
-			football: ["ovrs", "pots"],
-			hockey: ["ovrs", "pots"],
-		});
+			const extraRatings = bySport({
+				baseball: ["ovrs", "pots"],
+				basketball: [],
+				football: ["ovrs", "pots"],
+				hockey: ["ovrs", "pots"],
+			} as const);
 
-		players = await idb.getCopies.playersPlus(players, {
-			ratings: ["ovr", "pot", ...extraRatings, ...RATINGS],
-			season: inputs.season,
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
-		const ratingsAll = players.reduce((memo, p) => {
-			for (const rating of Object.keys(p.ratings)) {
-				if (rating === "ovrs" || rating === "pots") {
-					for (const pos of Object.keys(p.ratings[rating])) {
-						const posRating = `${rating.slice(0, rating.length - 1)}${pos}`;
-						if (memo[posRating]) {
-							memo[posRating].push(p.ratings[rating][pos]);
-						} else {
-							memo[posRating] = [p.ratings[rating][pos]];
-						}
-					}
-					continue;
+			const players = await player.formatAll(playersRaw, {
+				ratings: ["ovr", "pot", ...extraRatings, ...RATINGS],
+				season: inputs.season,
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			});
+
+			// Only numeric values can be plotted. Insertion order determines the display order in the UI
+			const ratingsAll: Record<string, number[]> = {};
+			const addValue = (rating: string, value: unknown) => {
+				if (typeof value !== "number") {
+					return;
 				}
+				ratingsAll[rating] ??= [];
+				ratingsAll[rating].push(value);
+			};
 
-				if (memo[rating]) {
-					memo[rating].push(p.ratings[rating]);
-				} else {
-					memo[rating] = [p.ratings[rating]];
+			for (const p of players) {
+				for (const [rating, value] of Object.entries(p.ratings)) {
+					if (rating === "ovrs" || rating === "pots") {
+						// Split into one rating per position, like ovrQB
+						if (typeof value === "object") {
+							for (const [pos, posValue] of Object.entries(value)) {
+								addValue(`${rating.slice(0, -1)}${pos}`, posValue);
+							}
+						}
+						continue;
+					}
+
+					addValue(rating, value);
 				}
 			}
 
-			return memo;
-		}, {});
-		return {
-			season: inputs.season,
-			ratingsAll,
-		};
-	}
-};
-
-export default updatePlayers;
+			return {
+				season: inputs.season,
+				ratingsAll,
+			};
+		}
+	},
+});

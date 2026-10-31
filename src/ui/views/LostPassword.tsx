@@ -1,38 +1,22 @@
 import { useState, type SubmitEvent } from "react";
 import { ACCOUNT_API_URL } from "../../common/constants.ts";
+import { ActionButton } from "../components/ActionButton.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
 
-type State = {
-	errorMessage?: string;
-	successMessage?: string;
-};
-
 const LostPassword = () => {
-	const [state, setState] = useState<State>({
-		errorMessage: undefined,
-		successMessage: undefined,
-	});
+	const [result, setResult] = useState<
+		{ success: boolean; message: string } | undefined
+	>();
+	const [submitting, setSubmitting] = useState(false);
 
-	const handleSubmit = async (event: SubmitEvent) => {
+	const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		setSubmitting(true);
+		setResult(undefined);
 
-		const element = document.getElementById("lostpw");
-		if (!(element instanceof HTMLFormElement)) {
-			setState({
-				errorMessage: "lostpw element not found",
-				successMessage: undefined,
-			});
-			throw new Error("lostpw element not found");
-		}
-
-		const formData = new FormData(element);
-
-		setState({
-			errorMessage: undefined,
-			successMessage: undefined,
-		});
+		const formData = new FormData(event.currentTarget);
 
 		try {
 			const data = await fetchWrapper({
@@ -43,36 +27,38 @@ const LostPassword = () => {
 			});
 
 			if (data.success) {
-				setState({
-					errorMessage: undefined,
-					successMessage: "Check your email for further instructions.",
+				setResult({
+					success: true,
+					message: "Check your email for further instructions.",
 				});
 			} else {
-				setState({
-					successMessage: undefined,
-					errorMessage: "Account not found.",
+				setResult({
+					success: false,
+					message: "Account not found.",
 				});
 			}
 		} catch (error) {
-			setState({
-				successMessage: undefined,
-				errorMessage: ajaxErrorMsg,
+			console.error(error);
+			setResult({
+				success: false,
+				message: ajaxErrorMsg,
 			});
-			throw error;
 		}
+
+		setSubmitting(false);
 	};
 	useTitleBar({ title: "Lost Password", hideNewWindow: true });
 
 	return (
 		<>
+			<p>
+				Enter your username or email address below to recover your login
+				information.
+			</p>
 			<div className="row">
 				<div className="col-lg-4 col-md-4 col-sm-6">
-					<p>
-						Enter your username or email address below to recover your login
-						information.
-					</p>
-					<form onSubmit={handleSubmit} id="lostpw">
-						<input type="hidden" name="sport" value={process.env.SPORT} />
+					<form onSubmit={handleSubmit}>
+						<input type="hidden" name="sport" value={__SPORT} />
 						<div className="mb-3">
 							<label className="col-form-label" htmlFor="lostpw-entry">
 								Username or Email Address
@@ -85,15 +71,16 @@ const LostPassword = () => {
 								required
 							/>
 						</div>
-						<button type="submit" className="btn btn-primary">
-							Recover Login Info
-						</button>
-						<p className="text-danger mt-3" id="lostpw-error">
-							{state.errorMessage}
-						</p>
-						<p className="text-success mt-3" id="lostpw-success">
-							{state.successMessage}
-						</p>
+						<ActionButton type="submit" processing={submitting}>
+							Recover login info
+						</ActionButton>
+						{result ? (
+							<p
+								className={`mt-3 ${result.success ? "text-success" : "text-danger"}`}
+							>
+								{result.message}
+							</p>
+						) : null}
 					</form>
 				</div>
 			</div>

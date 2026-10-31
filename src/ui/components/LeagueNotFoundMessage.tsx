@@ -28,15 +28,13 @@ export const LeagueNotFoundMessage = () => {
 					<p>
 						Have you ever looked at the decisions made by the front office of an{" "}
 						{pro} team and thought you could do better? Well, now you can! In{" "}
-						{GAME_NAME}, you are the general manager of a {process.env.SPORT}{" "}
-						team.
+						{GAME_NAME}, you are the general manager of a {__SPORT} team.
 					</p>
 					<div className="row">
 						<div className="col-sm-6 col-md-12 col-lg-6">
 							<h3>You Set The Strategy</h3>
 							<p>
-								Running a {process.env.SPORT} team requires you to make tough
-								decisions.
+								Running a {__SPORT} team requires you to make tough decisions.
 							</p>
 							<ol>
 								<li>
@@ -75,8 +73,8 @@ export const LeagueNotFoundMessage = () => {
 								game-breaking power-ups.
 							</p>
 							<p>
-								Our only goal is making the best possible {process.env.SPORT}{" "}
-								management game!
+								Our only goal is making the best possible {__SPORT} management
+								game!
 							</p>
 						</div>
 					</div>

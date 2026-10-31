@@ -1,4 +1,4 @@
-import { team } from "../index.ts";
+import { player, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type {
@@ -10,7 +10,7 @@ import { orderBy } from "../../../common/utils.ts";
 import isUntradable from "./isUntradable.ts";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
-	const players = await idb.getCopies.playersPlus(playersRaw, {
+	const players = await player.formatAll(playersRaw, {
 		attrs: ["injury", "pid", "value"],
 		fuzz: true,
 		ratings: ["ovr", "pos", "ovrs"],
@@ -64,14 +64,14 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			"playersByTid",
 			tids[i],
 		);
-		let players = orderBy(
+		const playersOrdered = orderBy(
 			playersBefore.filter(
 				(p) => pids[i].includes(p.pid) && !isUntradable(p).untradable,
 			),
 			"valueFuzz",
 			"desc",
 		);
-		players = await idb.getCopies.playersPlus(players, {
+		const players = await player.formatAll(playersOrdered, {
 			attrs: ["pid", "name", "contract", "draft"],
 			season: g.get("season"),
 			tid: tids[i],

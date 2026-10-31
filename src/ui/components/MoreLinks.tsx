@@ -6,7 +6,8 @@ import {
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { useLocal } from "../util/local.ts";
-import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { bySport } from "../../common/sportFunctions.ts";
+import type { LeagueUrlParts } from "../router/types.ts";
 
 export const MoreLinks = (
 	props: (
@@ -74,7 +75,7 @@ export const MoreLinks = (
 	const { godMode, season: currentSeason } = useLocal(["godMode", "season"]);
 
 	let links: {
-		url: (string | number | undefined)[] | string;
+		url: string | Readonly<LeagueUrlParts>;
 		name: string;
 		className?: string;
 	}[];
@@ -83,10 +84,7 @@ export const MoreLinks = (
 
 		links = [
 			{
-				url:
-					season !== undefined
-						? ["roster", `${abbrev}_${tid}`, season]
-						: ["roster", `${abbrev}_${tid}`],
+				url: ["roster", `${abbrev}_${tid}`, season],
 				name: "Roster",
 			},
 			{
@@ -94,10 +92,7 @@ export const MoreLinks = (
 				name: "Finances",
 			},
 			{
-				url:
-					season !== undefined
-						? ["game_log", `${abbrev}_${tid}`, season]
-						: ["game_log", `${abbrev}_${tid}`],
+				url: ["game_log", `${abbrev}_${tid}`, season],
 				name: "Game Log",
 			},
 			{ url: ["draft_picks", `${abbrev}_${tid}`], name: "Draft Picks" },
@@ -117,17 +112,11 @@ export const MoreLinks = (
 				name: "Schedule",
 			},
 			{
-				url:
-					season !== undefined
-						? ["transactions", `${abbrev}_${tid}`, season]
-						: ["transactions", `${abbrev}_${tid}`],
+				url: ["transactions", `${abbrev}_${tid}`, season],
 				name: "Transactions",
 			},
 			{
-				url:
-					season !== undefined
-						? ["news", `${abbrev}_${tid}`, season]
-						: ["news", `${abbrev}_${tid}`],
+				url: ["news", `${abbrev}_${tid}`, season],
 				name: "News Feed",
 			},
 		];
@@ -140,7 +129,7 @@ export const MoreLinks = (
 				hockey: true,
 			})
 		) {
-			if (isSport("baseball")) {
+			if (__SPORT === "baseball") {
 				links.unshift(
 					{
 						url: ["depth", "L", `${abbrev}_${tid}`],
@@ -211,15 +200,13 @@ export const MoreLinks = (
 				name: "Draft Picks",
 			},
 			{
-				url:
-					season !== undefined ? ["draft_lottery", season] : ["draft_lottery"],
+				url: ["draft_lottery", season],
 				name: NO_LOTTERY_DRAFT_TYPES.has(draftType as any)
 					? "Draft Order"
 					: "Draft Lottery",
 			},
 			{
-				url:
-					season !== undefined ? ["draft_history", season] : ["draft_history"],
+				url: ["draft_history", season],
 				name:
 					draftType === "freeAgents" ? "Prospects History" : "Draft History",
 			},
@@ -235,19 +222,27 @@ export const MoreLinks = (
 				name: "Draft Pick Notes",
 			},
 		];
-	} else if (props.type == "awards") {
+	} else if (props.type === "awards") {
 		const { season } = props;
 
-		links = godMode
-			? [
-					{
-						url:
-							season == undefined ? ["edit_awards"] : ["edit_awards", season],
-						name: "Edit Awards",
-						className: "god-mode",
-					},
-				]
-			: [];
+		links = [
+			{
+				url: ["award_races", season],
+				name: "Award Races",
+			},
+			{
+				url: ["award_settings"],
+				name: "Award Settings",
+			},
+		];
+
+		if (godMode) {
+			links.push({
+				url: ["edit_award_winners", season],
+				name: "Edit Award Winners",
+				className: "god-mode",
+			});
+		}
 	} else if (props.type === "playerRatings") {
 		const { season } = props;
 
@@ -265,17 +260,14 @@ export const MoreLinks = (
 		const { season, statType } = props;
 		links = [
 			{
-				url:
-					season !== undefined
-						? ["player_stat_dists", season]
-						: ["player_stat_dists"],
+				url: ["player_stat_dists", season],
 				name: "Stat Distributions",
 			},
 		];
 
 		if (season === undefined || page !== "player_stats") {
 			links.unshift({
-				url: season !== undefined ? ["player_stats", season] : ["player_stats"],
+				url: ["player_stats", season],
 				name: page === "player_stats" ? "Per Game" : "Main Stats",
 			});
 		} else {
@@ -284,7 +276,9 @@ export const MoreLinks = (
 					"player_stats",
 					"all",
 					"career",
-					isSport("basketball") || statType === undefined ? "totals" : statType,
+					__SPORT === "basketball" || statType === undefined
+						? "totals"
+						: statType,
 				],
 				name: "Career Totals",
 			});
@@ -333,7 +327,12 @@ export const MoreLinks = (
 		links = [
 			{ url: ["import_players"], name: "Import Players" },
 			...(REAL_PLAYERS_INFO
-				? [{ url: ["import_players_real"], name: "Import Real Players" }]
+				? [
+						{
+							url: ["import_players_real"] as const,
+							name: "Import Real Players",
+						},
+					]
 				: []),
 			{ url: ["export_players"], name: "Export Players" },
 			{ url: ["export_league"], name: "Export League" },

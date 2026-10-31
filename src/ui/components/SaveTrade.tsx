@@ -61,6 +61,7 @@ export const SaveTrade = memo(
 					className={clsx("btn btn-link p-0", className)}
 					onClick={handleClick}
 					title={"Unsave Trade"}
+					aria-label="Unsave Trade"
 				>
 					<span
 						className={`glyphicon glyphicon-flag watch ms-0 watch-active-${saved}`}
@@ -74,6 +75,7 @@ export const SaveTrade = memo(
 				className={clsx("btn btn-link p-0", className)}
 				onClick={handleClick}
 				title="Save Trade"
+				aria-label="Save Trade"
 				disabled={saved === undefined || empty}
 			>
 				<span className="glyphicon glyphicon-flag watch ms-0" />

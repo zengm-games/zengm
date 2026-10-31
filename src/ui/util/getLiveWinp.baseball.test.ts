@@ -29,7 +29,7 @@ const getProb = ({
 		sportState: { outs },
 	})!.prob;
 
-test("a lead is worth more in the bottom of the last inning with two outs", () => {
+test("a deficit hurts more in the bottom of the last inning with two outs", () => {
 	const late = getProb({ bottom: true, inning: 9, outs: 2, pts: [2, 3] });
 	const early = getProb({ bottom: true, inning: 1, outs: 0, pts: [2, 3] });
 	assert.isBelow(late, early);

@@ -19,6 +19,7 @@ import {
 	roundWinPercents,
 } from "../../../common/winProbability.ts";
 import { PomymarketBar, PomymarketPercent } from "../PomymarketOdds.tsx";
+import { TEAM_NUMS_DISPLAY_ORDER } from "../../util/boxScoreDisplayOrder.ts";
 
 type Team = {
 	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
@@ -548,7 +549,10 @@ export const ScoreBox = memo(
 						})
 					)}
 					{winPercents && !small && !final ? (
-						<PomymarketBar order={[1, 0]} winPercents={winPercents} />
+						<PomymarketBar
+							order={TEAM_NUMS_DISPLAY_ORDER}
+							winPercents={winPercents}
+						/>
 					) : null}
 				</div>
 				{small && overtimes ? (

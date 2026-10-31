@@ -31,7 +31,6 @@ export const formatClock = (clock: number) => {
 	return `${Math.floor(clock)}:${sec}`;
 };
 
-// Seconds left from clock text in min:sec or seconds only format
 export const getSeconds = (time: string | undefined) => {
 	if (!time) {
 		return 0;

@@ -49,7 +49,6 @@ export const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
 	"random",
 ]);
 
-// The parody name for win and title odds. Everything user facing reads it from here, so it can be renamed in one place.
 export const POMYMARKET_NAME = "Pomymarket";
 
 export const PHASE = {

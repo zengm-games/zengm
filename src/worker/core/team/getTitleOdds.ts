@@ -559,8 +559,7 @@ export const getTitleOdds = async () => {
 		.filter((teamSeason) => !teamsByTid.get(teamSeason.tid)?.disabled)
 		.map((teamSeason) => {
 			const { tid } = teamSeason;
-			const gp =
-				teamSeason.won + teamSeason.lost + teamSeason.tied + teamSeason.otl;
+			const gp = helpers.getTeamSeasonGp(teamSeason);
 
 			return {
 				eliminated: teamSeason.clinchedPlayoffs === "o",

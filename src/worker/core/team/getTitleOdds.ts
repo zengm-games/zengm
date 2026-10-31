@@ -1,5 +1,6 @@
 import { PHASE } from "../../../common/constants.ts";
 import { makeSeededRandom, realGauss } from "../../../common/random.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import type {
 	PlayoffSeries,
 	PlayoffSeriesTeam,
@@ -29,8 +30,13 @@ import ovr from "./ovr.ts";
 
 const DEFAULT_NUM_SIMS = 1000;
 
-// How far a team's true strength can be from its ovr, in ovr points. One value is drawn per team per sim and used for all of its games, otherwise the best team wins too often, since it never has a bad season or a bad playoff run.
-const STRENGTH_STD = 3;
+// How far a team's true strength can be from its ovr, in ovr points. Measured from how far season MOV is from what preseason ovr predicts, after taking out single game noise. One value is drawn per team per sim and used for all of its games, otherwise the best team wins too often, since it never has a bad season or a bad playoff run.
+const STRENGTH_STD = bySport({
+	baseball: 5.5,
+	basketball: 8,
+	football: 8,
+	hockey: 11,
+});
 
 type TitleOddsTeam = {
 	// Mathematically out of the playoffs

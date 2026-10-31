@@ -1,11 +1,12 @@
 import { getGameLengthScale } from "./getGameSpread.ts";
 import { bySport } from "./sportFunctions.ts";
 
+// These come from regressing the results of thousands of simulated games on team ovr. They differ from getGameSpread, which is what the spread has always shown.
 type WinModelConstants = {
-	// Home team's expected margin in a default length game with default homeCourtAdvantage
+	// Home team's expected margin in a default length game with default homeCourtAdvantage. Measured from win rates rather than margins, because the home team in baseball doesn't bat in the 9th with a lead.
 	homeEdge: number;
 
-	// Expected margin per point of team ovr difference, from src/common/ovr.*.ts
+	// Expected margin per point of team ovr difference
 	perOvr: number;
 
 	// Standard deviation of a default length game's margin
@@ -13,10 +14,10 @@ type WinModelConstants = {
 };
 
 const WIN_MODEL_CONSTANTS: WinModelConstants = bySport({
-	baseball: { homeEdge: 1, perOvr: 0.018, sigma: 4.2 },
-	basketball: { homeEdge: 3.3504, perOvr: 0.3, sigma: 12 },
-	football: { homeEdge: 3, perOvr: 0.2, sigma: 13.5 },
-	hockey: { homeEdge: 0.25, perOvr: 0.018, sigma: 2.3 },
+	baseball: { homeEdge: 0.2, perOvr: 0.034, sigma: 4.1 },
+	basketball: { homeEdge: 2.8, perOvr: 0.3, sigma: 13.4 },
+	football: { homeEdge: 2.3, perOvr: 0.19, sigma: 13.5 },
+	hockey: { homeEdge: 0.09, perOvr: 0.016, sigma: 2.6 },
 });
 
 // Abramowitz and Stegun 26.2.17, since there is no normal CDF elsewhere

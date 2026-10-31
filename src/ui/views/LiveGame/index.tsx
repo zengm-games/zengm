@@ -18,6 +18,7 @@ import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { getSeconds } from "../../../common/formatClock.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../../util/processLiveGameEvents.football.tsx";
@@ -96,23 +97,6 @@ class PlayerRow extends Component<PlayerRowProps> {
 const onLiveSimOver = () => {
 	// Send to worker, rather than doing `localActions.update({ liveGameInProgress: false });`, so it works in all tabs
 	toWorker("main", "onLiveSimOver", undefined);
-};
-
-const getSeconds = (time: string | undefined) => {
-	if (!time) {
-		return 0;
-	}
-
-	const parts = time.split(":").map((x) => Number.parseInt(x));
-	if (parts.length === 0) {
-		return 0;
-	}
-	if (parts.length === 1) {
-		// Seconds only being displayed
-		return Number.parseFloat(time);
-	}
-	const [min, sec] = parts as [number, number];
-	return min * 60 + sec;
 };
 
 const DEFAULT_SPORT_STATE = bySport<any>({

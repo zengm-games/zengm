@@ -13,6 +13,12 @@ import {
 	formatGameSpreads,
 	getGameSpread,
 } from "../../../common/getGameSpread.ts";
+import {
+	getWinModelInputs,
+	getWinProbability,
+	roundWinPercents,
+} from "../../../common/winProbability.ts";
+import { PomymarketBar, PomymarketPercent } from "../PomymarketOdds.tsx";
 
 type Team = {
 	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
@@ -104,6 +110,7 @@ export const ScoreBox = memo(
 			neutralSite,
 			numPeriods,
 			phase,
+			pomymarket,
 			quarterLength,
 			season,
 			teamInfoCache,
@@ -114,6 +121,7 @@ export const ScoreBox = memo(
 			"neutralSite",
 			"numPeriods",
 			"phase",
+			"pomymarket",
 			"quarterLength",
 			"season",
 			"teamInfoCache",
@@ -134,6 +142,7 @@ export const ScoreBox = memo(
 			userTid === game.teams[0].tid || userTid === game.teams[1].tid;
 
 		let spreads: [string | undefined, string | undefined] | undefined;
+		let winPercents: ReturnType<typeof roundWinPercents> | undefined;
 		if (
 			game.teams[0].ovr !== undefined &&
 			game.teams[1].ovr !== undefined &&
@@ -145,15 +154,21 @@ export const ScoreBox = memo(
 				(neutralSite === "finals" && !!game.finals) ||
 				(neutralSite === "playoffs" && phase === PHASE.PLAYOFFS);
 
-			spreads = formatGameSpreads(
-				getGameSpread({
-					homeCourtAdvantage,
-					neutral,
-					numPeriods,
-					ovrs: [game.teams[0].ovr, game.teams[1].ovr],
-					quarterLength,
-				}),
-			);
+			const gameInfo = {
+				homeCourtAdvantage,
+				neutral,
+				numPeriods,
+				ovrs: [game.teams[0].ovr, game.teams[1].ovr],
+				quarterLength,
+			} as const;
+
+			if (pomymarket) {
+				winPercents = roundWinPercents(
+					getWinProbability(getWinModelInputs(gameInfo)),
+				);
+			} else {
+				spreads = formatGameSpreads(getGameSpread(gameInfo));
+			}
 		}
 
 		const overtimes = helpers.overtimeText(game.overtimes, game.numPeriods);
@@ -395,6 +410,16 @@ export const ScoreBox = memo(
 															</span>
 														</>
 													) : null}
+													{winPercents ? (
+														<>
+															,{" "}
+															<PomymarketPercent
+																i={i}
+																preGame={final}
+																winPercents={winPercents}
+															/>
+														</>
+													) : null}
 													{spreads?.[i] ? (
 														<>
 															,{" "}
@@ -413,9 +438,13 @@ export const ScoreBox = memo(
 												</div>
 											) : null}
 										</div>
-										{spreads && small ? (
+										{(spreads || winPercents) && small ? (
 											<div className="text-end score-box-score me-2">
-												{spreads[i]}
+												{winPercents ? (
+													<PomymarketPercent i={i} winPercents={winPercents} />
+												) : (
+													spreads?.[i]
+												)}
 											</div>
 										) : null}
 										{final ? (
@@ -518,6 +547,9 @@ export const ScoreBox = memo(
 							);
 						})
 					)}
+					{winPercents && !small && !final ? (
+						<PomymarketBar order={[1, 0]} winPercents={winPercents} />
+					) : null}
 				</div>
 				{small && overtimes ? (
 					<div

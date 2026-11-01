@@ -1,6 +1,5 @@
 import { g } from "./index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
 import { actualPhase } from "./actualPhase.ts";
 
@@ -101,19 +100,17 @@ export const validateSeasonType = (
 export const validateStatType = (
 	statType: string | undefined,
 ): PlayerStatType => {
-	if (statType === "perGame") {
-		return "perGame";
-	} else if (statType === "per36") {
+	if (__SPORT !== "basketball") {
+		// Other sports only have totals
+		return "totals";
+	}
+
+	if (statType === "per36") {
 		return "per36";
 	} else if (statType === "totals") {
 		return "totals";
 	} else {
-		return bySport({
-			baseball: "totals",
-			basketball: "perGame",
-			football: "totals",
-			hockey: "totals",
-		});
+		return "perGame";
 	}
 };
 

@@ -228,7 +228,7 @@ const WatchList = ({
 			fields: [
 				{
 					key: "statType",
-					options: dropdownOptions.statTypes,
+					options: dropdownOptions.statTypesStrict,
 					value: statType,
 				},
 				{

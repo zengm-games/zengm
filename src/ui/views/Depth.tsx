@@ -138,7 +138,7 @@ const Depth = ({
 		dropdown: {
 			fields: [
 				{ key: "pos", options: dropdownOptions.depth, value: pos },
-				{ key: "abbrev", options: { type: "teams" }, value: tid },
+				{ key: "team", options: { type: "teams" }, value: tid },
 				{
 					key: "playoffs",
 					options: dropdownOptions.playoffsCombined,
@@ -376,7 +376,7 @@ const Depth = ({
 
 	return (
 		<>
-			<MoreLinks type="team" page="depth" abbrev={abbrev} tid={tid} />
+			<MoreLinks type="team" page="depth" tid={tid} />
 			<p>
 				{__SPORT === "football" ? (
 					<>

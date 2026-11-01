@@ -17,8 +17,8 @@ const LeagueStats = ({
 	seasons,
 	stats,
 	superCols,
+	team,
 	teamOpponent,
-	tid,
 	ties,
 	otl,
 	usePts,
@@ -28,9 +28,9 @@ const LeagueStats = ({
 		dropdown: {
 			fields: [
 				{
-					key: "abbrev",
+					key: "team",
 					options: { type: "teams", all: true },
-					value: abbrev === "all" ? "all" : tid,
+					value: team,
 				},
 				{
 					key: "teamOpponent",
@@ -44,7 +44,7 @@ const LeagueStats = ({
 	});
 
 	const basicColNames =
-		tid < 0
+		team === "all"
 			? ["Season", "# Teams", "stat:gp", "W", "L"]
 			: ["Season", "stat:gp", "W", "L"];
 	if (otl) {
@@ -75,7 +75,7 @@ const LeagueStats = ({
 			if (ties) {
 				actualSuperCols[0].colspan += 1;
 			}
-			if (tid >= 0) {
+			if (team !== "all") {
 				actualSuperCols[0].colspan -= 1;
 			}
 			if (usePts) {
@@ -131,7 +131,7 @@ const LeagueStats = ({
 		// Create the cells for this row.
 		const data: { [key: string]: ReactNode } = {
 			season:
-				abbrev === "all" ? (
+				team === "all" ? (
 					<a
 						href={helpers.leagueUrl([
 							"team_stats",
@@ -143,13 +143,15 @@ const LeagueStats = ({
 						{s.season}
 					</a>
 				) : (
-					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, s.season])}>
+					<a
+						href={helpers.leagueUrl(["roster", `${abbrev}_${team}`, s.season])}
+					>
 						{s.season}
 					</a>
 				),
 		};
 
-		if (abbrev === "all") {
+		if (team === "all") {
 			data.numTeams = s.numTeams;
 		}
 

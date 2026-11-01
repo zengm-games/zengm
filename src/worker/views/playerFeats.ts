@@ -6,22 +6,10 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { getWatchPids } from "./news.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"playerFeats">) => {
-	let abbrev;
-	let tid: number | undefined;
-	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
-	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
-		abbrev = validatedAbbrev;
-		tid = validatedTid;
-	} else if (params.abbrev === "watch") {
-		abbrev = "watch";
-	} else {
-		abbrev = "all";
-	}
-
 	let season: number | "all";
 
 	if (params.season && params.season !== "all") {
@@ -31,9 +19,8 @@ const processInputs = (params: RouteParams<"playerFeats">) => {
 	}
 
 	return {
-		abbrev,
 		season,
-		tid,
+		team: validateTeam(params.team, ["all", "watch"]),
 	};
 };
 
@@ -44,15 +31,15 @@ export default defineView({
 		if (
 			updateEvents.has("firstRun") ||
 			updateEvents.has("gameSim") ||
-			inputs.abbrev !== prevInputs?.abbrev ||
+			inputs.team !== prevInputs?.team ||
 			inputs.season !== prevInputs?.season
 		) {
 			const watchPids =
-				inputs.abbrev === "watch" ? await getWatchPids() : undefined;
+				inputs.team === "watch" ? await getWatchPids() : undefined;
 
 			// Applied while reading feats, so feats that won't be shown are not all held in memory
 			const filter = (feat: PlayerFeat) =>
-				(inputs.tid === undefined || feat.tid === inputs.tid) &&
+				(typeof inputs.team !== "number" || feat.tid === inputs.team) &&
 				(watchPids === undefined || watchPids.has(feat.pid)) &&
 				(inputs.season === "all" || feat.season === inputs.season);
 
@@ -207,8 +194,7 @@ export default defineView({
 				],
 			});
 			return {
-				abbrev: inputs.abbrev,
-				tid: inputs.tid,
+				team: inputs.team,
 				feats: featsProcessed,
 				quarterLengthFactor: helpers.quarterLengthFactor(),
 				season: inputs.season,

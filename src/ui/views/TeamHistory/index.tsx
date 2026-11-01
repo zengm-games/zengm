@@ -12,7 +12,6 @@ import useLocalStorageState from "use-local-storage-state";
 import clsx from "clsx";
 
 const TeamHistory = ({
-	abbrev,
 	bestRecord,
 	championships,
 	finalsAppearances,
@@ -35,7 +34,7 @@ const TeamHistory = ({
 	useTitleBar({
 		title: "Team History",
 		dropdown: {
-			fields: [{ key: "abbrev", options: { type: "teams" }, value: tid }],
+			fields: [{ key: "team", options: { type: "teams" }, value: tid }],
 			view: "teamHistory",
 		},
 	});
@@ -60,7 +59,7 @@ const TeamHistory = ({
 
 	return (
 		<>
-			<MoreLinks type="team" page="team_history" abbrev={abbrev} tid={tid} />
+			<MoreLinks type="team" page="team_history" tid={tid} />
 
 			<div className="row">
 				<div className="col-sm-5 col-md-3">

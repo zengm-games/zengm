@@ -18,10 +18,11 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
 import { defineView, keepType, type ViewArgs } from "../util/defineView.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"schedule">) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	const tid = validateTeam(params.team);
+	const abbrev = helpers.getAbbrev(tid);
 	return { abbrev, tid };
 };
 
@@ -484,7 +485,7 @@ const updateUpcoming = async ({
 		updateEvents.has("gameAttributes") ||
 		updateEvents.has("gameSim") ||
 		updateEvents.has("newPhase") ||
-		inputs.abbrev !== prevInputs?.abbrev
+		inputs.tid !== prevInputs?.tid
 	) {
 		const upcoming = await getUpcoming({
 			tid: inputs.tid,
@@ -525,7 +526,7 @@ const updateCompleted = async ({
 	prevInputs,
 	prevOutput,
 }: ViewArgs<typeof processInputs, typeof keepPrevOutput>) => {
-	if (updateEvents.has("firstRun") || inputs.abbrev !== prevInputs?.abbrev) {
+	if (updateEvents.has("firstRun") || inputs.tid !== prevInputs?.tid) {
 		// Load all games in list
 		const completed = await getProcessedGames({
 			tid: inputs.tid,

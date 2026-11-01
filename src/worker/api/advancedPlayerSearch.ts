@@ -17,7 +17,7 @@ import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "../views/depth.ts";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
-import { validateAbbrev, type SeasonType } from "../util/processInputs.ts";
+import { validateTeam, type SeasonType } from "../util/processInputs.ts";
 import type { processInputs } from "../views/advancedPlayerSearch.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { player } from "../core/index.ts";
@@ -218,9 +218,9 @@ export const advancedPlayerSearch = async ({
 		} else if (abbrev === "$FA$") {
 			tid = PLAYER.FREE_AGENT;
 		} else if (typeof abbrev === "string") {
-			const [validatedTid, validatedAbbrev] = validateAbbrev(abbrev, true);
-			if (validatedAbbrev !== "???") {
-				tid = validatedTid;
+			const team = validateTeam(abbrev, ["all"]);
+			if (typeof team === "number") {
+				tid = team;
 			}
 		}
 	}

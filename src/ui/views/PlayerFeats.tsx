@@ -9,21 +9,20 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { useLocal } from "../util/local.ts";
 
 const PlayerFeats = ({
-	abbrev,
 	feats,
 	quarterLengthFactor,
 	season,
 	stats,
-	tid,
+	team,
 }: View<"playerFeats">) => {
 	useTitleBar({
 		title: "Statistical Feats",
 		dropdown: {
 			fields: [
 				{
-					key: "abbrev",
+					key: "team",
 					options: { type: "teams", all: true, watch: true },
-					value: tid ?? abbrev,
+					value: team,
 				},
 				{
 					key: "season",

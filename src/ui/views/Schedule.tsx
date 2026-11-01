@@ -23,7 +23,7 @@ const Schedule = ({
 	useTitleBar({
 		title: "Schedule",
 		dropdown: {
-			fields: [{ key: "abbrev", options: { type: "teams" }, value: tid }],
+			fields: [{ key: "team", options: { type: "teams" }, value: tid }],
 			view: "schedule",
 		},
 	});
@@ -48,7 +48,7 @@ const Schedule = ({
 
 	return (
 		<>
-			<MoreLinks type="team" page="schedule" abbrev={abbrev} tid={tid} />
+			<MoreLinks type="team" page="schedule" tid={tid} />
 			{godMode ? (
 				<Dropdown className="mb-3">
 					<Dropdown.Toggle

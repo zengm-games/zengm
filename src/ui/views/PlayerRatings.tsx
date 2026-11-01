@@ -15,11 +15,10 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
 
 const PlayerRatings = ({
-	abbrev,
 	players,
 	ratings,
 	season,
-	tid,
+	team,
 }: View<"playerRatings">) => {
 	useTitleBar({
 		title: "Player Ratings",
@@ -28,14 +27,14 @@ const PlayerRatings = ({
 		dropdown: {
 			fields: [
 				{
-					key: "abbrev",
+					key: "team",
 					options: {
 						type: "teams",
 						all: true,
 						remainingPlayoffTeams: true,
 						watch: true,
 					},
-					value: tid ?? abbrev,
+					value: team,
 				},
 				{ key: "season", options: { type: "seasons" }, value: season },
 			],

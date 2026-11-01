@@ -6,20 +6,19 @@ import type { View } from "../../common/types.ts";
 import { SafeHtml } from "../components/SafeHtml.tsx";
 
 const Transactions = ({
-	abbrev,
 	eventType,
 	events,
 	season,
-	tid,
+	team,
 }: View<"transactions">) => {
 	useTitleBar({
 		title: "Transactions",
 		dropdown: {
 			fields: [
 				{
-					key: "abbrev",
+					key: "team",
 					options: { type: "teams", all: true, watch: true },
-					value: tid ?? abbrev,
+					value: team,
 				},
 				{
 					key: "season",
@@ -37,18 +36,16 @@ const Transactions = ({
 	});
 
 	const moreLinks =
-		tid !== undefined ? (
+		typeof team === "number" ? (
 			<MoreLinks
 				type="team"
 				page="transactions"
-				abbrev={abbrev}
-				tid={tid}
+				tid={team}
 				season={season !== "all" ? season : undefined}
 			/>
 		) : (
 			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["news", abbrev, season])}>News Feed</a>
+				More: <a href={helpers.leagueUrl(["news", team, season])}>News Feed</a>
 			</p>
 		);
 

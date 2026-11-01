@@ -7,12 +7,12 @@ import { defineView } from "../util/defineView.ts";
 import { getAutoTicketPriceByTid } from "../core/game/attendance.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"teamFinances">) => {
 	const show = params.show ?? "10";
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-	return { abbrev, show, tid };
+	const tid = validateTeam(params.team);
+	return { show, tid };
 };
 
 export default defineView({
@@ -232,7 +232,6 @@ export default defineView({
 			otherTeamTicketPrices.sort((a, b) => b - a);
 
 			return {
-				abbrev: inputs.abbrev,
 				autoTicketPrice,
 				tid: inputs.tid,
 				show: inputs.show,

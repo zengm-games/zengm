@@ -14,10 +14,9 @@ import { SkillsBlock } from "../components/SkillsBlock.tsx";
 import { PlusMinus } from "../components/PlusMinus.tsx";
 
 const DraftTeamHistory = ({
-	abbrev,
 	players,
 	stats,
-	tid,
+	team,
 }: View<"draftTeamHistory">) => {
 	const { challengeNoRatings, draftType, teamInfoCache, userTid } = useLocal([
 		"challengeNoRatings",
@@ -33,9 +32,9 @@ const DraftTeamHistory = ({
 		dropdown: {
 			fields: [
 				{
-					key: "abbrev",
+					key: "team",
 					options: { type: "teams", yourTeams: true },
-					value: abbrev === "your_teams" ? "your_teams" : tid,
+					value: team,
 				},
 			],
 			view: "draftTeamHistory",
@@ -174,9 +173,8 @@ const DraftTeamHistory = ({
 			<MoreLinks
 				type="draft"
 				page="draft_team_history"
-				abbrev={abbrev}
 				draftType={draftType}
-				tid={tid}
+				tid={typeof team === "number" ? team : undefined}
 			/>
 
 			<p>

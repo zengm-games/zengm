@@ -16,34 +16,13 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { getActivePlayoffTids } from "./playerRatings.ts";
 import { last } from "../../common/utils.ts";
 import { hasNonZeroStat } from "../../common/statValue.ts";
-import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { actualPhase } from "../util/actualPhase.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 import { validateSeasonType } from "../util/processInputs.ts";
 import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"playerStats">) => {
-	let abbrev;
-	let tid: number | undefined;
-
-	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
-
-	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
-		abbrev = validatedAbbrev;
-		tid = validatedTid;
-	} else if (params.abbrev === "watch") {
-		abbrev = "watch";
-	} else if (
-		params.abbrev === "playoffs" &&
-		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
-	) {
-		abbrev = "playoffs";
-	} else {
-		abbrev = "all";
-	}
-
 	const defaultStatType = bySport({
 		baseball: "batting",
 		basketball: "perGame",
@@ -66,8 +45,7 @@ const processInputs = (params: RouteParams<"playerStats">) => {
 	}
 
 	return {
-		abbrev,
-		tid,
+		team: validateTeam(params.team, ["all", "playoffs", "watch"]),
 		season,
 		statType,
 		playoffs: validateSeasonType(params.playoffs),
@@ -82,7 +60,7 @@ export default defineView({
 			updateEvents.has("firstRun") ||
 			(inputs.season === g.get("season") && updateEvents.has("gameSim")) ||
 			updateEvents.has("playerMovement") ||
-			inputs.abbrev !== prevInputs?.abbrev ||
+			inputs.team !== prevInputs?.team ||
 			inputs.season !== prevInputs?.season ||
 			inputs.statType !== prevInputs?.statType ||
 			inputs.playoffs !== prevInputs?.playoffs
@@ -126,7 +104,7 @@ export default defineView({
 				actualStats = getPlayerStatsTableStats(stats);
 			}
 
-			const tid = inputs.tid;
+			const tid = typeof inputs.team === "number" ? inputs.team : undefined;
 
 			// Applied while reading players, so players who won't be shown are not all held in memory. For a team, this keeps anyone with any stats for that team, and formatting does the exact filtering.
 			let filter: ((p: Player) => boolean) | undefined;
@@ -138,9 +116,9 @@ export default defineView({
 							ps.tid === tid &&
 							(typeof season !== "number" || ps.season === season),
 					);
-			} else if (inputs.abbrev === "watch") {
+			} else if (inputs.team === "watch") {
 				filter = (p) => p.watch !== undefined;
-			} else if (inputs.abbrev === "playoffs") {
+			} else if (inputs.team === "playoffs") {
 				const playoffTids = await getActivePlayoffTids();
 				filter = (p) => playoffTids.has(p.tid);
 			}
@@ -186,7 +164,7 @@ export default defineView({
 				let selector: PlayersSelector | undefined;
 				if (typeof inputs.season === "number") {
 					selector = getActiveSeasonSelector(inputs.season);
-				} else if (inputs.abbrev === "watch") {
+				} else if (inputs.team === "watch") {
 					// Only read players on the watch list, rather than all players
 					selector = { watch: true };
 				}
@@ -299,10 +277,10 @@ export default defineView({
 			}
 
 			// Only keep players who actually played
-			if (inputs.abbrev !== "watch" && __SPORT === "basketball") {
+			if (inputs.team !== "watch" && __SPORT === "basketball") {
 				rows = rows.filter((p) => (p.stats.gp ?? 0) > 0);
 			} else if (
-				inputs.abbrev !== "watch" &&
+				inputs.team !== "watch" &&
 				statsTable.onlyShowIf &&
 				__SPORT !== "basketball"
 			) {
@@ -337,8 +315,7 @@ export default defineView({
 
 			return {
 				players,
-				abbrev: inputs.abbrev,
-				tid: inputs.tid,
+				team: inputs.team,
 				season: inputs.season,
 				statType: inputs.statType,
 				playoffs: inputs.playoffs,

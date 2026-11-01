@@ -719,7 +719,6 @@ const highlightZeroNegative = (amount: number) => {
 };
 
 const TeamFinances = ({
-	abbrev,
 	autoTicketPrice,
 	barData,
 	contractTotals,
@@ -738,7 +737,7 @@ const TeamFinances = ({
 		title: "Team Finances",
 		dropdown: {
 			fields: [
-				{ key: "abbrev", options: { type: "teams" }, value: tid },
+				{ key: "team", options: { type: "teams" }, value: tid },
 				{ key: "show", options: dropdownOptions.shows, value: show },
 			],
 			view: "teamFinances",
@@ -853,7 +852,7 @@ const TeamFinances = ({
 
 	return (
 		<>
-			<MoreLinks type="team" page="team_finances" abbrev={abbrev} tid={tid} />
+			<MoreLinks type="team" page="team_finances" tid={tid} />
 
 			<PayrollInfo
 				luxuryTaxAmount={luxuryTaxAmount}

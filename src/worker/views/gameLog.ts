@@ -10,20 +10,21 @@ import {
 import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/constants.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"gameLog">) => {
-	const [tid, abbrev] =
-		params.abbrev === "special"
-			? [-1, "special"]
-			: validateAbbrev(params.abbrev);
+	const team = validateTeam(params.team, ["special"]);
+
+	// For the All-Star Game, -1 is the tid of the first All-Star team, which is used to load the All-Star games
+	const tid = team === "special" ? -1 : team;
 
 	return {
+		abbrev: team === "special" ? "special" : helpers.getAbbrev(tid),
 		gid: params.gid !== undefined ? Number.parseInt(params.gid) : -1,
 		season: validateSeason(params.season),
+		team,
 		tid,
-		abbrev,
 	};
 };
 
@@ -232,9 +233,9 @@ const boxScore = async (gid: number) => {
 
 const updateTeamSeason = (inputs: ViewInput<typeof processInputs>) => {
 	return {
-		// Needed for dropdown
 		abbrev: inputs.abbrev,
 		season: inputs.season,
+		team: inputs.team,
 		tid: inputs.tid,
 	};
 };

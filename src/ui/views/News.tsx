@@ -8,15 +8,7 @@ import { NewsBlock } from "../components/NewsBlock.tsx";
 import { categories, types } from "../../common/transactionInfo.ts";
 import { useLocal } from "../util/local.ts";
 
-const News = ({
-	abbrev,
-	events,
-	level,
-	order,
-	season,
-	teams,
-	tid,
-}: View<"news">) => {
+const News = ({ events, level, order, season, team, teams }: View<"news">) => {
 	const [showCategories, setShowCategories] = useState<
 		Record<keyof typeof categories, boolean>
 	>({
@@ -36,9 +28,9 @@ const News = ({
 		dropdown: {
 			fields: [
 				{
-					key: "abbrev",
+					key: "team",
 					options: { type: "teams", all: true, watch: true },
-					value: tid ?? abbrev,
+					value: team,
 				},
 				{ key: "season", options: { type: "seasons" }, value: season },
 				{ key: "level", options: dropdownOptions.newsLevels, value: level },

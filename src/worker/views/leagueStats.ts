@@ -6,20 +6,9 @@ import { season } from "../core/index.ts";
 import { range } from "../../common/utils.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"leagueStats">) => {
-	let abbrev: string = "all";
-	let tid: number = -1;
-	if (params.abbrev && params.abbrev !== "all") {
-		[tid, abbrev] = validateAbbrev(params.abbrev);
-	}
-
-	if (tid < 0) {
-		tid = -1;
-		abbrev = "all";
-	}
-
 	const playoffs =
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
@@ -31,8 +20,7 @@ const processInputs = (params: RouteParams<"leagueStats">) => {
 	});
 
 	return {
-		tid,
-		abbrev,
+		team: validateTeam(params.team, ["all"]),
 		teamOpponent: params.teamOpponent ?? defaultStatType,
 		playoffs,
 	};
@@ -45,7 +33,7 @@ export default defineView({
 		if (
 			updateEvents.has("firstRun") ||
 			updateEvents.has("gameSim") ||
-			inputs.tid !== prevInputs?.tid ||
+			inputs.team !== prevInputs?.team ||
 			inputs.playoffs !== prevInputs?.playoffs ||
 			inputs.teamOpponent !== prevInputs?.teamOpponent
 		) {
@@ -89,14 +77,14 @@ export default defineView({
 					playoffs: inputs.playoffs === "playoffs",
 					statsTable,
 					usePts,
-					tid: inputs.tid >= 0 ? inputs.tid : undefined,
+					tid: typeof inputs.team === "number" ? inputs.team : undefined,
 					noDynamicAvgAge: true,
 				});
 				stats = output.stats;
 				const output2 = averageTeamStats(output, {
 					otl,
 					ties,
-					tid: inputs.tid >= 0 ? inputs.tid : undefined,
+					tid: typeof inputs.team === "number" ? inputs.team : undefined,
 				});
 				otl = output2.otl;
 				ties = output2.ties;
@@ -122,13 +110,16 @@ export default defineView({
 			}
 
 			return {
-				abbrev: inputs.abbrev,
+				abbrev:
+					typeof inputs.team === "number"
+						? helpers.getAbbrev(inputs.team)
+						: undefined,
 				playoffs: inputs.playoffs,
 				seasons,
 				stats,
 				superCols,
+				team: inputs.team,
 				teamOpponent: inputs.teamOpponent,
-				tid: inputs.tid,
 				ties: season.hasTies(Infinity) || ties,
 				otl: g.get("otl") || otl,
 				usePts,

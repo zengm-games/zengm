@@ -63,14 +63,13 @@ export const formatStatGameHigh = (
 };
 
 const PlayerStats = ({
-	abbrev,
 	players,
 	playoffs,
 	season,
 	statType,
 	stats,
 	superCols,
-	tid,
+	team,
 }: View<"playerStats">) => {
 	useTitleBar({
 		title: "Player Stats",
@@ -79,14 +78,14 @@ const PlayerStats = ({
 		dropdown: {
 			fields: [
 				{
-					key: "abbrev",
+					key: "team",
 					options: {
 						type: "teams",
 						all: true,
 						remainingPlayoffTeams: true,
 						watch: true,
 					},
-					value: tid ?? abbrev,
+					value: team,
 				},
 				{
 					key: "season",

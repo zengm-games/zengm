@@ -1,46 +1,59 @@
 import { g } from "./index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
+import { actualPhase } from "./actualPhase.ts";
+
+// Values of the team URL param that mean something other than a single team
+export type TeamSpecial =
+	| "all"
+	| "playoffs"
+	| "special"
+	| "watch"
+	| "your_teams";
 
 /**
- * Validate that a given abbreviation corresponds to a team.
+ * Parse the team URL param into a tid or one of the special values allowed by the view.
  *
- * If the abbreviation is not valid, then g.get("userTid") and its correspodning abbreviation will be returned.
+ * The param can be like "ATL_0" (preferred, the tid is used even if the abbrev has changed), "0", or "ATL" (from old URLs).
  *
- * @memberOf util.helpers
- * @param  {string} abbrev Three-letter team abbreviation, like "ATL". Can also be a numeric team ID like "0" or a concatenated one like "ATL_0", in which case the number will be used.
- * @return {Array} Array with two elements, the team ID and the validated abbreviation.
+ * "playoffs" is only allowed in phases with remaining playoff teams.
+ *
+ * Invalid or missing values fall back to "all" if it's allowed, otherwise the user's team.
  */
-export const validateAbbrev = (
-	abbrev?: string,
-	strict?: boolean,
-): [number, string] => {
+export const validateTeam = <const Special extends TeamSpecial = never>(
+	team: string | undefined,
+	specials: readonly Special[] = [],
+): number | Special => {
+	const special = specials.find((special) => special === team);
+	if (
+		special !== undefined &&
+		(special !== "playoffs" ||
+			REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase()))
+	) {
+		return special;
+	}
+
 	const teamInfoCache = g.get("teamInfoCache");
 
-	if (abbrev !== undefined) {
-		// Prefer the tid, since abbrevs can change over time and are not guaranteed to be unique
-		{
-			const parts = abbrev.split("_");
-			const int = Number.parseInt(parts.at(-1)!);
-			if (!Number.isNaN(int) && teamInfoCache[int]) {
-				return [int, teamInfoCache[int].abbrev];
-			}
+	if (team !== undefined) {
+		const int = Number.parseInt(team.split("_").at(-1)!);
+		if (!Number.isNaN(int) && teamInfoCache[int]) {
+			return int;
 		}
 
-		{
-			const tid = teamInfoCache.findIndex((t) => t.abbrev === abbrev);
-			if (tid >= 0) {
-				return [tid, abbrev];
-			}
+		const tid = teamInfoCache.findIndex((t) => t.abbrev === team);
+		if (tid >= 0) {
+			return tid;
 		}
 	}
 
-	if (strict) {
-		return [g.get("userTid"), "???"];
+	const all = specials.find((special) => special === "all");
+	if (all !== undefined) {
+		return all;
 	}
 
-	const tid = g.get("userTid");
-	return [tid, teamInfoCache[tid]?.abbrev ?? "???"];
+	return g.get("userTid");
 };
 
 /**

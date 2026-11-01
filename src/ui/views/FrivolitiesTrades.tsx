@@ -40,12 +40,11 @@ const PlayerInfo = ({
 };
 
 const FrivolitiesTrades = ({
-	abbrev,
 	description,
+	team,
 	title,
 	trades,
 	type,
-	tid,
 }: View<"frivolitiesTrades">) => {
 	useTitleBar({
 		title,
@@ -53,9 +52,9 @@ const FrivolitiesTrades = ({
 		dropdown: {
 			fields: [
 				{
-					key: "abbrev",
+					key: "team",
 					options: { type: "teams", all: true, watch: true },
-					value: tid ?? abbrev,
+					value: team,
 				},
 			],
 			view: "frivolitiesTrades",

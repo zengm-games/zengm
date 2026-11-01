@@ -129,7 +129,7 @@ const Roster = ({
 		title: "Roster",
 		dropdown: {
 			fields: [
-				{ key: "abbrev", options: { type: "teams" }, value: tid },
+				{ key: "team", options: { type: "teams" }, value: tid },
 				{ key: "season", options: { type: "seasons" }, value: season },
 				{
 					key: "playoffs",
@@ -386,13 +386,7 @@ const Roster = ({
 
 	return (
 		<>
-			<MoreLinks
-				type="team"
-				page="roster"
-				abbrev={abbrev}
-				tid={tid}
-				season={season}
-			/>
+			<MoreLinks type="team" page="roster" tid={tid} season={season} />
 
 			<TopStuff
 				abbrev={abbrev}

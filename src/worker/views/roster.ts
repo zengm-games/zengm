@@ -10,13 +10,13 @@ import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { orderTeams } from "../util/orderTeams.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 import { validateSeasonType } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"roster">) => {
 	// Fix broken links
-	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
+	if (params.team === "FA" || params.team === "FA_-1") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["free_agents"]),
@@ -26,7 +26,7 @@ const processInputs = (params: RouteParams<"roster">) => {
 
 	const season = validateSeason(params.season);
 
-	if (params.abbrev === "DP" || params.abbrev === "DP_-2") {
+	if (params.team === "DP" || params.team === "DP_-2") {
 		let redirectUrl;
 		const draftAlreadyHappened =
 			season < g.get("season") ||
@@ -44,7 +44,8 @@ const processInputs = (params: RouteParams<"roster">) => {
 		return returnValue;
 	}
 
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	const tid = validateTeam(params.team);
+	const abbrev = helpers.getAbbrev(tid);
 
 	return { abbrev, playoffs: validateSeasonType(params.playoffs), season, tid };
 };
@@ -154,7 +155,7 @@ export default defineView({
 			(inputs.season === g.get("season") &&
 				(updateEvents.has("gameSim") || updateEvents.has("newPhase"))) ||
 			(updateEvents.has("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
-			inputs.abbrev !== prevInputs?.abbrev ||
+			inputs.tid !== prevInputs?.tid ||
 			inputs.playoffs !== prevInputs?.playoffs ||
 			inputs.season !== prevInputs?.season
 		) {

@@ -11,7 +11,6 @@ import { useLocal } from "../util/local.ts";
 import type { LeagueUrlParts } from "../router/types.ts";
 
 const HeadToHead = ({
-	abbrev,
 	season,
 	teams,
 	tid,
@@ -24,7 +23,7 @@ const HeadToHead = ({
 		title: "Head-to-Head",
 		dropdown: {
 			fields: [
-				{ key: "abbrev", options: { type: "teams" }, value: tid },
+				{ key: "team", options: { type: "teams" }, value: tid },
 				{
 					key: "season",
 					options: { type: "seasons", all: true },
@@ -112,7 +111,6 @@ const HeadToHead = ({
 			<MoreLinks
 				type="team"
 				page="head2head"
-				abbrev={abbrev}
 				tid={tid}
 				season={season === "all" ? undefined : season}
 			/>

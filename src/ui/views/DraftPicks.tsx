@@ -172,7 +172,6 @@ export const getDraftPicksColsAndRows = ({
 };
 
 const DraftPicks = ({
-	abbrev,
 	draftPicks,
 	draftPicksOutgoing,
 	tid,
@@ -180,7 +179,7 @@ const DraftPicks = ({
 	useTitleBar({
 		title: "Draft Picks",
 		dropdown: {
-			fields: [{ key: "abbrev", options: { type: "teams" }, value: tid }],
+			fields: [{ key: "team", options: { type: "teams" }, value: tid }],
 			view: "draftPicks",
 		},
 	});
@@ -201,7 +200,6 @@ const DraftPicks = ({
 			<MoreLinks
 				type="draft"
 				page="draft_picks"
-				abbrev={abbrev}
 				draftType={draftType}
 				tid={tid}
 			/>

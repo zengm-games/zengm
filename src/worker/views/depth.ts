@@ -34,8 +34,6 @@ const processInputs = (params: RouteParams<"depth">) => {
 	}
 
 	const tid = validateTeam(params.team);
-	const abbrev = helpers.getAbbrev(tid);
-
 	const DEFAULT_POS = bySport({
 		baseball: "L",
 		basketball: "G",
@@ -45,7 +43,7 @@ const processInputs = (params: RouteParams<"depth">) => {
 
 	const pos = params.pos ?? DEFAULT_POS;
 
-	return { abbrev, playoffs: validateSeasonType(params.playoffs), pos, tid };
+	return { playoffs: validateSeasonType(params.playoffs), pos, tid };
 };
 
 const defenseStats: PlayerStatAttr[] = [
@@ -183,7 +181,7 @@ export default defineView({
 	id: "depth",
 	processInputs,
 	load: async ({
-		inputs: { abbrev, playoffs, pos, tid },
+		inputs: { playoffs, pos, tid },
 		updateEvents,
 		prevInputs,
 	}) => {
@@ -334,7 +332,6 @@ export default defineView({
 			}
 
 			return {
-				abbrev,
 				editable,
 				keepRosterSorted: t.keepRosterSorted,
 				multiplePositionsWarning,

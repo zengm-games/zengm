@@ -70,16 +70,7 @@ export const MoreLinks = (
 ) => {
 	const { keepSelfLink, page } = props;
 
-	const {
-		godMode,
-		season: currentSeason,
-		teamInfoCache,
-	} = useLocal(["godMode", "season", "teamInfoCache"]);
-
-	const getTeamUrlPart = (tid: number) => {
-		const abbrev = teamInfoCache[tid]?.abbrev;
-		return abbrev === undefined ? String(tid) : `${abbrev}_${tid}`;
-	};
+	const { godMode, season: currentSeason } = useLocal(["godMode", "season"]);
 
 	let links: {
 		url: string | Readonly<LeagueUrlParts>;
@@ -88,7 +79,7 @@ export const MoreLinks = (
 	}[];
 	if (props.type === "team") {
 		const { season, tid } = props;
-		const team = getTeamUrlPart(tid);
+		const team = helpers.getTeamUrlPart(tid);
 
 		links = [
 			{
@@ -192,7 +183,7 @@ export const MoreLinks = (
 		}
 	} else if (props.type === "draft") {
 		const { draftType, season, tid } = props;
-		const team = tid === undefined ? undefined : getTeamUrlPart(tid);
+		const team = tid === undefined ? undefined : helpers.getTeamUrlPart(tid);
 
 		links = [
 			// { url: ["draft"], name: "Draft", },

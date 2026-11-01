@@ -1110,7 +1110,6 @@ export type LocalStateUI = {
 	jumpTo: boolean;
 	jumpToSeason?: number | "all" | "career";
 	dropdown?: TitleBarDropdown;
-	moreInfoAbbrev?: string;
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
 	stickyFooterAd: boolean;

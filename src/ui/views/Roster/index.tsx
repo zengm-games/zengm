@@ -87,7 +87,6 @@ const handleRelease = async (
 };
 
 const Roster = ({
-	abbrev,
 	editable,
 	luxuryTaxAmount,
 	maxRosterSize,
@@ -139,7 +138,6 @@ const Roster = ({
 			],
 			view: "roster",
 		},
-		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
 		moreInfoTid: tid,
 	});
@@ -389,7 +387,6 @@ const Roster = ({
 			<MoreLinks type="team" page="roster" tid={tid} season={season} />
 
 			<TopStuff
-				abbrev={abbrev}
 				currentSeason={currentSeason}
 				editable={editable}
 				luxuryTaxAmount={luxuryTaxAmount}

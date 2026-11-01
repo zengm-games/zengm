@@ -110,10 +110,6 @@ export default defineView({
 			}
 
 			return {
-				abbrev:
-					typeof inputs.team === "number"
-						? helpers.getAbbrev(inputs.team)
-						: undefined,
 				playoffs: inputs.playoffs,
 				seasons,
 				stats,

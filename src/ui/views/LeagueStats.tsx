@@ -12,7 +12,6 @@ export const formatMaybeInteger = (x: number) =>
 	Number.isInteger(x) ? String(x) : x.toFixed(1);
 
 const LeagueStats = ({
-	abbrev,
 	playoffs,
 	seasons,
 	stats,
@@ -144,7 +143,11 @@ const LeagueStats = ({
 					</a>
 				) : (
 					<a
-						href={helpers.leagueUrl(["roster", `${abbrev}_${team}`, s.season])}
+						href={helpers.leagueUrl([
+							"roster",
+							helpers.getTeamUrlPart(team),
+							s.season,
+						])}
 					>
 						{s.season}
 					</a>

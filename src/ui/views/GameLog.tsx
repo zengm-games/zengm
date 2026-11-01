@@ -68,7 +68,6 @@ export const NoGamesMessage = ({
 );
 
 const GamesList = ({
-	abbrev,
 	currentSeason,
 	gid,
 	gamesList,
@@ -76,7 +75,6 @@ const GamesList = ({
 	team,
 	tid,
 }: {
-	abbrev: string;
 	currentSeason: number;
 	gamesList: View<"gameLog">["gamesList"];
 	gid?: number;
@@ -126,7 +124,7 @@ const GamesList = ({
 
 						const url = helpers.leagueUrl([
 							"game_log",
-							team === "special" ? team : `${abbrev}_${team}`,
+							team === "special" ? team : helpers.getTeamUrlPart(team),
 							season,
 							gm.gid,
 						]);
@@ -169,7 +167,6 @@ const GamesList = ({
 };
 
 const GameLog = ({
-	abbrev,
 	boxScore,
 	gamesList,
 	season,
@@ -236,7 +233,6 @@ const GameLog = ({
 
 						<div className="col-md-2 mt-3 mt-md-0">
 							<GamesList
-								abbrev={abbrev}
 								currentSeason={currentSeason}
 								gamesList={gamesList}
 								gid={boxScore.gid}

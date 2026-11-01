@@ -99,7 +99,6 @@ const numLinesByPos: Record<string, number> | undefined =
 	__SPORT === "hockey" ? NUM_LINES : undefined;
 
 const Depth = ({
-	abbrev,
 	editable,
 	keepRosterSorted,
 	multiplePositionsWarning,
@@ -147,7 +146,6 @@ const Depth = ({
 			],
 			view: "depth",
 		},
-		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
 		moreInfoTid: tid,
 	});
@@ -425,7 +423,11 @@ const Depth = ({
 								className={clsx("nav-link", {
 									active: pos === pos2,
 								})}
-								href={helpers.leagueUrl(["depth", pos2, `${abbrev}_${tid}`])}
+								href={helpers.leagueUrl([
+									"depth",
+									pos2,
+									helpers.getTeamUrlPart(tid),
+								])}
 								data-no-scroll-reset
 							>
 								{text}
@@ -491,7 +493,13 @@ const Depth = ({
 			{__SPORT === "baseball" && pos === "L" ? (
 				<div className="alert alert-info d-inline-block">
 					To move players in and out of the starting lineup, switch to the{" "}
-					<a href={helpers.leagueUrl(["depth", "D", `${abbrev}_${tid}`])}>
+					<a
+						href={helpers.leagueUrl([
+							"depth",
+							"D",
+							helpers.getTeamUrlPart(tid),
+						])}
+					>
 						Defense tab
 					</a>
 					.
@@ -501,7 +509,13 @@ const Depth = ({
 			{__SPORT === "baseball" && pos === "LP" ? (
 				<div className="alert alert-info d-inline-block">
 					To move players in and out of the starting lineup, switch to the{" "}
-					<a href={helpers.leagueUrl(["depth", "DP", `${abbrev}_${tid}`])}>
+					<a
+						href={helpers.leagueUrl([
+							"depth",
+							"DP",
+							helpers.getTeamUrlPart(tid),
+						])}
+					>
 						Defense tab
 					</a>
 					.

@@ -45,9 +45,7 @@ const processInputs = (params: RouteParams<"roster">) => {
 	}
 
 	const tid = validateTeam(params.team);
-	const abbrev = helpers.getAbbrev(tid);
-
-	return { abbrev, playoffs: validateSeasonType(params.playoffs), season, tid };
+	return { playoffs: validateSeasonType(params.playoffs), season, tid };
 };
 
 const sortByPos = (p: {
@@ -401,7 +399,6 @@ export default defineView({
 			}
 
 			return {
-				abbrev: inputs.abbrev,
 				editable,
 				maxRosterSize: g.get("maxRosterSize"),
 				numPlayersOnCourt: g.get("numPlayersOnCourt"),

@@ -53,7 +53,6 @@ export const TitleBar = () => {
 		jumpTo,
 		jumpToSeason,
 		dropdown,
-		moreInfoAbbrev,
 		moreInfoSeason,
 		moreInfoTid,
 		lid,
@@ -64,7 +63,6 @@ export const TitleBar = () => {
 		"jumpTo",
 		"jumpToSeason",
 		"dropdown",
-		"moreInfoAbbrev",
 		"moreInfoSeason",
 		"moreInfoTid",
 		"lid",
@@ -157,11 +155,8 @@ export const TitleBar = () => {
 		});
 	}
 
-	if (
-		moreInfoAbbrev &&
-		moreInfoSeason !== undefined &&
-		moreInfoTid !== undefined
-	) {
+	if (moreInfoSeason !== undefined && moreInfoTid !== undefined) {
+		const team = helpers.getTeamUrlPart(moreInfoTid);
 		menuItems.push({
 			type: "header",
 			long: "More Info",
@@ -171,31 +166,19 @@ export const TitleBar = () => {
 				{
 					type: "link",
 					league: true,
-					path: [
-						"player_ratings",
-						`${moreInfoAbbrev}_${moreInfoTid}`,
-						moreInfoSeason,
-					],
+					path: ["player_ratings", team, moreInfoSeason],
 					text: "Player Ratings",
 				},
 				{
 					type: "link",
 					league: true,
-					path: [
-						"player_stats",
-						`${moreInfoAbbrev}_${moreInfoTid}`,
-						moreInfoSeason,
-					],
+					path: ["player_stats", team, moreInfoSeason],
 					text: "Player Stats",
 				},
 				{
 					type: "link",
 					league: true,
-					path: [
-						"player_bios",
-						`${moreInfoAbbrev}_${moreInfoTid}`,
-						moreInfoSeason,
-					],
+					path: ["player_bios", team, moreInfoSeason],
 					text: "Player Bios",
 				},
 			],

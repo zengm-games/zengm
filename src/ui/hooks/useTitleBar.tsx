@@ -55,7 +55,6 @@ const useTitleBar = <
 	jumpTo,
 	jumpToSeason,
 	dropdown,
-	moreInfoAbbrev,
 	moreInfoSeason,
 	moreInfoTid,
 }: {
@@ -66,7 +65,6 @@ const useTitleBar = <
 	jumpTo?: boolean;
 	jumpToSeason?: number | "all" | "career";
 	dropdown?: DropdownArg<V, Key, ParamKey>;
-	moreInfoAbbrev?: string;
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
 } = {}) => {
@@ -128,7 +126,6 @@ const useTitleBar = <
 			jumpTo,
 			jumpToSeason,
 			dropdown: storedDropdown,
-			moreInfoAbbrev,
 			moreInfoSeason,
 			moreInfoTid,
 		});
@@ -139,7 +136,6 @@ const useTitleBar = <
 		jumpTo,
 		jumpToSeason,
 		dropdown,
-		moreInfoAbbrev,
 		moreInfoSeason,
 		moreInfoTid,
 	]);

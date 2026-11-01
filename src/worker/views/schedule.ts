@@ -22,8 +22,7 @@ import { validateTeam } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"schedule">) => {
 	const tid = validateTeam(params.team);
-	const abbrev = helpers.getAbbrev(tid);
-	return { abbrev, tid };
+	return { tid };
 };
 
 export const getUpcoming = async ({
@@ -503,7 +502,6 @@ const updateUpcoming = async ({
 		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2);
 
 		return {
-			abbrev: inputs.abbrev,
 			canLiveSimFirstGame,
 			elam: g.get("elam"),
 			elamASG: g.get("elamASG"),

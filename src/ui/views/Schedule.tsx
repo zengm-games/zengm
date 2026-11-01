@@ -8,9 +8,9 @@ import allowForceTie from "../../common/allowForceTie.ts";
 import { Dropdown } from "react-bootstrap";
 import { ForceWin } from "../components/ForceWin.tsx";
 import { ScoreBox } from "../components/ScoreBox/index.tsx";
+import { helpers } from "../util/helpers.ts";
 
 const Schedule = ({
-	abbrev,
 	canLiveSimFirstGame,
 	completed,
 	elam,
@@ -178,7 +178,7 @@ const Schedule = ({
 					<h2>Completed Games</h2>
 					{completed.map((game) => (
 						<ScoreBox
-							boxScoreTeamOverride={`${abbrev}_${tid}`}
+							boxScoreTeamOverride={helpers.getTeamUrlPart(tid)}
 							className="mb-3"
 							key={game.gid}
 							game={game}

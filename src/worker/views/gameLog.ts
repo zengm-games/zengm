@@ -20,7 +20,6 @@ const processInputs = (params: RouteParams<"gameLog">) => {
 	const tid = team === "special" ? -1 : team;
 
 	return {
-		abbrev: team === "special" ? "special" : helpers.getAbbrev(tid),
 		gid: params.gid !== undefined ? Number.parseInt(params.gid) : -1,
 		season: validateSeason(params.season),
 		team,
@@ -233,7 +232,6 @@ const boxScore = async (gid: number) => {
 
 const updateTeamSeason = (inputs: ViewInput<typeof processInputs>) => {
 	return {
-		abbrev: inputs.abbrev,
 		season: inputs.season,
 		team: inputs.team,
 		tid: inputs.tid,
@@ -304,7 +302,7 @@ const keepPrevOutput = {
  * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
  *
  * @memberOf views.gameLog
- * @param {string} inputs.abbrev Abbrev of the team for the list of games.
+ * @param {number} inputs.tid Team ID for the list of games (-1 for the All-Star Game).
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */

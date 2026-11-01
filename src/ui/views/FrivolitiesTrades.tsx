@@ -45,13 +45,21 @@ const FrivolitiesTrades = ({
 	title,
 	trades,
 	type,
+	tid,
 }: View<"frivolitiesTrades">) => {
 	useTitleBar({
 		title,
 		customMenu: frivolitiesMenu,
-		dropdownView: `frivolities/trades/${type}`,
-		dropdownFields: {
-			teamsAndAllWatch: abbrev,
+		dropdown: {
+			fields: [
+				{
+					key: "abbrev",
+					options: { type: "teams", all: true, watch: true },
+					value: tid ?? abbrev,
+				},
+			],
+			view: "frivolitiesTrades",
+			params: { type },
 		},
 	});
 

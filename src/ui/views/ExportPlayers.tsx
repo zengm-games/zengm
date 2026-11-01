@@ -92,8 +92,10 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 
 	useTitleBar({
 		title: "Export Players",
-		dropdownView: "export_players",
-		dropdownFields: { seasons: season },
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "exportPlayers",
+		},
 	});
 
 	const selectedRows = useSelectedRows<"player">();

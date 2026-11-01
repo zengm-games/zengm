@@ -161,9 +161,15 @@ const History = (props: View<"history">) => {
 		title: "Season Summary",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "history",
-		dropdownFields: {
-			seasonsHistory: season,
+		dropdown: {
+			fields: [
+				{
+					key: "season",
+					options: { type: "seasons", completedOnly: true },
+					value: season,
+				},
+			],
+			view: "history",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);

@@ -229,6 +229,7 @@ export default defineView({
 			return {
 				abbrev,
 				description,
+				tid,
 				title,
 				trades,
 				type,

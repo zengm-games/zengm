@@ -179,8 +179,10 @@ const DraftPicks = ({
 }: View<"draftPicks">) => {
 	useTitleBar({
 		title: "Draft Picks",
-		dropdownView: "draft_picks",
-		dropdownFields: { teams: abbrev },
+		dropdown: {
+			fields: [{ key: "abbrev", options: { type: "teams" }, value: tid }],
+			view: "draftPicks",
+		},
 	});
 
 	const { challengeNoRatings, draftType } = useLocal([

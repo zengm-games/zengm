@@ -1,4 +1,5 @@
 import { MoreLinks } from "../components/MoreLinks.tsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import type { View } from "../../common/types.ts";
@@ -13,11 +14,25 @@ const Transactions = ({
 }: View<"transactions">) => {
 	useTitleBar({
 		title: "Transactions",
-		dropdownView: "transactions",
-		dropdownFields: {
-			teamsAndAllWatch: abbrev,
-			seasonsAndAll: season,
-			eventType,
+		dropdown: {
+			fields: [
+				{
+					key: "abbrev",
+					options: { type: "teams", all: true, watch: true },
+					value: tid ?? abbrev,
+				},
+				{
+					key: "season",
+					options: { type: "seasons", all: true },
+					value: season,
+				},
+				{
+					key: "eventType",
+					options: dropdownOptions.eventType,
+					value: eventType,
+				},
+			],
+			view: "transactions",
 		},
 	});
 

@@ -34,8 +34,10 @@ const TeamHistory = ({
 }: View<"teamHistory">) => {
 	useTitleBar({
 		title: "Team History",
-		dropdownView: "team_history",
-		dropdownFields: { teams: abbrev },
+		dropdown: {
+			fields: [{ key: "abbrev", options: { type: "teams" }, value: tid }],
+			view: "teamHistory",
+		},
 	});
 	const { godMode, season, userTid } = useLocal([
 		"godMode",

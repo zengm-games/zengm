@@ -1,5 +1,4 @@
 import useDropdownOptions from "../../hooks/useDropdownOptions.tsx";
-import { useLocal } from "../../util/local.ts";
 
 const CustomMoodItemsForm = ({
 	godMode,
@@ -50,25 +49,7 @@ const CustomMoodItemsForm = ({
 		});
 	};
 
-	const teamsRaw = useDropdownOptions("teamsAndAll");
-	const { teamInfoCache } = useLocal(["teamInfoCache"]);
-	const tidsByAbbrev: Record<string, number> = {};
-	for (const [tid, t] of teamInfoCache.entries()) {
-		tidsByAbbrev[t.abbrev] = tid;
-	}
-	const teams = teamsRaw.map((t) => {
-		let tid: number | "all";
-		if (t.key === "all") {
-			tid = "all";
-		} else {
-			tid = tidsByAbbrev[t.key]!;
-		}
-
-		return {
-			...t,
-			tid,
-		};
-	});
+	const teams = useDropdownOptions({ type: "teams", all: true });
 
 	return (
 		<>
@@ -121,8 +102,8 @@ const CustomMoodItemsForm = ({
 							>
 								{teams.map((t) => {
 									return (
-										<option key={t.tid} value={t.tid}>
-											{Array.isArray(t.value) ? t.value[0]!.text : t.value}
+										<option key={t.key} value={t.key}>
+											{Array.isArray(t.label) ? t.label[0]!.text : t.label}
 										</option>
 									);
 								})}

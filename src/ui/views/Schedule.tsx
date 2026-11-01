@@ -22,8 +22,10 @@ const Schedule = ({
 }: View<"schedule">) => {
 	useTitleBar({
 		title: "Schedule",
-		dropdownView: "schedule",
-		dropdownFields: { teams: abbrev },
+		dropdown: {
+			fields: [{ key: "abbrev", options: { type: "teams" }, value: tid }],
+			view: "schedule",
+		},
 	});
 
 	const { gameSimInProgress, godMode, phase, userTid } = useLocal([

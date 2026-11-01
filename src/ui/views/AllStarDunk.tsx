@@ -826,10 +826,9 @@ const AllStarDunk = ({
 
 	useTitleBar({
 		title: "Slam Dunk Contest",
-		dropdownView: "all_star_dunk",
-		dropdownFields: { seasons: season },
-		dropdownCustomURL: (fields) => {
-			return helpers.leagueUrl(["all_star", "dunk", fields.seasons]);
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "allStarDunk",
 		},
 	});
 

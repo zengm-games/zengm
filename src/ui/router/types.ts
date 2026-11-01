@@ -66,3 +66,22 @@ type MakeWildcardOptional<T, U = T> = T extends [...infer Init, PathWildcard]
 	: T;
 
 export type LeagueUrlParts = MakeWildcardOptional<LinkParts<RouteInfos>>;
+// Param names of each league route of view V, as a union with one tuple per route, so the names of different routes don't merge into one union
+type RouteParamNameSets<V extends ViewId> =
+	PathsForView<RouteInfos, V> extends infer P
+		? P extends string
+			? [Exclude<keyof PathParams<P>, "lid">]
+			: never
+		: never;
+
+type IsExactlyOneOf<Key, Sets> = Sets extends [infer Names]
+	? [Key] extends [Names]
+		? [Names] extends [Key]
+			? true
+			: never
+		: never
+	: never;
+
+// Whether a route of view V has exactly the params named in Key
+export type MatchesRouteParams<V extends ViewId, Key extends string> =
+	true extends IsExactlyOneOf<Key, RouteParamNameSets<V>> ? true : false;

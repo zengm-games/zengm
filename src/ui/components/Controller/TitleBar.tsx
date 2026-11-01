@@ -1,4 +1,4 @@
-import Dropdown from "../Dropdown.tsx";
+import { Dropdown } from "../Dropdown.tsx";
 import DropdownLinks from "../DropdownLinks.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { useLocal } from "../../util/local.ts";
@@ -52,10 +52,7 @@ export const TitleBar = () => {
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
-		dropdownCustomOptions,
-		dropdownCustomURL,
-		dropdownView,
-		dropdownFields,
+		dropdown,
 		moreInfoAbbrev,
 		moreInfoSeason,
 		moreInfoTid,
@@ -66,10 +63,7 @@ export const TitleBar = () => {
 		"hideNewWindow",
 		"jumpTo",
 		"jumpToSeason",
-		"dropdownCustomOptions",
-		"dropdownCustomURL",
-		"dropdownView",
-		"dropdownFields",
+		"dropdown",
 		"moreInfoAbbrev",
 		"moreInfoSeason",
 		"moreInfoTid",
@@ -218,14 +212,7 @@ export const TitleBar = () => {
 				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}
 			</h1>
-			{dropdownView && dropdownFields ? (
-				<Dropdown
-					customURL={dropdownCustomURL}
-					customOptions={dropdownCustomOptions}
-					view={dropdownView}
-					fields={dropdownFields}
-				/>
-			) : null}
+			{dropdown ? <Dropdown dropdown={dropdown} /> : null}
 			<DropdownLinks
 				className="ms-auto title-bar-right-links"
 				hideTitle

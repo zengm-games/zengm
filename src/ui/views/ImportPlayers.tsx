@@ -558,7 +558,6 @@ export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 const ImportPlayers = () => {
 	useTitleBar({
 		title: "Import Players",
-		dropdownView: "import_players",
 	});
 
 	return <ImportPlayersInner real={false} />;

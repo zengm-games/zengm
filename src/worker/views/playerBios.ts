@@ -55,6 +55,7 @@ export default defineView({
 
 			return {
 				abbrev: inputs.abbrev,
+				tid: inputs.tid,
 				season: inputs.season,
 				players,
 				stats,

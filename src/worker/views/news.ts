@@ -233,6 +233,7 @@ export default defineView({
 				order,
 				season,
 				teams,
+				tid,
 			};
 		}
 	},

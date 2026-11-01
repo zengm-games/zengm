@@ -1,4 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
@@ -20,10 +21,16 @@ const HeadToHeadAll = ({
 }: View<"headToHeadAll">) => {
 	useTitleBar({
 		title: "Head-to-Head",
-		dropdownView: "head2head_all",
-		dropdownFields: {
-			seasonsAndAll: season,
-			playoffsCombined: type,
+		dropdown: {
+			fields: [
+				{
+					key: "season",
+					options: { type: "seasons", all: true },
+					value: season,
+				},
+				{ key: "type", options: dropdownOptions.playoffsCombined, value: type },
+			],
+			view: "headToHeadAll",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);

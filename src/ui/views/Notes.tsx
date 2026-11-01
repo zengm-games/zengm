@@ -1,4 +1,5 @@
 import { helpers } from "../util/helpers.ts";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -19,9 +20,11 @@ const Notes = (props: View<"notes">) => {
 
 	useTitleBar({
 		title: "Notes",
-		dropdownView: "notes",
-		dropdownFields: {
-			notesType: props.type,
+		dropdown: {
+			fields: [
+				{ key: "type", options: dropdownOptions.notesType, value: props.type },
+			],
+			view: "notes",
 		},
 	});
 	const {

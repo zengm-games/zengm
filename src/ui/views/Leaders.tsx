@@ -1,4 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
@@ -63,11 +64,25 @@ const Leaders = ({
 		title: "League Leaders",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "leaders",
-		dropdownFields: {
-			seasonsAndCareer: season,
-			statTypesStrict: statType,
-			playoffsCombined: playoffs,
+		dropdown: {
+			fields: [
+				{
+					key: "season",
+					options: { type: "seasons", career: true, all: true },
+					value: season,
+				},
+				{
+					key: "statType",
+					options: dropdownOptions.statTypesStrict,
+					value: statType,
+				},
+				{
+					key: "playoffs",
+					options: dropdownOptions.playoffsCombined,
+					value: playoffs,
+				},
+			],
+			view: "leaders",
 		},
 	});
 

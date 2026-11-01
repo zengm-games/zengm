@@ -14,11 +14,25 @@ const PlayerFeats = ({
 	quarterLengthFactor,
 	season,
 	stats,
+	tid,
 }: View<"playerFeats">) => {
 	useTitleBar({
 		title: "Statistical Feats",
-		dropdownView: "player_feats",
-		dropdownFields: { teamsAndAllWatch: abbrev, seasonsAndAll: season },
+		dropdown: {
+			fields: [
+				{
+					key: "abbrev",
+					options: { type: "teams", all: true, watch: true },
+					value: tid ?? abbrev,
+				},
+				{
+					key: "season",
+					options: { type: "seasons", all: true },
+					value: season,
+				},
+			],
+			view: "playerFeats",
+		},
 	});
 	const { userTid } = useLocal(["userTid"]);
 

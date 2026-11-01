@@ -208,6 +208,7 @@ export default defineView({
 			});
 			return {
 				abbrev: inputs.abbrev,
+				tid: inputs.tid,
 				feats: featsProcessed,
 				quarterLengthFactor: helpers.quarterLengthFactor(),
 				season: inputs.season,

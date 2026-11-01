@@ -9,6 +9,7 @@ import {
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { dropdownOptions } from "../../hooks/useDropdownOptions.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
@@ -735,8 +736,13 @@ const TeamFinances = ({
 }: View<"teamFinances">) => {
 	useTitleBar({
 		title: "Team Finances",
-		dropdownView: "team_finances",
-		dropdownFields: { teams: abbrev, shows: show },
+		dropdown: {
+			fields: [
+				{ key: "abbrev", options: { type: "teams" }, value: tid },
+				{ key: "show", options: dropdownOptions.shows, value: show },
+			],
+			view: "teamFinances",
+		},
 	});
 
 	const {

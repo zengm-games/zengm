@@ -127,6 +127,7 @@ export default defineView({
 
 			return {
 				abbrev: inputs.abbrev,
+				tid: inputs.tid,
 				injuries: addFirstNameShort(injuries),
 				season: inputs.season,
 				stats,

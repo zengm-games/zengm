@@ -40,12 +40,11 @@ const AwardsRecords = ({
 }: View<"awardsRecords">) => {
 	useTitleBar({
 		title: "Awards Records",
-		dropdownView: "awards_records",
-		dropdownFields: {
-			awardType,
-		},
-		dropdownCustomOptions: {
-			awardType: awardTypeOptions,
+		dropdown: {
+			fields: [
+				{ key: "awardType", options: awardTypeOptions, value: awardType },
+			],
+			view: "awardsRecords",
 		},
 	});
 	const cols = getCols(

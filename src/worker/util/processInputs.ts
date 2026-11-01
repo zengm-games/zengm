@@ -18,18 +18,19 @@ export const validateAbbrev = (
 	const teamInfoCache = g.get("teamInfoCache");
 
 	if (abbrev !== undefined) {
-		{
-			const tid = teamInfoCache.findIndex((t) => t.abbrev === abbrev);
-			if (tid >= 0) {
-				return [tid, abbrev];
-			}
-		}
-
+		// Prefer the tid, since abbrevs can change over time and are not guaranteed to be unique
 		{
 			const parts = abbrev.split("_");
 			const int = Number.parseInt(parts.at(-1)!);
 			if (!Number.isNaN(int) && teamInfoCache[int]) {
 				return [int, teamInfoCache[int].abbrev];
+			}
+		}
+
+		{
+			const tid = teamInfoCache.findIndex((t) => t.abbrev === abbrev);
+			if (tid >= 0) {
+				return [tid, abbrev];
 			}
 		}
 	}

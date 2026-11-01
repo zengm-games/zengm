@@ -19,13 +19,28 @@ const PlayerRatings = ({
 	players,
 	ratings,
 	season,
+	tid,
 }: View<"playerRatings">) => {
 	useTitleBar({
 		title: "Player Ratings",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "player_ratings",
-		dropdownFields: { teamsAndAllWatchPlayoffs: abbrev, seasons: season },
+		dropdown: {
+			fields: [
+				{
+					key: "abbrev",
+					options: {
+						type: "teams",
+						all: true,
+						remainingPlayoffTeams: true,
+						watch: true,
+					},
+					value: tid ?? abbrev,
+				},
+				{ key: "season", options: { type: "seasons" }, value: season },
+			],
+			view: "playerRatings",
+		},
 	});
 
 	const {

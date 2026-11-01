@@ -26,11 +26,13 @@ import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"playerStats">) => {
 	let abbrev;
+	let tid: number | undefined;
 
-	const [, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
 
 	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
 		abbrev = validatedAbbrev;
+		tid = validatedTid;
 	} else if (params.abbrev === "watch") {
 		abbrev = "watch";
 	} else if (
@@ -65,6 +67,7 @@ const processInputs = (params: RouteParams<"playerStats">) => {
 
 	return {
 		abbrev,
+		tid,
 		season,
 		statType,
 		playoffs: validateSeasonType(params.playoffs),
@@ -123,13 +126,7 @@ export default defineView({
 				actualStats = getPlayerStatsTableStats(stats);
 			}
 
-			let tid: number | undefined = g
-				.get("teamInfoCache")
-				.findIndex((t) => t.abbrev === inputs.abbrev);
-
-			if (tid < 0) {
-				tid = undefined;
-			}
+			const tid = inputs.tid;
 
 			// Applied while reading players, so players who won't be shown are not all held in memory. For a team, this keeps anyone with any stats for that team, and formatting does the exact filtering.
 			let filter: ((p: Player) => boolean) | undefined;
@@ -341,6 +338,7 @@ export default defineView({
 			return {
 				players,
 				abbrev: inputs.abbrev,
+				tid: inputs.tid,
 				season: inputs.season,
 				statType: inputs.statType,
 				playoffs: inputs.playoffs,

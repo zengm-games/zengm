@@ -216,9 +216,9 @@ const SeasonPreview = ({
 }: View<"seasonPreview">) => {
 	useTitleBar({
 		title: "Season Preview",
-		dropdownView: "season_preview",
-		dropdownFields: {
-			seasons: season,
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "seasonPreview",
 		},
 	});
 	const { challengeNoRatings, userTid } = useLocal([

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { dropdownOptions } from "../../hooks/useDropdownOptions.tsx";
 import { arrayMove } from "@dnd-kit/sortable";
 import { PLAYER, WEBSITE_ROOT } from "../../../common/constants.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
@@ -126,11 +127,17 @@ const Roster = ({
 
 	useTitleBar({
 		title: "Roster",
-		dropdownView: "roster",
-		dropdownFields: {
-			teams: abbrev,
-			seasons: season,
-			playoffsCombined: playoffs,
+		dropdown: {
+			fields: [
+				{ key: "abbrev", options: { type: "teams" }, value: tid },
+				{ key: "season", options: { type: "seasons" }, value: season },
+				{
+					key: "playoffs",
+					options: dropdownOptions.playoffsCombined,
+					value: playoffs,
+				},
+			],
+			view: "roster",
 		},
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
@@ -14,6 +15,7 @@ const News = ({
 	order,
 	season,
 	teams,
+	tid,
 }: View<"news">) => {
 	const [showCategories, setShowCategories] = useState<
 		Record<keyof typeof categories, boolean>
@@ -31,12 +33,22 @@ const News = ({
 
 	useTitleBar({
 		title: "News Feed",
-		dropdownView: "news",
-		dropdownFields: {
-			teamsAndAllWatch: abbrev,
-			seasons: season,
-			newsLevels: level,
-			newestOldestFirst: order,
+		dropdown: {
+			fields: [
+				{
+					key: "abbrev",
+					options: { type: "teams", all: true, watch: true },
+					value: tid ?? abbrev,
+				},
+				{ key: "season", options: { type: "seasons" }, value: season },
+				{ key: "level", options: dropdownOptions.newsLevels, value: level },
+				{
+					key: "order",
+					options: dropdownOptions.newestOldestFirst,
+					value: order,
+				},
+			],
+			view: "news",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);

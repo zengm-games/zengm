@@ -16,13 +16,33 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { CountryFlag } from "../components/CountryFlag.tsx";
 import { useLocal } from "../util/local.ts";
 
-const PlayerBios = ({ abbrev, players, season, stats }: View<"playerBios">) => {
+const PlayerBios = ({
+	abbrev,
+	players,
+	season,
+	stats,
+	tid,
+}: View<"playerBios">) => {
 	useTitleBar({
 		title: "Player Bios",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "player_bios",
-		dropdownFields: { teamsAndAllWatchPlayoffs: abbrev, seasons: season },
+		dropdown: {
+			fields: [
+				{
+					key: "abbrev",
+					options: {
+						type: "teams",
+						all: true,
+						remainingPlayoffTeams: true,
+						watch: true,
+					},
+					value: tid ?? abbrev,
+				},
+				{ key: "season", options: { type: "seasons" }, value: season },
+			],
+			view: "playerBios",
+		},
 	});
 
 	const {

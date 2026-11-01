@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { Dropdown } from "react-bootstrap";
 import { PHASE, PLAYER } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -223,10 +224,20 @@ const WatchList = ({
 
 	useTitleBar({
 		title: "Watch List",
-		dropdownView: "watch_list",
-		dropdownFields: {
-			statTypes: statType,
-			playoffsCombined: playoffs,
+		dropdown: {
+			fields: [
+				{
+					key: "statType",
+					options: dropdownOptions.statTypes,
+					value: statType,
+				},
+				{
+					key: "playoffs",
+					options: dropdownOptions.playoffsCombined,
+					value: playoffs,
+				},
+			],
+			view: "watchList",
 		},
 	});
 

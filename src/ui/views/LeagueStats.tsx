@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -24,11 +25,21 @@ const LeagueStats = ({
 }: View<"leagueStats">) => {
 	useTitleBar({
 		title: "League Stats",
-		dropdownView: "league_stats",
-		dropdownFields: {
-			teamsAndAll: abbrev,
-			teamAdvanced: teamOpponent,
-			playoffs,
+		dropdown: {
+			fields: [
+				{
+					key: "abbrev",
+					options: { type: "teams", all: true },
+					value: abbrev === "all" ? "all" : tid,
+				},
+				{
+					key: "teamOpponent",
+					options: dropdownOptions.teamAdvanced,
+					value: teamOpponent,
+				},
+				{ key: "playoffs", options: dropdownOptions.playoffs, value: playoffs },
+			],
+			view: "leagueStats",
 		},
 	});
 

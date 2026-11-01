@@ -173,27 +173,22 @@ const GameLog = ({
 	season,
 	tid,
 }: View<"gameLog">) => {
-	const dropdownTeamsKey = bySport({
-		baseball: "teams",
-		basketball: "teamsAndSpecial",
-		football: "teams",
-		hockey: "teams",
-	});
-
 	useTitleBar({
 		title: "Game Log",
-		dropdownView: "game_log",
-		dropdownFields: {
-			[dropdownTeamsKey]: abbrev,
-			seasons: season,
-		},
-		dropdownCustomURL: (fields) => {
-			return helpers.leagueUrl([
-				"game_log",
-				fields[dropdownTeamsKey]!,
-				fields.seasons,
-				boxScore.gid,
-			]);
+		dropdown: {
+			fields: [
+				{
+					key: "abbrev",
+					options: {
+						type: "teams",
+						allStarGame: bySport({ basketball: true, default: false }),
+					},
+					value: abbrev === "special" ? "special" : tid,
+				},
+				{ key: "season", options: { type: "seasons" }, value: season },
+			],
+			view: "gameLog",
+			params: { gid: boxScore.gid },
 		},
 	});
 

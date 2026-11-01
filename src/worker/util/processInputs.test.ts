@@ -27,6 +27,12 @@ describe("validateAbbrev", () => {
 		assert.strictEqual(out[1], "DAL");
 	});
 
+	test("use the tid rather than the abbrev when both are given", () => {
+		const out = validateAbbrev("DAL_7");
+		assert.strictEqual(out[0], 7);
+		assert.strictEqual(out[1], "DEN");
+	});
+
 	test("return user team ID and abbrev on invalid input", () => {
 		let out = validateAbbrev("fuck");
 		assert.strictEqual(out[0], 4);

@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -134,8 +135,18 @@ const Depth = ({
 			hockey: "Lines",
 			default: "Depth Chart",
 		}),
-		dropdownView: "depth",
-		dropdownFields: { depth: pos, teams: abbrev, playoffsCombined: playoffs },
+		dropdown: {
+			fields: [
+				{ key: "pos", options: dropdownOptions.depth, value: pos },
+				{ key: "abbrev", options: { type: "teams" }, value: tid },
+				{
+					key: "playoffs",
+					options: dropdownOptions.playoffsCombined,
+					value: playoffs,
+				},
+			],
+			view: "depth",
+		},
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
 		moreInfoTid: tid,

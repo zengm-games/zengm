@@ -1,5 +1,4 @@
 import {
-	PHASE,
 	TEAM_STATS_TABLES,
 	POSITIONS,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
@@ -10,6 +9,11 @@ import { orderBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
 import { dropdownKeys } from "../../common/dropdownKeys.ts";
+import {
+	getFirstUpcomingFreeAgentsSeason,
+	hasCurrentSeasonDraftHappened,
+	isCurrentSeasonComplete,
+} from "../../common/seasons.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;
@@ -62,6 +66,7 @@ export type DropdownOptionsSource = DropdownOption[] | DynamicDropdownSource;
 
 export const dropdownOptionsStateKeys = [
 	"hideDisabledTeams",
+	"nextPhase",
 	"phase",
 	"season",
 	"startingSeason",
@@ -160,12 +165,12 @@ const getSeasonOptions = (
 			seasons.push(season);
 		}
 
-		if (state.phase < PHASE.DRAFT) {
+		if (!hasCurrentSeasonDraftHappened(state)) {
 			seasons.shift();
 		}
 	}
 
-	if (source.completedOnly && state.phase <= PHASE.PLAYOFFS) {
+	if (source.completedOnly && !isCurrentSeasonComplete(state)) {
 		seasons.shift();
 	}
 
@@ -194,12 +199,10 @@ const getSeasonOptions = (
 const getUpcomingSeasonOptions = (
 	state: DropdownOptionsState,
 ): DropdownOption[] => {
-	// For upcomingFreeAgents, bump up 1 if we're past the season
-	const offset = state.phase <= PHASE.RESIGN_PLAYERS ? 0 : 1;
+	const firstSeason = getFirstUpcomingFreeAgentsSeason(state);
 
 	const options: DropdownOption[] = [];
-	for (let i = 4 + offset; i >= offset; i--) {
-		const season = state.season + i;
+	for (let season = firstSeason + 4; season >= firstSeason; season--) {
 		options.push({ key: season, label: String(season) });
 	}
 

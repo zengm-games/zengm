@@ -3,6 +3,7 @@ import type { PlayerStatType } from "../../common/types.ts";
 import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
 import { actualPhase } from "./actualPhase.ts";
 import { dropdownKeys } from "../../common/dropdownKeys.ts";
+import type { SeasonState } from "../../common/seasons.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
 // Values of the team URL param that mean something other than a single team
@@ -122,6 +123,14 @@ export const validateStatType = (
 		dropdownKeys.statTypesStrict,
 		bySport({ basketball: "perGame", default: "totals" }),
 	);
+};
+
+export const getSeasonState = (): SeasonState => {
+	return {
+		season: g.get("season"),
+		phase: g.get("phase"),
+		nextPhase: g.get("nextPhase"),
+	};
 };
 
 export const validateSeasonOnly = (params: { season?: string }) => {

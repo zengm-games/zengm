@@ -11,10 +11,10 @@ test("RouteParams", () => {
 		IsExact<
 			RouteParams<"gameLog">,
 			{
-				abbrev?: string;
 				gid?: string;
 				lid: string;
 				season?: string;
+				team?: string;
 				view?: string;
 			}
 		>

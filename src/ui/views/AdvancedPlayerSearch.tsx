@@ -7,7 +7,9 @@ import {
 	type SetStateAction,
 } from "react";
 import type { View } from "../../common/types.ts";
-import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
+import useDropdownOptions, {
+	dropdownOptions,
+} from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { OptionDropdown } from "./PlayerGraphs/index.tsx";
 import { PLAYER, PLAYER_STATS_TABLES } from "../../common/constants.ts";
@@ -162,10 +164,13 @@ const SelectTeam = ({
 	onChange: (value: string) => void;
 }) => {
 	const teams = [
-		{ key: "$ALL$", value: "All Teams" },
-		{ key: "$DP$", value: "Draft Prospects" },
-		{ key: "$FA$", value: "Free Agents" },
-		...useDropdownOptions("teams"),
+		{ key: "$ALL$", label: "All Teams" },
+		{ key: "$DP$", label: "Draft Prospects" },
+		{ key: "$FA$", label: "Free Agents" },
+		...useDropdownOptions({ type: "teams" }).map((option) => ({
+			...option,
+			key: option.urlPart ?? option.key,
+		})),
 	];
 
 	return (
@@ -255,14 +260,14 @@ const Filters = ({
 	};
 
 	let statTypes = [
-		{ key: "bio", value: "Bio" },
-		{ key: "ratings", value: "Ratings" },
+		{ key: "bio", label: "Bio" },
+		{ key: "ratings", label: "Ratings" },
 		...Object.entries(PLAYER_STATS_TABLES).map(([key, info]) => {
-			const value =
+			const label =
 				key === "regular" && __SPORT === "basketball"
 					? "Traditional Stats"
 					: info.name;
-			return { key, value };
+			return { key, label };
 		}),
 	];
 
@@ -413,15 +418,15 @@ const ShowStatTypes = ({
 	showStatTypes: string[];
 	setShowStatTypes: Dispatch<SetStateAction<string[]>>;
 }) => {
-	const dropdownOptions = useDropdownOptions("statTypesAdv");
+	const statTypesAdv = dropdownOptions.statTypesAdv;
 
 	const allStatTypes = [
-		{ key: "bio", value: "Bio" },
-		{ key: "ratings", value: "Ratings" },
+		{ key: "bio", label: "Bio" },
+		{ key: "ratings", label: "Ratings" },
 		...(__SPORT === "basketball"
 			? [
-					{ key: "regular", value: "Traditional Stats" },
-					...dropdownOptions.filter(
+					{ key: "regular", label: "Traditional Stats" },
+					...statTypesAdv.filter(
 						(row) =>
 							row.key !== "perGame" &&
 							row.key !== "per36" &&
@@ -429,8 +434,8 @@ const ShowStatTypes = ({
 					),
 				]
 			: __SPORT === "baseball"
-				? dropdownOptions.filter((row) => row.key !== "fielding")
-				: dropdownOptions),
+				? statTypesAdv.filter((row) => row.key !== "fielding")
+				: statTypesAdv),
 	];
 
 	return (
@@ -453,7 +458,7 @@ const ShowStatTypes = ({
 							}}
 						/>
 						<label className="form-check-label" htmlFor={id}>
-							{Array.isArray(x.value) ? x.value.at(-1)!.text : x.value}
+							{Array.isArray(x.label) ? x.label.at(-1)!.text : x.label}
 						</label>
 					</div>
 				);
@@ -589,9 +594,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		loadInitialPlayers();
 	}, []);
 
-	const seasons = useDropdownOptions("seasons");
-	const playoffsOptions = useDropdownOptions("playoffsCombined");
-	const statTypes = useDropdownOptions("statTypesStrict");
+	const seasons = useDropdownOptions({ type: "seasons" });
+	const playoffsOptions = dropdownOptions.playoffsCombined;
+	const statTypes = dropdownOptions.statTypesStrict;
 
 	const { uniqueColFiltersWithInfo, uniqueStatTypeInfos } = useMemo(() => {
 		const renderedFiltersWithInfos = rendered.filters

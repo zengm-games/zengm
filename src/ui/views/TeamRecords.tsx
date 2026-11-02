@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -43,8 +44,21 @@ const TeamRecords = ({
 
 	useTitleBar({
 		title: "Team Records",
-		dropdownView: "team_records",
-		dropdownFields: { teamRecordType: byType, teamRecordsFilter: filter },
+		dropdown: {
+			fields: [
+				{
+					key: "byType",
+					options: dropdownOptions.teamRecordType,
+					value: byType,
+				},
+				{
+					key: "filter",
+					options: dropdownOptions.teamRecordsFilter,
+					value: filter,
+				},
+			],
+			view: "teamRecords",
+		},
 	});
 	const { userTid } = useLocal(["userTid"]);
 

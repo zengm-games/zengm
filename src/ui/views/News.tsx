@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
@@ -7,14 +8,7 @@ import { NewsBlock } from "../components/NewsBlock.tsx";
 import { categories, types } from "../../common/transactionInfo.ts";
 import { useLocal } from "../util/local.ts";
 
-const News = ({
-	abbrev,
-	events,
-	level,
-	order,
-	season,
-	teams,
-}: View<"news">) => {
+const News = ({ events, level, order, season, team, teams }: View<"news">) => {
 	const [showCategories, setShowCategories] = useState<
 		Record<keyof typeof categories, boolean>
 	>({
@@ -31,12 +25,22 @@ const News = ({
 
 	useTitleBar({
 		title: "News Feed",
-		dropdownView: "news",
-		dropdownFields: {
-			teamsAndAllWatch: abbrev,
-			seasons: season,
-			newsLevels: level,
-			newestOldestFirst: order,
+		dropdown: {
+			fields: [
+				{
+					key: "team",
+					options: { type: "teams", all: true, watch: true },
+					value: team,
+				},
+				{ key: "season", options: { type: "seasons" }, value: season },
+				{ key: "level", options: dropdownOptions.newsLevels, value: level },
+				{
+					key: "order",
+					options: dropdownOptions.newestOldestFirst,
+					value: order,
+				},
+			],
+			view: "news",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);

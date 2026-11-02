@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -98,7 +99,6 @@ const numLinesByPos: Record<string, number> | undefined =
 	__SPORT === "hockey" ? NUM_LINES : undefined;
 
 const Depth = ({
-	abbrev,
 	editable,
 	keepRosterSorted,
 	multiplePositionsWarning,
@@ -134,9 +134,18 @@ const Depth = ({
 			hockey: "Lines",
 			default: "Depth Chart",
 		}),
-		dropdownView: "depth",
-		dropdownFields: { depth: pos, teams: abbrev, playoffsCombined: playoffs },
-		moreInfoAbbrev: abbrev,
+		dropdown: {
+			fields: [
+				{ key: "pos", options: dropdownOptions.depth, value: pos },
+				{ key: "team", options: { type: "teams" }, value: tid },
+				{
+					key: "playoffs",
+					options: dropdownOptions.playoffsCombined,
+					value: playoffs,
+				},
+			],
+			view: "depth",
+		},
 		moreInfoSeason: season,
 		moreInfoTid: tid,
 	});
@@ -262,6 +271,9 @@ const Depth = ({
 		let lineupPos;
 		if (__SPORT === "baseball" && pos === "D" && rowLabels?.[i]) {
 			lineupPos = rowLabels[i];
+		} else if (__SPORT === "baseball" && pos === "P") {
+			// Lineup position is not relevant on the pitching depth screen
+			lineupPos = p.ratings.pos;
 		} else {
 			lineupPos = p.lineupPos ?? p.ratings.pos;
 		}
@@ -309,19 +321,21 @@ const Depth = ({
 									: null,
 					classNames: {
 						"text-danger":
-							__SPORT === "baseball" && p.lineupPos !== undefined
-								? p.pid >= 0 &&
-									p.lineupPos !== "DH" &&
-									p.lineupPos !== p.ratings.pos
-								: __SPORT === "baseball" && (pos === "D" || pos === "DP")
-									? rowLabels?.[i] !== undefined &&
-										rowLabels[i] !== "DH" &&
-										rowLabels[i] !== p.ratings.pos
-									: __SPORT !== "baseball" &&
-										p.pid >= 0 &&
-										pos !== "KR" &&
-										pos !== "PR" &&
-										!positions.includes(p.ratings.pos),
+							__SPORT === "baseball" && pos === "P"
+								? false
+								: __SPORT === "baseball" && p.lineupPos !== undefined
+									? p.pid >= 0 &&
+										p.lineupPos !== "DH" &&
+										p.lineupPos !== p.ratings.pos
+									: __SPORT === "baseball" && (pos === "D" || pos === "DP")
+										? rowLabels?.[i] !== undefined &&
+											rowLabels[i] !== "DH" &&
+											rowLabels[i] !== p.ratings.pos
+										: __SPORT !== "baseball" &&
+											p.pid >= 0 &&
+											pos !== "KR" &&
+											pos !== "PR" &&
+											!positions.includes(p.ratings.pos),
 					},
 				},
 				p.age,
@@ -360,7 +374,7 @@ const Depth = ({
 
 	return (
 		<>
-			<MoreLinks type="team" page="depth" abbrev={abbrev} tid={tid} />
+			<MoreLinks type="team" page="depth" tid={tid} />
 			<p>
 				{__SPORT === "football" ? (
 					<>
@@ -409,7 +423,11 @@ const Depth = ({
 								className={clsx("nav-link", {
 									active: pos === pos2,
 								})}
-								href={helpers.leagueUrl(["depth", pos2, `${abbrev}_${tid}`])}
+								href={helpers.leagueUrl([
+									"depth",
+									pos2,
+									helpers.getTeamUrlPart(tid),
+								])}
 								data-no-scroll-reset
 							>
 								{text}
@@ -475,7 +493,13 @@ const Depth = ({
 			{__SPORT === "baseball" && pos === "L" ? (
 				<div className="alert alert-info d-inline-block">
 					To move players in and out of the starting lineup, switch to the{" "}
-					<a href={helpers.leagueUrl(["depth", "D", `${abbrev}_${tid}`])}>
+					<a
+						href={helpers.leagueUrl([
+							"depth",
+							"D",
+							helpers.getTeamUrlPart(tid),
+						])}
+					>
 						Defense tab
 					</a>
 					.
@@ -485,7 +509,13 @@ const Depth = ({
 			{__SPORT === "baseball" && pos === "LP" ? (
 				<div className="alert alert-info d-inline-block">
 					To move players in and out of the starting lineup, switch to the{" "}
-					<a href={helpers.leagueUrl(["depth", "DP", `${abbrev}_${tid}`])}>
+					<a
+						href={helpers.leagueUrl([
+							"depth",
+							"DP",
+							helpers.getTeamUrlPart(tid),
+						])}
+					>
 						Defense tab
 					</a>
 					.

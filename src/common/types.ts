@@ -1110,13 +1110,7 @@ export type LocalStateUI = {
 	hideNewWindow: boolean;
 	jumpTo: boolean;
 	jumpToSeason?: number | "all" | "career";
-	dropdownCustomOptions?: Record<string, DropdownOption[]>;
-	dropdownCustomURL?: (fields: Record<string, number | string>) => string;
-	dropdownView?: string;
-	dropdownFields?: {
-		[key: string]: number | string;
-	};
-	moreInfoAbbrev?: string;
+	dropdown?: TitleBarDropdown;
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
 	stickyFooterAd: boolean;
@@ -2136,7 +2130,7 @@ import type {
 	TeamStatAttr as TeamStatAttrHockey,
 } from "./types.hockey.ts";
 import type { REAL_DRAFT_RATINGS, TIEBREAKERS } from "./constants.ts";
-import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
+import type { TitleBarDropdown } from "../ui/components/Dropdown.tsx";
 import type { SuperCol } from "../ui/components/DataTable/index.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
 import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";

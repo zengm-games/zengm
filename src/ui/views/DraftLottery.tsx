@@ -956,9 +956,11 @@ const DraftLottery = (props: Props) => {
 			: "Draft Lottery",
 		jumpTo: true,
 		jumpToSeason: props.season,
-		dropdownView: "draft_lottery",
-		dropdownFields: {
-			seasons: props.season,
+		dropdown: {
+			fields: [
+				{ key: "season", options: { type: "seasons" }, value: props.season },
+			],
+			view: "draftLottery",
 		},
 	});
 

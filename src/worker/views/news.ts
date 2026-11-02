@@ -5,7 +5,7 @@ import { idb } from "../db/index.ts";
 import type { FaceConfig } from "facesjs";
 import { formatEventText } from "../util/formatEventText.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 import { team } from "../core/index.ts";
 
@@ -23,24 +23,11 @@ const processInputs = (params: RouteParams<"news">) => {
 	const order: "oldest" | "newest" =
 		params.order === "oldest" ? "oldest" : "newest";
 
-	let abbrev;
-	let tid: number | undefined;
-	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
-	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
-		abbrev = validatedAbbrev;
-		tid = validatedTid;
-	} else if (params.abbrev === "watch") {
-		abbrev = "watch";
-	} else {
-		abbrev = "all";
-	}
-
 	return {
-		abbrev,
 		level,
 		order,
 		season,
-		tid,
+		team: validateTeam(params.team, ["all", "watch"]),
 	};
 };
 
@@ -184,11 +171,8 @@ export const processEvents = async (
 export default defineView({
 	id: "news",
 	processInputs,
-	load: async ({
-		inputs: { abbrev, level, order, season, tid },
-		updateEvents,
-		prevInputs,
-	}) => {
+	load: async ({ inputs, updateEvents, prevInputs }) => {
+		const { level, order, season } = inputs;
 		if (
 			updateEvents.has("firstRun") ||
 			updateEvents.has("playerMovement") ||
@@ -196,7 +180,7 @@ export default defineView({
 			updateEvents.has("newPhase") ||
 			prevInputs?.season !== season ||
 			prevInputs?.level !== level ||
-			prevInputs?.abbrev !== abbrev ||
+			prevInputs?.team !== inputs.team ||
 			prevInputs?.order !== order
 		) {
 			const eventsAll = await idb.merged.events.getAll({ season });
@@ -207,8 +191,8 @@ export default defineView({
 
 			const events = await processEvents(eventsAll, {
 				level,
-				tid,
-				watchOnly: abbrev === "watch",
+				tid: typeof inputs.team === "number" ? inputs.team : undefined,
+				watchOnly: inputs.team === "watch",
 			});
 
 			const teams = (
@@ -227,11 +211,11 @@ export default defineView({
 			).map((t) => t.seasonAttrs);
 
 			return {
-				abbrev,
 				events,
 				level,
 				order,
 				season,
+				team: inputs.team,
 				teams,
 			};
 		}

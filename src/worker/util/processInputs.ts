@@ -1,45 +1,61 @@
 import { g } from "./index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
+import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
+import { actualPhase } from "./actualPhase.ts";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
+import type { SeasonState } from "../../common/seasons.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
+// Values of the team URL param that mean something other than a single team
+export type TeamSpecial =
+	| "all"
+	| "playoffs"
+	| "special"
+	| "watch"
+	| "your_teams";
+
 /**
- * Validate that a given abbreviation corresponds to a team.
+ * Parse the team URL param into a tid or one of the special values allowed by the view.
  *
- * If the abbreviation is not valid, then g.get("userTid") and its correspodning abbreviation will be returned.
+ * The param can be like "ATL_0" (preferred, the tid is used even if the abbrev has changed), "0", or "ATL" (from old URLs).
  *
- * @memberOf util.helpers
- * @param  {string} abbrev Three-letter team abbreviation, like "ATL". Can also be a numeric team ID like "0" or a concatenated one like "ATL_0", in which case the number will be used.
- * @return {Array} Array with two elements, the team ID and the validated abbreviation.
+ * "playoffs" is only allowed in phases with remaining playoff teams.
+ *
+ * Invalid or missing values fall back to "all" if it's allowed, otherwise the user's team.
  */
-export const validateAbbrev = (
-	abbrev?: string,
-	strict?: boolean,
-): [number, string] => {
+export const validateTeam = <const Special extends TeamSpecial = never>(
+	team: string | undefined,
+	specials: readonly Special[] = [],
+): number | Special => {
+	const special = specials.find((special) => special === team);
+	if (
+		special !== undefined &&
+		(special !== "playoffs" ||
+			REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase()))
+	) {
+		return special;
+	}
+
 	const teamInfoCache = g.get("teamInfoCache");
 
-	if (abbrev !== undefined) {
-		{
-			const tid = teamInfoCache.findIndex((t) => t.abbrev === abbrev);
-			if (tid >= 0) {
-				return [tid, abbrev];
-			}
+	if (team !== undefined) {
+		const int = Number.parseInt(team.split("_").at(-1)!);
+		if (!Number.isNaN(int) && teamInfoCache[int]) {
+			return int;
 		}
 
-		{
-			const parts = abbrev.split("_");
-			const int = Number.parseInt(parts.at(-1)!);
-			if (!Number.isNaN(int) && teamInfoCache[int]) {
-				return [int, teamInfoCache[int].abbrev];
-			}
+		const tid = teamInfoCache.findIndex((t) => t.abbrev === team);
+		if (tid >= 0) {
+			return tid;
 		}
 	}
 
-	if (strict) {
-		return [g.get("userTid"), "???"];
+	const all = specials.find((special) => special === "all");
+	if (all !== undefined) {
+		return all;
 	}
 
-	const tid = g.get("userTid");
-	return [tid, teamInfoCache[tid]?.abbrev ?? "???"];
+	return g.get("userTid");
 };
 
 /**
@@ -67,40 +83,54 @@ export const validateSeason = (season: number | string | undefined): number => {
 	return season;
 };
 
-export type SeasonType = "playoffs" | "regularSeason" | "combined";
+// Returns value if it's one of options, otherwise defaultValue
+export const validateOption = <const T extends string>(
+	value: string | undefined,
+	options: readonly T[],
+	defaultValue: T,
+): T => {
+	for (const option of options) {
+		if (option === value) {
+			return option;
+		}
+	}
+	return defaultValue;
+};
+
+export type SeasonType = (typeof dropdownKeys.playoffsCombined)[number];
 
 export const validateSeasonType = (
 	seasonType: string | undefined,
 	defaultType: SeasonType = "regularSeason",
 ): SeasonType => {
-	if (seasonType === "playoffs") {
-		return "playoffs";
-	} else if (seasonType === "regularSeason") {
-		return "regularSeason";
-	} else if (seasonType === "combined") {
-		return "combined";
-	} else {
-		return defaultType;
-	}
+	return validateOption(seasonType, dropdownKeys.playoffsCombined, defaultType);
 };
 
+// Like validateSeasonType, but for pages that don't have a combined option
+export const validatePlayoffs = (
+	playoffs: string | undefined,
+	defaultType: (typeof dropdownKeys.playoffs)[number] = "regularSeason",
+) => {
+	return validateOption(playoffs, dropdownKeys.playoffs, defaultType);
+};
+
+// For pages that show the same stats in every sport, so only basketball has a choice of per game/per 36/totals
 export const validateStatType = (
 	statType: string | undefined,
 ): PlayerStatType => {
-	if (statType === "perGame") {
-		return "perGame";
-	} else if (statType === "per36") {
-		return "per36";
-	} else if (statType === "totals") {
-		return "totals";
-	} else {
-		return bySport({
-			baseball: "totals",
-			basketball: "perGame",
-			football: "totals",
-			hockey: "totals",
-		});
-	}
+	return validateOption(
+		statType,
+		dropdownKeys.statTypesStrict,
+		bySport({ basketball: "perGame", default: "totals" }),
+	);
+};
+
+export const getSeasonState = (): SeasonState => {
+	return {
+		season: g.get("season"),
+		phase: g.get("phase"),
+		nextPhase: g.get("nextPhase"),
+	};
 };
 
 export const validateSeasonOnly = (params: { season?: string }) => {

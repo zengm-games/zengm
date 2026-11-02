@@ -10,24 +10,11 @@ import { processAssets } from "./tradeSummary.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { getWatchPids } from "./news.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"frivolitiesTrades">) => {
-	let abbrev;
-	let tid: number | undefined;
-	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
-	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
-		abbrev = validatedAbbrev;
-		tid = validatedTid;
-	} else if (params.abbrev === "watch") {
-		abbrev = "watch";
-	} else {
-		abbrev = "all";
-	}
-
 	return {
-		abbrev,
-		tid,
+		team: validateTeam(params.team, ["all", "watch"]),
 		type: params.type,
 	};
 };
@@ -166,12 +153,12 @@ const getMostXRows = async ({
 export default defineView({
 	id: "frivolitiesTrades",
 	processInputs,
-	load: async ({ inputs: { abbrev, tid, type }, updateEvents, prevInputs }) => {
+	load: async ({ inputs: { team, type }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (
 			updateEvents.has("firstRun") ||
 			type !== prevInputs?.type ||
-			abbrev !== prevInputs?.abbrev
+			team !== prevInputs?.team
 		) {
 			let filter: Parameters<typeof getMostXRows>[0]["filter"];
 			let getValue: Parameters<typeof getMostXRows>[0]["getValue"];
@@ -213,9 +200,9 @@ export default defineView({
 				throw new Error(`Unknown type "${type}"`);
 			}
 
-			if (tid !== undefined) {
-				filter = (event) => event.tids.includes(tid);
-			} else if (abbrev === "watch") {
+			if (typeof team === "number") {
+				filter = (event) => event.tids.includes(team);
+			} else if (team === "watch") {
 				const watchPids = await getWatchPids();
 				filter = (event) => event.pids.some((pid) => watchPids.has(pid));
 			}
@@ -227,8 +214,8 @@ export default defineView({
 			});
 
 			return {
-				abbrev,
 				description,
+				team,
 				title,
 				trades,
 				type,

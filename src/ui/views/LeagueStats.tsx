@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -11,29 +12,38 @@ export const formatMaybeInteger = (x: number) =>
 	Number.isInteger(x) ? String(x) : x.toFixed(1);
 
 const LeagueStats = ({
-	abbrev,
 	playoffs,
 	seasons,
 	stats,
 	superCols,
+	team,
 	teamOpponent,
-	tid,
 	ties,
 	otl,
 	usePts,
 }: View<"leagueStats">) => {
 	useTitleBar({
 		title: "League Stats",
-		dropdownView: "league_stats",
-		dropdownFields: {
-			teamsAndAll: abbrev,
-			teamAdvanced: teamOpponent,
-			playoffs,
+		dropdown: {
+			fields: [
+				{
+					key: "team",
+					options: { type: "teams", all: true },
+					value: team,
+				},
+				{
+					key: "teamOpponent",
+					options: dropdownOptions.teamAdvanced,
+					value: teamOpponent,
+				},
+				{ key: "playoffs", options: dropdownOptions.playoffs, value: playoffs },
+			],
+			view: "leagueStats",
 		},
 	});
 
 	const basicColNames =
-		tid < 0
+		team === "all"
 			? ["Season", "# Teams", "stat:gp", "W", "L"]
 			: ["Season", "stat:gp", "W", "L"];
 	if (otl) {
@@ -64,7 +74,7 @@ const LeagueStats = ({
 			if (ties) {
 				actualSuperCols[0].colspan += 1;
 			}
-			if (tid >= 0) {
+			if (team !== "all") {
 				actualSuperCols[0].colspan -= 1;
 			}
 			if (usePts) {
@@ -120,7 +130,7 @@ const LeagueStats = ({
 		// Create the cells for this row.
 		const data: { [key: string]: ReactNode } = {
 			season:
-				abbrev === "all" ? (
+				team === "all" ? (
 					<a
 						href={helpers.leagueUrl([
 							"team_stats",
@@ -132,13 +142,19 @@ const LeagueStats = ({
 						{s.season}
 					</a>
 				) : (
-					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, s.season])}>
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							helpers.getTeamUrlPart(team),
+							s.season,
+						])}
+					>
 						{s.season}
 					</a>
 				),
 		};
 
-		if (abbrev === "all") {
+		if (team === "all") {
 			data.numTeams = s.numTeams;
 		}
 

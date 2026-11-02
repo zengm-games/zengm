@@ -8,23 +8,14 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { addMood } from "./freeAgents.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { actualPhase } from "../util/actualPhase.ts";
-import { validateSeason } from "../util/processInputs.ts";
+import { getSeasonState, validateSeason } from "../util/processInputs.ts";
+import { getFirstUpcomingFreeAgentsSeason } from "../../common/seasons.ts";
 
 const processInputs = (params: RouteParams<"upcomingFreeAgents">) => {
-	let season = validateSeason(params.season);
-
-	const phase = actualPhase();
-	if (phase >= 0 && phase <= PHASE.RESIGN_PLAYERS) {
-		if (season < g.get("season")) {
-			season = g.get("season");
-		}
-	} else if (season < g.get("season") + 1) {
-		season = g.get("season") + 1;
-	}
+	const firstSeason = getFirstUpcomingFreeAgentsSeason(getSeasonState());
 
 	return {
-		season,
+		season: Math.max(validateSeason(params.season), firstSeason),
 	};
 };
 

@@ -6,16 +6,16 @@ import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique, last, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { PHASE } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { helpers } from "../util/index.ts";
-import { validateSeason } from "../util/processInputs.ts";
+import { getSeasonState, validateSeason } from "../util/processInputs.ts";
+import { hasCurrentSeasonDraftHappened } from "../../common/seasons.ts";
 import { player, team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"draftHistory">) => {
 	let season: number;
 
-	const draftAlreadyHappened = g.get("phase") >= PHASE.DRAFT;
+	const draftAlreadyHappened = hasCurrentSeasonDraftHappened(getSeasonState());
 	const currentSeason = g.get("season");
 
 	if (

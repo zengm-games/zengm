@@ -1,3 +1,10 @@
+next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954
+- fix issue with FA abbrev redirecting to free agents
+- implement new dropdown part of useTitlebar
+  - do in parallel to old system, so we can gradually port
+  - better types for inputs (not just a string)
+  - explicitly specify all values on view (can import from somewhere, just don't make it a string specifying it)
+
 future idb.merged stuff
 - a way to share a transaction across multiple calls, for when called in a loop like frivolitiesTeamSeasons. generally not many places would benefit from this
 
@@ -37,7 +44,6 @@ custom awards later
   - maybe also show built-in awards here, with ability to delete (leave slot blank)
 - award settings
   - some way to set award settings in default new league settings
-  - pick and choose which awards to import, and option to not overwrite all
   - player stats don't update when new awardCandidates comes in - tricky to keep editing state in sync, since sometimes state is dirty or new awardCandidates have come from API
   - team records not updating when api is used to update awards/players, since those come through the worker view. would need to either have more stuff come through api, or use the worker view rather than API to update things (but that's tricky because state is client side and needs to be sent back)
 - `if` function in FormulaEvaluator
@@ -56,8 +62,6 @@ leaguewide jersey retirement https://discord.com/channels/290013534023057409/152
 - bill russell #6 in real players leagues is hardcoded per team
 
 I think if there was a way to show in the team history and gm history beside the record and playoff finish if there was a way to show where you ranked in terms of points per game and opponent points per game would be nice just so you can see how good you were at making offenses and defenses as well as seeing how good the teams were https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p6icjbc/
-
-I'd like an option in team History to see when you started being the GM of that team. This would make it easier to tell which championships were under your tenure. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p67almt/
 
 Retired jerseys should display the uniform the player wore during his peak season/most WAR accumulated - for scenarios when teams change their uniforms over the years. https://www.reddit.com/r/BasketballGM/comments/1uk5wew/monthly_suggestions_thread/p0jmqda/
 
@@ -155,13 +159,6 @@ options for expansion team draft position
 hockey pulled goalie scoring probability too high? https://app.fastmail.com/mail/Inbox/AXbF3uID79q3.StpQ3TODbYnk?u=433e4054
 
 some type of team popularity factor independent of hype and population, to handle situations like LAC/LAL or NYY/NYM https://discord.com/channels/290013534023057409/1490041722577752237/1490041722577752237
-
-next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954
-- fix issue with FA abbrev redirecting to free agents
-- implement new dropdown part of useTitlebar
-  - do in parallel to old system, so we can gradually port
-  - better types for inputs (not just a string)
-  - explicitly specify all values on view (can import from somewhere, just don't make it a string specifying it)
 
 in addition to force W/L/T https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.StpcmfcZYd-7?u=433e4054
 - force OT

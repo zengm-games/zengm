@@ -14,8 +14,10 @@ const LeagueFinances = ({ season, teams }: View<"leagueFinances">) => {
 		title: "League Finances",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "league_finances",
-		dropdownFields: { seasons: season },
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "leagueFinances",
+		},
 	});
 
 	const {

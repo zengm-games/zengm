@@ -6,21 +6,14 @@ import type { Player } from "../../common/types.ts";
 import { defineView, type ViewInput } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import type { PlayerStatType } from "../../common/types.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateSeasonType } from "../util/processInputs.ts";
+import { validateSeasonType, validateStatType } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"watchList">) => {
-	let statType: PlayerStatType;
-	if (params.statType === "per36") {
-		statType = params.statType;
-	} else if (params.statType === "totals") {
-		statType = params.statType;
-	} else {
-		statType = "perGame";
-	}
-
-	return { playoffs: validateSeasonType(params.playoffs), statType };
+	return {
+		playoffs: validateSeasonType(params.playoffs),
+		statType: validateStatType(params.statType),
+	};
 };
 
 export const formatPlayersWatchList = async (

@@ -35,7 +35,7 @@ const getPlayers = async (
 	seasonRange?: [number, number],
 ) => {
 	let tid: number | undefined;
-	if (tidInput !== undefined && tidInput <= 0) {
+	if (tidInput !== undefined && tidInput < 0) {
 		// For draft prospets and free agents, use current status
 		playersAll = playersAll.filter((p) => p.tid === tidInput);
 	} else {

@@ -32,7 +32,6 @@ export const dropdownKeys = {
 	playoffs,
 	playoffsCombined: [...playoffs, "combined"] as const,
 	shows: ["10", "all"] as const,
-	statTypes,
 	statTypesAdv,
 
 	// Game highs can't be plotted, since each value is a tuple of the stat and the game it happened in

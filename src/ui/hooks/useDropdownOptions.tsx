@@ -375,7 +375,6 @@ export const dropdownOptions = {
 		{ key: "conf", label: makeResponsiveDropdownOption("Conf", "Conference") },
 		{ key: "div", label: makeResponsiveDropdownOption("Div", "Division") },
 	],
-	statTypes: makeOptions(dropdownKeys.statTypes, statTypeLabels),
 	statTypesAdv: makeOptions(dropdownKeys.statTypesAdv, statTypeLabels),
 	statTypesDists: makeOptions(dropdownKeys.statTypesDists, statTypeLabels),
 	statTypesStrict: makeOptions(dropdownKeys.statTypesStrict, statTypeLabels),

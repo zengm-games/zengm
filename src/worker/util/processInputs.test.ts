@@ -1,6 +1,12 @@
 import { assert, beforeAll, describe, test } from "vitest";
 import { g, helpers } from "./index.ts";
-import { validateSeason, validateTeam } from "./processInputs.ts";
+import {
+	validateOption,
+	validatePlayoffs,
+	validateSeason,
+	validateSeasonType,
+	validateTeam,
+} from "./processInputs.ts";
 import { PHASE } from "../../common/constants.ts";
 
 beforeAll(() => {
@@ -71,5 +77,25 @@ describe("validateSeason", () => {
 	test("return current season on invalid input", () => {
 		assert.strictEqual(validateSeason("fuck"), 2009);
 		assert.strictEqual(validateSeason(undefined), 2009);
+	});
+});
+
+describe("validateOption", () => {
+	test("return the value if it's one of the options", () => {
+		assert.strictEqual(validateOption("b", ["a", "b"], "a"), "b");
+	});
+
+	test("return the default for other values", () => {
+		assert.strictEqual(validateOption("c", ["a", "b"], "a"), "a");
+		assert.strictEqual(validateOption(undefined, ["a", "b"], "b"), "b");
+	});
+});
+
+describe("validateSeasonType and validatePlayoffs", () => {
+	test("only validatePlayoffs rejects combined", () => {
+		assert.strictEqual(validateSeasonType("combined"), "combined");
+		assert.strictEqual(validatePlayoffs("combined"), "regularSeason");
+		assert.strictEqual(validatePlayoffs("playoffs"), "playoffs");
+		assert.strictEqual(validatePlayoffs("fuck", "playoffs"), "playoffs");
 	});
 });

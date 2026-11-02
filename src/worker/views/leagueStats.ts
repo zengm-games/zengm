@@ -1,28 +1,31 @@
 import { g, helpers } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
-import { averageTeamStats, getStats, ignoreStats } from "./teamStats.ts";
+import {
+	averageTeamStats,
+	defaultTeamOpponent,
+	getStats,
+	ignoreStats,
+} from "./teamStats.ts";
 import { PHASE, TEAM_STATS_TABLES } from "../../common/constants.ts";
 import { season } from "../core/index.ts";
 import { range } from "../../common/utils.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { bySport } from "../../common/sportFunctions.ts";
-import { validateTeam } from "../util/processInputs.ts";
+import {
+	validateOption,
+	validatePlayoffs,
+	validateTeam,
+} from "../util/processInputs.ts";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
 
 const processInputs = (params: RouteParams<"leagueStats">) => {
-	const playoffs =
-		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
-
-	const defaultStatType = bySport({
-		baseball: "batting",
-		basketball: "team",
-		football: "summary",
-		hockey: "team",
-	});
-
 	return {
 		team: validateTeam(params.team, ["all"]),
-		teamOpponent: params.teamOpponent ?? defaultStatType,
-		playoffs,
+		teamOpponent: validateOption(
+			params.teamOpponent,
+			dropdownKeys.teamAdvanced,
+			defaultTeamOpponent,
+		),
+		playoffs: validatePlayoffs(params.playoffs),
 	};
 };
 

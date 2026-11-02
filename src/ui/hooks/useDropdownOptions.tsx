@@ -2,7 +2,6 @@ import {
 	PHASE,
 	TEAM_STATS_TABLES,
 	POSITIONS,
-	PLAYER_STATS_TABLES,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
 } from "../../common/constants.ts";
 import { useLocal } from "../util/local.ts";
@@ -10,6 +9,7 @@ import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;
@@ -253,61 +253,54 @@ const useDropdownOptions = (source: DynamicDropdownSource) => {
 
 export default useDropdownOptions;
 
-const playoffs: DropdownOption[] = [
-	{
-		key: "regularSeason",
-		label: makeResponsiveDropdownOption("Reg Seas", "Regular Season"),
-	},
-	{ key: "playoffs", label: "Playoffs" },
-];
+// For the shared dropdown keys, so the UI shows the same options that the worker accepts
+const makeOptions = (
+	keys: readonly string[],
+	labels: Record<string, DropdownLabel | undefined>,
+): DropdownOption[] => {
+	return keys.map((key) => {
+		const label = labels[key];
+		if (label === undefined) {
+			throw new Error(`Missing dropdown label for "${key}"`);
+		}
+		return { key, label };
+	});
+};
 
-const statTypes: DropdownOption[] = bySport({
-	baseball: [
-		{ key: "batting", label: PLAYER_STATS_TABLES.batting!.name },
-		{ key: "pitching", label: PLAYER_STATS_TABLES.pitching!.name },
-		{ key: "fielding", label: PLAYER_STATS_TABLES.fielding!.name },
-	],
-	basketball: [
-		{
-			key: "perGame",
-			label: makeResponsiveDropdownOption("Per G", "Per Game"),
-		},
-		{
-			key: "per36",
-			label: makeResponsiveDropdownOption("Per 36", "Per 36 Minutes"),
-		},
-		{ key: "totals", label: "Totals" },
-	],
-	football: [
-		{ key: "passing", label: "Passing" },
-		{ key: "rushingReceiving", label: "Rushing and Receiving" },
-		{ key: "blocking", label: "Blocking" },
-		{ key: "defense", label: "Defense" },
-		{ key: "kicking", label: "Kicking" },
-		{ key: "punting", label: "Punting" },
-		{ key: "returns", label: "Returns" },
-	],
-	hockey: [
-		{ key: "skater", label: "Skaters" },
-		{ key: "goalie", label: "Goalies" },
-	],
-});
+const playoffsLabels = {
+	regularSeason: makeResponsiveDropdownOption("Reg Seas", "Regular Season"),
+	playoffs: "Playoffs",
+	combined: "Combined",
+};
 
-const advancedAndGameHighs: DropdownOption[] = [
-	{ key: "advanced", label: "Advanced" },
-	{ key: "gameHighs", label: "Game Highs" },
-];
+const statTypeLabels: Record<string, DropdownLabel | undefined> = {
+	// Basketball
+	perGame: makeResponsiveDropdownOption("Per G", "Per Game"),
+	per36: makeResponsiveDropdownOption("Per 36", "Per 36 Minutes"),
+	totals: "Totals",
+	shotLocations: "Shot Locations and Feats",
 
-const statTypesAdv: DropdownOption[] = bySport({
-	baseball: [...statTypes, ...advancedAndGameHighs],
-	basketball: [
-		...statTypes,
-		{ key: "shotLocations", label: "Shot Locations and Feats" },
-		...advancedAndGameHighs,
-	],
-	football: statTypes,
-	hockey: [...statTypes, ...advancedAndGameHighs],
-});
+	// Baseball
+	batting: "Batting",
+	pitching: "Pitching",
+	fielding: "Fielding",
+
+	// Football
+	passing: "Passing",
+	rushingReceiving: "Rushing and Receiving",
+	blocking: "Blocking",
+	defense: "Defense",
+	kicking: "Kicking",
+	punting: "Punting",
+	returns: "Returns",
+
+	// Hockey
+	skater: "Skaters",
+	goalie: "Goalies",
+
+	advanced: "Advanced",
+	gameHighs: "Game Highs",
+};
 
 const teamStatsLabelOverrides: Record<string, DropdownLabel> = {
 	opponent: makeResponsiveDropdownOption("Opp", "Opponent"),
@@ -322,12 +315,13 @@ const teamStatsLabelOverrides: Record<string, DropdownLabel> = {
 	),
 };
 
-const teamOpponentAdvanced: DropdownOption[] = Object.entries(
-	TEAM_STATS_TABLES,
-).map(([key, table]) => ({
-	key,
-	label: teamStatsLabelOverrides[key] ?? table.name,
-}));
+// Team stats tables with the same key as a player stats type (like "returns" in FBGM) get the same label, so the player and team stats dropdowns match
+const teamStatsLabels = Object.fromEntries(
+	Object.entries(TEAM_STATS_TABLES).map(([key, table]) => [
+		key,
+		teamStatsLabelOverrides[key] ?? statTypeLabels[key] ?? table.name,
+	]),
+);
 
 // Static option lists, for dropdowns whose options don't depend on league state
 export const dropdownOptions = {
@@ -367,30 +361,26 @@ export const dropdownOptions = {
 		{ key: "overview", label: "Overview" },
 		{ key: "gameLog", label: "Game Log" },
 	],
-	playoffs,
-	playoffsCombined: [...playoffs, { key: "combined", label: "Combined" }],
-	shows: [
-		{ key: "10", label: "Past 10 Seasons" },
-		{ key: "all", label: makeResponsiveDropdownOption("All", "All Seasons") },
-	],
+	playoffs: makeOptions(dropdownKeys.playoffs, playoffsLabels),
+	playoffsCombined: makeOptions(dropdownKeys.playoffsCombined, playoffsLabels),
+	shows: makeOptions(dropdownKeys.shows, {
+		10: "Past 10 Seasons",
+		all: makeResponsiveDropdownOption("All", "All Seasons"),
+	}),
 	standingsType: [
 		{ key: "league", label: makeResponsiveDropdownOption("Leag", "League") },
 		{ key: "conf", label: makeResponsiveDropdownOption("Conf", "Conference") },
 		{ key: "div", label: makeResponsiveDropdownOption("Div", "Division") },
 	],
-	statTypes,
-	statTypesAdv,
-	statTypesStrict: bySport<DropdownOption[]>({
-		basketball: statTypes,
-		default: [{ key: "totals", label: "Totals" }],
-	}),
-	teamAdvanced: teamOpponentAdvanced.filter(
-		(option) =>
-			typeof option.key === "string" &&
-			!option.key.includes("pponent") &&
-			!option.key.includes("opp"),
+	statTypes: makeOptions(dropdownKeys.statTypes, statTypeLabels),
+	statTypesAdv: makeOptions(dropdownKeys.statTypesAdv, statTypeLabels),
+	statTypesDists: makeOptions(dropdownKeys.statTypesDists, statTypeLabels),
+	statTypesStrict: makeOptions(dropdownKeys.statTypesStrict, statTypeLabels),
+	teamAdvanced: makeOptions(dropdownKeys.teamAdvanced, teamStatsLabels),
+	teamOpponentAdvanced: makeOptions(
+		dropdownKeys.teamOpponentAdvanced,
+		teamStatsLabels,
 	),
-	teamOpponentAdvanced,
 	teamRecordsFilter: [
 		{ key: "all", label: makeResponsiveDropdownOption("All", "All Teams") },
 		{ key: "your_teams", label: "Your Teams" },

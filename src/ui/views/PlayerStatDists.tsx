@@ -53,7 +53,7 @@ const PlayerStatDists = ({
 				{ key: "season", options: { type: "seasons" }, value: season },
 				{
 					key: "statType",
-					options: dropdownOptions.statTypesAdv,
+					options: dropdownOptions.statTypesDists,
 					value: statType,
 				},
 			],

@@ -7,10 +7,11 @@ import { defineView } from "../util/defineView.ts";
 import { getAutoTicketPriceByTid } from "../core/game/attendance.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateTeam } from "../util/processInputs.ts";
+import { validateOption, validateTeam } from "../util/processInputs.ts";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
 
 const processInputs = (params: RouteParams<"teamFinances">) => {
-	const show = params.show ?? "10";
+	const show = validateOption(params.show, dropdownKeys.shows, "10");
 	const tid = validateTeam(params.team);
 	return { show, tid };
 };

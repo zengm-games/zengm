@@ -2,6 +2,8 @@ import { g } from "./index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
 import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
 import { actualPhase } from "./actualPhase.ts";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 // Values of the team URL param that mean something other than a single team
 export type TeamSpecial =
@@ -80,38 +82,46 @@ export const validateSeason = (season: number | string | undefined): number => {
 	return season;
 };
 
-export type SeasonType = "playoffs" | "regularSeason" | "combined";
+// Returns value if it's one of options, otherwise defaultValue
+export const validateOption = <const T extends string>(
+	value: string | undefined,
+	options: readonly T[],
+	defaultValue: T,
+): T => {
+	for (const option of options) {
+		if (option === value) {
+			return option;
+		}
+	}
+	return defaultValue;
+};
+
+export type SeasonType = (typeof dropdownKeys.playoffsCombined)[number];
 
 export const validateSeasonType = (
 	seasonType: string | undefined,
 	defaultType: SeasonType = "regularSeason",
 ): SeasonType => {
-	if (seasonType === "playoffs") {
-		return "playoffs";
-	} else if (seasonType === "regularSeason") {
-		return "regularSeason";
-	} else if (seasonType === "combined") {
-		return "combined";
-	} else {
-		return defaultType;
-	}
+	return validateOption(seasonType, dropdownKeys.playoffsCombined, defaultType);
 };
 
+// Like validateSeasonType, but for pages that don't have a combined option
+export const validatePlayoffs = (
+	playoffs: string | undefined,
+	defaultType: (typeof dropdownKeys.playoffs)[number] = "regularSeason",
+) => {
+	return validateOption(playoffs, dropdownKeys.playoffs, defaultType);
+};
+
+// For pages that show the same stats in every sport, so only basketball has a choice of per game/per 36/totals
 export const validateStatType = (
 	statType: string | undefined,
 ): PlayerStatType => {
-	if (__SPORT !== "basketball") {
-		// Other sports only have totals
-		return "totals";
-	}
-
-	if (statType === "per36") {
-		return "per36";
-	} else if (statType === "totals") {
-		return "totals";
-	} else {
-		return "perGame";
-	}
+	return validateOption(
+		statType,
+		dropdownKeys.statTypesStrict,
+		bySport({ basketball: "perGame", default: "totals" }),
+	);
 };
 
 export const validateSeasonOnly = (params: { season?: string }) => {

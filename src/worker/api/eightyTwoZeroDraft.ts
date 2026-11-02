@@ -21,6 +21,7 @@ import oldAbbrevTo2020BBGMAbbrev from "../core/realRosters/oldAbbrevTo2020BBGMAb
 import { idb } from "../db/index.ts";
 import { g, helpers, local, toUI } from "../util/index.ts";
 import { getRealTeamInfo } from "../views/newLeague.ts";
+import { getContractStartSeason } from "../util/getContractStartSeason.ts";
 import {
 	countPickablePlayers,
 	getLockedCount,
@@ -83,12 +84,6 @@ export const checkCanUse = () => {
 	if (activeDraftErrorMessage) {
 		throw new Error(activeDraftErrorMessage);
 	}
-};
-
-const getContractExp = () => {
-	return (
-		g.get("season") + (g.get("phase") > PHASE.AFTER_TRADE_DEADLINE ? 1 : 0)
-	);
 };
 
 const getCappedLockedCount = (round: number, numPlayers: number) => {
@@ -402,7 +397,8 @@ const normalizePick = async (
 		p,
 		{
 			amount: g.get("minContract"),
-			exp: getContractExp(),
+			// 1 year contract
+			exp: getContractStartSeason(),
 		},
 		true,
 	);

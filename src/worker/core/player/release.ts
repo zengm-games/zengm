@@ -2,7 +2,7 @@ import addToFreeAgents from "./addToFreeAgents.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
-import { PHASE } from "../../../common/constants.ts";
+import { getContractStartSeason } from "../../util/getContractStartSeason.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayNormalized.ts";
 
 /**
@@ -18,11 +18,8 @@ import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayN
 const release = async (p: Player, justDrafted: boolean) => {
 	// Keep track of player salary even when he's off the team, but make an exception for players who were just drafted.
 	if (!justDrafted) {
-		// ...and of course for players whose contracts have already expired.
-		if (
-			p.contract.exp > g.get("season") ||
-			(p.contract.exp === g.get("season") && g.get("phase") < PHASE.PLAYOFFS)
-		) {
+		// ...and of course for players whose contracts have already been fully paid.
+		if (p.contract.exp >= getContractStartSeason()) {
 			await idb.cache.releasedPlayers.add({
 				pid: p.pid,
 				tid: p.tid,

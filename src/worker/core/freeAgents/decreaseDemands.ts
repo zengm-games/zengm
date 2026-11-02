@@ -1,6 +1,19 @@
 import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
+import { getContractStartSeason } from "../../util/getContractStartSeason.ts";
+
+// After the season has already started, free agents ask for a short contract. Very cheap players ask for the shortest possible contract, everyone else asks for an extra season.
+export const getInSeasonContractExp = (
+	amount: number,
+	contractStartSeason: number,
+) => {
+	if (amount < 1.34 * g.get("minContract")) {
+		return contractStartSeason;
+	}
+
+	return contractStartSeason + 1;
+};
 
 /**
  * Decrease contract demands for all free agents.
@@ -17,10 +30,8 @@ const decreaseDemands = async () => {
 	);
 
 	const minContract = g.get("minContract");
-	const minContractExp =
-		g.get("season") +
-		g.get("minContractLength") +
-		(g.get("phase") <= PHASE.PLAYOFFS ? -1 : 0);
+	const contractStartSeason = getContractStartSeason();
+	const minContractExp = contractStartSeason + g.get("minContractLength") - 1;
 
 	for (const p of players) {
 		const baseAmount = 50 * Math.sqrt(g.get("maxContract") / 20000);
@@ -40,12 +51,10 @@ const decreaseDemands = async () => {
 		}
 
 		if (g.get("phase") !== PHASE.FREE_AGENCY) {
-			// Since this is after the season has already started, ask for a short contract
-			if (p.contract.amount < 1.34 * minContract) {
-				p.contract.exp = g.get("season");
-			} else {
-				p.contract.exp = g.get("season") + 1;
-			}
+			p.contract.exp = getInSeasonContractExp(
+				p.contract.amount,
+				contractStartSeason,
+			);
 		}
 
 		if (p.contract.exp < minContractExp) {

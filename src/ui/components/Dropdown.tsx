@@ -1,19 +1,56 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import type { CSSProperties } from "react";
-import useDropdownOptions, {
-	type ResponsiveOption,
+import {
+	dropdownOptionsStateKeys,
+	getDropdownOptions,
+	getDropdownUrlPart,
+	type DropdownLabel,
+	type DropdownOption,
+	type DropdownOptionsSource,
+	findDropdownOption,
 } from "../hooks/useDropdownOptions.tsx";
-import { helpers } from "../util/helpers.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { NextPrevButtons } from "./NextPrevButtons.tsx";
-import type { LocalStateUI } from "../../common/types.ts";
-import type { LeagueUrlParts } from "../router/types.ts";
+import { useLocal } from "../util/local.ts";
+
+type DropdownButtons = "forward" | "reverse";
+
+export type TitleBarDropdownField<Key extends string = string> = {
+	key: Key;
+	options: DropdownOptionsSource;
+	value: number | string;
+
+	// Next/previous buttons next to the dropdown. Teams default to "forward", seasons default to "reverse" because they are listed newest first, and anything else defaults to no buttons.
+	buttons?: DropdownButtons;
+};
+
+export type TitleBarDropdown = {
+	fields: TitleBarDropdownField[];
+
+	// Receives the URL part for each field, keyed by field key, with the newly selected value for the field that changed
+	getUrl: (values: Record<string, number | string>) => string;
+};
+
+const getButtons = (
+	field: TitleBarDropdownField,
+): DropdownButtons | undefined => {
+	if (field.buttons !== undefined) {
+		return field.buttons;
+	}
+
+	if (Array.isArray(field.options)) {
+		return undefined;
+	}
+
+	if (field.options.type === "teams") {
+		return "forward";
+	}
+
+	return "reverse";
+};
 
 // This assumes that when val is an array, it is already sorted by minWidth ascending
-export const getResponsiveValue = (
-	val: string | ResponsiveOption[],
-	windowWidth: number,
-) => {
+export const getResponsiveValue = (val: DropdownLabel, windowWidth: number) => {
 	if (Array.isArray(val)) {
 		return val.findLast((row) => windowWidth >= row.minWidth)!.text;
 	}
@@ -21,7 +58,7 @@ export const getResponsiveValue = (
 	return val;
 };
 
-const getResponsiveValue2 = (val: string | ResponsiveOption[]) => {
+const getResponsiveValue2 = (val: DropdownLabel) => {
 	return getResponsiveValue(val, window.innerWidth);
 };
 
@@ -29,38 +66,32 @@ const getResponsiveValue2 = (val: string | ResponsiveOption[]) => {
 const SUPPORTS_FIELD_SIZING_CONTENT = CSS.supports("field-sizing", "content");
 
 const Select = ({
-	customOptions,
-	field,
+	buttons,
 	handleChange,
+	options,
 	value,
 }: {
-	customOptions?: NonNullable<LocalStateUI["dropdownCustomOptions"]>[string];
-	field: string;
-	handleChange: (value: number | string) => void;
+	buttons: DropdownButtons | undefined;
+	handleChange: (option: DropdownOption) => void;
+	options: DropdownOption[];
 	value: number | string;
 }) => {
-	const options = useDropdownOptions(field, customOptions);
-
 	const selectRef = useRef<HTMLSelectElement>(null);
+
+	const currentOption = findDropdownOption(options, value);
 
 	const updateWidth = useCallback(() => {
 		if (SUPPORTS_FIELD_SIZING_CONTENT) {
 			return;
 		}
 
-		let currentValue: string | ResponsiveOption[] = "";
-		for (const option of options) {
-			if (option.key === value) {
-				currentValue = option.value;
-				break;
-			}
-		}
-
 		const el = document.createElement("select");
 		el.style.display = "inline";
 		el.className = "dropdown-select";
 		const el2 = document.createElement("option");
-		el2.textContent = getResponsiveValue2(currentValue);
+		el2.textContent = currentOption
+			? getResponsiveValue2(currentOption.label)
+			: "";
 		el.append(el2);
 
 		document.body.append(el);
@@ -70,7 +101,7 @@ const Select = ({
 		if (selectRef.current) {
 			selectRef.current.style.width = `${width}px`;
 		}
-	}, [options, value]);
+	}, [currentOption]);
 
 	useLayoutEffect(() => {
 		updateWidth();
@@ -85,9 +116,9 @@ const Select = ({
 		const widthsToCheck = new Set([768]);
 
 		// Also check any other widths where there is a breakpoint in the text of one of the options for this dropdown
-		for (const { value } of options) {
-			if (Array.isArray(value)) {
-				for (const { minWidth } of value) {
+		for (const { label } of options) {
+			if (Array.isArray(label)) {
+				for (const { minWidth } of label) {
 					if (minWidth > -Infinity) {
 						widthsToCheck.add(minWidth);
 					}
@@ -121,44 +152,33 @@ const Select = ({
 		return null;
 	}
 
-	const showButtons =
-		field.startsWith("teams") ||
-		field.startsWith("seasons") ||
-		field === "days";
-
-	let buttons = null;
-	if (showButtons) {
-		const currentItem = options.find((option) => option.key === value);
-
-		buttons = (
-			<NextPrevButtons
-				currentItem={currentItem}
-				items={options}
-				onChange={(newItem) => {
-					handleChange(newItem.key);
-				}}
-				reverse={field.startsWith("seasons")}
-				style={{ marginLeft: 2 }}
-			/>
-		);
-	}
-
 	return (
 		<div className="d-flex dropdown-select-wrapper">
-			{buttons}
+			{buttons ? (
+				<NextPrevButtons
+					currentItem={currentOption}
+					items={options}
+					onChange={handleChange}
+					reverse={buttons === "reverse"}
+					style={{ marginLeft: 2 }}
+				/>
+			) : null}
 			<select
-				value={value}
+				value={String(value)}
 				className="dropdown-select"
 				onChange={(event) => {
-					handleChange(event.currentTarget.value);
+					const option = findDropdownOption(options, event.currentTarget.value);
+					if (option) {
+						handleChange(option);
+					}
 				}}
 				ref={selectRef}
 				style={style}
 			>
-				{options.map((opt) => {
+				{options.map((option) => {
 					return (
-						<option key={opt.key} value={opt.key}>
-							{getResponsiveValue2(opt.value)}
+						<option key={option.key} value={String(option.key)}>
+							{getResponsiveValue2(option.label)}
 						</option>
 					);
 				})}
@@ -167,51 +187,38 @@ const Select = ({
 	);
 };
 
-type Props = {
-	customOptions?: LocalStateUI["dropdownCustomOptions"];
-	customURL?: (fields: Record<string, number | string>) => string;
-	fields: Record<string, number | string>;
-	view: string;
-};
+export const Dropdown = ({ dropdown }: { dropdown: TitleBarDropdown }) => {
+	const state = useLocal([...dropdownOptionsStateKeys]);
 
-const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
-	const keys = Object.keys(fields);
-	const values = Object.values(fields);
+	const fieldOptions = dropdown.fields.map((field) =>
+		getDropdownOptions(field.options, state),
+	);
 
-	const handleChange = (i: number, value: string | number) => {
-		let url;
-		if (customURL) {
-			const newFields = {
-				...fields,
-				[keys[i]!]: value,
-			};
-
-			url = customURL(newFields);
-		} else {
-			const newValues = values.slice();
-			newValues[i] = value;
-			const parts = [view, ...newValues] as LeagueUrlParts;
-			url = helpers.leagueUrl(parts);
+	const handleChange = (i: number, newOption: DropdownOption) => {
+		const values: Record<string, number | string> = {};
+		for (const [j, field] of dropdown.fields.entries()) {
+			values[field.key] =
+				i === j
+					? (newOption.urlPart ?? newOption.key)
+					: getDropdownUrlPart(fieldOptions[j]!, field.value);
 		}
 
-		realtimeUpdate([], url);
+		realtimeUpdate([], dropdown.getUrl(values));
 	};
 
 	return (
 		<>
-			{keys.map((key, i) => {
+			{dropdown.fields.map((field, i) => {
 				return (
 					<Select
-						customOptions={customOptions ? customOptions[key] : undefined}
-						key={key}
-						field={key}
-						value={values[i]!}
-						handleChange={(value) => handleChange(i, value)}
+						key={field.key}
+						buttons={getButtons(field)}
+						handleChange={(option) => handleChange(i, option)}
+						options={fieldOptions[i]!}
+						value={field.value}
 					/>
 				);
 			})}
 		</>
 	);
 };
-
-export default Dropdown;

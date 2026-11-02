@@ -14,20 +14,20 @@ import { showStatsByType } from "../../common/awards.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 import { formatAwardNamePrefix } from "../core/awards/prefixes.ts";
 import { PlayersCache } from "../db/PlayersCache.ts";
-import { PHASE } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateSeason } from "../util/processInputs.ts";
+import { getSeasonState, validateSeason } from "../util/processInputs.ts";
+import { isCurrentSeasonComplete } from "../../common/seasons.ts";
 import { player, team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"history">) => {
 	let season = validateSeason(params.season);
 
-	// If playoffs aren't over, season awards haven't been set
-	if (g.get("phase") >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
-		// View last season by default
-		if (season === g.get("season")) {
-			season -= 1;
-		}
+	// If playoffs aren't over, season awards haven't been set, so view last season by default
+	if (
+		season === g.get("season") &&
+		!isCurrentSeasonComplete(getSeasonState())
+	) {
+		season -= 1;
 	}
 
 	return {

@@ -12,12 +12,12 @@ import {
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { helpers } from "../util/index.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeasonType } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"depth">) => {
 	// Fix broken links
-	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
+	if (params.team === "FA" || params.team === "FA_-1") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["free_agents"]),
@@ -25,7 +25,7 @@ const processInputs = (params: RouteParams<"depth">) => {
 		return returnValue;
 	}
 
-	if (params.abbrev === "DP" || params.abbrev === "DP_-2") {
+	if (params.team === "DP" || params.team === "DP_-2") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["draft_scouting"]),
@@ -33,8 +33,7 @@ const processInputs = (params: RouteParams<"depth">) => {
 		return returnValue;
 	}
 
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-
+	const tid = validateTeam(params.team);
 	const DEFAULT_POS = bySport({
 		baseball: "L",
 		basketball: "G",
@@ -44,7 +43,7 @@ const processInputs = (params: RouteParams<"depth">) => {
 
 	const pos = params.pos ?? DEFAULT_POS;
 
-	return { abbrev, playoffs: validateSeasonType(params.playoffs), pos, tid };
+	return { playoffs: validateSeasonType(params.playoffs), pos, tid };
 };
 
 const defenseStats: PlayerStatAttr[] = [
@@ -182,7 +181,7 @@ export default defineView({
 	id: "depth",
 	processInputs,
 	load: async ({
-		inputs: { abbrev, playoffs, pos, tid },
+		inputs: { playoffs, pos, tid },
 		updateEvents,
 		prevInputs,
 	}) => {
@@ -202,7 +201,7 @@ export default defineView({
 			updateEvents.has("team") ||
 			pos !== prevInputs?.pos ||
 			playoffs !== prevInputs?.playoffs ||
-			abbrev !== prevInputs?.abbrev
+			tid !== prevInputs?.tid
 		) {
 			let showDH: "noDH" | "dh" | "both" | undefined;
 			let pos2 = pos;
@@ -333,7 +332,6 @@ export default defineView({
 			}
 
 			return {
-				abbrev,
 				editable,
 				keepRosterSorted: t.keepRosterSorted,
 				multiplePositionsWarning,

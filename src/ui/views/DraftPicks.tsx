@@ -172,15 +172,16 @@ export const getDraftPicksColsAndRows = ({
 };
 
 const DraftPicks = ({
-	abbrev,
 	draftPicks,
 	draftPicksOutgoing,
 	tid,
 }: View<"draftPicks">) => {
 	useTitleBar({
 		title: "Draft Picks",
-		dropdownView: "draft_picks",
-		dropdownFields: { teams: abbrev },
+		dropdown: {
+			fields: [{ key: "team", options: { type: "teams" }, value: tid }],
+			view: "draftPicks",
+		},
 	});
 
 	const { challengeNoRatings, draftType } = useLocal([
@@ -199,7 +200,6 @@ const DraftPicks = ({
 			<MoreLinks
 				type="draft"
 				page="draft_picks"
-				abbrev={abbrev}
 				draftType={draftType}
 				tid={tid}
 			/>

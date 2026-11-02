@@ -240,10 +240,9 @@ const AllStars = ({
 
 	useTitleBar({
 		title: `All-Star ${type === "draft" ? "Draft" : "Teams"}`,
-		dropdownView: "all_star_draft",
-		dropdownFields: { seasons: season },
-		dropdownCustomURL: (fields) => {
-			return helpers.leagueUrl(["all_star", "teams", fields.seasons]);
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "allStarTeams",
 		},
 	});
 

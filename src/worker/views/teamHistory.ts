@@ -9,12 +9,12 @@ import { groupByUnique } from "../../common/utils.ts";
 import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
 import { DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { player } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"teamHistory">) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-	return { abbrev, tid };
+	const tid = validateTeam(params.team);
+	return { tid };
 };
 
 type PlayoffsByConfBySeason = Awaited<
@@ -248,7 +248,7 @@ export default defineView({
 			updateEvents.has("gameSim") ||
 			updateEvents.has("retiredJerseys") ||
 			updateEvents.has("gameAttributes") ||
-			inputs.abbrev !== prevInputs?.abbrev
+			inputs.tid !== prevInputs?.tid
 		) {
 			const t = await idb.cache.teams.get(inputs.tid);
 			if (!t) {
@@ -440,7 +440,6 @@ export default defineView({
 				...teamHistory,
 				players,
 				stats: historyStats,
-				abbrev: inputs.abbrev,
 				tid: inputs.tid,
 				retiredJerseyNumbers: retiredJerseyNumbers2,
 				userPlayers: processUserPlayer

@@ -8,9 +8,9 @@ import allowForceTie from "../../common/allowForceTie.ts";
 import { Dropdown } from "react-bootstrap";
 import { ForceWin } from "../components/ForceWin.tsx";
 import { ScoreBox } from "../components/ScoreBox/index.tsx";
+import { helpers } from "../util/helpers.ts";
 
 const Schedule = ({
-	abbrev,
 	canLiveSimFirstGame,
 	completed,
 	elam,
@@ -22,8 +22,10 @@ const Schedule = ({
 }: View<"schedule">) => {
 	useTitleBar({
 		title: "Schedule",
-		dropdownView: "schedule",
-		dropdownFields: { teams: abbrev },
+		dropdown: {
+			fields: [{ key: "team", options: { type: "teams" }, value: tid }],
+			view: "schedule",
+		},
 	});
 
 	const { gameSimInProgress, godMode, phase, userTid } = useLocal([
@@ -46,7 +48,7 @@ const Schedule = ({
 
 	return (
 		<>
-			<MoreLinks type="team" page="schedule" abbrev={abbrev} tid={tid} />
+			<MoreLinks type="team" page="schedule" tid={tid} />
 			{godMode ? (
 				<Dropdown className="mb-3">
 					<Dropdown.Toggle
@@ -176,7 +178,7 @@ const Schedule = ({
 					<h2>Completed Games</h2>
 					{completed.map((game) => (
 						<ScoreBox
-							boxScoreTeamOverride={`${abbrev}_${tid}`}
+							boxScoreTeamOverride={helpers.getTeamUrlPart(tid)}
 							className="mb-3"
 							key={game.gid}
 							game={game}

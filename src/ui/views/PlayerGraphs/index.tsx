@@ -2,6 +2,7 @@ import type { View } from "../../../common/types.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { StatGraph, type TooltipData } from "./ScatterPlot.tsx";
 import useDropdownOptions, {
+	dropdownOptions,
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
@@ -151,7 +152,7 @@ type AxisState = {
 export const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 	return (
 		<option value={value.key}>
-			{Array.isArray(value.value) ? value.value.at(-1)!.text : value.value}
+			{Array.isArray(value.label) ? value.label.at(-1)!.text : value.label}
 		</option>
 	);
 };
@@ -190,14 +191,14 @@ const PickStat = ({
 		row.stat = stat;
 	}
 
-	const seasons = useDropdownOptions("seasons");
+	const seasons = useDropdownOptions({ type: "seasons" });
 	const statTypes = [
 		// Keep in sync with statTypes in playerGraphs.ts
-		...useDropdownOptions("statTypesAdv"),
-		{ key: "bio", value: "Bio" },
-		{ key: "ratings", value: "Ratings" },
+		...dropdownOptions.statTypesAdv,
+		{ key: "bio", label: "Bio" },
+		{ key: "ratings", label: "Ratings" },
 	];
-	const playoffs = useDropdownOptions("playoffsCombined");
+	const playoffs = dropdownOptions.playoffsCombined;
 
 	const xyCapital = label === "x" ? "X" : "Y";
 
@@ -339,7 +340,6 @@ const PlayerGraphs = ({
 }: View<"playerGraphs">) => {
 	useTitleBar({
 		title: "Player Graphs",
-		dropdownView: "player_graphs",
 	});
 
 	const updateUrl = async (toUpdate: UpdateUrlParam) => {

@@ -9,16 +9,29 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { useLocal } from "../util/local.ts";
 
 const PlayerFeats = ({
-	abbrev,
 	feats,
 	quarterLengthFactor,
 	season,
 	stats,
+	team,
 }: View<"playerFeats">) => {
 	useTitleBar({
 		title: "Statistical Feats",
-		dropdownView: "player_feats",
-		dropdownFields: { teamsAndAllWatch: abbrev, seasonsAndAll: season },
+		dropdown: {
+			fields: [
+				{
+					key: "team",
+					options: { type: "teams", all: true, watch: true },
+					value: team,
+				},
+				{
+					key: "season",
+					options: { type: "seasons", all: true },
+					value: season,
+				},
+			],
+			view: "playerFeats",
+		},
 	});
 	const { userTid } = useLocal(["userTid"]);
 

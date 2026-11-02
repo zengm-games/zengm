@@ -9,13 +9,28 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCheckmarkOrCross } from "../components/CheckmarkOrCross.tsx";
 import { useLocal } from "../util/local.ts";
 
-const Injuries = ({ abbrev, injuries, season, stats }: View<"injuries">) => {
+const Injuries = ({ injuries, season, stats, team }: View<"injuries">) => {
 	useTitleBar({
 		title: "Injuries",
-		dropdownView: "injuries",
-		dropdownFields: {
-			teamsAndAllWatchPlayoffs: abbrev,
-			seasonsAndCurrent: season,
+		dropdown: {
+			fields: [
+				{
+					key: "team",
+					options: {
+						type: "teams",
+						all: true,
+						remainingPlayoffTeams: true,
+						watch: true,
+					},
+					value: team,
+				},
+				{
+					key: "season",
+					options: { type: "seasons", current: true },
+					value: season,
+				},
+			],
+			view: "injuries",
 		},
 	});
 

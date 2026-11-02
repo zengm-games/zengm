@@ -16,39 +16,61 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { getActivePlayoffTids } from "./playerRatings.ts";
 import { last } from "../../common/utils.ts";
 import { hasNonZeroStat } from "../../common/statValue.ts";
-import { REMAINING_PLAYOFF_TEAMS_PHASES } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { actualPhase } from "../util/actualPhase.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
-import { validateSeason } from "../util/processInputs.ts";
-import { validateSeasonType } from "../util/processInputs.ts";
+import {
+	validateOption,
+	validateSeason,
+	validateSeasonType,
+	validateTeam,
+} from "../util/processInputs.ts";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
 import { player } from "../core/index.ts";
 
-const processInputs = (params: RouteParams<"playerStats">) => {
-	let abbrev;
+export const validatePlayerStatType = (
+	statType: string | undefined,
+	statTypes: readonly string[],
+) => {
+	// Handle upgrade without breaking URLs
+	const upgradedStatType =
+		__SPORT === "football" && statType === "rushing"
+			? "rushingReceiving"
+			: statType;
 
-	const [, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	return validateOption(
+		upgradedStatType,
+		statTypes,
+		bySport({
+			baseball: "batting",
+			basketball: "perGame",
+			football: "passing",
+			hockey: "skater",
+		}),
+	);
+};
 
-	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
-		abbrev = validatedAbbrev;
-	} else if (params.abbrev === "watch") {
-		abbrev = "watch";
-	} else if (
-		params.abbrev === "playoffs" &&
-		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+// In basketball, perGame/per36/totals are different ways of showing the regular stats table, and other stat types are their own tables. In other sports, every stat type is its own table of totals.
+export const getPlayerStatsTable = (statType: string) => {
+	let playerStatType: PlayerStatType;
+	let statsTable;
+	if (
+		__SPORT === "basketball" &&
+		(statType === "perGame" || statType === "per36" || statType === "totals")
 	) {
-		abbrev = "playoffs";
+		playerStatType = statType;
+		statsTable = PLAYER_STATS_TABLES.regular;
 	} else {
-		abbrev = "all";
+		playerStatType = bySport({ basketball: "perGame", default: "totals" });
+		statsTable = PLAYER_STATS_TABLES[statType];
 	}
 
-	const defaultStatType = bySport({
-		baseball: "batting",
-		basketball: "perGame",
-		football: "passing",
-		hockey: "skater",
-	});
+	if (statsTable === undefined) {
+		throw new Error(`Invalid statType: "${statType}"`);
+	}
 
+	return { playerStatType, statsTable };
+};
+
+const processInputs = (params: RouteParams<"playerStats">) => {
 	let season: "career" | "all" | number;
 	if (params.season === "career" || params.season === "all") {
 		season = params.season;
@@ -56,17 +78,13 @@ const processInputs = (params: RouteParams<"playerStats">) => {
 		season = validateSeason(params.season);
 	}
 
-	let statType = params.statType ?? defaultStatType;
-
-	// Handle upgrade without breaking URLs
-	if (__SPORT === "football" && statType === "rushing") {
-		statType = "rushingReceiving";
-	}
-
 	return {
-		abbrev,
+		team: validateTeam(params.team, ["all", "playoffs", "watch"]),
 		season,
-		statType,
+		statType: validatePlayerStatType(
+			params.statType,
+			dropdownKeys.statTypesAdv,
+		),
 		playoffs: validateSeasonType(params.playoffs),
 	};
 };
@@ -79,31 +97,14 @@ export default defineView({
 			updateEvents.has("firstRun") ||
 			(inputs.season === g.get("season") && updateEvents.has("gameSim")) ||
 			updateEvents.has("playerMovement") ||
-			inputs.abbrev !== prevInputs?.abbrev ||
+			inputs.team !== prevInputs?.team ||
 			inputs.season !== prevInputs?.season ||
 			inputs.statType !== prevInputs?.statType ||
 			inputs.playoffs !== prevInputs?.playoffs
 		) {
-			let statsTable;
-
-			if (__SPORT === "basketball") {
-				if (inputs.statType === "advanced") {
-					statsTable = PLAYER_STATS_TABLES.advanced;
-				} else if (inputs.statType === "shotLocations") {
-					statsTable = PLAYER_STATS_TABLES.shotLocations;
-				} else if (inputs.statType === "gameHighs") {
-					statsTable = PLAYER_STATS_TABLES.gameHighs;
-				} else {
-					statsTable = PLAYER_STATS_TABLES.regular;
-				}
-			} else {
-				statsTable = PLAYER_STATS_TABLES[inputs.statType];
-			}
-
-			// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-			if (!statsTable) {
-				throw new Error(`Invalid statType: "${inputs.statType}"`);
-			}
+			const { playerStatType, statsTable } = getPlayerStatsTable(
+				inputs.statType,
+			);
 
 			const stats = statsTable.stats;
 			let actualStats;
@@ -123,13 +124,7 @@ export default defineView({
 				actualStats = getPlayerStatsTableStats(stats);
 			}
 
-			let tid: number | undefined = g
-				.get("teamInfoCache")
-				.findIndex((t) => t.abbrev === inputs.abbrev);
-
-			if (tid < 0) {
-				tid = undefined;
-			}
+			const tid = typeof inputs.team === "number" ? inputs.team : undefined;
 
 			// Applied while reading players, so players who won't be shown are not all held in memory. For a team, this keeps anyone with any stats for that team, and formatting does the exact filtering.
 			let filter: ((p: Player) => boolean) | undefined;
@@ -141,24 +136,11 @@ export default defineView({
 							ps.tid === tid &&
 							(typeof season !== "number" || ps.season === season),
 					);
-			} else if (inputs.abbrev === "watch") {
+			} else if (inputs.team === "watch") {
 				filter = (p) => p.watch !== undefined;
-			} else if (inputs.abbrev === "playoffs") {
+			} else if (inputs.team === "playoffs") {
 				const playoffTids = await getActivePlayoffTids();
 				filter = (p) => playoffTids.has(p.tid);
-			}
-
-			let statType: PlayerStatType;
-			if (__SPORT === "basketball") {
-				if (inputs.statType === "totals") {
-					statType = "totals";
-				} else if (inputs.statType === "per36") {
-					statType = "per36";
-				} else {
-					statType = "perGame";
-				}
-			} else {
-				statType = "totals";
 			}
 
 			const formatOptions = {
@@ -179,7 +161,7 @@ export default defineView({
 				ratings: ["skills", "pos", "season"],
 				stats: ["abbrev", "tid", "jerseyNumber", "season", ...actualStats],
 				tid,
-				statType,
+				statType: playerStatType,
 				seasonType: inputs.playoffs,
 				mergeStats: "totOnly",
 			} as const;
@@ -189,7 +171,7 @@ export default defineView({
 				let selector: PlayersSelector | undefined;
 				if (typeof inputs.season === "number") {
 					selector = getActiveSeasonSelector(inputs.season);
-				} else if (inputs.abbrev === "watch") {
+				} else if (inputs.team === "watch") {
 					// Only read players on the watch list, rather than all players
 					selector = { watch: true };
 				}
@@ -302,10 +284,10 @@ export default defineView({
 			}
 
 			// Only keep players who actually played
-			if (inputs.abbrev !== "watch" && __SPORT === "basketball") {
+			if (inputs.team !== "watch" && __SPORT === "basketball") {
 				rows = rows.filter((p) => (p.stats.gp ?? 0) > 0);
 			} else if (
-				inputs.abbrev !== "watch" &&
+				inputs.team !== "watch" &&
 				statsTable.onlyShowIf &&
 				__SPORT !== "basketball"
 			) {
@@ -340,7 +322,7 @@ export default defineView({
 
 			return {
 				players,
-				abbrev: inputs.abbrev,
+				team: inputs.team,
 				season: inputs.season,
 				statType: inputs.statType,
 				playoffs: inputs.playoffs,

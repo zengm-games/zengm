@@ -131,7 +131,6 @@ const PayrollAndPenalties = ({
 };
 
 const TopStuff = ({
-	abbrev,
 	currentSeason,
 	editable,
 	luxuryTaxAmount,
@@ -149,7 +148,6 @@ const TopStuff = ({
 	usePts,
 }: Pick<
 	View<"roster">,
-	| "abbrev"
 	| "editable"
 	| "luxuryTaxAmount"
 	| "minPayrollAmount"
@@ -200,7 +198,6 @@ const TopStuff = ({
 			<>
 				Record:{" "}
 				<RecordAndPlayoffs
-					abbrev={abbrev}
 					season={season}
 					won={t.seasonAttrs.won}
 					lost={t.seasonAttrs.lost}
@@ -208,7 +205,6 @@ const TopStuff = ({
 					tied={t.seasonAttrs.tied}
 					roundsWonText={t.roundsWonText}
 					option="noSeason"
-					tid={tid}
 				/>
 			</>
 		) : (

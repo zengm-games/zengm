@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
@@ -47,8 +48,17 @@ const PlayerStatDists = ({
 
 	useTitleBar({
 		title: "Player Stat Distributions",
-		dropdownView: "player_stat_dists",
-		dropdownFields: { seasons: season, statTypesAdv: statType },
+		dropdown: {
+			fields: [
+				{ key: "season", options: { type: "seasons" }, value: season },
+				{
+					key: "statType",
+					options: dropdownOptions.statTypesDists,
+					value: statType,
+				},
+			],
+			view: "playerStatDists",
+		},
 	});
 
 	// Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.

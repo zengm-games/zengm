@@ -13,8 +13,10 @@ const PlayerRatingDists = ({
 }: View<"playerRatingDists">) => {
 	useTitleBar({
 		title: "Player Rating Distributions",
-		dropdownView: "player_rating_dists",
-		dropdownFields: { seasons: season },
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "playerRatingDists",
+		},
 	});
 
 	return (

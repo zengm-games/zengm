@@ -24,7 +24,6 @@ const MARGIN = {
 	left: 0,
 };
 
-// Room for the two-line team label, as a share of the plot height
 const LABEL_HEIGHT_PX = 34;
 const MIN_LABEL_GAP = LABEL_HEIGHT_PX / (HEIGHT - MARGIN.top - MARGIN.bottom);
 
@@ -38,14 +37,11 @@ type ChartTeam = {
 
 export const PomymarketChart = ({
 	gameOver,
-	numSamples,
 	samples,
 	teams,
 	xDomain,
 }: {
 	gameOver: boolean;
-	// Samples live in a ref that is mutated in place, so the count tells the chart when to redraw
-	numSamples: number;
 	samples: LiveWinpSample[];
 	teams: readonly [ChartTeam, ChartTeam];
 	xDomain: number;
@@ -54,6 +50,7 @@ export const PomymarketChart = ({
 	const abbrev1 = teams[1].abbrev;
 	const colors0 = teams[0].colors.join();
 	const colors1 = teams[1].colors.join();
+	const numSamples = samples.length;
 
 	const info = useMemo(() => {
 		const last = samples.at(-1);
@@ -160,7 +157,7 @@ export const PomymarketChart = ({
 			.join(", ")}`;
 
 		return { ariaLabel, definition };
-		// samples is mutated in place, and numSamples changes whenever it does
+		// samples is a ref array mutated in place, so its length tells the chart when to redraw
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [abbrev0, abbrev1, colors0, colors1, gameOver, numSamples, xDomain]);
 

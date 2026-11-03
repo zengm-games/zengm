@@ -1116,7 +1116,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 					showPomymarketLive(pomymarket, boxScore.current) ? (
 						<PomymarketChart
 							gameOver={!!boxScore.current.gameOver}
-							numSamples={winpSamples.current.length}
 							samples={winpSamples.current}
 							teams={boxScore.current.teams}
 							xDomain={getLiveWinpXDomain({

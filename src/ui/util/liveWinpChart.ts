@@ -4,7 +4,6 @@ import { getLiveWinp } from "./getLiveWinp.ts";
 
 const BASEBALL_OUTS_PER_HALF_INNING = 3;
 
-// Elam endings and shootouts have no clock, so they move x by a share of regulation
 const ELAM_FALLBACK_SPAN_FRACTION = 0.05;
 const SHOOTOUT_STEP_FRACTION = 0.01;
 
@@ -141,7 +140,6 @@ export type LiveWinpSample = {
 	x: number;
 };
 
-// Exhibition games and games without team ovrs get no samples, matching the live percentages under the score
 export const getNextLiveWinpSample = ({
 	boxScore,
 	elapsedSeconds,
@@ -185,7 +183,6 @@ export const getNextLiveWinpSample = ({
 	};
 };
 
-// Right edge of the x-axis: regulation until overtime pushes past it
 export const getLiveWinpXDomain = ({
 	boxScore,
 	quarterLength,
@@ -255,7 +252,6 @@ export const getLineColors = (
 ): [string, string] => {
 	const visible0 = getVisibleColors(colors[0]);
 	const visible1 = getVisibleColors(colors[1]);
-	// A team with no usable color gets a neutral one, and the other team keeps its own
 	const color0 = visible0[0] ?? FALLBACK_LINE_COLORS[0];
 	const color1 =
 		visible0[0] === undefined

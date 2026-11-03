@@ -10,20 +10,20 @@ import {
 import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/constants.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"gameLog">) => {
-	const [tid, abbrev] =
-		params.abbrev === "special"
-			? [-1, "special"]
-			: validateAbbrev(params.abbrev);
+	const team = validateTeam(params.team, ["special"]);
+
+	// For the All-Star Game, -1 is the tid of the first All-Star team, which is used to load the All-Star games
+	const tid = team === "special" ? -1 : team;
 
 	return {
 		gid: params.gid !== undefined ? Number.parseInt(params.gid) : -1,
 		season: validateSeason(params.season),
+		team,
 		tid,
-		abbrev,
 	};
 };
 
@@ -232,9 +232,8 @@ const boxScore = async (gid: number) => {
 
 const updateTeamSeason = (inputs: ViewInput<typeof processInputs>) => {
 	return {
-		// Needed for dropdown
-		abbrev: inputs.abbrev,
 		season: inputs.season,
+		team: inputs.team,
 		tid: inputs.tid,
 	};
 };
@@ -303,7 +302,7 @@ const keepPrevOutput = {
  * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
  *
  * @memberOf views.gameLog
- * @param {string} inputs.abbrev Abbrev of the team for the list of games.
+ * @param {number} inputs.tid Team ID for the list of games (-1 for the All-Star Game).
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */

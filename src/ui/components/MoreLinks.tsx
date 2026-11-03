@@ -13,14 +13,12 @@ export const MoreLinks = (
 	props: (
 		| {
 				type: "team";
-				abbrev: string;
 				tid: number;
 				season?: number;
 		  }
 		| {
 				type: "draft";
 				draftType: DraftType | "dummy" | undefined;
-				abbrev?: string;
 				tid?: number;
 				season?: number;
 		  }
@@ -80,43 +78,44 @@ export const MoreLinks = (
 		className?: string;
 	}[];
 	if (props.type === "team") {
-		const { abbrev, season, tid } = props;
+		const { season, tid } = props;
+		const team = helpers.getTeamUrlPart(tid);
 
 		links = [
 			{
-				url: ["roster", `${abbrev}_${tid}`, season],
+				url: ["roster", team, season],
 				name: "Roster",
 			},
 			{
-				url: ["team_finances", `${abbrev}_${tid}`],
+				url: ["team_finances", team],
 				name: "Finances",
 			},
 			{
-				url: ["game_log", `${abbrev}_${tid}`, season],
+				url: ["game_log", team, season],
 				name: "Game Log",
 			},
-			{ url: ["draft_picks", `${abbrev}_${tid}`], name: "Draft Picks" },
+			{ url: ["draft_picks", team], name: "Draft Picks" },
 			{
-				url: ["team_history", `${abbrev}_${tid}`],
+				url: ["team_history", team],
 				name: "History",
 			},
 			{
 				url:
 					season !== undefined && season !== currentSeason
-						? ["head2head", `${abbrev}_${tid}`, season]
-						: ["head2head", `${abbrev}_${tid}`],
+						? ["head2head", team, season]
+						: ["head2head", team],
 				name: "Head-to-Head",
 			},
 			{
-				url: ["schedule", `${abbrev}_${tid}`],
+				url: ["schedule", team],
 				name: "Schedule",
 			},
 			{
-				url: ["transactions", `${abbrev}_${tid}`, season],
+				url: ["transactions", team, season],
 				name: "Transactions",
 			},
 			{
-				url: ["news", `${abbrev}_${tid}`, season],
+				url: ["news", team, season],
 				name: "News Feed",
 			},
 		];
@@ -132,15 +131,15 @@ export const MoreLinks = (
 			if (__SPORT === "baseball") {
 				links.unshift(
 					{
-						url: ["depth", "L", `${abbrev}_${tid}`],
+						url: ["depth", "L", team],
 						name: "Batting Order",
 					},
 					{
-						url: ["depth", "D", `${abbrev}_${tid}`],
+						url: ["depth", "D", team],
 						name: "Defense",
 					},
 					{
-						url: ["depth", "P", `${abbrev}_${tid}`],
+						url: ["depth", "P", team],
 						name: "Pitching",
 					},
 				);
@@ -154,7 +153,7 @@ export const MoreLinks = (
 							football: "QB",
 							hockey: "F",
 						}),
-						`${abbrev}_${tid}`,
+						team,
 					],
 					name: bySport({
 						baseball: "",
@@ -170,7 +169,7 @@ export const MoreLinks = (
 			links.push({
 				url: [
 					"player_stats",
-					`${abbrev}_${tid}`,
+					team,
 					"career",
 					bySport({
 						baseball: "batting",
@@ -183,7 +182,8 @@ export const MoreLinks = (
 			});
 		}
 	} else if (props.type === "draft") {
-		const { abbrev, draftType, season, tid } = props;
+		const { draftType, season, tid } = props;
+		const team = tid === undefined ? undefined : helpers.getTeamUrlPart(tid);
 
 		links = [
 			// { url: ["draft"], name: "Draft", },
@@ -193,10 +193,7 @@ export const MoreLinks = (
 					draftType === "freeAgents" ? "Upcoming Prospects" : "Draft Scouting",
 			},
 			{
-				url:
-					abbrev !== undefined && tid !== undefined
-						? ["draft_picks", `${abbrev}_${tid}`]
-						: ["draft_picks"],
+				url: team === undefined ? ["draft_picks"] : ["draft_picks", team],
 				name: "Draft Picks",
 			},
 			{
@@ -212,9 +209,9 @@ export const MoreLinks = (
 			},
 			{
 				url:
-					abbrev !== undefined && tid !== undefined
-						? ["draft_team_history", `${abbrev}_${tid}`]
-						: ["draft_team_history"],
+					team === undefined
+						? ["draft_team_history"]
+						: ["draft_team_history", team],
 				name: "Team History",
 			},
 			{

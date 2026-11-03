@@ -185,14 +185,14 @@ export default defineView({
 					? [
 							{
 								key: "all",
-								value: makeResponsiveDropdownOption(
+								label: makeResponsiveDropdownOption(
 									"All confs",
 									"All conferences",
 								),
 							},
 							...confs.map((conf) => {
 								// Shorten "Eastern Conference" to "Eastern Conf" on mobile
-								const value = conf.name.endsWith("onference")
+								const label = conf.name.endsWith("onference")
 									? makeResponsiveDropdownOption(
 											conf.name.slice(0, -"erence".length),
 											conf.name,
@@ -201,7 +201,7 @@ export default defineView({
 
 								return {
 									key: conf.cid,
-									value,
+									label,
 								};
 							}),
 						]
@@ -212,7 +212,7 @@ export default defineView({
 					.sort((a, b) => a.day - b.day)
 					.map(({ day, playoffs }) => ({
 						key: day,
-						value: playoffs ? `${day} (playoffs)` : `${day}`,
+						label: playoffs ? `${day} (playoffs)` : `${day}`,
 					}));
 
 				if (inputs.season !== currentSeason) {

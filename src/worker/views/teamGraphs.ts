@@ -12,22 +12,17 @@ import { season, team } from "../core/index.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 import { choice } from "../../common/random.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateSeason } from "../util/processInputs.ts";
+import { validatePlayoffs, validateSeason } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"teamGraphs">) => {
-	const playoffsX =
-		params.playoffsX === "playoffs" ? "playoffs" : "regularSeason";
-	const playoffsY =
-		params.playoffsY === "playoffs" ? "playoffs" : "regularSeason";
-
 	const seasonX = validateSeason(params.seasonX);
 	const seasonY = validateSeason(params.seasonY);
 
 	return {
 		seasonX,
 		seasonY,
-		playoffsX: playoffsX as "playoffs" | "regularSeason",
-		playoffsY: playoffsY as "playoffs" | "regularSeason",
+		playoffsX: validatePlayoffs(params.playoffsX),
+		playoffsY: validatePlayoffs(params.playoffsY),
 
 		// Defaults to random stat if undefined
 		statTypeX: params.statTypeX,

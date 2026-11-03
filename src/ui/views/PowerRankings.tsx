@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
@@ -68,15 +69,23 @@ const PowerRankings = ({
 	titleOddsAvailable,
 	otl,
 }: View<"powerRankings">) => {
-	const dropdownFields = bySport({
-		basketball: { seasons: season, playoffs },
-		default: { seasons: season },
-	}) as { seasons: number; playoffs: string } | { seasons: number };
-
 	useTitleBar({
 		title: "Power Rankings",
-		dropdownView: "power_rankings",
-		dropdownFields,
+		dropdown: {
+			view: "powerRankings",
+			fields: [
+				{ key: "season", options: { type: "seasons" }, value: season },
+				...(__SPORT === "basketball"
+					? [
+							{
+								key: "playoffs",
+								options: dropdownOptions.playoffs,
+								value: playoffs,
+							} as const,
+						]
+					: []),
+			],
+		},
 	});
 
 	const {

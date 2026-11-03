@@ -541,14 +541,12 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 							</div>
 							{currentTeam.seasonInfo ? (
 								<RecordAndPlayoffs
-									abbrev={currentTeam.abbrev}
 									lost={currentTeam.seasonInfo.lost}
 									otl={currentTeam.seasonInfo.otl}
 									noLinks
 									option="noSeason"
 									roundsWonText={currentTeam.seasonInfo.roundsWonText}
 									season={currentTeam.season}
-									tid={currentTeam.tid}
 									tied={currentTeam.seasonInfo.tied}
 									won={currentTeam.seasonInfo.won}
 								/>

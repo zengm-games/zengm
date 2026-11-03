@@ -88,7 +88,7 @@ const GmHistory = ({
 									totalWon={teamHistory.totalWon}
 									worstRecord={teamHistory.worstRecord}
 								/>
-								<Seasons history={teamHistory.history} />
+								<Seasons history={teamHistory.history} userSeasons={[]} />
 							</HideableSection>
 						);
 					})}

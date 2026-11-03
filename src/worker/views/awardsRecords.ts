@@ -18,29 +18,28 @@ const processInputs = (params: RouteParams<"awardsRecords">) => {
 	};
 };
 
-// Sync with useDropdownOptions
 const nonCustomAwardsList = [
 	{
-		value: "All-Star",
+		label: "All-Star",
 		key: "all_star",
 	},
 	{
-		value: "All-Star MVP",
+		label: "All-Star MVP",
 		key: "all_star_mvp",
 	},
 	{
-		value: "Won Championship",
+		label: "Won Championship",
 		key: "champion",
 	},
 	...bySport({
 		baseball: [],
 		basketball: [
 			{
-				value: "Slam Dunk Contest Winner",
+				label: "Slam Dunk Contest Winner",
 				key: "dunk",
 			},
 			{
-				value: "Three-Point Contest Winner",
+				label: "Three-Point Contest Winner",
 				key: "three",
 			},
 		],
@@ -52,7 +51,7 @@ const nonCustomAwardsList = [
 nonCustomAwardsList.push(
 	...leaderAwardCategories.map((x) => {
 		return {
-			value: x.name,
+			label: x.name,
 			key: `${x.stat}_leader`,
 		};
 	}),
@@ -60,7 +59,7 @@ nonCustomAwardsList.push(
 
 const nonCustomAwards: Record<string, string> = {};
 for (const row of nonCustomAwardsList) {
-	nonCustomAwards[row.key] = row.value;
+	nonCustomAwards[row.key] = row.label;
 }
 
 const DELIMITER = "~";
@@ -255,7 +254,7 @@ export default defineView({
 							...range(1, row.maxNumTeams + 1).map((rank) => {
 								return {
 									key: `${row.shortName}${DELIMITER}${rank}`,
-									value: formatPlayerAwardName({
+									label: formatPlayerAwardName({
 										name: row.name,
 										numTeams: row.maxNumTeams,
 										rank,
@@ -264,14 +263,14 @@ export default defineView({
 							}),
 							{
 								key: row.shortName,
-								value: row.name,
+								label: row.name,
 							},
 						];
 					}
 
 					return {
 						key: row.shortName,
-						value: row.name,
+						label: row.name,
 					};
 				}),
 				...nonCustomAwardsList,

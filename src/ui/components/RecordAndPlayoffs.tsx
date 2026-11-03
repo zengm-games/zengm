@@ -1,37 +1,43 @@
 import { helpers } from "../util/helpers.ts";
 
-export const RecordAndPlayoffs = ({
-	abbrev,
-	className,
-	lost,
-	noLinks,
-	option,
-	roundsWonText,
-	season,
-	tied,
-	otl,
-	tid,
-	won,
-}: {
-	abbrev: string;
-	className?: string;
-	lost: number;
-	noLinks?: boolean;
-	option?: "noSeason";
-	roundsWonText?: string;
-	season: number;
-	tied?: number;
-	otl?: number;
-	tid: number;
-	won: number;
-}) => {
+export const RecordAndPlayoffs = (
+	props: {
+		className?: string;
+		lost: number;
+		noLinks?: boolean;
+		roundsWonText?: string;
+		season: number;
+		tied?: number;
+		otl?: number;
+		won: number;
+	} & (
+		| {
+				// abbrev and tid are for the link to the roster page for this season
+				abbrev: string;
+				option?: undefined;
+				tid: number;
+		  }
+		| {
+				option: "noSeason";
+		  }
+	),
+) => {
+	const { className, lost, noLinks, roundsWonText, season, tied, otl, won } =
+		props;
+
 	const seasonText =
-		option !== "noSeason" ? (
+		props.option !== "noSeason" ? (
 			<span>
 				{noLinks ? (
 					season
 				) : (
-					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}>
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${props.abbrev}_${props.tid}`,
+							season,
+						])}
+					>
 						{season}
 					</a>
 				)}

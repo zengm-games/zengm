@@ -17,7 +17,7 @@ import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "../views/depth.ts";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
-import type { SeasonType } from "../util/processInputs.ts";
+import { validateTeam, type SeasonType } from "../util/processInputs.ts";
 import type { processInputs } from "../views/advancedPlayerSearch.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { player } from "../core/index.ts";
@@ -35,7 +35,7 @@ const getPlayers = async (
 	seasonRange?: [number, number],
 ) => {
 	let tid: number | undefined;
-	if (tidInput !== undefined && tidInput <= 0) {
+	if (tidInput !== undefined && tidInput < 0) {
 		// For draft prospets and free agents, use current status
 		playersAll = playersAll.filter((p) => p.tid === tidInput);
 	} else {
@@ -217,11 +217,10 @@ export const advancedPlayerSearch = async ({
 			tid = PLAYER.UNDRAFTED;
 		} else if (abbrev === "$FA$") {
 			tid = PLAYER.FREE_AGENT;
-		} else {
-			const teamInfos = g.get("teamInfoCache");
-			const index = teamInfos.findIndex((t) => t.abbrev === abbrev);
-			if (index >= 0) {
-				tid = index;
+		} else if (typeof abbrev === "string") {
+			const team = validateTeam(abbrev, ["all"]);
+			if (typeof team === "number") {
+				tid = team;
 			}
 		}
 	}

@@ -315,9 +315,9 @@ const AwardRaces = ({
 		title: "Award Races",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "award_races",
-		dropdownFields: {
-			seasons: season,
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "awardRaces",
 		},
 	});
 

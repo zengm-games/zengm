@@ -19,8 +19,12 @@ const UpcomingFreeAgents = ({
 }: View<"upcomingFreeAgents">) => {
 	useTitleBar({
 		title: "Upcoming Free Agents",
-		dropdownView: "upcoming_free_agents",
-		dropdownFields: { seasonsUpcoming: season },
+		dropdown: {
+			fields: [
+				{ key: "season", options: { type: "upcomingSeasons" }, value: season },
+			],
+			view: "upcomingFreeAgents",
+		},
 	});
 
 	const {

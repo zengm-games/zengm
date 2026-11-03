@@ -5,22 +5,10 @@ import { defineView } from "../util/defineView.ts";
 import { getWatchPids } from "./news.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { g } from "../util/index.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"transactions">) => {
-	let abbrev;
-	let tid: number | undefined;
-	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
-	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
-		abbrev = validatedAbbrev;
-		tid = validatedTid;
-	} else if (params.abbrev === "watch") {
-		abbrev = "watch";
-	} else {
-		abbrev = "all";
-	}
-
 	let season: number | "all";
 
 	if (params.season && params.season !== "all") {
@@ -32,8 +20,7 @@ const processInputs = (params: RouteParams<"transactions">) => {
 	}
 
 	return {
-		tid,
-		abbrev,
+		team: validateTeam(params.team, ["all", "watch"]),
 		season,
 		eventType: params.eventType ?? "all",
 	};
@@ -46,14 +33,17 @@ export default defineView({
 		if (
 			updateEvents.size >= 1 ||
 			inputs.season !== prevInputs?.season ||
-			inputs.abbrev !== prevInputs?.abbrev ||
+			inputs.team !== prevInputs?.team ||
 			inputs.eventType !== prevInputs?.eventType
 		) {
 			const watchPids =
-				inputs.abbrev === "watch" ? await getWatchPids() : undefined;
+				inputs.team === "watch" ? await getWatchPids() : undefined;
 
 			const filter = (event: EventBBGM) => {
-				if (inputs.tid !== undefined && !event.tids?.includes(inputs.tid)) {
+				if (
+					typeof inputs.team === "number" &&
+					!event.tids?.includes(inputs.team)
+				) {
 					return false;
 				}
 
@@ -98,11 +88,10 @@ export default defineView({
 			}
 
 			return {
-				abbrev: inputs.abbrev,
 				events: events2,
 				season: inputs.season,
 				eventType: inputs.eventType,
-				tid: inputs.tid,
+				team: inputs.team,
 			};
 		}
 	},

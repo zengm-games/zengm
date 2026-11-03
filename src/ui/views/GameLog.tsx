@@ -68,18 +68,18 @@ export const NoGamesMessage = ({
 );
 
 const GamesList = ({
-	abbrev,
 	currentSeason,
 	gid,
 	gamesList,
 	season,
+	team,
 	tid,
 }: {
-	abbrev: string;
 	currentSeason: number;
 	gamesList: View<"gameLog">["gamesList"];
 	gid?: number;
 	season: number;
+	team: View<"gameLog">["team"];
 	tid: number;
 }) => {
 	if (season < currentSeason && gamesList.games.length === 0) {
@@ -124,7 +124,7 @@ const GamesList = ({
 
 						const url = helpers.leagueUrl([
 							"game_log",
-							abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
+							team === "special" ? team : helpers.getTeamUrlPart(team),
 							season,
 							gm.gid,
 						]);
@@ -167,33 +167,28 @@ const GamesList = ({
 };
 
 const GameLog = ({
-	abbrev,
 	boxScore,
 	gamesList,
 	season,
+	team,
 	tid,
 }: View<"gameLog">) => {
-	const dropdownTeamsKey = bySport({
-		baseball: "teams",
-		basketball: "teamsAndSpecial",
-		football: "teams",
-		hockey: "teams",
-	});
-
 	useTitleBar({
 		title: "Game Log",
-		dropdownView: "game_log",
-		dropdownFields: {
-			[dropdownTeamsKey]: abbrev,
-			seasons: season,
-		},
-		dropdownCustomURL: (fields) => {
-			return helpers.leagueUrl([
-				"game_log",
-				fields[dropdownTeamsKey]!,
-				fields.seasons,
-				boxScore.gid,
-			]);
+		dropdown: {
+			fields: [
+				{
+					key: "team",
+					options: {
+						type: "teams",
+						allStarGame: bySport({ basketball: true, default: false }),
+					},
+					value: team,
+				},
+				{ key: "season", options: { type: "seasons" }, value: season },
+			],
+			view: "gameLog",
+			params: { gid: boxScore.gid },
 		},
 	});
 
@@ -210,13 +205,7 @@ const GameLog = ({
 	return (
 		<>
 			{tid >= 0 ? (
-				<MoreLinks
-					type="team"
-					page="game_log"
-					abbrev={abbrev}
-					tid={tid}
-					season={season}
-				/>
+				<MoreLinks type="team" page="game_log" tid={tid} season={season} />
 			) : null}
 
 			{noGamesAndNoBoxScore ? (
@@ -228,7 +217,6 @@ const GameLog = ({
 						<div className="col-md-10">
 							{boxScore.gid >= 0 ? (
 								<BoxScoreWrapper
-									abbrev={abbrev}
 									boxScore={boxScore}
 									currentGidInList={currentGidInList}
 									nextGid={nextGid}
@@ -245,11 +233,11 @@ const GameLog = ({
 
 						<div className="col-md-2 mt-3 mt-md-0">
 							<GamesList
-								abbrev={abbrev}
 								currentSeason={currentSeason}
 								gamesList={gamesList}
 								gid={boxScore.gid}
 								season={season}
+								team={team}
 								tid={tid}
 							/>
 						</div>

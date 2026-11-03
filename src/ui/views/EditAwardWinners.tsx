@@ -313,8 +313,16 @@ const EditAwardWinners = ({
 }: View<"editAwardWinners">) => {
 	useTitleBar({
 		title: "Edit Award Winners",
-		dropdownView: "edit_award_winners",
-		dropdownFields: { seasonsHistory: season },
+		dropdown: {
+			fields: [
+				{
+					key: "season",
+					options: { type: "seasons", completedOnly: true },
+					value: season,
+				},
+			],
+			view: "editAwardWinners",
+		},
 	});
 
 	const [saving, setSaving] = useState(false);

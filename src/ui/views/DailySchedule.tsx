@@ -25,11 +25,13 @@ const DailySchedule = ({
 }: View<"dailySchedule">) => {
 	useTitleBar({
 		title: DAILY_SCHEDULE,
-		dropdownView: "daily_schedule",
-		dropdownFields: { seasons: season, days: day, cids: cid ?? "all" },
-		dropdownCustomOptions: {
-			cids,
-			days,
+		dropdown: {
+			fields: [
+				{ key: "season", options: { type: "seasons" }, value: season },
+				{ key: "day", options: days, value: day, buttons: "forward" },
+				{ key: "cid", options: cids, value: cid ?? "all" },
+			],
+			view: "dailySchedule",
 		},
 	});
 

@@ -1,0 +1,175 @@
+import { assert, test } from "vitest";
+import {
+	advanceLiveWinpX,
+	getLiveWinpXDomain,
+	INITIAL_LIVE_WINP_X_STATE,
+} from "./liveWinpChart.ts";
+
+const QUARTER_LENGTH = 12;
+const REGULATION_SECONDS = 4 * QUARTER_LENGTH * 60;
+
+const makeBoxScore = ({
+	pts = [0, 0],
+	...rest
+}: {
+	pts?: [number, number];
+	[key: string]: unknown;
+} = {}) => ({
+	numPeriods: 4,
+	teams: [0, 1].map((i) => ({
+		pts: pts[i],
+		ptsQtrs: [0],
+		sAtt: undefined as number | undefined,
+	})),
+	time: "6:00",
+	...rest,
+});
+
+const advance = (
+	state: typeof INITIAL_LIVE_WINP_X_STATE,
+	boxScore: any,
+	elapsedSeconds: number,
+) =>
+	advanceLiveWinpX({
+		boxScore,
+		elapsedSeconds,
+		quarterLength: QUARTER_LENGTH,
+		sportState: undefined,
+		state,
+	});
+
+test("adds elapsed seconds during regulation", () => {
+	let state = INITIAL_LIVE_WINP_X_STATE;
+	for (let i = 0; i < 12; i++) {
+		state = advance(state, makeBoxScore(), 30);
+	}
+	assert.strictEqual(state.x, 360);
+	assert.strictEqual(
+		getLiveWinpXDomain({
+			boxScore: makeBoxScore(),
+			quarterLength: QUARTER_LENGTH,
+			x: state.x,
+		}),
+		REGULATION_SECONDS,
+	);
+});
+
+test("a period rollover leaves x unchanged", () => {
+	const state = advance({ x: 720 }, makeBoxScore(), -720);
+	assert.strictEqual(state.x, 720);
+});
+
+test("a non-finite clock leaves x unchanged", () => {
+	const state = advance({ x: 720 }, makeBoxScore(), Number.NaN);
+	assert.strictEqual(state.x, 720);
+});
+
+test("overtime extends x and the domain past regulation", () => {
+	let state = { x: REGULATION_SECONDS };
+	let prev = state.x;
+	for (let i = 0; i < 10; i++) {
+		state = advance(state, makeBoxScore(), 30);
+		assert.isAbove(state.x, prev);
+		prev = state.x;
+	}
+	assert.strictEqual(state.x, REGULATION_SECONDS + 300);
+	assert.strictEqual(
+		getLiveWinpXDomain({
+			boxScore: makeBoxScore(),
+			quarterLength: QUARTER_LENGTH,
+			x: state.x,
+		}),
+		REGULATION_SECONDS + 300,
+	);
+});
+
+test("Elam ending moves x through the regulation time left, by points toward the target", () => {
+	const activationX = REGULATION_SECONDS - 180;
+	const span = 180;
+
+	// First sample with the target set anchors the Elam segment, and the clock is ignored from then on
+	let state = advance(
+		{ x: activationX },
+		makeBoxScore({ elamTarget: 124, pts: [100, 95] }),
+		Number.NaN,
+	);
+	assert.strictEqual(state.x, activationX);
+
+	state = advance(
+		state,
+		makeBoxScore({ elamTarget: 124, pts: [112, 100] }),
+		Number.NaN,
+	);
+	assert.strictEqual(state.x, activationX + span / 2);
+
+	state = advance(
+		state,
+		makeBoxScore({ elamTarget: 124, pts: [112, 124] }),
+		Number.NaN,
+	);
+	assert.strictEqual(state.x, activationX + span);
+});
+
+test("Elam ending with no regulation time left still advances", () => {
+	let state = advance(
+		{ x: REGULATION_SECONDS + 60 },
+		makeBoxScore({ elamTarget: 20, pts: [10, 10] }),
+		Number.NaN,
+	);
+	const start = state.x;
+	state = advance(
+		state,
+		makeBoxScore({ elamTarget: 20, pts: [15, 10] }),
+		Number.NaN,
+	);
+	assert.isAbove(state.x, start);
+});
+
+test("shootout adds one step per attempt", () => {
+	const startX = REGULATION_SECONDS + 300;
+	const shootoutBoxScore = (sAtt: [number, number]) => {
+		const boxScore = makeBoxScore({ shootout: true });
+		boxScore.teams[0]!.sAtt = sAtt[0];
+		boxScore.teams[1]!.sAtt = sAtt[1];
+		return boxScore;
+	};
+
+	let state = advance({ x: startX }, shootoutBoxScore([0, 0]), 0);
+	assert.strictEqual(state.x, startX);
+
+	const steps = [];
+	let prev = state.x;
+	for (const sAtt of [
+		[1, 0],
+		[1, 1],
+		[2, 1],
+	] as [number, number][]) {
+		state = advance(state, shootoutBoxScore(sAtt), 0);
+		steps.push(state.x - prev);
+		prev = state.x;
+	}
+	assert.isAbove(steps[0]!, 0);
+	assert.closeTo(steps[1]!, steps[0]!, 1e-9);
+	assert.closeTo(steps[2]!, steps[0]!, 1e-9);
+});
+
+test("numPeriods 0 does not divide by zero", () => {
+	const boxScore = makeBoxScore({ numPeriods: 0, elamTarget: 10, pts: [0, 0] });
+	let state = advance({ x: 0 }, boxScore, Number.NaN);
+	state = advance(
+		state,
+		makeBoxScore({ numPeriods: 0, elamTarget: 10, pts: [5, 0] }),
+		Number.NaN,
+	);
+	assert.isTrue(Number.isFinite(state.x));
+	assert.isAbove(state.x, 0);
+	assert.isTrue(
+		Number.isFinite(
+			getLiveWinpXDomain({
+				boxScore,
+				quarterLength: QUARTER_LENGTH,
+				x: state.x,
+			}),
+		),
+	);
+});

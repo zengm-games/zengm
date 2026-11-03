@@ -2,6 +2,9 @@ import { assert, test } from "vitest";
 import {
 	advanceLiveWinpX,
 	getLiveWinpXDomain,
+	FALLBACK_LINE_COLORS,
+	getLabelYs,
+	getLineColors,
 	getNextLiveWinpSample,
 	INITIAL_LIVE_WINP_X_STATE,
 } from "./liveWinpChart.ts";
@@ -216,4 +219,54 @@ test("exhibition games and games without ovrs get no sample", () => {
 		(t as any).ovr = undefined;
 	}
 	assert.isUndefined(nextSample(noOvr));
+});
+
+test("two distinct mid-tone primaries are kept", () => {
+	assert.deepEqual(
+		getLineColors([
+			["#1d428a", "#ffc72c", "#ffffff"],
+			["#ce1141", "#000000", "#ffffff"],
+		]),
+		["#1d428a", "#ce1141"],
+	);
+});
+
+test("a black primary is replaced by the team's next color", () => {
+	assert.deepEqual(
+		getLineColors([
+			["#000000", "#c8102e", "#ffffff"],
+			["#1d428a", "#ffc72c", "#ffffff"],
+		]),
+		["#c8102e", "#1d428a"],
+	);
+});
+
+test("near-identical primaries switch the second team to its next color", () => {
+	assert.deepEqual(
+		getLineColors([
+			["#c8102e", "#000000", "#ffffff"],
+			["#ce1141", "#1d428a", "#ffffff"],
+		]),
+		["#c8102e", "#1d428a"],
+	);
+});
+
+test("teams on the default colors fall back to the neutral pair", () => {
+	const defaults = ["#000000", "#cccccc", "#ffffff"];
+	assert.deepEqual(getLineColors([defaults, defaults]), [
+		...FALLBACK_LINE_COLORS,
+	]);
+});
+
+test("labels at 50/50 are pushed apart, and labels at 90/10 are left alone", () => {
+	const [a, b] = getLabelYs([0.5, 0.5], 0.2);
+	assert.closeTo(a - b, 0.2, 1e-9);
+	assert.deepEqual(getLabelYs([0.9, 0.1], 0.2), [0.9, 0.1]);
+	assert.deepEqual(getLabelYs([0.1, 0.9], 0.2), [0.1, 0.9]);
+});
+
+test("labels near 100% stay inside the chart", () => {
+	const [a, b] = getLabelYs([1, 0.95], 0.2);
+	assert.closeTo(a, 0.9, 1e-9);
+	assert.closeTo(b, 0.7, 1e-9);
 });

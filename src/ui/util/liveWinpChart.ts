@@ -201,3 +201,97 @@ export const getLiveWinpXDomain = ({
 		1,
 	);
 };
+
+// Line colors are each team's main color, but a near-black or near-white color vanishes in one of the themes, and two similar colors can't be told apart
+const MIN_LUMINANCE = 0.03;
+const MAX_LUMINANCE = 0.9;
+const MIN_COLOR_DISTANCE = 80;
+export const FALLBACK_LINE_COLORS = [
+	"var(--bs-primary)",
+	"var(--bs-secondary)",
+] as const;
+
+const hexToRgb = (hex: string) => {
+	const match = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
+	if (!match) {
+		return;
+	}
+	return [
+		Number.parseInt(match[1]!, 16),
+		Number.parseInt(match[2]!, 16),
+		Number.parseInt(match[3]!, 16),
+	] as const;
+};
+
+const getLuminance = (rgb: readonly [number, number, number]) => {
+	const [r, g, b] = rgb.map((value) => {
+		const channel = value / 255;
+		return channel <= 0.03928
+			? channel / 12.92
+			: ((channel + 0.055) / 1.055) ** 2.4;
+	}) as [number, number, number];
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+const getVisibleColors = (colors: readonly string[]) => {
+	return colors.filter((color) => {
+		const rgb = hexToRgb(color);
+		if (!rgb) {
+			return false;
+		}
+		const luminance = getLuminance(rgb);
+		return luminance >= MIN_LUMINANCE && luminance <= MAX_LUMINANCE;
+	});
+};
+
+const getColorDistance = (a: string, b: string) => {
+	const rgbA = hexToRgb(a)!;
+	const rgbB = hexToRgb(b)!;
+	return Math.hypot(rgbA[0] - rgbB[0], rgbA[1] - rgbB[1], rgbA[2] - rgbB[2]);
+};
+
+export const getLineColors = (
+	colors: [readonly string[], readonly string[]],
+): [string, string] => {
+	const visible0 = getVisibleColors(colors[0]);
+	const visible1 = getVisibleColors(colors[1]);
+	const color0 = visible0[0];
+	if (color0 !== undefined) {
+		const color1 = visible1.find(
+			(color) => getColorDistance(color0, color) >= MIN_COLOR_DISTANCE,
+		);
+		if (color1 !== undefined) {
+			return [color0, color1];
+		}
+	}
+	return [...FALLBACK_LINE_COLORS];
+};
+
+// Label centers for the two lines' right-edge labels, as probabilities. Labels closer than minGap are pushed apart around their midpoint and kept inside [minGap / 2, 1 - minGap / 2], so they never overlap or leave the chart.
+export const getLabelYs = (
+	probs: [number, number],
+	minGap: number,
+): [number, number] => {
+	const hi = probs[0] >= probs[1] ? 0 : 1;
+	const lo = hi === 0 ? 1 : 0;
+	let yHi = probs[hi];
+	let yLo = probs[lo];
+	if (yHi - yLo < minGap) {
+		const mid = (yHi + yLo) / 2;
+		yHi = mid + minGap / 2;
+		yLo = mid - minGap / 2;
+	}
+	const pad = minGap / 2;
+	if (yHi > 1 - pad) {
+		yLo -= yHi - (1 - pad);
+		yHi = 1 - pad;
+	}
+	if (yLo < pad) {
+		yHi += pad - yLo;
+		yLo = pad;
+	}
+	const ys: [number, number] = [0, 0];
+	ys[hi] = yHi;
+	ys[lo] = yLo;
+	return ys;
+};

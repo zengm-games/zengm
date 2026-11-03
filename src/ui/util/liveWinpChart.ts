@@ -202,9 +202,9 @@ export const getLiveWinpXDomain = ({
 	);
 };
 
-// Line colors are each team's main color, but a near-black or near-white color vanishes in one of the themes, and two similar colors can't be told apart
-const MIN_LUMINANCE = 0.03;
-const MAX_LUMINANCE = 0.9;
+// Line colors are each team's main color, but a dark color vanishes in the dark theme, a light color vanishes in the light theme, and two similar colors can't be told apart
+const MIN_LUMINANCE = 0.05;
+const MAX_LUMINANCE = 0.5;
 const MIN_COLOR_DISTANCE = 80;
 export const FALLBACK_LINE_COLORS = [
 	"var(--bs-primary)",
@@ -255,16 +255,15 @@ export const getLineColors = (
 ): [string, string] => {
 	const visible0 = getVisibleColors(colors[0]);
 	const visible1 = getVisibleColors(colors[1]);
-	const color0 = visible0[0];
-	if (color0 !== undefined) {
-		const color1 = visible1.find(
-			(color) => getColorDistance(color0, color) >= MIN_COLOR_DISTANCE,
-		);
-		if (color1 !== undefined) {
-			return [color0, color1];
-		}
-	}
-	return [...FALLBACK_LINE_COLORS];
+	// A team with no usable color gets a neutral one, and the other team keeps its own
+	const color0 = visible0[0] ?? FALLBACK_LINE_COLORS[0];
+	const color1 =
+		visible0[0] === undefined
+			? visible1[0]
+			: visible1.find(
+					(color) => getColorDistance(color0, color) >= MIN_COLOR_DISTANCE,
+				);
+	return [color0, color1 ?? FALLBACK_LINE_COLORS[1]];
 };
 
 // Label centers for the two lines' right-edge labels, as probabilities. Labels closer than minGap are pushed apart around their midpoint and kept inside [minGap / 2, 1 - minGap / 2], so they never overlap or leave the chart.

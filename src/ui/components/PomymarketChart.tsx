@@ -15,7 +15,14 @@ import {
 } from "../util/liveWinpChart.ts";
 
 const HEIGHT = 200;
-const MARGIN = { top: 12, right: 90, bottom: 12, left: 0 };
+// The team labels sit just right of the line's end, which reaches the plot's right edge at the final buzzer, so the percent ticks are pushed past them
+const TEAM_LABEL_WIDTH_PX = 72;
+const MARGIN = {
+	top: 12,
+	right: TEAM_LABEL_WIDTH_PX + 36,
+	bottom: 12,
+	left: 0,
+};
 
 // Room for the two-line team label, as a share of the plot height
 const LABEL_HEIGHT_PX = 34;
@@ -81,13 +88,16 @@ export const PomymarketChart = ({
 						}),
 					),
 				),
-				decorative(
-					dot(labels, {
-						x: "x",
-						y: "prob",
-						r: 4,
-						fill: (d) => d.color,
-					}),
+				// dot only takes a static fill, so each team gets its own mark
+				...labels.map((label) =>
+					decorative(
+						dot([label], {
+							x: "x",
+							y: "prob",
+							r: 4,
+							fill: label.color,
+						}),
+					),
 				),
 				decorative(
 					text(labels, {
@@ -135,6 +145,7 @@ export const PomymarketChart = ({
 							format: (value: number) => `${Math.round(value * 100)}%`,
 						},
 						tickLabels: {
+							dx: TEAM_LABEL_WIDTH_PX,
 							fontSize: 11,
 							opacity: 0.6,
 						},

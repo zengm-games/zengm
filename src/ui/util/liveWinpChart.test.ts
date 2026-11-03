@@ -251,6 +251,20 @@ test("near-identical primaries switch the second team to its next color", () => 
 	);
 });
 
+test("a team with no usable color gets a neutral line, and the other keeps its color", () => {
+	// Near-black, cream, and dark purple: none reads in both themes
+	const curses = ["#211e1e", "#f8e3cc", "#3f1c59"];
+	const navy = ["#1d428a", "#ffc72c", "#ffffff"];
+	assert.deepEqual(getLineColors([curses, navy]), [
+		FALLBACK_LINE_COLORS[0],
+		"#1d428a",
+	]);
+	assert.deepEqual(getLineColors([navy, curses]), [
+		"#1d428a",
+		FALLBACK_LINE_COLORS[1],
+	]);
+});
+
 test("teams on the default colors fall back to the neutral pair", () => {
 	const defaults = ["#000000", "#cccccc", "#ffffff"];
 	assert.deepEqual(getLineColors([defaults, defaults]), [

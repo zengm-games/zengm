@@ -1,3 +1,5 @@
+import { getLiveWinp } from "./getLiveWinp.ts";
+
 // Maps live game state to a game-progress x position for the Pomymarket win chart. This is not the time-left fraction from getLiveWinp, because that one restarts every overtime period and extra inning and so would run backwards.
 
 const BASEBALL_OUTS_PER_HALF_INNING = 3;
@@ -130,6 +132,56 @@ export const advanceLiveWinpX = ({
 	return {
 		...state,
 		x: state.x + elapsedSeconds,
+	};
+};
+
+export type LiveWinpSample = {
+	// Probability that teams[0] wins
+	prob: number;
+	x: number;
+};
+
+// Exhibition games and games without team ovrs get no samples, matching the live percentages under the score
+export const getNextLiveWinpSample = ({
+	boxScore,
+	elapsedSeconds,
+	homeCourtAdvantage,
+	quarterLength,
+	sportState,
+	xState,
+}: {
+	boxScore: any;
+	elapsedSeconds: number;
+	homeCourtAdvantage: number;
+	quarterLength: number;
+	sportState: any;
+	xState: LiveWinpXState;
+}) => {
+	if (boxScore.exhibition) {
+		return;
+	}
+
+	const liveWinp = getLiveWinp({
+		boxScore,
+		homeCourtAdvantage,
+		quarterLength,
+		sportState,
+	});
+	if (!liveWinp) {
+		return;
+	}
+
+	const nextXState = advanceLiveWinpX({
+		boxScore,
+		elapsedSeconds,
+		quarterLength,
+		sportState,
+		state: xState,
+	});
+
+	return {
+		sample: { prob: liveWinp.prob, x: nextXState.x },
+		xState: nextXState,
 	};
 };
 

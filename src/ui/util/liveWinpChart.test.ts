@@ -2,6 +2,7 @@ import { assert, test } from "vitest";
 import {
 	advanceLiveWinpX,
 	getLiveWinpXDomain,
+	getNextLiveWinpSample,
 	INITIAL_LIVE_WINP_X_STATE,
 } from "./liveWinpChart.ts";
 
@@ -172,4 +173,47 @@ test("numPeriods 0 does not divide by zero", () => {
 			}),
 		),
 	);
+});
+
+const sampleBoxScore = (rest: Record<string, unknown> = {}) => ({
+	...makeBoxScore({ pts: [80, 70] }),
+	teams: [0, 1].map((i) => ({
+		ovr: 55,
+		pts: i === 0 ? 80 : 70,
+		ptsQtrs: [20, 20, 20],
+		tid: i,
+	})),
+	...rest,
+});
+
+const nextSample = (boxScore: any, elapsedSeconds = 10) =>
+	getNextLiveWinpSample({
+		boxScore,
+		elapsedSeconds,
+		homeCourtAdvantage: 1,
+		quarterLength: QUARTER_LENGTH,
+		sportState: undefined,
+		xState: { x: 100 },
+	});
+
+test("a sample carries the live probability and the advanced x", () => {
+	const result = nextSample(sampleBoxScore())!;
+	assert.strictEqual(result.sample.x, 110);
+	assert.strictEqual(result.xState.x, 110);
+	assert.isAbove(result.sample.prob, 0.5);
+});
+
+test("the game-over sample resolves to the winner", () => {
+	const result = nextSample(sampleBoxScore({ gameOver: true }), 0)!;
+	assert.strictEqual(result.sample.prob, 1);
+	assert.strictEqual(result.sample.x, 100);
+});
+
+test("exhibition games and games without ovrs get no sample", () => {
+	assert.isUndefined(nextSample(sampleBoxScore({ exhibition: true })));
+	const noOvr = sampleBoxScore();
+	for (const t of noOvr.teams) {
+		(t as any).ovr = undefined;
+	}
+	assert.isUndefined(nextSample(noOvr));
 });

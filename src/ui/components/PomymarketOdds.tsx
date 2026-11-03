@@ -72,6 +72,11 @@ export const PomymarketBar = ({
 	);
 };
 
+// The live percentages and the live chart share this rule, and both also need team ovrs
+export const showPomymarketLive = (pomymarket: boolean, boxScore: any) => {
+	return pomymarket && !boxScore.exhibition;
+};
+
 export const PomymarketLive = ({
 	boxScore,
 	quarterLength,
@@ -86,7 +91,7 @@ export const PomymarketLive = ({
 		"pomymarket",
 	]);
 
-	if (!pomymarket || boxScore.exhibition) {
+	if (!showPomymarketLive(pomymarket, boxScore)) {
 		return null;
 	}
 

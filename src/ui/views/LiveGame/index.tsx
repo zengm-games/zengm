@@ -19,13 +19,18 @@ import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { getSeconds } from "../../../common/formatClock.ts";
-import { PomymarketLive } from "../../components/PomymarketOdds.tsx";
+import { PomymarketChart } from "../../components/PomymarketChart.tsx";
 import {
+	PomymarketLive,
+	showPomymarketLive,
+} from "../../components/PomymarketOdds.tsx";
+import {
+	getLiveWinpXDomain,
 	getNextLiveWinpSample,
 	INITIAL_LIVE_WINP_X_STATE,
 	type LiveWinpSample,
 } from "../../util/liveWinpChart.ts";
-import { local } from "../../util/local.ts";
+import { local, useLocal } from "../../util/local.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../../util/processLiveGameEvents.football.tsx";
@@ -1002,6 +1007,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 		useState<HTMLElement | null>(null);
 	const isStuck = useIsStuck(liveGameStickyDiv);
 
+	const { pomymarket } = useLocal(["pomymarket"]);
+
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
@@ -1104,6 +1111,20 @@ export const LiveGame = (props: View<"liveGame">) => {
 								</div>
 							</div>
 						</div>
+					) : null}
+					{boxScore.current.gid >= 0 &&
+					showPomymarketLive(pomymarket, boxScore.current) ? (
+						<PomymarketChart
+							gameOver={!!boxScore.current.gameOver}
+							numSamples={winpSamples.current.length}
+							samples={winpSamples.current}
+							teams={boxScore.current.teams}
+							xDomain={getLiveWinpXDomain({
+								boxScore: boxScore.current,
+								quarterLength: props.quarterLength,
+								x: winpXState.current.x,
+							})}
+						/>
 					) : null}
 					{boxScore.current.gid >= 0 ? (
 						<BoxScoreWrapper

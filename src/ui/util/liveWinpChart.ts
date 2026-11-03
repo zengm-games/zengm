@@ -60,6 +60,28 @@ const getBaseballOuts = (boxScore: any, outs: number) => {
 	return halfInningsDone * BASEBALL_OUTS_PER_HALF_INNING + outs;
 };
 
+// Football and hockey log no event at 0:00, so the time left after a period's last play only shows up as a clock rollover or as the game ending
+export const getLiveWinpElapsedSeconds = ({
+	endSeconds,
+	gameOver,
+	overtimes,
+	startSeconds,
+}: {
+	endSeconds: number;
+	gameOver: boolean;
+	overtimes: number;
+	startSeconds: number;
+}) => {
+	// Regulation ran out. An overtime game can end early on a sudden-death score, so its clock is left alone.
+	if (gameOver && overtimes === 0) {
+		return startSeconds;
+	}
+	if (endSeconds > startSeconds) {
+		return startSeconds;
+	}
+	return startSeconds - endSeconds;
+};
+
 export const advanceLiveWinpX = ({
 	boxScore,
 	elapsedSeconds,

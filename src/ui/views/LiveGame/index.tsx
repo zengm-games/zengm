@@ -25,6 +25,7 @@ import {
 	showPomymarketLive,
 } from "../../components/PomymarketOdds.tsx";
 import {
+	getLiveWinpElapsedSeconds,
 	getLiveWinpXDomain,
 	getNextLiveWinpSample,
 	INITIAL_LIVE_WINP_X_STATE,
@@ -517,7 +518,14 @@ export const LiveGame = (props: View<"liveGame">) => {
 				onLiveSimOver();
 			}
 
-			recordWinpSample(startSeconds - playEndSeconds);
+			recordWinpSample(
+				getLiveWinpElapsedSeconds({
+					endSeconds: playEndSeconds,
+					gameOver: !!boxScore.current.gameOver,
+					overtimes: overtimes.current,
+					startSeconds,
+				}),
+			);
 
 			const endSeconds = getSeconds(boxScore.current.time);
 

@@ -1,6 +1,7 @@
 import { assert, test } from "vitest";
 import {
 	advanceLiveWinpX,
+	getLiveWinpElapsedSeconds,
 	getLiveWinpXDomain,
 	FALLBACK_LINE_COLORS,
 	getLabelYs,
@@ -155,6 +156,30 @@ test("shootout adds one step per attempt", () => {
 	assert.isAbove(steps[0]!, 0);
 	assert.closeTo(steps[1]!, steps[0]!, 1e-9);
 	assert.closeTo(steps[2]!, steps[0]!, 1e-9);
+});
+
+test("time left after a period's last play still counts", () => {
+	const elapsed = (
+		startSeconds: number,
+		endSeconds: number,
+		gameOver = false,
+		overtimes = 0,
+	) =>
+		getLiveWinpElapsedSeconds({
+			endSeconds,
+			gameOver,
+			overtimes,
+			startSeconds,
+		});
+
+	// A play in the middle of a period
+	assert.strictEqual(elapsed(300, 270), 30);
+	// The last snap was at 0:07, then the clock reset to 15:00 for the next quarter
+	assert.strictEqual(elapsed(7, 900), 7);
+	// Regulation ends with 0:04 left on the last play's clock
+	assert.strictEqual(elapsed(9, 4, true), 9);
+	// A sudden-death overtime winner adds only the time actually played
+	assert.strictEqual(elapsed(200, 150, true, 1), 50);
 });
 
 test("numPeriods 0 does not divide by zero", () => {

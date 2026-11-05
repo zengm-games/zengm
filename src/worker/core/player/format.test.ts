@@ -368,46 +368,6 @@ test("return stats from previous season if options.oldStats is true and current 
 	g.setWithoutSavingToDB("season", 2012);
 });
 
-test("adjust cashOwed by options.numGamesRemaining", async () => {
-	g.setWithoutSavingToDB("season", 2012);
-	let pf = await player.format(p, {
-		attrs: ["cashOwed"],
-		tid: 4,
-		season: 2012,
-		numGamesRemaining: 82,
-	});
-
-	if (!pf) {
-		throw new Error("Missing player");
-	}
-
-	assert.strictEqual(pf.cashOwed, (p.contracts[0]!.amounts[0]! * 2) / 1000);
-	pf = await player.format(p, {
-		attrs: ["cashOwed"],
-		tid: 4,
-		season: 2012,
-		numGamesRemaining: 41,
-	});
-
-	if (!pf) {
-		throw new Error("Missing player");
-	}
-
-	assert.strictEqual(pf.cashOwed, (p.contracts[0]!.amounts[0]! * 1.5) / 1000);
-	pf = await player.format(p, {
-		attrs: ["cashOwed"],
-		tid: 4,
-		season: 2012,
-		numGamesRemaining: 0,
-	});
-
-	if (!pf) {
-		throw new Error("Missing player");
-	}
-
-	assert.strictEqual(pf.cashOwed, p.contracts[0]!.amounts[0]! / 1000);
-});
-
 test("return stats and ratings from all seasons and teams if no season or team is specified", async () => {
 	const pf = await player.format(p, {
 		attrs: ["tid", "awards"],

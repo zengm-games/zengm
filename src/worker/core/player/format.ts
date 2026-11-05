@@ -266,22 +266,18 @@ const getSalaryRows = (p: Player) => {
 	return rows;
 };
 
-// Total of all salaries, past and future, in thousands of dollars
-export const getSalariesTotal = (p: Player) => {
-	return Math.sumPrecise(getSalaryRows(p).map((row) => row.amount));
+// Total of all salaries, past and future, in thousands of dollars. Pass salaryRows if they were already computed.
+export const getSalariesTotal = (
+	p: Player,
+	salaryRows: SalaryRow[] = getSalaryRows(p),
+) => {
+	return Math.sumPrecise(salaryRows.map((row) => row.amount));
 };
 
 const processAttrs = (
 	output: any,
 	p: Player,
-	{
-		attrs,
-		fuzz,
-		numGamesRemaining,
-		season,
-		seasonRange,
-		tid,
-	}: PlayerFormatOptionsRequired,
+	{ attrs, fuzz, season, seasonRange, tid }: PlayerFormatOptionsRequired,
 	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	let salaryRowsCache: SalaryRow[] | undefined;
@@ -368,34 +364,6 @@ const processAttrs = (
 					exp: season,
 				};
 			}
-		} else if (attr === "cashOwed") {
-			let cashOwed = 0;
-			if (p.contractDemand) {
-				cashOwed =
-					player.contractSeasonsRemaining(
-						p.contractDemand.exp,
-						numGamesRemaining,
-					) * p.contractDemand.amount;
-			} else {
-				const contract = getCurrentContract(p);
-				if (contract) {
-					// The rest of this season, plus all future seasons
-					const currentSeason = g.get("season");
-					const fractionRemaining = Math.min(
-						numGamesRemaining / g.get("numGames"),
-						1,
-					);
-					for (const [i, amount] of contract.amounts.entries()) {
-						const contractSeason = contract.start + i;
-						if (contractSeason === currentSeason) {
-							cashOwed += fractionRemaining * amount;
-						} else if (contractSeason > currentSeason) {
-							cashOwed += amount;
-						}
-					}
-				}
-			}
-			output.cashOwed = cashOwed / 1000; // [millions of dollars]
 		} else if (attr === "abbrev") {
 			output.abbrev = helpers.getAbbrev(p.tid);
 		} else if (attr === "hof") {
@@ -431,7 +399,7 @@ const processAttrs = (
 			}));
 			output.salaries = salaries;
 		} else if (attr === "salariesTotal") {
-			output.salariesTotal = getSalariesTotal(p) / 1000;
+			output.salariesTotal = getSalariesTotal(p, getSalaryRowsCached()) / 1000;
 		} else if (attr === "name") {
 			output.name = `${p.firstName} ${p.lastName}`;
 		} else if (attr === "untradable") {
@@ -1499,7 +1467,6 @@ const normalizeOptions = (
 		showDraftProspectRookieRatings = false,
 		fuzz = false,
 		oldStats = false,
-		numGamesRemaining = 0,
 		statType = "perGame",
 		mergeStats = "none",
 	} = optionsInput;
@@ -1530,7 +1497,6 @@ const normalizeOptions = (
 		showRetired,
 		fuzz,
 		oldStats,
-		numGamesRemaining,
 		statType,
 		mergeStats,
 	};
@@ -1584,7 +1550,6 @@ const getAbbrevsNeeded = ({
  * @param {boolean=} options.showRetired If true (default false), then players with no ratings for the current season are still returned, with either 0 for every rating and a blank array for skills (retired players) or future ratings (draft prospects). This is currently only used for the watch list, so retired players (and future draft prospects!) can still be watched.
  * @param {boolean=} options.fuzz When true (default false), noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false.
  * @param {boolean=} options.oldStats When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.
- * @param {number=} options.numGamesRemaining If the "cashOwed" attr is requested, options.numGamesRemaining is used to calculate how much of the current season's contract remains to be paid. This is used for buying out players.
  * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */

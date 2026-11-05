@@ -8,7 +8,6 @@ import bonus from "./bonus.ts";
 import checkJerseyNumberRetirement from "./checkJerseyNumberRetirement.ts";
 import checkStatisticalFeat from "./checkStatisticalFeat.ts";
 import compositeRating from "./compositeRating.ts";
-import contractSeasonsRemaining from "./contractSeasonsRemaining.ts";
 import develop from "./develop.ts";
 import {
 	abbrevsFromTeamSeasons,
@@ -65,7 +64,6 @@ export default {
 	checkJerseyNumberRetirement,
 	checkStatisticalFeat,
 	compositeRating,
-	contractSeasonsRemaining,
 	createFormatter,
 	develop,
 	format,

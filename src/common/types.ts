@@ -1433,7 +1433,6 @@ type PlayerAttrsPlus<Contract = PlayerContract> = Omit<
 	abbrev: string;
 	age: number;
 	ageAtDeath: number | null;
-	cashOwed: number;
 	contract: Contract;
 	diedYear: number | null;
 	draft: Player["draft"] & {
@@ -1570,7 +1569,6 @@ export type PlayerFormatOptions = {
 	showRetired?: boolean;
 	fuzz?: boolean;
 	oldStats?: boolean;
-	numGamesRemaining?: number;
 	statType?: PlayerStatType;
 	mergeStats?: "none" | "totOnly" | "totAndTeams";
 };

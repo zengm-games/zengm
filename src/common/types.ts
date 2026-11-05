@@ -1171,7 +1171,7 @@ export type ContractEndedEarly =
 export type Contract = {
 	type: ContractType;
 
-	// Undefined for contracts migrated from before contracts were tracked, when the signing is not known
+	// When and by which team the contract was signed. Undefined if that's not known, like for contracts migrated from before contracts were tracked, real players' contracts, and contracts that came with a league file. tid is PLAYER.DOES_NOT_EXIST if the team isn't in this league, like for imported players' past contracts.
 	signed?: { season: number; phase: Phase; tid: number };
 
 	start: number; // First season paid

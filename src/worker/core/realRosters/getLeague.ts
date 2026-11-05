@@ -7,7 +7,7 @@ import type {
 	DraftPickWithoutKey,
 	DraftLotteryResult,
 	GameAttributesLeague,
-	PlayerContract,
+	FlatContractInfo,
 } from "../../../common/types.ts";
 import { helpers } from "../../util/index.ts";
 import {
@@ -781,7 +781,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 						round: number | undefined;
 						pick: number | undefined;
 					};
-					contractDemand: PlayerContract | undefined;
+					contractDemand: FlatContractInfo | undefined;
 					ratings: [OnlyRatings, ...OnlyRatings[]];
 					srID: string;
 				}) => {

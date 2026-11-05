@@ -1,6 +1,6 @@
 import { PHASE } from "../../../common/constants.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
-import type { Phase, Player, PlayerContract } from "../../../common/types.ts";
+import type { Phase, Player, FlatContractInfo } from "../../../common/types.ts";
 import genJerseyNumber from "./genJerseyNumber.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
 import { addContract, createContract } from "../contract/index.ts";
@@ -8,7 +8,7 @@ import { addContract, createContract } from "../contract/index.ts";
 const sign = async (
 	p: Player,
 	tid: number,
-	contractInput: PlayerContract,
+	contractInput: FlatContractInfo,
 	phase: Phase,
 ) => {
 	const isRookie =
@@ -33,7 +33,7 @@ const sign = async (
 	score = Math.round(helpers.bound(score, 0, Infinity));
 
 	// Copy so later changes to the contract demand don't affect this
-	const contractSummary: PlayerContract = {
+	const contractSummary: FlatContractInfo = {
 		amount: contractInput.amount,
 		exp: contractInput.exp,
 	};

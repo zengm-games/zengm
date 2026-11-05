@@ -9,7 +9,7 @@ import type {
 	ContractType,
 	LegacyPlayerContractInfo,
 	Phase,
-	PlayerContract,
+	FlatContractInfo,
 } from "../../../common/types.ts";
 
 // Before league DB version 75, a player's contract (or contract demand) was in p.contract, a log of salaries by season was in p.salaries, and contracts still owed to released players were in the releasedPlayers store. This converts that to the current format: contracts in p.contracts, and contract demands in p.contractDemand.
@@ -53,8 +53,8 @@ export type LegacyReleasedPlayer = {
 	};
 };
 
-// From "freeAgent" and "reSigned" events
-export type LegacySigningEvent = {
+// What's known about a signing, from a "freeAgent" or "reSigned" event
+export type SigningEventInfo = {
 	type: "freeAgent" | "reSigned";
 	season: number;
 	phase: Phase | undefined;
@@ -63,8 +63,8 @@ export type LegacySigningEvent = {
 	exp: number;
 };
 
-// From "release" events
-export type LegacyReleaseEvent = {
+// What's known about a release, from a "release" event
+export type ReleaseEventInfo = {
 	season: number;
 	phase: Phase | undefined;
 	tid: number;
@@ -83,7 +83,7 @@ type Segment = {
 	exp: number;
 	amount: number;
 	current?: true;
-	signingEvent?: LegacySigningEvent;
+	signingEvent?: SigningEventInfo;
 };
 
 // Group salary rows into contracts. Rows were added in the order contracts were signed, so a contract ends when the next row is not the next season or has a different amount, or at the expiration of a known contract.
@@ -305,7 +305,7 @@ export const applyLegacyReleasedPlayers = ({
 	contracts: Contract[];
 	leagueState: LeagueState;
 	releasedPlayers: LegacyReleasedPlayer[];
-	releaseEvents: LegacyReleaseEvent[];
+	releaseEvents: ReleaseEventInfo[];
 	tid: number;
 }) => {
 	const currentContract = getCurrentContract({ contracts, tid });
@@ -379,11 +379,11 @@ export const convertLegacyContracts = ({
 	p: LegacyPlayer;
 	leagueState: LeagueState;
 	releasedPlayers: LegacyReleasedPlayer[];
-	releaseEvents: LegacyReleaseEvent[];
-	signingEvents: LegacySigningEvent[];
+	releaseEvents: ReleaseEventInfo[];
+	signingEvents: SigningEventInfo[];
 }): {
 	contracts: Contract[];
-	contractDemand: PlayerContract | undefined;
+	contractDemand: FlatContractInfo | undefined;
 } => {
 	const { phase, season } = leagueState;
 	const legacyContract = p.contract;
@@ -395,7 +395,7 @@ export const convertLegacyContracts = ({
 	];
 	const segments = getSegments(p.salaries ?? [], knownContracts);
 
-	let contractDemand: PlayerContract | undefined;
+	let contractDemand: FlatContractInfo | undefined;
 	if (legacyContract) {
 		const { rookieResign, temp, ...demand } = legacyContract;
 		if (p.tid >= 0) {
@@ -430,7 +430,7 @@ export const convertLegacyContracts = ({
 		}
 	}
 
-	const usedSigningEvents = new Set<LegacySigningEvent>();
+	const usedSigningEvents = new Set<SigningEventInfo>();
 	for (const segment of segments.toReversed()) {
 		const signingEvent = signingEvents.findLast(
 			(event) =>

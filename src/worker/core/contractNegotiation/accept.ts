@@ -2,7 +2,7 @@ import { player, team } from "../index.ts";
 import cancel from "./cancel.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, toUI } from "../../util/index.ts";
-import type { Negotiation, PlayerContract } from "../../../common/types.ts";
+import type { Negotiation, FlatContractInfo } from "../../../common/types.ts";
 import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { getContractDemand } from "../contract/index.ts";
@@ -75,7 +75,7 @@ const accept = async <
 
 	const phase = actualPhase();
 
-	const contract: PlayerContract = {
+	const contract: FlatContractInfo = {
 		amount,
 		exp,
 	};

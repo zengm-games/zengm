@@ -1,5 +1,9 @@
 import { PHASE, PLAYER } from "../../../common/constants.ts";
-import type { Contract, Phase, PlayerContract } from "../../../common/types.ts";
+import type {
+	Contract,
+	Phase,
+	FlatContractInfo,
+} from "../../../common/types.ts";
 import { helpers } from "../../util/index.ts";
 import { averageSalary } from "./averageSalary.ts";
 import type { Basketball } from "./loadData.basketball.ts";
@@ -56,7 +60,7 @@ export const getRealContracts = ({
 	useExtensions: boolean;
 }): {
 	contracts: Contract[];
-	contractDemand: PlayerContract | undefined;
+	contractDemand: FlatContractInfo | undefined;
 } => {
 	// These can be out of order, particularly due to merging data sources
 	const salaryRows = salaryRowsInput
@@ -68,7 +72,7 @@ export const getRealContracts = ({
 	);
 
 	const contracts: Contract[] = [];
-	let contractDemand: PlayerContract | undefined;
+	let contractDemand: FlatContractInfo | undefined;
 
 	// Past contracts, only the seasons before the current season
 	for (const row of salaryRows) {

@@ -1,6 +1,6 @@
 import { g, helpers } from "../../util/index.ts";
 import type {
-	PlayerContract,
+	FlatContractInfo,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
@@ -18,7 +18,7 @@ const genContract = (
 	p: PlayerWithoutKey,
 	randomizeAmount: boolean = true,
 	noLimit: boolean = false,
-): PlayerContract => {
+): FlatContractInfo => {
 	const ratings = last(p.ratings);
 	let factor = g.get("salaryCapType") === "hard" ? 1.6 : 2;
 	let factor2 = 1;

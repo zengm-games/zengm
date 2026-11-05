@@ -10,7 +10,7 @@ import type {
 	ContractType,
 	Phase,
 	Player,
-	PlayerContract,
+	FlatContractInfo,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
@@ -143,8 +143,8 @@ export const isFlatContract = (contract: Pick<Contract, "amounts">) => {
 };
 
 // For an expiring contract after the season is over, amount is from its last season, which is what the player is still being paid
-export const contractToSummary = (contract: Contract): PlayerContract => {
-	const summary: PlayerContract = {
+export const contractToSummary = (contract: Contract): FlatContractInfo => {
+	const summary: FlatContractInfo = {
 		amount: getNearestContractAmount(contract, getContractStartSeason()),
 		exp: getContractExp(contract),
 	};
@@ -157,7 +157,7 @@ export const contractToSummary = (contract: Contract): PlayerContract => {
 // The contract that matters for a player right now, in the simple format (amount and exp). That's the contract demand if he has one (free agents, draft prospects, unsigned players on a team), otherwise his current contract. undefined for retired players.
 export const getContractSummary = (
 	p: Pick<PlayerWithoutKey, "contractDemand" | "contracts" | "tid">,
-): PlayerContract | undefined => {
+): FlatContractInfo | undefined => {
 	if (p.contractDemand) {
 		return p.contractDemand;
 	}
@@ -242,7 +242,7 @@ export const createContract = ({
 	tid,
 	type,
 }: {
-	contract: PlayerContract;
+	contract: FlatContractInfo;
 	phase?: Phase;
 
 	// Override the first season, for when the season and phase don't match yet, like during newPhasePreseason

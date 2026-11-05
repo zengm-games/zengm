@@ -7,7 +7,7 @@ import {
 import { groupByUnique, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,
-	PlayerContract,
+	FlatContractInfo,
 	Team,
 } from "../../../../common/types.ts";
 import { g } from "../../../util/index.ts";
@@ -130,7 +130,7 @@ const createRandomPlayers = async ({
 					years = Math.min(4 - round, 2);
 				}
 
-				const contract: PlayerContract = {
+				const contract: FlatContractInfo = {
 					amount: rookieSalaries[i]!,
 					exp: g.get("season") - numYearsAgo + years,
 				};

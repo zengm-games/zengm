@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { PlayerContract } from "../../common/types.ts";
+import type { FlatContractInfo } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { useLocal } from "../util/local.ts";
 
@@ -8,11 +8,11 @@ type ContractAmountPlayer = {
 	draft: {
 		year: number;
 	};
-	contract: Pick<PlayerContract, "amount" | "rookie">;
+	contract: Pick<FlatContractInfo, "amount" | "rookie">;
 };
 
 type ContractPlayer = ContractAmountPlayer & {
-	contract: PlayerContract;
+	contract: FlatContractInfo;
 };
 
 const useJustDrafted = (p: ContractAmountPlayer) => {

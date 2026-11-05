@@ -288,7 +288,7 @@ type TradeEventAsset =
 	| {
 			pid: number;
 			name: string;
-			contract: PlayerContract;
+			contract: FlatContractInfo;
 			ratingsIndex: number;
 			statsIndex: number;
 	  }
@@ -363,7 +363,7 @@ export type EventBBGMWithoutKey =
 			// These three will only be undefined in legacy events
 			phase?: Phase;
 			score?: number;
-			contract?: PlayerContract;
+			contract?: FlatContractInfo;
 
 			// Never defined, just for TypeScript
 			dpids?: number[];
@@ -729,7 +729,7 @@ export type GameAttributesLeague = {
 					number,
 					{
 						tid: number;
-						contract: PlayerContract;
+						contract: FlatContractInfo;
 						injury: PlayerInjury;
 					}
 				>;
@@ -1137,7 +1137,7 @@ export type PhaseReturn = {
 };
 
 // A flat contract, the same amount every season through exp. This is used for contract demands (what a player is asking for), and for snapshots of contracts in events and trades. Signed contracts are Contract objects in p.contracts.
-export type PlayerContract = {
+export type FlatContractInfo = {
 	amount: number;
 	exp: number;
 	rookie?: true; // If present, this is (or signing it would make) a rookie contract. Could be either a rookie scale auto sign, or negotiated.
@@ -1270,11 +1270,11 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	college: string;
 
 	// What the player is asking for. Defined for free agents, draft prospects, and players on a team who need a new contract (unsigned draft picks, or expiring contracts while re-signing).
-	contractDemand?: PlayerContract & {
+	contractDemand?: FlatContractInfo & {
 		temp?: true; // Used only during league creation, to mark demands that need to be normalized
 	};
 
-	// Every contract the player signed, oldest first. His current contract is the last one that did not end early, if he's on a team.
+	// Every contract the player signed, oldest first. If he's on a team, his current contract is the last one, unless it ended early.
 	contracts: Contract[];
 
 	customMoodItems?: {
@@ -1395,7 +1395,7 @@ export type Player<PlayerRatings = MinimalPlayerRatings> = {
 
 // Contract info in the format from before p.contracts (league DB version 75). This can still be in league files, player exports, and real players data.
 export type LegacyPlayerContractInfo = {
-	contract?: PlayerContract & {
+	contract?: FlatContractInfo & {
 		rookieResign?: true;
 		temp?: true;
 	};
@@ -1426,7 +1426,7 @@ type PlayerAllKeys = {
 	[K in PlayerKey]: Player[K];
 };
 
-type PlayerAttrsPlus<Contract = PlayerContract> = Omit<
+type PlayerAttrsPlus<Contract = FlatContractInfo> = Omit<
 	PlayerAllKeys,
 	"diedYear" | "draft" | "hof" | "jerseyNumber" | "ratings" | "stats" | "watch"
 > & {
@@ -1640,10 +1640,10 @@ type PlayerContractFiltered<
 	Season extends number | undefined,
 	SeasonRange extends [number, number] | undefined,
 > = [SeasonRange] extends [undefined]
-	? PlayerContract
+	? FlatContractInfo
 	: [Season] extends [number]
-		? PlayerContract
-		: Omit<PlayerContract, "exp"> & { exp: number | undefined };
+		? FlatContractInfo
+		: Omit<FlatContractInfo, "exp"> & { exp: number | undefined };
 
 type PlayerAttrsPart<
 	Attrs extends Readonly<PlayerAttr[]>,

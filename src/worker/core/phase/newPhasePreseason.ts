@@ -18,7 +18,7 @@ import type {
 	Contract,
 	PhaseReturn,
 	Player,
-	PlayerContract,
+	FlatContractInfo,
 	TeamSeason,
 } from "../../../common/types.ts";
 import { groupByUnique, maxBy } from "../../../common/utils.ts";
@@ -54,7 +54,7 @@ const endContractBeforeNewSeason = (
 const toFreeAgent = (
 	p: Player,
 	newSeason: number,
-	contractDemand?: PlayerContract,
+	contractDemand?: FlatContractInfo,
 ) => {
 	const currentContract = getCurrentContract(p);
 	if (contractDemand) {
@@ -72,7 +72,7 @@ const toFreeAgent = (
 const setRepeatSeasonContract = (
 	p: Player,
 	tid: number,
-	contract: PlayerContract,
+	contract: FlatContractInfo,
 	newSeason: number,
 ) => {
 	const currentContract = p.contractDemand ? undefined : getCurrentContract(p);

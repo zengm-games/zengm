@@ -25,7 +25,7 @@ import RelativesForm from "./RelativesForm.tsx";
 import type {
 	View,
 	Phase,
-	PlayerContract,
+	FlatContractInfo,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { posRatings } from "../../../common/posRatings.ts";
@@ -41,7 +41,7 @@ import clsx from "clsx";
 
 // In the form, the contract fields are the player's current contract or contract demand
 type PlayerWithContract = PlayerWithoutKey & {
-	contract: PlayerContract;
+	contract: FlatContractInfo;
 };
 
 const VARIABLE_CONTRACT_TEXT =

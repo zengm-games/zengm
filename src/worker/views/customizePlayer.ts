@@ -3,7 +3,7 @@ import { finances, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
-	PlayerContract,
+	FlatContractInfo,
 	PlayerWithoutKey,
 	Player,
 } from "../../common/types.ts";
@@ -90,7 +90,7 @@ export default defineView({
 			let originalTid;
 
 			// What's shown in the contract fields, which is the current contract or contract demand
-			let contract: PlayerContract | undefined;
+			let contract: FlatContractInfo | undefined;
 			let contractEditable = true;
 
 			let p: PlayerWithoutKey;

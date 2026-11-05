@@ -8,7 +8,7 @@ import { g, helpers, local } from "../../util/index.ts";
 import type {
 	TradePickValues,
 	Player,
-	PlayerContract,
+	FlatContractInfo,
 	PlayerInjury,
 	DraftPick,
 	Team,
@@ -203,7 +203,7 @@ const getContractForValuation = (p: Player) => {
 };
 
 const getContractValue = (
-	contract: PlayerContract,
+	contract: FlatContractInfo,
 	normalizedValue: number,
 ) => {
 	const season = g.get("season");

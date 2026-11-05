@@ -1,7 +1,7 @@
 import { csvFormat, csvFormatRows } from "d3-dsv";
 import type {
 	Contract,
-	PlayerContract,
+	FlatContractInfo,
 	PlayerStatAttr,
 } from "../../common/types.ts";
 import {
@@ -2853,7 +2853,7 @@ const importPlayers = async ({
 			row.tid = PLAYER.DOES_NOT_EXIST;
 		}
 
-		const newContract: PlayerContract = {
+		const newContract: FlatContractInfo = {
 			amount: helpers.roundContract(
 				helpers.localeParseFloat(contractAmount) * 1000,
 			),
@@ -4978,7 +4978,7 @@ const upgrade65 = async () => {
 const applyCustomizedContract = (
 	p: PlayerWithoutKey,
 	originalTid: number | undefined,
-	contractInput: PlayerContract,
+	contractInput: FlatContractInfo,
 ) => {
 	const prevCurrentContract =
 		originalTid !== undefined && originalTid >= 0 && !p.contractDemand
@@ -5065,7 +5065,7 @@ const upsertCustomizedPlayer = async (
 	}: {
 		p: PlayerWithoutKey & {
 			// The contract fields in the form
-			contract: PlayerContract;
+			contract: FlatContractInfo;
 		};
 		originalTid: number | undefined;
 		season: number;

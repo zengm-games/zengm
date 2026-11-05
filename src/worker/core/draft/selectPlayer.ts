@@ -3,7 +3,7 @@ import { player, league, team } from "../index.ts";
 import getRookieSalaries from "./getRookieSalaries.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent } from "../../util/index.ts";
-import type { DraftPick, PlayerContract } from "../../../common/types.ts";
+import type { DraftPick, FlatContractInfo } from "../../../common/types.ts";
 import { addContract, createContract } from "../contract/index.ts";
 import getRookieContractLength from "./getRookieContractLength.ts";
 import { last } from "../../../common/utils.ts";
@@ -101,7 +101,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			const rookieSalaries = getRookieSalaries();
 			const i = dp.pick - 1 + g.get("numActiveTeams") * (dp.round - 1);
 
-			const contractDemand: PlayerContract = {
+			const contractDemand: FlatContractInfo = {
 				amount: rookieSalaries[i]!,
 				exp: g.get("season"),
 				rookie: true,

@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common/constants.ts";
-import type { Negotiation, PlayerContract } from "../../../common/types.ts";
+import type { Negotiation, FlatContractInfo } from "../../../common/types.ts";
 import { range } from "../../../common/utils.ts";
 import g from "../../util/g.ts";
 import helpers from "../../util/helpers.ts";
@@ -8,7 +8,7 @@ import accept from "./accept.ts";
 
 export const generateContractOptions = async (
 	negotiation: Negotiation,
-	contract: PlayerContract,
+	contract: FlatContractInfo,
 	ovr: number,
 ) => {
 	let growthFactor = 0.15;

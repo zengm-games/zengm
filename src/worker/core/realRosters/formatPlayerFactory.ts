@@ -7,7 +7,7 @@ import type {
 	GetLeagueOptions,
 	NonEmptyArray,
 	PlayerAward,
-	PlayerContract,
+	FlatContractInfo,
 	PlayerInjury,
 } from "../../../common/types.ts";
 import getOnlyRatings, { type OnlyRatings } from "./getOnlyRatings.ts";
@@ -225,7 +225,7 @@ const formatPlayerFactory = async (
 		}
 
 		let contracts: Contract[] | undefined;
-		let contractDemand: PlayerContract | undefined;
+		let contractDemand: FlatContractInfo | undefined;
 		let awards: PlayerAward[] | undefined;
 		if (options.type === "legends") {
 			contractDemand = {

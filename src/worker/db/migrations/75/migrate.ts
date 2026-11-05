@@ -5,8 +5,8 @@ import type { VersionChangeTransaction } from "../../connectLeague.ts";
 import {
 	convertLegacyContracts,
 	type LegacyReleasedPlayer,
-	type LegacyReleaseEvent,
-	type LegacySigningEvent,
+	type ReleaseEventInfo,
+	type SigningEventInfo,
 } from "../../../core/contract/convertLegacyContracts.ts";
 import { updateOwedByTids } from "../../../core/contract/index.ts";
 
@@ -71,8 +71,8 @@ export const migrate75 = async (transaction: VersionChangeTransaction) => {
 		pushToMap(releasedPlayersByPid, rp.pid, rp);
 	}
 
-	const signingEventsByPid = new Map<number, LegacySigningEvent[]>();
-	const releaseEventsByPid = new Map<number, LegacyReleaseEvent[]>();
+	const signingEventsByPid = new Map<number, SigningEventInfo[]>();
+	const releaseEventsByPid = new Map<number, ReleaseEventInfo[]>();
 	for await (const cursor of transaction.objectStore("events")) {
 		const event = cursor.value;
 		const pid = event.pids?.[0];

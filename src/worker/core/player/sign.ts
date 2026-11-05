@@ -1,14 +1,14 @@
 import { PHASE } from "../../../common/constants.ts";
-import setContract from "./setContract.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Phase, Player, PlayerContract } from "../../../common/types.ts";
 import genJerseyNumber from "./genJerseyNumber.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
+import { addContract, createContract } from "../contract/index.ts";
 
 const sign = async (
 	p: Player,
 	tid: number,
-	contract: PlayerContract,
+	contractInput: PlayerContract,
 	phase: Phase,
 ) => {
 	const isRookie =
@@ -32,9 +32,37 @@ const sign = async (
 	}
 	score = Math.round(helpers.bound(score, 0, Infinity));
 
-	setContract(p, contract, true);
+	// Copy so later changes to the contract demand don't affect this
+	const contractSummary: PlayerContract = {
+		amount: contractInput.amount,
+		exp: contractInput.exp,
+	};
+	if (contractInput.rookie) {
+		contractSummary.rookie = true;
+	}
+
+	// Sigh, don't know why this is needed, but people tell me that sometimes the #1 pick has a massively negative contract
+	if (contractSummary.amount < 0) {
+		contractSummary.amount = g.get("minContract");
+	}
+
 	const resigning =
 		phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.get("season");
+
+	addContract(
+		p,
+		createContract({
+			contract: contractSummary,
+			phase,
+			tid,
+			type: contractSummary.rookie
+				? "rookie"
+				: resigning
+					? "reSign"
+					: "freeAgent",
+		}),
+	);
+
 	const eventType = resigning ? "reSigned" : "freeAgent";
 	const eid = await logEvent({
 		type: eventType,
@@ -42,7 +70,7 @@ const sign = async (
 		pids: [p.pid],
 		tids: [p.tid],
 		score,
-		contract: p.contract,
+		contract: contractSummary,
 	});
 
 	const freeAgent = !resigning && !isRookie;

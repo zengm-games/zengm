@@ -5,6 +5,7 @@ import { processPlayerStats as processPlayerStats2 } from "../../util/processPla
 import type {
 	Player,
 	PlayerFiltered,
+	PlayerSalaryRow,
 	PlayerSeasonType,
 	PlayerStatAttr,
 	PlayerStatType,
@@ -16,6 +17,8 @@ import { idb } from "../../db/index.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { last } from "../../../common/utils.ts";
+import { getCurrentContract } from "../../../common/contracts.ts";
+import { getLatestContractSummary } from "../contract/index.ts";
 
 type PlayerFormatOptionsRequired = Required<
 	Omit<PlayerFormatOptions, "season" | "seasonRange" | "seasonType" | "tid">
@@ -166,6 +169,108 @@ class AbbrevsCache {
 	}
 }
 
+type SalaryRow = Omit<PlayerSalaryRow, "payers"> & {
+	payers: Omit<PlayerSalaryRow["payers"][number], "abbrev">[];
+};
+
+// One row for each season of each contract, in thousands of dollars. For past seasons, the amount is what was paid. For current and future seasons, it's the contract amount.
+const getSalaryRows = (p: Player) => {
+	const season = g.get("season");
+	const phase = actualPhase();
+	const currentContract = getCurrentContract(p);
+
+	const rows: SalaryRow[] = [];
+	for (const contract of p.contracts) {
+		const { endedEarly } = contract;
+		const released = endedEarly?.reason === "released";
+
+		// Team that will pay the rest of this contract, if any
+		let remainingTid: number | undefined;
+		if (released) {
+			remainingTid = endedEarly.tid;
+		} else if (contract === currentContract) {
+			remainingTid = p.tid;
+		}
+
+		for (const [i, contractAmount] of contract.amounts.entries()) {
+			const rowSeason = contract.start + i;
+
+			// Not paid after retirement or death
+			if (endedEarly && !released && rowSeason > endedEarly.season) {
+				break;
+			}
+
+			let type: PlayerSalaryRow["type"];
+			if (
+				rowSeason < season ||
+				(rowSeason === season && phase > PHASE.PLAYOFFS)
+			) {
+				type = "past";
+			} else if (
+				rowSeason === season ||
+				(rowSeason === season + 1 && phase > PHASE.PLAYOFFS)
+			) {
+				type = "current";
+			} else {
+				type = "future";
+			}
+
+			// After a player is released, only the team that released him pays this contract
+			const releasedSeason = released && rowSeason >= endedEarly.season;
+
+			const payers: SalaryRow["payers"] = contract.payments
+				.filter((payment) => payment.season === rowSeason)
+				.map((payment) => ({
+					tid: payment.tid,
+					amount: payment.amount,
+					released: releasedSeason,
+				}));
+			const paid = Math.sumPrecise(payers.map((payer) => payer.amount));
+
+			let amount;
+			if (type === "past") {
+				// Nothing was paid, like for an expiring contract in a league created after the season ended
+				if (payers.length === 0) {
+					continue;
+				}
+				amount = paid;
+			} else {
+				amount = contractAmount;
+
+				if (remainingTid !== undefined) {
+					const remaining = Math.max(0, amount - paid);
+					const payer = payers.find((payer) => payer.tid === remainingTid);
+					if (payer) {
+						payer.amount += remaining;
+					} else {
+						payers.push({
+							tid: remainingTid,
+							amount: remaining,
+							released: releasedSeason,
+						});
+					}
+				}
+			}
+
+			payers.sort((a, b) => b.amount - a.amount);
+
+			rows.push({
+				amount,
+				season: rowSeason,
+				type,
+				payers,
+			});
+		}
+	}
+
+	return rows;
+};
+
+// Total of all salaries, past and future, in thousands of dollars
+export const getSalariesTotal = (p: Player) => {
+	return Math.sumPrecise(getSalaryRows(p).map((row) => row.amount));
+};
+
 const processAttrs = (
 	output: any,
 	p: Player,
@@ -179,20 +284,24 @@ const processAttrs = (
 	}: PlayerFormatOptionsRequired,
 	abbrevsCache: AbbrevsCache | undefined,
 ) => {
+	let salaryRowsCache: SalaryRow[] | undefined;
+	const getSalaryRowsCached = () => {
+		salaryRowsCache ??= getSalaryRows(p);
+		return salaryRowsCache;
+	};
+
+	// Millions of dollars
 	const getSalary = () => {
 		let total = 0;
 
-		for (const salary of p.salaries) {
+		for (const row of getSalaryRowsCached()) {
 			if (seasonRange !== undefined) {
-				if (
-					salary.season >= seasonRange[0] &&
-					salary.season <= seasonRange[1]
-				) {
-					total += salary.amount / 1000;
+				if (row.season >= seasonRange[0] && row.season <= seasonRange[1]) {
+					total += row.amount / 1000;
 				}
 			} else {
-				if (salary.season === season || season === undefined) {
-					total += salary.amount / 1000;
+				if (row.season === season || season === undefined) {
+					total += row.amount / 1000;
 				}
 			}
 		}
@@ -245,8 +354,14 @@ const processAttrs = (
 				seasonRange === undefined &&
 				(g.get("season") === season || season === undefined)
 			) {
-				output.contract = helpers.deepCopy(p.contract);
-				output.contract.amount /= 1000; // [millions of dollars]
+				const contract = getLatestContractSummary(p) ?? {
+					amount: 0,
+					exp: g.get("season"),
+				};
+				output.contract = {
+					...contract,
+					amount: contract.amount / 1000, // [millions of dollars]
+				};
 			} else {
 				output.contract = {
 					amount: getSalary(),
@@ -254,10 +369,33 @@ const processAttrs = (
 				};
 			}
 		} else if (attr === "cashOwed") {
-			output.cashOwed =
-				(player.contractSeasonsRemaining(p.contract.exp, numGamesRemaining) *
-					p.contract.amount) /
-				1000; // [millions of dollars]
+			let cashOwed = 0;
+			if (p.contractDemand) {
+				cashOwed =
+					player.contractSeasonsRemaining(
+						p.contractDemand.exp,
+						numGamesRemaining,
+					) * p.contractDemand.amount;
+			} else {
+				const contract = getCurrentContract(p);
+				if (contract) {
+					// The rest of this season, plus all future seasons
+					const currentSeason = g.get("season");
+					const fractionRemaining = Math.min(
+						numGamesRemaining / g.get("numGames"),
+						1,
+					);
+					for (const [i, amount] of contract.amounts.entries()) {
+						const contractSeason = contract.start + i;
+						if (contractSeason === currentSeason) {
+							cashOwed += fractionRemaining * amount;
+						} else if (contractSeason > currentSeason) {
+							cashOwed += amount;
+						}
+					}
+				}
+			}
+			output.cashOwed = cashOwed / 1000; // [millions of dollars]
 		} else if (attr === "abbrev") {
 			output.abbrev = helpers.getAbbrev(p.tid);
 		} else if (attr === "hof") {
@@ -276,38 +414,24 @@ const processAttrs = (
 		} else if (attr === "salary") {
 			output.salary = getSalary();
 		} else if (attr === "lastSalary") {
-			const amount = p.salaries.at(-1)?.amount;
+			// Last season of his most recent contract
+			const amount = p.contracts.at(-1)?.amounts.at(-1);
 			output.lastSalary = amount === undefined ? undefined : amount / 1000;
 		} else if (attr === "salaries") {
-			const season = g.get("season");
-			const phase = actualPhase();
-			output.salaries = p.salaries.map((salary) => {
-				let type: "past" | "current" | "future";
-				if (
-					salary.season < season ||
-					(salary.season === season && phase > PHASE.PLAYOFFS)
-				) {
-					type = "past";
-				} else if (
-					salary.season === season ||
-					(salary.season === season + 1 && phase > PHASE.PLAYOFFS)
-				) {
-					type = "current";
-				} else {
-					type = "future";
-				}
-
-				return {
-					amount: salary.amount / 1000,
-					season: salary.season,
-					type,
-				};
-			});
+			const salaries: PlayerSalaryRow[] = getSalaryRowsCached().map((row) => ({
+				...row,
+				amount: row.amount / 1000,
+				payers: row.payers.map((payer) => ({
+					...payer,
+					abbrev:
+						abbrevsCache?.get(row.season, payer.tid) ??
+						helpers.getAbbrev(payer.tid),
+					amount: payer.amount / 1000,
+				})),
+			}));
+			output.salaries = salaries;
 		} else if (attr === "salariesTotal") {
-			output.salariesTotal = output.salaries.reduce(
-				(memo: number, salary: { amount: number }) => memo + salary.amount,
-				0,
-			);
+			output.salariesTotal = getSalariesTotal(p) / 1000;
 		} else if (attr === "name") {
 			output.name = `${p.firstName} ${p.lastName}`;
 		} else if (attr === "untradable") {
@@ -1420,14 +1544,16 @@ const getAbbrevsNeeded = ({
 }: PlayerFormatOptionsRequired) => {
 	const draft = attrs.includes("draft");
 	const latestTransaction = attrs.includes("latestTransaction");
+	const salaries = attrs.includes("salaries");
 
 	// Ratings uses the tid from stats, so have ratings and stats both trigger a stats check
 	const stats2 = ratings.includes("abbrev") || stats.includes("abbrev");
 
 	return {
-		any: draft || latestTransaction || stats2,
+		any: draft || latestTransaction || salaries || stats2,
 		draft,
 		latestTransaction,
+		salaries,
 		stats: stats2,
 	};
 };
@@ -1476,6 +1602,16 @@ export const formatAll = async <Options extends PlayerFormatOptions>(
 	if (abbrevsNeeded.any) {
 		abbrevsCache = new AbbrevsCache();
 		for (const p of players) {
+			if (abbrevsNeeded.salaries) {
+				for (const contract of p.contracts) {
+					for (const payment of contract.payments) {
+						if (payment.tid >= 0) {
+							abbrevsCache.add(payment.season, payment.tid);
+						}
+					}
+				}
+			}
+
 			if (abbrevsNeeded.draft) {
 				for (const tid of [p.draft.tid, p.draft.originalTid]) {
 					abbrevsCache.add(p.draft.year, tid);
@@ -1521,9 +1657,11 @@ export const loadAbbrevs = async (optionsInput: PlayerFormatOptions) => {
 		return;
 	}
 
-	// Draft and latest transaction abbrevs can be from any season
+	// Draft, latest transaction, and salaries abbrevs can be from any season
 	const onlyOneSeason =
-		!abbrevsNeeded.draft && !abbrevsNeeded.latestTransaction;
+		!abbrevsNeeded.draft &&
+		!abbrevsNeeded.latestTransaction &&
+		!abbrevsNeeded.salaries;
 
 	const abbrevsCache = new AbbrevsCache();
 	await abbrevsCache.loadAll(onlyOneSeason ? options.season : undefined);

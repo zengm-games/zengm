@@ -10,6 +10,10 @@ import {
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { Conditions, PhaseReturn } from "../../../common/types.ts";
+import {
+	getContractDemand,
+	getContractSummaryOrThrow,
+} from "../contract/index.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
@@ -91,7 +95,7 @@ const newPhaseResignPlayers = async (
 
 		for (const p of players) {
 			// Only expiring contracts and hard cap rookies!
-			if (p.contract.exp <= g.get("season")) {
+			if (getContractSummaryOrThrow(p).exp <= g.get("season")) {
 				continue;
 			}
 
@@ -111,16 +115,13 @@ const newPhaseResignPlayers = async (
 
 	if (g.get("salaryCapType") === "hard") {
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
-			const payroll = await team.getPayroll(tid);
-			const expiringPayroll = players
-				.filter((p) => p.tid === tid && p.contract.exp <= g.get("season"))
-				.reduce((total, p) => total + p.contract.amount, 0);
-			payrollsByTid.set(tid, payroll - expiringPayroll);
+			// Payroll for next season, so it doesn't include expiring contracts or unsigned draft picks
+			payrollsByTid.set(tid, await team.getPayroll(tid));
 		}
 	}
 
 	const expiringPids = orderBy(
-		players.filter((p) => p.contract.exp <= g.get("season")),
+		players.filter((p) => getContractSummaryOrThrow(p).exp <= g.get("season")),
 		[
 			"tid",
 			(p) => {
@@ -130,17 +131,6 @@ const newPhaseResignPlayers = async (
 		],
 		["asc", "desc", "desc"],
 	).map((p) => p.pid);
-
-	const expiredRookieContractPids = new Set(
-		players
-			.filter(
-				(p) =>
-					p.contract.exp <= g.get("season") &&
-					p.contract.rookie &&
-					p.draft.year < g.get("season"),
-			)
-			.map((p) => p.pid),
-	);
 
 	await freeAgents.normalizeContractDemands({
 		type: "includeExpiringContracts",
@@ -156,22 +146,20 @@ const newPhaseResignPlayers = async (
 			continue;
 		}
 
-		if (expiredRookieContractPids.has(p.pid)) {
-			p.contract.rookieResign = true;
-		}
+		const contractDemand = getContractDemand(p);
 
 		const draftPick = p.draft.year === g.get("season");
 
 		if (draftPick && !g.get("draftPickAutoContract")) {
-			p.contract.amount /= 2;
+			contractDemand.amount /= 2;
 
-			if (p.contract.amount < g.get("minContract")) {
-				p.contract.amount = g.get("minContract");
+			if (contractDemand.amount < g.get("minContract")) {
+				contractDemand.amount = g.get("minContract");
 			} else {
-				p.contract.amount = helpers.roundContract(p.contract.amount);
+				contractDemand.amount = helpers.roundContract(contractDemand.amount);
 			}
 
-			p.contract.rookie = true;
+			contractDemand.rookie = true;
 		}
 
 		if (
@@ -208,7 +196,7 @@ const newPhaseResignPlayers = async (
 			let reSignPlayer = true;
 
 			const contract = {
-				...p.contract,
+				...contractDemand,
 			};
 			const payroll = payrollsByTid.get(p.tid);
 
@@ -249,7 +237,7 @@ const newPhaseResignPlayers = async (
 
 			if (reSignPlayer) {
 				const mood = await player.moodInfo(p, p.tid, {
-					contractAmount: p.contract.amount,
+					contractAmount: contractDemand.amount,
 				});
 
 				// Player must be willing to sign (includes draft picks and first year after expansion, from moodInfo)
@@ -303,11 +291,6 @@ const newPhaseResignPlayers = async (
 
 			if (!reSignPlayer) {
 				player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
-			}
-
-			// Delete rookieResign for AI players, since we're done re-signing them. Leave it for user players.
-			if (expiredRookieContractPids.has(pid) || p.contract.rookieResign) {
-				delete p.contract.rookieResign;
 			}
 
 			await idb.cache.players.put(p);

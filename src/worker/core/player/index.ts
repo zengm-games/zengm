@@ -15,6 +15,7 @@ import {
 	createFormatter,
 	format,
 	formatAll,
+	getSalariesTotal,
 	loadAbbrevs,
 } from "./format.ts";
 import fuzzRating from "./fuzzRating.ts";
@@ -41,7 +42,7 @@ import pos from "./pos.ts";
 import release from "./release.ts";
 import remove from "./remove.ts";
 import retire from "./retire.ts";
-import setContract from "./setContract.ts";
+import setContractDemand from "./setContractDemand.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
 import sign from "./sign.ts";
 import shouldRetire from "./shouldRetire.ts";
@@ -84,6 +85,7 @@ export default {
 	injury,
 	killOne,
 	limitRating,
+	getSalariesTotal,
 	loadAbbrevs,
 	madeHof,
 	moodInfo,
@@ -95,7 +97,7 @@ export default {
 	remove,
 	retire,
 	sign,
-	setContract,
+	setContractDemand,
 	setJerseyNumber,
 	shouldRetire,
 	skills,

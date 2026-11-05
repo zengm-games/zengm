@@ -10,6 +10,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt, shuffle, uniform } from "../../../common/random.ts";
 import { getCumulativeWeights } from "./getCumulativeWeights.ts";
 import { getInSeasonContractExp } from "./decreaseDemands.ts";
+import { getContractSummaryOrThrow } from "../contract/index.ts";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
@@ -114,7 +115,9 @@ const normalizeContractDemands = async ({
 		players = playersAll.filter((p) => p.tid === PLAYER.FREE_AGENT);
 	} else {
 		players = playersAll.filter(
-			(p) => p.tid === PLAYER.FREE_AGENT || p.contract.exp === season,
+			(p) =>
+				p.tid === PLAYER.FREE_AGENT ||
+				getContractSummaryOrThrow(p).exp === season,
 		);
 	}
 
@@ -139,7 +142,7 @@ const normalizeContractDemands = async ({
 			softmaxValue: value * TEMP,
 			numBids: 0,
 			contractAmount: helpers.bound(
-				p.contract.amount,
+				getContractSummaryOrThrow(p).amount,
 				minContract,
 				maxContract,
 			),
@@ -261,10 +264,12 @@ const normalizeContractDemands = async ({
 		rookieSalaries = draft.getRookieSalaries();
 	}
 
+	// For includeExpiringContracts, every player needs a new contract demand, even if his amount didn't change, because his exp is from his expiring contract
 	const playerInfosToUpdate = playerInfos.filter((info) => {
 		return (
 			(type === "freeAgentsOnly" ||
 				type === "newLeague" ||
+				type === "includeExpiringContracts" ||
 				numRounds === 0 ||
 				updatedPIDs.has(info.pid)) &&
 			!info.dummy
@@ -394,16 +399,19 @@ const normalizeContractDemands = async ({
 		}
 
 		// Make sure to remove "temp" flag!
-		p.contract = {
+		p.contractDemand = {
 			amount,
 			exp,
 		};
-		if (p.tid === PLAYER.FREE_AGENT && p.contract.exp < minNewContractExp) {
-			p.contract.exp = minNewContractExp;
+		if (
+			p.tid === PLAYER.FREE_AGENT &&
+			p.contractDemand.exp < minNewContractExp
+		) {
+			p.contractDemand.exp = minNewContractExp;
 		}
 
 		if (labelAsRookieContract) {
-			p.contract.rookie = true;
+			p.contractDemand.rookie = true;
 		}
 	}
 

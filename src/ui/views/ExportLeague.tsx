@@ -290,7 +290,7 @@ const getExportInfo = (
 	const storesSet = new Set<LeagueDBStoreNames>();
 
 	const storesByKey = {
-		players: ["players", "releasedPlayers", "awards"],
+		players: ["players", "awards"],
 		teamsBasic: ["teams", "gameAttributes"],
 		teams: ["teamSeasons", "teamStats"],
 		headToHead: ["headToHeads"],

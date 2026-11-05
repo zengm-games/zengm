@@ -7,6 +7,7 @@ import type {
 } from "../../../common/types.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { PreProcessParams } from "./createStream.ts";
+import { setContractDemandFromCurrentContract } from "../contract/index.ts";
 
 export const applyRealPlayerPhotos = (
 	realPlayerPhotos: RealPlayerPhotos | undefined,
@@ -81,15 +82,15 @@ const processPlayerNewLeague = async ({
 		scoutingLevel,
 		version,
 	);
-	if (!p.contract) {
-		p2.contract.temp = true;
-		if (!p.salaries) {
-			p2.salaries = [];
-		}
+
+	// No contract info in the file, so his contract demand needs to be normalized. Then for players on a team, that will become their contract.
+	const noContractInfo = !p.contract && !p.contracts && !p.contractDemand;
+	if (noContractInfo && p2.contractDemand) {
+		p2.contractDemand.temp = true;
 	}
 
 	// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts. Don't check draftPickAutoContract here because we want all rookie contracts to be labeled as such, not just rookie scale contracts.
-	if (p2.tid >= 0 && (!p.contract || !hasRookieContracts)) {
+	if (p2.tid >= 0 && (noContractInfo || !hasRookieContracts)) {
 		const rookieContractLength = draft.getRookieContractLength(p2.draft.round);
 		const rookieContractExp = p2.draft.year + rookieContractLength;
 
@@ -99,6 +100,8 @@ const processPlayerNewLeague = async ({
 	}
 
 	if (p2.tid >= 0 && !activeTids.includes(p2.tid)) {
+		// Like addToFreeAgents
+		setContractDemandFromCurrentContract(p2);
 		p2.tid = PLAYER.FREE_AGENT;
 	}
 

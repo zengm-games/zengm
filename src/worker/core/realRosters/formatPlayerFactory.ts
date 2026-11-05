@@ -3,6 +3,7 @@ import loadStatsBasketball, {
 } from "./loadStats.basketball.ts";
 import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import type {
+	Contract,
 	GetLeagueOptions,
 	NonEmptyArray,
 	PlayerAward,
@@ -15,7 +16,8 @@ import nerfDraftProspect from "./nerfDraftProspect.ts";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
 import { setDraftProspectRatings } from "./setDraftProspectRatings.ts";
 import { getEWA } from "../../util/advStats.basketball.ts";
-import { averageSalary } from "./averageSalary.ts";
+import { getRealContracts } from "./getRealContracts.ts";
+import { estimatePaymentTeams } from "../contract/convertLegacyContracts.ts";
 import { helpers } from "../../util/index.ts";
 import {
 	formatPlayerAward,
@@ -222,77 +224,34 @@ const formatPlayerFactory = async (
 			}
 		}
 
-		let contract: PlayerContract | undefined;
+		let contracts: Contract[] | undefined;
+		let contractDemand: PlayerContract | undefined;
 		let awards: PlayerAward[] | undefined;
-		let salaries;
 		if (options.type === "legends") {
-			contract = {
+			// Every legend asks for the same contract
+			contractDemand = {
 				amount: 6000,
 				exp: season + 3,
 			};
 		} else if (!options.randomDebuts || options.randomDebutsKeepCurrent) {
-			const salaryRows = basketball.salaries[slug]?.filter((row) => {
-				// Auto-apply extensions, otherwise will feel weird
-				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
-					return true;
-				}
-
-				return row.start <= season;
-			});
+			const salaryRows = basketball.salaries[slug];
 
 			if (salaryRows && salaryRows.length > 0 && !draftProspect) {
-				// Complicated stuff rather than just taking last entry because these can be out of order, particularly due to merging data sources. But still search backwards
-				let salaryRow = salaryRows.findLast(
-					(row) => row.start <= season && row.exp >= season,
-				);
-				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
+				const realContracts = getRealContracts({
+					draftYear: draft.year,
+					onTeam: tid >= 0,
+					phase: options.phase,
+					salaryRows,
+					season,
+
 					// Auto-apply extensions, otherwise will feel weird
-					const salaryRowExtension = salaryRows.find(
-						(row) => row.start > season,
-					);
-					if (salaryRowExtension) {
-						salaryRow = salaryRowExtension;
-					}
-				}
-
-				if (salaryRow) {
-					// Bound at 5 year contract
-					const exp = Math.min(salaryRow.exp, season + 4);
-					contract = {
-						amount: averageSalary(salaryRow, season, exp),
-						exp,
-					};
-
-					if (salaryRow.start === draft.year + 1) {
-						contract.rookie = true;
-					}
-				}
-
-				const maxSalaryHistorySeason = contract?.exp ?? season - 1;
-				salaries = [];
-				for (const row of salaryRows) {
-					const maxSeason = Math.min(row.exp, maxSalaryHistorySeason);
-
-					for (let season2 = row.start; season2 <= maxSeason; season2++) {
-						if (contract && row === salaryRow && season2 >= season) {
-							// Current contract, use averageSalary output from above for current season or later
-							salaries.push({
-								amount: contract.amount,
-								season: season2,
-							});
-						} else {
-							const i = season2 - row.start;
-
-							// Historical salary, use exact value every year
-							salaries.push({
-								amount: helpers.roundContract(row.amounts[i]! / 1000),
-								season: season2,
-							});
-						}
-					}
+					useExtensions: season >= REAL_PLAYERS_INFO!.MAX_SEASON,
+				});
+				contracts = realContracts.contracts;
+				if (tid !== PLAYER.RETIRED) {
+					contractDemand = realContracts.contractDemand;
 				}
 			}
-
 			const allAwards = basketball.awards[slug];
 
 			const awardsCutoffSeason =
@@ -489,6 +448,18 @@ const formatPlayerFactory = async (
 
 		pid += 1;
 
+		// Contract data doesn't say which team paid, so estimate it from stats
+		if (contracts) {
+			estimatePaymentTeams({
+				contracts,
+				currentTid: tid >= 0 ? tid : undefined,
+				payerInfo: {
+					stats: stats ?? [],
+					transactions: [],
+				},
+			});
+		}
+
 		const p = {
 			pid,
 			name,
@@ -510,8 +481,8 @@ const formatPlayerFactory = async (
 			ratings: processedRatings as NonEmptyArray<OnlyRatings>,
 			stats,
 			injury: undefined as PlayerInjury | undefined,
-			contract,
-			salaries,
+			contracts,
+			contractDemand,
 			awards,
 			jerseyNumber,
 			hof,

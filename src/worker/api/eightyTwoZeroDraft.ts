@@ -22,6 +22,7 @@ import { idb } from "../db/index.ts";
 import { g, helpers, local, toUI } from "../util/index.ts";
 import { getRealTeamInfo } from "../views/newLeague.ts";
 import { getContractStartSeason } from "../util/getContractStartSeason.ts";
+import { addContract, createContract } from "../core/contract/index.ts";
 import {
 	countPickablePlayers,
 	getLockedCount,
@@ -380,7 +381,8 @@ const normalizePick = async (
 	};
 	p.numDaysFreeAgent = 0;
 	p.ptModifier = 1;
-	p.salaries = [];
+	p.contracts = [];
+	delete p.owedByTids;
 	p.stats = [];
 	p.statsTids = [];
 	p.watch = undefined;
@@ -393,14 +395,17 @@ const normalizePick = async (
 	p.draft.pot = ratings.pot;
 	p.draft.skills = ratings.skills;
 
-	player.setContract(
+	addContract(
 		p,
-		{
-			amount: g.get("minContract"),
-			// 1 year contract
-			exp: getContractStartSeason(),
-		},
-		true,
+		createContract({
+			contract: {
+				amount: g.get("minContract"),
+				// 1 year contract
+				exp: getContractStartSeason(),
+			},
+			tid: p.tid,
+			type: "freeAgent",
+		}),
 	);
 
 	const p2 = await player.augmentPartialPlayer(

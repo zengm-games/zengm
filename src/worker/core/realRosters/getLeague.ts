@@ -341,7 +341,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 						// Delete stuff that may have been added on, for randomDebutsKeepCurrent if stats are kept
 						p.stats = [];
 						p.awards = [];
-						p.salaries = [];
+						p.contracts = undefined;
+						p.contractDemand = undefined;
 					}
 				}
 			}
@@ -780,7 +781,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 						round: number | undefined;
 						pick: number | undefined;
 					};
-					contract: PlayerContract | undefined;
+					contractDemand: PlayerContract | undefined;
 					ratings: [OnlyRatings, ...OnlyRatings[]];
 					srID: string;
 				}) => {
@@ -804,15 +805,15 @@ const getLeague = async (options: GetLeagueOptions) => {
 							exp = options.season + 5;
 						}
 
-						p.contract = {
+						p.contractDemand = {
 							amount: averageSalary(salaryRow, options.season + 1, exp),
 							exp,
 							rookie: true,
 						};
 
 						// Bound at minYears, but do this after calling averageSalary in case a player was released before minYears
-						if (p.contract.exp < options.season + minYears) {
-							p.contract.exp = options.season + minYears;
+						if (p.contractDemand.exp < options.season + minYears) {
+							p.contractDemand.exp = options.season + minYears;
 						}
 					}
 
@@ -1042,7 +1043,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		addFreeAgents(keptPlayers, season);
 
 		return {
-			version: 37,
+			version: LEAGUE_DATABASE_VERSION,
 			startingSeason: season,
 			players: keptPlayers,
 			teams: initialTeams,

@@ -7,6 +7,7 @@ import { g, helpers } from "../../util/index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { last } from "../../../common/utils.ts";
 import type {
+	PlayerSalaryRow,
 	Player,
 	NonEmptyArray,
 	PlayerFiltered,
@@ -24,10 +25,10 @@ beforeAll(async () => {
 	};
 	p.tid = 4;
 	g.setWithoutSavingToDB("season", 2012);
+	p.contractDemand!.exp = g.get("season") + 1;
 	await resetCache({
 		players: [p],
 	});
-	p.contract.exp = g.get("season") + 1;
 	player.addStatsRow(p, g.get("season"), false);
 	player.addStatsRow(p, g.get("season"), true);
 	player.addStatsRow(p, g.get("season"), false);
@@ -380,7 +381,7 @@ test("adjust cashOwed by options.numGamesRemaining", async () => {
 		throw new Error("Missing player");
 	}
 
-	assert.strictEqual(pf.cashOwed, (p.contract.amount * 2) / 1000);
+	assert.strictEqual(pf.cashOwed, (p.contracts[0]!.amounts[0]! * 2) / 1000);
 	pf = await player.format(p, {
 		attrs: ["cashOwed"],
 		tid: 4,
@@ -392,7 +393,7 @@ test("adjust cashOwed by options.numGamesRemaining", async () => {
 		throw new Error("Missing player");
 	}
 
-	assert.strictEqual(pf.cashOwed, (p.contract.amount * 1.5) / 1000);
+	assert.strictEqual(pf.cashOwed, (p.contracts[0]!.amounts[0]! * 1.5) / 1000);
 	pf = await player.format(p, {
 		attrs: ["cashOwed"],
 		tid: 4,
@@ -404,7 +405,7 @@ test("adjust cashOwed by options.numGamesRemaining", async () => {
 		throw new Error("Missing player");
 	}
 
-	assert.strictEqual(pf.cashOwed, p.contract.amount / 1000);
+	assert.strictEqual(pf.cashOwed, p.contracts[0]!.amounts[0]! / 1000);
 });
 
 test("return stats and ratings from all seasons and teams if no season or team is specified", async () => {
@@ -905,11 +906,7 @@ describe("TypeScript", () => {
 					note: string | undefined;
 					untradable: boolean;
 					untradableMsg?: string;
-					salaries: {
-						amount: number;
-						season: number;
-						type: "past" | "current" | "future";
-					}[];
+					salaries: PlayerSalaryRow[];
 				}
 			>
 		>(true);

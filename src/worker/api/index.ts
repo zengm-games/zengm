@@ -1,5 +1,9 @@
 import { csvFormat, csvFormatRows } from "d3-dsv";
-import type { PlayerStatAttr } from "../../common/types.ts";
+import type {
+	Contract,
+	PlayerContract,
+	PlayerStatAttr,
+} from "../../common/types.ts";
 import {
 	GAME_ACRONYM,
 	PHASE,
@@ -122,7 +126,6 @@ import {
 	maxBy,
 	omit,
 	orderBy,
-	range,
 	assertDefined,
 } from "../../common/utils.ts";
 import {
@@ -164,6 +167,18 @@ import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { generateContractOptions } from "../core/contractNegotiation/generateContractOptions.ts";
+import { convertLegacyContracts } from "../core/contract/convertLegacyContracts.ts";
+import {
+	addContract,
+	contractToSummary,
+	createContract,
+	getContractSummaryOrThrow,
+	isFlatContract,
+	isReleasedContractOwed,
+	updateOwedByTids,
+} from "../core/contract/index.ts";
+import { getContractExp, getCurrentContract } from "../../common/contracts.ts";
+import { getContractStartSeason } from "../util/getContractStartSeason.ts";
 import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
 import * as z from "zod";
 import { defaultTragicDeaths } from "../util/defaultTragicDeaths.ts";
@@ -878,12 +893,15 @@ const deleteOldData = async (options: {
 		}
 	}
 
+	// Retired players who are still owed money by a team that released them are kept, because their contracts still count in payroll
 	if (options.retiredPlayers) {
 		for await (const cursor of tx
 			.objectStore("players")
 			.index("tid")
 			.iterate(PLAYER.RETIRED)) {
-			await cursor.delete();
+			if (!cursor.value.owedByTids) {
+				await cursor.delete();
+			}
 		}
 	} else if (options.retiredPlayersUnnotable) {
 		for await (const cursor of tx
@@ -891,12 +909,17 @@ const deleteOldData = async (options: {
 			.index("tid")
 			.iterate(PLAYER.RETIRED)) {
 			const p = cursor.value;
-			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+			if (
+				p.awards.length === 0 &&
+				!p.statsTids.includes(g.get("userTid")) &&
+				!p.owedByTids
+			) {
 				await cursor.delete();
 			}
 		}
 	}
 
+	const payrollSeason = getContractStartSeason();
 	const deletePlayerStats = (p: Player) => {
 		let updated = false;
 		if (p.ratings.length > 1) {
@@ -926,27 +949,15 @@ const deleteOldData = async (options: {
 				updated = true;
 			}
 		}
-		if (p.salaries.length > 0) {
-			if (p.tid < 0) {
-				p.salaries = [];
-			} else {
-				const minSeasonKeep =
-					g.get("phase") > PHASE.PLAYOFFS
-						? g.get("season") + 1
-						: g.get("season");
-				let minIndexKeep = Infinity;
-				for (const [i, row] of p.salaries.entries()) {
-					if (row.season === minSeasonKeep) {
-						// Keep latest contract that covers the current season - handles the case of old released contracts that would have also covered this season
-						minIndexKeep = i;
-					}
-				}
-				const lengthBefore = p.salaries.length;
-				p.salaries = p.salaries.slice(minIndexKeep);
-				if (lengthBefore > p.salaries.length) {
-					updated = true;
-				}
-			}
+		// Keep contracts that still count in payroll
+		const contracts = p.contracts.filter(
+			(contract) =>
+				getContractExp(contract) >= payrollSeason ||
+				isReleasedContractOwed(contract),
+		);
+		if (contracts.length < p.contracts.length) {
+			p.contracts = contracts;
+			updated = true;
 		}
 
 		if (updated) {
@@ -2735,6 +2746,78 @@ const idbCacheFlush = async () => {
 	await idb.cache.flush();
 };
 
+// Contracts from the league a player was exported from, shifted by seasonOffset, and only for seasons before the current season. Teams in the other league aren't the same as teams here, so they're unknown.
+const getImportedContractHistory = (
+	p: any,
+	seasonOffset: number,
+	currentSeason: number,
+): Contract[] => {
+	let contracts: Contract[];
+	if (p.contracts) {
+		contracts = helpers.deepCopy(p.contracts);
+		for (const contract of contracts) {
+			contract.start += seasonOffset;
+			if (contract.signed) {
+				contract.signed.season += seasonOffset;
+			}
+			if (contract.endedEarly) {
+				contract.endedEarly.season += seasonOffset;
+			}
+			for (const payment of contract.payments) {
+				payment.season += seasonOffset;
+			}
+		}
+	} else if (p.salaries) {
+		// Legacy format, from before p.contracts
+		contracts = convertLegacyContracts({
+			p: {
+				draft: p.draft,
+				retiredYear: Infinity,
+				salaries: p.salaries.map((row: any) => ({
+					...row,
+					season: row.season + seasonOffset,
+				})),
+				tid: PLAYER.FREE_AGENT,
+			},
+			leagueState: {
+				fractionCurrentSeasonPaid: 0,
+				phase: PHASE.PRESEASON,
+				season: currentSeason,
+			},
+			releasedPlayers: [],
+			releaseEvents: [],
+			signingEvents: [],
+		}).contracts;
+	} else {
+		contracts = [];
+	}
+
+	const output: Contract[] = [];
+	for (const contract of contracts) {
+		const numPastSeasons = currentSeason - contract.start;
+		if (numPastSeasons <= 0) {
+			continue;
+		}
+		contract.amounts = contract.amounts.slice(0, numPastSeasons);
+		contract.payments = contract.payments
+			.filter((payment) => payment.season < currentSeason)
+			.map((payment) => ({
+				...payment,
+				tid: PLAYER.DOES_NOT_EXIST,
+			}));
+		if (contract.signed) {
+			contract.signed.tid = PLAYER.DOES_NOT_EXIST;
+		}
+		// Not owed by any team in this league
+		if (contract.endedEarly?.reason === "released") {
+			delete contract.endedEarly.tid;
+		}
+		output.push(contract);
+	}
+
+	return output;
+};
+
 const importPlayers = async ({
 	includeStats,
 	leagueFileVersion,
@@ -2770,13 +2853,18 @@ const importPlayers = async ({
 			row.tid = PLAYER.DOES_NOT_EXIST;
 		}
 
+		const newContract: PlayerContract = {
+			amount: helpers.roundContract(
+				helpers.localeParseFloat(contractAmount) * 1000,
+			),
+			exp: Number.parseInt(contractExp),
+		};
+
 		const p2 = {
 			born: p.born,
 			college: p.college,
-			contract: {
-				amount: helpers.localeParseFloat(contractAmount) * 1000,
-				exp: Number.parseInt(contractExp),
-			},
+			contractDemand: newContract,
+			contracts: [] as Contract[],
 			draft: {
 				...p.draft,
 				round: 0,
@@ -2791,7 +2879,6 @@ const importPlayers = async ({
 			injuries: p.injuries ?? [],
 			lastName: p.lastName,
 			ratings: p.ratings,
-			salaries: p.salaries ?? [],
 			srID: p.srID,
 			stats,
 			tid,
@@ -2832,7 +2919,7 @@ const importPlayers = async ({
 		}
 
 		const adjustAndFilter = (
-			key: "injuries" | "ratings" | "salaries" | "stats",
+			key: "injuries" | "ratings" | "stats",
 			seasonOffset: number,
 			draftProspect: boolean,
 		) => {
@@ -2844,9 +2931,6 @@ const importPlayers = async ({
 			if (!draftProspect) {
 				if (key === "injuries" && currentPhase < PHASE.REGULAR_SEASON) {
 					// No injuries from current season, if current season has not started yet
-					offset = -1;
-				} else if (key === "salaries") {
-					// Current season salary will be added later
 					offset = -1;
 				} else if (key === "stats" && currentPhase <= PHASE.PLAYOFFS) {
 					// Don't include current season stats if the season has not started yet. Might be good to separate playoff stats and non-playoff stats and use differnet phase cutoffs, but whatever.
@@ -2884,7 +2968,6 @@ const importPlayers = async ({
 				);
 			}
 
-			p2.salaries = [];
 			p2.injuries = [];
 			p2.ratings = [ratings];
 			adjustAndFilter("stats", currentSeason - ratingsSeason, true);
@@ -2898,10 +2981,25 @@ const importPlayers = async ({
 
 			adjustAndFilter("injuries", seasonOffset2, false);
 			adjustAndFilter("ratings", seasonOffset2, false);
-			adjustAndFilter("salaries", seasonOffset2, false);
 			adjustAndFilter("stats", seasonOffset2, false);
 
-			player.setContract(p2, p2.contract, tid >= 0);
+			p2.contracts = getImportedContractHistory(
+				p,
+				seasonOffset2,
+				currentSeason,
+			);
+		}
+
+		// Players on a team sign the contract entered when importing
+		if (tid >= 0) {
+			addContract(
+				p2,
+				createContract({
+					contract: newContract,
+					tid,
+					type: "unknown",
+				}),
+			);
 		}
 
 		const p3 = await player.augmentPartialPlayer(
@@ -2942,18 +3040,13 @@ const importPlayersGetReal = async (param: unknown, conditions: Conditions) => {
 		-1,
 	);
 
+	// Default contract when importing, can be changed in the UI
 	const contract = {
 		exp: g.get("season") + 2,
 		amount: helpers.roundContract(
 			Math.sqrt(g.get("minContract") * g.get("maxContract")),
 		),
 	};
-	const salaries = range(g.get("season"), contract.exp + 1).map((season) => {
-		return {
-			season,
-			amount: contract.amount,
-		};
-	});
 
 	const { realPlayerPhotos } = await getRealTeamPlayerData(
 		{ fileHasPlayers: true, fileHasTeams: false },
@@ -2964,15 +3057,18 @@ const importPlayersGetReal = async (param: unknown, conditions: Conditions) => {
 	for (const ratings of groupedRatings.values()) {
 		const p = formatPlayer(ratings);
 		applyRealPlayerPhotos(realPlayerPhotos, p);
-		p.contract = { ...contract };
-		p.salaries = helpers.deepCopy(salaries);
+		// Real players have contract history, which is kept. The contract demand is the default contract in the UI.
+		const contractDemand = { ...contract };
+		p.contractDemand = contractDemand;
 
 		const p2 = await player.augmentPartialPlayer(
 			p,
 			DEFAULT_LEVEL,
 			LEAGUE_DATABASE_VERSION,
 		);
-		players.push(p2);
+
+		// contractDemand is already on p2, but TypeScript doesn't know unless we are explicit
+		players.push({ ...p2, contractDemand });
 	}
 
 	return players;
@@ -3356,7 +3452,11 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 	}
 
 	for (const p of players) {
-		const justDrafted = helpers.justDrafted(p, g.get("phase"), g.get("season"));
+		const justDrafted = helpers.justDrafted(
+			{ draft: p.draft, contract: getContractSummaryOrThrow(p) },
+			g.get("phase"),
+			g.get("season"),
+		);
 
 		await player.release(p, justDrafted);
 	}
@@ -4258,7 +4358,10 @@ const updateGameAttributesGodMode = async (
 		(gameAttributes.realPlayerDeterminism !== undefined &&
 			currentRealPlayerDeterminism !== gameAttributes.realPlayerDeterminism)
 	) {
-		const players = (await idb.cache.players.getAll()).filter((p) => p.real);
+		// The cache can have retired players, like ones who are still owed money by a team that released them
+		const players = (await idb.cache.players.getAll()).filter(
+			(p) => p.real && p.tid !== PLAYER.RETIRED,
+		);
 		for (const p of players) {
 			await player.develop(p, 0);
 			await player.updateValues(p);
@@ -4871,20 +4974,107 @@ const upgrade65 = async () => {
 	console.timeEnd("upgrade65");
 };
 
+// Apply the contract from the Customize Player form, which is the player's current contract or contract demand. p.contracts must be the player's actual contracts, not the ones sent from the UI.
+const applyCustomizedContract = (
+	p: PlayerWithoutKey,
+	originalTid: number | undefined,
+	contractInput: PlayerContract,
+) => {
+	const prevCurrentContract =
+		originalTid !== undefined && originalTid >= 0 && !p.contractDemand
+			? getCurrentContract({ contracts: p.contracts, tid: originalTid })
+			: undefined;
+
+	if (p.tid === PLAYER.RETIRED) {
+		if (
+			prevCurrentContract &&
+			getContractExp(prevCurrentContract) >= getContractStartSeason()
+		) {
+			prevCurrentContract.endedEarly = {
+				season: g.get("season"),
+				phase: g.get("phase"),
+				reason: "retired",
+			};
+		}
+		return;
+	}
+
+	const unsignedOnTeam =
+		p.contractDemand !== undefined &&
+		originalTid !== undefined &&
+		originalTid >= 0;
+	if (p.tid < 0 || unsignedOnTeam) {
+		// Free agent, draft prospect, or unsigned player on a team
+		p.contractDemand = {
+			...p.contractDemand,
+			amount: contractInput.amount,
+			exp: contractInput.exp,
+		};
+		return;
+	}
+
+	if (prevCurrentContract) {
+		// Contracts with different amounts in different seasons can't be edited yet
+		if (!isFlatContract(prevCurrentContract)) {
+			return;
+		}
+
+		const summary = contractToSummary(prevCurrentContract);
+		if (
+			summary.amount === contractInput.amount &&
+			summary.exp === contractInput.exp
+		) {
+			return;
+		}
+
+		// Keep seasons that were already paid, and change the rest
+		const firstEditableSeason = Math.max(
+			prevCurrentContract.start,
+			getContractStartSeason(),
+		);
+		const amounts = prevCurrentContract.amounts.slice(
+			0,
+			firstEditableSeason - prevCurrentContract.start,
+		);
+		for (let s = firstEditableSeason; s <= contractInput.exp; s++) {
+			amounts.push(contractInput.amount);
+		}
+		if (amounts.length > 0) {
+			prevCurrentContract.amounts = amounts;
+		}
+		return;
+	}
+
+	// Moving to a team, so he needs a contract
+	addContract(
+		p,
+		createContract({
+			contract: contractInput,
+			tid: p.tid,
+			type: "unknown",
+		}),
+	);
+};
+
 const upsertCustomizedPlayer = async (
 	{
-		p,
+		p: pInput,
 		originalTid,
 		season,
 		recomputePosOvrPot,
 	}: {
-		p: PlayerWithoutKey;
+		p: PlayerWithoutKey & {
+			// The contract fields in the form
+			contract: PlayerContract;
+		};
 		originalTid: number | undefined;
 		season: number;
 		recomputePosOvrPot: boolean;
 	},
 	conditions: Conditions,
 ): Promise<number> => {
+	const { contract: contractInput, ...p } = pInput;
+
 	if (p.tid >= 0) {
 		const t = await idb.cache.teams.get(p.tid);
 		if (!t) {
@@ -4912,6 +5102,13 @@ const upsertCustomizedPlayer = async (
 			p.ptModifier = 1;
 		}
 	}
+
+	// Contracts can't be edited directly in the UI, so use the current ones, which might have changed since the UI got them (like payments from games played)
+	const prevPlayer =
+		p.pid !== undefined ? await idb.merged.players.get(p.pid) : undefined;
+	p.contracts = prevPlayer ? helpers.deepCopy(prevPlayer.contracts) : [];
+	applyCustomizedContract(p, originalTid, contractInput);
+	updateOwedByTids(p);
 
 	// Handle making player a FA
 	if (p.tid === PLAYER.FREE_AGENT && originalTid !== PLAYER.FREE_AGENT) {
@@ -5045,8 +5242,6 @@ const upsertCustomizedPlayer = async (
 
 	p.relatives = relatives;
 
-	const prevPlayer =
-		p.pid !== undefined ? await idb.merged.players.get(p.pid) : undefined;
 	if (prevPlayer) {
 		// Any relation in here that is no longer in p should be deleted in the corresponding player too
 		for (const prevRel of prevPlayer.relatives) {

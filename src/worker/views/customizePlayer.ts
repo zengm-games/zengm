@@ -2,7 +2,16 @@ import { PLAYER, PHASE } from "../../common/constants.ts";
 import { finances, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { PlayerWithoutKey, Player } from "../../common/types.ts";
+import type {
+	PlayerContract,
+	PlayerWithoutKey,
+	Player,
+} from "../../common/types.ts";
+import { getCurrentContract } from "../../common/contracts.ts";
+import {
+	getLatestContractSummary,
+	isFlatContract,
+} from "../core/contract/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { upgradeFace } from "../util/face.ts";
@@ -80,6 +89,10 @@ export default defineView({
 			let appearanceOption;
 			let originalTid;
 
+			// What's shown in the contract fields, which is the current contract or contract demand
+			let contract: PlayerContract | undefined;
+			let contractEditable = true;
+
 			let p: PlayerWithoutKey;
 			if (inputs.pid === null) {
 				// Generate new player as basis
@@ -99,6 +112,7 @@ export default defineView({
 				);
 				appearanceOption = "Cartoon Face";
 				p.imgURL = "http://";
+				contract = p.contractDemand;
 			} else {
 				// Load a player to edit
 				const p2 = await idb.merged.players.get(inputs.pid);
@@ -113,6 +127,18 @@ export default defineView({
 
 				// Copy because the player is edited below
 				p = helpers.deepCopy(p2);
+
+				const currentContract = getCurrentContract(p2);
+				contract = getLatestContractSummary(p2);
+
+				// Contracts with different amounts in different seasons can't be edited yet
+				if (
+					currentContract &&
+					!p2.contractDemand &&
+					!isFlatContract(currentContract)
+				) {
+					contractEditable = false;
+				}
 
 				await upgradeFace(p);
 
@@ -139,9 +165,9 @@ export default defineView({
 						ovr: 0,
 						skills: [],
 					};
-					p.salaries = p.salaries.filter(
-						(row) => row.season >= g.get("season"),
-					);
+					p.contracts = [];
+					delete p.owedByTids;
+					contractEditable = true;
 				}
 			}
 
@@ -165,8 +191,15 @@ export default defineView({
 
 			faceCount += 1;
 
+			contract ??= {
+				amount: g.get("minContract"),
+				exp: g.get("season"),
+			};
+
 			return {
 				appearanceOption,
+				contract,
+				contractEditable,
 				faceCount,
 				initialAutoPos,
 				originalTid,

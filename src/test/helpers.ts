@@ -1,6 +1,8 @@
 import { Cache, idb } from "../worker/db/index.ts";
 import { STORES, type Store } from "../worker/db/Cache.ts";
 import { g, helpers } from "../worker/util/index.ts";
+import { getCurrentContract } from "../common/contracts.ts";
+import { addContract, createContract } from "../worker/core/contract/index.ts";
 import {
 	defaultGameAttributes,
 	footballOverrides,
@@ -90,6 +92,20 @@ export const resetCache = async (
 	}
 
 	if (data.players) {
+		// Like at league creation, players on a team sign their contract demands
+		for (const p of data.players) {
+			if (p.tid >= 0 && p.contractDemand && !getCurrentContract(p)) {
+				addContract(
+					p,
+					createContract({
+						contract: p.contractDemand,
+						tid: p.tid,
+						type: "unknown",
+					}),
+				);
+			}
+		}
+
 		await idb.cache.players.addAll(data.players);
 	}
 

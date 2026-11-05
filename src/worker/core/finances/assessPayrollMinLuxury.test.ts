@@ -18,10 +18,10 @@ test("store payroll and appropriately assess luxury and minimum payroll taxes fo
 		player.generate(1, 30, 2017, true, DEFAULT_LEVEL),
 		player.generate(2, 30, 2017, true, DEFAULT_LEVEL),
 	] as const;
-	players[0].contract.amount = g.get("luxuryPayroll") + 1;
-	players[1].contract.amount =
+	players[0].contractDemand!.amount = g.get("luxuryPayroll") + 1;
+	players[1].contractDemand!.amount =
 		(g.get("luxuryPayroll") + g.get("minPayroll")) / 2;
-	players[2].contract.amount = g.get("minPayroll") - 1;
+	players[2].contractDemand!.amount = g.get("minPayroll") - 1;
 
 	const teamsDefault = helpers.getTeamsDefault().slice(0, 3);
 

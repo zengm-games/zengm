@@ -58,6 +58,17 @@ import createGameAttributes from "./createGameAttributes.ts";
 import initRandomDebutsForRandomPlayersLeague from "./initRandomDebutsForRandomPlayersLeague.ts";
 import setRepeatSeason from "./setRepeatSeason.ts";
 import processPlayerNewLeague from "./processPlayerNewLeague.ts";
+import { getCurrentContract } from "../../../common/contracts.ts";
+import {
+	addContract,
+	createContract,
+	updateOwedByTids,
+} from "../contract/index.ts";
+import {
+	applyLegacyReleasedPlayers,
+	estimatePaymentTeams,
+	type LegacyReleasedPlayer,
+} from "../contract/convertLegacyContracts.ts";
 import remove from "./remove.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
@@ -223,7 +234,6 @@ export type PreProcessParams = {
 const PRIMARY_KEYS_TO_DELETE: Record<string, string> = {
 	messages: "mid",
 	playerFeats: "fid",
-	releasedPlayers: "rid",
 	scheduledEvents: "id",
 	teamSeasons: "rid",
 	teamStats: "rid",
@@ -351,8 +361,15 @@ const preProcess = async (
 type ExtraFromStream = {
 	activePlayers: PlayerWithoutKey[];
 	hasEvents: boolean;
+
+	// From league files before p.contracts (version 75), where contracts owed to released players were in their own store
+	legacyReleasedPlayers: LegacyReleasedPlayer[];
+
 	teamHasRosterOrder: Set<number>;
 };
+
+// Not a store anymore, but can be in old league files
+const LEGACY_RELEASED_PLAYERS = "releasedPlayers" as LeagueDBStoreNames;
 
 const getSaveToDB = ({
 	keptKeys,
@@ -370,6 +387,7 @@ const getSaveToDB = ({
 	const extraFromStream: ExtraFromStream = {
 		activePlayers: [],
 		hasEvents: false,
+		legacyReleasedPlayers: [],
 		teamHasRosterOrder: new Set(),
 	};
 
@@ -408,6 +426,13 @@ const getSaveToDB = ({
 
 		if (key === "events" && keptKeys.has("events")) {
 			extraFromStream.hasEvents = true;
+		}
+
+		if (key === LEGACY_RELEASED_PLAYERS) {
+			if (keptKeys.has(key) && keptKeys.has("players")) {
+				extraFromStream.legacyReleasedPlayers.push(value);
+			}
+			return;
 		}
 
 		const isPlayers = key === "players" && keptKeys.has("players");
@@ -1059,11 +1084,107 @@ const processTeamInfos = async ({
 	};
 };
 
+// Old league files have contracts owed to released players in their own store, which now go in the players' contracts
+const applyLegacyReleasedPlayersToPlayers = async (
+	players: Player[],
+	legacyReleasedPlayers: ExtraFromStream["legacyReleasedPlayers"],
+) => {
+	const legacyReleasedPlayersByPid = Map.groupBy(
+		legacyReleasedPlayers,
+		(rp) => rp.pid,
+	);
+	const leagueState = {
+		fractionCurrentSeasonPaid: 0,
+		phase: g.get("phase"),
+		season: g.get("season"),
+	};
+
+	const apply = (p: Player, releasedPlayers: LegacyReleasedPlayer[]) => {
+		applyLegacyReleasedPlayers({
+			contracts: p.contracts,
+			leagueState,
+			releasedPlayers,
+			releaseEvents: [],
+			tid: p.tid,
+		});
+		estimatePaymentTeams({
+			contracts: p.contracts,
+			currentTid: p.tid >= 0 ? p.tid : undefined,
+			payerInfo: {
+				stats: p.stats,
+				transactions: p.transactions ?? [],
+			},
+		});
+		updateOwedByTids(p);
+	};
+
+	// Active players are in the cache, but their objects are still being modified, so they are saved later
+	for (const p of players) {
+		const releasedPlayers = legacyReleasedPlayersByPid.get(p.pid);
+		if (releasedPlayers) {
+			legacyReleasedPlayersByPid.delete(p.pid);
+			apply(p, releasedPlayers);
+		}
+	}
+
+	// Released players who are not active anymore (like if they retired) were already saved. Now that they're owed money, they belong in the cache.
+	for (const [pid, releasedPlayers] of legacyReleasedPlayersByPid) {
+		const p = await idb.league.get("players", pid);
+		if (p) {
+			apply(p, releasedPlayers);
+			await idb.cache.players.put(p);
+		}
+	}
+};
+
+// Players on a team who don't have a contract yet, like random players, sign their contract demand. Except unsigned draft picks, who will sign during the re-signing phase.
+const finalizeContract = (p: PlayerWithoutKey, phase: Phase) => {
+	const rookieContract = !!(p as any).rookieContract;
+	delete (p as any).rookieContract;
+
+	if (p.contractDemand) {
+		delete p.contractDemand.temp;
+		if (rookieContract) {
+			p.contractDemand.rookie = true;
+		}
+	}
+
+	if (p.tid < 0) {
+		return;
+	}
+
+	const currentContract = getCurrentContract(p);
+	if (currentContract) {
+		if (rookieContract && currentContract.type === "unknown") {
+			currentContract.type = "rookie";
+		}
+	} else if (p.contractDemand) {
+		const unsignedDraftPick =
+			p.draft.year === g.get("season") &&
+			phase >= PHASE.DRAFT &&
+			p.contractDemand.exp <= g.get("season");
+		if (!unsignedDraftPick) {
+			const contract = createContract({
+				contract: p.contractDemand,
+				tid: p.tid,
+				type: p.contractDemand.rookie ? "rookie" : "unknown",
+			});
+
+			// Not actually signed in this league, so the signing is unknown
+			delete contract.signed;
+
+			addContract(p, contract);
+		}
+	}
+};
+
 const finalizeActivePlayers = async ({
 	fileHasPlayers,
+	legacyReleasedPlayers,
 	phase,
 }: {
 	fileHasPlayers: boolean;
+	legacyReleasedPlayers: ExtraFromStream["legacyReleasedPlayers"];
 	phase: Phase;
 }) => {
 	// If no players were uploaded in custom league file, add some relatives!
@@ -1091,11 +1212,22 @@ const finalizeActivePlayers = async ({
 		await player.updateValues(p);
 	}
 
+	// Before normalizeContractDemands, so payrolls include these contracts
+	if (legacyReleasedPlayers.length > 0) {
+		await applyLegacyReleasedPlayersToPlayers(players1, legacyReleasedPlayers);
+	}
+	for (const p of players1) {
+		// Contract demands that will be normalized become contracts after that
+		if (!p.contractDemand?.temp) {
+			finalizeContract(p, phase);
+		}
+	}
+
 	// players1 are the objects stored in the cache, so mutations above are already visible to cache reads. This just marks them as dirty
 	await idb.cache.players.putAll(players1);
 
 	const pidsToNormalize = players1
-		.filter((p) => p.contract.temp)
+		.filter((p) => p.contractDemand?.temp)
 		.map((p) => p.pid);
 	await freeAgents.normalizeContractDemands({
 		type: "newLeague",
@@ -1114,20 +1246,27 @@ const finalizeActivePlayers = async ({
 			if (t.disabled) {
 				continue;
 			}
-			const roster = players.filter((p) => p.tid === t.tid);
-			let payroll = roster.reduce((total, p) => total + p.contract.amount, 0);
+			// Contract demands of random players, which become their contracts below
+			const roster = players
+				.filter((p) => p.tid === t.tid)
+				.map((p) => p.contractDemand)
+				.filter((contractDemand) => contractDemand !== undefined);
+			let payroll = await team.getPayroll(t.tid);
+			for (const contractDemand of roster) {
+				payroll += contractDemand.amount;
+			}
 
 			while (payroll > g.get("salaryCap")) {
 				let foundAny = false;
 
-				for (const p of roster) {
-					if (p.contract.amount >= minContract + 10) {
+				for (const contractDemand of roster) {
+					if (contractDemand.amount >= minContract + 10) {
 						payroll -= 10;
-						p.contract.amount -= 10;
+						contractDemand.amount -= 10;
 						foundAny = true;
-					} else if (p.contract.amount > minContract) {
-						payroll -= p.contract.amount - minContract;
-						p.contract.amount = minContract;
+					} else if (contractDemand.amount > minContract) {
+						payroll -= contractDemand.amount - minContract;
+						contractDemand.amount = minContract;
 						foundAny = true;
 					}
 				}
@@ -1142,16 +1281,7 @@ const finalizeActivePlayers = async ({
 	}
 
 	for (const p of players) {
-		if (p.tid >= 0 && p.salaries.length === 0) {
-			player.setContract(p, p.contract, true);
-		}
-
-		if ((p as any).rookieContract) {
-			p.contract.rookie = true;
-			delete (p as any).rookieContract;
-		}
-
-		delete p.contract.temp;
+		finalizeContract(p, phase);
 	}
 
 	// Maybe not needed, but let's be sure
@@ -1374,7 +1504,7 @@ const adjustSeasonPlayer = (p: Partial<PlayerWithoutKey>) => {
 	const diff = season - playerSeason;
 
 	if (diff !== 0) {
-		const keys = ["awards", "injuries", "ratings", "salaries"] as const;
+		const keys = ["awards", "injuries", "ratings"] as const;
 		for (const key of keys) {
 			if (p[key]) {
 				for (const row of p[key]) {
@@ -1526,6 +1656,9 @@ const afterDBStream = async ({
 				delete p.transactions;
 				delete p.contract;
 				delete p.salaries;
+				delete p.contracts;
+				delete p.owedByTids;
+				delete p.contractDemand;
 				delete p.awards;
 				delete p.hof;
 				delete p.diedYear;
@@ -1549,15 +1682,12 @@ const afterDBStream = async ({
 				if ((p2 as any).rookieContract && draftPickAutoContract) {
 					const pickIndex =
 						(p2.draft.round - 1) * g.get("numActiveTeams") + p2.draft.pick - 1;
-					player.setContract(
-						p2,
-						{
-							amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1)!,
-							exp: p2.contract.exp,
-						},
-						true,
-					);
-					p2.contract.rookie = true;
+					// Not temp, so this won't be normalized. Then it becomes his contract in finalizeActivePlayers.
+					player.setContractDemand(p2, {
+						amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1)!,
+						exp: p2.contractDemand!.exp,
+						rookie: true,
+					});
 				}
 
 				// Do this after processPlayerNewLeague so it can impute rookie contract status based on draft round
@@ -1717,6 +1847,7 @@ const afterDBStream = async ({
 
 	await finalizeActivePlayers({
 		fileHasPlayers,
+		legacyReleasedPlayers: extraFromStream.legacyReleasedPlayers,
 		phase: gameAttributes.phase,
 	});
 

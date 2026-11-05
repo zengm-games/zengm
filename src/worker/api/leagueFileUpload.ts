@@ -20,7 +20,8 @@ const cumulativeObjects = [
 ] as const;
 export const CUMULATIVE_OBJECTS = new Set<string>(cumulativeObjects);
 type CumulativeObjects = (typeof cumulativeObjects)[number];
-type LeagueFileKey = LeagueDBStoreNames | CumulativeObjects;
+// releasedPlayers is only in old league files, from before p.contracts
+type LeagueFileKey = LeagueDBStoreNames | CumulativeObjects | "releasedPlayers";
 
 export const parseJSON = () => {
 	// This is an object rather than an array so we can easily confirm that all LeagueDBStoreNames are present
@@ -215,7 +216,12 @@ const getBasicInfo = async ({
 			basicInfo.maxGid = value.gid;
 		}
 
-		if (key === "players" && value.contract?.rookie) {
+		if (
+			key === "players" &&
+			(value.contract?.rookie ||
+				value.contractDemand?.rookie ||
+				value.contracts?.some((contract: any) => contract.type === "rookie"))
+		) {
 			basicInfo.hasRookieContracts = true;
 		}
 

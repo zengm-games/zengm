@@ -22,7 +22,12 @@ import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
-import type { View, Phase, PlayerWithoutKey } from "../../../common/types.ts";
+import type {
+	View,
+	Phase,
+	PlayerContract,
+	PlayerWithoutKey,
+} from "../../../common/types.ts";
 import { posRatings } from "../../../common/posRatings.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
@@ -34,17 +39,21 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { useLocal } from "../../util/local.ts";
 import clsx from "clsx";
 
+// In the form, the contract fields are the player's current contract or contract demand
+type PlayerWithContract = PlayerWithoutKey & {
+	contract: PlayerContract;
+};
+
+const VARIABLE_CONTRACT_TEXT =
+	"Contracts with different amounts in different seasons can't be edited yet.";
+
 const copyValidValues = (
-	source: PlayerWithoutKey,
-	target: PlayerWithoutKey,
+	source: PlayerWithContract,
+	target: PlayerWithContract,
 	minContract: number,
 	phase: Phase,
 	season: number,
 ) => {
-	// Should be true if a player is becoming "active" (moving to a team from a non-team, such as free agent, retired, draft prospect, or new player)
-	// @ts-expect-error
-	const activated = source.tid >= 0 && Number.parseInt(target.tid) < 0;
-
 	for (const attr of ["hgt", "tid", "weight"] as const) {
 		// @ts-expect-error
 		const val = Number.parseInt(source[attr]);
@@ -135,13 +144,6 @@ const copyValidValues = (
 		}
 	}
 
-	// This preserves contract.rookie
-	const oldContract = {
-		...target.contract,
-	};
-
-	let contractChanged = false;
-
 	{
 		// Allow any value, even above or below normal limits, but round and convert from M to k
 		let amount = roundContract(
@@ -152,10 +154,7 @@ const copyValidValues = (
 			amount = minContract;
 		}
 
-		if (target.contract.amount !== amount) {
-			target.contract.amount = amount;
-			contractChanged = true;
-		}
+		target.contract.amount = amount;
 	}
 
 	{
@@ -172,39 +171,7 @@ const copyValidValues = (
 				exp += 1;
 			}
 
-			if (target.contract.exp !== exp) {
-				target.contract.exp = exp;
-				contractChanged = true;
-			}
-		}
-	}
-
-	// Keep salaries log updated with contract
-	if (contractChanged || activated) {
-		// This code is similar to player.setContract
-
-		// Is this contract beginning with an in-progress season, or next season?
-		let start = season;
-
-		if (phase > PHASE.AFTER_TRADE_DEADLINE) {
-			start += 1;
-		}
-
-		if (contractChanged && !activated) {
-			// Remove entries from old contract
-			target.salaries = target.salaries.filter((salary) => {
-				return salary.season < start || salary.amount !== oldContract.amount;
-			});
-		}
-
-		if (target.tid >= 0) {
-			// Add entries for new contract
-			for (let i = start; i <= target.contract.exp; i++) {
-				target.salaries.push({
-					season: i,
-					amount: target.contract.amount,
-				});
-			}
+			target.contract.exp = exp;
 		}
 	}
 
@@ -356,12 +323,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	]);
 
 	const [state, setState] = useState(() => {
-		const p = helpers.deepCopy(props.p);
-		if (p) {
-			(p as any).age = season - p.born.year;
-			p.contract.amount /= 1000;
-			(p as any).face = JSON.stringify(p.face, null, 2);
-		}
+		const p: PlayerWithContract = {
+			...helpers.deepCopy(props.p),
+			contract: {
+				...props.contract,
+				amount: props.contract.amount / 1000,
+			},
+		};
+		(p as any).age = season - p.born.year;
+		(p as any).face = JSON.stringify(p.face, null, 2);
 
 		return {
 			appearanceOption: props.appearanceOption,
@@ -396,7 +366,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		}));
 
 		try {
-			const p = helpers.deepCopy(props.p);
+			const p: PlayerWithContract = {
+				...helpers.deepCopy(props.p),
+				contract: helpers.deepCopy(props.contract),
+			};
 
 			// Copy over values from state, if they're valid
 			const recomputePosOvrPot = copyValidValues(
@@ -1194,7 +1167,12 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										className="form-control"
 										onChange={handleChange.bind(null, "contract", "amount")}
 										value={p.contract.amount}
-										disabled={!godMode}
+										disabled={!godMode || !props.contractEditable}
+										title={
+											props.contractEditable
+												? undefined
+												: VARIABLE_CONTRACT_TEXT
+										}
 									/>
 								</CurrencyInputGroup>
 							</div>
@@ -1211,7 +1189,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "contract", "exp")}
 									value={p.contract.exp}
-									disabled={!godMode}
+									disabled={!godMode || !props.contractEditable}
+									title={
+										props.contractEditable ? undefined : VARIABLE_CONTRACT_TEXT
+									}
 								/>
 							</div>
 							{playerMoodTraits ? (

@@ -1136,11 +1136,48 @@ export type PhaseReturn = {
 	updateEvents?: UpdateEvents;
 };
 
+// A flat contract, the same amount every season through exp. This is used for contract demands (what a player is asking for), and for snapshots of contracts in events and trades. Signed contracts are Contract objects in p.contracts.
 export type PlayerContract = {
 	amount: number;
 	exp: number;
-	rookie?: true; // If present, this is a rookie contract. Could be either a rookie scale auto sign, or negotiated.
-	rookieResign?: true; // Should only be present during re-signing phase for guys re-signing after rookie contracts, otherwise can't identify if previous contract was a rookie contract cause it's overwritten!
+	rookie?: true; // If present, this is (or signing it would make) a rookie contract. Could be either a rookie scale auto sign, or negotiated.
+};
+
+// "unknown" is for contracts where the type can't be determined, like contracts migrated from before contracts were tracked, or a rookie contract with an extension merged into it.
+export type ContractType = "rookie" | "reSign" | "freeAgent" | "unknown";
+
+export type ContractPayment = {
+	season: number;
+	tid: number; // PLAYER.DOES_NOT_EXIST if unknown, like for payments migrated from before contracts were tracked
+	amount: number;
+};
+
+export type ContractEndedEarly =
+	| {
+			season: number;
+			phase: Phase;
+			reason: "retired" | "died";
+			tid?: undefined;
+	  }
+	| {
+			season: number;
+			phase: Phase;
+			reason: "released";
+
+			// Team that released the player, which still owes the rest of the contract. Deleted once the contract is fully paid, so p.owedByTids only has teams that still owe something. After that, payments say which team paid.
+			tid?: number;
+	  };
+
+export type Contract = {
+	type: ContractType;
+
+	// Undefined for contracts migrated from before contracts were tracked, when the signing is not known
+	signed?: { season: number; phase: Phase; tid: number };
+
+	start: number; // First season paid
+	amounts: number[]; // One per season, so exp = start + amounts.length - 1
+	payments: ContractPayment[]; // Actually paid, added to every game
+	endedEarly?: ContractEndedEarly;
 };
 
 export type PlayerFeatWithoutKey = {
@@ -1170,6 +1207,7 @@ export type PlayerInjury = {
 	score?: number;
 };
 
+// Only for legacy league files and the migration from before contracts were tracked
 type PlayerSalary = {
 	amount: number;
 	season: number;
@@ -1230,9 +1268,15 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 		loc: string;
 	};
 	college: string;
-	contract: PlayerContract & {
-		temp?: true; // Used only on import
+
+	// What the player is asking for. Defined for free agents, draft prospects, and players on a team who need a new contract (unsigned draft picks, or expiring contracts while re-signing).
+	contractDemand?: PlayerContract & {
+		temp?: true; // Used only during league creation, to mark demands that need to be normalized
 	};
+
+	// Every contract the player signed, oldest first. His current contract is the last one that did not end early, if he's on a team.
+	contracts: Contract[];
+
 	customMoodItems?: {
 		amount: number;
 		text: string;
@@ -1271,6 +1315,10 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	note?: string;
 	noteBool?: 1; // Keep in sync with note - for indexing
 	numDaysFreeAgent: number;
+
+	// Teams that released this player and still owe him money, from endedEarly.tid of his contracts. This is only so the database can index players who are still owed, since IndexedDB can't index inside p.contracts. Missing if nobody owes him. Update with updateOwedByTids whenever endedEarly.tid changes.
+	owedByTids?: number[];
+
 	pid?: number;
 	pos?: string; // Only in players from custom league files
 	ptModifier: number;
@@ -1279,7 +1327,6 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	relatives: Relative[];
 	retiredYear: number;
 	rosterOrder: number;
-	salaries: PlayerSalary[];
 	srID?: string;
 	stats: PlayerStats[];
 	statsTids: number[];
@@ -1346,6 +1393,15 @@ export type Player<PlayerRatings = MinimalPlayerRatings> = {
 	pid: number;
 } & PlayerWithoutKey<PlayerRatings>;
 
+// Contract info in the format from before p.contracts (league DB version 75). This can still be in league files, player exports, and real players data.
+export type LegacyPlayerContractInfo = {
+	contract?: PlayerContract & {
+		rookieResign?: true;
+		temp?: true;
+	};
+	salaries?: PlayerSalary[];
+};
+
 export type PlayerStatType = "per36" | "perGame" | "totals";
 
 // For keys present in multiple sports, the value type is the union of the types from each sport
@@ -1370,17 +1426,9 @@ type PlayerAllKeys = {
 	[K in PlayerKey]: Player[K];
 };
 
-type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
+type PlayerAttrsPlus<Contract = PlayerContract> = Omit<
 	PlayerAllKeys,
-	| "contract"
-	| "diedYear"
-	| "draft"
-	| "hof"
-	| "jerseyNumber"
-	| "ratings"
-	| "salaries"
-	| "stats"
-	| "watch"
+	"diedYear" | "draft" | "hof" | "jerseyNumber" | "ratings" | "stats" | "watch"
 > & {
 	abbrev: string;
 	age: number;
@@ -1405,17 +1453,28 @@ type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
 	numBrothers: number;
 	numFathers: number;
 	numSons: number;
-	salaries: {
-		amount: number;
-		season: number;
-		type: "past" | "current" | "future";
-	}[];
+	salaries: PlayerSalaryRow[];
 	salariesTotal: number;
 	salary: number;
 	untradable: boolean;
 	watch: number;
 };
 export type PlayerAttr = keyof PlayerAttrsPlus;
+
+// One row per season of each contract, for the player page
+export type PlayerSalaryRow = {
+	amount: number; // Paid for past seasons, contracted for current and future seasons
+	season: number;
+	type: "past" | "current" | "future";
+
+	// Teams that paid for this season (past), or are expected to pay (current/future), with the largest first. tid is PLAYER.DOES_NOT_EXIST (abbrev "DNE") if unknown, like for salaries from before this was tracked.
+	payers: {
+		tid: number;
+		abbrev: string;
+		amount: number;
+		released: boolean;
+	}[];
+};
 
 // Rating keys from all sports, like RATINGS
 export type PlayerRatingKey =
@@ -1583,10 +1642,10 @@ type PlayerContractFiltered<
 	Season extends number | undefined,
 	SeasonRange extends [number, number] | undefined,
 > = [SeasonRange] extends [undefined]
-	? Player["contract"]
+	? PlayerContract
 	: [Season] extends [number]
-		? Player["contract"]
-		: Omit<Player["contract"], "exp"> & { exp: number | undefined };
+		? PlayerContract
+		: Omit<PlayerContract, "exp"> & { exp: number | undefined };
 
 type PlayerAttrsPart<
 	Attrs extends Readonly<PlayerAttr[]>,
@@ -1946,24 +2005,15 @@ export type ContractInfo = {
 	pos: string;
 	injury: PlayerInjury;
 	jerseyNumber: string | undefined;
-	amount: number;
+	amount: number; // Current amount, as counted in payroll
 	exp: number;
+
+	// Amount for each season, starting with start
+	start: number;
+	amounts: number[];
+
 	released: boolean;
 	watch: number;
-};
-
-export type ReleasedPlayerWithoutKey = {
-	rid?: number;
-	pid: number;
-	tid: number;
-	contract: {
-		amount: number;
-		exp: number;
-	};
-};
-
-export type ReleasedPlayer = ReleasedPlayerWithoutKey & {
-	rid: number;
 };
 
 export type ScheduleGameWithoutKey = {

@@ -1,3 +1,4 @@
+import { clearPaidReleasedContracts } from "../contract/index.ts";
 import { PLAYER } from "../../../common/constants.ts";
 import { draft, player, season, team, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
@@ -481,13 +482,7 @@ const newPhaseBeforeDraft = async (
 			);
 		}
 
-		const releasedPlayers = await idb.cache.releasedPlayers.getAll();
-
-		for (const rp of releasedPlayers) {
-			if (rp.contract.exp <= g.get("season") && typeof rp.rid === "number") {
-				await idb.cache.releasedPlayers.delete(rp.rid);
-			}
-		}
+		await clearPaidReleasedContracts();
 
 		await team.updateStrategies();
 		await achievement.check("afterAwards", conditions);

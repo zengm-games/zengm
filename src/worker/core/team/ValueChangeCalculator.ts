@@ -1,9 +1,13 @@
+import { getCurrentContract } from "../../../common/contracts.ts";
+import { contractToSummary } from "../contract/index.ts";
+import { getContractStartSeason } from "../../util/getContractStartSeason.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { draft, player, team, trade } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import type {
 	TradePickValues,
+	Player,
 	PlayerContract,
 	PlayerInjury,
 	DraftPick,
@@ -174,6 +178,30 @@ const MAX_VALUE = bySport({
 	football: 3,
 	hockey: 2,
 });
+// Like getContractSummary, but for a contract that has different amounts in different seasons, amount is the average of the remaining seasons
+const getContractForValuation = (p: Player) => {
+	if (p.contractDemand) {
+		return p.contractDemand;
+	}
+
+	const contract = getCurrentContract(p);
+	if (!contract) {
+		throw new Error(
+			`No contract or contract demand for ${p.firstName} ${p.lastName} (pid ${p.pid})`,
+		);
+	}
+
+	const summary = contractToSummary(contract);
+	const remainingAmounts = contract.amounts.slice(
+		Math.max(0, getContractStartSeason() - contract.start),
+	);
+	if (remainingAmounts.length > 0) {
+		summary.amount =
+			Math.sumPrecise(remainingAmounts) / remainingAmounts.length;
+	}
+	return summary;
+};
+
 const getContractValue = (
 	contract: PlayerContract,
 	normalizedValue: number,
@@ -248,13 +276,18 @@ const getPlayers = async ({
 			fudgedValue *= fudgeFactor;
 		}
 
+		const contract = getContractForValuation(p);
 		remove.push({
 			type: "player",
 			value: fudgedValue,
-			contractValue: getContractValue(p.contract, value),
+			contractValue: getContractValue(contract, value),
 			injury: p.injury,
 			age: g.get("season") - p.born.year,
-			justDrafted: helpers.justDrafted(p, phase, season),
+			justDrafted: helpers.justDrafted(
+				{ draft: p.draft, contract },
+				phase,
+				season,
+			),
 		});
 	}
 
@@ -264,13 +297,18 @@ const getPlayers = async ({
 		if (p) {
 			const value = zscore(p.value);
 
+			const contract = getContractForValuation(p);
 			add.push({
 				type: "player",
 				value,
-				contractValue: getContractValue(p.contract, value),
+				contractValue: getContractValue(contract, value),
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
-				justDrafted: helpers.justDrafted(p, phase, season),
+				justDrafted: helpers.justDrafted(
+					{ draft: p.draft, contract },
+					phase,
+					season,
+				),
 			});
 		}
 	}

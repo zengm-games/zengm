@@ -4,6 +4,7 @@ import { DRAFT_BY_TEAM_OVR } from "../../../common/constants.ts";
 import { getTeamOvrDiffs } from "../draft/runPicks.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { getContractDemand } from "../contract/index.ts";
 
 // In some sports, extra check for certain important rare positions in case the only one was traded away. These should only be positions with weird unique skills, where you can't replace them easily with another position. Value is the number of players that should be at each position.
 export const KEY_POSITIONS_NEEDED = bySport<Record<string, number> | undefined>(
@@ -39,7 +40,10 @@ const getBest = <T extends PlayerWithoutKey>(
 				return false;
 			}
 
-			if (p.contract.amount <= minContract && p.injury.gamesRemaining === 0) {
+			if (
+				getContractDemand(p).amount <= minContract &&
+				p.injury.gamesRemaining === 0
+			) {
 				seenMinContractAtPos.add(pos);
 			}
 
@@ -109,24 +113,23 @@ const getBest = <T extends PlayerWithoutKey>(
 	};
 
 	for (const p of playersSorted) {
+		const { amount } = getContractDemand(p);
 		const salaryCapCheck =
 			payroll === undefined ||
 			skipSalaryCapCheck ||
-			p.contract.amount + payroll <= salaryCap;
+			amount + payroll <= salaryCap;
 
 		// Don't sign minimum contract players to fill out the roster
-		const shouldAddPlayerNormal =
-			salaryCapCheck && p.contract.amount > minContract;
+		const shouldAddPlayerNormal = salaryCapCheck && amount > minContract;
 		const shouldAddPlayerMinContract =
-			p.contract.amount <= minContract &&
-			playersOnRoster.length < maxRosterSize - 2;
+			amount <= minContract && playersOnRoster.length < maxRosterSize - 2;
 
 		// If none of the other checks were true and we can afford this player and it's at a position we have nobody at (like hockey goalie), go for it
 		const shouldAddPlayerPosition =
 			p.injury.gamesRemaining === 0 &&
 			!shouldAddPlayerNormal &&
 			!shouldAddPlayerMinContract &&
-			(salaryCapCheck || p.contract.amount <= minContract) &&
+			(salaryCapCheck || amount <= minContract) &&
 			getKeyPositionsNeeded()?.has(last(p.ratings).pos);
 
 		if (

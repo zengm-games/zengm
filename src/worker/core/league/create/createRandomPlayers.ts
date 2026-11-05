@@ -120,7 +120,7 @@ const createRandomPlayers = async ({
 
 			if (round === 0) {
 				// Guaranteed contracts for undrafted players are overwritten below
-				p.contract.exp = -Infinity;
+				p.contractDemand!.exp = -Infinity;
 			} else {
 				let years;
 				if (g.get("draftPickAutoContract")) {
@@ -138,9 +138,9 @@ const createRandomPlayers = async ({
 					contract.rookie = true;
 				}
 
-				player.setContract(p, contract, false);
+				player.setContractDemand(p, contract);
 			}
-			p.contract.temp = true;
+			p.contractDemand!.temp = true;
 
 			keptPlayers.push(p);
 		}
@@ -201,8 +201,11 @@ const createRandomPlayers = async ({
 		}
 
 		// Keep rookie contract, or no?
-		if (p.contract.exp >= g.get("season") && g.get("draftPickAutoContract")) {
-			delete p.contract.temp;
+		if (
+			p.contractDemand!.exp >= g.get("season") &&
+			g.get("draftPickAutoContract")
+		) {
+			delete p.contractDemand!.temp;
 		}
 
 		players.push(p);
@@ -300,15 +303,11 @@ const createRandomPlayers = async ({
 			// So half will be eligible to retire after the first season
 			p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0;
 
-			player.setContract(
-				p,
-				{
-					amount: g.get("minContract"),
-					exp: g.get("season"),
-				},
-				false,
-			);
-			p.contract.temp = true;
+			player.setContractDemand(p, {
+				amount: g.get("minContract"),
+				exp: g.get("season"),
+				temp: true,
+			});
 			player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 			players.push(p);
 		}

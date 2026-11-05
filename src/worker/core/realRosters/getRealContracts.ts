@@ -35,6 +35,7 @@ const getPayments = (
 // Real contract data has exact amounts for each season, and extensions that start after the current contract. An extension is added to the current contract, since in the game a player only has one contract at a time.
 export const getRealContracts = ({
 	draftYear,
+	includePastContracts,
 	onTeam,
 	phase,
 	salaryRows: salaryRowsInput,
@@ -42,6 +43,10 @@ export const getRealContracts = ({
 	useExtensions,
 }: {
 	draftYear: number;
+
+	// Seasons of contracts before the current season: contracts that ended before then, seasons of the current contract before then, and the paid part of a released free agent's contract. Without stats, there's no way to tell which team paid them.
+	includePastContracts: boolean;
+
 	onTeam: boolean;
 	phase: Phase;
 	salaryRows: SalaryRow[];
@@ -67,7 +72,7 @@ export const getRealContracts = ({
 
 	// Past contracts, only the seasons before the current season
 	for (const row of salaryRows) {
-		if (row === currentRow || row.start >= season) {
+		if (!includePastContracts || row === currentRow || row.start >= season) {
 			continue;
 		}
 
@@ -109,15 +114,21 @@ export const getRealContracts = ({
 		if (onTeam) {
 			// A rookie contract with an extension is not just a rookie contract anymore
 			const rookie = firstRow.start === draftYear + 1 && !extended;
+
+			// Without past contracts, the seasons of this contract before the current season are left out too
+			const start = includePastContracts
+				? firstRow.start
+				: Math.max(firstRow.start, season);
+			const currentAmounts = amounts.slice(start - firstRow.start);
 			contracts.push({
 				type: rookie ? "rookie" : "unknown",
-				start: firstRow.start,
-				amounts,
-				payments: getPayments(firstRow.start, amounts, season, phase),
+				start,
+				amounts: currentAmounts,
+				payments: getPayments(start, currentAmounts, season, phase),
 			});
 		} else {
 			// A free agent with a contract in the data was released, but the team that released him isn't known. So he asks for the rest of that contract.
-			if (firstRow.start < season) {
+			if (includePastContracts && firstRow.start < season) {
 				contracts.push({
 					type: "unknown",
 					start: firstRow.start,

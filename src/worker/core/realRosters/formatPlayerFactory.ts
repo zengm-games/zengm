@@ -228,7 +228,6 @@ const formatPlayerFactory = async (
 		let contractDemand: PlayerContract | undefined;
 		let awards: PlayerAward[] | undefined;
 		if (options.type === "legends") {
-			// Every legend asks for the same contract
 			contractDemand = {
 				amount: 6000,
 				exp: season + 3,
@@ -239,6 +238,7 @@ const formatPlayerFactory = async (
 			if (salaryRows && salaryRows.length > 0 && !draftProspect) {
 				const realContracts = getRealContracts({
 					draftYear: draft.year,
+					includePastContracts: options.realStats !== "none",
 					onTeam: tid >= 0,
 					phase: options.phase,
 					salaryRows,

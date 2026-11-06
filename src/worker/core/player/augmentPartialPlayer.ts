@@ -11,7 +11,7 @@ import stats from "./stats.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { convertLegacyContracts } from "../contract/convertLegacyContracts.ts";
-import { getCurrentContract } from "../../../common/contracts.ts";
+import { getImportedCurrentContract } from "../../../common/contracts.ts";
 import {
 	type ContractInput,
 	fillContractDefaults,
@@ -406,7 +406,11 @@ const augmentPartialPlayer = async (
 	}
 
 	// Every non-retired player needs a contract or a contract demand
-	if (p.tid !== PLAYER.RETIRED && !getCurrentContract(p) && !p.contractDemand) {
+	if (
+		p.tid !== PLAYER.RETIRED &&
+		!getImportedCurrentContract(p, currentSeason) &&
+		!p.contractDemand
+	) {
 		p.contractDemand = {
 			amount: g.get("minContract"),
 			exp: currentSeason,

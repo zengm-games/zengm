@@ -58,7 +58,7 @@ import createGameAttributes from "./createGameAttributes.ts";
 import initRandomDebutsForRandomPlayersLeague from "./initRandomDebutsForRandomPlayersLeague.ts";
 import setRepeatSeason from "./setRepeatSeason.ts";
 import processPlayerNewLeague from "./processPlayerNewLeague.ts";
-import { getCurrentContract } from "../../../common/contracts.ts";
+import { getImportedCurrentContract } from "../../../common/contracts.ts";
 import {
 	addContract,
 	createContract,
@@ -1153,7 +1153,7 @@ const finalizeContract = (p: PlayerWithoutKey, phase: Phase) => {
 		return;
 	}
 
-	const currentContract = getCurrentContract(p);
+	const currentContract = getImportedCurrentContract(p, g.get("season"));
 	if (currentContract) {
 		if (rookieContract && currentContract.type === "unknown") {
 			currentContract.type = "rookie";

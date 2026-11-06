@@ -40,3 +40,14 @@ export const getCurrentContract = (
 		return contract;
 	}
 };
+
+// For players coming from outside the game (league files, real players data), which can have a player on a team whose contracts all ended before this season, like a real player whose contract data is missing for this season. Then his last contract is not really his current contract, and he needs a new one. In the game itself, an expired contract is replaced before the next season, so this isn't needed.
+export const getImportedCurrentContract = (
+	p: Pick<PlayerWithoutKey, "contracts" | "tid">,
+	season: number,
+) => {
+	const contract = getCurrentContract(p);
+	if (contract && getContractExp(contract) >= season) {
+		return contract;
+	}
+};

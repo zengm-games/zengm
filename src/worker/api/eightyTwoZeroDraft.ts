@@ -403,7 +403,6 @@ const normalizePick = async (
 				// 1 year contract
 				exp: getContractStartSeason(),
 			},
-			tid: p.tid,
 			type: "freeAgent",
 		}),
 	);

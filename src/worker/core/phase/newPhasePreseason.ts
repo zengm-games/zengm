@@ -99,7 +99,6 @@ const setRepeatSeasonContract = (
 		createContract({
 			contract,
 			start: newSeason,
-			tid,
 			type: "unknown",
 		}),
 	);
@@ -134,7 +133,6 @@ const setHistoricalRosterContract = (
 		createContract({
 			contract,
 			start: newSeason,
-			tid,
 			type: "unknown",
 		}),
 	);

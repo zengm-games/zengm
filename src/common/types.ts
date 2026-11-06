@@ -1171,8 +1171,8 @@ export type ContractEndedEarly =
 export type Contract = {
 	type: ContractType;
 
-	// When and by which team the contract was signed. Undefined if that's not known, like for contracts migrated from before contracts were tracked, real players' contracts, and contracts that came with a league file. tid is PLAYER.DOES_NOT_EXIST if the team isn't in this league, like for imported players' past contracts.
-	signed?: { season: number; phase: Phase; tid: number };
+	// The "freeAgent" or "reSigned" event for this signing, which says when and by which team it was signed. Undefined if there is none, like for rookie contracts (see p.draft instead), real players' contracts, contracts that came with a league file or imported player, and contracts created in Customize Player. The event can also be missing if old events were deleted.
+	eid?: number;
 
 	start: number; // First season paid
 	amounts: number[]; // One per season, so exp = start + amounts.length - 1

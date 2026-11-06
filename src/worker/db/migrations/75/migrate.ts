@@ -86,6 +86,7 @@ export const migrate75 = async (transaction: VersionChangeTransaction) => {
 			event.contract
 		) {
 			pushToMap(signingEventsByPid, pid, {
+				eid: event.eid,
 				type: event.type,
 				season: event.season,
 				phase: event.phase,

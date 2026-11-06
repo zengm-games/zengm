@@ -1166,13 +1166,8 @@ const finalizeContract = (p: PlayerWithoutKey, phase: Phase) => {
 		if (!unsignedDraftPick) {
 			const contract = createContract({
 				contract: p.contractDemand,
-				tid: p.tid,
 				type: p.contractDemand.rookie ? "rookie" : "unknown",
 			});
-
-			// Not actually signed in this league, so the signing is unknown
-			delete contract.signed;
-
 			addContract(p, contract);
 		}
 	}

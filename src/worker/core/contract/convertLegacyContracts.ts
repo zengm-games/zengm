@@ -55,12 +55,20 @@ export type LegacyReleasedPlayer = {
 
 // What's known about a signing, from a "freeAgent" or "reSigned" event
 export type SigningEventInfo = {
+	eid: number;
 	type: "freeAgent" | "reSigned";
 	season: number;
 	phase: Phase | undefined;
 	tid: number;
 	amount: number;
 	exp: number;
+};
+
+// When and by which team a contract was signed, for estimating who paid it
+type Signing = {
+	season: number;
+	phase: Phase;
+	tid: number;
 };
 
 // What's known about a release, from a "release" event
@@ -129,16 +137,18 @@ const estimatePayers = ({
 	currentTid,
 	payerInfo,
 	season,
+	signing,
 }: {
-	contract: Pick<Contract, "endedEarly" | "signed">;
+	contract: Pick<Contract, "endedEarly">;
 
 	// Team that is paying this contract now, if it's the player's current contract
 	currentTid: number | undefined;
 
 	payerInfo: PayerInfo;
 	season: number;
+	signing: Signing | undefined;
 }): { tid: number; weight: number }[] | undefined => {
-	const { endedEarly, signed } = contract;
+	const { endedEarly } = contract;
 
 	// After a player is released, the team that released him pays the rest of his contract. Assume that team paid all of the season he was released in too.
 	if (
@@ -156,12 +166,12 @@ const estimatePayers = ({
 
 	// A contract signed during the season was only paid by the team that signed him, and any teams he was traded to after that
 	if (
-		signed &&
-		signed.season === season &&
-		signed.phase >= PHASE.REGULAR_SEASON &&
-		signed.phase <= PHASE.PLAYOFFS
+		signing &&
+		signing.season === season &&
+		signing.phase >= PHASE.REGULAR_SEASON &&
+		signing.phase <= PHASE.PLAYOFFS
 	) {
-		const i = rows.findLastIndex((row) => row.tid === signed.tid);
+		const i = rows.findLastIndex((row) => row.tid === signing.tid);
 		if (i >= 0) {
 			rows = rows.slice(i);
 		}
@@ -205,6 +215,7 @@ export const estimatePaymentTeams = ({
 	contracts,
 	currentTid,
 	payerInfo,
+	signings,
 }: {
 	contracts: Contract[];
 
@@ -212,6 +223,9 @@ export const estimatePaymentTeams = ({
 	currentTid: number | undefined;
 
 	payerInfo: PayerInfo;
+
+	// Only for contracts whose signing is known, which is only when converting from the legacy format with events
+	signings?: Map<Contract, Signing>;
 }) => {
 	const currentContract =
 		currentTid !== undefined
@@ -231,6 +245,7 @@ export const estimatePaymentTeams = ({
 				currentTid: contract === currentContract ? currentTid : undefined,
 				payerInfo,
 				season: payment.season,
+				signing: signings?.get(contract),
 			});
 			if (!payers) {
 				payments.push(payment);
@@ -459,14 +474,15 @@ export const convertLegacyContracts = ({
 
 	const firstStart = Math.min(...segments.map((segment) => segment.start));
 
+	const signings = new Map<Contract, Signing>();
 	const contracts = segments.map((segment) => {
 		let type: ContractType = "unknown";
-		let signed: Contract["signed"];
+		let signing: Signing | undefined;
 
-		if (segment.signingEvent) {
-			const event = segment.signingEvent;
+		const event = segment.signingEvent;
+		if (event) {
 			type = event.type === "reSigned" ? "reSign" : "freeAgent";
-			signed = {
+			signing = {
 				season: event.season,
 				phase:
 					event.phase ??
@@ -487,11 +503,6 @@ export const convertLegacyContracts = ({
 			segment === expiringRookieContract
 		) {
 			type = "rookie";
-			signed ??= {
-				season: p.draft.year,
-				phase: PHASE.DRAFT,
-				tid: p.draft.tid,
-			};
 		}
 
 		let endedEarly: ContractEndedEarly | undefined;
@@ -510,8 +521,11 @@ export const convertLegacyContracts = ({
 			amounts: getAmounts(segment),
 			payments: getPayments(segment, endedEarly, leagueState),
 		};
-		if (signed) {
-			contract.signed = signed;
+		if (event) {
+			contract.eid = event.eid;
+		}
+		if (signing) {
+			signings.set(contract, signing);
 		}
 		if (endedEarly) {
 			contract.endedEarly = endedEarly;
@@ -534,6 +548,7 @@ export const convertLegacyContracts = ({
 			stats: p.stats ?? [],
 			transactions: p.transactions ?? [],
 		},
+		signings,
 	});
 
 	return {

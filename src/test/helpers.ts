@@ -99,7 +99,6 @@ export const resetCache = async (
 					p,
 					createContract({
 						contract: p.contractDemand,
-						tid: p.tid,
 						type: "unknown",
 					}),
 				);

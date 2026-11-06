@@ -8,7 +8,6 @@ import type {
 	Contract,
 	ContractEndedEarly,
 	ContractType,
-	Phase,
 	Player,
 	FlatContractInfo,
 	PlayerWithoutKey,
@@ -231,18 +230,18 @@ export const setContractDemandFromCurrentContract = (
 // Create a contract from a flat contract (amount and exp), like a contract demand. It starts at the first season that would be paid if it was signed now, unless that is after exp, which happens for an expiring contract created after the season is over (like in a new league).
 export const createContract = ({
 	contract,
-	phase = g.get("phase"),
+	eid,
 	start: startInput,
-	tid,
 	type,
 }: {
 	contract: FlatContractInfo;
-	phase?: Phase;
+
+	// Signing event, see Contract["eid"]
+	eid?: number;
 
 	// Override the first season, for when the season and phase don't match yet, like during newPhasePreseason
 	start?: number;
 
-	tid: number;
 	type: ContractType;
 }): Contract => {
 	if (!Number.isFinite(contract.exp) || !Number.isFinite(contract.amount)) {
@@ -255,17 +254,16 @@ export const createContract = ({
 		amounts.push(contract.amount);
 	}
 
-	return {
+	const output: Contract = {
 		type,
-		signed: {
-			season: g.get("season"),
-			phase,
-			tid,
-		},
 		start,
 		amounts,
 		payments: [],
 	};
+	if (eid !== undefined) {
+		output.eid = eid;
+	}
+	return output;
 };
 
 // Add a new contract for a player, replacing his contract demand

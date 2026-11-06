@@ -55,11 +55,8 @@ describe("convertLegacyContracts", () => {
 
 		const [rookie, current] = contracts;
 		assert.strictEqual(rookie!.type, "rookie");
-		assert.deepStrictEqual(rookie!.signed, {
-			season: 2014,
-			phase: PHASE.DRAFT,
-			tid: 3,
-		});
+		// No signing event for a rookie contract, p.draft has that info
+		assert.strictEqual(rookie!.eid, undefined);
 		assert.strictEqual(rookie!.start, 2015);
 		assert.deepStrictEqual(rookie!.amounts, [1000, 1000, 1000]);
 		assert.strictEqual(rookie!.payments.length, 3);
@@ -92,6 +89,7 @@ describe("convertLegacyContracts", () => {
 			releaseEvents: [],
 			signingEvents: [
 				{
+					eid: 10,
 					type: "freeAgent",
 					season: 2015,
 					phase: PHASE.FREE_AGENCY,
@@ -100,6 +98,7 @@ describe("convertLegacyContracts", () => {
 					exp: 2018,
 				},
 				{
+					eid: 11,
 					type: "reSigned",
 					season: 2018,
 					phase: PHASE.RESIGN_PLAYERS,
@@ -114,14 +113,11 @@ describe("convertLegacyContracts", () => {
 		assert.strictEqual(contracts[0]!.type, "freeAgent");
 		assert.strictEqual(contracts[0]!.start, 2016);
 		assert.strictEqual(contracts[0]!.amounts.length, 3);
-		assert.deepStrictEqual(contracts[0]!.signed, {
-			season: 2015,
-			phase: PHASE.FREE_AGENCY,
-			tid: 2,
-		});
+		assert.strictEqual(contracts[0]!.eid, 10);
 		assert.strictEqual(contracts[1]!.type, "reSign");
 		assert.strictEqual(contracts[1]!.start, 2019);
 		assert.strictEqual(contracts[1]!.amounts.length, 3);
+		assert.strictEqual(contracts[1]!.eid, 11);
 	});
 
 	test("free agent with a contract still owed by the team that released him", () => {
@@ -279,6 +275,7 @@ describe("estimating which teams paid", () => {
 			releaseEvents: [{ season: 2019, phase: PHASE.REGULAR_SEASON, tid: 2 }],
 			signingEvents: [
 				{
+					eid: 12,
 					type: "freeAgent",
 					season: 2019,
 					phase: PHASE.REGULAR_SEASON,

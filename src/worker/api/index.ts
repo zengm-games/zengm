@@ -2756,9 +2756,6 @@ const getImportedContractHistory = (
 		contracts = helpers.deepCopy(p.contracts);
 		for (const contract of contracts) {
 			contract.start += seasonOffset;
-			if (contract.signed) {
-				contract.signed.season += seasonOffset;
-			}
 			if (contract.endedEarly) {
 				contract.endedEarly.season += seasonOffset;
 			}
@@ -2804,9 +2801,8 @@ const getImportedContractHistory = (
 				...payment,
 				tid: PLAYER.DOES_NOT_EXIST,
 			}));
-		if (contract.signed) {
-			contract.signed.tid = PLAYER.DOES_NOT_EXIST;
-		}
+		// Event is in a different league
+		delete contract.eid;
 		// Not owed by any team in this league
 		if (contract.endedEarly?.reason === "released") {
 			delete contract.endedEarly.tid;
@@ -2995,7 +2991,6 @@ const importPlayers = async ({
 				p2,
 				createContract({
 					contract: newContract,
-					tid,
 					type: "unknown",
 				}),
 			);
@@ -5064,7 +5059,6 @@ const applyCustomizedContract = (
 					exp: contractSeasons.start + contractSeasons.amounts.length - 1,
 				}
 			: contractInput,
-		tid: p.tid,
 		type: "unknown",
 	});
 	if (contractSeasons) {

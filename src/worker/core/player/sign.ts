@@ -49,20 +49,6 @@ const sign = async (
 	const resigning =
 		phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.get("season");
 
-	addContract(
-		p,
-		createContract({
-			contract: contractSummary,
-			phase,
-			tid,
-			type: contractSummary.rookie
-				? "rookie"
-				: resigning
-					? "reSign"
-					: "freeAgent",
-		}),
-	);
-
 	const eventType = resigning ? "reSigned" : "freeAgent";
 	const eid = await logEvent({
 		type: eventType,
@@ -72,6 +58,19 @@ const sign = async (
 		score,
 		contract: contractSummary,
 	});
+
+	addContract(
+		p,
+		createContract({
+			contract: contractSummary,
+			eid,
+			type: contractSummary.rookie
+				? "rookie"
+				: resigning
+					? "reSign"
+					: "freeAgent",
+		}),
+	);
 
 	const freeAgent = !resigning && !isRookie;
 	if (freeAgent) {

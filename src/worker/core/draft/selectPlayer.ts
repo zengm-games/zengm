@@ -85,7 +85,6 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 				p,
 				createContract({
 					contract: p.contractDemand,
-					tid: dp.tid,
 					type: "unknown",
 				}),
 			);
@@ -117,7 +116,6 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 					p,
 					createContract({
 						contract: contractDemand,
-						tid: dp.tid,
 						type: "rookie",
 					}),
 				);

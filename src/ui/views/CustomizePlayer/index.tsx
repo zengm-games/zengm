@@ -1222,25 +1222,37 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<div className="form-label" id="customize-player-contract">
 									Contract
 								</div>
-								{canBeVariable ? (
-									<div className="form-check form-switch mb-2">
-										<input
-											className="form-check-input"
-											type="checkbox"
-											role="switch"
-											id="customize-player-contract-variable"
-											checked={state.contractVariable}
-											onChange={handleContractVariableChange}
-											disabled={!godMode}
-										/>
-										<label
-											className="form-check-label"
-											htmlFor="customize-player-contract-variable"
+								<div className="form-check form-switch mb-2">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										role="switch"
+										id="customize-player-contract-variable"
+										checked={contractVariable}
+										onChange={handleContractVariableChange}
+										disabled={!godMode || !canBeVariable}
+										aria-describedby={
+											canBeVariable
+												? undefined
+												: "customize-player-contract-variable-note"
+										}
+									/>
+									<label
+										className="form-check-label"
+										htmlFor="customize-player-contract-variable"
+									>
+										Different amounts in different seasons
+									</label>
+									{canBeVariable ? null : (
+										<div
+											className="form-text mt-0"
+											id="customize-player-contract-variable-note"
 										>
-											Different amounts in different seasons
-										</label>
-									</div>
-								) : null}
+											Currently only players signed to a team can have variable
+											contracts.
+										</div>
+									)}
+								</div>
 								{contractVariable ? (
 									<>
 										{state.contractAmounts.map((amount, i) => {

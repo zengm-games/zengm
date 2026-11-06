@@ -12,6 +12,7 @@ import {
 	getLatestContractSummary,
 	isFlatContract,
 } from "../core/contract/index.ts";
+import { getContractStartSeason } from "../util/getContractStartSeason.ts";
 import { defineView } from "../util/defineView.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { upgradeFace } from "../util/face.ts";
@@ -91,7 +92,9 @@ export default defineView({
 
 			// What's shown in the contract fields, which is the current contract or contract demand
 			let contract: FlatContractInfo | undefined;
-			let contractEditable = true;
+
+			// Seasons of the current contract that can still be edited, for editing different amounts in different seasons
+			let contractSeasons: { start: number; amounts: number[] } | undefined;
 
 			let p: PlayerWithoutKey;
 			if (inputs.pid === null) {
@@ -103,9 +106,7 @@ export default defineView({
 				p = player.generate(
 					PLAYER.FREE_AGENT,
 					20,
-					g.get("phase") <= PHASE.PLAYOFFS
-						? g.get("season") - 1
-						: g.get("season"),
+					g.get("phase") <= PHASE.DRAFT ? g.get("season") - 1 : g.get("season"),
 					false,
 					scoutingLevel,
 					name,
@@ -128,16 +129,21 @@ export default defineView({
 				// Copy because the player is edited below
 				p = helpers.deepCopy(p2);
 
-				const currentContract = getCurrentContract(p2);
 				contract = getLatestContractSummary(p2);
 
-				// Contracts with different amounts in different seasons can't be edited yet
-				if (
-					currentContract &&
-					!p2.contractDemand &&
-					!isFlatContract(currentContract)
-				) {
-					contractEditable = false;
+				// Seasons that were already paid can't be changed
+				const currentContract = getCurrentContract(p2);
+				if (currentContract && !p2.contractDemand) {
+					const start = Math.max(
+						currentContract.start,
+						getContractStartSeason(),
+					);
+					const amounts = currentContract.amounts.slice(
+						start - currentContract.start,
+					);
+					if (amounts.length > 0) {
+						contractSeasons = { start, amounts };
+					}
 				}
 
 				await upgradeFace(p);
@@ -167,7 +173,7 @@ export default defineView({
 					};
 					p.contracts = [];
 					delete p.owedByTids;
-					contractEditable = true;
+					contractSeasons = undefined;
 				}
 			}
 
@@ -196,10 +202,21 @@ export default defineView({
 				exp: g.get("season"),
 			};
 
+			// For a new contract, the seasons of the flat contract
+			if (!contractSeasons) {
+				const start = getContractStartSeason();
+				const amounts = [];
+				for (let s = start; s <= Math.max(contract.exp, start); s++) {
+					amounts.push(contract.amount);
+				}
+				contractSeasons = { start, amounts };
+			}
+
 			return {
 				appearanceOption,
 				contract,
-				contractEditable,
+				contractSeasons,
+				contractVariable: !isFlatContract(contractSeasons),
 				faceCount,
 				initialAutoPos,
 				originalTid,

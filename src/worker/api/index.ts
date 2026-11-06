@@ -173,7 +173,6 @@ import {
 	contractToSummary,
 	createContract,
 	getContractSummaryOrThrow,
-	isFlatContract,
 	isReleasedContractOwed,
 	updateOwedByTids,
 } from "../core/contract/index.ts";
@@ -4974,12 +4973,17 @@ const upgrade65 = async () => {
 	console.timeEnd("upgrade65");
 };
 
-// Apply the contract from the Customize Player form, which is the player's current contract or contract demand. p.contracts must be the player's actual contracts, not the ones sent from the UI.
+// Apply the contract from the Customize Player form, which is the player's current contract or contract demand. p.contracts must be the player's actual contracts, not the ones sent from the UI. contractSeasons is for a contract with different amounts in different seasons, starting at the first season that can still be edited.
 const applyCustomizedContract = (
 	p: PlayerWithoutKey,
 	originalTid: number | undefined,
 	contractInput: FlatContractInfo,
+	contractSeasons: CustomizedContractSeasons | undefined,
 ) => {
+	if (contractSeasons && contractSeasons.amounts.length === 0) {
+		throw new Error("Contract must have at least one season");
+	}
+
 	const prevCurrentContract =
 		originalTid !== undefined && originalTid >= 0 && !p.contractDemand
 			? getCurrentContract({ contracts: p.contracts, tid: originalTid })
@@ -5005,6 +5009,11 @@ const applyCustomizedContract = (
 		originalTid >= 0;
 	if (p.tid < 0 || unsignedOnTeam) {
 		// Free agent, draft prospect, or unsigned player on a team
+		if (contractSeasons) {
+			throw new Error(
+				"A contract demand can't have different amounts in different seasons",
+			);
+		}
 		p.contractDemand = {
 			...p.contractDemand,
 			amount: contractInput.amount,
@@ -5014,19 +5023,6 @@ const applyCustomizedContract = (
 	}
 
 	if (prevCurrentContract) {
-		// Contracts with different amounts in different seasons can't be edited yet
-		if (!isFlatContract(prevCurrentContract)) {
-			return;
-		}
-
-		const summary = contractToSummary(prevCurrentContract);
-		if (
-			summary.amount === contractInput.amount &&
-			summary.exp === contractInput.exp
-		) {
-			return;
-		}
-
 		// Keep seasons that were already paid, and change the rest
 		const firstEditableSeason = Math.max(
 			prevCurrentContract.start,
@@ -5036,9 +5032,24 @@ const applyCustomizedContract = (
 			0,
 			firstEditableSeason - prevCurrentContract.start,
 		);
-		for (let s = firstEditableSeason; s <= contractInput.exp; s++) {
-			amounts.push(contractInput.amount);
+
+		if (contractSeasons) {
+			checkContractSeasonsStart(contractSeasons, firstEditableSeason);
+			amounts.push(...contractSeasons.amounts);
+		} else {
+			const summary = contractToSummary(prevCurrentContract);
+			if (
+				summary.amount === contractInput.amount &&
+				summary.exp === contractInput.exp
+			) {
+				return;
+			}
+
+			for (let s = firstEditableSeason; s <= contractInput.exp; s++) {
+				amounts.push(contractInput.amount);
+			}
 		}
+
 		if (amounts.length > 0) {
 			prevCurrentContract.amounts = amounts;
 		}
@@ -5046,19 +5057,44 @@ const applyCustomizedContract = (
 	}
 
 	// Moving to a team, so he needs a contract
-	addContract(
-		p,
-		createContract({
-			contract: contractInput,
-			tid: p.tid,
-			type: "unknown",
-		}),
-	);
+	const contract = createContract({
+		contract: contractSeasons
+			? {
+					amount: contractSeasons.amounts[0]!,
+					exp: contractSeasons.start + contractSeasons.amounts.length - 1,
+				}
+			: contractInput,
+		tid: p.tid,
+		type: "unknown",
+	});
+	if (contractSeasons) {
+		checkContractSeasonsStart(contractSeasons, contract.start);
+		contract.amounts = contractSeasons.amounts;
+	}
+	addContract(p, contract);
+};
+
+type CustomizedContractSeasons = {
+	start: number;
+	amounts: number[];
+};
+
+// The UI shows seasons starting from when the form was loaded, which could be out of date, like if the phase changed since then
+const checkContractSeasonsStart = (
+	contractSeasons: CustomizedContractSeasons,
+	start: number,
+) => {
+	if (contractSeasons.start !== start) {
+		throw new Error(
+			`Contract seasons start in ${contractSeasons.start}, but the first season that can be edited is ${start}. Reload the page and try again.`,
+		);
+	}
 };
 
 const upsertCustomizedPlayer = async (
 	{
 		p: pInput,
+		contractSeasons,
 		originalTid,
 		season,
 		recomputePosOvrPot,
@@ -5067,6 +5103,10 @@ const upsertCustomizedPlayer = async (
 			// The contract fields in the form
 			contract: FlatContractInfo;
 		};
+
+		// If the form has different amounts in different seasons
+		contractSeasons: CustomizedContractSeasons | undefined;
+
 		originalTid: number | undefined;
 		season: number;
 		recomputePosOvrPot: boolean;
@@ -5107,7 +5147,7 @@ const upsertCustomizedPlayer = async (
 	const prevPlayer =
 		p.pid !== undefined ? await idb.merged.players.get(p.pid) : undefined;
 	p.contracts = prevPlayer ? helpers.deepCopy(prevPlayer.contracts) : [];
-	applyCustomizedContract(p, originalTid, contractInput);
+	applyCustomizedContract(p, originalTid, contractInput, contractSeasons);
 	updateOwedByTids(p);
 
 	// Handle making player a FA

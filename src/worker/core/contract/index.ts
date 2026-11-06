@@ -171,7 +171,7 @@ export const getContractSummary = (
 	p: Pick<PlayerWithoutKey, "contractDemand" | "contracts" | "tid">,
 ): FlatContractInfo | undefined => {
 	if (p.contractDemand) {
-		return p.contractDemand;
+		return { ...p.contractDemand };
 	}
 
 	const contract = getCurrentContract(p);

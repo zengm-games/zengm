@@ -1156,7 +1156,8 @@ export type ContractEndedEarly =
 	| {
 			season: number;
 			phase: Phase;
-			reason: "retired" | "died";
+			// godMode is for a player moved from a team to free agency in Customize Player
+			reason: "retired" | "died" | "godMode";
 			tid?: undefined;
 	  }
 	| {

@@ -9,6 +9,7 @@ import type {
 } from "../../common/types.ts";
 import { getCurrentContract } from "../../common/contracts.ts";
 import {
+	contractToSummary,
 	getContractSummary,
 	getRemainingContractSeasons,
 	isFlatContract,
@@ -138,6 +139,12 @@ export default defineView({
 					const remaining = getRemainingContractSeasons(currentContract);
 					if (remaining.amounts.length > 0) {
 						contractSeasons = remaining;
+
+						// The amount shown for a flat contract is what it is changed to starting at the first season that can still be edited, so show what it is then. That's different than the summary amount after the regular season, when the summary is still for this season.
+						contract = {
+							...contractToSummary(currentContract),
+							amount: remaining.amounts[0]!,
+						};
 					}
 				}
 

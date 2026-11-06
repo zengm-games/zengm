@@ -457,7 +457,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								type: "integer",
 							},
 							reason: {
-								enum: ["retired", "died", "released"],
+								enum: ["retired", "died", "released", "godMode"],
 							},
 							tid: {
 								type: "integer",

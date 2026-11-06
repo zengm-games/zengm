@@ -170,7 +170,6 @@ import { generateContractOptions } from "../core/contractNegotiation/generateCon
 import { convertLegacyContracts } from "../core/contract/convertLegacyContracts.ts";
 import {
 	addContract,
-	contractToSummary,
 	createContract,
 	getContractSummaryOrThrow,
 	isReleasedContractOwed,
@@ -180,7 +179,6 @@ import {
 } from "../core/contract/index.ts";
 import { getContractExp, getCurrentContract } from "../../common/contracts.ts";
 import { getContractStartSeason } from "../util/getContractStartSeason.ts";
-import { getPayrollSeason } from "../util/getPayrollSeason.ts";
 import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
 import * as z from "zod";
 import { defaultTragicDeaths } from "../util/defaultTragicDeaths.ts";
@@ -921,7 +919,6 @@ const deleteOldData = async (options: {
 		}
 	}
 
-	const payrollSeason = getPayrollSeason();
 	const deletePlayerStats = (p: Player) => {
 		let updated = false;
 		if (p.ratings.length > 1) {
@@ -951,14 +948,18 @@ const deleteOldData = async (options: {
 				updated = true;
 			}
 		}
-		// Keep contracts that still count in payroll
+		// Keep the current contract, even if it's expiring and already fully paid, because it still matters until it's replaced (payroll, rookie contracts for re-signing). Also keep released contracts that are still owed.
+		const currentContract = getCurrentContract(p);
 		const contracts = p.contracts.filter(
 			(contract) =>
-				getContractExp(contract) >= payrollSeason ||
-				isReleasedContractOwed(contract),
+				contract === currentContract || isReleasedContractOwed(contract),
 		);
 		if (contracts.length < p.contracts.length) {
 			p.contracts = contracts;
+
+			// A released contract that was fully paid after the regular season can be removed before clearPaidReleasedContracts runs
+			updateOwedByTids(p);
+
 			updated = true;
 		}
 
@@ -4989,7 +4990,8 @@ const applyCustomizedContract = (
 			? getCurrentContract({ contracts: p.contracts, tid: originalTid })
 			: undefined;
 
-	if (p.tid === PLAYER.RETIRED) {
+	// Retiring or moving to free agency ends the current contract, unless it was already fully paid. Nobody pays the rest of it.
+	const endPrevCurrentContract = (reason: "retired" | "godMode") => {
 		if (
 			prevCurrentContract &&
 			getContractExp(prevCurrentContract) >= getContractStartSeason()
@@ -4997,9 +4999,13 @@ const applyCustomizedContract = (
 			prevCurrentContract.endedEarly = {
 				season: g.get("season"),
 				phase: g.get("phase"),
-				reason: "retired",
+				reason,
 			};
 		}
+	};
+
+	if (p.tid === PLAYER.RETIRED) {
+		endPrevCurrentContract("retired");
 		return;
 	}
 
@@ -5019,6 +5025,10 @@ const applyCustomizedContract = (
 			amount: contractInput.amount,
 			exp: contractInput.exp,
 		};
+
+		if (p.tid < 0) {
+			endPrevCurrentContract("godMode");
+		}
 		return;
 	}
 
@@ -5037,14 +5047,6 @@ const applyCustomizedContract = (
 			checkContractSeasonsStart(contractSeasons, firstEditableSeason);
 			amounts.push(...contractSeasons.amounts);
 		} else {
-			const summary = contractToSummary(prevCurrentContract);
-			if (
-				summary.amount === contractInput.amount &&
-				summary.exp === contractInput.exp
-			) {
-				return;
-			}
-
 			for (let s = firstEditableSeason; s <= contractInput.exp; s++) {
 				amounts.push(contractInput.amount);
 			}

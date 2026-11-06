@@ -201,7 +201,7 @@ const getSalaryRows = (p: Player) => {
 		for (const [i, contractAmount] of contract.amounts.entries()) {
 			const rowSeason = contract.start + i;
 
-			// Not paid after retirement or death
+			// Not paid after retirement, death, or being moved to free agency in Customize Player
 			if (endedEarly && !released && rowSeason > endedEarly.season) {
 				break;
 			}

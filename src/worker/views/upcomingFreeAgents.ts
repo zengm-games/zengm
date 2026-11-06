@@ -1,3 +1,4 @@
+import { getContractSummaryOrThrow } from "../core/contract/index.ts";
 import { PHASE, PLAYER } from "../../common/constants.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -38,7 +39,7 @@ export default defineView({
 			? await idb.merged.players.getAll({ tid: PLAYER.FREE_AGENT })
 			: await idb.merged.players.getAll(
 					{ tid: [0, Infinity] },
-					{ filter: (p) => p.contract.exp === inputs.season },
+					{ filter: (p) => getContractSummaryOrThrow(p).exp === inputs.season },
 				);
 		const playersRawByPid = groupByUnique(playersRaw, "pid");
 
@@ -52,6 +53,7 @@ export default defineView({
 				"tid",
 				"age",
 				"contract",
+				"draft",
 				"injury",
 				"watch",
 				"jerseyNumber",

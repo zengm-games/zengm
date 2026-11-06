@@ -3,6 +3,7 @@ import { contractNegotiation, draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
 import type { Conditions, PhaseReturn } from "../../../common/types.ts";
+import { cancelReleasedContracts } from "../contract/index.ts";
 
 const newPhaseFantasyDraft = async (
 	conditions: Conditions,
@@ -14,7 +15,7 @@ const newPhaseFantasyDraft = async (
 	await league.setGameAttributes({
 		nextPhase: g.get("phase"),
 	});
-	await idb.cache.releasedPlayers.clear();
+	await cancelReleasedContracts();
 
 	// Protect draft prospects from being included in this
 	const playersUndrafted = await idb.cache.players.indexGetAll(

@@ -22,7 +22,12 @@ import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
-import type { View, Phase, PlayerWithoutKey } from "../../../common/types.ts";
+import type {
+	View,
+	Phase,
+	FlatContractInfo,
+	PlayerWithoutKey,
+} from "../../../common/types.ts";
 import { posRatings } from "../../../common/posRatings.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
@@ -34,17 +39,30 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { useLocal } from "../../util/local.ts";
 import clsx from "clsx";
 
+// In the form, the contract fields are the player's current contract or contract demand
+type PlayerWithContract = PlayerWithoutKey & {
+	contract: FlatContractInfo;
+};
+
+// Allow any value, even above or below normal limits, but round and convert from M to k
+const parseContractAmount = (amount: string, minContract: number) => {
+	const parsed = roundContract(
+		1000 * helpers.localeParseFloat(amount),
+		minContract,
+	);
+	if (Number.isNaN(parsed)) {
+		return minContract;
+	}
+	return parsed;
+};
+
 const copyValidValues = (
-	source: PlayerWithoutKey,
-	target: PlayerWithoutKey,
+	source: PlayerWithContract,
+	target: PlayerWithContract,
 	minContract: number,
 	phase: Phase,
 	season: number,
 ) => {
-	// Should be true if a player is becoming "active" (moving to a team from a non-team, such as free agent, retired, draft prospect, or new player)
-	// @ts-expect-error
-	const activated = source.tid >= 0 && Number.parseInt(target.tid) < 0;
-
 	for (const attr of ["hgt", "tid", "weight"] as const) {
 		// @ts-expect-error
 		const val = Number.parseInt(source[attr]);
@@ -135,28 +153,10 @@ const copyValidValues = (
 		}
 	}
 
-	// This preserves contract.rookie
-	const oldContract = {
-		...target.contract,
-	};
-
-	let contractChanged = false;
-
-	{
-		// Allow any value, even above or below normal limits, but round and convert from M to k
-		let amount = roundContract(
-			1000 * helpers.localeParseFloat(String(source.contract.amount)),
-			minContract,
-		);
-		if (Number.isNaN(amount)) {
-			amount = minContract;
-		}
-
-		if (target.contract.amount !== amount) {
-			target.contract.amount = amount;
-			contractChanged = true;
-		}
-	}
+	target.contract.amount = parseContractAmount(
+		String(source.contract.amount),
+		minContract,
+	);
 
 	{
 		// @ts-expect-error
@@ -172,39 +172,7 @@ const copyValidValues = (
 				exp += 1;
 			}
 
-			if (target.contract.exp !== exp) {
-				target.contract.exp = exp;
-				contractChanged = true;
-			}
-		}
-	}
-
-	// Keep salaries log updated with contract
-	if (contractChanged || activated) {
-		// This code is similar to player.setContract
-
-		// Is this contract beginning with an in-progress season, or next season?
-		let start = season;
-
-		if (phase > PHASE.AFTER_TRADE_DEADLINE) {
-			start += 1;
-		}
-
-		if (contractChanged && !activated) {
-			// Remove entries from old contract
-			target.salaries = target.salaries.filter((salary) => {
-				return salary.season < start || salary.amount !== oldContract.amount;
-			});
-		}
-
-		if (target.tid >= 0) {
-			// Add entries for new contract
-			for (let i = start; i <= target.contract.exp; i++) {
-				target.salaries.push({
-					season: i,
-					amount: target.contract.amount,
-				});
-			}
+			target.contract.exp = exp;
 		}
 	}
 
@@ -356,19 +324,37 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	]);
 
 	const [state, setState] = useState(() => {
-		const p = helpers.deepCopy(props.p);
-		if (p) {
-			(p as any).age = season - p.born.year;
-			p.contract.amount /= 1000;
-			(p as any).face = JSON.stringify(p.face, null, 2);
-		}
+		const p: PlayerWithContract = {
+			...helpers.deepCopy(props.p),
+			contract: {
+				...props.contract,
+				amount: props.contract.amount / 1000,
+			},
+		};
+		(p as any).age = season - p.born.year;
+		(p as any).face = JSON.stringify(p.face, null, 2);
 
 		return {
 			appearanceOption: props.appearanceOption,
 			saving: false,
 			p,
+
+			// Different amounts in different seasons, in millions of dollars, starting at props.contractSeasons.start
+			contractVariable: props.contractVariable,
+			contractAmounts: props.contractSeasons.amounts.map((amount) =>
+				String(amount / 1000),
+			),
 		};
 	});
+
+	// Contract demands always have the same amount every season, so different amounts are only possible for a player who will have a signed contract. This matches applyCustomizedContract in the worker.
+	const tid = Number.parseInt(String(state.p.tid));
+	const unsignedOnTeam =
+		props.p.contractDemand !== undefined &&
+		props.originalTid !== undefined &&
+		props.originalTid >= 0;
+	const canBeVariable = tid >= 0 && !unsignedOnTeam;
+	const contractVariable = canBeVariable && state.contractVariable;
 
 	const [autoPos, setAutoPos] = useState(props.initialAutoPos);
 
@@ -396,7 +382,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		}));
 
 		try {
-			const p = helpers.deepCopy(props.p);
+			const p: PlayerWithContract = {
+				...helpers.deepCopy(props.p),
+				contract: helpers.deepCopy(props.contract),
+			};
 
 			// Copy over values from state, if they're valid
 			const recomputePosOvrPot = copyValidValues(
@@ -412,8 +401,19 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				p.imgURL = "";
 			}
 
+			let contractSeasons;
+			if (contractVariable) {
+				contractSeasons = {
+					start: props.contractSeasons.start,
+					amounts: state.contractAmounts.map((amount) =>
+						parseContractAmount(amount, minContract),
+					),
+				};
+			}
+
 			const pid = await toWorker("main", "upsertCustomizedPlayer", {
 				p,
+				contractSeasons,
 				originalTid: props.originalTid,
 				season,
 				recomputePosOvrPot,
@@ -431,6 +431,40 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				saving: false,
 			}));
 		}
+	};
+
+	// Switching modes keeps the same contract, as close as possible
+	const handleContractVariableChange = () => {
+		setState((prevState) => {
+			const { start } = props.contractSeasons;
+			if (prevState.contractVariable) {
+				const amount = helpers.localeParseFloat(prevState.contractAmounts[0]!);
+				return {
+					...prevState,
+					contractVariable: false,
+					p: {
+						...prevState.p,
+						contract: {
+							...prevState.p.contract,
+							amount: Number.isNaN(amount)
+								? prevState.p.contract.amount
+								: amount,
+							exp: start + prevState.contractAmounts.length - 1,
+						},
+					},
+				};
+			}
+
+			const exp = Number.parseInt(String(prevState.p.contract.exp));
+			const numSeasons = Number.isNaN(exp) ? 1 : Math.max(exp - start + 1, 1);
+			return {
+				...prevState,
+				contractVariable: true,
+				contractAmounts: Array(numSeasons).fill(
+					String(prevState.p.contract.amount),
+				),
+			};
+		});
 	};
 
 	const handleChange = (
@@ -1180,39 +1214,145 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							</div>
 						</div>
 						<div className="row">
-							<div className="col-6 mb-3">
-								<label
-									className="form-label"
-									htmlFor="customize-player-contract-amount"
-								>
-									Contract Amount
-								</label>
-								<CurrencyInputGroup displayUnit="M">
+							<div
+								className="col-12 mb-3"
+								role="group"
+								aria-labelledby="customize-player-contract"
+							>
+								<div className="form-label" id="customize-player-contract">
+									Contract
+								</div>
+								<div className="form-check form-switch mb-2">
 									<input
-										id="customize-player-contract-amount"
-										type="text"
-										className="form-control"
-										onChange={handleChange.bind(null, "contract", "amount")}
-										value={p.contract.amount}
-										disabled={!godMode}
+										className="form-check-input"
+										type="checkbox"
+										role="switch"
+										id="customize-player-contract-variable"
+										checked={contractVariable}
+										onChange={handleContractVariableChange}
+										disabled={!godMode || !canBeVariable}
+										aria-describedby={
+											canBeVariable
+												? undefined
+												: "customize-player-contract-variable-note"
+										}
 									/>
-								</CurrencyInputGroup>
-							</div>
-							<div className="col-6 mb-3">
-								<label
-									className="form-label"
-									htmlFor="customize-player-contract-exp"
-								>
-									Contract Expiration
-								</label>
-								<input
-									id="customize-player-contract-exp"
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "contract", "exp")}
-									value={p.contract.exp}
-									disabled={!godMode}
-								/>
+									<label
+										className="form-check-label"
+										htmlFor="customize-player-contract-variable"
+									>
+										Different amounts in different seasons
+									</label>
+									{canBeVariable ? null : (
+										<div
+											className="form-text mt-0"
+											id="customize-player-contract-variable-note"
+										>
+											Currently only players signed to a team can have variable
+											contracts.
+										</div>
+									)}
+								</div>
+								{contractVariable ? (
+									<>
+										{state.contractAmounts.map((amount, i) => {
+											const contractSeason = props.contractSeasons.start + i;
+											const isLast = i === state.contractAmounts.length - 1;
+											return (
+												<div
+													className="d-flex align-items-center gap-2 mb-2"
+													key={i}
+												>
+													<span>{contractSeason}</span>
+													<CurrencyInputGroup
+														displayUnit="M"
+														style={{ width: "auto" }}
+													>
+														<input
+															type="text"
+															className="form-control"
+															aria-label={`Contract amount for ${contractSeason}`}
+															onChange={(event) => {
+																const value = event.target.value;
+																setState((prevState) => ({
+																	...prevState,
+																	contractAmounts:
+																		prevState.contractAmounts.map(
+																			(amount2, j) =>
+																				j === i ? value : amount2,
+																		),
+																}));
+															}}
+															value={amount}
+															disabled={!godMode}
+														/>
+													</CurrencyInputGroup>
+													{isLast && state.contractAmounts.length > 1 ? (
+														<button
+															type="button"
+															className="btn btn-link text-danger p-0"
+															onClick={() => {
+																setState((prevState) => ({
+																	...prevState,
+																	contractAmounts:
+																		prevState.contractAmounts.slice(0, -1),
+																}));
+															}}
+															disabled={!godMode}
+															title="Remove last season"
+														>
+															Remove
+														</button>
+													) : null}
+												</div>
+											);
+										})}
+										<button
+											type="button"
+											className="btn btn-secondary btn-sm"
+											onClick={() => {
+												setState((prevState) => ({
+													...prevState,
+													contractAmounts: [
+														...prevState.contractAmounts,
+														prevState.contractAmounts.at(-1)!,
+													],
+												}));
+											}}
+											disabled={!godMode}
+										>
+											Add season
+										</button>
+									</>
+								) : (
+									<div className="d-flex align-items-center gap-2">
+										<CurrencyInputGroup
+											displayUnit="M"
+											style={{ width: "auto" }}
+										>
+											<input
+												id="customize-player-contract-amount"
+												type="text"
+												className="form-control"
+												aria-label="Contract amount"
+												onChange={handleChange.bind(null, "contract", "amount")}
+												value={p.contract.amount}
+												disabled={!godMode}
+											/>
+										</CurrencyInputGroup>
+										<span>thru</span>
+										<input
+											id="customize-player-contract-exp"
+											type="text"
+											className="form-control"
+											style={{ width: "6rem" }}
+											aria-label="Contract expiration"
+											onChange={handleChange.bind(null, "contract", "exp")}
+											value={p.contract.exp}
+											disabled={!godMode}
+										/>
+									</div>
+								)}
 							</div>
 							{playerMoodTraits ? (
 								<div

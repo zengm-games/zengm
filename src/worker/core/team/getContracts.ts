@@ -1,6 +1,23 @@
 import { idb } from "../../db/index.ts";
-import type { ContractInfo } from "../../../common/types.ts";
+import type { ContractInfo, Player } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
+import {
+	getContractExp,
+	getCurrentContract,
+} from "../../../common/contracts.ts";
+import { getOwedContracts, getPayrollAmount } from "../contract/index.ts";
+
+const getPlayerInfo = (p: Player) => {
+	const { pos, skills } = last(p.ratings);
+	return {
+		firstName: p.firstName,
+		lastName: p.lastName,
+		skills,
+		pos,
+		injury: p.injury,
+		watch: p.watch ?? 0,
+	};
+};
 
 /**
  * Gets all the contracts a team owes.
@@ -12,70 +29,37 @@ import { last } from "../../../common/utils.ts";
  * @returns {Promise.Array} Array of objects containing contract information.
  */
 const getContracts = async (tid: number): Promise<ContractInfo[]> => {
-	// First, get players currently on the roster
-	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const contracts = players.map((p) => {
-		const { pos, skills } = last(p.ratings);
-		return {
-			pid: p.pid,
-			firstName: p.firstName,
-			lastName: p.lastName,
-			skills,
-			pos,
-			injury: p.injury,
-			jerseyNumber: p.stats.at(-1)?.jerseyNumber,
-			watch: p.watch ?? 0,
-			amount: p.contract.amount,
-			exp: p.contract.exp,
-			released: false,
-		};
-	});
+	const contracts: ContractInfo[] = [];
 
-	// Then, get any released players still owed money
-	const releasedPlayers = await idb.cache.releasedPlayers.indexGetAll(
-		"releasedPlayersByTid",
-		tid,
-	);
-
-	for (const releasedPlayer of releasedPlayers) {
-		const p = await idb.merged.players.get(releasedPlayer.pid);
-
-		if (p) {
-			const { pos, skills } = last(p.ratings);
-
-			// If a player is deleted, such as if the user deletes retired players, this will be undefined
+	// First, players currently on the roster. Players who haven't signed yet, like some draft picks, don't count until they sign.
+	for (const p of await idb.cache.players.indexGetAll("playersByTid", tid)) {
+		const contract = getCurrentContract(p);
+		if (contract) {
 			contracts.push({
-				pid: releasedPlayer.pid,
-				firstName: p.firstName,
-				lastName: p.lastName,
-				skills,
-				pos,
-				injury: p.injury,
-				jerseyNumber: undefined,
-				watch: p.watch ?? 0,
-				// undefined check is for old leagues, can delete eventually
-				amount: releasedPlayer.contract.amount,
-				exp: releasedPlayer.contract.exp,
-				released: true,
-			});
-		} else {
-			contracts.push({
-				pid: releasedPlayer.pid,
-				firstName: "Deleted",
-				lastName: "Player",
-				skills: [],
-				pos: "?",
-				injury: {
-					type: "Healthy",
-					gamesRemaining: 0,
-				},
-				jerseyNumber: undefined,
-				watch: 0,
-				amount: releasedPlayer.contract.amount,
-				exp: releasedPlayer.contract.exp,
-				released: true,
+				pid: p.pid,
+				...getPlayerInfo(p),
+				jerseyNumber: p.stats.at(-1)?.jerseyNumber,
+				amount: getPayrollAmount(contract),
+				exp: getContractExp(contract),
+				start: contract.start,
+				amounts: contract.amounts,
+				released: false,
 			});
 		}
+	}
+
+	// Then, any released players still owed money
+	for (const { p, contract } of await getOwedContracts(tid)) {
+		contracts.push({
+			pid: p.pid,
+			...getPlayerInfo(p),
+			jerseyNumber: undefined,
+			amount: getPayrollAmount(contract),
+			exp: getContractExp(contract),
+			start: contract.start,
+			amounts: contract.amounts,
+			released: true,
+		});
 	}
 
 	return contracts;

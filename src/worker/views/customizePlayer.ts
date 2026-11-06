@@ -2,7 +2,19 @@ import { PLAYER, PHASE } from "../../common/constants.ts";
 import { finances, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { PlayerWithoutKey, Player } from "../../common/types.ts";
+import type {
+	FlatContractInfo,
+	PlayerWithoutKey,
+	Player,
+} from "../../common/types.ts";
+import { getCurrentContract } from "../../common/contracts.ts";
+import {
+	contractToSummary,
+	getContractSummary,
+	getRemainingContractSeasons,
+	isFlatContract,
+} from "../core/contract/index.ts";
+import { getContractStartSeason } from "../util/getContractStartSeason.ts";
 import { defineView } from "../util/defineView.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { upgradeFace } from "../util/face.ts";
@@ -80,6 +92,12 @@ export default defineView({
 			let appearanceOption;
 			let originalTid;
 
+			// What's shown in the contract fields, which is the current contract or contract demand
+			let contract: FlatContractInfo | undefined;
+
+			// Seasons of the current contract that can still be edited, for editing different amounts in different seasons
+			let contractSeasons: { start: number; amounts: number[] } | undefined;
+
 			let p: PlayerWithoutKey;
 			if (inputs.pid === null) {
 				// Generate new player as basis
@@ -90,15 +108,14 @@ export default defineView({
 				p = player.generate(
 					PLAYER.FREE_AGENT,
 					20,
-					g.get("phase") <= PHASE.PLAYOFFS
-						? g.get("season") - 1
-						: g.get("season"),
+					g.get("phase") <= PHASE.DRAFT ? g.get("season") - 1 : g.get("season"),
 					false,
 					scoutingLevel,
 					name,
 				);
 				appearanceOption = "Cartoon Face";
 				p.imgURL = "http://";
+				contract = p.contractDemand;
 			} else {
 				// Load a player to edit
 				const p2 = await idb.merged.players.get(inputs.pid);
@@ -113,6 +130,23 @@ export default defineView({
 
 				// Copy because the player is edited below
 				p = helpers.deepCopy(p2);
+
+				contract = getContractSummary(p2);
+
+				// Seasons that were already paid can't be changed
+				const currentContract = getCurrentContract(p2);
+				if (currentContract && !p2.contractDemand) {
+					const remaining = getRemainingContractSeasons(currentContract);
+					if (remaining.amounts.length > 0) {
+						contractSeasons = remaining;
+
+						// The amount shown for a flat contract is what it is changed to starting at the first season that can still be edited, so show what it is then. That's different than the summary amount after the regular season, when the summary is still for this season.
+						contract = {
+							...contractToSummary(currentContract),
+							amount: remaining.amounts[0]!,
+						};
+					}
+				}
 
 				await upgradeFace(p);
 
@@ -139,9 +173,9 @@ export default defineView({
 						ovr: 0,
 						skills: [],
 					};
-					p.salaries = p.salaries.filter(
-						(row) => row.season >= g.get("season"),
-					);
+					p.contracts = [];
+					delete p.owedByTids;
+					contractSeasons = undefined;
 				}
 			}
 
@@ -165,8 +199,26 @@ export default defineView({
 
 			faceCount += 1;
 
+			contract ??= {
+				amount: g.get("minContract"),
+				exp: g.get("season"),
+			};
+
+			// For a new contract, the seasons of the flat contract
+			if (!contractSeasons) {
+				const start = getContractStartSeason();
+				const amounts = [];
+				for (let s = start; s <= Math.max(contract.exp, start); s++) {
+					amounts.push(contract.amount);
+				}
+				contractSeasons = { start, amounts };
+			}
+
 			return {
 				appearanceOption,
+				contract,
+				contractSeasons,
+				contractVariable: !isFlatContract(contractSeasons),
 				faceCount,
 				initialAutoPos,
 				originalTid,

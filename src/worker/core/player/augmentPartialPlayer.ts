@@ -6,11 +6,17 @@ import heightToRating from "./heightToRating.ts";
 import name from "./name.ts";
 import ovr from "./ovr.ts";
 import pos from "./pos.ts";
-import setContract from "./setContract.ts";
 import skills from "./skills.ts";
 import stats from "./stats.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
+import { convertLegacyContracts } from "../contract/convertLegacyContracts.ts";
+import { getImportedCurrentContract } from "../../../common/contracts.ts";
+import {
+	type ContractInput,
+	fillContractDefaults,
+	updateOwedByTids,
+} from "../contract/index.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
 
@@ -352,30 +358,63 @@ const augmentPartialPlayer = async (
 
 	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 
-	p.salaries ??= [];
-
-	if (p.contract === undefined) {
-		setContract(
-			p,
-			{
-				amount: g.get("minContract"),
-				exp: currentSeason,
-			},
-			p.tid >= 0,
+	// Contracts can be in the current format (embedded contracts and contractDemand) or the legacy format (contract and salaries)
+	if (p.contracts !== undefined) {
+		p.contracts = p.contracts.map((contract: ContractInput) =>
+			fillContractDefaults(contract),
 		);
 	} else {
-		p.contract.amount = helpers.roundContract(p.contract.amount);
+		if (p.contract !== undefined || p.salaries !== undefined) {
+			if (p.contract) {
+				p.contract.amount = helpers.roundContract(p.contract.amount);
 
-		if (p.contract.exp < g.get("startingSeason")) {
-			p.contract.exp = g.get("startingSeason");
+				if (p.contract.exp < g.get("startingSeason")) {
+					p.contract.exp = g.get("startingSeason");
+				}
+			}
+
+			const { contracts, contractDemand } = convertLegacyContracts({
+				p,
+				leagueState: {
+					fractionCurrentSeasonPaid: 0,
+					phase: g.get("phase"),
+					season: currentSeason,
+				},
+				releasedPlayers: [],
+				releaseEvents: [],
+				signingEvents: [],
+			});
+			p.contracts = contracts;
+			if (contractDemand) {
+				p.contractDemand = contractDemand;
+			}
+		} else {
+			p.contracts = [];
 		}
+	}
+	delete p.contract;
+	delete p.salaries;
 
-		if (p.tid >= 0 && p.salaries.length === 0) {
-			setContract(p, p.contract, true);
-		}
+	// Derived from contracts, so don't trust what was in the file
+	updateOwedByTids(p);
 
-		// Just in case... we never want this except for internal purposes, cause it means normalizeContractDemands will always overwrite this contract on load
-		delete p.contract.temp;
+	if (p.contractDemand) {
+		p.contractDemand.amount = helpers.roundContract(p.contractDemand.amount);
+
+		// Just in case... we never want this except for internal purposes, cause it means normalizeContractDemands will always overwrite this contract demand on load
+		delete p.contractDemand.temp;
+	}
+
+	// Every non-retired player needs a contract or a contract demand
+	if (
+		p.tid !== PLAYER.RETIRED &&
+		!getImportedCurrentContract(p, currentSeason) &&
+		!p.contractDemand
+	) {
+		p.contractDemand = {
+			amount: g.get("minContract"),
+			exp: currentSeason,
+		};
 	}
 
 	if (p.jerseyNumber === undefined && p.stats.length > 0) {

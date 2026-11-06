@@ -2,7 +2,11 @@ import addToFreeAgents from "./addToFreeAgents.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
-import { getContractStartSeason } from "../../util/getContractStartSeason.ts";
+import { getCurrentContract } from "../../../common/contracts.ts";
+import {
+	endContractEarly,
+	setContractDemandFromCurrentContract,
+} from "../contract/index.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayNormalized.ts";
 
 /**
@@ -16,21 +20,23 @@ import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayN
  * @return {Promise}
  */
 const release = async (p: Player, justDrafted: boolean) => {
-	// Keep track of player salary even when he's off the team, but make an exception for players who were just drafted.
-	if (!justDrafted) {
-		// ...and of course for players whose contracts have already been fully paid.
-		if (p.contract.exp >= getContractStartSeason()) {
-			await idb.cache.releasedPlayers.add({
-				pid: p.pid,
+	// Before his contract ends, since that's what his contract demand is based on
+	setContractDemandFromCurrentContract(p);
+
+	const contract = getCurrentContract(p);
+	if (contract) {
+		if (justDrafted) {
+			// Just drafted players can be released without paying anything
+			p.contracts = p.contracts.filter((row) => row !== contract);
+		} else {
+			// The team still owes the rest of the contract, unless it has already been fully paid
+			endContractEarly(p, {
+				season: g.get("season"),
+				phase: g.get("phase"),
+				reason: "released",
 				tid: p.tid,
-				contract: helpers.deepCopy(p.contract),
 			});
 		}
-	}
-
-	if (justDrafted) {
-		// Clear player salary log if just drafted, because this won't be paid.
-		p.salaries = [];
 	}
 
 	logEvent({

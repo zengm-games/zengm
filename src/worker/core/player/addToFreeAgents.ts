@@ -1,11 +1,11 @@
 import { PLAYER } from "../../../common/constants.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
+import { setContractDemandFromCurrentContract } from "../contract/index.ts";
 
 /**
  * Adds player to the free agents list.
  *
- * This should be THE ONLY way that players are added to the free agents
- * list, because this will also calculate their demanded contract and mood.
+ * This should be THE ONLY way that players are added to the free agents list.
  *
  * @memberOf core.player
  * @param {Object} p Player object.
@@ -14,6 +14,9 @@ const addToFreeAgents = (
 	p: PlayerWithoutKey,
 	numPlayersTradedAwayNormalized: Record<number, number>,
 ) => {
+	// Free agents always have a contract demand
+	setContractDemandFromCurrentContract(p);
+
 	p.tid = PLAYER.FREE_AGENT;
 	p.numDaysFreeAgent = 0;
 	p.ptModifier = 1;

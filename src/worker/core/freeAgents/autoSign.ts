@@ -1,6 +1,7 @@
 import { PLAYER } from "../../../common/constants.ts";
 import { player, team } from "../index.ts";
 import getBest from "./getBest.ts";
+import { getContractDemand } from "../contract/index.ts";
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
 import { orderBy } from "../../../common/utils.ts";
@@ -77,7 +78,7 @@ const autoSign = async () => {
 			// Remove from list of free agents
 			playersSorted = playersSorted.filter((p2) => p2 !== p);
 
-			await player.sign(p, t.tid, p.contract, g.get("phase"));
+			await player.sign(p, t.tid, getContractDemand(p), g.get("phase"));
 			await idb.cache.players.put(p);
 			await team.rosterAutoSort(t.tid);
 		}

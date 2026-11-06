@@ -1,3 +1,4 @@
+import { payContracts } from "../contract/index.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
@@ -30,7 +31,6 @@ const writeTeamStats = async (results: GameResults) => {
 
 	for (const t1 of [0, 1] as const) {
 		const t2 = t1 === 1 ? 0 : 1;
-		const payroll = await team.getPayroll(results.team[t1].id);
 		const t = await idb.cache.teams.get(results.team[t1].id);
 		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 			"teamSeasonsByTidSeason",
@@ -97,7 +97,8 @@ const writeTeamStats = async (results: GameResults) => {
 		if (g.get("phase") !== PHASE.PLAYOFFS) {
 			// All in [thousands of dollars]
 			const salaryCap = g.get("salaryCap");
-			salaryPaid = payroll / g.get("numGames");
+			// Also records the payment in each contract
+			salaryPaid = await payContracts(results.team[t1].id);
 			scoutingPaid =
 				levelToAmount(t.budget.scouting, salaryCap) / g.get("numGames");
 			coachingPaid =

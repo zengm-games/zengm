@@ -20,6 +20,72 @@ import useLocalStorageState from "use-local-storage-state";
 import { LeagueFileUpload } from "../components/LeagueFileUpload.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { showNotification } from "../util/showNotification.ts";
+import {
+	getContractAmount,
+	getContractExp,
+	getCurrentContract,
+	getNearestContractAmount,
+} from "../../common/contracts.ts";
+import type { Contract } from "../../common/types.ts";
+
+// For a player from a player export (either the current format with embedded contracts, or the legacy format with contract and salaries), the contract he had in some season, to use as the default when importing him. undefined if unknown.
+const getExportedPlayerContract = (
+	p: {
+		contract?: { amount: number; exp: number };
+		contractDemand?: { amount: number; exp: number };
+		contracts?: Contract[];
+		ratings: { season: number }[];
+		salaries?: { amount: number; season: number }[];
+		tid: number;
+	},
+	season: number,
+): { amount: number; exp: number | undefined } | undefined => {
+	const latestSeason = p.ratings.at(-1)?.season === season;
+
+	if (p.contracts) {
+		if (latestSeason) {
+			if (p.contractDemand) {
+				return p.contractDemand;
+			}
+
+			const currentContract = getCurrentContract({
+				contracts: p.contracts,
+				tid: p.tid,
+			});
+			if (currentContract) {
+				return {
+					amount: getNearestContractAmount(currentContract, season),
+					exp: getContractExp(currentContract),
+				};
+			}
+		}
+
+		const contract = p.contracts.findLast(
+			(contract) => getContractAmount(contract, season) !== undefined,
+		);
+		if (contract) {
+			return {
+				amount: getContractAmount(contract, season)!,
+				exp: undefined,
+			};
+		}
+
+		return;
+	}
+
+	// Legacy format
+	if (p.contract && latestSeason) {
+		return p.contract;
+	}
+
+	const salaryRow = p.salaries?.find((row) => row.season === season);
+	if (salaryRow) {
+		return {
+			amount: salaryRow.amount,
+			exp: undefined,
+		};
+	}
+};
 
 export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 	const {
@@ -388,17 +454,11 @@ export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 
 								let contractAmount = 1;
 								let contractExp = season + 1;
-								if (p.contract && season === p.ratings.at(-1).season) {
-									// Exported the latest season for this player
-									contractAmount = p.contract.amount / 1000;
-									contractExp = p.contract.exp;
-								} else {
-									// Exported some historical season, try to figure out contract
-									const salaryRow = Array.isArray(p.salaries)
-										? p.salaries.find((row: any) => row.season === season)
-										: undefined;
-									if (salaryRow) {
-										contractAmount = salaryRow.amount / 1000;
+								const exportedContract = getExportedPlayerContract(p, season);
+								if (exportedContract) {
+									contractAmount = exportedContract.amount / 1000;
+									if (exportedContract.exp !== undefined) {
+										contractExp = exportedContract.exp;
 									}
 								}
 
@@ -446,8 +506,8 @@ export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 								return {
 									p,
 									checked: false,
-									contractAmount: String(p.contract.amount / 1000),
-									contractExp: String(p.contract.exp),
+									contractAmount: String(p.contractDemand.amount / 1000),
+									contractExp: String(p.contractDemand.exp),
 									draftYear: String(
 										currentSeason + (phase >= PHASE.DRAFT ? 1 : 0),
 									),

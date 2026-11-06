@@ -222,7 +222,6 @@ export default defineView({
 				"age",
 				"born",
 				"contract",
-				"cashOwed",
 				"rosterOrder",
 				"injury",
 				"ptModifier",
@@ -257,8 +256,6 @@ export default defineView({
 			let minPayrollAmount: number | undefined;
 
 			if (inputs.season === g.get("season")) {
-				const schedule = await season.getSchedule();
-
 				// Show players currently on the roster
 				const playersAll = await idb.cache.players.indexGetAll(
 					"playersByTid",
@@ -267,18 +264,6 @@ export default defineView({
 				payroll = await team.getPayroll(inputs.tid);
 				luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll);
 				minPayrollAmount = finances.getMinPayrollAmount(payroll);
-
-				// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
-				let numGamesRemaining = 0;
-
-				for (const matchup of schedule) {
-					if (
-						inputs.tid === matchup.homeTid ||
-						inputs.tid === matchup.awayTid
-					) {
-						numGamesRemaining += 1;
-					}
-				}
 
 				players = await player.formatAll(playersAll, {
 					attrs,
@@ -290,7 +275,6 @@ export default defineView({
 					showNoStats: true,
 					showRookies: true,
 					fuzz: true,
-					numGamesRemaining,
 				});
 				players = await addMood(players, playersAll);
 

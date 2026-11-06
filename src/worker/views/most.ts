@@ -633,11 +633,9 @@ export default defineView({
 				});
 
 				getValue = (p) => {
-					let sum = 0;
-					for (const salary of p.salaries) {
-						sum += salary.amount;
-					}
-					return { value: sum };
+					return {
+						value: player.getSalariesTotal(p),
+					};
 				};
 			} else if (type === "hall_of_good") {
 				title = "Hall of Good";

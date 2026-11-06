@@ -96,6 +96,7 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 
 	await retire(p, conditions, {
 		logRetiredEvent: false,
+		died: true,
 	});
 
 	const text = getReason()

@@ -131,13 +131,16 @@ export const getRealContracts = ({
 				payments: getPayments(start, currentAmounts, season, phase),
 			});
 		} else {
-			// A free agent with a contract in the data was released, but the team that released him isn't known. So he asks for the rest of that contract.
-			if (includePastContracts && firstRow.start < season) {
+			// A free agent with a contract in the data was released, but the team that released him isn't known. So he asks for the rest of that contract. The part that was already paid is kept as a past contract, which includes the current season after the playoffs.
+			const numPaidSeasons =
+				season - firstRow.start + (phase > PHASE.PLAYOFFS ? 1 : 0);
+			if (includePastContracts && numPaidSeasons > 0) {
+				const paidAmounts = amounts.slice(0, numPaidSeasons);
 				contracts.push({
 					type: "unknown",
 					start: firstRow.start,
-					amounts: amounts.slice(0, season - firstRow.start),
-					payments: getPayments(firstRow.start, amounts, season, phase),
+					amounts: paidAmounts,
+					payments: getPayments(firstRow.start, paidAmounts, season, phase),
 				});
 			}
 			if (exp >= season) {

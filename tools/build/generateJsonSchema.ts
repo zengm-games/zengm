@@ -410,23 +410,12 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			contract: {
 				type: "object",
 				properties: {
+					// Defaults to "unknown"
 					type: {
 						enum: ["rookie", "reSign", "freeAgent", "unknown"],
 					},
-					signed: {
-						type: "object",
-						properties: {
-							season: {
-								type: "integer",
-							},
-							phase: {
-								type: "integer",
-							},
-							tid: {
-								type: "integer",
-							},
-						},
-						required: ["season", "phase", "tid"],
+					eid: {
+						type: "integer",
 					},
 					start: {
 						type: "integer",
@@ -439,6 +428,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						},
 						minItems: 1,
 					},
+					// Defaults to [], meaning nothing is known to have been paid
 					payments: {
 						type: "array",
 						items: {
@@ -476,7 +466,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						required: ["season", "phase", "reason"],
 					},
 				},
-				required: ["type", "start", "amounts", "payments"],
+				required: ["start", "amounts"],
 			},
 			playerInjury: {
 				type: "object",

@@ -12,7 +12,11 @@ import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { convertLegacyContracts } from "../contract/convertLegacyContracts.ts";
 import { getCurrentContract } from "../../../common/contracts.ts";
-import { updateOwedByTids } from "../contract/index.ts";
+import {
+	type ContractInput,
+	fillContractDefaults,
+	updateOwedByTids,
+} from "../contract/index.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
 
@@ -355,7 +359,11 @@ const augmentPartialPlayer = async (
 	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 
 	// Contracts can be in the current format (embedded contracts and contractDemand) or the legacy format (contract and salaries)
-	if (p.contracts === undefined) {
+	if (p.contracts !== undefined) {
+		p.contracts = p.contracts.map((contract: ContractInput) =>
+			fillContractDefaults(contract),
+		);
+	} else {
 		if (p.contract !== undefined || p.salaries !== undefined) {
 			if (p.contract) {
 				p.contract.amount = helpers.roundContract(p.contract.amount);

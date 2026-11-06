@@ -227,6 +227,18 @@ export const setContractDemandFromCurrentContract = (
 	}
 };
 
+// A contract in a league file or player export, which can leave out type and payments to make files easier to write by hand. Defaults are explicit rather than guessed, since type affects gameplay.
+export type ContractInput = Omit<Contract, "type" | "payments"> &
+	Partial<Pick<Contract, "type" | "payments">>;
+
+export const fillContractDefaults = (contract: ContractInput): Contract => {
+	return {
+		...contract,
+		type: contract.type ?? "unknown",
+		payments: contract.payments ?? [],
+	};
+};
+
 // Create a contract from a flat contract (amount and exp), like a contract demand. It starts at the first season that would be paid if it was signed now, unless that is after exp, which happens for an expiring contract created after the season is over (like in a new league).
 export const createContract = ({
 	contract,

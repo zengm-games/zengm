@@ -175,6 +175,8 @@ import {
 	getContractSummaryOrThrow,
 	isReleasedContractOwed,
 	updateOwedByTids,
+	type ContractInput,
+	fillContractDefaults,
 } from "../core/contract/index.ts";
 import { getContractExp, getCurrentContract } from "../../common/contracts.ts";
 import { getContractStartSeason } from "../util/getContractStartSeason.ts";
@@ -2753,7 +2755,9 @@ const getImportedContractHistory = (
 ): Contract[] => {
 	let contracts: Contract[];
 	if (p.contracts) {
-		contracts = helpers.deepCopy(p.contracts);
+		contracts = p.contracts.map((contract: ContractInput) =>
+			fillContractDefaults(helpers.deepCopy(contract)),
+		);
 		for (const contract of contracts) {
 			contract.start += seasonOffset;
 			if (contract.endedEarly) {

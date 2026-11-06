@@ -3,6 +3,7 @@ import { player, trade } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { processPlayerStats as processPlayerStats2 } from "../../util/processPlayerStats.ts";
 import type {
+	FormattedContract,
 	Player,
 	PlayerFiltered,
 	PlayerSalaryRow,
@@ -18,7 +19,11 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { last } from "../../../common/utils.ts";
 import { getCurrentContract } from "../../../common/contracts.ts";
-import { getLatestContractSummary } from "../contract/index.ts";
+import {
+	getContractSummary,
+	getRemainingContractSeasons,
+	isFlatContract,
+} from "../contract/index.ts";
 
 type PlayerFormatOptionsRequired = Required<
 	Omit<PlayerFormatOptions, "season" | "seasonRange" | "seasonType" | "tid">
@@ -350,14 +355,32 @@ const processAttrs = (
 				seasonRange === undefined &&
 				(g.get("season") === season || season === undefined)
 			) {
-				const contract = getLatestContractSummary(p) ?? {
+				// No contract for a retired player, since showing his old one would look like he's still being paid
+				const summary = getContractSummary(p) ?? {
 					amount: 0,
 					exp: g.get("season"),
 				};
-				output.contract = {
-					...contract,
-					amount: contract.amount / 1000, // [millions of dollars]
+				const contract: FormattedContract = {
+					...summary,
+					amount: summary.amount / 1000, // [millions of dollars]
 				};
+
+				// Contract demands are always flat
+				const currentContract = p.contractDemand
+					? undefined
+					: getCurrentContract(p);
+				if (currentContract) {
+					// Only the seasons that are left, which is what amount and exp describe. That also means a contract whose different amounts were all in past seasons is now flat.
+					const remaining = getRemainingContractSeasons(currentContract);
+					if (!isFlatContract(remaining)) {
+						contract.remainingSeasons = remaining.amounts.map((amount, i) => ({
+							season: remaining.start + i,
+							amount: amount / 1000, // [millions of dollars]
+						}));
+					}
+				}
+
+				output.contract = contract;
 			} else {
 				output.contract = {
 					amount: getSalary(),

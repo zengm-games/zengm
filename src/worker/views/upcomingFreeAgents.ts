@@ -53,6 +53,7 @@ export default defineView({
 				"tid",
 				"age",
 				"contract",
+				"draft",
 				"injury",
 				"watch",
 				"jerseyNumber",

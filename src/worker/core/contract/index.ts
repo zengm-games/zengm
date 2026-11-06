@@ -142,6 +142,15 @@ export const isFlatContract = (contract: Pick<Contract, "amounts">) => {
 	return contract.amounts.every((amount) => amount === contract.amounts[0]);
 };
 
+// Seasons of a contract that haven't been paid yet, starting at the season a new contract would start. Empty if the contract is over, like an expiring contract after the playoffs.
+export const getRemainingContractSeasons = (contract: Contract) => {
+	const start = Math.max(contract.start, getContractStartSeason());
+	return {
+		start,
+		amounts: contract.amounts.slice(start - contract.start),
+	};
+};
+
 // For an expiring contract after the season is over, amount is from its last season, which is what the player is still being paid
 export const contractToSummary = (contract: Contract): FlatContractInfo => {
 	const summary: FlatContractInfo = {
@@ -165,21 +174,6 @@ export const getContractSummary = (
 	const contract = getCurrentContract(p);
 	if (contract) {
 		return contractToSummary(contract);
-	}
-};
-
-// Like getContractSummary, but for a player with no current contract or contract demand (like a retired player), his last contract. For showing a player's contract.
-export const getLatestContractSummary = (
-	p: Pick<PlayerWithoutKey, "contractDemand" | "contracts" | "tid">,
-) => {
-	const summary = getContractSummary(p);
-	if (summary) {
-		return summary;
-	}
-
-	const lastContract = p.contracts.at(-1);
-	if (lastContract) {
-		return contractToSummary(lastContract);
 	}
 };
 

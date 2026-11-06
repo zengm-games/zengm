@@ -9,7 +9,8 @@ import type {
 } from "../../common/types.ts";
 import { getCurrentContract } from "../../common/contracts.ts";
 import {
-	getLatestContractSummary,
+	getContractSummary,
+	getRemainingContractSeasons,
 	isFlatContract,
 } from "../core/contract/index.ts";
 import { getContractStartSeason } from "../util/getContractStartSeason.ts";
@@ -129,20 +130,14 @@ export default defineView({
 				// Copy because the player is edited below
 				p = helpers.deepCopy(p2);
 
-				contract = getLatestContractSummary(p2);
+				contract = getContractSummary(p2);
 
 				// Seasons that were already paid can't be changed
 				const currentContract = getCurrentContract(p2);
 				if (currentContract && !p2.contractDemand) {
-					const start = Math.max(
-						currentContract.start,
-						getContractStartSeason(),
-					);
-					const amounts = currentContract.amounts.slice(
-						start - currentContract.start,
-					);
-					if (amounts.length > 0) {
-						contractSeasons = { start, amounts };
+					const remaining = getRemainingContractSeasons(currentContract);
+					if (remaining.amounts.length > 0) {
+						contractSeasons = remaining;
 					}
 				}
 

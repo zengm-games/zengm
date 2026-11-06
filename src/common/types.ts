@@ -1635,14 +1635,23 @@ type CareerStatsKey<
 				: { [K in Key]?: Row }
 			: { [K in Key]?: Row };
 
+// A contract for showing in the UI. amount (what the player is paid this season, in millions of dollars) and exp are a summary of it, which is all most of the UI needs.
+export type FormattedContract = FlatContractInfo & {
+	// Breakdown of the summary by season, from this season through exp (amounts in millions of dollars). Only present if the amounts are different in different seasons, since otherwise the summary already describes the contract.
+	remainingSeasons?: {
+		season: number;
+		amount: number;
+	}[];
+};
+
 // With seasonRange and no season, contract is the sum of salaries in the range, with exp set to the (undefined) season
 type PlayerContractFiltered<
 	Season extends number | undefined,
 	SeasonRange extends [number, number] | undefined,
 > = [SeasonRange] extends [undefined]
-	? FlatContractInfo
+	? FormattedContract
 	: [Season] extends [number]
-		? FlatContractInfo
+		? FormattedContract
 		: Omit<FlatContractInfo, "exp"> & { exp: number | undefined };
 
 type PlayerAttrsPart<

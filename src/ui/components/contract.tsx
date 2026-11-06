@@ -1,5 +1,7 @@
 import clsx from "clsx";
-import type { FlatContractInfo } from "../../common/types.ts";
+import type { ReactNode } from "react";
+import { OverlayTrigger, Popover } from "react-bootstrap";
+import type { FormattedContract } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { useLocal } from "../util/local.ts";
 
@@ -8,11 +10,11 @@ type ContractAmountPlayer = {
 	draft: {
 		year: number;
 	};
-	contract: Pick<FlatContractInfo, "amount" | "rookie">;
+	contract: Pick<FormattedContract, "amount" | "rookie" | "remainingSeasons">;
 };
 
 type ContractPlayer = ContractAmountPlayer & {
-	contract: FlatContractInfo;
+	contract: FormattedContract;
 };
 
 const useJustDrafted = (p: ContractAmountPlayer) => {
@@ -24,6 +26,48 @@ const useJustDrafted = (p: ContractAmountPlayer) => {
 const NON_GUARANTEED_CONTRACT_TEXT =
 	"Contracts for drafted players are not guaranteed until the regular season. If you release a drafted player before then, you pay nothing.";
 
+// For a contract with different amounts in different seasons, since the amount shown is only this season's. Clicking it shows the amount in each remaining season.
+const RemainingSeasons = ({
+	children,
+	remainingSeasons,
+}: {
+	children: ReactNode;
+	remainingSeasons: NonNullable<FormattedContract["remainingSeasons"]>;
+}) => {
+	return (
+		<OverlayTrigger
+			trigger="click"
+			placement="auto"
+			overlay={
+				<Popover>
+					<Popover.Body>
+						<ul className="list-unstyled mb-0">
+							{remainingSeasons.map(({ season, amount }) => (
+								<li
+									key={season}
+									className="d-flex justify-content-between gap-3"
+								>
+									<div>{season}</div>
+									<div>{helpers.formatCurrency(amount, "M")}</div>
+								</li>
+							))}
+						</ul>
+					</Popover.Body>
+				</Popover>
+			}
+			rootClose
+		>
+			<button
+				className="btn btn-link p-0 border-0 align-baseline text-reset text-decoration-none"
+				title="Different amounts in different seasons"
+				type="button"
+			>
+				{children}*
+			</button>
+		</OverlayTrigger>
+	);
+};
+
 export const ContractAmount = ({
 	p,
 	override,
@@ -33,7 +77,7 @@ export const ContractAmount = ({
 }) => {
 	const justDrafted = useJustDrafted(p);
 
-	return (
+	const amount = (
 		<span
 			className={justDrafted ? "fst-italic" : undefined}
 			title={justDrafted ? NON_GUARANTEED_CONTRACT_TEXT : undefined}
@@ -41,18 +85,35 @@ export const ContractAmount = ({
 			{helpers.formatCurrency(override ?? p.contract.amount, "M")}
 		</span>
 	);
+
+	if (override === undefined && p.contract.remainingSeasons) {
+		return (
+			<RemainingSeasons remainingSeasons={p.contract.remainingSeasons}>
+				{amount}
+			</RemainingSeasons>
+		);
+	}
+
+	return amount;
+};
+
+// Text version of ContractAmount, for searching
+const formatContractAmount = (p: ContractAmountPlayer, override?: number) => {
+	const formatted = helpers.formatCurrency(override ?? p.contract.amount, "M");
+	if (override === undefined && p.contract.remainingSeasons) {
+		return `${formatted}*`;
+	}
+	return formatted;
 };
 
 export const wrappedContractAmount = (
 	p: ContractAmountPlayer,
 	override?: number,
 ) => {
-	const formatted = helpers.formatCurrency(override ?? p.contract.amount, "M");
-
 	return {
 		value: <ContractAmount p={p} override={override} />,
 		sortValue: p.contract.amount,
-		searchValue: formatted,
+		searchValue: formatContractAmount(p, override),
 	};
 };
 
@@ -116,12 +177,9 @@ export const Contract = ({ p }: { p: ContractPlayer }) => {
 };
 
 export const wrappedContract = (p: ContractPlayer) => {
-	const formattedAmount = helpers.formatCurrency(p.contract.amount, "M");
-	const formatted = `${formattedAmount} thru ${p.contract.exp}`;
-
 	return {
 		value: <Contract p={p} />,
 		sortValue: p.contract.amount,
-		searchValue: formatted,
+		searchValue: `${formatContractAmount(p)} thru ${p.contract.exp}`,
 	};
 };

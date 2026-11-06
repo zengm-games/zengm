@@ -180,6 +180,7 @@ import {
 } from "../core/contract/index.ts";
 import { getContractExp, getCurrentContract } from "../../common/contracts.ts";
 import { getContractStartSeason } from "../util/getContractStartSeason.ts";
+import { getPayrollSeason } from "../util/getPayrollSeason.ts";
 import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
 import * as z from "zod";
 import { defaultTragicDeaths } from "../util/defaultTragicDeaths.ts";
@@ -920,7 +921,7 @@ const deleteOldData = async (options: {
 		}
 	}
 
-	const payrollSeason = getContractStartSeason();
+	const payrollSeason = getPayrollSeason();
 	const deletePlayerStats = (p: Player) => {
 		let updated = false;
 		if (p.ratings.length > 1) {

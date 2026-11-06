@@ -15,16 +15,17 @@ import type {
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import { getContractStartSeason } from "../../util/getContractStartSeason.ts";
+import { getPayrollSeason } from "../../util/getPayrollSeason.ts";
 
-// Amount that counts in payroll for a season, which by default is the first season not fully paid yet. 0 if the contract does not cover that season, so an expiring contract stops counting once the season is over.
+// Amount that counts in payroll for a season, which by default is the current payroll season. 0 if the contract does not cover that season, so an expiring contract stops counting once the re-signing phase starts.
 export const getPayrollAmount = (
 	contract: Pick<Contract, "amounts" | "start">,
-	season: number = getContractStartSeason(),
+	season: number = getPayrollSeason(),
 ) => {
 	return getContractAmount(contract, season) ?? 0;
 };
 
-// A released player's contract is owed by the team that released him until it's fully paid
+// A released player's contract is owed by the team that released him until it's fully paid. Unlike a team's own expiring contracts, which keep counting in payroll until the re-signing phase (see getPayrollSeason), an expiring released contract stops counting once the regular season is over, the same as releasing a player with an expiring contract after the regular season.
 export const isReleasedContractOwed = (contract: Contract) => {
 	return (
 		contract.endedEarly?.reason === "released" &&
@@ -141,19 +142,22 @@ export const isFlatContract = (contract: Pick<Contract, "amounts">) => {
 	return contract.amounts.every((amount) => amount === contract.amounts[0]);
 };
 
-// Seasons of a contract that haven't been paid yet, starting at the season a new contract would start. Empty if the contract is over, like an expiring contract after the playoffs.
-export const getRemainingContractSeasons = (contract: Contract) => {
-	const start = Math.max(contract.start, getContractStartSeason());
+// Seasons of a contract from a season on, by default the seasons that haven't been paid yet, starting at the season a new contract would start. Empty if the contract is over, like an expiring contract after the playoffs.
+export const getRemainingContractSeasons = (
+	contract: Contract,
+	season: number = getContractStartSeason(),
+) => {
+	const start = Math.max(contract.start, season);
 	return {
 		start,
 		amounts: contract.amounts.slice(start - contract.start),
 	};
 };
 
-// For an expiring contract after the season is over, amount is from its last season, which is what the player is still being paid
+// amount is for the payroll season, so it adds up to the payroll. For an expiring contract during the re-signing phase, it's from its last season, which is what the player is still being paid.
 export const contractToSummary = (contract: Contract): FlatContractInfo => {
 	const summary: FlatContractInfo = {
-		amount: getNearestContractAmount(contract, getContractStartSeason()),
+		amount: getNearestContractAmount(contract, getPayrollSeason()),
 		exp: getContractExp(contract),
 	};
 	if (contract.type === "rookie") {

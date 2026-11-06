@@ -115,8 +115,8 @@ const newPhaseResignPlayers = async (
 
 	if (g.get("salaryCapType") === "hard") {
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
-			// Payroll for next season, so it doesn't include expiring contracts or unsigned draft picks
-			payrollsByTid.set(tid, await team.getPayroll(tid));
+			// Payroll for next season, so it doesn't include expiring contracts or unsigned draft picks. Explicit season because the phase isn't updated to RESIGN_PLAYERS until after this function, so the default payroll season would still be this season.
+			payrollsByTid.set(tid, await team.getPayroll(tid, g.get("season") + 1));
 		}
 	}
 

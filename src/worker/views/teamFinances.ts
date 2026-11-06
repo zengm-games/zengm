@@ -4,7 +4,7 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { TeamSeason } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { getContractStartSeason } from "../util/getContractStartSeason.ts";
+import { getPayrollSeason } from "../util/getPayrollSeason.ts";
 import { getAutoTicketPriceByTid } from "../core/game/attendance.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
@@ -44,7 +44,7 @@ export default defineView({
 			}
 
 			// Same season as payroll, so seasons that are already paid are not shown
-			const season = getContractStartSeason();
+			const season = getPayrollSeason();
 
 			// How many seasons into the future are contracts?
 			let maxContractExp = -Infinity;

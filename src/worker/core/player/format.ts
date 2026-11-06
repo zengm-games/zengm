@@ -17,6 +17,7 @@ import type { StatSumsExtra } from "../../../common/processPlayerStats.basketbal
 import { idb } from "../../db/index.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
+import { getPayrollSeason } from "../../util/getPayrollSeason.ts";
 import { last } from "../../../common/utils.ts";
 import { getCurrentContract } from "../../../common/contracts.ts";
 import {
@@ -370,8 +371,11 @@ const processAttrs = (
 					? undefined
 					: getCurrentContract(p);
 				if (currentContract) {
-					// Only the seasons that are left, which is what amount and exp describe. That also means a contract whose different amounts were all in past seasons is now flat.
-					const remaining = getRemainingContractSeasons(currentContract);
+					// Only the seasons from the payroll season on, which is what amount and exp describe. That also means a contract whose different amounts were all in past seasons is now flat.
+					const remaining = getRemainingContractSeasons(
+						currentContract,
+						getPayrollSeason(),
+					);
 					if (!isFlatContract(remaining)) {
 						contract.remainingSeasons = remaining.amounts.map((amount, i) => ({
 							season: remaining.start + i,

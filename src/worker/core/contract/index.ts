@@ -296,9 +296,14 @@ export const endContract = (
 	contract: Contract,
 	endedEarly: ContractEndedEarly,
 ) => {
-	if (getContractExp(contract) >= getContractStartSeason()) {
+	if (!isContractFullyPaid(contract)) {
 		contract.endedEarly = endedEarly;
 	}
+};
+
+// No seasons left to pay, like an expiring contract after the regular season
+export const isContractFullyPaid = (contract: Contract) => {
+	return getContractExp(contract) < getContractStartSeason();
 };
 
 // End a player's current contract before it expires, like when he retires or is released

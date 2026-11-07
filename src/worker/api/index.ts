@@ -3407,7 +3407,9 @@ const removeLastTeam = async () => {
 	const numPlayersTradedAwayNormalized =
 		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
-		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
+		player.addToFreeAgents(p, numPlayersTradedAwayNormalized, {
+			reason: "contraction",
+		});
 	}
 	await idb.cache.players.putAll(players);
 

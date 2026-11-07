@@ -463,6 +463,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 									"released",
 									"godMode",
 									"fantasyDraft",
+									"contraction",
 								],
 							},
 							tid: {

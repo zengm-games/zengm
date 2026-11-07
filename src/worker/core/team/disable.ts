@@ -70,7 +70,9 @@ const disable = async (tid: number) => {
 	const numPlayersTradedAwayNormalized =
 		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
-		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
+		player.addToFreeAgents(p, numPlayersTradedAwayNormalized, {
+			reason: "contraction",
+		});
 		logEvent({
 			text: `The <a href="${helpers.leagueUrl([
 				"roster",

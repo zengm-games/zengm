@@ -786,8 +786,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 					srID: string;
 				}) => {
 					// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
+					// The contract that covers next season, when the rookie contract starts. Not just any contract that started by then, which could be from years ago, like for a player drafted long before he debuted.
 					const salaryRow = basketball.salaries[p.srID]?.find(
-						(row) => row.start <= options.season + 1,
+						(row) =>
+							row.start <= options.season + 1 && row.exp >= options.season + 1,
 					);
 					if (salaryRow) {
 						assertDefined(p.draft.round);

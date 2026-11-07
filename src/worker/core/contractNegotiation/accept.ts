@@ -2,9 +2,10 @@ import { player, team } from "../index.ts";
 import cancel from "./cancel.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, toUI } from "../../util/index.ts";
-import type { Negotiation, PlayerContract } from "../../../common/types.ts";
+import type { Negotiation, FlatContractInfo } from "../../../common/types.ts";
 import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
+import { getContractDemand } from "../contract/index.ts";
 
 /**
  * Accept the player's offer.
@@ -17,7 +18,7 @@ import { actualPhase } from "../../util/actualPhase.ts";
  */
 const accept = async <
 	DryRun extends boolean,
-	SuccessReturn extends DryRun extends true ? void : () => Promise<boolean>,
+	SuccessReturn extends (DryRun extends true ? void : () => Promise<boolean>),
 >({
 	negotiation,
 	amount,
@@ -74,11 +75,11 @@ const accept = async <
 
 	const phase = actualPhase();
 
-	const contract: PlayerContract = {
+	const contract: FlatContractInfo = {
 		amount,
 		exp,
 	};
-	if (p.contract.rookie && phase === PHASE.RESIGN_PLAYERS) {
+	if (getContractDemand(p).rookie && phase === PHASE.RESIGN_PLAYERS) {
 		// Not sure if the phase condition is necessary. The purpose of this is for hard cap rookies with rookie contract scale.
 		contract.rookie = true;
 	}
@@ -90,8 +91,8 @@ const accept = async <
 				p.numPlayersTradedAwayNormalized,
 			),
 			jerseyNumber: p.jerseyNumber,
-			contract: helpers.deepCopy(p.contract),
-			salaries: helpers.deepCopy(p.salaries),
+			contractDemand: helpers.deepCopy(p.contractDemand),
+			contracts: [...p.contracts],
 			transactions: helpers.deepCopy(p.transactions),
 		};
 

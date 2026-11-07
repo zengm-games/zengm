@@ -4,7 +4,7 @@ import clone from "just-clone";
 import type {
 	TeamBasic,
 	Phase,
-	PlayerContract,
+	FlatContractInfo,
 	GameAttributesLeague,
 	RelativeType,
 	ByConf,
@@ -1424,7 +1424,7 @@ const justDrafted = (
 		draft: {
 			year: number;
 		};
-		contract: Pick<PlayerContract, "rookie">;
+		contract: Pick<FlatContractInfo, "rookie">;
 	},
 	phase: Phase,
 	season: number,

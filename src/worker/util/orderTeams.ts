@@ -26,6 +26,27 @@ const wonMinusLost = (obj?: { won?: number; lost?: number; otl?: number }) => {
 
 type Tiebreaker = keyof typeof TIEBREAKERS;
 
+// What to request from team.getFormattedAll to get everything needed by orderTeams
+export const ORDER_TEAMS_SEASON_ATTRS = [
+	"cid",
+	"did",
+	"won",
+	"lost",
+	"tied",
+	"otl",
+	"winp",
+	"pts",
+	"wonDiv",
+	"lostDiv",
+	"tiedDiv",
+	"otlDiv",
+	"wonConf",
+	"lostConf",
+	"tiedConf",
+	"otlConf",
+] as const;
+export const ORDER_TEAMS_STATS = ["pts", "oppPts", "gp"] as const;
+
 export type BaseTeam = {
 	seasonAttrs: {
 		winp: number;

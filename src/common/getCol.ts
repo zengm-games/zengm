@@ -1,4 +1,4 @@
-import type { Col } from "../ui/components/DataTable/index.tsx";
+import type { Col } from "./types.ts";
 import { getCols } from "./getCols.ts";
 
 export const getCol = (title: string, overrides?: Partial<Col>): Col => {

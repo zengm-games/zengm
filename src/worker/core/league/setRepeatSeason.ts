@@ -5,6 +5,7 @@ import { PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import player from "../player/index.ts";
 import draft from "../draft/index.ts";
+import { getContractSummaryOrThrow } from "../contract/index.ts";
 
 const setRepeatSeason = async (
 	type: "players" | "playersAndRosters" | "disabled",
@@ -18,9 +19,10 @@ const setRepeatSeason = async (
 		>["players"] = {};
 		for (const p of allPlayers) {
 			if (p.tid >= PLAYER.FREE_AGENT) {
+				const contract = getContractSummaryOrThrow(p);
 				players[p.pid] = {
 					tid: p.tid,
-					contract: helpers.deepCopy(p.contract),
+					contract: helpers.deepCopy(contract),
 					injury: helpers.deepCopy(p.injury),
 				};
 			}

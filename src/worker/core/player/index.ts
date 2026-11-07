@@ -8,13 +8,13 @@ import bonus from "./bonus.ts";
 import checkJerseyNumberRetirement from "./checkJerseyNumberRetirement.ts";
 import checkStatisticalFeat from "./checkStatisticalFeat.ts";
 import compositeRating from "./compositeRating.ts";
-import contractSeasonsRemaining from "./contractSeasonsRemaining.ts";
 import develop from "./develop.ts";
 import {
 	abbrevsFromTeamSeasons,
 	createFormatter,
 	format,
 	formatAll,
+	getSalariesTotal,
 	loadAbbrevs,
 } from "./format.ts";
 import fuzzRating from "./fuzzRating.ts";
@@ -41,7 +41,7 @@ import pos from "./pos.ts";
 import release from "./release.ts";
 import remove from "./remove.ts";
 import retire from "./retire.ts";
-import setContract from "./setContract.ts";
+import setContractDemand from "./setContractDemand.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
 import sign from "./sign.ts";
 import shouldRetire from "./shouldRetire.ts";
@@ -64,7 +64,6 @@ export default {
 	checkJerseyNumberRetirement,
 	checkStatisticalFeat,
 	compositeRating,
-	contractSeasonsRemaining,
 	createFormatter,
 	develop,
 	format,
@@ -84,6 +83,7 @@ export default {
 	injury,
 	killOne,
 	limitRating,
+	getSalariesTotal,
 	loadAbbrevs,
 	madeHof,
 	moodInfo,
@@ -95,7 +95,7 @@ export default {
 	remove,
 	retire,
 	sign,
-	setContract,
+	setContractDemand,
 	setJerseyNumber,
 	shouldRetire,
 	skills,

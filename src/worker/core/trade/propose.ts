@@ -8,6 +8,7 @@ import get from "./get.ts";
 import { idb } from "../../db/index.ts";
 import { hashSavedTrade } from "../../../common/hashSavedTrade.ts";
 import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
+import { getTradeBlockedReason } from "../../../common/transactionPhases.ts";
 
 /**
  * Proposes the current trade in the database.
@@ -19,13 +20,18 @@ import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
  * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
  */
 const propose = async (forceTrade: boolean = false) => {
-	if (
-		g.get("phase") >= PHASE.AFTER_TRADE_DEADLINE &&
-		g.get("phase") <= PHASE.PLAYOFFS
-	) {
+	const tradeBlockedReason = getTradeBlockedReason({
+		challengeNoTrades: g.get("challengeNoTrades"),
+		gameOver: g.get("gameOver"),
+		otherTeamsWantToHire: g.get("otherTeamsWantToHire"),
+		phase: g.get("phase"),
+		spectator: g.get("spectator"),
+	});
+	if (tradeBlockedReason) {
 		return {
 			accepted: false as const,
 			message: `Error! You're not allowed to make trades ${
+				tradeBlockedReason === "phase" &&
 				g.get("phase") === PHASE.AFTER_TRADE_DEADLINE
 					? "after the trade deadline"
 					: "now"

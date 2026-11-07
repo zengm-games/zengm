@@ -190,58 +190,17 @@ type PlayByPlayEventInputNoScore =
 			timeouts: [number, number];
 	  };
 
-type PlayByPlayEventInput =
+export type PlayByPlayEventOutput =
 	| PlayByPlayEventInputScore
 	| PlayByPlayEventInputNoScore;
 
-// Only add period to scoring events, since they are used for scoringSummary
-type PlayByPlayEventScore = PlayByPlayEventInputScore & { period: number };
-
-export type PlayByPlayEventOutput =
-	| PlayByPlayEventScore
-	| PlayByPlayEventInputNoScore;
-
-const scoringTypes: Set<PlayByPlayEventInput["type"]> = new Set([
-	"fgAtRim",
-	"fgAtRimAndOne",
-	"fgLowPost",
-	"fgLowPostAndOne",
-	"fgMidRange",
-	"fgMidRangeAndOne",
-	"ft",
-	"tp",
-	"tpAndOne",
-] satisfies PlayByPlayEventInputScore["type"][]);
-
-const isScoringPlay = (
-	event: PlayByPlayEventInput,
-): event is PlayByPlayEventInputScore => {
-	return scoringTypes.has(event.type);
-};
-
 class BasketballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutput> {
-	private period = 1;
-	constructor(active: boolean) {
-		super(active);
-	}
-
-	logEvent(event: PlayByPlayEventInput) {
+	logEvent(event: PlayByPlayEventOutput) {
 		if (!this.active) {
 			return;
 		}
 
-		if (event.type === "period" || event.type === "overtime") {
-			this.period = event.period;
-		}
-
-		if (isScoringPlay(event)) {
-			this.playByPlay.push({
-				...event,
-				period: this.period,
-			});
-		} else {
-			this.playByPlay.push(event);
-		}
+		this.playByPlay.push(event);
 	}
 }
 

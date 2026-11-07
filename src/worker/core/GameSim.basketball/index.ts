@@ -1,7 +1,7 @@
 import { g, helpers } from "../../util/index.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
-import getInjuryRate from "./getInjuryRate.ts";
+import getInjuryRate from "../GameSim/getInjuryRate.ts";
 import type {
 	GameAttributesLeague,
 	PlayerInjury,
@@ -368,14 +368,12 @@ class GameSim extends GameSimBase {
 		this.simRegulation();
 
 		// Play overtime periods if necessary
-		let numOvertimes = 0;
 		while (
 			this.team[0].stat.pts === this.team[1].stat.pts &&
-			numOvertimes < this.maxOvertimes
+			this.overtimes < this.maxOvertimes
 		) {
 			this.checkGameTyingShot();
 			this.simOvertime();
-			numOvertimes += 1;
 		}
 
 		this.checkGameWinner();
@@ -386,28 +384,7 @@ class GameSim extends GameSimBase {
 			type: "gameOver",
 		});
 
-		// Delete stuff that isn't needed before returning
-		for (const t of teamNums) {
-			delete this.team[t].compositeRating;
-
-			// @ts-expect-error
-			delete this.team[t].pace;
-
-			for (const p of this.team[t].player) {
-				// @ts-expect-error
-				delete p.age;
-
-				// @ts-expect-error
-				delete p.valueNoPot;
-				delete p.compositeRating;
-
-				// @ts-expect-error
-				delete p.ptModifier;
-				delete p.stat.benchTime;
-				delete p.stat.courtTime;
-				delete p.stat.energy;
-			}
-		}
+		this.deleteGameSimOnlyProperties(this.team);
 
 		const out = {
 			gid: this.id,
@@ -415,7 +392,7 @@ class GameSim extends GameSimBase {
 			overtimes: this.overtimes,
 			team: this.team,
 			clutchPlays: this.clutchPlays,
-			playByPlay: this.playByPlay.getPlayByPlay(this.team),
+			playByPlay: this.playByPlay.getPlayByPlay(),
 			numPlayersOnCourt: this.numPlayersOnCourt,
 			neutralSite: this.neutralSite,
 			// scoringSummary: this.playByPlay.scoringSummary,
@@ -476,42 +453,25 @@ class GameSim extends GameSimBase {
 			)!;
 		}) as [PlayerGameSim, PlayerGameSim];
 
-		const reversedTeamNums = [1, 0] as const;
-
-		for (const t of reversedTeamNums) {
-			const shooter = shooters[t];
-
-			this.playByPlay.logEvent({
-				type: "shootoutTeam",
-				t,
-				pid: shooter.id,
-			});
-
-			for (let i = 0; i < this.shootoutRounds; i++) {
-				if (
-					this.shouldEndShootoutEarly(t, i, [
-						this.team[0].stat.sPts,
-						this.team[1].stat.sPts,
-					])
-				) {
-					break;
-				}
-
-				this.doShootoutShot(t, shooter);
-			}
-		}
-
-		if (this.team[0].stat.sPts === this.team[1].stat.sPts) {
-			this.playByPlay.logEvent({
-				type: "shootoutTie",
-			});
-
-			while (this.team[0].stat.sPts === this.team[1].stat.sPts) {
-				for (const t of reversedTeamNums) {
-					this.doShootoutShot(t, shooters[t]);
-				}
-			}
-		}
+		this.runShootoutShots({
+			format: "teamByTeam",
+			getSPts: () => [this.team[0].stat.sPts, this.team[1].stat.sPts],
+			onTeamStart: (t) => {
+				this.playByPlay.logEvent({
+					type: "shootoutTeam",
+					t,
+					pid: shooters[t].id,
+				});
+			},
+			onTie: () => {
+				this.playByPlay.logEvent({
+					type: "shootoutTie",
+				});
+			},
+			shoot: (t) => {
+				this.doShootoutShot(t, shooters[t]);
+			},
+		});
 
 		// Log winner
 		const winner = this.team[0].stat.sPts > this.team[1].stat.sPts ? 0 : 1;
@@ -670,7 +630,6 @@ class GameSim extends GameSimBase {
 		this.team[1].stat.ptsQtrs.push(0);
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
-		this.lastScoringPlay = [];
 		this.playByPlay.logEvent({
 			type: "overtime",
 			period: this.team[0].stat.ptsQtrs.length,

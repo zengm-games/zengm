@@ -31,6 +31,7 @@ import {
 } from "../util/boxScoreDisplayOrder.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
 
 type Team = {
 	abbrev: string;
@@ -153,7 +154,7 @@ const StatsTableIndividual = ({
 		),
 	});
 
-	const allStarGame = t.tid === -1 || t.tid === -2;
+	const allStarGame = isAllStarTid(t.tid);
 	const players = t.players
 		.map((p) => {
 			return {

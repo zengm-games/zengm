@@ -1,5 +1,5 @@
-import api from "../../api/index.ts";
+import { setAutoSave } from "../league/setAutoSave.ts";
 
 export const disableAutoSave = async () => {
-	await api.main.setLocal(["autoSave", false]);
+	await setAutoSave(false);
 };

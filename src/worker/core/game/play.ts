@@ -43,6 +43,10 @@ import {
 } from "../../util/recomputeLocalUITeamOvrs.ts";
 import { last } from "../../../common/utils.ts";
 import { advStats } from "../../util/advStats.ts";
+import {
+	isAllStarGame,
+	isTradeDeadline,
+} from "../../../common/specialGames.ts";
 
 /**
  * Play one or more days of games.
@@ -387,7 +391,7 @@ const play = async (
 		}
 
 		let baseInjuryRate;
-		const allStarGame = teams[0].id === -1 && teams[1].id === -2;
+		const allStarGame = isAllStarGame(teams[0].id, teams[1].id);
 		if (allStarGame) {
 			// Fewer injuries in All-Star Game, and no injuries in playoffs All-Star Game
 			if (g.get("phase") === PHASE.PLAYOFFS) {
@@ -583,10 +587,11 @@ const play = async (
 			}
 		}
 
-		if (schedule[0]?.homeTid === -3 && schedule[0].awayTid === -3) {
-			await idb.cache.schedule.delete(schedule[0].gid);
+		const firstGame = schedule[0];
+		if (firstGame && isTradeDeadline(firstGame.homeTid, firstGame.awayTid)) {
+			await idb.cache.schedule.delete(firstGame.gid);
 			await phase.newPhase(PHASE.AFTER_TRADE_DEADLINE, conditions);
-			await toUI("deleteGames", [[schedule[0].gid]]);
+			await toUI("deleteGames", [[firstGame.gid]]);
 			await play(numDays - 1, conditions, false);
 		} else {
 			// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games

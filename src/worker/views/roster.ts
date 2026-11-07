@@ -8,7 +8,11 @@ import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { orderTeams } from "../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	orderTeams,
+} from "../util/orderTeams.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
@@ -61,25 +65,8 @@ const sortByPos = (p: {
 const getStandingsInfo = async (info: { season: number; tid: number }) => {
 	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
-		seasonAttrs: [
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-			"winp",
-			"pts",
-			"cid",
-			"did",
-		],
-		stats: ["pts", "oppPts", "gp"],
+		seasonAttrs: ORDER_TEAMS_SEASON_ATTRS,
+		stats: ORDER_TEAMS_STATS,
 		season: info.season,
 		showNoStats: true,
 	});
@@ -222,7 +209,6 @@ export default defineView({
 				"age",
 				"born",
 				"contract",
-				"cashOwed",
 				"rosterOrder",
 				"injury",
 				"ptModifier",
@@ -257,8 +243,6 @@ export default defineView({
 			let minPayrollAmount: number | undefined;
 
 			if (inputs.season === g.get("season")) {
-				const schedule = await season.getSchedule();
-
 				// Show players currently on the roster
 				const playersAll = await idb.cache.players.indexGetAll(
 					"playersByTid",
@@ -267,18 +251,6 @@ export default defineView({
 				payroll = await team.getPayroll(inputs.tid);
 				luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll);
 				minPayrollAmount = finances.getMinPayrollAmount(payroll);
-
-				// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
-				let numGamesRemaining = 0;
-
-				for (const matchup of schedule) {
-					if (
-						inputs.tid === matchup.homeTid ||
-						inputs.tid === matchup.awayTid
-					) {
-						numGamesRemaining += 1;
-					}
-				}
 
 				players = await player.formatAll(playersAll, {
 					attrs,
@@ -290,7 +262,6 @@ export default defineView({
 					showNoStats: true,
 					showRookies: true,
 					fuzz: true,
-					numGamesRemaining,
 				});
 				players = await addMood(players, playersAll);
 

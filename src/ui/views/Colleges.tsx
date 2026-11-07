@@ -31,49 +31,53 @@ export const genView = (
 			"userTid",
 		]);
 
+		const groupCols = getCols([
+			type === "college"
+				? "College"
+				: type === "country"
+					? "Country"
+					: type === "draftPosition"
+						? "Pick"
+						: "stat:jerseyNumber",
+			"# Players",
+			"Active",
+			...(type === "jerseyNumbers"
+				? [
+						{
+							...getCols(["Retired"])[0]!,
+							desc: "Number of teams that retired this jersey number",
+						},
+					]
+				: []),
+			"HoF",
+			"stat:gp",
+			"stat:gpPerPlayer",
+			`stat:${displayStat}`,
+			`stat:${displayStat}PerPlayer`,
+		]);
+		const bestPlayerCols = getCols([
+			"Name",
+			"Pos",
+			"Drafted",
+			"Retired",
+			"Pick",
+			"Peak Ovr",
+			"Team",
+			...stats.map((stat) => `stat:${stat}`),
+		]);
+
 		const superCols = [
 			{
 				title: "",
-				colspan: 8,
+				colspan: groupCols.length,
 			},
 			{
 				title: "Best Player",
-				colspan: 7 + stats.length,
+				colspan: bestPlayerCols.length,
 			},
 		];
 
-		const cols = getCols(
-			[
-				type === "college"
-					? "College"
-					: type === "country"
-						? "Country"
-						: type === "draftPosition"
-							? "Pick"
-							: "stat:jerseyNumber",
-				"# Players",
-				"Active",
-				...(type === "jerseyNumbers" ? ["Retired"] : []),
-				"HoF",
-				"stat:gp",
-				"stat:gpPerPlayer",
-				`stat:${displayStat}`,
-				`stat:${displayStat}PerPlayer`,
-				"Name",
-				"Pos",
-				"Drafted",
-				"Retired",
-				"Pick",
-				"Peak Ovr",
-				"Team",
-				...stats.map((stat) => `stat:${stat}`),
-			],
-			{
-				Retired: {
-					desc: "Number of teams that retired this jersey number",
-				},
-			},
-		);
+		const cols = [...groupCols, ...bestPlayerCols];
 
 		const rows: DataTableRow<"player">[] = infos.map((c) => {
 			const p = c.p;

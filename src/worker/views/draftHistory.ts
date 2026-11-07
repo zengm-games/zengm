@@ -75,18 +75,21 @@ export const getDraftTeamsByTid = async (season: number) => {
 	return teamsByTid;
 };
 
+// Also used for draftTeamHistory, which shows the same table for a different set of players
+export const DRAFT_HISTORY_STATS = bySport({
+	baseball: ["gp", "keyStats", "war"],
+	basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
+	football: ["gp", "keyStats", "av"],
+	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+} as const);
+
 export default defineView({
 	id: "draftHistory",
 	processInputs,
 	load: async ({ inputs }) => {
 		// Update every time because anything could change this (unless all players from class are retired)
 
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		} as const);
+		const stats = DRAFT_HISTORY_STATS;
 
 		const summaryStat = bySport({
 			baseball: "war",

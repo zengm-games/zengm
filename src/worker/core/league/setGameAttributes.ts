@@ -16,6 +16,7 @@ import { defaultInjuries } from "../../util/defaultInjuries.ts";
 import { initUILocalGames } from "../../util/initUILocalGames.ts";
 import { disableNba2027, initializeNba2027 } from "../draft/nba2027.ts";
 import { groupByUnique } from "../../../common/utils.ts";
+import { userControlsTeam } from "../../util/userControlsTeam.ts";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	await updateMeta({
@@ -138,11 +139,7 @@ const setGameAttributes = async (
 
 				let updated = false;
 
-				if (
-					g.get("userTids").includes(t.tid) &&
-					!local.autoPlayUntil &&
-					!g.get("spectator")
-				) {
+				if (userControlsTeam(t.tid)) {
 					if (t.adjustForInflation) {
 						if (t.autoTicketPrice !== false) {
 							t.budget.ticketPrice = await getAutoTicketPriceByTid(t.tid);

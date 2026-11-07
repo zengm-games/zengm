@@ -13,6 +13,8 @@ import { formatClock } from "../../common/formatClock.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
+import { updateRecordForGameResult } from "../../common/updateRecordForGameResult.ts";
 
 const processInputs = (params: RouteParams<"liveGame">, ctxBBGM: any) => {
 	const obj: {
@@ -90,34 +92,7 @@ export const boxScoreToLiveSim = async ({
 		const t = initialBoxScore.teams[i];
 
 		// Fix records, taking out result of this game
-		// Keep in sync with LiveGame.tsx
-		if (initialBoxScore.playoffs) {
-			if (t.playoffs) {
-				if (initialBoxScore.won.tid === t.tid) {
-					t.playoffs.won -= 1;
-				} else if (initialBoxScore.lost.tid === t.tid) {
-					t.playoffs.lost -= 1;
-				}
-			}
-		} else {
-			if (
-				initialBoxScore.won.pts === initialBoxScore.lost.pts &&
-				initialBoxScore.won.sPts === initialBoxScore.lost.sPts
-			) {
-				// Tied!
-				if (t.tied !== undefined) {
-					t.tied -= 1;
-				}
-			} else if (initialBoxScore.won.tid === t.tid) {
-				t.won -= 1;
-			} else if (initialBoxScore.lost.tid === t.tid) {
-				if (initialBoxScore.overtimes > 0 && otl) {
-					t.otl -= 1;
-				} else {
-					t.lost -= 1;
-				}
-			}
-		}
+		updateRecordForGameResult(t, initialBoxScore, otl, -1);
 
 		await setTeamInfo(
 			t,
@@ -215,8 +190,7 @@ export default defineView({
 			// Copy because boxScoreToLiveSim modifies the box score
 			const boxScore = helpers.deepCopy(boxScoreRaw);
 
-			const allStarGame =
-				boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;
+			const allStarGame = isAllStarTid(boxScore.teams[0].tid);
 			let allStars;
 
 			if (allStarGame) {

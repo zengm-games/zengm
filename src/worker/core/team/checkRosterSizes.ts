@@ -2,11 +2,13 @@ import { PLAYER, POSITION_COUNTS } from "../../../common/constants.ts";
 import { player, freeAgents } from "../index.ts";
 import rosterAutoSort from "./rosterAutoSort.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, local } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { KEY_POSITIONS_NEEDED } from "../freeAgents/getBest.ts";
+import { getContractDemand } from "../contract/index.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
+import { userControlsTeam } from "../../util/userControlsTeam.ts";
 
 const dropPlayers = async (players: Player[], numToDrop: number) => {
 	// Automatically drop lowest value players until we reach g.get("maxRosterSize")
@@ -190,7 +192,7 @@ const checkRosterSizes = async (
 						p = await player.genRandomFreeAgent();
 					}
 
-					await player.sign(p, tid, p.contract, g.get("phase"));
+					await player.sign(p, tid, getContractDemand(p), g.get("phase"));
 					await idb.cache.players.put(p);
 					numPlayersOnRoster += 1;
 				}
@@ -212,7 +214,7 @@ const checkRosterSizes = async (
 
 	// List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
 	for (const p of players) {
-		if (p.contract.amount === g.get("minContract")) {
+		if (getContractDemand(p).amount === g.get("minContract")) {
 			minFreeAgents.push(p);
 		}
 	}
@@ -225,10 +227,7 @@ const checkRosterSizes = async (
 			continue;
 		}
 
-		const userTeamAndActive =
-			g.get("userTids").includes(t.tid) &&
-			!local.autoPlayUntil &&
-			!g.get("spectator");
+		const userTeamAndActive = userControlsTeam(t.tid);
 
 		if (
 			(userTeamAndActive && userOrOther === "user") ||

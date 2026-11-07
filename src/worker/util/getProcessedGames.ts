@@ -1,5 +1,6 @@
 import { idb } from "../db/index.ts";
 import type { Game } from "../../common/types.ts";
+import { isAllStarGame } from "../../common/specialGames.ts";
 
 /**
  * Generate a game log list.
@@ -39,8 +40,7 @@ export const getProcessedGames = async ({
 				(gm.teams[0].tid === tid ||
 					gm.teams[1].tid === tid ||
 					(includeAllStarGame &&
-						gm.teams[0].tid === -1 &&
-						gm.teams[1].tid === -2)),
+						isAllStarGame(gm.teams[0].tid, gm.teams[1].tid))),
 		},
 	);
 

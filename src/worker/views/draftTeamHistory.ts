@@ -7,11 +7,11 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 import { getNumToPick } from "../core/draft/genOrder.ts";
 import { last, maxBy } from "../../common/utils.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateTeam } from "../util/processInputs.ts";
 import { player } from "../core/index.ts";
+import { DRAFT_HISTORY_STATS } from "./draftHistory.ts";
 
 const processInputs = (params: RouteParams<"draftTeamHistory">) => {
 	return {
@@ -33,12 +33,7 @@ export default defineView({
 				p.draft.tid === g.get("userTid", p.draft.year + 1);
 		}
 
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		} as const);
+		const stats = DRAFT_HISTORY_STATS;
 		const formatOptions = {
 			attrs: [
 				"tid",

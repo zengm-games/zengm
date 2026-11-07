@@ -9,6 +9,7 @@ import { Dropdown } from "react-bootstrap";
 import { ForceWin } from "../components/ForceWin.tsx";
 import { ScoreBox } from "../components/ScoreBox/index.tsx";
 import { helpers } from "../util/helpers.ts";
+import { isTradeDeadline } from "../../common/specialGames.ts";
 
 const Schedule = ({
 	canLiveSimFirstGame,
@@ -84,8 +85,10 @@ const Schedule = ({
 					<h2>Upcoming Games</h2>
 					<ul className="list-group">
 						{upcoming.map((game, i) => {
-							const tradeDeadline =
-								game.teams[0].tid === -3 && game.teams[1].tid === -3;
+							const tradeDeadline = isTradeDeadline(
+								game.teams[0].tid,
+								game.teams[1].tid,
+							);
 							const canWatch =
 								game.teams[0].playoffs || (canLiveSimFirstGame && i === 0);
 

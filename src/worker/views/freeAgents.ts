@@ -72,7 +72,7 @@ export const addMood = async <T extends { pid: number }>(
 	return output;
 };
 
-export const freeAgentStats = bySport({
+export const FREE_AGENT_STATS = bySport({
 	baseball: ["gp", "keyStats", "war"],
 	basketball: ["min", "pts", "trb", "ast", "per"],
 	football: ["gp", "keyStats", "av"],
@@ -200,7 +200,7 @@ export default defineView({
 						"draft",
 					],
 					ratings: ["ovr", "pot", "skills", "pos"],
-					stats: freeAgentStats,
+					stats: FREE_AGENT_STATS,
 					season: season === "current" ? g.get("season") : freeAgencySeason,
 					showNoStats: true,
 					showRookies: true,
@@ -294,7 +294,7 @@ export default defineView({
 				payroll: payroll / 1000,
 				players,
 				season,
-				stats: freeAgentStats,
+				stats: FREE_AGENT_STATS,
 				type,
 				userPlayers,
 			};

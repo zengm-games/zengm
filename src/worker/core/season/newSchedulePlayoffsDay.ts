@@ -4,7 +4,12 @@ import { g, helpers, local, lock } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
 import { season, team } from "../index.ts";
 import { chunk, groupByUnique } from "../../../common/utils.ts";
-import { orderTeams } from "../../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	orderTeams,
+} from "../../util/orderTeams.ts";
+import { ALL_STAR_GAME_TIDS } from "../../../common/specialGames.ts";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 export const betterSeedHome = (
@@ -38,25 +43,8 @@ const seriesIsNotOver = (
 const getTeamsForOrderTeams = () => {
 	return team.getFormattedAll({
 		attrs: ["tid"],
-		seasonAttrs: [
-			"winp",
-			"pts",
-			"won",
-			"lost",
-			"otl",
-			"tied",
-			"did",
-			"cid",
-			"wonDiv",
-			"lostDiv",
-			"otlDiv",
-			"tiedDiv",
-			"wonConf",
-			"lostConf",
-			"otlConf",
-			"tiedConf",
-		],
-		stats: ["pts", "oppPts", "gp"],
+		seasonAttrs: ORDER_TEAMS_SEASON_ATTRS,
+		stats: ORDER_TEAMS_STATS,
 		season: g.get("season"),
 		showNoStats: true,
 	});
@@ -181,7 +169,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			// Make sure we didn't just play the All-Star Game - only schedule once
 			const allStar = await idb.merged.allStars.get(g.get("season"));
 			if (!allStar?.score) {
-				tids.unshift([-1, -2]);
+				tids.unshift([...ALL_STAR_GAME_TIDS]);
 			}
 		}
 

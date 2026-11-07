@@ -37,3 +37,31 @@ export const wrappedMovOrDiff = (stats: Stats, type: Type) => {
 		sortValue: value,
 	};
 };
+
+// Team stats from the worker are per game in basketball and totals in other sports
+const teamStatsToTotals = (stats: Stats): Stats =>
+	__SPORT === "basketball"
+		? {
+				pts: stats.pts * stats.gp,
+				oppPts: stats.oppPts * stats.gp,
+				gp: stats.gp,
+			}
+		: stats;
+
+// Basketball shows margin of victory, other sports show point differential. Also the stat name for column headers.
+export const teamMovOrDiffStat: Type =
+	__SPORT === "basketball" ? "mov" : "diff";
+
+export const TeamMovOrDiff = ({ stats }: { stats: Stats }) => {
+	return (
+		<MovOrDiff stats={teamStatsToTotals(stats)} type={teamMovOrDiffStat} />
+	);
+};
+
+export const wrappedTeamMovOrDiff = (stats: Stats) => {
+	return wrappedMovOrDiff(teamStatsToTotals(stats), teamMovOrDiffStat);
+};
+
+export const getTeamMov = (stats: Stats) => {
+	return getValue(teamStatsToTotals(stats), "mov");
+};

@@ -1,7 +1,7 @@
 import type {
 	GameAttributeWithHistory,
 	GameAttributesLeagueWithHistory,
-	PlayerContract,
+	FlatContractInfo,
 	PlayerInjury,
 } from "./types.ts";
 
@@ -18,7 +18,7 @@ type ObsoleteGameAttributes = {
 			number,
 			{
 				tid: number;
-				contract: PlayerContract;
+				contract: FlatContractInfo;
 				injury: PlayerInjury;
 			}
 		>;

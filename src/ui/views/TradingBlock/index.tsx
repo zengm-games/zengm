@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from "react";
-import { PHASE } from "../../../common/constants.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
@@ -28,6 +27,8 @@ import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { SaveTrade } from "../../components/SaveTrade.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { ActionButton } from "../../components/ActionButton.tsx";
+import { TradeNotAllowed } from "../../components/TradeNotAllowed.tsx";
+import { getTradeBlockedReason } from "../../../common/transactionPhases.ts";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -308,7 +309,7 @@ export const OfferTable = ({
 		dpids: number[];
 		dpidsUser: number[];
 	}) => void;
-	handleRemove?: (i: number) => void;
+	handleRemove?: (tid: number) => void;
 	offers: OfferType[];
 } & Pick<LocalStateUI, "salaryCap" | "salaryCapType">) => {
 	const { teamInfoCache, userTid } = useLocal(["teamInfoCache", "userTid"]);
@@ -433,7 +434,7 @@ export const OfferTable = ({
 							className="btn-close ms-2 p-0"
 							title="Remove trade from list"
 							onClick={() => {
-								handleRemove(i);
+								handleRemove(offer.tid);
 							}}
 						/>
 					) : null}
@@ -502,6 +503,7 @@ const TradingBlock = ({
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
+		otherTeamsWantToHire,
 		phase,
 		salaryCap,
 		salaryCapType,
@@ -511,6 +513,7 @@ const TradingBlock = ({
 		"challengeNoRatings",
 		"challengeNoTrades",
 		"gameOver",
+		"otherTeamsWantToHire",
 		"phase",
 		"salaryCap",
 		"salaryCapType",
@@ -609,10 +612,10 @@ const TradingBlock = ({
 		});
 	};
 
-	const handleRemove = (i: number) => {
+	const handleRemove = (tid: number) => {
 		setState((prevState) => ({
 			...prevState,
-			offers: prevState.offers.filter((offer, j) => j !== i),
+			offers: prevState.offers.filter((offer) => offer.tid !== tid),
 		}));
 	};
 
@@ -637,37 +640,15 @@ const TradingBlock = ({
 
 	const tradeOffersSwitch = useTradeOffersSwitch();
 
-	if (spectator) {
-		return <p>You're not allowed to make trades in spectator mode.</p>;
-	}
-
-	if (challengeNoTrades) {
-		return (
-			<div>
-				<p className="alert alert-danger d-inline-block">
-					<b>Challenge Mode:</b> You're not allowed to make trades.
-				</p>
-			</div>
-		);
-	}
-
-	if (
-		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
-		phase === PHASE.FANTASY_DRAFT ||
-		gameOver
-	) {
-		return (
-			<div>
-				<h2>Error</h2>
-				<p>
-					You're not allowed to make trades{" "}
-					{phase === PHASE.AFTER_TRADE_DEADLINE
-						? "after the trade deadline"
-						: "now"}
-					.
-				</p>
-			</div>
-		);
+	const tradeBlockedReason = getTradeBlockedReason({
+		challengeNoTrades,
+		gameOver,
+		otherTeamsWantToHire,
+		phase,
+		spectator,
+	});
+	if (tradeBlockedReason) {
+		return <TradeNotAllowed reason={tradeBlockedReason} />;
 	}
 
 	let sumContracts = 0;
@@ -923,7 +904,7 @@ const TradingBlock = ({
 									handleNegotiate(offer.tid, offer.pids, offer.dpids);
 								}}
 								onRemove={() => {
-									handleRemove(i);
+									handleRemove(offer.tid);
 								}}
 								salaryCap={salaryCap}
 								salaryCapType={salaryCapType}

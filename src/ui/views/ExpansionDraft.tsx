@@ -20,6 +20,7 @@ import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal.tsx";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld.tsx";
 import { last } from "../../common/utils.ts";
 import { useLocal } from "../util/local.ts";
+import { setTeamFormValue } from "./ManageTeams/teamFormValues.ts";
 
 // Hacky, but it's in a <option> so what can you do
 const BLANK_TEAM_ABBREV = "_BLANK_TEAM_ABBREV_";
@@ -130,21 +131,8 @@ const ExpansionDraft = ({
 		async (field: string, event: { target: { value: string } }) => {
 			const value = event.target.value;
 
-			const t: any = {
-				...teams[i],
-			};
-
-			if (field.startsWith("colors")) {
-				const ind = Number.parseInt(field.replace("colors", ""));
-				if (ind >= 0 && ind <= 2) {
-					t.colors[ind] = value;
-				}
-			} else {
-				t[field] = value;
-			}
-
 			const newTeams = [...teams];
-			newTeams[i] = t;
+			newTeams[i] = setTeamFormValue(teams[i]!, field, value);
 			await setTeams(newTeams);
 		};
 

@@ -4,7 +4,8 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { TradeSummary, TradeTeams } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { orderBy } from "../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../common/utils.ts";
+import isUntradable from "../core/trade/isUntradable.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import { defineView } from "../util/defineView.ts";
 
@@ -20,6 +21,14 @@ const getSummaryTeam = (summary: TradeSummary, i: 0 | 1) => {
 		other: i === 0 ? (1 as const) : (0 as const), // Index of other team
 	};
 };
+
+// Stats shown for players in trades
+export const TRADE_STATS = bySport({
+	baseball: ["gp", "keyStats", "war"],
+	basketball: ["gp", "min", "pts", "trb", "ast", "per"],
+	football: ["gp", "keyStats", "av"],
+	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+} as const);
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 export const getSummary = async (teams: TradeTeams) => {
@@ -87,6 +96,96 @@ const validateTeams = async () => {
 	return trade.updatePlayers(teams);
 };
 
+export const augmentOffers = async (offers: TradeTeams[]) => {
+	if (offers.length === 0) {
+		return [];
+	}
+
+	const teams = await team.getFormattedAll({
+		attrs: ["abbrev", "region", "name", "strategy", "tid"],
+		seasonAttrs: ["won", "lost", "tied", "otl"],
+		season: g.get("season"),
+		addDummySeason: true,
+	});
+	const teamsByTid = groupByUnique(teams, "tid");
+
+	// Take the pids and dpids in each offer and get the info needed to display the offer
+	return Promise.all(
+		offers.map(async (offerRaw) => {
+			const tid = offerRaw[1].tid;
+			const t = teamsByTid[tid];
+			if (!t) {
+				throw new Error("No team found");
+			}
+
+			const formatPicks = async (tid: number, dpids: number[]) => {
+				let picks = await idb.merged.draftPicks.getAll({ tid });
+				picks = picks.filter((dp) => dpids.includes(dp.dpid));
+
+				return await Promise.all(
+					picks.map(async (dp) => {
+						return {
+							...dp,
+							desc: await helpers.pickDesc(dp, "short"),
+						};
+					}),
+				);
+			};
+
+			const formatPlayers = async (tid: number, pids: number[]) => {
+				let playersAll = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					tid,
+				);
+				playersAll = playersAll.filter(
+					(p) => pids.includes(p.pid) && !isUntradable(p).untradable,
+				);
+				return addFirstNameShort(
+					await player.formatAll(playersAll, {
+						attrs: [
+							"pid",
+							"firstName",
+							"lastName",
+							"age",
+							"contract",
+							"injury",
+							"jerseyNumber",
+							"draft",
+						],
+						ratings: ["ovr", "pot", "skills", "pos"],
+						stats: TRADE_STATS,
+						season: g.get("season"),
+						tid,
+						showNoStats: true,
+						showRookies: true,
+						fuzz: true,
+					}),
+				);
+			};
+
+			const payroll = await team.getPayroll(tid);
+			return {
+				tid,
+				strategy: t.strategy,
+				won: t.seasonAttrs.won,
+				lost: t.seasonAttrs.lost,
+				tied: t.seasonAttrs.tied,
+				otl: t.seasonAttrs.otl,
+				pids: offerRaw[1].pids,
+				dpids: offerRaw[1].dpids,
+				pidsUser: offerRaw[0].pids,
+				dpidsUser: offerRaw[0].dpids,
+				payroll,
+				picks: await formatPicks(tid, offerRaw[1].dpids),
+				players: await formatPlayers(tid, offerRaw[1].pids),
+				picksUser: await formatPicks(g.get("userTid"), offerRaw[0].dpids),
+				playersUser: await formatPlayers(g.get("userTid"), offerRaw[0].pids),
+				summary: await getSummary(offerRaw),
+			};
+		}),
+	);
+};
+
 export default defineView({
 	id: "trade",
 	load: async ({ updateEvents }) => {
@@ -111,12 +210,7 @@ export default defineView({
 			"jerseyNumber",
 		] as const;
 		const ratings = ["ovr", "pot", "skills", "pos"] as const;
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		} as const);
+		const stats = TRADE_STATS;
 		const userRoster = addFirstNameShort(
 			await player.formatAll(userRosterAll, {
 				attrs,
@@ -242,7 +336,6 @@ export default defineView({
 			tied: t.seasonAttrs.tied,
 			otl: t.seasonAttrs.otl,
 			userTeamName,
-			otherTeamsWantToHire: g.get("otherTeamsWantToHire"),
 			forceTrade: false,
 			numDraftRounds: g.get("numDraftRounds"),
 			multiTeamMode: g.get("userTids").length > 1,

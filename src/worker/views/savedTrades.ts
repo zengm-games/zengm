@@ -2,7 +2,7 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { TradeTeams } from "../../common/types.ts";
 import isUntradable from "../core/trade/isUntradable.ts";
-import { augmentOffers } from "../api/index.ts";
+import { augmentOffers } from "./trade.ts";
 import { addInlinePlayerInfo } from "./tradeProposals.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { last, orderBy } from "../../common/utils.ts";

@@ -60,10 +60,11 @@ const generate = (
 			loc: country,
 		},
 		college,
-		contract: {
+		contractDemand: {
 			amount: g.get("minContract"),
 			exp: g.get("season") + 1,
 		},
+		contracts: [],
 		draft: {
 			round: 0,
 			pick: 0,
@@ -92,7 +93,6 @@ const generate = (
 		ratings: ratingsArray,
 		retiredYear: Infinity,
 		rosterOrder: 666, // Will be set later
-		salaries: [],
 		stats: [],
 		statsTids: [],
 		tid,

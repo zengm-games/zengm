@@ -349,12 +349,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	// Contract demands always have the same amount every season, so different amounts are only possible for a player who will have a signed contract. This matches applyCustomizedContract in the worker.
 	const tid = Number.parseInt(String(state.p.tid));
-	const unsignedOnTeam =
-		props.p.contractDemand !== undefined &&
-		props.originalTid !== undefined &&
-		props.originalTid >= 0;
-	const keepsContract = props.hasCurrentContract && tid === props.originalTid;
-	const canBeVariable = (tid >= 0 && !unsignedOnTeam) || keepsContract;
+	let canBeVariable;
+	if (props.hasCurrentContract) {
+		// He keeps his contract, unless he's moved off his team
+		canBeVariable = tid >= 0 || tid === props.originalTid;
+	} else {
+		// He signs a contract if he's moved onto a team. A player who was already on a team without a contract is an unsigned draft pick.
+		const fromTeam = props.originalTid !== undefined && props.originalTid >= 0;
+		canBeVariable = tid >= 0 && !fromTeam;
+	}
 	const contractVariable = canBeVariable && state.contractVariable;
 
 	const [autoPos, setAutoPos] = useState(props.initialAutoPos);

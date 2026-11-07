@@ -4886,7 +4886,7 @@ const applyCustomizedContract = (
 				})
 			: undefined;
 
-	// Retiring or moving to free agency ends the current contract, unless it was already fully paid. Nobody pays the rest of it.
+	// Retiring or moving off his team ends his contract, unless it was already fully paid. Nobody pays the rest of it.
 	const endPrevCurrentContract = () => {
 		if (prevCurrentContract) {
 			endContract(prevCurrentContract, {
@@ -4901,17 +4901,7 @@ const applyCustomizedContract = (
 		return;
 	}
 
-	const unsignedOnTeam =
-		p.contractDemand !== undefined &&
-		originalTid !== undefined &&
-		originalTid >= 0;
-
-	// In a fantasy draft, players who were on a team keep their contracts while they're draft prospects (see getCurrentContract), so editing one of them without moving him edits his contract
-	const keepsContract =
-		prevCurrentContract !== undefined && p.tid === originalTid;
-
-	if ((p.tid < 0 && !keepsContract) || unsignedOnTeam) {
-		// Free agent, draft prospect, or unsigned player on a team
+	const setContractDemand = () => {
 		if (contractSeasons) {
 			throw new Error(
 				"A contract demand can't have different amounts in different seasons",
@@ -4922,14 +4912,16 @@ const applyCustomizedContract = (
 			amount: contractInput.amount,
 			exp: contractInput.exp,
 		};
-
-		if (p.tid < 0) {
-			endPrevCurrentContract();
-		}
-		return;
-	}
+	};
 
 	if (prevCurrentContract) {
+		// Moving him off his team ends his contract. Otherwise, like if he's traded to another team or stays in a fantasy draft (see getCurrentContract), he keeps it.
+		if (p.tid < 0 && p.tid !== originalTid) {
+			setContractDemand();
+			endPrevCurrentContract();
+			return;
+		}
+
 		// Keep seasons that were already paid, and change the rest
 		const firstEditableSeason = Math.max(
 			prevCurrentContract.start,
@@ -4955,21 +4947,28 @@ const applyCustomizedContract = (
 		return;
 	}
 
-	// Moving to a team, so he needs a contract
-	const contract = createContract({
-		contract: contractSeasons
-			? {
-					amount: contractSeasons.amounts[0]!,
-					exp: contractSeasons.start + contractSeasons.amounts.length - 1,
-				}
-			: contractInput,
-		type: "unknown",
-	});
-	if (contractSeasons) {
-		checkContractSeasonsStart(contractSeasons, contract.start);
-		contract.amounts = contractSeasons.amounts;
+	// Moving onto a team, so he needs a contract. A player who was already on a team without one is an unsigned draft pick, who keeps his contract demand.
+	const fromTeam = originalTid !== undefined && originalTid >= 0;
+	if (p.tid >= 0 && !fromTeam) {
+		const contract = createContract({
+			contract: contractSeasons
+				? {
+						amount: contractSeasons.amounts[0]!,
+						exp: contractSeasons.start + contractSeasons.amounts.length - 1,
+					}
+				: contractInput,
+			type: "unknown",
+		});
+		if (contractSeasons) {
+			checkContractSeasonsStart(contractSeasons, contract.start);
+			contract.amounts = contractSeasons.amounts;
+		}
+		addContract(p, contract);
+		return;
 	}
-	addContract(p, contract);
+
+	// Free agent, draft prospect, or unsigned draft pick
+	setContractDemand();
 };
 
 type CustomizedContractSeasons = {

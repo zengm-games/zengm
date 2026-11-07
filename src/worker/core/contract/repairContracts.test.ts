@@ -54,6 +54,14 @@ describe("repairContracts", () => {
 		assert.deepStrictEqual(p.contractDemand, { amount: 750, exp: 2026 });
 	});
 
+	test("once re-signing starts, an expiring contract is over, so he needs a contract demand", () => {
+		const p = makePlayer({ tid: 3, contracts: [contract(2025, [1000, 1000])] });
+		g.setWithoutSavingToDB("phase", PHASE.RESIGN_PLAYERS);
+		assert.strictEqual(repairContracts(p).length, 1);
+		assert.deepStrictEqual(p.contractDemand, { amount: 750, exp: 2026 });
+		assert.strictEqual(p.contracts[0]!.endedEarly, undefined);
+	});
+
 	test("unsigned draft pick keeps his contract demand", () => {
 		const p = makePlayer({
 			tid: 3,

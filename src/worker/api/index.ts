@@ -168,12 +168,13 @@ import {
 	addContract,
 	createContract,
 	getContractSummaryOrThrow,
+	endContract,
 	isReleasedContractOwed,
 	updateOwedByTids,
 	type ContractInput,
 	fillContractDefaults,
 } from "../core/contract/index.ts";
-import { getContractExp, getCurrentContract } from "../../common/contracts.ts";
+import { getCurrentContract } from "../../common/contracts.ts";
 import { getContractStartSeason } from "../util/getContractStartSeason.ts";
 import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
 import * as z from "zod";
@@ -951,11 +952,11 @@ const deleteOldData = async (options: {
 				updated = true;
 			}
 		}
-		// Keep the current contract, even if it's expiring and already fully paid, because it still matters until it's replaced (payroll, rookie contracts for re-signing). Also keep released contracts that are still owed.
-		const currentContract = getCurrentContract(p);
+		// Keep the last contract, even if it's expiring and already fully paid, because it still matters until it's replaced (payroll, rookie contracts for re-signing). Also keep released contracts that are still owed.
+		const lastContract = p.contracts.at(-1);
 		const contracts = p.contracts.filter(
 			(contract) =>
-				contract === currentContract || isReleasedContractOwed(contract),
+				contract === lastContract || isReleasedContractOwed(contract),
 		);
 		if (contracts.length < p.contracts.length) {
 			p.contracts = contracts;
@@ -4879,21 +4880,22 @@ const applyCustomizedContract = (
 	}
 
 	const prevCurrentContract =
-		originalTid !== undefined && originalTid >= 0 && !p.contractDemand
-			? getCurrentContract({ contracts: p.contracts, tid: originalTid })
+		originalTid !== undefined
+			? getCurrentContract({
+					contractDemand: p.contractDemand,
+					contracts: p.contracts,
+					tid: originalTid,
+				})
 			: undefined;
 
 	// Retiring or moving to free agency ends the current contract, unless it was already fully paid. Nobody pays the rest of it.
 	const endPrevCurrentContract = (reason: "retired" | "godMode") => {
-		if (
-			prevCurrentContract &&
-			getContractExp(prevCurrentContract) >= getContractStartSeason()
-		) {
-			prevCurrentContract.endedEarly = {
+		if (prevCurrentContract) {
+			endContract(prevCurrentContract, {
 				season: g.get("season"),
 				phase: g.get("phase"),
 				reason,
-			};
+			});
 		}
 	};
 
@@ -4906,7 +4908,12 @@ const applyCustomizedContract = (
 		p.contractDemand !== undefined &&
 		originalTid !== undefined &&
 		originalTid >= 0;
-	if (p.tid < 0 || unsignedOnTeam) {
+
+	// In a fantasy draft, players who were on a team keep their contracts while they're draft prospects (see getCurrentContract), so editing one of them without moving him edits his contract
+	const keepsContract =
+		prevCurrentContract !== undefined && p.tid === originalTid;
+
+	if ((p.tid < 0 && !keepsContract) || unsignedOnTeam) {
 		// Free agent, draft prospect, or unsigned player on a team
 		if (contractSeasons) {
 			throw new Error(

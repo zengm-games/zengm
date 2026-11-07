@@ -14,6 +14,8 @@ import {
 import type { Conditions } from "../../../common/types.ts";
 import expansionDraft from "../expansionDraft/index.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
+import { getCurrentContract } from "../../../common/contracts.ts";
+import { endContract } from "../contract/index.ts";
 
 const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 	if (draftOver) {
@@ -57,7 +59,16 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 				const numPlayersTradedAwayNormalized =
 					await getNumPlayersTradedAwayNormalizedAll();
 				for (const p of playersUndrafted) {
+					// Players who were on a team before the fantasy draft still have their contracts, which end now. Get it before addToFreeAgents, since it bases his contract demand on it, and then he has no current contract.
+					const contract = getCurrentContract(p);
 					player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
+					if (contract) {
+						endContract(contract, {
+							season: g.get("season"),
+							phase: g.get("phase"),
+							reason: "fantasyDraft",
+						});
+					}
 				}
 				await idb.cache.players.putAll(playersUndrafted);
 				await freeAgents.normalizeContractDemands({

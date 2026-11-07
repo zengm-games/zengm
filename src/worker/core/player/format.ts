@@ -194,14 +194,14 @@ const getSalaryRows = (p: Player) => {
 		let remainingTid: number | undefined;
 		if (released) {
 			remainingTid = endedEarly.tid;
-		} else if (contract === currentContract) {
+		} else if (contract === currentContract && p.tid >= 0) {
 			remainingTid = p.tid;
 		}
 
 		for (const [i, contractAmount] of contract.amounts.entries()) {
 			const rowSeason = contract.start + i;
 
-			// Not paid after retirement, death, or being moved to free agency in Customize Player
+			// Not paid after retirement, death, being moved to free agency in Customize Player, or going undrafted in a fantasy draft
 			if (endedEarly && !released && rowSeason > endedEarly.season) {
 				break;
 			}
@@ -367,9 +367,7 @@ const processAttrs = (
 				};
 
 				// Contract demands are always flat
-				const currentContract = p.contractDemand
-					? undefined
-					: getCurrentContract(p);
+				const currentContract = getCurrentContract(p);
 				if (currentContract) {
 					// Only the seasons from the payroll season on, which is what amount and exp describe. That also means a contract whose different amounts were all in past seasons is now flat.
 					const remaining = getRemainingContractSeasons(

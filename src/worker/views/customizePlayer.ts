@@ -98,6 +98,9 @@ export default defineView({
 			// Seasons of the current contract that can still be edited, for editing different amounts in different seasons
 			let contractSeasons: { start: number; amounts: number[] } | undefined;
 
+			// Usually only players on a team, but also players in a fantasy draft who were on a team, see getCurrentContract
+			let hasCurrentContract = false;
+
 			let p: PlayerWithoutKey;
 			if (inputs.pid === null) {
 				// Generate new player as basis
@@ -135,7 +138,8 @@ export default defineView({
 
 				// Seasons that were already paid can't be changed
 				const currentContract = getCurrentContract(p2);
-				if (currentContract && !p2.contractDemand) {
+				if (currentContract) {
+					hasCurrentContract = true;
 					const remaining = getRemainingContractSeasons(currentContract);
 					if (remaining.amounts.length > 0) {
 						contractSeasons = remaining;
@@ -176,6 +180,7 @@ export default defineView({
 					p.contracts = [];
 					delete p.owedByTids;
 					contractSeasons = undefined;
+					hasCurrentContract = false;
 				}
 			}
 
@@ -220,6 +225,7 @@ export default defineView({
 				contractSeasons,
 				contractVariable: !isFlatContract(contractSeasons),
 				faceCount,
+				hasCurrentContract,
 				initialAutoPos,
 				originalTid,
 				p,

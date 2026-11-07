@@ -1156,8 +1156,8 @@ export type ContractEndedEarly =
 	| {
 			season: number;
 			phase: Phase;
-			// godMode is for a player moved from a team to free agency in Customize Player
-			reason: "retired" | "died" | "godMode";
+			// godMode is for a player moved from a team to free agency in Customize Player. fantasyDraft is for a player who was on a team before a fantasy draft and wasn't drafted.
+			reason: "retired" | "died" | "godMode" | "fantasyDraft";
 			tid?: undefined;
 	  }
 	| {

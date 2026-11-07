@@ -117,7 +117,7 @@ const normalizeContractDemands = async ({
 		players = playersAll.filter(
 			(p) =>
 				p.tid === PLAYER.FREE_AGENT ||
-				getContractSummaryOrThrow(p).exp === season,
+				getContractSummaryOrThrow(p).exp <= season,
 		);
 	}
 

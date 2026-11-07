@@ -76,7 +76,7 @@ const setRepeatSeasonContract = (
 	contract: FlatContractInfo,
 	newSeason: number,
 ) => {
-	const currentContract = p.contractDemand ? undefined : getCurrentContract(p);
+	const currentContract = getCurrentContract(p);
 	p.tid = tid;
 
 	if (
@@ -111,7 +111,7 @@ const setHistoricalRosterContract = (
 	tid: number,
 	newSeason: number,
 ) => {
-	const currentContract = p.contractDemand ? undefined : getCurrentContract(p);
+	const currentContract = getCurrentContract(p);
 	p.tid = tid;
 
 	if (currentContract && getContractExp(currentContract) >= newSeason) {

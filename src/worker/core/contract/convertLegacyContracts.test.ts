@@ -339,6 +339,7 @@ describe("applyLegacyReleasedPlayers", () => {
 		};
 		const contracts = [currentContract];
 		applyLegacyReleasedPlayers({
+			contractDemand: undefined,
 			contracts,
 			leagueState,
 			releasedPlayers: [

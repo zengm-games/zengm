@@ -311,19 +311,25 @@ const getAmounts = (segment: Pick<Segment, "amount" | "exp" | "start">) => {
 
 // Mark contracts that are owed to teams that released the player, from the old releasedPlayers store. This is separate from convertLegacyContracts because in a league file, releasedPlayers is separate from players. If the player is on a team, his current contract can't be a released contract.
 export const applyLegacyReleasedPlayers = ({
+	contractDemand,
 	contracts,
 	leagueState,
 	releasedPlayers,
 	releaseEvents,
 	tid,
 }: {
+	contractDemand: FlatContractInfo | undefined;
 	contracts: Contract[];
 	leagueState: LeagueState;
 	releasedPlayers: LegacyReleasedPlayer[];
 	releaseEvents: ReleaseEventInfo[];
 	tid: number;
 }) => {
-	const currentContract = getCurrentContract({ contracts, tid });
+	const currentContract = getCurrentContract({
+		contractDemand,
+		contracts,
+		tid,
+	});
 
 	for (const releasedPlayer of releasedPlayers) {
 		const { amount, exp } = releasedPlayer.contract;
@@ -534,6 +540,7 @@ export const convertLegacyContracts = ({
 	});
 
 	applyLegacyReleasedPlayers({
+		contractDemand,
 		contracts,
 		leagueState,
 		releasedPlayers,

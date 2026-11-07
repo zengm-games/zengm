@@ -291,9 +291,22 @@ export const addContract = (
 	p.contracts.push(contract);
 };
 
+// End a contract before it expires. Nothing changes if it was already fully paid, since then it didn't end early.
+export const endContract = (
+	contract: Contract,
+	endedEarly: ContractEndedEarly,
+) => {
+	if (getContractExp(contract) >= getContractStartSeason()) {
+		contract.endedEarly = endedEarly;
+	}
+};
+
 // End a player's current contract before it expires, like when he retires or is released
 export const endContractEarly = (
-	p: Pick<PlayerWithoutKey, "contracts" | "owedByTids" | "tid">,
+	p: Pick<
+		PlayerWithoutKey,
+		"contractDemand" | "contracts" | "owedByTids" | "tid"
+	>,
 	endedEarly: ContractEndedEarly,
 ) => {
 	const contract = getCurrentContract(p);
@@ -301,12 +314,7 @@ export const endContractEarly = (
 		return;
 	}
 
-	// Already fully paid, so it didn't end early
-	if (getContractExp(contract) < getContractStartSeason()) {
-		return;
-	}
-
-	contract.endedEarly = endedEarly;
+	endContract(contract, endedEarly);
 	updateOwedByTids(p);
 };
 

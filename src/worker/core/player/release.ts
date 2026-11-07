@@ -4,8 +4,9 @@ import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { getCurrentContract } from "../../../common/contracts.ts";
 import {
-	endContractEarly,
+	endContract,
 	setContractDemandFromCurrentContract,
+	updateOwedByTids,
 } from "../contract/index.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayNormalized.ts";
 
@@ -20,22 +21,23 @@ import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayN
  * @return {Promise}
  */
 const release = async (p: Player, justDrafted: boolean) => {
+	const contract = getCurrentContract(p);
+
 	// Before his contract ends, since that's what his contract demand is based on
 	setContractDemandFromCurrentContract(p);
-
-	const contract = getCurrentContract(p);
 	if (contract) {
 		if (justDrafted) {
 			// Just drafted players can be released without paying anything
 			p.contracts = p.contracts.filter((row) => row !== contract);
 		} else {
 			// The team still owes the rest of the contract, unless it has already been fully paid
-			endContractEarly(p, {
+			endContract(contract, {
 				season: g.get("season"),
 				phase: g.get("phase"),
 				reason: "released",
 				tid: p.tid,
 			});
+			updateOwedByTids(p);
 		}
 	}
 

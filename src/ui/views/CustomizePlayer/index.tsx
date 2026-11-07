@@ -353,7 +353,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		props.p.contractDemand !== undefined &&
 		props.originalTid !== undefined &&
 		props.originalTid >= 0;
-	const canBeVariable = tid >= 0 && !unsignedOnTeam;
+	const keepsContract = props.hasCurrentContract && tid === props.originalTid;
+	const canBeVariable = (tid >= 0 && !unsignedOnTeam) || keepsContract;
 	const contractVariable = canBeVariable && state.contractVariable;
 
 	const [autoPos, setAutoPos] = useState(props.initialAutoPos);

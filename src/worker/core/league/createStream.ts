@@ -1100,6 +1100,7 @@ const applyLegacyReleasedPlayersToPlayers = async (
 
 	const apply = (p: Player, releasedPlayers: LegacyReleasedPlayer[]) => {
 		applyLegacyReleasedPlayers({
+			contractDemand: p.contractDemand,
 			contracts: p.contracts,
 			leagueState,
 			releasedPlayers,

@@ -1,5 +1,6 @@
 import { PHASE } from "./constants.ts";
 import type { Phase } from "./types.ts";
+import { isAllStarGame } from "./specialGames.ts";
 
 // Probably this logic should be used in GameSim too, cause it is the same there
 const allowForceTie = ({
@@ -26,13 +27,13 @@ const allowForceTie = ({
 	}
 
 	if (__SPORT === "basketball") {
-		const isAllStarGame = homeTid === -1 && awayTid === -2;
+		const allStarGame = isAllStarGame(homeTid, awayTid);
 
-		if (!isAllStarGame && elam) {
+		if (!allStarGame && elam) {
 			return false;
 		}
 
-		if (isAllStarGame && elamASG) {
+		if (allStarGame && elamASG) {
 			return false;
 		}
 	}

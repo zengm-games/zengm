@@ -400,11 +400,71 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					rookie: {
 						const: true,
 					},
+					// Legacy, from before p.contracts
 					rookieResign: {
 						const: true,
 					},
 				},
 				required: ["amount", "exp"],
+			},
+			contract: {
+				type: "object",
+				properties: {
+					// Defaults to "unknown"
+					type: {
+						enum: ["rookie", "reSign", "freeAgent", "unknown"],
+					},
+					eid: {
+						type: "integer",
+					},
+					start: {
+						type: "integer",
+					},
+					amounts: {
+						type: "array",
+						items: {
+							// Not minimum 0, because some people use a negative amount for released players for various purposes
+							type: "number",
+						},
+						minItems: 1,
+					},
+					// Defaults to [], meaning nothing is known to have been paid
+					payments: {
+						type: "array",
+						items: {
+							type: "object",
+							properties: {
+								season: {
+									type: "integer",
+								},
+								tid: {
+									type: "integer",
+								},
+								amount: {
+									type: "number",
+								},
+							},
+							required: ["season", "tid", "amount"],
+						},
+					},
+					endedEarly: {
+						type: "object",
+						properties: {
+							season: {
+								type: "integer",
+							},
+							phase: {
+								type: "integer",
+							},
+							// Team that released the player, which still owes the rest of the contract
+							tid: {
+								type: "integer",
+							},
+						},
+						required: ["season", "phase"],
+					},
+				},
+				required: ["start", "amounts"],
 			},
 			playerInjury: {
 				type: "object",
@@ -1812,8 +1872,18 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						college: {
 							type: "string",
 						},
+						// Legacy, from before p.contracts. Use contracts and contractDemand instead.
 						contract: {
 							$ref: "#/definitions/playerContract",
+						},
+						contractDemand: {
+							$ref: "#/definitions/playerContract",
+						},
+						contracts: {
+							type: "array",
+							items: {
+								$ref: "#/definitions/contract",
+							},
 						},
 						customMoodItems: {
 							type: "array",
@@ -1944,6 +2014,13 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							type: "integer",
 							minimum: 0,
 						},
+						// Derived from contracts, so it's ignored when importing
+						owedByTids: {
+							type: "array",
+							items: {
+								type: "integer",
+							},
+						},
 						pid: {
 							type: "integer",
 						},
@@ -1988,6 +2065,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						rosterOrder: {
 							type: "integer",
 						},
+						// Legacy, from before p.contracts. Use contracts instead.
 						salaries: {
 							type: "array",
 							items: {
@@ -2149,6 +2227,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					required: ["season", "currentRound", "series"],
 				},
 			},
+			// Legacy, from before p.contracts. Now released players' contracts are in the players' contracts, with endedEarly.
 			releasedPlayers: {
 				type: "array",
 				items: {

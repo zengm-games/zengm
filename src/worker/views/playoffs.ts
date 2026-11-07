@@ -4,7 +4,11 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayoffSeries } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { orderTeams } from "../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	orderTeams,
+} from "../util/orderTeams.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
 
 type TeamToEdit = {
@@ -150,25 +154,8 @@ export default defineView({
 			if (canEdit) {
 				const teamsUnsorted = await team.getFormattedAll({
 					attrs: ["tid", "region", "name", "imgURL", "imgURLSmall"],
-					seasonAttrs: [
-						"cid",
-						"did",
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"winp",
-						"pts",
-						"wonDiv",
-						"lostDiv",
-						"tiedDiv",
-						"otlDiv",
-						"wonConf",
-						"lostConf",
-						"tiedConf",
-						"otlConf",
-					],
-					stats: ["pts", "oppPts", "gp"],
+					seasonAttrs: ORDER_TEAMS_SEASON_ATTRS,
+					stats: ORDER_TEAMS_STATS,
 					season: g.get("season"),
 					active: true,
 					showNoStats: true,

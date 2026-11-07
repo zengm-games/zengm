@@ -8,6 +8,7 @@ import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdow
 import { env } from "../util/env.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateSeason } from "../util/processInputs.ts";
+import { isAllStarGame, isTradeDeadline } from "../../common/specialGames.ts";
 
 const processInputs = (params: RouteParams<"dailySchedule">) => {
 	let cid;
@@ -128,8 +129,8 @@ export default defineView({
 						const homeTid = teams[0].tid;
 						const awayTid = teams[1].tid;
 						return (
-							(homeTid === -1 && awayTid === -2) ||
-							(homeTid === -3 && awayTid === -3) ||
+							isAllStarGame(homeTid, awayTid) ||
+							isTradeDeadline(homeTid, awayTid) ||
 							tids.has(awayTid) ||
 							tids.has(homeTid)
 						);

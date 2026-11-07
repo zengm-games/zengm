@@ -2,6 +2,10 @@ import { choice, shuffle } from "../../../common/random.ts";
 import g from "../../util/g.ts";
 import realSchedules from "./realSchedules.football.json";
 import { assertDefined } from "../../../common/utils.ts";
+import {
+	ALL_STAR_GAME_TIDS,
+	TRADE_DEADLINE_TIDS,
+} from "../../../common/specialGames.ts";
 
 const NUM_CONFS = 2;
 const NUM_DIVS_PER_CONF = 4;
@@ -109,10 +113,10 @@ export const getRealSchedule = (
 
 	for (const { day, matchups } of schedule) {
 		if (day === tradeDeadlineDay) {
-			tids.push([-3, -3]);
+			tids.push([...TRADE_DEADLINE_TIDS]);
 		}
 		if (day === allStarGameDay) {
-			tids.push([-1, -2]);
+			tids.push([...ALL_STAR_GAME_TIDS]);
 			addedAllStarGame = true;
 		}
 
@@ -132,7 +136,7 @@ export const getRealSchedule = (
 
 	// In case All-Star Game is after the last day. Trade deadline doesn't matter at this point so leave it out.
 	if (!addedAllStarGame && allStarGameDay !== undefined) {
-		tids.push([-1, -2]);
+		tids.push([...ALL_STAR_GAME_TIDS]);
 	}
 
 	return tids;

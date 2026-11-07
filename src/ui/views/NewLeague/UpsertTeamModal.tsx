@@ -29,6 +29,7 @@ import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";
 import { orderBy, range } from "../../../common/utils.ts";
 import { choice, randInt } from "../../../common/random.ts";
+import { setTeamFormValue } from "../ManageTeams/teamFormValues.ts";
 
 export const getGodModeWarnings = ({
 	is,
@@ -718,30 +719,19 @@ const UpsertTeamModal = ({
 								confs={confs}
 								divs={divs}
 								handleInputChange={(field, event) => {
-									if (field.startsWith("colors")) {
-										const ind = Number.parseInt(field.replace("colors", ""));
-										if (ind >= 0 && ind <= 2) {
-											const colors = [...controlledTeam.colors] as [
-												string,
-												string,
-												string,
-											];
-											colors[ind] = event.target.value;
-											setControlledTeam({
-												...controlledTeam,
-												colors,
-											});
-										}
-									} else if (field === "usePlayers") {
+									if (field === "usePlayers") {
 										setControlledTeam({
 											...controlledTeam,
 											usePlayers: !controlledTeam.usePlayers,
 										});
 									} else {
-										setControlledTeam({
-											...controlledTeam,
-											[field]: event.target.value,
-										});
+										setControlledTeam(
+											setTeamFormValue(
+												controlledTeam,
+												field,
+												event.target.value,
+											),
+										);
 									}
 								}}
 								hideStatus

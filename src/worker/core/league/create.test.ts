@@ -24,7 +24,6 @@ describe.skip("worker/core/league/create", () => {
 			"playerFeats",
 			"players",
 			"playoffSeries",
-			"releasedPlayers",
 			"schedule",
 			"scheduledEvents",
 			"teamSeasons",

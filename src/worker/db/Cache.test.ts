@@ -189,3 +189,76 @@ describe("flush", () => {
 		assert.deepStrictEqual([...idb.cache._dirtyRecords.messages], [2]);
 	});
 });
+
+describe("multiEntry index", () => {
+	const getOwedPids = async (tid: number) => {
+		const players = await idb.cache.players.indexGetAll(
+			"playersByOwedByTid",
+			tid,
+		);
+		return players.map((p) => p.pid).sort((a, b) => a - b);
+	};
+
+	beforeEach(async () => {
+		resetG();
+
+		const players = [0, 1, 2].map(() =>
+			player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL),
+		);
+		players[0]!.owedByTids = [3, 5];
+		players[1]!.owedByTids = [5];
+		await resetCache({ players });
+	});
+
+	test("index a row under each value", async () => {
+		assert.deepStrictEqual(await getOwedPids(3), [0]);
+		assert.deepStrictEqual(await getOwedPids(5), [0, 1]);
+		assert.deepStrictEqual(await getOwedPids(7), []);
+	});
+
+	test("index a row once if a value is repeated", async () => {
+		const p = (await idb.cache.players.get(2))!;
+		p.owedByTids = [7, 7];
+		await idb.cache.players.put(p);
+		assert.deepStrictEqual(await getOwedPids(7), [2]);
+	});
+
+	test("update when a value is added to a row in place", async () => {
+		const p = (await idb.cache.players.get(1))!;
+		p.owedByTids!.push(3);
+		await idb.cache.players.put(p);
+		assert.deepStrictEqual(await getOwedPids(3), [0, 1]);
+	});
+
+	test("update when a value is removed from a row in place", async () => {
+		const p = (await idb.cache.players.get(0))!;
+		p.owedByTids = [5];
+		await idb.cache.players.put(p);
+		assert.deepStrictEqual(await getOwedPids(3), []);
+		assert.deepStrictEqual(await getOwedPids(5), [0, 1]);
+
+		delete p.owedByTids;
+		await idb.cache.players.put(p);
+		assert.deepStrictEqual(await getOwedPids(5), [1]);
+	});
+
+	test("update when a row is replaced by a different object with no values", async () => {
+		const p = (await idb.cache.players.get(0))!;
+		const p2 = { ...p };
+		delete p2.owedByTids;
+		await idb.cache.players.put(p2);
+		assert.deepStrictEqual(await getOwedPids(3), []);
+		assert.deepStrictEqual(await getOwedPids(5), [1]);
+	});
+
+	test("don't return a row twice from a range query", async () => {
+		const players = await idb.cache.players.indexGetAll(
+			"playersByOwedByTid",
+			[0, 10],
+		);
+		assert.deepStrictEqual(
+			players.map((p) => p.pid).sort((a, b) => a - b),
+			[0, 1],
+		);
+	});
+});

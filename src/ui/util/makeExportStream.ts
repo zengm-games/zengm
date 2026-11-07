@@ -195,6 +195,7 @@ const makeExportStream = async (
 				if (onProcessingStore && store !== prevStore) {
 					onProcessingStore(store);
 				}
+				prevStore = store;
 
 				// Define this up here so it is undefined for gameAttributes, triggering the "go to next store" logic at the bottom
 				let cursor:

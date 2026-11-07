@@ -1,13 +1,14 @@
 import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
+import { ALL_STAR_GAME_TIDS, isAllStarTid } from "../../common/specialGames.ts";
 
 export const getTeamInfoBySeason = async (tid: number, season: number) => {
-	if (tid === -1 || tid === -2) {
+	if (isAllStarTid(tid)) {
 		return {
 			abbrev: "ASG",
 			colors: DEFAULT_TEAM_COLORS,
 			jersey: DEFAULT_JERSEY,
-			name: tid === -1 ? "1" : "2",
+			name: tid === ALL_STAR_GAME_TIDS[0] ? "1" : "2",
 			region: "All-Stars",
 		};
 	}

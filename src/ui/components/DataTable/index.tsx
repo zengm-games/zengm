@@ -20,7 +20,9 @@ import getSearchVal from "./getSearchVal.tsx";
 import getSortVal from "./getSortVal.tsx";
 import { ResponsiveTableWrapper } from "../ResponsiveTableWrapper.tsx";
 import { helpers } from "../../util/helpers.ts";
-import type { SortOrder, SortType } from "../../../common/types.ts";
+import type { Col, SortOrder, SuperCol } from "../../../common/types.ts";
+
+export type { Col, SuperCol };
 import { arrayMove } from "@dnd-kit/sortable";
 import updateSortBys, { type SortEvent } from "./updateSortBys.ts";
 import useStickyXX from "./useStickyXX.ts";
@@ -42,24 +44,6 @@ import { downloadFile } from "../../util/downloadFile.ts";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 export type SortBy = [number, SortOrder];
-
-export type Col = {
-	classNames?: any; // Just header
-	desc?: string;
-	noSearch?: boolean;
-	sortSequence?: ReadonlyArray<SortOrder>;
-	sortType?: SortType;
-	searchType?: SortType;
-	title: string;
-	titleReact?: ReactNode;
-	width?: string;
-};
-
-export type SuperCol = {
-	colspan: number;
-	desc?: string;
-	title: ReactNode;
-};
 
 type Season = number | "career";
 

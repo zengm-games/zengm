@@ -11,7 +11,7 @@ import {
 	getTeamFormValues,
 	setTeamFormValue,
 	type TeamFormValues,
-} from "./teamFormValues.ts";
+} from "../ManageTeams/teamFormValues.ts";
 
 const KEYS = [
 	"region",

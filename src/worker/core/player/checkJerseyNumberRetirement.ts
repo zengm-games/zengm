@@ -2,8 +2,9 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import type { Player, Team } from "../../../common/types.ts";
 import { maxBy, orderBy } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
-import { g, local, logEvent, helpers } from "../../util/index.ts";
+import { g, logEvent, helpers } from "../../util/index.ts";
 import { getThreshold } from "./madeHof.football.ts";
+import { userControlsTeam } from "../../util/userControlsTeam.ts";
 
 // Higher in basketball, because real player leagues have a lot
 const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM =
@@ -285,11 +286,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		}
 
 		// Only for AI teams!
-		if (
-			g.get("userTids").includes(tid) &&
-			!local.autoPlayUntil &&
-			!g.get("spectator")
-		) {
+		if (userControlsTeam(tid)) {
 			continue;
 		}
 

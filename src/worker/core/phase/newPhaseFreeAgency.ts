@@ -23,7 +23,7 @@ const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
 		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
 	).filter((p) => p.yearsFreeAgent > 0);
 	for (const p of players) {
-		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
+		player.addToFreeAgents(p, numPlayersTradedAwayNormalized, null);
 	}
 	await idb.cache.players.putAll(players);
 

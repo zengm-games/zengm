@@ -8,7 +8,11 @@ import { processEvents } from "./news.ts";
 import { getMaxPlayoffSeed } from "./standings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { orderTeams } from "../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	orderTeams,
+} from "../util/orderTeams.ts";
 import { getNumericStat } from "../../common/statValue.ts";
 
 const updateInbox = async ({ updateEvents }: ViewArgs) => {
@@ -99,27 +103,7 @@ const updateTeams = async ({ updateEvents }: ViewArgs) => {
 		});
 		const teams = await team.getFormattedAll({
 			attrs: ["tid"],
-			seasonAttrs: [
-				"won",
-				"lost",
-				"otl",
-				"tied",
-				"winp",
-				"pts",
-				"att",
-				"revenue",
-				"profit",
-				"cid",
-				"did",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-			],
+			seasonAttrs: [...ORDER_TEAMS_SEASON_ATTRS, "att", "revenue", "profit"],
 			stats: ["pts", "oppPts", "gp", ...stats] as const,
 			season: g.get("season"),
 			showNoStats: true,
@@ -479,29 +463,14 @@ const updateStandings = async ({ updateEvents }: ViewArgs) => {
 		const teams = await team.getFormattedAll({
 			attrs: ["tid"],
 			seasonAttrs: [
-				"won",
-				"lost",
-				"tied",
-				"otl",
-				"wonDiv",
-				"lostDiv",
-				"tiedDiv",
-				"otlDiv",
-				"wonConf",
-				"lostConf",
-				"tiedConf",
-				"otlConf",
-				"winp",
-				"pts",
-				"cid",
-				"did",
+				...ORDER_TEAMS_SEASON_ATTRS,
 				"abbrev",
 				"region",
 				"clinchedPlayoffs",
 				"imgURL",
 				"imgURLSmall",
 			],
-			stats: ["pts", "oppPts", "gp"],
+			stats: ORDER_TEAMS_STATS,
 			season: g.get("season"),
 			showNoStats: true,
 		});

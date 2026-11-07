@@ -10,6 +10,7 @@ import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateSeason } from "../util/processInputs.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
 
 const processInputs = (params: RouteParams<"playerGameLog">) => {
 	return {
@@ -69,7 +70,7 @@ export default defineView({
 
 			const abbrevsByTid: Record<number, string> = {};
 			const getAbbrev = async (tid: number) => {
-				if (tid === -1 || tid === -2) {
+				if (isAllStarTid(tid)) {
 					return "ASG";
 				}
 

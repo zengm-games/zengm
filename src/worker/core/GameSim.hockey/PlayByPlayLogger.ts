@@ -137,10 +137,6 @@ export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 class HockeyPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutput> {
 	scoringSummary: PlayByPlayEventScore[] = [];
 	private quarter = 1;
-	constructor(active: boolean) {
-		super(active);
-	}
-
 	logEvent(event: PlayByPlayEventInput) {
 		if (event.type === "quarter") {
 			this.quarter = event.quarter;

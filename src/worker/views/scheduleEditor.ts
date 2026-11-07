@@ -10,6 +10,7 @@ import { season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
+import { isAllStarGame, isTradeDeadline } from "../../common/specialGames.ts";
 
 export const formatScheduleForEditor = (
 	scheduleRaw: ScheduleGameWithoutKey[],
@@ -39,16 +40,14 @@ export const formatScheduleForEditor = (
 				};
 			}),
 		...scheduleRaw.map((game) => {
-			const isAllStarGame = game.homeTid === -1 && game.awayTid === -2;
-			if (isAllStarGame) {
+			if (isAllStarGame(game.homeTid, game.awayTid)) {
 				return {
 					type: "allStarGame" as const,
 					...game,
 				};
 			}
 
-			const isTradeDeadline = game.homeTid === -3 && game.awayTid === -3;
-			if (isTradeDeadline) {
+			if (isTradeDeadline(game.homeTid, game.awayTid)) {
 				return {
 					type: "tradeDeadline" as const,
 					...game,

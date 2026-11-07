@@ -27,6 +27,7 @@ import {
 } from "../util/boxScoreDisplayOrder.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
 
 type Team = {
 	abbrev: string;
@@ -74,7 +75,7 @@ const StatsTable = ({
 
 	const { onClick, sortBys } = useBoxScoreSortBys({ cols });
 
-	const allStarGame = t.tid === -1 || t.tid === -2;
+	const allStarGame = isAllStarTid(t.tid);
 	let players = t.players
 		.map((p) => {
 			// p.seasonStats is stats from before the game. Add current game stats to get current value - works for live sim and post-game box score!

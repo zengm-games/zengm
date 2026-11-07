@@ -2,6 +2,7 @@ import { PHASE } from "../../../common/constants.ts";
 import { g } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
 import { timeBetweenGames } from "../../../common/timeBetweenGames.ts";
+import { getContractSummary } from "../contract/index.ts";
 
 const isUntradable = (
 	p: PlayerWithoutKey,
@@ -15,8 +16,10 @@ const isUntradable = (
 			untradableMsg: string;
 	  } => {
 	if (!g.get("godMode")) {
+		const contract = getContractSummary(p);
 		if (
-			p.contract.exp <= g.get("season") &&
+			contract &&
+			contract.exp <= g.get("season") &&
 			g.get("phase") > PHASE.PLAYOFFS &&
 			g.get("phase") < PHASE.FREE_AGENCY
 		) {

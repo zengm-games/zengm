@@ -1,5 +1,8 @@
 import { finances } from "../index.ts";
-import { DEFAULT_STADIUM_CAPACITY } from "../../../common/constants.ts";
+import {
+	DEFAULT_STADIUM_CAPACITY,
+	SALARY_CAP_SCALE_LEGACY,
+} from "../../../common/constants.ts";
 import { facilitiesEffectAttendance } from "../../../common/budgetLevels.ts";
 import { PLAYOFF_ATTENDANCE_FACTOR } from "../../../common/getAdjustedTicketPrice.ts";
 import type { TeamSeason } from "../../../common/types.ts";
@@ -34,8 +37,7 @@ export const getBaseAttendance = ({
 
 // Ticket price adjusted for the salary cap, so it can be used in attendance calculation without distorting things for leagues with low/high caps. The exponential factor was hand-tuned to make this work in 1965.
 const salaryCapFactor = () => {
-	// Uses 90000 rather than defaultGameAttributes for unclear reasons, other sports should be tuned better
-	const ratio = 90000 / g.get("salaryCap");
+	const ratio = SALARY_CAP_SCALE_LEGACY / g.get("salaryCap");
 	if (ratio > 1) {
 		return ratio ** 0.75;
 	}

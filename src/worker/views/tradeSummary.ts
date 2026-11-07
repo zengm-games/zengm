@@ -7,7 +7,7 @@ import type {
 	NonEmptyArray,
 	Phase,
 	Player,
-	PlayerContract,
+	FlatContractInfo,
 	PlayerStats,
 } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
@@ -403,7 +403,7 @@ const getSeasonsToPlot = async (
 type CommonPlayer = {
 	pid: number;
 	name: string;
-	contract: PlayerContract;
+	contract: FlatContractInfo;
 };
 
 type CommonActualPlayer = {

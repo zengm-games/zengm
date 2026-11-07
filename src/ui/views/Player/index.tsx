@@ -7,6 +7,7 @@ import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
 import { SeasonIcons } from "../../components/SeasonIcons.tsx";
 import TopStuff from "./TopStuff.tsx";
+import { wrappedSalaryPayers } from "./SalaryPayers.tsx";
 import { PLAYER } from "../../../common/constants.ts";
 import HideableSection from "../../components/HideableSection.tsx";
 import { StatsTable } from "./StatsTable.tsx";
@@ -238,11 +239,12 @@ const Player2 = ({
 					<HideableSection title="Salaries">
 						<DataTable
 							className="datatable-negative-margin-top mb-3"
-							cols={getCols(["Year", "Amount"])}
+							cols={getCols(["Year", "Team", "Amount"])}
 							defaultSort={[0, "asc"]}
 							footer={{
 								data: [
 									"Total",
+									null,
 									helpers.formatCurrency(player.salariesTotal, "M"),
 								],
 							}}
@@ -265,6 +267,7 @@ const Player2 = ({
 												</>
 											),
 										},
+										wrappedSalaryPayers(s),
 										wrappedCurrency(s.amount, "M"),
 									],
 									classNames:

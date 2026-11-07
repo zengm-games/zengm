@@ -9,7 +9,7 @@ type Props = {
 	season?: number;
 };
 
-const TeamAbbrevLink = ({ tid, abbrev, className, season }: Props) => {
+export const TeamAbbrevLink = ({ tid, abbrev, className, season }: Props) => {
 	if (!abbrev || tid === undefined) {
 		return null;
 	}

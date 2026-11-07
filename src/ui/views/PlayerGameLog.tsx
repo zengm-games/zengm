@@ -10,6 +10,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { InjuryIcon } from "../components/InjuryIcon.tsx";
 import { useLocal } from "../util/local.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
 
 type DecisionPlayer = {
 	w: number;
@@ -213,7 +214,7 @@ const PlayerGameLog = ({
 	]);
 
 	const makeRow = (game: (typeof gameLog)[number], i: number): DataTableRow => {
-		const allStarGame = game.tid === -1 || game.tid === -2;
+		const allStarGame = isAllStarTid(game.tid);
 
 		return {
 			key: i,

@@ -10,6 +10,7 @@ import getWinner from "../../../common/getWinner.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
 import { processPlayerStats } from "../../util/processPlayerStats.ts";
+import { isAllStarGame } from "../../../common/specialGames.ts";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
@@ -249,7 +250,7 @@ const writePlayerStats = async (
 	const playersToSave = new Set<Player>();
 
 	for (const result of results) {
-		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2;
+		const allStarGame = isAllStarGame(result.team[0].id, result.team[1].id);
 
 		const winner = getWinner([result.team[0].stat, result.team[1].stat]);
 

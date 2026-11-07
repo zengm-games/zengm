@@ -2,10 +2,12 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { Player, GameAttributesLeague } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { extraStats } from "./hallOfFame.ts";
-import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import {
+	CAREER_SUMMARY_STATS,
+	extraStats,
+	processPlayersHallOfFame,
+} from "../util/processPlayersHallOfFame.ts";
 import { processInputs } from "./player.ts";
 import { player } from "../core/index.ts";
 
@@ -95,22 +97,7 @@ export default defineView({
 	load: async ({ inputs: { pid }, updateEvents, prevInputs }) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.has("firstRun") || pid !== prevInputs?.pid) {
-			const stats = bySport({
-				baseball: ["gp", "keyStats", "war"],
-				basketball: [
-					"gp",
-					"min",
-					"pts",
-					"trb",
-					"ast",
-					"per",
-					"ewa",
-					"ws",
-					"ws48",
-				],
-				football: ["gp", "keyStats", "av"],
-				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-			} as const);
+			const stats = CAREER_SUMMARY_STATS;
 
 			const formatOptions = {
 				attrs: [

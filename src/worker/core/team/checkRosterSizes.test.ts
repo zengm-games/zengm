@@ -23,7 +23,7 @@ const resetCacheWithPlayers = async (info: Map<number, number>) => {
 			const p = player.generate(tid, 30, 2017, true, DEFAULT_LEVEL);
 
 			if (tid === PLAYER.FREE_AGENT) {
-				p.contract.amount = g.get("minContract");
+				p.contractDemand!.amount = g.get("minContract");
 			}
 
 			players.push(p);

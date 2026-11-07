@@ -14,6 +14,10 @@ import {
 	getGameSpread,
 } from "../../../common/getGameSpread.ts";
 import {
+	isAllStarGame,
+	isTradeDeadline,
+} from "../../../common/specialGames.ts";
+import {
 	getWinModelInputs,
 	getWinProbability,
 	roundWinPercents,
@@ -176,8 +180,8 @@ export const ScoreBox = memo(
 
 		const gameSeason = game.season ?? season;
 
-		const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
-		const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;
+		const allStarGame = isAllStarGame(game.teams[0].tid, game.teams[1].tid);
+		const tradeDeadline = isTradeDeadline(game.teams[0].tid, game.teams[1].tid);
 
 		if (actions.length === 0 && final && !small) {
 			actions = [

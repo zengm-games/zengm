@@ -1,4 +1,3 @@
-import { PHASE } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { SummaryTeam } from "./Trade/Summary.tsx";
@@ -14,6 +13,8 @@ import {
 } from "./TradingBlock/index.tsx";
 import { Dropdown } from "react-bootstrap";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
+import { TradeNotAllowed } from "../components/TradeNotAllowed.tsx";
+import { getTradeBlockedReason } from "../../common/transactionPhases.ts";
 
 const SavedTrades = ({ offers }: View<"savedTrades">) => {
 	useTitleBar({ title: "Saved Trades" });
@@ -22,6 +23,7 @@ const SavedTrades = ({ offers }: View<"savedTrades">) => {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
+		otherTeamsWantToHire,
 		phase,
 		salaryCap,
 		salaryCapType,
@@ -31,6 +33,7 @@ const SavedTrades = ({ offers }: View<"savedTrades">) => {
 		"challengeNoRatings",
 		"challengeNoTrades",
 		"gameOver",
+		"otherTeamsWantToHire",
 		"phase",
 		"salaryCap",
 		"salaryCapType",
@@ -40,37 +43,15 @@ const SavedTrades = ({ offers }: View<"savedTrades">) => {
 
 	const tradeOffersSwitch = useTradeOffersSwitch();
 
-	if (spectator) {
-		return <p>You're not allowed to make trades in spectator mode.</p>;
-	}
-
-	if (challengeNoTrades) {
-		return (
-			<div>
-				<p className="alert alert-danger d-inline-block">
-					<b>Challenge Mode:</b> You're not allowed to make trades.
-				</p>
-			</div>
-		);
-	}
-
-	if (
-		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
-		phase === PHASE.FANTASY_DRAFT ||
-		gameOver
-	) {
-		return (
-			<div>
-				<h2>Error</h2>
-				<p>
-					You're not allowed to make trades{" "}
-					{phase === PHASE.AFTER_TRADE_DEADLINE
-						? "after the trade deadline"
-						: "now"}
-					.
-				</p>
-			</div>
-		);
+	const tradeBlockedReason = getTradeBlockedReason({
+		challengeNoTrades,
+		gameOver,
+		otherTeamsWantToHire,
+		phase,
+		spectator,
+	});
+	if (tradeBlockedReason) {
+		return <TradeNotAllowed reason={tradeBlockedReason} />;
 	}
 
 	const handleNegotiate = async (offer: {

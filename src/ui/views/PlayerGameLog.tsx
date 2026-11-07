@@ -1,4 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import type { View } from "../../common/types.ts";
 import TopStuff from "./Player/TopStuff.tsx";
 import { helpers } from "../util/helpers.ts";
@@ -9,7 +10,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { InjuryIcon } from "../components/InjuryIcon.tsx";
 import { useLocal } from "../util/local.ts";
-import type { LeagueUrlParts } from "../router/types.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
 
 type DecisionPlayer = {
 	w: number;
@@ -170,24 +171,27 @@ const PlayerGameLog = ({
 	useTitleBar({
 		title: player.name,
 		customMenu,
-		dropdownView: "player_game_log",
-		dropdownFields: {
-			playerProfile: "gameLog",
-			seasons: season,
-		},
-		dropdownCustomOptions: {
-			seasons: seasonsWithStats.map((season) => ({
-				key: season,
-				value: String(season),
-			})),
-		},
-		dropdownCustomURL: (fields) => {
-			const parts: LeagueUrlParts =
-				fields.playerProfile === "gameLog"
-					? ["player_game_log", player.pid, fields.seasons]
-					: ["player", player.pid];
-
-			return helpers.leagueUrl(parts);
+		dropdown: {
+			fields: [
+				{
+					key: "profile",
+					options: dropdownOptions.playerProfile,
+					value: "gameLog",
+				},
+				{
+					key: "season",
+					options: seasonsWithStats.map((season) => ({
+						key: season,
+						label: String(season),
+					})),
+					value: season,
+					buttons: "reverse",
+				},
+			],
+			urlOverride: ({ profile, season }) =>
+				profile === "gameLog"
+					? ["player_game_log", player.pid, season]
+					: ["player", player.pid],
 		},
 	});
 
@@ -210,7 +214,7 @@ const PlayerGameLog = ({
 	]);
 
 	const makeRow = (game: (typeof gameLog)[number], i: number): DataTableRow => {
-		const allStarGame = game.tid === -1 || game.tid === -2;
+		const allStarGame = isAllStarTid(game.tid);
 
 		return {
 			key: i,

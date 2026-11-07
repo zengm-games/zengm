@@ -1,4 +1,5 @@
 import { helpers } from "../util/helpers.ts";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { getCols } from "../../common/getCols.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { DataTable } from "../components/DataTable/index.tsx";
@@ -30,11 +31,17 @@ const TeamStats = ({
 		title: "Team Stats",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "team_stats",
-		dropdownFields: {
-			seasons: season,
-			teamOpponentAdvanced: teamOpponent,
-			playoffs,
+		dropdown: {
+			fields: [
+				{ key: "season", options: { type: "seasons" }, value: season },
+				{
+					key: "teamOpponent",
+					options: dropdownOptions.teamOpponentAdvanced,
+					value: teamOpponent,
+				},
+				{ key: "playoffs", options: dropdownOptions.playoffs, value: playoffs },
+			],
+			view: "teamStats",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);

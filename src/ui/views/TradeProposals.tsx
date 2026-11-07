@@ -1,4 +1,3 @@
-import { PHASE } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { SummaryTeam } from "./Trade/Summary.tsx";
@@ -14,12 +13,15 @@ import {
 import { useState } from "react";
 import { ActionButton } from "../components/ActionButton.tsx";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
+import { TradeNotAllowed } from "../components/TradeNotAllowed.tsx";
+import { getTradeBlockedReason } from "../../common/transactionPhases.ts";
 
 const TradeProposals = ({ offers, seed }: View<"tradeProposals">) => {
 	const {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
+		otherTeamsWantToHire,
 		phase,
 		salaryCap,
 		salaryCapType,
@@ -29,6 +31,7 @@ const TradeProposals = ({ offers, seed }: View<"tradeProposals">) => {
 		"challengeNoRatings",
 		"challengeNoTrades",
 		"gameOver",
+		"otherTeamsWantToHire",
 		"phase",
 		"salaryCap",
 		"salaryCapType",
@@ -51,37 +54,15 @@ const TradeProposals = ({ offers, seed }: View<"tradeProposals">) => {
 
 	const tradeOffersSwitch = useTradeOffersSwitch();
 
-	if (spectator) {
-		return <p>You're not allowed to make trades in spectator mode.</p>;
-	}
-
-	if (challengeNoTrades) {
-		return (
-			<div>
-				<p className="alert alert-danger d-inline-block">
-					<b>Challenge Mode:</b> You're not allowed to make trades.
-				</p>
-			</div>
-		);
-	}
-
-	if (
-		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
-		phase === PHASE.FANTASY_DRAFT ||
-		gameOver
-	) {
-		return (
-			<div>
-				<h2>Error</h2>
-				<p>
-					You're not allowed to make trades{" "}
-					{phase === PHASE.AFTER_TRADE_DEADLINE
-						? "after the trade deadline"
-						: "now"}
-					.
-				</p>
-			</div>
-		);
+	const tradeBlockedReason = getTradeBlockedReason({
+		challengeNoTrades,
+		gameOver,
+		otherTeamsWantToHire,
+		phase,
+		spectator,
+	});
+	if (tradeBlockedReason) {
+		return <TradeNotAllowed reason={tradeBlockedReason} />;
 	}
 
 	const handleNegotiate = async (offer: {
@@ -179,8 +160,7 @@ const TradeProposals = ({ offers, seed }: View<"tradeProposals">) => {
 					}}
 					challengeNoRatings={challengeNoRatings}
 					handleNegotiate={handleNegotiate}
-					handleRemove={(i) => {
-						const tid = offers[i]!.tid;
+					handleRemove={(tid) => {
 						setRemovedTids((prevTids) => [...prevTids, tid]);
 					}}
 					offers={filteredOffers}

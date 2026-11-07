@@ -1,21 +1,10 @@
 import { bySport } from "../../common/sportFunctions.ts";
-import {
-	processStats as processStatsBaseball,
-	statFunctions as statFunctionsBaseball,
-} from "../../common/processPlayerStats.baseball.ts";
-import {
-	processStats as processStatsBasketball,
-	statFunctions as statFunctionsBasketball,
-} from "../../common/processPlayerStats.basketball.ts";
-import {
-	processStats as processStatsFootball,
-	statFunctions as statFunctionsFootball,
-} from "../../common/processPlayerStats.football.ts";
-import {
-	processStats as processStatsHockey,
-	statFunctions as statFunctionsHockey,
-} from "../../common/processPlayerStats.hockey.ts";
+import { statFunctions as statFunctionsBaseball } from "../../common/processPlayerStats.baseball.ts";
+import { statFunctions as statFunctionsBasketball } from "../../common/processPlayerStats.basketball.ts";
+import { statFunctions as statFunctionsFootball } from "../../common/processPlayerStats.football.ts";
+import { statFunctions as statFunctionsHockey } from "../../common/processPlayerStats.hockey.ts";
 import type { StatSumsExtra } from "../../common/processPlayerStats.basketball.ts";
+import { processPlayerStats as processPlayerStatsCommon } from "../../common/processPlayerStats.ts";
 import type {
 	PlayerStatsToProcess,
 	PlayerStatType,
@@ -30,20 +19,10 @@ export const processPlayerStats = (
 	keepWithNoStats?: boolean,
 	statSumsExtra?: StatSumsExtra,
 ) => {
-	return bySport({
-		baseball: processStatsBaseball(ps, stats, statType, bornYear),
-		basketball: processStatsBasketball(
-			ps,
-			stats,
-			statType,
-			bornYear,
-			keepWithNoStats,
-			statSumsExtra,
-		),
-		football: processStatsFootball(ps, stats, bornYear, () =>
-			g.get("fantasyPoints"),
-		),
-		hockey: processStatsHockey(ps, stats, statType, bornYear),
+	return processPlayerStatsCommon(ps, stats, statType, bornYear, {
+		getFantasyPoints: () => g.get("fantasyPoints"),
+		keepWithNoStats,
+		statSumsExtra,
 	});
 };
 

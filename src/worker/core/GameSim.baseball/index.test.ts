@@ -119,7 +119,7 @@ test("walk-off scoring", async () => {
 
 		game.simPlateAppearance();
 		const event = game.playByPlay
-			.getPlayByPlay(game)
+			.getPlayByPlay()
 			?.find((event) => event.type === "hitResult");
 		assert(event);
 

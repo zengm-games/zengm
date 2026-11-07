@@ -1,5 +1,9 @@
 import type { Game, ScheduleGameWithoutKey } from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
+import {
+	isAllStarGame,
+	isTradeDeadline,
+} from "../../../common/specialGames.ts";
 
 const addDaysToSchedule = (
 	games: {
@@ -31,8 +35,8 @@ const addDaysToSchedule = (
 	return games.map((game) => {
 		const { awayTid, homeTid } = game;
 
-		const allStarGame = awayTid === -2 && homeTid === -1;
-		const tradeDeadline = awayTid === -3 && homeTid === -3;
+		const allStarGame = isAllStarGame(homeTid, awayTid);
+		const tradeDeadline = isTradeDeadline(homeTid, awayTid);
 		if (
 			dayTids.has(homeTid) ||
 			dayTids.has(awayTid) ||

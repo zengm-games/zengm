@@ -3,17 +3,12 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import {
+	extraStats,
+	processPlayersHallOfFame,
+} from "../util/processPlayersHallOfFame.ts";
 import { defineView } from "../util/defineView.ts";
 import { player } from "../core/index.ts";
-
-// gpF is used on processPlayersHallOfFame for baseball
-export const extraStats = bySport({
-	baseball: ["gpF"],
-	basketball: [],
-	football: [],
-	hockey: [],
-} as const);
 
 export default defineView({
 	id: "hallOfFame",

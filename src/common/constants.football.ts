@@ -706,7 +706,7 @@ export const TEAM_STATS_TABLES = {
 			"oppPtsPerDrive",
 		],
 	},
-	opponnetPassing: {
+	opponentPassing: {
 		name: "Opponent Passing",
 		stats: [
 			"oppPssCmp",
@@ -728,20 +728,6 @@ export const TEAM_STATS_TABLES = {
 			"oppPssSkPct",
 			"oppPssNetYdsPerAtt",
 			"oppPssAdjNetYdsPerAtt",
-		],
-	},
-	opponnetRushing: {
-		name: "Opponent Rushing",
-		stats: [
-			"oppRus",
-			"oppRusYds",
-			"oppRusTD",
-			"oppRusLng",
-			"oppRusYdsPerAtt",
-			"oppRusYdsPerGame",
-			"oppRusPerGame",
-			"oppFmb",
-			"oppFmbLost",
 		],
 	},
 	opponentRushingReceiving: {
@@ -785,7 +771,7 @@ export const TEAM_STATS_TABLES = {
 			"oppSkAlwPct",
 		],
 	},
-	opponnetDefense: {
+	opponentDefense: {
 		name: "Opponent Defense",
 		stats: [
 			"oppDefInt",
@@ -810,7 +796,7 @@ export const TEAM_STATS_TABLES = {
 			"oppPenYds",
 		],
 	},
-	opponnetKicking: {
+	opponentKicking: {
 		name: "Opponent Kicking",
 		stats: [
 			"oppFg0",
@@ -853,7 +839,7 @@ export const TEAM_STATS_TABLES = {
 			"oppPntBlk",
 		],
 	},
-	opponnetReturns: {
+	opponentReturns: {
 		name: "Opponent Returns",
 		stats: [
 			"oppPr",
@@ -869,7 +855,7 @@ export const TEAM_STATS_TABLES = {
 			"oppAllPurposeYds",
 		],
 	},
-	opponnetScoring: {
+	opponentScoring: {
 		name: "Opponent Scoring",
 		stats: [
 			"oppRusTD",

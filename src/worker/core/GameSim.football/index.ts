@@ -20,7 +20,7 @@ import type {
 	TeamGameSim,
 	Formation,
 } from "./types.ts";
-import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
+import getInjuryRate from "../GameSim/getInjuryRate.ts";
 import Play, {
 	SCRIMMAGE_EXTRA_POINT,
 	SCRIMMAGE_KICKOFF,
@@ -280,15 +280,13 @@ class GameSim extends GameSimBase {
 		// Simulate the game up to the end of regulation
 		this.simRegulation();
 
-		let numOvertimes = 0;
 		while (
 			(this.team[0].stat.pts === this.team[1].stat.pts ||
 				// Score is not tied, but the trailing team still gets a possession, like if the first team kicks a field goal and the second team's possession continues past the end of the period
 				(this.overtimeState !== undefined && this.overtimeState !== "over")) &&
-			numOvertimes < this.maxOvertimes
+			this.overtimes < this.maxOvertimes
 		) {
 			this.simOvertime();
-			numOvertimes += 1;
 		}
 
 		this.doShootout();
@@ -298,25 +296,7 @@ class GameSim extends GameSimBase {
 			clock: this.clock,
 		});
 
-		// Delete stuff that isn't needed before returning
-		for (const t of [0, 1] as const) {
-			delete this.team[t].compositeRating;
-			// @ts-expect-error
-			delete this.team[t].pace;
-
-			for (const p of this.team[t].player) {
-				// @ts-expect-error
-				delete p.age;
-				// @ts-expect-error
-				delete p.valueNoPot;
-				delete p.compositeRating;
-				// @ts-expect-error
-				delete p.ptModifier;
-				delete p.stat.benchTime;
-				delete p.stat.courtTime;
-				delete p.stat.energy;
-			}
-		}
+		this.deleteGameSimOnlyProperties(this.team);
 
 		const scoringSummary: PlayByPlayEventScore[] = [];
 
@@ -343,7 +323,7 @@ class GameSim extends GameSimBase {
 			overtimes: this.overtimes,
 			team: this.team,
 			clutchPlays: [],
-			playByPlay: this.playByPlay.getPlayByPlay(this.team),
+			playByPlay: this.playByPlay.getPlayByPlay(),
 			neutralSite: this.neutralSite,
 			scoringSummary,
 		};
@@ -397,41 +377,25 @@ class GameSim extends GameSimBase {
 		this.team[1].stat.sPts = 0;
 		this.team[1].stat.sAtt = 0;
 
-		const reversedTeamNums = [1, 0] as const;
-
 		this.playByPlay.logEvent({
 			type: "shootoutStart",
 			rounds: this.shootoutRounds,
 			clock: this.clock,
 		});
 
-		SHOOTOUT_ROUNDS: for (let i = 0; i < this.shootoutRounds; i++) {
-			for (const t of reversedTeamNums) {
+		this.runShootoutShots({
+			format: "alternating",
+			getSPts: () => [this.team[0].stat.sPts, this.team[1].stat.sPts],
+			onTie: () => {
+				this.playByPlay.logEvent({
+					type: "shootoutTie",
+					clock: this.clock,
+				});
+			},
+			shoot: (t) => {
 				this.doShootoutShot(t);
-
-				if (
-					this.shouldEndShootoutEarly(t, i, [
-						this.team[0].stat.sPts,
-						this.team[1].stat.sPts,
-					])
-				) {
-					break SHOOTOUT_ROUNDS;
-				}
-			}
-		}
-
-		if (this.team[0].stat.sPts === this.team[1].stat.sPts) {
-			this.playByPlay.logEvent({
-				type: "shootoutTie",
-				clock: this.clock,
-			});
-
-			while (this.team[0].stat.sPts === this.team[1].stat.sPts) {
-				for (const t of reversedTeamNums) {
-					this.doShootoutShot(t);
-				}
-			}
-		}
+			},
+		});
 	}
 
 	isFirstPeriodAfterHalftime(quarter: number) {
@@ -511,7 +475,6 @@ class GameSim extends GameSimBase {
 	simOvertime() {
 		this.clock = this.getOvertimeLength();
 
-		this.overtime = true;
 		this.overtimes += 1;
 		if (this.overtimeState === undefined) {
 			// Only set this in first overtime
@@ -3034,7 +2997,6 @@ class GameSim extends GameSimBase {
 			}
 
 			for (const p of onField) {
-				// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
 				const injuryRate = getInjuryRate(
 					this.baseInjuryRate,
 					p.age,
@@ -3104,7 +3066,7 @@ class GameSim extends GameSimBase {
 			const teamStat = this.team[t].stat;
 
 			if (isLng) {
-				teamStat[s] = this.lngTracker.log("player", t, s, amt, remove);
+				teamStat[s] = this.lngTracker.log("team", t, s, amt, remove);
 			} else {
 				teamStat[s] += signedAmount;
 			}

@@ -13,6 +13,12 @@ const leagueUrl = (components: Readonly<LeagueUrlParts>): string => {
 	return commonHelpers.leagueUrlBase(lid, components);
 };
 
+// Team URL part using the current abbrev, like "ATL_0". The abbrev is just for display, the tid is what's used to find the team.
+const getTeamUrlPart = (tid: number): string => {
+	const abbrev = local.getState().teamInfoCache[tid]?.abbrev;
+	return abbrev === undefined ? String(tid) : `${abbrev}_${tid}`;
+};
+
 const plusMinus = (arg: number, d: number): string => {
 	if (Number.isNaN(arg)) {
 		return "";
@@ -602,6 +608,7 @@ export const helpers = {
 	...commonHelpers,
 	formatCurrency,
 	formatNumber,
+	getTeamUrlPart,
 	leagueUrl,
 	plusMinus,
 	roundStat,

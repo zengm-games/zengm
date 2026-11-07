@@ -1,18 +1,20 @@
-import { PHASE } from "../../common/constants.ts";
+import { getContractAmount } from "../../common/contracts.ts";
 import { finances, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { TeamSeason } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
+import { getPayrollSeason } from "../util/getPayrollSeason.ts";
 import { getAutoTicketPriceByTid } from "../core/game/attendance.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateOption, validateTeam } from "../util/processInputs.ts";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
 
 const processInputs = (params: RouteParams<"teamFinances">) => {
-	const show = params.show ?? "10";
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-	return { abbrev, show, tid };
+	const show = validateOption(params.show, dropdownKeys.shows, "10");
+	const tid = validateTeam(params.team);
+	return { show, tid };
 };
 
 export default defineView({
@@ -41,11 +43,8 @@ export default defineView({
 				showInt = Number.parseInt(inputs.show);
 			}
 
-			let season = g.get("season");
-			if (g.get("phase") >= PHASE.DRAFT) {
-				// After the draft, don't show old contract year
-				season += 1;
-			}
+			// Same season as payroll, so seasons that are already paid are not shown
+			const season = getPayrollSeason();
 
 			// How many seasons into the future are contracts?
 			let maxContractExp = -Infinity;
@@ -66,9 +65,10 @@ export default defineView({
 					const amounts: number[] = [];
 
 					for (let i = season; i <= contract.exp; i++) {
-						amounts.push(contract.amount / 1000);
+						const amount = (getContractAmount(contract, i) ?? 0) / 1000;
+						amounts.push(amount);
 						if (contractTotals[i - season] !== undefined) {
-							contractTotals[i - season] += contract.amount / 1000;
+							contractTotals[i - season] += amount;
 						}
 					}
 
@@ -232,7 +232,6 @@ export default defineView({
 			otherTeamTicketPrices.sort((a, b) => b - a);
 
 			return {
-				abbrev: inputs.abbrev,
 				autoTicketPrice,
 				tid: inputs.tid,
 				show: inputs.show,

@@ -238,8 +238,16 @@ const DraftHistory = ({
 		title: noDraft ? "Prospects History" : "Draft History",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "draft_history",
-		dropdownFields: { seasonsAndOldDrafts: season },
+		dropdown: {
+			fields: [
+				{
+					key: "season",
+					options: { type: "seasons", pastDrafts: true },
+					value: season,
+				},
+			],
+			view: "draftHistory",
+		},
 	});
 
 	const superCols = [

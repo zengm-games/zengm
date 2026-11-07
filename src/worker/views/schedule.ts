@@ -18,11 +18,12 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { getProcessedGames } from "../util/getProcessedGames.ts";
 import { defineView, keepType, type ViewArgs } from "../util/defineView.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
+import { isAllStarGame, isTradeDeadline } from "../../common/specialGames.ts";
 
 const processInputs = (params: RouteParams<"schedule">) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-	return { abbrev, tid };
+	const tid = validateTeam(params.team);
+	return { tid };
 };
 
 export const getUpcoming = async ({
@@ -58,8 +59,8 @@ export const getUpcoming = async ({
 
 		cidFilter = ({ awayTid, homeTid }) => {
 			return (
-				(homeTid === -1 && awayTid === -2) ||
-				(homeTid === -3 && awayTid === -3) ||
+				isAllStarGame(homeTid, awayTid) ||
+				isTradeDeadline(homeTid, awayTid) ||
 				tids.has(awayTid) ||
 				tids.has(homeTid)
 			);
@@ -72,8 +73,8 @@ export const getUpcoming = async ({
 			(tid === undefined ||
 				tid === game.homeTid ||
 				tid === game.awayTid ||
-				(game.homeTid === -1 && game.awayTid === -2) ||
-				(game.homeTid === -3 && game.awayTid === -3)) &&
+				isAllStarGame(game.homeTid, game.awayTid) ||
+				isTradeDeadline(game.homeTid, game.awayTid)) &&
 			(day === undefined || game.day === day) &&
 			(!onlyOneGame || !keptOneGame) &&
 			(!cidFilter || cidFilter(game));
@@ -129,6 +130,11 @@ export const getUpcoming = async ({
 		: undefined;
 
 	const getTeam = (tid: number, day: number) => {
+		// All-Star Game or trade deadline
+		if (tid < 0) {
+			return { tid };
+		}
+
 		const t = teamsByTid[tid];
 
 		// For basketball this is fast, but for other sports it's a bit slow. Could cache sometimes, depending on which players are injured (if nobody is in playThroughInjuries window). This would apply by default in the regualr season, which is what matters, since the default is 0
@@ -141,10 +147,6 @@ export const getUpcoming = async ({
 			// This is better than checking g.get("phase"), because g.get("phase") will still show up as regular season when this is called (via setSchedule) from newDayPlayoffSeries
 			playoffs: !!roundSeries,
 		});
-
-		if (tid < 0) {
-			return { tid };
-		}
 
 		if (!t) {
 			throw new Error(`No team found for tid ${tid}`);
@@ -494,7 +496,7 @@ const updateUpcoming = async ({
 		updateEvents.has("gameAttributes") ||
 		updateEvents.has("gameSim") ||
 		updateEvents.has("newPhase") ||
-		inputs.abbrev !== prevInputs?.abbrev
+		inputs.tid !== prevInputs?.tid
 	) {
 		const upcoming = await getUpcoming({
 			tid: inputs.tid,
@@ -512,7 +514,6 @@ const updateUpcoming = async ({
 		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2);
 
 		return {
-			abbrev: inputs.abbrev,
 			canLiveSimFirstGame,
 			elam: g.get("elam"),
 			elamASG: g.get("elamASG"),
@@ -535,7 +536,7 @@ const updateCompleted = async ({
 	prevInputs,
 	prevOutput,
 }: ViewArgs<typeof processInputs, typeof keepPrevOutput>) => {
-	if (updateEvents.has("firstRun") || inputs.abbrev !== prevInputs?.abbrev) {
+	if (updateEvents.has("firstRun") || inputs.tid !== prevInputs?.tid) {
 		// Load all games in list
 		const completed = await getProcessedGames({
 			tid: inputs.tid,

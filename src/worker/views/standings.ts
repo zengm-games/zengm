@@ -1,7 +1,12 @@
 import { g, helpers } from "../util/index.ts";
 import type { ByConf } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import { getTiebreakers, orderTeams } from "../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	getTiebreakers,
+	orderTeams,
+} from "../util/orderTeams.ts";
 import { season, team } from "../core/index.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -85,12 +90,7 @@ export default defineView({
 				await team.getFormattedAll({
 					attrs: ["tid"],
 					seasonAttrs: [
-						"won",
-						"lost",
-						"tied",
-						"otl",
-						"winp",
-						"pts",
+						...ORDER_TEAMS_SEASON_ATTRS,
 						"ptsPct",
 						"wonHome",
 						"lostHome",
@@ -100,18 +100,8 @@ export default defineView({
 						"lostAway",
 						"tiedAway",
 						"otlAway",
-						"wonDiv",
-						"lostDiv",
-						"tiedDiv",
-						"otlDiv",
-						"wonConf",
-						"lostConf",
-						"tiedConf",
-						"otlConf",
 						"lastTen",
 						"streak",
-						"cid",
-						"did",
 						"abbrev",
 						"region",
 						"name",
@@ -119,7 +109,7 @@ export default defineView({
 						"imgURL",
 						"imgURLSmall",
 					],
-					stats: ["pts", "oppPts", "gp"],
+					stats: ORDER_TEAMS_STATS,
 					season: inputs.season,
 					showNoStats: true,
 				})

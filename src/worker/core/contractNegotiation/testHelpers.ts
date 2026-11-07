@@ -11,7 +11,14 @@ const givePlayerMinContract = async (pid: number) => {
 	if (!p) {
 		throw new Error("Invalid pid");
 	}
-	p.contract.amount = g.get("minContract");
+	if (p.contractDemand) {
+		p.contractDemand.amount = g.get("minContract");
+	} else {
+		p.contracts = p.contracts.map((contract) => ({
+			...contract,
+			amounts: contract.amounts.map(() => g.get("minContract")),
+		}));
+	}
 	await idb.cache.players.put(p);
 };
 

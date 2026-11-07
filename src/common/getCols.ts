@@ -1,4 +1,4 @@
-import type { Col } from "../ui/components/DataTable/index.tsx";
+import type { Col } from "./types.ts";
 import { bySport } from "./sportFunctions.ts";
 
 type ColTemp = Omit<Col, "title"> & {

@@ -15,7 +15,10 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
 import type {
 	Conditions,
+	Contract,
 	PhaseReturn,
+	Player,
+	FlatContractInfo,
 	TeamSeason,
 } from "../../../common/types.ts";
 import { groupByUnique, maxBy } from "../../../common/utils.ts";
@@ -25,6 +28,116 @@ import { choice, randInt, uniform } from "../../../common/random.ts";
 import { env } from "../../util/env.ts";
 import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
 import { getMetaAttribute } from "../../db/metaAttributes.ts";
+import {
+	addContract,
+	createContract,
+	setContractDemandFromCurrentContract,
+	truncateContractBefore,
+} from "../contract/index.ts";
+import {
+	getContractExp,
+	getCurrentContract,
+	getNearestContractAmount,
+} from "../../../common/contracts.ts";
+import { userControlsTeam } from "../../util/userControlsTeam.ts";
+
+// When a player changes teams or leaves his team at the start of a new season without a normal signing or release (repeat season, forced historical rosters), his contract just ends before this season
+const endContractBeforeNewSeason = (
+	p: Player,
+	contract: Contract,
+	newSeason: number,
+) => {
+	if (!truncateContractBefore(contract, newSeason)) {
+		p.contracts = p.contracts.filter((row) => row !== contract);
+	}
+};
+
+const toFreeAgent = (
+	p: Player,
+	newSeason: number,
+	contractDemand?: FlatContractInfo,
+) => {
+	const currentContract = getCurrentContract(p);
+	if (contractDemand) {
+		p.contractDemand = contractDemand;
+	} else {
+		setContractDemandFromCurrentContract(p);
+	}
+	if (currentContract) {
+		endContractBeforeNewSeason(p, currentContract, newSeason);
+	}
+	p.tid = PLAYER.FREE_AGENT;
+};
+
+// For repeat season, a player on a team has the same contract as when the repeated season started, with the same number of seasons remaining. Usually that's his current contract extended by a season. But if he signed a different contract (like re-signing at a new amount), that's replaced.
+const setRepeatSeasonContract = (
+	p: Player,
+	tid: number,
+	contract: FlatContractInfo,
+	newSeason: number,
+) => {
+	const currentContract = getCurrentContract(p);
+	p.tid = tid;
+
+	if (
+		currentContract &&
+		getContractExp(currentContract) >= newSeason - 1 &&
+		getNearestContractAmount(currentContract, newSeason) === contract.amount
+	) {
+		while (getContractExp(currentContract) < contract.exp) {
+			currentContract.amounts.push(contract.amount);
+		}
+		delete p.contractDemand;
+		return;
+	}
+
+	if (currentContract) {
+		endContractBeforeNewSeason(p, currentContract, newSeason);
+	}
+
+	addContract(
+		p,
+		createContract({
+			contract,
+			start: newSeason,
+			type: "unknown",
+		}),
+	);
+};
+
+// For forced historical rosters, a player moved to a team keeps his current contract if it covers this season, like in a trade. Otherwise he signs his contract demand if it covers this season, or a new contract.
+const setHistoricalRosterContract = (
+	p: Player,
+	tid: number,
+	newSeason: number,
+) => {
+	const currentContract = getCurrentContract(p);
+	p.tid = tid;
+
+	if (currentContract && getContractExp(currentContract) >= newSeason) {
+		return;
+	}
+
+	const contract =
+		p.contractDemand && p.contractDemand.exp >= newSeason
+			? p.contractDemand
+			: {
+					amount: player.genContract(p).amount,
+					exp:
+						newSeason -
+						1 +
+						randInt(g.get("minContractLength"), g.get("maxContractLength")),
+				};
+
+	addContract(
+		p,
+		createContract({
+			contract,
+			start: newSeason,
+			type: "unknown",
+		}),
+	);
+};
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -198,11 +311,7 @@ const newPhasePreseason = async (
 	for (const [t, popRank] of Iterator.zip([activeTeams, popRanks], {
 		mode: "strict",
 	})) {
-		if (
-			!g.get("userTids").includes(t.tid) ||
-			local.autoPlayUntil ||
-			g.get("spectator")
-		) {
+		if (!userControlsTeam(t.tid)) {
 			await team.resetTicketPrice(t, popRank);
 
 			// Sometimes update budget items for AI teams
@@ -345,17 +454,19 @@ const newPhasePreseason = async (
 			if (repeatSeason.type === "playersAndRosters") {
 				const info = repeatSeason.players[p.pid];
 				if (info) {
-					p.tid = info.tid;
-					p.injury = helpers.deepCopy(info.injury);
-					p.contract = helpers.deepCopy(info.contract);
+					// Same contract as when the repeated season started, with the same number of seasons remaining
+					const contract = helpers.deepCopy(info.contract);
+					contract.exp += newSeason - repeatSeason.startingSeason;
 
-					p.contract.exp += newSeason - repeatSeason.startingSeason;
-					p.salaries.push({
-						season: p.contract.exp,
-						amount: p.contract.amount,
-					});
+					if (info.tid < 0) {
+						toFreeAgent(p, newSeason, contract);
+					} else {
+						setRepeatSeasonContract(p, info.tid, contract, newSeason);
+					}
+
+					p.injury = helpers.deepCopy(info.injury);
 				} else {
-					p.tid = PLAYER.FREE_AGENT;
+					toFreeAgent(p, newSeason);
 				}
 			}
 
@@ -382,7 +493,7 @@ const newPhasePreseason = async (
 			p.tid !== PLAYER.RETIRED
 		) {
 			if (p.srID === undefined) {
-				p.tid = PLAYER.FREE_AGENT;
+				toFreeAgent(p, newSeason);
 			} else {
 				const playerActiveSeasons = await realRosters.getPlayerActiveSeasons();
 				let tid = playerActiveSeasons[p.srID]?.[newSeason];
@@ -394,16 +505,10 @@ const newPhasePreseason = async (
 					}
 				}
 
-				p.tid = tid ?? PLAYER.FREE_AGENT;
-
-				if (p.tid >= 0 && p.contract.exp < newSeason) {
-					p.contract = {
-						amount: player.genContract(p).amount,
-						exp:
-							newSeason -
-							1 +
-							randInt(g.get("minContractLength"), g.get("maxContractLength")),
-					};
+				if (tid === undefined) {
+					toFreeAgent(p, newSeason);
+				} else {
+					setHistoricalRosterContract(p, tid, newSeason);
 				}
 			}
 		}

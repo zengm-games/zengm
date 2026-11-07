@@ -3,14 +3,12 @@ import { defineView } from "../util/defineView.ts";
 import { headToHead, team } from "../core/index.ts";
 import hasTies from "../core/season/hasTies.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { processInputs as processInputsHeadToHeadAll } from "./headToHeadAll.ts";
 
 const processInputs = (params: RouteParams<"headToHead">) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-
+	const tid = validateTeam(params.team);
 	return {
-		abbrev,
 		tid,
 		...processInputsHeadToHeadAll(params),
 	};
@@ -19,11 +17,7 @@ const processInputs = (params: RouteParams<"headToHead">) => {
 export default defineView({
 	id: "headToHead",
 	processInputs,
-	load: async ({
-		inputs: { abbrev, season, tid, type },
-		updateEvents,
-		prevInputs,
-	}) => {
+	load: async ({ inputs: { season, tid, type }, updateEvents, prevInputs }) => {
 		if (
 			((season === g.get("season") || season === "all") &&
 				updateEvents.has("gameSim")) ||
@@ -121,7 +115,6 @@ export default defineView({
 			}
 
 			return {
-				abbrev,
 				season,
 				teams,
 				tid,

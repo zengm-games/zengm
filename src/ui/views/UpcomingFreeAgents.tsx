@@ -10,6 +10,7 @@ import { wrappedMood } from "../components/Mood.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
+import { wrappedContractAmount } from "../components/contract.tsx";
 
 const UpcomingFreeAgents = ({
 	players,
@@ -19,8 +20,12 @@ const UpcomingFreeAgents = ({
 }: View<"upcomingFreeAgents">) => {
 	useTitleBar({
 		title: "Upcoming Free Agents",
-		dropdownView: "upcoming_free_agents",
-		dropdownFields: { seasonsUpcoming: season },
+		dropdown: {
+			fields: [
+				{ key: "season", options: { type: "upcomingSeasons" }, value: season },
+			],
+			view: "upcomingFreeAgents",
+		},
 	});
 
 	const {
@@ -100,9 +105,7 @@ const UpcomingFreeAgents = ({
 					maxWidth: true,
 					p,
 				}),
-				...(phase === PHASE.RESIGN_PLAYERS
-					? []
-					: [wrappedCurrency(p.contract.amount, "M")]),
+				...(phase === PHASE.RESIGN_PLAYERS ? [] : [wrappedContractAmount(p)]),
 				wrappedCurrency(p.contractDesired.amount, "M"),
 			],
 			classNames: {

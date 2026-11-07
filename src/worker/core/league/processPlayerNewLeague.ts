@@ -1,5 +1,4 @@
 import { draft, player } from "../index.ts";
-import { PLAYER } from "../../../common/constants.ts";
 import type { FaceConfig } from "facesjs";
 import type {
 	PlayerWithoutKey,
@@ -81,15 +80,16 @@ const processPlayerNewLeague = async ({
 		scoutingLevel,
 		version,
 	);
-	if (!p.contract) {
-		p2.contract.temp = true;
-		if (!p.salaries) {
-			p2.salaries = [];
-		}
+
+	// No current contract or contract demand in the file, so augmentPartialPlayer gave him a placeholder contract demand (see repairContracts), which needs to be normalized. Then for players on a team, that will become their contract. Past contracts don't matter, like for a real player with no contract data for this season.
+	const noContractInfo =
+		!p.contract && !p.contractDemand && p2.contractDemand !== undefined;
+	if (noContractInfo && p2.contractDemand) {
+		p2.contractDemand.temp = true;
 	}
 
 	// Impute rookie contract status if there is no contract for this player, or if the entire league file has no rookie contracts. Don't check draftPickAutoContract here because we want all rookie contracts to be labeled as such, not just rookie scale contracts.
-	if (p2.tid >= 0 && (!p.contract || !hasRookieContracts)) {
+	if (p2.tid >= 0 && (noContractInfo || !hasRookieContracts)) {
 		const rookieContractLength = draft.getRookieContractLength(p2.draft.round);
 		const rookieContractExp = p2.draft.year + rookieContractLength;
 
@@ -99,7 +99,8 @@ const processPlayerNewLeague = async ({
 	}
 
 	if (p2.tid >= 0 && !activeTids.includes(p2.tid)) {
-		p2.tid = PLAYER.FREE_AGENT;
+		// His team was removed from the league
+		player.addToFreeAgents(p2, {}, undefined);
 	}
 
 	if (noStartingInjuries && p.injury) {

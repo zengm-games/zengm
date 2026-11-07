@@ -1,4 +1,5 @@
 import { helpers } from "./helpers.ts";
+import { SALARY_CAP_SCALE_LEGACY } from "./constants.ts";
 
 export const MAX_LEVEL = 100;
 
@@ -28,8 +29,10 @@ export const levelToAmount = (level: number, salaryCap: number) => {
 	// Denominator uses 2 * DEFAULT_LEVEL rather than MAX_LEVEL to allow for extra space at the top, and to keep DEFAULT_LEVEL in the middle
 	return (
 		Math.round(
-			(salaryCap / 90000) * 1345 +
-				(900 * (salaryCap / 90000) * (Math.round(level) - 1)) /
+			(salaryCap / SALARY_CAP_SCALE_LEGACY) * 1345 +
+				(900 *
+					(salaryCap / SALARY_CAP_SCALE_LEGACY) *
+					(Math.round(level) - 1)) /
 					(2 * DEFAULT_LEVEL - 1),
 		) * 10
 	);
@@ -39,8 +42,9 @@ export const levelToAmount = (level: number, salaryCap: number) => {
 export const amountToLevel = (amount: number, salaryCap: number) => {
 	return helpers.bound(
 		Math.round(
-			((amount / 10 - (salaryCap / 90000) * 1345) * (2 * DEFAULT_LEVEL - 1)) /
-				((900 * salaryCap) / 90000) +
+			((amount / 10 - (salaryCap / SALARY_CAP_SCALE_LEGACY) * 1345) *
+				(2 * DEFAULT_LEVEL - 1)) /
+				((900 * salaryCap) / SALARY_CAP_SCALE_LEGACY) +
 				1,
 		),
 		1,

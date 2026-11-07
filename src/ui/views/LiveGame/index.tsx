@@ -39,6 +39,7 @@ import {
 	TEAM_NUMS_DISPLAY_ORDER,
 	teamsInDisplayOrder,
 } from "../../util/boxScoreDisplayOrder.ts";
+import { updateRecordForGameResult } from "../../../common/updateRecordForGameResult.ts";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -450,42 +451,20 @@ export const LiveGame = (props: View<"liveGame">) => {
 				boxScore.current.possession = undefined;
 
 				// Update team records with result of game
-				// Keep in sync with liveGame.ts
 				if (!boxScore.current.exhibition) {
 					for (const t of boxScore.current.teams) {
-						if (boxScore.current.playoffs) {
-							if (t.playoffs) {
-								if (boxScore.current.won.tid === t.tid) {
-									t.playoffs.won += 1;
+						updateRecordForGameResult(t, boxScore.current, props.otl, 1);
 
-									if (props.confetti) {
-										setConfetti({
-											display: true,
-											colors: t.colors,
-										});
-									}
-								} else if (boxScore.current.lost.tid === t.tid) {
-									t.playoffs.lost += 1;
-								}
-							}
-						} else {
-							if (
-								boxScore.current.won.pts === boxScore.current.lost.pts &&
-								boxScore.current.won.sPts === boxScore.current.lost.sPts
-							) {
-								// Tied!
-								if (t.tied !== undefined) {
-									t.tied += 1;
-								}
-							} else if (boxScore.current.won.tid === t.tid) {
-								t.won += 1;
-							} else if (boxScore.current.lost.tid === t.tid) {
-								if (boxScore.current.overtimes > 0 && props.otl) {
-									t.otl += 1;
-								} else {
-									t.lost += 1;
-								}
-							}
+						if (
+							props.confetti &&
+							boxScore.current.playoffs &&
+							t.playoffs &&
+							boxScore.current.won.tid === t.tid
+						) {
+							setConfetti({
+								display: true,
+								colors: t.colors,
+							});
 						}
 					}
 				}
@@ -562,6 +541,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 	}, [processToNextPause]);
 
 	const fastForwardMenuItems = useMemo(() => {
+		// boxScore is still empty before the game loads, and these all assume it has teams
+		if (!started) {
+			return [];
+		}
+
 		// Plays up to `cutoffs` seconds, or until end of quarter
 		const playSeconds = (cutoff: number) => {
 			let seconds = 0;
@@ -960,6 +944,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		quarters.current.length,
 		processToNextPause,
 		props.quarterLength,
+		started,
 	]);
 
 	const scrollTop = useRef<HTMLDivElement>(null);

@@ -13,9 +13,12 @@ import { PLAYER } from "../../common/constants.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import goatFormula from "../util/goatFormula.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import {
+	CAREER_SUMMARY_STATS,
+	extraStats,
+	processPlayersHallOfFame,
+} from "../util/processPlayersHallOfFame.ts";
 import { formatPlayerAwardName } from "../../common/awards.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 
@@ -93,12 +96,7 @@ const getMostXPlayers = async ({
 		}
 	}
 
-	const stats = bySport({
-		baseball: ["gp", "keyStats", "war"],
-		basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	} as const);
+	const stats = CAREER_SUMMARY_STATS;
 
 	const playersFiltered = await player.formatAll(playersAll, {
 		attrs: [
@@ -633,11 +631,9 @@ export default defineView({
 				});
 
 				getValue = (p) => {
-					let sum = 0;
-					for (const salary of p.salaries) {
-						sum += salary.amount;
-					}
-					return { value: sum };
+					return {
+						value: player.getSalariesTotal(p),
+					};
 				};
 			} else if (type === "hall_of_good") {
 				title = "Hall of Good";

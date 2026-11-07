@@ -3,6 +3,11 @@ import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocal } from "../util/local.ts";
+import {
+	ALL_STAR_GAME_TIDS,
+	isAllStarGame,
+	isTradeDeadline,
+} from "../../common/specialGames.ts";
 
 type Team = {
 	tid: number;
@@ -56,8 +61,8 @@ export const ForceWin = ({
 
 	const { godMode, teamInfoCache } = useLocal(["godMode", "teamInfoCache"]);
 
-	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
-	const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;
+	const allStarGame = isAllStarGame(game.teams[0].tid, game.teams[1].tid);
+	const tradeDeadline = isTradeDeadline(game.teams[0].tid, game.teams[1].tid);
 
 	let form = null;
 	if (godMode && !tradeDeadline) {
@@ -96,7 +101,7 @@ export const ForceWin = ({
 							style={style}
 						>
 							{allStarGame
-								? `AS${tid === -1 ? 2 : 1}`
+								? `AS${tid === ALL_STAR_GAME_TIDS[0] ? 2 : 1}`
 								: teamInfoCache[tid]?.abbrev}
 						</button>
 					))}

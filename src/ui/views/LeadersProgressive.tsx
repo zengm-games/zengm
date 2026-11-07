@@ -1,4 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
@@ -18,14 +19,21 @@ const LeadersProgressive = ({
 }: View<"leadersProgressive">) => {
 	useTitleBar({
 		title: "Progressive Leaders",
-		dropdownView: "leaders_progressive",
-		dropdownFields: {
-			stats: stat,
-			statTypesStrict: statType,
-			playoffsCombined: playoffs,
-		},
-		dropdownCustomOptions: {
-			stats: formatStatsDropdown(stats),
+		dropdown: {
+			fields: [
+				{ key: "stat", options: formatStatsDropdown(stats), value: stat },
+				{
+					key: "statType",
+					options: dropdownOptions.statTypesStrict,
+					value: statType,
+				},
+				{
+					key: "playoffs",
+					options: dropdownOptions.playoffsCombined,
+					value: playoffs,
+				},
+			],
+			view: "leadersProgressive",
 		},
 	});
 

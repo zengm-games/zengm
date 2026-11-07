@@ -20,8 +20,7 @@ import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { focusOnMount } from "../../util/refCallbacks.ts";
-import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
-import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
+import { getText, makeAnchorProps } from "../../util/menuItemLinks.ts";
 import { Modal } from "../Modal.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 import {
@@ -277,36 +276,19 @@ const getResultsGroupedLeagues = async ({
 }) => {
 	const leagues = await toWorker("main", "getLeagues", undefined);
 
-	const newLeagueResults = [];
-	if (REAL_PLAYERS_INFO) {
-		newLeagueResults.push(
-			{
-				text: "New League - Real Players",
-				href: "/new_league/real",
-			},
-			{
-				text: "New League - Random Players",
-				href: "/new_league/random",
-			},
-		);
-
-		if (REAL_PLAYERS_INFO.legends) {
-			newLeagueResults.push({
-				text: "New League - Legends",
-				href: "/new_league/legends",
-			});
-		}
-
-		newLeagueResults.push({
-			text: "New League - Custom",
-			href: "/new_league",
-		});
-	} else {
-		newLeagueResults.push({
-			text: "New League",
-			href: "/new_league",
-		});
-	}
+	const newLeagueResults = menuItems
+		.filter(
+			(menuItem): menuItem is MenuItemLink & { path: string; text: string } =>
+				menuItem.type === "link" &&
+				!!menuItem.commandPalette &&
+				typeof menuItem.path === "string" &&
+				menuItem.path.startsWith("/new_league") &&
+				typeof menuItem.text === "string",
+		)
+		.map((menuItem) => ({
+			text: menuItem.text,
+			href: menuItem.path,
+		}));
 
 	const results: {
 		category: string | undefined;

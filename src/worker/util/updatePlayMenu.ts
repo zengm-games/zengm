@@ -13,6 +13,7 @@ import toUI from "./toUI.ts";
 import type { Option } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { isAllStarGame, isTradeDeadline } from "../../common/specialGames.ts";
 
 const updatePlayMenu = async () => {
 	if (__NODE_ENV === "test") {
@@ -193,11 +194,11 @@ const updatePlayMenu = async () => {
 		const untilMore: typeof keys = [];
 
 		const schedule = await season.getSchedule();
-		const tradeDeadlineIndex = schedule.findIndex(
-			(game) => game.awayTid === -3 && game.homeTid === -3,
+		const tradeDeadlineIndex = schedule.findIndex((game) =>
+			isTradeDeadline(game.homeTid, game.awayTid),
 		);
-		const allStarIndex = schedule.findIndex(
-			(game) => game.awayTid === -2 && game.homeTid === -1,
+		const allStarIndex = schedule.findIndex((game) =>
+			isAllStarGame(game.homeTid, game.awayTid),
 		);
 
 		// > rather than >= because if it's the next game already, no need to "play until"
@@ -272,8 +273,8 @@ const updatePlayMenu = async () => {
 		}
 
 		const schedule = await season.getSchedule();
-		const allStarIndex = schedule.findIndex(
-			(game) => game.awayTid === -2 && game.homeTid === -1,
+		const allStarIndex = schedule.findIndex((game) =>
+			isAllStarGame(game.homeTid, game.awayTid),
 		);
 		if (allStarIndex === 0) {
 			keys.unshift("viewAllStar");

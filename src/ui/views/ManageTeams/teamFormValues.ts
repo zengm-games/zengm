@@ -40,11 +40,13 @@ export const getTeamFormValues = (
 };
 
 // Apply a change from TeamForm's handleInputChange, which uses the fields colors0/colors1/colors2 for the three colors
-export const setTeamFormValue = (
-	values: TeamFormValues,
+export const setTeamFormValue = <
+	T extends { colors: TeamFormValues["colors"] },
+>(
+	values: T,
 	field: string,
 	value: string,
-): TeamFormValues => {
+): T => {
 	if (field.startsWith("colors")) {
 		const i = Number.parseInt(field.replace("colors", ""));
 		const colors: TeamFormValues["colors"] = [...values.colors];

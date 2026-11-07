@@ -12,19 +12,14 @@ import hasTies from "../core/season/hasTies.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { PHASE } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateSeason } from "../util/processInputs.ts";
+import { validatePlayoffs, validateSeason } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"powerRankings">) => {
-	let playoffs: "playoffs" | "regularSeason" =
-		g.get("phase") === PHASE.PLAYOFFS ? "playoffs" : "regularSeason";
-	if (params.playoffs === "playoffs") {
-		playoffs = "playoffs";
-	} else if (params.playoffs === "regularSeason") {
-		playoffs = "regularSeason";
-	}
-
 	return {
-		playoffs,
+		playoffs: validatePlayoffs(
+			params.playoffs,
+			g.get("phase") === PHASE.PLAYOFFS ? "playoffs" : "regularSeason",
+		),
 		season: validateSeason(params.season),
 	};
 };

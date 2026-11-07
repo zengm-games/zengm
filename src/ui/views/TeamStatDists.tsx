@@ -148,8 +148,10 @@ const width100 = {
 const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 	useTitleBar({
 		title: "Team Stat Distributions",
-		dropdownView: "team_stat_dists",
-		dropdownFields: { seasons: season },
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "teamStatDists",
+		},
 	});
 
 	return (

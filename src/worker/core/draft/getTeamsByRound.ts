@@ -2,6 +2,8 @@ import { PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
 	getDivisionRanks,
 	orderTeams,
 	type BaseTeam,
@@ -286,26 +288,8 @@ const getTeamsByRound = async (
 ) => {
 	const allTeams = await team.getFormattedAll({
 		attrs: ["tid", "draftLottery"],
-		seasonAttrs: [
-			"playoffRoundsWon",
-			"cid",
-			"did",
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"winp",
-			"pts",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-		],
-		stats: ["pts", "oppPts", "gp"],
+		seasonAttrs: [...ORDER_TEAMS_SEASON_ATTRS, "playoffRoundsWon"],
+		stats: ORDER_TEAMS_STATS,
 		season: g.get("season"),
 		addDummySeason: true,
 		active: true,

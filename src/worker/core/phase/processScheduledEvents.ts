@@ -604,7 +604,7 @@ const processUnretirePlayer = async (pid: number) => {
 	}
 
 	p.retiredYear = Infinity;
-	player.addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll());
+	player.addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll(), null);
 	await idb.cache.players.put(p);
 
 	const ratings = last(p.ratings);

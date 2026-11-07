@@ -363,7 +363,6 @@ const getPlayer = async (
 			"tid",
 			"experience",
 			"contract",
-			"salaries",
 			"salariesTotal",
 		],
 		ratings: ["season", "pos", "ovr", "pot", ...RATINGS],
@@ -441,6 +440,10 @@ export default defineView({
 			hasPlayerInfoChanged(inputs.players, prevInputs?.players)
 		) {
 			const currentPlayers = (await idb.cache.players.getAll()).filter((p) => {
+				if (p.tid === PLAYER.RETIRED) {
+					return false;
+				}
+
 				// Don't include far future players
 				if (p.tid === PLAYER.UNDRAFTED && p.draft.year > g.get("season") + 2) {
 					return false;

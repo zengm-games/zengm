@@ -1,8 +1,6 @@
 import {
-	PHASE,
 	TEAM_STATS_TABLES,
 	POSITIONS,
-	PLAYER_STATS_TABLES,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
 } from "../../common/constants.ts";
 import { useLocal } from "../util/local.ts";
@@ -10,85 +8,304 @@ import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
-import { leaderAwardCategories } from "../../common/awards.ts";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
+import {
+	getFirstUpcomingFreeAgentsSeason,
+	hasCurrentSeasonDraftHappened,
+	isCurrentSeasonComplete,
+} from "../../common/seasons.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;
 	text: string;
 };
 
+export type DropdownLabel = string | ResponsiveOption[];
+
 export type DropdownOption = {
 	key: number | string;
-	value: string | ResponsiveOption[];
+	label: DropdownLabel;
+
+	// What goes in the URL when this option is selected, if it's different than key. Team options have the tid as their key and `${abbrev}_${tid}` in the URL.
+	urlPart?: string;
 };
 
-export const getSortedTeams = ({
-	teamInfoCache,
-	hideDisabledTeams,
-}: {
-	teamInfoCache: LocalStateUI["teamInfoCache"];
-	hideDisabledTeams: boolean;
-}) => {
-	const array = [
+type TeamsSource = {
+	type: "teams";
+	allStarGame?: boolean;
+	all?: boolean;
+	remainingPlayoffTeams?: boolean;
+	watch?: boolean;
+	yourTeams?: boolean;
+};
+
+type SeasonsSource = {
+	type: "seasons";
+	current?: boolean;
+	career?: boolean;
+	all?: boolean;
+
+	// Include seasons before startingSeason that have draft classes, and exclude the current season until its draft happens
+	pastDrafts?: boolean;
+
+	// Exclude the current season until the playoffs end
+	completedOnly?: boolean;
+};
+
+type UpcomingSeasonsSource = {
+	type: "upcomingSeasons";
+};
+
+// Options that depend on the current league state, so they can't be a static list
+export type DynamicDropdownSource =
+	| TeamsSource
+	| SeasonsSource
+	| UpcomingSeasonsSource;
+
+export type DropdownOptionsSource = DropdownOption[] | DynamicDropdownSource;
+
+export const dropdownOptionsStateKeys = [
+	"hideDisabledTeams",
+	"nextPhase",
+	"phase",
+	"season",
+	"startingSeason",
+	"teamInfoCache",
+] as const;
+
+export type DropdownOptionsState = Pick<
+	LocalStateUI,
+	(typeof dropdownOptionsStateKeys)[number]
+>;
+
+const getTeamOptions = (
+	source: TeamsSource,
+	state: DropdownOptionsState,
+): DropdownOption[] => {
+	const options: DropdownOption[] = [];
+
+	if (source.allStarGame) {
+		options.push({ key: "special", label: "All-Star Game" });
+	}
+	if (source.all) {
+		options.push({
+			key: "all",
+			label: makeResponsiveDropdownOption("All", "All Teams"),
+		});
+	}
+	if (
+		source.remainingPlayoffTeams &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(state.phase)
+	) {
+		options.push({
+			key: "playoffs",
+			label: makeResponsiveDropdownOption(
+				"Playoffs",
+				"Remaining Playoff Teams",
+			),
+		});
+	}
+	if (source.watch) {
+		options.push({
+			key: "watch",
+			label: makeResponsiveDropdownOption("Watch", "Watch List"),
+		});
+	}
+	if (source.yourTeams) {
+		options.push({ key: "your_teams", label: "Your Teams" });
+	}
+
+	const teams = state.teamInfoCache.map((t, tid) => ({ ...t, tid }));
+	const sortedTeams = [
 		...orderBy(
-			teamInfoCache.filter((t) => !t.disabled),
+			teams.filter((t) => !t.disabled),
 			["region", "name"],
 		),
+		...(state.hideDisabledTeams
+			? []
+			: orderBy(
+					teams.filter((t) => t.disabled),
+					["region", "name"],
+				)),
 	];
 
-	if (!hideDisabledTeams) {
-		array.push(
-			...orderBy(
-				teamInfoCache.filter((t) => t.disabled),
-				["region", "name"],
-			),
-		);
-	}
-
-	const object: Record<string, string | ResponsiveOption[]> = {};
-	for (const t of array) {
+	for (const t of sortedTeams) {
 		const inactiveText = t.disabled ? " (inactive)" : "";
-		object[t.abbrev] = makeResponsiveDropdownOption(
-			`${t.abbrev}${inactiveText}`,
-			`${t.region} ${t.name}${inactiveText}`,
-		);
+		options.push({
+			key: t.tid,
+			label: makeResponsiveDropdownOption(
+				`${t.abbrev}${inactiveText}`,
+				`${t.region} ${t.name}${inactiveText}`,
+			),
+			urlPart: `${t.abbrev}_${t.tid}`,
+		});
 	}
 
-	return object;
+	return options;
 };
 
-const dropdownValues: Record<string, string | ResponsiveOption[]> = {
-	special: "All-Star Game",
-	"all|||teams": makeResponsiveDropdownOption("All", "All Teams"),
-	watch: makeResponsiveDropdownOption("Watch", "Watch List"),
-	career: "Career",
+// Keep synced with league/create.js
+const NUM_PAST_SEASONS = 20;
+
+const getSeasonOptions = (
+	source: SeasonsSource,
+	state: DropdownOptionsState,
+): DropdownOption[] => {
+	const seasons: number[] = [];
+	for (let season = state.season; season >= state.startingSeason; season--) {
+		seasons.push(season);
+	}
+
+	if (source.pastDrafts) {
+		for (
+			let season = state.startingSeason - 1;
+			season >= state.startingSeason - NUM_PAST_SEASONS;
+			season--
+		) {
+			seasons.push(season);
+		}
+
+		if (!hasCurrentSeasonDraftHappened(state)) {
+			seasons.shift();
+		}
+	}
+
+	if (source.completedOnly && !isCurrentSeasonComplete(state)) {
+		seasons.shift();
+	}
+
+	const options: DropdownOption[] = [];
+
+	if (source.current) {
+		options.push({ key: "current", label: "Current" });
+	}
+	if (source.career) {
+		options.push({ key: "career", label: "Career" });
+	}
+	if (source.all) {
+		options.push({
+			key: "all",
+			label: makeResponsiveDropdownOption("All", "All Seasons"),
+		});
+	}
+
+	for (const season of seasons) {
+		options.push({ key: season, label: String(season) });
+	}
+
+	return options;
+};
+
+const getUpcomingSeasonOptions = (
+	state: DropdownOptionsState,
+): DropdownOption[] => {
+	const firstSeason = getFirstUpcomingFreeAgentsSeason(state);
+
+	const options: DropdownOption[] = [];
+	for (let season = firstSeason + 4; season >= firstSeason; season--) {
+		options.push({ key: season, label: String(season) });
+	}
+
+	return options;
+};
+
+export const getDropdownOptions = (
+	source: DropdownOptionsSource,
+	state: DropdownOptionsState,
+): DropdownOption[] => {
+	if (Array.isArray(source)) {
+		return source;
+	}
+
+	if (source.type === "teams") {
+		return getTeamOptions(source, state);
+	}
+
+	if (source.type === "seasons") {
+		return getSeasonOptions(source, state);
+	}
+
+	return getUpcomingSeasonOptions(state);
+};
+
+// Compares as strings, like <select> does, so a value read from a <select> matches a numeric key
+export const findDropdownOption = (
+	options: DropdownOption[],
+	value: number | string,
+) => {
+	return options.find((option) => String(option.key) === String(value));
+};
+
+// Value that goes in the URL for the option with key value, or value itself if it's not one of the options (like a disabled team that is hidden from the dropdown, which the worker can still look up by tid)
+export const getDropdownUrlPart = (
+	options: DropdownOption[],
+	value: number | string,
+) => {
+	const option = findDropdownOption(options, value);
+	if (option) {
+		return option.urlPart ?? option.key;
+	}
+
+	return value;
+};
+
+const useDropdownOptions = (source: DynamicDropdownSource) => {
+	const state = useLocal([...dropdownOptionsStateKeys]);
+	return getDropdownOptions(source, state);
+};
+
+export default useDropdownOptions;
+
+// For the shared dropdown keys, so the UI shows the same options that the worker accepts
+const makeOptions = (
+	keys: readonly string[],
+	labels: Record<string, DropdownLabel | undefined>,
+): DropdownOption[] => {
+	return keys.map((key) => {
+		const label = labels[key];
+		if (label === undefined) {
+			throw new Error(`Missing dropdown label for "${key}"`);
+		}
+		return { key, label };
+	});
+};
+
+const playoffsLabels = {
 	regularSeason: makeResponsiveDropdownOption("Reg Seas", "Regular Season"),
 	playoffs: "Playoffs",
-	"playoffs|||teams": makeResponsiveDropdownOption(
-		"Playoffs",
-		"Remaining Playoff Teams",
-	),
-	"10": "Past 10 Seasons",
-	"all|||seasons": makeResponsiveDropdownOption("All", "All Seasons"),
+	combined: "Combined",
+};
+
+const statTypeLabels: Record<string, DropdownLabel | undefined> = {
+	// Basketball
 	perGame: makeResponsiveDropdownOption("Per G", "Per Game"),
 	per36: makeResponsiveDropdownOption("Per 36", "Per 36 Minutes"),
 	totals: "Totals",
 	shotLocations: "Shot Locations and Feats",
-	advanced: "Advanced",
-	gameHighs: "Game Highs",
+
+	// Baseball
+	batting: "Batting",
+	pitching: "Pitching",
+	fielding: "Fielding",
+
+	// Football
 	passing: "Passing",
-	rushing: "Rushing",
 	rushingReceiving: "Rushing and Receiving",
+	blocking: "Blocking",
 	defense: "Defense",
 	kicking: "Kicking",
+	punting: "Punting",
 	returns: "Returns",
-	"all|||types": makeResponsiveDropdownOption("All", "All Types"),
-	draft: "Draft",
-	freeAgent: "FA Signed",
-	reSigned: "Re-signed",
-	release: "Released",
-	trade: "Trades",
-	team: "Team",
+
+	// Hockey
+	skater: "Skaters",
+	goalie: "Goalies",
+
+	advanced: "Advanced",
+	gameHighs: "Game Highs",
+};
+
+const teamStatsLabelOverrides: Record<string, DropdownLabel> = {
 	opponent: makeResponsiveDropdownOption("Opp", "Opponent"),
 	oppBatting: makeResponsiveDropdownOption("Opp Batting", "Opponent Batting"),
 	oppPitching: makeResponsiveDropdownOption(
@@ -99,281 +316,91 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 		"Opp Fielding",
 		"Opponent Fielding",
 	),
-	by_team: "By Team",
-	by_conf: makeResponsiveDropdownOption("By Conf", "By Conference"),
-	by_div: makeResponsiveDropdownOption("By Div", "By Division"),
-	"all|||news": makeResponsiveDropdownOption("All", "All Stories"),
-	normal: "Normal",
-	big: "Only Big News",
-	newest: "Newest First",
-	oldest: "Oldest First",
-	league: makeResponsiveDropdownOption("Leag", "League"),
-	conf: makeResponsiveDropdownOption("Conf", "Conference"),
-	div: makeResponsiveDropdownOption("Div", "Division"),
-	your_teams: "Your Teams",
-	skater: "Skaters",
-	goalie: "Goalies",
-	combined: "Combined",
-	current: "Current",
-	overview: "Overview",
-	gameLog: "Game Log",
-	available: "Available",
-	signed: "Signed",
-	both: "Both",
-	draftPick: "Draft Picks",
-	game: "Games",
-	player: "Players",
-	teamSeason: "Teams",
 };
 
-const leaderInfos = leaderAwardCategories.map((x) => {
-	return {
-		val: x.name,
-		key: `${x.stat}_leader`,
-	};
-});
-for (const { key, val } of leaderInfos) {
-	dropdownValues[key] = val;
-}
+// Team stats tables with the same key as a player stats type (like "returns" in FBGM) get the same label, so the player and team stats dropdowns match
+const teamStatsLabels = Object.fromEntries(
+	Object.entries(TEAM_STATS_TABLES).map(([key, table]) => [
+		key,
+		teamStatsLabelOverrides[key] ?? statTypeLabels[key] ?? table.name,
+	]),
+);
 
-if (__SPORT === "baseball") {
-	Object.assign(dropdownValues, {
-		batting: PLAYER_STATS_TABLES.batting!.name,
-		pitching: PLAYER_STATS_TABLES.pitching!.name,
-		fielding: PLAYER_STATS_TABLES.fielding!.name,
-	});
-}
-
-if (__SPORT === "hockey") {
-	Object.assign(dropdownValues, {
-		F: "Forwards",
-		D: "Defense",
-		G: "Goalies",
-	});
-}
-
-export const getDropdownValue = (
-	key: number | string,
-	sortedTeams: Record<string, string | ResponsiveOption[]>,
-) => {
-	if (typeof key === "number") {
-		return String(key);
-	}
-
-	if (sortedTeams[key] !== undefined) {
-		return sortedTeams[key];
-	}
-
-	if (dropdownValues[key] !== undefined) {
-		return dropdownValues[key];
-	}
-
-	// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-	if (TEAM_STATS_TABLES[key]) {
-		return TEAM_STATS_TABLES[key].name;
-	}
-
-	if (POSITIONS.includes(key)) {
-		return key;
-	}
-
-	return "???";
-};
-
-const useDropdownOptions = (
-	field: string,
-	customOptions?: DropdownOption[],
-) => {
-	const state = useLocal([
-		"hideDisabledTeams",
-		"phase",
-		"season",
-		"startingSeason",
-		"teamInfoCache",
-	]);
-
-	const sortedTeams = getSortedTeams(state);
-
-	let keys: (number | string)[];
-
-	if (customOptions) {
-		return customOptions;
-	} else if (field === "teams") {
-		keys = Object.keys(sortedTeams);
-	} else if (field === "teamsAndSpecial") {
-		keys = ["special", ...Object.keys(sortedTeams)];
-	} else if (field === "teamsAndAll") {
-		keys = ["all|||teams", ...Object.keys(sortedTeams)];
-	} else if (field === "teamsAndAllWatch") {
-		keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
-	} else if (field === "teamsAndAllWatchPlayoffs") {
-		keys = [
-			"all|||teams",
-			...(REMAINING_PLAYOFF_TEAMS_PHASES.has(state.phase)
-				? ["playoffs|||teams"]
-				: []),
-			"watch",
-			...Object.keys(sortedTeams),
-		];
-	} else if (field === "teamsAndYours") {
-		keys = ["your_teams", ...Object.keys(sortedTeams)];
-	} else if (
-		field === "seasons" ||
-		field === "seasonsAndCareer" ||
-		field === "seasonsAndAll" ||
-		field === "seasonsAndCurrent" ||
-		field === "seasonsAndOldDrafts" ||
-		field === "seasonsHistory" ||
-		field === "seasonsFreeAgents"
-	) {
-		keys = [];
-
-		for (let season = state.season; season >= state.startingSeason; season--) {
-			keys.push(season);
-		}
-
-		if (field === "seasonsAndCareer") {
-			keys.unshift("career", "all|||seasons");
-		}
-
-		if (field === "seasonsAndAll") {
-			keys.unshift("all|||seasons");
-		}
-
-		if (field === "seasonsAndCurrent") {
-			keys.unshift("current");
-		}
-
-		if (field === "seasonsAndOldDrafts") {
-			const NUM_PAST_SEASONS = 20; // Keep synced with league/create.js
-
-			for (
-				let season = state.startingSeason - 1;
-				season >= state.startingSeason - NUM_PAST_SEASONS;
-				season--
-			) {
-				keys.push(season);
-			}
-
-			// Remove current season, if draft hasn't happened yet
-			if (state.phase < PHASE.DRAFT) {
-				keys.shift();
-			}
-		}
-
-		if (field === "seasonsHistory") {
-			// Remove current season until playoffs end
-			if (state.phase <= PHASE.PLAYOFFS) {
-				keys.shift();
-			}
-		}
-	} else if (field === "seasonsUpcoming") {
-		keys = []; // For upcomingFreeAgents, bump up 1 if we're past the season
-
-		const offset = state.phase <= PHASE.RESIGN_PLAYERS ? 0 : 1;
-
-		for (let j = 4 + offset; j >= offset; j--) {
-			keys.push(state.season + j);
-		}
-	} else if (field === "playoffs") {
-		keys = ["regularSeason", "playoffs"];
-	} else if (field === "playoffsCombined") {
-		keys = ["regularSeason", "playoffs", "combined"];
-	} else if (field === "shows") {
-		keys = ["10", "all|||seasons"];
-	} else if (field === "statTypes" || field === "statTypesAdv") {
-		keys = bySport({
-			baseball: [
-				"batting",
-				"pitching",
-				"fielding",
-				...(field === "statTypesAdv" ? ["advanced", "gameHighs"] : []),
-			],
-			basketball: [
-				"perGame",
-				"per36",
-				"totals",
-				...(field === "statTypesAdv"
-					? ["shotLocations", "advanced", "gameHighs"]
-					: []),
-			],
-			football: [
-				"passing",
-				"rushingReceiving",
-				"blocking",
-				"defense",
-				"kicking",
-				"punting",
-				"returns",
-			],
-			hockey: [
-				"skater",
-				"goalie",
-				...(field === "statTypesAdv" ? ["advanced", "gameHighs"] : []),
-			],
-		});
-	} else if (field === "statTypesStrict") {
-		keys = bySport({
-			baseball: ["totals"],
-			basketball: ["perGame", "per36", "totals"],
-			football: ["totals"],
-			hockey: ["totals"],
-		});
-	} else if (field === "eventType") {
-		keys = [
-			"all|||types",
-			"draft",
-			"freeAgent",
-			"reSigned",
-			"release",
-			"trade",
-		];
-	} else if (field === "teamOpponent") {
-		keys = ["team", "opponent"];
-	} else if (field === "teamOpponentAdvanced") {
-		keys = Object.keys(TEAM_STATS_TABLES);
-	} else if (field === "teamAdvanced") {
-		keys = Object.keys(TEAM_STATS_TABLES).filter(
-			(key) => !key.includes("pponent") && !key.includes("opp"),
-		);
-	} else if (field === "teamRecordType") {
-		keys = ["by_team", "by_conf", "by_div"];
-	} else if (field === "teamRecordsFilter") {
-		keys = ["all|||teams", "your_teams"];
-	} else if (field === "depth") {
-		keys = bySport({
-			baseball: [],
-			hockey: ["F", "D", "G"],
-			default: POSITIONS,
-		});
-	} else if (field === "newsLevels") {
-		keys = ["big", "normal", "all|||news"];
-	} else if (field === "newestOldestFirst") {
-		keys = ["newest", "oldest"];
-	} else if (field === "standingsType") {
-		keys = ["league", "conf", "div"];
-	} else if (field === "playerProfile") {
-		keys = ["overview", "gameLog"];
-	} else if (field === "typeFreeAgents") {
-		keys = ["available", "signed", "both"];
-	} else if (field === "notesType") {
-		keys = ["draftPick", "game", "player", "teamSeason"];
-	} else {
-		throw new Error(`Unknown Dropdown field: ${field}`);
-	}
-
-	const newOptions: DropdownOption[] = keys.map((rawKey) => {
-		const key =
-			typeof rawKey === "string" && rawKey.includes("|||")
-				? rawKey.split("|||")[0]!
-				: rawKey;
-		return {
-			key,
-			value: getDropdownValue(rawKey, sortedTeams),
-		};
-	});
-
-	return newOptions;
-};
-
-export default useDropdownOptions;
+// Static option lists, for dropdowns whose options don't depend on league state
+export const dropdownOptions = {
+	depth: bySport<DropdownOption[]>({
+		baseball: [],
+		hockey: [
+			{ key: "F", label: "Forwards" },
+			{ key: "D", label: "Defense" },
+			{ key: "G", label: "Goalies" },
+		],
+		default: POSITIONS.map((pos: string) => ({ key: pos, label: pos })),
+	}),
+	eventType: [
+		{ key: "all", label: makeResponsiveDropdownOption("All", "All Types") },
+		{ key: "draft", label: "Draft" },
+		{ key: "freeAgent", label: "FA Signed" },
+		{ key: "reSigned", label: "Re-signed" },
+		{ key: "release", label: "Released" },
+		{ key: "trade", label: "Trades" },
+	],
+	newestOldestFirst: [
+		{ key: "newest", label: "Newest First" },
+		{ key: "oldest", label: "Oldest First" },
+	],
+	newsLevels: [
+		{ key: "big", label: "Only Big News" },
+		{ key: "normal", label: "Normal" },
+		{ key: "all", label: makeResponsiveDropdownOption("All", "All Stories") },
+	],
+	notesType: [
+		{ key: "draftPick", label: "Draft Picks" },
+		{ key: "game", label: "Games" },
+		{ key: "player", label: "Players" },
+		{ key: "teamSeason", label: "Teams" },
+	],
+	playerProfile: [
+		{ key: "overview", label: "Overview" },
+		{ key: "gameLog", label: "Game Log" },
+	],
+	playoffs: makeOptions(dropdownKeys.playoffs, playoffsLabels),
+	playoffsCombined: makeOptions(dropdownKeys.playoffsCombined, playoffsLabels),
+	shows: makeOptions(dropdownKeys.shows, {
+		10: "Past 10 Seasons",
+		all: makeResponsiveDropdownOption("All", "All Seasons"),
+	}),
+	standingsType: [
+		{ key: "league", label: makeResponsiveDropdownOption("Leag", "League") },
+		{ key: "conf", label: makeResponsiveDropdownOption("Conf", "Conference") },
+		{ key: "div", label: makeResponsiveDropdownOption("Div", "Division") },
+	],
+	statTypesAdv: makeOptions(dropdownKeys.statTypesAdv, statTypeLabels),
+	statTypesDists: makeOptions(dropdownKeys.statTypesDists, statTypeLabels),
+	statTypesStrict: makeOptions(dropdownKeys.statTypesStrict, statTypeLabels),
+	teamAdvanced: makeOptions(dropdownKeys.teamAdvanced, teamStatsLabels),
+	teamOpponentAdvanced: makeOptions(
+		dropdownKeys.teamOpponentAdvanced,
+		teamStatsLabels,
+	),
+	teamRecordsFilter: [
+		{ key: "all", label: makeResponsiveDropdownOption("All", "All Teams") },
+		{ key: "your_teams", label: "Your Teams" },
+	],
+	teamRecordType: [
+		{ key: "by_team", label: "By Team" },
+		{
+			key: "by_conf",
+			label: makeResponsiveDropdownOption("By Conf", "By Conference"),
+		},
+		{
+			key: "by_div",
+			label: makeResponsiveDropdownOption("By Div", "By Division"),
+		},
+	],
+	typeFreeAgents: [
+		{ key: "available", label: "Available" },
+		{ key: "signed", label: "Signed" },
+		{ key: "both", label: "Both" },
+	],
+} satisfies Record<string, DropdownOption[]>;

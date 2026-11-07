@@ -7,23 +7,29 @@ import { player, season, team } from "../core/index.ts";
 import { lowerIsBetter } from "../../common/lowerIsBetter.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { validateSeason } from "../util/processInputs.ts";
+import {
+	validateOption,
+	validatePlayoffs,
+	validateSeason,
+} from "../util/processInputs.ts";
+import { dropdownKeys } from "../../common/dropdownKeys.ts";
+
+export const defaultTeamOpponent = bySport({
+	baseball: "batting",
+	basketball: "team",
+	football: "summary",
+	hockey: "team",
+});
 
 const processInputs = (params: RouteParams<"teamStats">) => {
-	const playoffs =
-		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
-
-	const defaultStatType = bySport({
-		baseball: "batting",
-		basketball: "team",
-		football: "summary",
-		hockey: "team",
-	});
-
 	return {
 		season: validateSeason(params.season),
-		teamOpponent: params.teamOpponent ?? defaultStatType,
-		playoffs,
+		teamOpponent: validateOption(
+			params.teamOpponent,
+			dropdownKeys.teamOpponentAdvanced,
+			defaultTeamOpponent,
+		),
+		playoffs: validatePlayoffs(params.playoffs),
 	};
 };
 

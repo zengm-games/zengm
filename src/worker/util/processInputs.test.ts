@@ -1,6 +1,13 @@
 import { assert, beforeAll, describe, test } from "vitest";
 import { g, helpers } from "./index.ts";
-import { validateAbbrev, validateSeason } from "./processInputs.ts";
+import {
+	validateOption,
+	validatePlayoffs,
+	validateSeason,
+	validateSeasonType,
+	validateTeam,
+} from "./processInputs.ts";
+import { PHASE } from "../../common/constants.ts";
 
 beforeAll(() => {
 	g.setWithoutSavingToDB("userTid", 4);
@@ -20,20 +27,44 @@ beforeAll(() => {
 });
 
 // Relies on g.*Cache being populated
-describe("validateAbbrev", () => {
-	test("return team ID and abbrev when given valid abbrev", () => {
-		const out = validateAbbrev("DAL");
-		assert.strictEqual(out[0], 6);
-		assert.strictEqual(out[1], "DAL");
+describe("validateTeam", () => {
+	test("return tid when given valid abbrev", () => {
+		assert.strictEqual(validateTeam("DAL"), 6);
 	});
 
-	test("return user team ID and abbrev on invalid input", () => {
-		let out = validateAbbrev("fuck");
-		assert.strictEqual(out[0], 4);
-		assert.strictEqual(out[1], "CIN");
-		out = validateAbbrev();
-		assert.strictEqual(out[0], 4);
-		assert.strictEqual(out[1], "CIN");
+	test("use the tid rather than the abbrev when both are given", () => {
+		assert.strictEqual(validateTeam("DAL_7"), 7);
+	});
+
+	test("return user tid on invalid input", () => {
+		assert.strictEqual(validateTeam("fuck"), 4);
+		assert.strictEqual(validateTeam(undefined), 4);
+	});
+
+	test("return allowed special values", () => {
+		assert.strictEqual(validateTeam("watch", ["all", "watch"]), "watch");
+		assert.strictEqual(validateTeam("DAL_6", ["all", "watch"]), 6);
+	});
+
+	test("don't return special values that aren't allowed", () => {
+		assert.strictEqual(validateTeam("watch"), 4);
+		assert.strictEqual(validateTeam("watch", ["all"]), "all");
+	});
+
+	test("fall back to all if it's allowed", () => {
+		assert.strictEqual(validateTeam("fuck", ["all", "watch"]), "all");
+		assert.strictEqual(validateTeam(undefined, ["all", "watch"]), "all");
+	});
+
+	test("only allow playoffs when there are remaining playoff teams", () => {
+		g.setWithoutSavingToDB("nextPhase", undefined);
+		g.setWithoutSavingToDB("phase", PHASE.DRAFT_LOTTERY);
+		assert.strictEqual(validateTeam("playoffs", ["all", "playoffs"]), "all");
+		g.setWithoutSavingToDB("phase", PHASE.PLAYOFFS);
+		assert.strictEqual(
+			validateTeam("playoffs", ["all", "playoffs"]),
+			"playoffs",
+		);
 	});
 });
 
@@ -46,5 +77,25 @@ describe("validateSeason", () => {
 	test("return current season on invalid input", () => {
 		assert.strictEqual(validateSeason("fuck"), 2009);
 		assert.strictEqual(validateSeason(undefined), 2009);
+	});
+});
+
+describe("validateOption", () => {
+	test("return the value if it's one of the options", () => {
+		assert.strictEqual(validateOption("b", ["a", "b"], "a"), "b");
+	});
+
+	test("return the default for other values", () => {
+		assert.strictEqual(validateOption("c", ["a", "b"], "a"), "a");
+		assert.strictEqual(validateOption(undefined, ["a", "b"], "b"), "b");
+	});
+});
+
+describe("validateSeasonType and validatePlayoffs", () => {
+	test("only validatePlayoffs rejects combined", () => {
+		assert.strictEqual(validateSeasonType("combined"), "combined");
+		assert.strictEqual(validatePlayoffs("combined"), "regularSeason");
+		assert.strictEqual(validatePlayoffs("playoffs"), "playoffs");
+		assert.strictEqual(validatePlayoffs("fuck", "playoffs"), "playoffs");
 	});
 });

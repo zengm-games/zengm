@@ -18,7 +18,7 @@ export default defineView({
 				(updateEvents.has("gameSim") || updateEvents.has("playerMovement"))) ||
 			(updateEvents.has("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
 			inputs.season !== prevInputs?.season ||
-			inputs.abbrev !== prevInputs?.abbrev
+			inputs.team !== prevInputs?.team
 		) {
 			const stats = bySport({
 				baseball: ["keyStats"],
@@ -30,12 +30,11 @@ export default defineView({
 			const playersWithoutMood = addFirstNameShort(
 				await getPlayers(
 					inputs.season,
-					inputs.abbrev,
+					inputs.team,
 					// name is for the mood popover
 					["born", "college", "hgt", "weight", "draft", "experience", "name"],
 					["ovr", "pot"],
 					[...stats, "jerseyNumber"],
-					inputs.tid,
 				),
 			);
 
@@ -54,7 +53,7 @@ export default defineView({
 			}
 
 			return {
-				abbrev: inputs.abbrev,
+				team: inputs.team,
 				season: inputs.season,
 				players,
 				stats,

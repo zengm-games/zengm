@@ -2,9 +2,9 @@ import { PLAYER } from "../../../common/constants.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import madeHof from "./madeHof.ts";
 import type { Conditions, Player } from "../../../common/types.ts";
-import { idb } from "../../db/index.ts";
 import { player } from "../index.ts";
 import addAward from "./addAward.ts";
+import { endContractEarly } from "../contract/index.ts";
 
 /**
  * Have a player retire, including all event and HOF bookkeeping.
@@ -69,15 +69,12 @@ const retire = async (
 		);
 	}
 
-	if (p.tid !== PLAYER.FREE_AGENT) {
-		// Remove any old contracts from releasedPlayers
-		const releasedPlayers = await idb.cache.releasedPlayers.getAll();
-		for (const rp of releasedPlayers) {
-			if (rp.pid === p.pid) {
-				await idb.cache.releasedPlayers.delete(rp.rid);
-			}
-		}
-	}
+	// Any remaining seasons on his contract won't be paid. Contracts owed by teams that released him are still owed.
+	endContractEarly(p, {
+		season: g.get("season"),
+		phase: g.get("phase"),
+	});
+	delete p.contractDemand;
 
 	p.tid = PLAYER.RETIRED;
 	p.retiredYear = g.get("season");

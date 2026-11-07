@@ -288,7 +288,7 @@ type TradeEventAsset =
 	| {
 			pid: number;
 			name: string;
-			contract: PlayerContract;
+			contract: FlatContractInfo;
 			ratingsIndex: number;
 			statsIndex: number;
 	  }
@@ -363,7 +363,7 @@ export type EventBBGMWithoutKey =
 			// These three will only be undefined in legacy events
 			phase?: Phase;
 			score?: number;
-			contract?: PlayerContract;
+			contract?: FlatContractInfo;
 
 			// Never defined, just for TypeScript
 			dpids?: number[];
@@ -729,7 +729,7 @@ export type GameAttributesLeague = {
 					number,
 					{
 						tid: number;
-						contract: PlayerContract;
+						contract: FlatContractInfo;
 						injury: PlayerInjury;
 					}
 				>;
@@ -1109,13 +1109,7 @@ export type LocalStateUI = {
 	hideNewWindow: boolean;
 	jumpTo: boolean;
 	jumpToSeason?: number | "all" | "career";
-	dropdownCustomOptions?: Record<string, DropdownOption[]>;
-	dropdownCustomURL?: (fields: Record<string, number | string>) => string;
-	dropdownView?: string;
-	dropdownFields?: {
-		[key: string]: number | string;
-	};
-	moreInfoAbbrev?: string;
+	dropdown?: TitleBarDropdown;
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
 	stickyFooterAd: boolean;
@@ -1142,11 +1136,41 @@ export type PhaseReturn = {
 	updateEvents?: UpdateEvents;
 };
 
-export type PlayerContract = {
+// A flat contract, the same amount every season through exp. This is used for contract demands (what a player is asking for), and for snapshots of contracts in events and trades. Signed contracts are Contract objects in p.contracts.
+export type FlatContractInfo = {
 	amount: number;
 	exp: number;
-	rookie?: true; // If present, this is a rookie contract. Could be either a rookie scale auto sign, or negotiated.
-	rookieResign?: true; // Should only be present during re-signing phase for guys re-signing after rookie contracts, otherwise can't identify if previous contract was a rookie contract cause it's overwritten!
+	rookie?: true; // If present, this is (or signing it would make) a rookie contract. Could be either a rookie scale auto sign, or negotiated.
+};
+
+// "unknown" is for contracts where the type can't be determined, like contracts migrated from before contracts were tracked, or a rookie contract with an extension merged into it.
+export type ContractType = "rookie" | "reSign" | "freeAgent" | "unknown";
+
+export type ContractPayment = {
+	season: number;
+	tid: number; // PLAYER.DOES_NOT_EXIST if unknown, like for payments migrated from before contracts were tracked
+	amount: number;
+};
+
+// When a contract ended before it was fully paid, like when a player retires or is released. Why it ended is tracked elsewhere, like p.retiredYear or a "release" event.
+export type ContractEndedEarly = {
+	season: number;
+	phase: Phase;
+
+	// Team that released the player, which still owes the rest of the contract. Deleted once the contract is fully paid, so p.owedByTids only has teams that still owe something. After that, payments say which team paid.
+	tid?: number;
+};
+
+export type Contract = {
+	type: ContractType;
+
+	// The "freeAgent" or "reSigned" event for this signing, which says when and by which team it was signed. Undefined if there is none, like for rookie contracts (see p.draft instead), real players' contracts, contracts that came with a league file or imported player, and contracts created in Customize Player. The event can also be missing if old events were deleted.
+	eid?: number;
+
+	start: number; // First season paid
+	amounts: number[]; // One per season, so exp = start + amounts.length - 1
+	payments: ContractPayment[]; // Actually paid, added to every game
+	endedEarly?: ContractEndedEarly;
 };
 
 export type PlayerFeatWithoutKey = {
@@ -1176,6 +1200,7 @@ export type PlayerInjury = {
 	score?: number;
 };
 
+// Only for legacy league files and the migration from before contracts were tracked
 type PlayerSalary = {
 	amount: number;
 	season: number;
@@ -1236,9 +1261,15 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 		loc: string;
 	};
 	college: string;
-	contract: PlayerContract & {
-		temp?: true; // Used only on import
+
+	// What the player is asking for. Defined for free agents, draft prospects, and players on a team who need a new contract (unsigned draft picks, or expiring contracts while re-signing).
+	contractDemand?: FlatContractInfo & {
+		temp?: true; // Used only during league creation, to mark demands that need to be normalized
 	};
+
+	// Every contract the player signed, oldest first. If he's on a team, his current contract is the last one, unless it ended early.
+	contracts: Contract[];
+
 	customMoodItems?: {
 		amount: number;
 		text: string;
@@ -1277,6 +1308,10 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	note?: string;
 	noteBool?: 1; // Keep in sync with note - for indexing
 	numDaysFreeAgent: number;
+
+	// Teams that released this player and still owe him money, from endedEarly.tid of his contracts. This is only so the database can index players who are still owed, since IndexedDB can't index inside p.contracts. Missing if nobody owes him. Update with updateOwedByTids whenever endedEarly.tid changes.
+	owedByTids?: number[];
+
 	pid?: number;
 	pos?: string; // Only in players from custom league files
 	ptModifier: number;
@@ -1285,7 +1320,6 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	relatives: Relative[];
 	retiredYear: number;
 	rosterOrder: number;
-	salaries: PlayerSalary[];
 	srID?: string;
 	stats: PlayerStats[];
 	statsTids: number[];
@@ -1352,6 +1386,15 @@ export type Player<PlayerRatings = MinimalPlayerRatings> = {
 	pid: number;
 } & PlayerWithoutKey<PlayerRatings>;
 
+// Contract info in the format from before p.contracts (league DB version 75). This can still be in league files, player exports, and real players data.
+export type LegacyPlayerContractInfo = {
+	contract?: FlatContractInfo & {
+		rookieResign?: true;
+		temp?: true;
+	};
+	salaries?: PlayerSalary[];
+};
+
 export type PlayerStatType = "per36" | "perGame" | "totals";
 
 // For keys present in multiple sports, the value type is the union of the types from each sport
@@ -1376,22 +1419,13 @@ type PlayerAllKeys = {
 	[K in PlayerKey]: Player[K];
 };
 
-type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
+type PlayerAttrsPlus<Contract = FlatContractInfo> = Omit<
 	PlayerAllKeys,
-	| "contract"
-	| "diedYear"
-	| "draft"
-	| "hof"
-	| "jerseyNumber"
-	| "ratings"
-	| "salaries"
-	| "stats"
-	| "watch"
+	"diedYear" | "draft" | "hof" | "jerseyNumber" | "ratings" | "stats" | "watch"
 > & {
 	abbrev: string;
 	age: number;
 	ageAtDeath: number | null;
-	cashOwed: number;
 	contract: Contract;
 	diedYear: number | null;
 	draft: Player["draft"] & {
@@ -1411,17 +1445,28 @@ type PlayerAttrsPlus<Contract = Player["contract"]> = Omit<
 	numBrothers: number;
 	numFathers: number;
 	numSons: number;
-	salaries: {
-		amount: number;
-		season: number;
-		type: "past" | "current" | "future";
-	}[];
+	salaries: PlayerSalaryRow[];
 	salariesTotal: number;
 	salary: number;
 	untradable: boolean;
 	watch: number;
 };
 export type PlayerAttr = keyof PlayerAttrsPlus;
+
+// One row per season of each contract, for the player page
+export type PlayerSalaryRow = {
+	amount: number; // Paid for past seasons, contracted for current and future seasons
+	season: number;
+	type: "past" | "current" | "future";
+
+	// Teams that paid for this season (past), or are expected to pay (current/future), with the largest first. tid is PLAYER.DOES_NOT_EXIST (abbrev "DNE") if unknown, like for salaries from before this was tracked.
+	payers: {
+		tid: number;
+		abbrev: string;
+		amount: number;
+		released: boolean;
+	}[];
+};
 
 // Rating keys from all sports, like RATINGS
 export type PlayerRatingKey =
@@ -1517,7 +1562,6 @@ export type PlayerFormatOptions = {
 	showRetired?: boolean;
 	fuzz?: boolean;
 	oldStats?: boolean;
-	numGamesRemaining?: number;
 	statType?: PlayerStatType;
 	mergeStats?: "none" | "totOnly" | "totAndTeams";
 };
@@ -1584,15 +1628,24 @@ type CareerStatsKey<
 				: { [K in Key]?: Row }
 			: { [K in Key]?: Row };
 
+// A contract for showing in the UI. amount (what the player is paid this season, in millions of dollars) and exp are a summary of it, which is all most of the UI needs.
+export type FormattedContract = FlatContractInfo & {
+	// Breakdown of the summary by season, from this season through exp (amounts in millions of dollars). Only present if the amounts are different in different seasons, since otherwise the summary already describes the contract.
+	remainingSeasons?: {
+		season: number;
+		amount: number;
+	}[];
+};
+
 // With seasonRange and no season, contract is the sum of salaries in the range, with exp set to the (undefined) season
 type PlayerContractFiltered<
 	Season extends number | undefined,
 	SeasonRange extends [number, number] | undefined,
 > = [SeasonRange] extends [undefined]
-	? Player["contract"]
+	? FormattedContract
 	: [Season] extends [number]
-		? Player["contract"]
-		: Omit<Player["contract"], "exp"> & { exp: number | undefined };
+		? FormattedContract
+		: Omit<FlatContractInfo, "exp"> & { exp: number | undefined };
 
 type PlayerAttrsPart<
 	Attrs extends Readonly<PlayerAttr[]>,
@@ -1952,24 +2005,15 @@ export type ContractInfo = {
 	pos: string;
 	injury: PlayerInjury;
 	jerseyNumber: string | undefined;
-	amount: number;
+	amount: number; // Current amount, as counted in payroll
 	exp: number;
+
+	// Amount for each season, starting with start
+	start: number;
+	amounts: number[];
+
 	released: boolean;
 	watch: number;
-};
-
-export type ReleasedPlayerWithoutKey = {
-	rid?: number;
-	pid: number;
-	tid: number;
-	contract: {
-		amount: number;
-		exp: number;
-	};
-};
-
-export type ReleasedPlayer = ReleasedPlayerWithoutKey & {
-	rid: number;
 };
 
 export type ScheduleGameWithoutKey = {
@@ -1996,6 +2040,24 @@ export type SortType =
 	| "record"
 	| "string"
 	| "pos";
+
+export type Col = {
+	classNames?: any; // Just header
+	desc?: string;
+	noSearch?: boolean;
+	sortSequence?: ReadonlyArray<SortOrder>;
+	sortType?: SortType;
+	searchType?: SortType;
+	title: string;
+	titleReact?: ReactNode;
+	width?: string;
+};
+
+export type SuperCol = {
+	colspan: number;
+	desc?: string;
+	title: ReactNode;
+};
 
 export type Team = {
 	tid: number;
@@ -2135,8 +2197,7 @@ import type {
 	TeamStatAttr as TeamStatAttrHockey,
 } from "./types.hockey.ts";
 import type { REAL_DRAFT_RATINGS, TIEBREAKERS } from "./constants.ts";
-import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
-import type { SuperCol } from "../ui/components/DataTable/index.tsx";
+import type { TitleBarDropdown } from "../ui/components/Dropdown.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
 import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";
 import type {

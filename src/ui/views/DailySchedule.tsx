@@ -8,6 +8,7 @@ import { NoGamesMessage } from "./GameLog.tsx";
 import allowForceTie from "../../common/allowForceTie.ts";
 import { ForceWin } from "../components/ForceWin.tsx";
 import { ScoreBox } from "../components/ScoreBox/index.tsx";
+import { isTradeDeadline } from "../../common/specialGames.ts";
 
 const DailySchedule = ({
 	cid,
@@ -25,11 +26,13 @@ const DailySchedule = ({
 }: View<"dailySchedule">) => {
 	useTitleBar({
 		title: DAILY_SCHEDULE,
-		dropdownView: "daily_schedule",
-		dropdownFields: { seasons: season, days: day, cids: cid ?? "all" },
-		dropdownCustomOptions: {
-			cids,
-			days,
+		dropdown: {
+			fields: [
+				{ key: "season", options: { type: "seasons" }, value: season },
+				{ key: "day", options: days, value: day, buttons: "forward" },
+				{ key: "cid", options: cids, value: cid ?? "all" },
+			],
+			view: "dailySchedule",
 		},
 	});
 
@@ -62,8 +65,7 @@ const DailySchedule = ({
 
 	const tradeDeadline =
 		upcoming.length === 1 &&
-		upcoming[0]!.teams[0].tid === -3 &&
-		upcoming[0]!.teams[1].tid === -3;
+		isTradeDeadline(upcoming[0]!.teams[0].tid, upcoming[0]!.teams[1].tid);
 
 	let noGamesMessage;
 	if (days.length === 0) {

@@ -1,4 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
@@ -10,7 +11,6 @@ import { useLocal } from "../util/local.ts";
 import type { LeagueUrlParts } from "../router/types.ts";
 
 const HeadToHead = ({
-	abbrev,
 	season,
 	teams,
 	tid,
@@ -21,11 +21,17 @@ const HeadToHead = ({
 }: View<"headToHead">) => {
 	useTitleBar({
 		title: "Head-to-Head",
-		dropdownView: "head2head",
-		dropdownFields: {
-			teams: abbrev,
-			seasonsAndAll: season,
-			playoffsCombined: type,
+		dropdown: {
+			fields: [
+				{ key: "team", options: { type: "teams" }, value: tid },
+				{
+					key: "season",
+					options: { type: "seasons", all: true },
+					value: season,
+				},
+				{ key: "type", options: dropdownOptions.playoffsCombined, value: type },
+			],
+			view: "headToHead",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);
@@ -105,7 +111,6 @@ const HeadToHead = ({
 			<MoreLinks
 				type="team"
 				page="head2head"
-				abbrev={abbrev}
 				tid={tid}
 				season={season === "all" ? undefined : season}
 			/>

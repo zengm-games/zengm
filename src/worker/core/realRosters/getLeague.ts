@@ -7,7 +7,7 @@ import type {
 	DraftPickWithoutKey,
 	DraftLotteryResult,
 	GameAttributesLeague,
-	PlayerContract,
+	FlatContractInfo,
 } from "../../../common/types.ts";
 import { helpers } from "../../util/index.ts";
 import {
@@ -341,7 +341,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 						// Delete stuff that may have been added on, for randomDebutsKeepCurrent if stats are kept
 						p.stats = [];
 						p.awards = [];
-						p.salaries = [];
+						p.contracts = undefined;
+						p.contractDemand = undefined;
 					}
 				}
 			}
@@ -696,10 +697,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 			// Mark players as retired - don't delete, so we have full season stats and awards.
 			// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
-			// Skip 2021 because we don't have 2021 data yet!
+			// Skip MAX_SEASON because we don't have next season's data yet!
 			if (
 				options.phase > PHASE.PLAYOFFS &&
-				options.season < 2021 &&
+				options.season < REAL_PLAYERS_INFO!.MAX_SEASON &&
 				!options.randomDebuts
 			) {
 				const nextSeasonSlugs = new Set<string>();
@@ -780,13 +781,15 @@ const getLeague = async (options: GetLeagueOptions) => {
 						round: number | undefined;
 						pick: number | undefined;
 					};
-					contract: PlayerContract | undefined;
+					contractDemand: FlatContractInfo | undefined;
 					ratings: [OnlyRatings, ...OnlyRatings[]];
 					srID: string;
 				}) => {
 					// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
+					// The contract that covers next season, when the rookie contract starts. Not just any contract that started by then, which could be from years ago, like for a player drafted long before he debuted.
 					const salaryRow = basketball.salaries[p.srID]?.find(
-						(row) => row.start <= options.season + 1,
+						(row) =>
+							row.start <= options.season + 1 && row.exp >= options.season + 1,
 					);
 					if (salaryRow) {
 						assertDefined(p.draft.round);
@@ -804,15 +807,15 @@ const getLeague = async (options: GetLeagueOptions) => {
 							exp = options.season + 5;
 						}
 
-						p.contract = {
+						p.contractDemand = {
 							amount: averageSalary(salaryRow, options.season + 1, exp),
 							exp,
 							rookie: true,
 						};
 
 						// Bound at minYears, but do this after calling averageSalary in case a player was released before minYears
-						if (p.contract.exp < options.season + minYears) {
-							p.contract.exp = options.season + minYears;
+						if (p.contractDemand.exp < options.season + minYears) {
+							p.contractDemand.exp = options.season + minYears;
 						}
 					}
 
@@ -1042,7 +1045,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		addFreeAgents(keptPlayers, season);
 
 		return {
-			version: 37,
+			version: LEAGUE_DATABASE_VERSION,
 			startingSeason: season,
 			players: keptPlayers,
 			teams: initialTeams,

@@ -7,23 +7,15 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 import { getNumToPick } from "../core/draft/genOrder.ts";
 import { last, maxBy } from "../../common/utils.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { player } from "../core/index.ts";
+import { DRAFT_HISTORY_STATS } from "./draftHistory.ts";
 
 const processInputs = (params: RouteParams<"draftTeamHistory">) => {
-	let [tid, abbrev] = validateAbbrev(params.abbrev);
-
-	if (params.abbrev === "your_teams") {
-		tid = -1;
-		abbrev = "your_teams";
-	}
-
 	return {
-		tid,
-		abbrev,
+		team: validateTeam(params.team, ["your_teams"]),
 	};
 };
 
@@ -31,20 +23,17 @@ export default defineView({
 	id: "draftTeamHistory",
 	processInputs,
 	load: async ({ inputs }) => {
+		const { team } = inputs;
+
 		let filter;
-		if (inputs.tid >= 0) {
-			filter = (p: Player) => p.draft.tid === inputs.tid;
+		if (typeof team === "number") {
+			filter = (p: Player) => p.draft.tid === team;
 		} else {
 			filter = (p: Player) =>
 				p.draft.tid === g.get("userTid", p.draft.year + 1);
 		}
 
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		} as const);
+		const stats = DRAFT_HISTORY_STATS;
 		const formatOptions = {
 			attrs: [
 				"tid",
@@ -152,10 +141,9 @@ export default defineView({
 		}
 
 		return {
-			abbrev: inputs.abbrev,
 			players: addFirstNameShort(players),
 			stats,
-			tid: inputs.tid,
+			team,
 		};
 	},
 });

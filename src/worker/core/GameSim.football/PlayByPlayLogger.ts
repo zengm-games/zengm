@@ -315,11 +315,6 @@ class FootballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutpu
 		scoringSummaryEvent: PlayByPlayEventScore;
 	}[] = [];
 
-	constructor(active: boolean) {
-		super(active);
-		this.active = active;
-	}
-
 	logEvent(event: PlayByPlayEventInput) {
 		if (event.type === "quarter" || event.type === "overtime") {
 			this.quarter += 1;
@@ -346,8 +341,10 @@ class FootballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutpu
 	}
 
 	setClockForScores(clock: number) {
-		for (const { playByPlayEvent, scoringSummaryEvent } of this
-			.currentPlayScores) {
+		for (const {
+			playByPlayEvent,
+			scoringSummaryEvent,
+		} of this.currentPlayScores) {
 			if (playByPlayEvent) {
 				playByPlayEvent.clock = clock;
 			}

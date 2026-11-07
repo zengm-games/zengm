@@ -192,10 +192,6 @@ class BaseballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventInput
 	scoringSummary: PlayByPlayEventScore[] = [];
 	private period = 1;
 
-	constructor(active: boolean) {
-		super(active);
-	}
-
 	logEvent(event: PlayByPlayEventInput) {
 		if (this.active) {
 			this.playByPlay.push(event);

@@ -1,4 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { helpers } from "../util/helpers.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
@@ -15,7 +16,7 @@ export const formatStatsDropdown = (stats: string[]) =>
 		const col = getCol(`stat:${stat}`);
 		return {
 			key: stat,
-			value: col.desc
+			label: col.desc
 				? makeResponsiveDropdownOption(col.title, col.desc)
 				: col.title,
 		};
@@ -30,14 +31,21 @@ const LeadersYears = ({
 }: View<"leadersYears">) => {
 	useTitleBar({
 		title: "Yearly Leaders",
-		dropdownView: "leaders_years",
-		dropdownFields: {
-			stats: stat,
-			statTypesStrict: statType,
-			playoffsCombined: playoffs,
-		},
-		dropdownCustomOptions: {
-			stats: formatStatsDropdown(stats),
+		dropdown: {
+			fields: [
+				{ key: "stat", options: formatStatsDropdown(stats), value: stat },
+				{
+					key: "statType",
+					options: dropdownOptions.statTypesStrict,
+					value: statType,
+				},
+				{
+					key: "playoffs",
+					options: dropdownOptions.playoffsCombined,
+					value: playoffs,
+				},
+			],
+			view: "leadersYears",
 		},
 	});
 

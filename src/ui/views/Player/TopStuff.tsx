@@ -2,6 +2,7 @@ import { last } from "../../../common/utils.ts";
 import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
 import { WatchBlock } from "../../components/WatchBlock.tsx";
+import { ContractAmount } from "../../components/contract.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type {
@@ -364,19 +365,22 @@ const TopStuff = ({
 
 	let contractInfo: ReactNode = null;
 	if (season !== undefined || showContract) {
-		let amount;
+		let amount: ReactNode;
 		let exp;
 		if (season === undefined || season === currentSeason) {
-			amount = player.contract.amount;
+			amount = <ContractAmount p={player} />;
 			exp = player.contract.exp;
 		} else {
-			amount = player.salaries.findLast((row) => row.season === season)?.amount;
+			const salary = player.salaries.findLast(
+				(row) => row.season === season,
+			)?.amount;
+			amount =
+				salary !== undefined ? helpers.formatCurrency(salary, "M") : "???";
 		}
 
 		contractInfo = (
 			<>
-				{freeAgent ? "Asking for" : "Contract"}:{" "}
-				{amount !== undefined ? helpers.formatCurrency(amount, "M") : "???"}/yr
+				{freeAgent ? "Asking for" : "Contract"}: {amount}
 				{exp !== undefined ? ` thru ${exp}` : null}
 				<br />
 			</>

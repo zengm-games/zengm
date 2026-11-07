@@ -15,6 +15,7 @@ import {
 	TEAM_NUMS_DISPLAY_ORDER,
 	teamsInDisplayOrder,
 } from "../util/boxScoreDisplayOrder.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
 
 type Team = {
 	abbrev: string;
@@ -61,7 +62,7 @@ const StatsTable = ({
 		),
 	});
 
-	const allStarGame = t.tid === -1 || t.tid === -2;
+	const allStarGame = isAllStarTid(t.tid);
 	const players = t.players
 		.map((p) => {
 			return {

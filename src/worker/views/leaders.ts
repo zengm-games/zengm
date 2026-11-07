@@ -12,9 +12,11 @@ import { defineView } from "../util/defineView.ts";
 import { range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { player, season, team } from "../core/index.ts";
-import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import {
+	extraStats,
+	processPlayersHallOfFame,
+} from "../util/processPlayersHallOfFame.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { getLeaderRequirementsStats } from "../core/season/getLeaderRequirements.ts";
 import type { RouteParams } from "../../ui/router/types.ts";

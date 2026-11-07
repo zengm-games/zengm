@@ -8,15 +8,19 @@ import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { orderTeams } from "../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	orderTeams,
+} from "../util/orderTeams.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { validateAbbrev } from "../util/processInputs.ts";
+import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
 import { validateSeasonType } from "../util/processInputs.ts";
 
 const processInputs = (params: RouteParams<"roster">) => {
 	// Fix broken links
-	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
+	if (params.team === "FA" || params.team === "FA_-1") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["free_agents"]),
@@ -26,7 +30,7 @@ const processInputs = (params: RouteParams<"roster">) => {
 
 	const season = validateSeason(params.season);
 
-	if (params.abbrev === "DP" || params.abbrev === "DP_-2") {
+	if (params.team === "DP" || params.team === "DP_-2") {
 		let redirectUrl;
 		const draftAlreadyHappened =
 			season < g.get("season") ||
@@ -44,9 +48,8 @@ const processInputs = (params: RouteParams<"roster">) => {
 		return returnValue;
 	}
 
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-
-	return { abbrev, playoffs: validateSeasonType(params.playoffs), season, tid };
+	const tid = validateTeam(params.team);
+	return { playoffs: validateSeasonType(params.playoffs), season, tid };
 };
 
 const sortByPos = (p: {
@@ -62,25 +65,8 @@ const sortByPos = (p: {
 const getStandingsInfo = async (info: { season: number; tid: number }) => {
 	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
-		seasonAttrs: [
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-			"winp",
-			"pts",
-			"cid",
-			"did",
-		],
-		stats: ["pts", "oppPts", "gp"],
+		seasonAttrs: ORDER_TEAMS_SEASON_ATTRS,
+		stats: ORDER_TEAMS_STATS,
 		season: info.season,
 		showNoStats: true,
 	});
@@ -154,7 +140,7 @@ export default defineView({
 			(inputs.season === g.get("season") &&
 				(updateEvents.has("gameSim") || updateEvents.has("newPhase"))) ||
 			(updateEvents.has("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
-			inputs.abbrev !== prevInputs?.abbrev ||
+			inputs.tid !== prevInputs?.tid ||
 			inputs.playoffs !== prevInputs?.playoffs ||
 			inputs.season !== prevInputs?.season
 		) {
@@ -223,7 +209,6 @@ export default defineView({
 				"age",
 				"born",
 				"contract",
-				"cashOwed",
 				"rosterOrder",
 				"injury",
 				"ptModifier",
@@ -258,8 +243,6 @@ export default defineView({
 			let minPayrollAmount: number | undefined;
 
 			if (inputs.season === g.get("season")) {
-				const schedule = await season.getSchedule();
-
 				// Show players currently on the roster
 				const playersAll = await idb.cache.players.indexGetAll(
 					"playersByTid",
@@ -268,18 +251,6 @@ export default defineView({
 				payroll = await team.getPayroll(inputs.tid);
 				luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll);
 				minPayrollAmount = finances.getMinPayrollAmount(payroll);
-
-				// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
-				let numGamesRemaining = 0;
-
-				for (const matchup of schedule) {
-					if (
-						inputs.tid === matchup.homeTid ||
-						inputs.tid === matchup.awayTid
-					) {
-						numGamesRemaining += 1;
-					}
-				}
 
 				players = await player.formatAll(playersAll, {
 					attrs,
@@ -291,7 +262,6 @@ export default defineView({
 					showNoStats: true,
 					showRookies: true,
 					fuzz: true,
-					numGamesRemaining,
 				});
 				players = await addMood(players, playersAll);
 
@@ -400,7 +370,6 @@ export default defineView({
 			}
 
 			return {
-				abbrev: inputs.abbrev,
 				editable,
 				maxRosterSize: g.get("maxRosterSize"),
 				numPlayersOnCourt: g.get("numPlayersOnCourt"),

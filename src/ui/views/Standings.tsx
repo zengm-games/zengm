@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { type CSSProperties, Fragment } from "react";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -6,7 +7,7 @@ import { helpers } from "../util/helpers.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { ByConf, TeamSeason, View } from "../../common/types.ts";
 import { TIEBREAKERS } from "../../common/constants.ts";
-import { MovOrDiff } from "../components/MovOrDiff.tsx";
+import { TeamMovOrDiff } from "../components/MovOrDiff.tsx";
 import { ResponsiveTableWrapper } from "../components/ResponsiveTableWrapper.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -156,18 +157,7 @@ const GroupStandingsRow = ({
 			<td>{helpers.roundStat(t.stats.pts, "pts")}</td>
 			<td>{helpers.roundStat(t.stats.oppPts, "oppPts")}</td>
 			<td>
-				<MovOrDiff
-					stats={
-						__SPORT === "basketball"
-							? {
-									pts: t.stats.pts * t.stats.gp,
-									oppPts: t.stats.oppPts * t.stats.gp,
-									gp: t.stats.gp,
-								}
-							: t.stats
-					}
-					type={__SPORT === "basketball" ? "mov" : "diff"}
-				/>
+				<TeamMovOrDiff stats={t.stats} />
 			</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>
@@ -425,10 +415,12 @@ const Standings = ({
 		title: "Standings",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "standings",
-		dropdownFields: {
-			seasons: season,
-			standingsType: type,
+		dropdown: {
+			fields: [
+				{ key: "season", options: { type: "seasons" }, value: season },
+				{ key: "type", options: dropdownOptions.standingsType, value: type },
+			],
+			view: "standings",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);

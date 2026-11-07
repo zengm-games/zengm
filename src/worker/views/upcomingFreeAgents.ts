@@ -1,30 +1,21 @@
+import { getContractSummaryOrThrow } from "../core/contract/index.ts";
 import { PHASE, PLAYER } from "../../common/constants.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import { groupByUnique } from "../../common/utils.ts";
-import { addMood } from "./freeAgents.ts";
+import { addMood, FREE_AGENT_STATS } from "./freeAgents.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
-import { actualPhase } from "../util/actualPhase.ts";
-import { validateSeason } from "../util/processInputs.ts";
+import { getSeasonState, validateSeason } from "../util/processInputs.ts";
+import { getFirstUpcomingFreeAgentsSeason } from "../../common/seasons.ts";
 
 const processInputs = (params: RouteParams<"upcomingFreeAgents">) => {
-	let season = validateSeason(params.season);
-
-	const phase = actualPhase();
-	if (phase >= 0 && phase <= PHASE.RESIGN_PLAYERS) {
-		if (season < g.get("season")) {
-			season = g.get("season");
-		}
-	} else if (season < g.get("season") + 1) {
-		season = g.get("season") + 1;
-	}
+	const firstSeason = getFirstUpcomingFreeAgentsSeason(getSeasonState());
 
 	return {
-		season,
+		season: Math.max(validateSeason(params.season), firstSeason),
 	};
 };
 
@@ -32,12 +23,7 @@ export default defineView({
 	id: "upcomingFreeAgents",
 	processInputs,
 	load: async ({ inputs }) => {
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		} as const);
+		const stats = FREE_AGENT_STATS;
 
 		const showActualFreeAgents =
 			g.get("phase") === PHASE.RESIGN_PLAYERS &&
@@ -47,7 +33,7 @@ export default defineView({
 			? await idb.merged.players.getAll({ tid: PLAYER.FREE_AGENT })
 			: await idb.merged.players.getAll(
 					{ tid: [0, Infinity] },
-					{ filter: (p) => p.contract.exp === inputs.season },
+					{ filter: (p) => getContractSummaryOrThrow(p).exp === inputs.season },
 				);
 		const playersRawByPid = groupByUnique(playersRaw, "pid");
 
@@ -61,6 +47,7 @@ export default defineView({
 				"tid",
 				"age",
 				"contract",
+				"draft",
 				"injury",
 				"watch",
 				"jerseyNumber",

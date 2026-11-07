@@ -9,7 +9,8 @@ import {
 	type PlayerInfoForName,
 } from "../CustomizePlayer/RelativesForm.tsx";
 import type { SeasonType } from "../../../worker/util/processInputs.ts";
-import useDropdownOptions, {
+import {
+	dropdownOptions,
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
@@ -24,7 +25,7 @@ type PlayerInfo = {
 const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 	return (
 		<option value={value.key}>
-			{Array.isArray(value.value) ? value.value[0]!.text : value.value}
+			{Array.isArray(value.label) ? value.label[0]!.text : value.label}
 		</option>
 	);
 };
@@ -79,7 +80,7 @@ const PlayersForm = ({
 		);
 	}, [players]);
 
-	const playoffsOptions = useDropdownOptions("playoffsCombined");
+	const playoffsOptions = dropdownOptions.playoffsCombined;
 
 	return (
 		<form

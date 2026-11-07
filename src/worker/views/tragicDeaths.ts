@@ -2,8 +2,10 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { extraStats } from "./hallOfFame.ts";
-import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import {
+	extraStats,
+	processPlayersHallOfFame,
+} from "../util/processPlayersHallOfFame.ts";
 import { defineView } from "../util/defineView.ts";
 import { player } from "../core/index.ts";
 

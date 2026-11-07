@@ -1,4 +1,5 @@
 import teamInfos from "./teamInfos.ts";
+import { abbrevRewrites } from "./getTeamInfos.ts";
 
 const getUnusedAbbrevs = (
 	currentTeams: {
@@ -11,32 +12,14 @@ const getUnusedAbbrevs = (
 ): string[] => {
 	const abbrevs: string[] = [];
 	for (const [abbrev, t] of Object.entries(teamInfos)) {
-		const blacklist = new Set([
-			...abbrevs,
-			...currentTeams
-				.filter((t2) => !disabledTeamsCountAsUnused || !t2.disabled)
-				.map((t2) => t2.abbrev),
-		]);
-
-		// Handle a couple teams with multiple abbrevs
-		if (blacklist.has("LA") && abbrev === "LAL") {
-			continue;
-		}
-		if (blacklist.has("LAL") && abbrev === "LA") {
-			continue;
-		}
-		if (blacklist.has("LAC") && abbrev === "LAE") {
-			continue;
-		}
-		if (blacklist.has("LAE") && abbrev === "LAC") {
-			continue;
-		}
-		if (blacklist.has("GS") && abbrev === "SF") {
-			continue;
-		}
-		if (blacklist.has("SF") && abbrev === "GS") {
-			continue;
-		}
+		const blacklist = new Set(
+			[
+				...abbrevs,
+				...currentTeams
+					.filter((t2) => !disabledTeamsCountAsUnused || !t2.disabled)
+					.map((t2) => t2.abbrev),
+			].map((abbrev2) => abbrevRewrites[abbrev2] ?? abbrev2),
+		);
 
 		if (blacklist.has(abbrev)) {
 			continue;

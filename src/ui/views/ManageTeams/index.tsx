@@ -9,6 +9,7 @@ import { PHASE } from "../../../common/constants.ts";
 import TeamForm, { getNumTeamsByDid } from "./TeamForm.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { useLocal } from "../../util/local.ts";
+import { setTeamFormValue } from "./teamFormValues.ts";
 
 export const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
@@ -50,14 +51,17 @@ const reducer = (state: State, action: Action): State => {
 			};
 		case "updateTeam": {
 			const newTeams = state.teams.slice();
-			const t = newTeams.find((t) => t.tid === action.tid);
-			if (!t) {
+			const index = newTeams.findIndex((t) => t.tid === action.tid);
+			if (index < 0) {
 				throw new Error(`No team found with tid ${action.tid}`);
 			}
 
+			// Copy, so the previous state is not mutated
+			const t = { ...newTeams[index]! };
+			newTeams[index] = t;
+
 			if (action.field.startsWith("colors")) {
-				// @ts-expect-error
-				t.colors[action.field.replace("colors", "")] = action.value;
+				t.colors = setTeamFormValue(t, action.field, action.value).colors;
 			} else if (action.field === "did") {
 				t[action.field] = Number.parseInt(action.value);
 			} else if (action.field === "disabled") {

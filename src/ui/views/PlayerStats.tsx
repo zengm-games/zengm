@@ -1,4 +1,5 @@
 import { DataTable } from "../components/DataTable/index.tsx";
+import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
@@ -62,24 +63,47 @@ export const formatStatGameHigh = (
 };
 
 const PlayerStats = ({
-	abbrev,
 	players,
 	playoffs,
 	season,
 	statType,
 	stats,
 	superCols,
+	team,
 }: View<"playerStats">) => {
 	useTitleBar({
 		title: "Player Stats",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "player_stats",
-		dropdownFields: {
-			teamsAndAllWatchPlayoffs: abbrev,
-			seasonsAndCareer: season,
-			statTypesAdv: statType,
-			playoffsCombined: playoffs,
+		dropdown: {
+			fields: [
+				{
+					key: "team",
+					options: {
+						type: "teams",
+						all: true,
+						remainingPlayoffTeams: true,
+						watch: true,
+					},
+					value: team,
+				},
+				{
+					key: "season",
+					options: { type: "seasons", career: true, all: true },
+					value: season,
+				},
+				{
+					key: "statType",
+					options: dropdownOptions.statTypesAdv,
+					value: statType,
+				},
+				{
+					key: "playoffs",
+					options: dropdownOptions.playoffsCombined,
+					value: playoffs,
+				},
+			],
+			view: "playerStats",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);

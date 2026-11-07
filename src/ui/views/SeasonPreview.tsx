@@ -165,13 +165,11 @@ const TeamList = ({
 						<div>
 							Last season:{" "}
 							<RecordAndPlayoffs
-								abbrev={t.abbrev}
 								lost={t.lastSeason.lost}
 								option="noSeason"
 								otl={t.lastSeason.otl}
 								roundsWonText={t.lastSeason.roundsWonText}
 								season={season - 1}
-								tid={t.tid}
 								tied={t.lastSeason.tied}
 								won={t.lastSeason.won}
 							/>
@@ -216,9 +214,9 @@ const SeasonPreview = ({
 }: View<"seasonPreview">) => {
 	useTitleBar({
 		title: "Season Preview",
-		dropdownView: "season_preview",
-		dropdownFields: {
-			seasons: season,
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "seasonPreview",
 		},
 	});
 	const { challengeNoRatings, userTid } = useLocal([

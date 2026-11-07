@@ -2,6 +2,7 @@ import type { View } from "../../../common/types.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { StatGraph, type TooltipData } from "../PlayerGraphs/ScatterPlot.tsx";
 import useDropdownOptions, {
+	dropdownOptions,
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
@@ -285,7 +286,7 @@ type AxisState = {
 const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 	return (
 		<option value={value.key}>
-			{Array.isArray(value.value) ? value.value.at(-1)!.text : value.value}
+			{Array.isArray(value.label) ? value.label.at(-1)!.text : value.label}
 		</option>
 	);
 };
@@ -311,13 +312,13 @@ const actuallyAddSuffix = (text: string) => {
 };
 
 const addStatsSuffix = (option: DropdownOption) => {
-	const value = option.value;
+	const label = option.label;
 
-	let newValue: typeof value;
-	if (typeof value === "string") {
-		newValue = actuallyAddSuffix(value);
+	let newLabel: typeof label;
+	if (typeof label === "string") {
+		newLabel = actuallyAddSuffix(label);
 	} else {
-		newValue = value.map((row) => {
+		newLabel = label.map((row) => {
 			return {
 				...row,
 				text: actuallyAddSuffix(row.text),
@@ -327,7 +328,7 @@ const addStatsSuffix = (option: DropdownOption) => {
 
 	return {
 		...option,
-		value: newValue,
+		label: newLabel,
 	};
 };
 
@@ -357,15 +358,15 @@ const PickStat = ({
 		row.stat = stats[i]!;
 	}
 
-	const dropdownSeasons = useDropdownOptions("seasons");
+	const dropdownSeasons = useDropdownOptions({ type: "seasons" });
 	const statTypes = [
 		// Keep in sync with statTypes in TeamGraphs.ts
-		...useDropdownOptions("teamOpponentAdvanced").map(addStatsSuffix),
-		{ key: "standings", value: "Standings" },
-		{ key: "powerRankings", value: "Power Rankings" },
-		{ key: "finances", value: "Finances" },
+		...dropdownOptions.teamOpponentAdvanced.map(addStatsSuffix),
+		{ key: "standings", label: "Standings" },
+		{ key: "powerRankings", label: "Power Rankings" },
+		{ key: "finances", label: "Finances" },
 	];
-	const playoffs = useDropdownOptions("playoffs");
+	const playoffs = dropdownOptions.playoffs;
 
 	const xyCapital = label === "x" ? "X" : "Y";
 
@@ -509,7 +510,6 @@ const TeamGraphs = ({
 }: ViewProps) => {
 	useTitleBar({
 		title: "Team Graphs",
-		dropdownView: "team_graphs",
 	});
 
 	const updateUrl = async (toUpdate: UpdateUrlParam) => {

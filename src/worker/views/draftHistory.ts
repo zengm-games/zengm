@@ -6,16 +6,16 @@ import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique, last, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { PHASE } from "../../common/constants.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { helpers } from "../util/index.ts";
-import { validateSeason } from "../util/processInputs.ts";
+import { getSeasonState, validateSeason } from "../util/processInputs.ts";
+import { hasCurrentSeasonDraftHappened } from "../../common/seasons.ts";
 import { player, team } from "../core/index.ts";
 
 const processInputs = (params: RouteParams<"draftHistory">) => {
 	let season: number;
 
-	const draftAlreadyHappened = g.get("phase") >= PHASE.DRAFT;
+	const draftAlreadyHappened = hasCurrentSeasonDraftHappened(getSeasonState());
 	const currentSeason = g.get("season");
 
 	if (
@@ -75,18 +75,21 @@ export const getDraftTeamsByTid = async (season: number) => {
 	return teamsByTid;
 };
 
+// Also used for draftTeamHistory, which shows the same table for a different set of players
+export const DRAFT_HISTORY_STATS = bySport({
+	baseball: ["gp", "keyStats", "war"],
+	basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
+	football: ["gp", "keyStats", "av"],
+	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+} as const);
+
 export default defineView({
 	id: "draftHistory",
 	processInputs,
 	load: async ({ inputs }) => {
 		// Update every time because anything could change this (unless all players from class are retired)
 
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["gp", "min", "pts", "trb", "ast", "per", "ws"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		} as const);
+		const stats = DRAFT_HISTORY_STATS;
 
 		const summaryStat = bySport({
 			baseball: "war",

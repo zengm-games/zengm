@@ -2,6 +2,7 @@ import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { g, helpers } from "../../util/index.ts";
 import { idb } from "../../db/index.ts";
 import moodComponents from "./moodComponents.ts";
+import { getContractSummaryOrThrow } from "../contract/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
@@ -23,6 +24,9 @@ const moodInfo = async (
 	const components = await moodComponents(p, tid);
 	let probWilling = 0;
 
+	// What he's asking for, or his current contract if he's not asking for anything
+	const contract = getContractSummaryOrThrow(p);
+
 	const phase = g.get("phase");
 	const season = g.get("season");
 
@@ -34,7 +38,7 @@ const moodInfo = async (
 
 	let firstSeasonAfterExpansionOverride = false;
 	if (
-		(p.contract.exp === season &&
+		(contract.exp === season &&
 			phase >= PHASE.PLAYOFFS &&
 			phase <= PHASE.RESIGN_PLAYERS) ||
 		(phase === PHASE.RESIGN_PLAYERS && p.tid === PLAYER.FREE_AGENT)
@@ -94,7 +98,7 @@ const moodInfo = async (
 		sumAndStuff -= 3;
 	}
 
-	let contractAmount = overrides.contractAmount ?? p.contract.amount;
+	let contractAmount = overrides.contractAmount ?? contract.amount;
 
 	// Up to 50% penalty for bad mood, except if this is a rookie contract
 	const autoRookieContract =

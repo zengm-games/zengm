@@ -1,10 +1,11 @@
-import { PHASE, PLAYER } from "../../common/constants.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { defineView } from "../util/defineView.ts";
 import { omit, orderBy } from "../../common/utils.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { getPlayers } from "../core/awards/getPlayers.ts";
-import { validateSeasonOnly } from "../util/processInputs.ts";
+import { getSeasonState, validateSeasonOnly } from "../util/processInputs.ts";
+import { isCurrentSeasonComplete } from "../../common/seasons.ts";
 import { team } from "../core/index.ts";
 
 export default defineView({
@@ -24,7 +25,10 @@ export default defineView({
 			let season = inputs.season;
 			let awards = await idb.merged.awards.get(season);
 			if (!awards) {
-				if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
+				if (
+					g.get("season") === season &&
+					!isCurrentSeasonComplete(getSeasonState())
+				) {
 					season -= 1;
 					awards = await idb.merged.awards.get(season);
 				}

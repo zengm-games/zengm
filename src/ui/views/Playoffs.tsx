@@ -103,9 +103,9 @@ const Playoffs = ({
 		title: "Playoffs",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "playoffs",
-		dropdownFields: {
-			seasons: season,
+		dropdown: {
+			fields: [{ key: "season", options: { type: "seasons" }, value: season }],
+			view: "playoffs",
 		},
 	});
 	const { userTid } = useLocal(["userTid"]);

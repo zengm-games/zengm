@@ -8,7 +8,7 @@ import type { Position } from "../../../common/types.baseball.ts";
 import { groupByUnique, orderBy } from "../../../common/utils.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher.ts";
-import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
+import getInjuryRate from "../GameSim/getInjuryRate.ts";
 import type { PlayerGameSim, TeamGameSim } from "./types.ts";
 
 type GamePositions<DH extends boolean> =

@@ -1,4 +1,8 @@
-import { DEFAULT_TEAM_COLORS, PLAYER } from "../../common/constants.ts";
+import {
+	DEFAULT_TEAM_COLORS,
+	PLAYER,
+	SALARY_CAP_SCALE_LEGACY,
+} from "../../common/constants.ts";
 import { helpers as commonHelpers } from "../../common/helpers.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
@@ -162,8 +166,10 @@ const defaultTicketPrice = (
 	return helpers.localeParseFloat(
 		(
 			1 +
-			(salaryCap / 90000) * 36 +
-			(25 * (salaryCap / 90000) * (g.get("numActiveTeams") - popRank)) /
+			(salaryCap / SALARY_CAP_SCALE_LEGACY) * 36 +
+			(25 *
+				(salaryCap / SALARY_CAP_SCALE_LEGACY) *
+				(g.get("numActiveTeams") - popRank)) /
 				(g.get("numActiveTeams") - 1)
 		).toFixed(2),
 	);

@@ -446,6 +446,16 @@ describe("players selectors", () => {
 			);
 		}
 
+		for (const minDraftYear of [SEASON - 12, SEASON - 5, SEASON]) {
+			assert.deepStrictEqual(
+				pids(await idb.merged.players.getAll({ retired: true, minDraftYear })),
+				expected(
+					(p) => p.tid === PLAYER.RETIRED && p.draft.year >= minDraftYear,
+				),
+				`retired minDraftYear ${minDraftYear}`,
+			);
+		}
+
 		assert.deepStrictEqual(
 			pids(await idb.merged.players.getAll({ statsTid: 2 })),
 			expected((p) => p.statsTids.includes(2)),

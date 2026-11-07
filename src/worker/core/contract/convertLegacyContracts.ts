@@ -151,11 +151,7 @@ const estimatePayers = ({
 	const { endedEarly } = contract;
 
 	// After a player is released, the team that released him pays the rest of his contract. Assume that team paid all of the season he was released in too.
-	if (
-		endedEarly?.reason === "released" &&
-		endedEarly.tid !== undefined &&
-		season >= endedEarly.season
-	) {
+	if (endedEarly?.tid !== undefined && season >= endedEarly.season) {
 		return [{ tid: endedEarly.tid, weight: 1 }];
 	}
 
@@ -272,11 +268,8 @@ const getPayments = (
 ) => {
 	const payments: Contract["payments"] = [];
 	for (let s = segment.start; s <= segment.exp; s++) {
-		if (
-			endedEarly &&
-			endedEarly.reason !== "released" &&
-			s > endedEarly.season
-		) {
+		// Only released contracts are paid after they end, by the team that released him
+		if (endedEarly && endedEarly.tid === undefined && s > endedEarly.season) {
 			break;
 		}
 
@@ -345,7 +338,6 @@ export const applyLegacyReleasedPlayers = ({
 			return {
 				season: releaseEvent?.season ?? leagueState.season,
 				phase: releaseEvent?.phase ?? leagueState.phase,
-				reason: "released",
 				tid: releasedPlayer.tid,
 			};
 		};
@@ -354,7 +346,7 @@ export const applyLegacyReleasedPlayers = ({
 		const contract = contracts.findLast(
 			(contract) =>
 				contract !== currentContract &&
-				contract.endedEarly?.reason !== "released" &&
+				contract.endedEarly?.tid === undefined &&
 				getContractExp(contract) === exp &&
 				contract.amounts[0] === amount,
 		);
@@ -517,7 +509,6 @@ export const convertLegacyContracts = ({
 			endedEarly = {
 				season: died ? p.diedYear! : p.retiredYear,
 				phase: died ? PHASE.REGULAR_SEASON : PHASE.DRAFT_LOTTERY,
-				reason: died ? "died" : "retired",
 			};
 		}
 

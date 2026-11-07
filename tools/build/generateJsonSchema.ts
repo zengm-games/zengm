@@ -456,22 +456,12 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							phase: {
 								type: "integer",
 							},
-							reason: {
-								enum: [
-									"retired",
-									"died",
-									"released",
-									"godMode",
-									"fantasyDraft",
-									"contraction",
-									"unknown",
-								],
-							},
+							// Team that released the player, which still owes the rest of the contract
 							tid: {
 								type: "integer",
 							},
 						},
-						required: ["season", "phase", "reason"],
+						required: ["season", "phase"],
 					},
 				},
 				required: ["start", "amounts"],

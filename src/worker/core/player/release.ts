@@ -37,10 +37,7 @@ const release = async (p: Player, justDrafted: boolean) => {
 		pids: [p.pid],
 		tids: [p.tid],
 	});
-	addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll(), {
-		reason: "released",
-		tid: p.tid,
-	});
+	addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll(), p.tid);
 	await idb.cache.players.put(p);
 };
 

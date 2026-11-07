@@ -1,6 +1,9 @@
 import { PLAYER } from "../../../common/constants.ts";
 import { getCurrentContract } from "../../../common/contracts.ts";
-import type { PlayerWithoutKey } from "../../../common/types.ts";
+import type {
+	ContractEndedEarly,
+	PlayerWithoutKey,
+} from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 import {
 	endContract,
@@ -8,16 +11,6 @@ import {
 	setContractDemandFromCurrentContract,
 	updateOwedByTids,
 } from "../contract/index.ts";
-
-// Why a player's contract ends when he becomes a free agent before it's fully paid. A released player's contract is still owed by the team that released him.
-export type ContractEndReason =
-	| {
-			reason: "released";
-			tid: number;
-	  }
-	| {
-			reason: "fantasyDraft" | "contraction" | "unknown";
-	  };
 
 /**
  * Adds player to the free agents list.
@@ -31,8 +24,10 @@ const addToFreeAgents = (
 	p: PlayerWithoutKey,
 	numPlayersTradedAwayNormalized: Record<number, number>,
 
-	// Why his contract ends, if it's not fully paid yet. null if he can't have a contract like that, like a player whose contract expired, or who is already a free agent.
-	contractEndReason: ContractEndReason | null,
+	// If his contract is not fully paid yet, it ends. This is the team that released him, which still owes the rest of it, or undefined if nobody owes it, like when his team is removed from the league. Console scripts from before this was a parameter also get undefined.
+	//
+	// null if he can't have a contract like that, like a player whose contract expired, or who is already a free agent.
+	releasedByTid: number | undefined | null,
 ) => {
 	const contract = getCurrentContract(p);
 
@@ -41,19 +36,20 @@ const addToFreeAgents = (
 
 	// His contract ends, so he has no current contract as a free agent
 	if (contract && !isContractFullyPaid(contract)) {
-		if (contractEndReason === null) {
+		if (releasedByTid === null) {
 			throw new Error(
 				`Contract for ${p.firstName} ${p.lastName} (pid ${p.pid}) is not fully paid, so it needs a reason to end`,
 			);
 		}
 
-		endContract(contract, {
+		const endedEarly: ContractEndedEarly = {
 			season: g.get("season"),
 			phase: g.get("phase"),
-
-			// Extra check is for console scripts from before contractEndReason was a required parameter
-			...(contractEndReason ?? { reason: "unknown" }),
-		});
+		};
+		if (releasedByTid !== undefined) {
+			endedEarly.tid = releasedByTid;
+		}
+		endContract(contract, endedEarly);
 		updateOwedByTids(p);
 	}
 

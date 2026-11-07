@@ -69,7 +69,6 @@ export const repairContracts = (
 			lastContract.endedEarly = {
 				season,
 				phase,
-				reason: "unknown",
 			};
 			fixes.push("player not on a team had an unfinished contract");
 		}

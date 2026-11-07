@@ -2723,9 +2723,7 @@ const getImportedContractHistory = (
 		// Event is in a different league
 		delete contract.eid;
 		// Not owed by any team in this league
-		if (contract.endedEarly?.reason === "released") {
-			delete contract.endedEarly.tid;
-		}
+		delete contract.endedEarly?.tid;
 		output.push(contract);
 	}
 
@@ -3407,9 +3405,7 @@ const removeLastTeam = async () => {
 	const numPlayersTradedAwayNormalized =
 		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
-		player.addToFreeAgents(p, numPlayersTradedAwayNormalized, {
-			reason: "contraction",
-		});
+		player.addToFreeAgents(p, numPlayersTradedAwayNormalized, undefined);
 	}
 	await idb.cache.players.putAll(players);
 
@@ -4891,18 +4887,17 @@ const applyCustomizedContract = (
 			: undefined;
 
 	// Retiring or moving to free agency ends the current contract, unless it was already fully paid. Nobody pays the rest of it.
-	const endPrevCurrentContract = (reason: "retired" | "godMode") => {
+	const endPrevCurrentContract = () => {
 		if (prevCurrentContract) {
 			endContract(prevCurrentContract, {
 				season: g.get("season"),
 				phase: g.get("phase"),
-				reason,
 			});
 		}
 	};
 
 	if (p.tid === PLAYER.RETIRED) {
-		endPrevCurrentContract("retired");
+		endPrevCurrentContract();
 		return;
 	}
 
@@ -4929,7 +4924,7 @@ const applyCustomizedContract = (
 		};
 
 		if (p.tid < 0) {
-			endPrevCurrentContract("godMode");
+			endPrevCurrentContract();
 		}
 		return;
 	}

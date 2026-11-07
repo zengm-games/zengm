@@ -188,11 +188,10 @@ const getSalaryRows = (p: Player) => {
 	const rows: SalaryRow[] = [];
 	for (const contract of p.contracts) {
 		const { endedEarly } = contract;
-		const released = endedEarly?.reason === "released";
 
-		// Team that will pay the rest of this contract, if any
+		// Team that will pay the rest of this contract, if any. For a contract that ended early, that's the team that released him, until it's fully paid.
 		let remainingTid: number | undefined;
-		if (released) {
+		if (endedEarly) {
 			remainingTid = endedEarly.tid;
 		} else if (contract === currentContract && p.tid >= 0) {
 			remainingTid = p.tid;
@@ -201,9 +200,14 @@ const getSalaryRows = (p: Player) => {
 		for (const [i, contractAmount] of contract.amounts.entries()) {
 			const rowSeason = contract.start + i;
 
-			// Only released contracts are paid after ending early, by the team that released him
-			if (endedEarly && !released && rowSeason > endedEarly.season) {
-				break;
+			// After a contract ends, its later seasons only matter if they were paid or are still owed, like for a released player
+			const endedBeforeSeason =
+				endedEarly !== undefined && rowSeason > endedEarly.season;
+			const hasPayments = contract.payments.some(
+				(payment) => payment.season === rowSeason,
+			);
+			if (endedBeforeSeason && !hasPayments && remainingTid === undefined) {
+				continue;
 			}
 
 			let type: PlayerSalaryRow["type"];
@@ -221,8 +225,10 @@ const getSalaryRows = (p: Player) => {
 				type = "future";
 			}
 
-			// After a player is released, only the team that released him pays this contract
-			const releasedSeason = released && rowSeason >= endedEarly.season;
+			// After a player is released, only the team that released him pays this contract. Payments after a contract ended can only be from that, and while it's still owed, so is the season he was released in. Once it's fully paid, that season isn't labeled, since then it's unknown if the contract ended because he was released.
+			const releasedSeason =
+				endedBeforeSeason ||
+				(endedEarly?.tid !== undefined && rowSeason >= endedEarly.season);
 
 			const payers: SalaryRow["payers"] = contract.payments
 				.filter((payment) => payment.season === rowSeason)

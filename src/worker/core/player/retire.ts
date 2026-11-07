@@ -22,11 +22,9 @@ const retire = async (
 	{
 		logRetiredEvent = true,
 		forceHofNotification = false,
-		died = false,
 	}: {
 		logRetiredEvent?: boolean;
 		forceHofNotification?: boolean;
-		died?: boolean;
 	} = {},
 ) => {
 	if (conditions && logRetiredEvent) {
@@ -75,7 +73,6 @@ const retire = async (
 	endContractEarly(p, {
 		season: g.get("season"),
 		phase: g.get("phase"),
-		reason: died ? "died" : "retired",
 	});
 	delete p.contractDemand;
 

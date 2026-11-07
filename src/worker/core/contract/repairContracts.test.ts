@@ -79,7 +79,10 @@ describe("repairContracts", () => {
 			contractDemand: { amount: 1000, exp: 2027 },
 		});
 		assert.strictEqual(repairContracts(p).length, 1);
-		assert.strictEqual(p.contracts[0]!.endedEarly?.reason, "unknown");
+		assert.deepStrictEqual(p.contracts[0]!.endedEarly, {
+			season: 2026,
+			phase: PHASE.REGULAR_SEASON,
+		});
 	});
 
 	test("free agent's expiring contract after the regular season is already paid", () => {
@@ -127,7 +130,6 @@ describe("repairContracts", () => {
 			endedEarly: {
 				season: 2026,
 				phase: PHASE.REGULAR_SEASON,
-				reason: "released",
 				tid: 5,
 			},
 		};

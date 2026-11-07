@@ -100,7 +100,7 @@ const processPlayerNewLeague = async ({
 
 	if (p2.tid >= 0 && !activeTids.includes(p2.tid)) {
 		// His team was removed from the league
-		player.addToFreeAgents(p2, {}, { reason: "contraction" });
+		player.addToFreeAgents(p2, {}, undefined);
 	}
 
 	if (noStartingInjuries && p.injury) {

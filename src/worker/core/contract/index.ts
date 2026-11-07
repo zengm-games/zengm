@@ -28,8 +28,7 @@ export const getPayrollAmount = (
 // A released player's contract is owed by the team that released him until it's fully paid. Unlike a team's own expiring contracts, which keep counting in payroll until the re-signing phase (see getPayrollSeason), an expiring released contract stops counting once the regular season is over, the same as releasing a player with an expiring contract after the regular season.
 export const isReleasedContractOwed = (contract: Contract) => {
 	return (
-		contract.endedEarly?.reason === "released" &&
-		contract.endedEarly.tid !== undefined &&
+		contract.endedEarly?.tid !== undefined &&
 		getContractExp(contract) >= getContractStartSeason()
 	);
 };
@@ -40,10 +39,7 @@ export const updateOwedByTids = (
 ) => {
 	const tids = new Set<number>();
 	for (const contract of p.contracts) {
-		if (
-			contract.endedEarly?.reason === "released" &&
-			contract.endedEarly.tid !== undefined
-		) {
+		if (contract.endedEarly?.tid !== undefined) {
 			tids.add(contract.endedEarly.tid);
 		}
 	}
@@ -64,8 +60,7 @@ export const getOwedContracts = async (tid: number) => {
 	)) {
 		for (const contract of p.contracts) {
 			if (
-				contract.endedEarly?.reason === "released" &&
-				contract.endedEarly.tid === tid &&
+				contract.endedEarly?.tid === tid &&
 				isReleasedContractOwed(contract)
 			) {
 				owed.push({ p, contract });
@@ -86,8 +81,7 @@ export const clearPaidReleasedContracts = async () => {
 		let changed = false;
 		for (const contract of p.contracts) {
 			if (
-				contract.endedEarly?.reason === "released" &&
-				contract.endedEarly.tid !== undefined &&
+				contract.endedEarly?.tid !== undefined &&
 				!isReleasedContractOwed(contract)
 			) {
 				delete contract.endedEarly.tid;

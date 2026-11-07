@@ -1152,28 +1152,14 @@ export type ContractPayment = {
 	amount: number;
 };
 
-export type ContractEndedEarly =
-	| {
-			season: number;
-			phase: Phase;
-			// godMode is for a player moved from a team to free agency in Customize Player. fantasyDraft is for a player who was on a team before a fantasy draft and wasn't drafted. contraction is for a player whose team was removed from the league. unknown is for a player moved to free agency some other way, like a script in the Danger Zone.
-			reason:
-				| "retired"
-				| "died"
-				| "godMode"
-				| "fantasyDraft"
-				| "contraction"
-				| "unknown";
-			tid?: undefined;
-	  }
-	| {
-			season: number;
-			phase: Phase;
-			reason: "released";
+// When a contract ended before it was fully paid, like when a player retires or is released. Why it ended is tracked elsewhere, like p.retiredYear or a "release" event.
+export type ContractEndedEarly = {
+	season: number;
+	phase: Phase;
 
-			// Team that released the player, which still owes the rest of the contract. Deleted once the contract is fully paid, so p.owedByTids only has teams that still owe something. After that, payments say which team paid.
-			tid?: number;
-	  };
+	// Team that released the player, which still owes the rest of the contract. Deleted once the contract is fully paid, so p.owedByTids only has teams that still owe something. After that, payments say which team paid.
+	tid?: number;
+};
 
 export type Contract = {
 	type: ContractType;

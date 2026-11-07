@@ -142,7 +142,6 @@ describe("convertLegacyContracts", () => {
 		assert.deepStrictEqual(contracts[0]!.endedEarly, {
 			season: 2019,
 			phase: PHASE.REGULAR_SEASON,
-			reason: "released",
 			tid: 7,
 		});
 	});
@@ -169,7 +168,7 @@ describe("convertLegacyContracts", () => {
 		assert.strictEqual(contracts.length, 2);
 
 		// Current contract is last, even though it starts after the released one
-		assert.strictEqual(contracts[0]!.endedEarly?.reason, "released");
+		assert.notStrictEqual(contracts[0]!.endedEarly?.tid, undefined);
 		assert.deepStrictEqual(contracts[0]!.amounts, [4000, 4000, 4000]);
 		assert.strictEqual(contracts[1]!.endedEarly, undefined);
 		assert.deepStrictEqual(contracts[1]!.amounts, [1000]);
@@ -215,7 +214,8 @@ describe("convertLegacyContracts", () => {
 
 		assert.strictEqual(contractDemand, undefined);
 		assert.strictEqual(contracts.length, 1);
-		assert.strictEqual(contracts[0]!.endedEarly?.reason, "retired");
+		assert(contracts[0]!.endedEarly);
+		assert.strictEqual(contracts[0]!.endedEarly.tid, undefined);
 		assert.deepStrictEqual(
 			contracts[0]!.payments.map((payment) => payment.season),
 			[2016, 2017],

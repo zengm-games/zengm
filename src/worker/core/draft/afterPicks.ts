@@ -58,9 +58,7 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					await getNumPlayersTradedAwayNormalizedAll();
 				for (const p of playersUndrafted) {
 					// Players who were on a team before the fantasy draft still have their contracts, which end now
-					player.addToFreeAgents(p, numPlayersTradedAwayNormalized, {
-						reason: "fantasyDraft",
-					});
+					player.addToFreeAgents(p, numPlayersTradedAwayNormalized, undefined);
 				}
 				await idb.cache.players.putAll(playersUndrafted);
 				await freeAgents.normalizeContractDemands({

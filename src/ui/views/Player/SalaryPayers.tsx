@@ -63,7 +63,7 @@ const SalaryPayers = ({
 			rootClose
 		>
 			<button
-				className="btn btn-link p-0 text-info"
+				className="btn btn-link p-0"
 				title="Paid by multiple teams"
 				type="button"
 			>

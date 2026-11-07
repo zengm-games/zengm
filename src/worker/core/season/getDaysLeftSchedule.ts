@@ -1,4 +1,8 @@
 import getSchedule from "./getSchedule.ts";
+import {
+	isAllStarGame,
+	isTradeDeadline,
+} from "../../../common/specialGames.ts";
 
 /**
  * Get the number of days left in the regular season schedule.
@@ -19,12 +23,12 @@ const getDaysLeftSchedule = async (
 			if (typeof target === "number") {
 				game = schedule.find((game) => game.gid === target);
 			} else if (target === "allStarGame") {
-				game = schedule.find(
-					(game) => game.awayTid === -2 && game.homeTid === -1,
+				game = schedule.find((game) =>
+					isAllStarGame(game.homeTid, game.awayTid),
 				);
 			} else if (target === "tradeDeadline") {
-				game = schedule.find(
-					(game) => game.awayTid === -3 && game.homeTid === -3,
+				game = schedule.find((game) =>
+					isTradeDeadline(game.homeTid, game.awayTid),
 				);
 			}
 

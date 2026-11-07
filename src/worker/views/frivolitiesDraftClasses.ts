@@ -4,9 +4,12 @@ import type { Player } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
-import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import {
+	CAREER_SUMMARY_STATS,
+	extraStats,
+	processPlayersHallOfFame,
+} from "../util/processPlayersHallOfFame.ts";
 import { defineView } from "../util/defineView.ts";
 import { player } from "../core/index.ts";
 
@@ -107,22 +110,7 @@ export default defineView({
 				}
 			}
 
-			const stats = bySport({
-				baseball: ["gp", "keyStats", "war"],
-				basketball: [
-					"gp",
-					"min",
-					"pts",
-					"trb",
-					"ast",
-					"per",
-					"ewa",
-					"ws",
-					"ws48",
-				],
-				football: ["gp", "keyStats", "av"],
-				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-			} as const);
+			const stats = CAREER_SUMMARY_STATS;
 
 			const bestPlayersAll = draftClasses.map(
 				(draftClass) => draftClass.bestPlayer.p,

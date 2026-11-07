@@ -6,7 +6,10 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { POSITIONS, RATINGS } from "../../common/constants.ts";
-import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
+import {
+	teamMovOrDiffStat,
+	wrappedTeamMovOrDiff,
+} from "../components/MovOrDiff.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
@@ -131,7 +134,7 @@ const PowerRankings = ({
 		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
 		"L10",
-		`stat:${__SPORT === "basketball" ? "mov" : "diff"}`,
+		`stat:${teamMovOrDiffStat}`,
 		"AvgAge",
 		...otherKeys.map((key) => `${otherKeysPrefix}:${key}`),
 	];
@@ -179,16 +182,7 @@ const PowerRankings = ({
 				...(otl ? [t.seasonAttrs.otl] : []),
 				...(ties ? [t.seasonAttrs.tied] : []),
 				t.seasonAttrs.lastTen,
-				wrappedMovOrDiff(
-					__SPORT === "basketball"
-						? {
-								pts: t.stats.pts * t.stats.gp,
-								oppPts: t.stats.oppPts * t.stats.gp,
-								gp: t.stats.gp,
-							}
-						: t.stats,
-					__SPORT === "basketball" ? "mov" : "diff",
-				),
+				wrappedTeamMovOrDiff(t.stats),
 				t.powerRankings.avgAge?.toFixed(1),
 				...otherKeys.map((key) => ({
 					value: (

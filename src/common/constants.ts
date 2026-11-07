@@ -1,4 +1,4 @@
-import type { SuperCol } from "../ui/components/DataTable/index.tsx";
+import type { SuperCol } from "./types.ts";
 import { bySport } from "./sportFunctions.ts";
 import * as constantsBaseball from "./constants.baseball.ts";
 import * as constantsBasketball from "./constants.basketball.ts";
@@ -214,6 +214,17 @@ export const DEFAULT_DIVS = bySport({
 	football: constantsFootball.DEFAULT_DIVS,
 	hockey: constantsHockey.DEFAULT_DIVS,
 });
+
+// Formulas that scale with the salary cap were tuned for these values, which were defaultGameAttributes.salaryCap at the time. They're frozen, because otherwise those formulas would need to be retuned whenever the default changes.
+export const SALARY_CAP_SCALE = bySport({
+	baseball: 175000,
+	basketball: 90000,
+	football: 200000,
+	hockey: 80000,
+});
+
+// Some older formulas use the basketball value for every sport
+export const SALARY_CAP_SCALE_LEGACY = 90000;
 
 export const DEFAULT_STADIUM_CAPACITY = bySport({
 	baseball: 50000,

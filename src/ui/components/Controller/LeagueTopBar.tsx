@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useLocal, localActions } from "../../util/local.ts";
 import { ScoreBox } from "../ScoreBox/index.tsx";
+import { isAllStarGame } from "../../../common/specialGames.ts";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 	// container-fluid is needed to make this account for scrollbar width when modal is open
@@ -102,8 +103,7 @@ export const LeagueTopBar = memo(() => {
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
 		games.length === 1 &&
-		games[0]!.teams[0].tid === -1 &&
-		games[0]!.teams[1].tid === -2;
+		isAllStarGame(games[0]!.teams[0].tid, games[0]!.teams[1].tid);
 
 	if (lid === undefined || games.length === 0 || onlyAllStarGame) {
 		return <div className="mt-2" />;

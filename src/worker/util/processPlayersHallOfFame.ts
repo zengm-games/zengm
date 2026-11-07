@@ -2,6 +2,22 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { maxBy } from "../../common/utils.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 
+// Stats to request along with any others, because processPlayersHallOfFame uses them (gpF for baseball)
+export const extraStats = bySport({
+	baseball: ["gpF"],
+	basketball: [],
+	football: [],
+	hockey: [],
+} as const);
+
+// Career summary stats shown in tables of players from different eras
+export const CAREER_SUMMARY_STATS = bySport({
+	baseball: ["gp", "keyStats", "war"],
+	basketball: ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"],
+	football: ["gp", "keyStats", "av"],
+	hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+} as const);
+
 // Would be better as part of player.formatAll
 export const processPlayersHallOfFame = <
 	T extends {

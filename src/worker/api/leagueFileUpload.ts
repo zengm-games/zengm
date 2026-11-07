@@ -10,16 +10,11 @@ import {
 	LEAGUE_DATABASE_VERSION,
 } from "../../common/constants.ts";
 import type { LeagueDBStoreNames } from "../db/connectLeague.ts";
+import {
+	CUMULATIVE_OBJECTS,
+	type CumulativeObjects,
+} from "../core/league/leagueFileObjects.ts";
 
-// These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
-const cumulativeObjects = [
-	"gameAttributes",
-	"meta",
-	"startingSeason",
-	"version",
-] as const;
-export const CUMULATIVE_OBJECTS = new Set<string>(cumulativeObjects);
-type CumulativeObjects = (typeof cumulativeObjects)[number];
 // releasedPlayers is only in old league files, from before p.contracts
 type LeagueFileKey = LeagueDBStoreNames | CumulativeObjects | "releasedPlayers";
 

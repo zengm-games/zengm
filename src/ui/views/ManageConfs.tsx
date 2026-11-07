@@ -25,6 +25,7 @@ import {
 	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
 } from "./ManageTeams/index.tsx";
 import { useBlocker } from "../hooks/useBlocker.ts";
+import { setTeamFormValue } from "./ManageTeams/teamFormValues.ts";
 
 const EditTeamModal = ({
 	t,
@@ -145,26 +146,9 @@ const EditTeamModal = ({
 							confs={confs}
 							divs={divs}
 							handleInputChange={(field, event) => {
-								if (field.startsWith("colors")) {
-									const ind = Number.parseInt(field.replace("colors", ""));
-									if (ind >= 0 && ind <= 2) {
-										const colors = [...controlledTeam.colors] as [
-											string,
-											string,
-											string,
-										];
-										colors[ind] = event.target.value;
-										setControlledTeam({
-											...controlledTeam,
-											colors,
-										});
-									}
-								} else {
-									setControlledTeam({
-										...controlledTeam,
-										[field]: event.target.value,
-									});
-								}
+								setControlledTeam(
+									setTeamFormValue(controlledTeam, field, event.target.value),
+								);
 							}}
 							disablePop={!godMode}
 							disableStatus={disableStatus}

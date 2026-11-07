@@ -4,7 +4,7 @@ import type { TradeTeams } from "../../common/types.ts";
 import isUntradable from "../core/trade/isUntradable.ts";
 import makeItWork from "../core/trade/makeItWork.ts";
 import summary from "../core/trade/summary.ts";
-import { augmentOffers } from "../api/index.ts";
+import { augmentOffers } from "./trade.ts";
 import { shuffle, uniformSeed, choice } from "../../common/random.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import { orderBy } from "../../common/utils.ts";

@@ -9,11 +9,11 @@ import type {
 import { defineView } from "../util/defineView.ts";
 import { PHASE, POSITIONS } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
-import { extraStats } from "./hallOfFame.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
+import { extraStats } from "../util/processPlayersHallOfFame.ts";
 
 const sortByPos = (p: {
 	bestPos: string;

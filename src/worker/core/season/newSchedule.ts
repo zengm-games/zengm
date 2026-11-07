@@ -3,6 +3,10 @@ import type { Conditions } from "../../../common/types.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import { getRealSchedule } from "./getRealSchedule.football.ts";
 import newScheduleGood from "./newScheduleGood.ts";
+import {
+	ALL_STAR_GAME_TIDS,
+	TRADE_DEADLINE_TIDS,
+} from "../../../common/specialGames.ts";
 
 const newSchedule = (
 	teams: {
@@ -27,14 +31,14 @@ const newSchedule = (
 	const tradeDeadline = g.get("tradeDeadline");
 	if (tradeDeadline < 1) {
 		const ind = Math.round(tradeDeadline * tids.length);
-		tids.splice(ind, 0, [-3, -3]);
+		tids.splice(ind, 0, [...TRADE_DEADLINE_TIDS]);
 	}
 
 	// Add an All-Star Game
 	const allStarGame = g.get("allStarGame");
 	if (allStarGame !== null && allStarGame >= 0) {
 		const ind = Math.round(allStarGame * tids.length);
-		tids.splice(ind, 0, [-1, -2]);
+		tids.splice(ind, 0, [...ALL_STAR_GAME_TIDS]);
 	}
 
 	if (warning !== undefined) {

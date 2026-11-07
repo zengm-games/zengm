@@ -2049,6 +2049,24 @@ export type SortType =
 	| "string"
 	| "pos";
 
+export type Col = {
+	classNames?: any; // Just header
+	desc?: string;
+	noSearch?: boolean;
+	sortSequence?: ReadonlyArray<SortOrder>;
+	sortType?: SortType;
+	searchType?: SortType;
+	title: string;
+	titleReact?: ReactNode;
+	width?: string;
+};
+
+export type SuperCol = {
+	colspan: number;
+	desc?: string;
+	title: ReactNode;
+};
+
 export type Team = {
 	tid: number;
 	cid: number;
@@ -2188,7 +2206,6 @@ import type {
 } from "./types.hockey.ts";
 import type { REAL_DRAFT_RATINGS, TIEBREAKERS } from "./constants.ts";
 import type { TitleBarDropdown } from "../ui/components/Dropdown.tsx";
-import type { SuperCol } from "../ui/components/DataTable/index.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
 import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";
 import type {

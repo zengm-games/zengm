@@ -22,6 +22,7 @@ export const gameAttributesSyncedToUi = [
 	"numGames",
 	"numPeriods",
 	"numWatchColors",
+	"otherTeamsWantToHire",
 	"phase",
 	"quarterLength",
 	"salaryCap",

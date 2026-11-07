@@ -90,7 +90,7 @@ import {
 import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula.ts";
-import type { Settings } from "../views/settings.ts";
+import type { NewLeagueSettings, Settings } from "../views/settings.ts";
 import {
 	getActualAttendance,
 	getAutoTicketPriceByTid,
@@ -117,7 +117,6 @@ import {
 	normalizeScheduledEventsAfterChange,
 	upsertScheduledEvent,
 } from "./scheduledEvents.ts";
-import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
 import {
@@ -135,14 +134,12 @@ import {
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { advancedPlayerSearch } from "./advancedPlayerSearch.ts";
 import * as exhibitionGame from "./exhibitionGame.ts";
-import { getSummary } from "../views/trade.ts";
 import { statTypes } from "../views/playerGraphs.ts";
 import {
 	getStats as teamGetStats,
 	statTypes as teamStatTypes,
 } from "../views/teamGraphs.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
-import isUntradable from "../core/trade/isUntradable.ts";
 import getWinner from "../../common/getWinner.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import { getStats } from "../../common/advancedPlayerSearch.ts";
@@ -161,7 +158,6 @@ import { getCols } from "../../common/getCols.ts";
 import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 import { getNumPlayoffTeamsRaw } from "../core/season/getNumPlayoffTeams.ts";
-import type { NewLeagueSettings } from "../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
@@ -202,6 +198,13 @@ import {
 import { registerGlobal } from "../../common/registerGlobal.ts";
 import { getTeamInfoCache } from "../core/team/getTeamInfoCache.ts";
 import { getMetaAttribute, putMetaAttribute } from "../db/metaAttributes.ts";
+import {
+	ALL_STAR_GAME_TIDS,
+	isAllStarGame,
+	isTradeDeadline,
+} from "../../common/specialGames.ts";
+import { augmentOffers } from "../views/trade.ts";
+import { setAutoSave } from "../core/league/setAutoSave.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -407,7 +410,7 @@ const allStarGameNow = async () => {
 
 	// Does ASG exist in schedule? If so, delete it.
 	schedule = schedule.filter(
-		(game) => game.awayTid !== -2 || game.homeTid !== -1,
+		(game) => !isAllStarGame(game.homeTid, game.awayTid),
 	);
 
 	// Add 1 to each day, so we can fit in ASG
@@ -417,8 +420,8 @@ const allStarGameNow = async () => {
 
 	// Add new ASG to front of schedule, and adjust days
 	schedule.unshift({
-		awayTid: -2,
-		homeTid: -1,
+		homeTid: ALL_STAR_GAME_TIDS[0],
+		awayTid: ALL_STAR_GAME_TIDS[1],
 		day: schedule[0] ? schedule[0].day - 1 : 0,
 	});
 
@@ -1529,7 +1532,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 					p.name,
 					p.ratings.pos,
 					p.draft.round > 0 && p.draft.pick > 0
-						? (p.draft.round - 1) * 30 + p.draft.pick
+						? (p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick
 						: "",
 					p.age,
 					p.salary,
@@ -2050,7 +2053,7 @@ const getNegotiationProps = async (pid: number) => {
 	};
 };
 
-const getNumPlayoffTeams = ({
+const getNumPlayoffTeams = async ({
 	confs,
 	numRounds,
 	numPlayoffByes,
@@ -2063,7 +2066,12 @@ const getNumPlayoffTeams = ({
 	playIn: boolean;
 	playoffsByConf: boolean;
 }) => {
-	const byConf = playoffsByConf ? confs.length : false;
+	// Season doesn't matter, since we provide overrides and skipPlayoffSeries
+	const byConf = await season.getPlayoffsByConf(Infinity, {
+		skipPlayoffSeries: true,
+		playoffsByConf,
+		confs,
+	});
 
 	const actualNumPlayoffByes = season.getNumPlayoffByes({
 		numPlayoffByes,
@@ -2392,102 +2400,6 @@ const getOffers = async (
 	}
 
 	return offers;
-};
-
-export const augmentOffers = async (offers: TradeTeams[]) => {
-	if (offers.length === 0) {
-		return [];
-	}
-
-	const teams = await team.getFormattedAll({
-		attrs: ["abbrev", "region", "name", "strategy", "tid"],
-		seasonAttrs: ["won", "lost", "tied", "otl"],
-		season: g.get("season"),
-		addDummySeason: true,
-	});
-	const teamsByTid = groupByUnique(teams, "tid");
-	const stats = bySport({
-		baseball: ["gp", "keyStats", "war"],
-		basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-		football: ["gp", "keyStats", "av"],
-		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-	} as const);
-
-	// Take the pids and dpids in each offer and get the info needed to display the offer
-	return Promise.all(
-		offers.map(async (offerRaw) => {
-			const tid = offerRaw[1].tid;
-			const t = teamsByTid[tid];
-			if (!t) {
-				throw new Error("No team found");
-			}
-
-			const formatPicks = async (tid: number, dpids: number[]) => {
-				let picks = await idb.merged.draftPicks.getAll({ tid });
-				picks = picks.filter((dp) => dpids.includes(dp.dpid));
-
-				return await Promise.all(
-					picks.map(async (dp) => {
-						return {
-							...dp,
-							desc: await helpers.pickDesc(dp, "short"),
-						};
-					}),
-				);
-			};
-
-			const formatPlayers = async (tid: number, pids: number[]) => {
-				let playersAll = await idb.cache.players.indexGetAll(
-					"playersByTid",
-					tid,
-				);
-				playersAll = playersAll.filter(
-					(p) => pids.includes(p.pid) && !isUntradable(p).untradable,
-				);
-				return addFirstNameShort(
-					await player.formatAll(playersAll, {
-						attrs: [
-							"pid",
-							"firstName",
-							"lastName",
-							"age",
-							"contract",
-							"injury",
-							"jerseyNumber",
-							"draft",
-						],
-						ratings: ["ovr", "pot", "skills", "pos"],
-						stats,
-						season: g.get("season"),
-						tid,
-						showNoStats: true,
-						showRookies: true,
-						fuzz: true,
-					}),
-				);
-			};
-
-			const payroll = await team.getPayroll(tid);
-			return {
-				tid,
-				strategy: t.strategy,
-				won: t.seasonAttrs.won,
-				lost: t.seasonAttrs.lost,
-				tied: t.seasonAttrs.tied,
-				otl: t.seasonAttrs.otl,
-				pids: offerRaw[1].pids,
-				dpids: offerRaw[1].dpids,
-				pidsUser: offerRaw[0].pids,
-				dpidsUser: offerRaw[0].dpids,
-				payroll,
-				picks: await formatPicks(tid, offerRaw[1].dpids),
-				players: await formatPlayers(tid, offerRaw[1].pids),
-				picksUser: await formatPicks(g.get("userTid"), offerRaw[0].dpids),
-				playersUser: await formatPlayers(g.get("userTid"), offerRaw[0].pids),
-				summary: await getSummary(offerRaw),
-			};
-		}),
-	);
 };
 
 const toConciseLookingFor = (lookingForState: LookingForState) => {
@@ -3995,25 +3907,6 @@ const setGOATFormula = async ({
 	}
 };
 
-const setLocal = async <T extends keyof Local>([key, value]: [T, Local[T]]) => {
-	if (key === "autoSave" && value === false) {
-		await idb.cache.flush();
-	}
-
-	// @ts-expect-error
-	local[key] = value;
-
-	if (key === "autoSave" && value === true) {
-		await idb.cache.flush();
-		await idb.cache.fill();
-
-		await league.updateMeta({
-			phaseText: `${g.get("season")} ${PHASE_TEXT[g.get("phase")]}`,
-			difficulty: g.get("difficulty"),
-		});
-	}
-};
-
 const setNote = async (info: NoteInfo & { editedNote: string }) => {
 	let cacheStore;
 	let object;
@@ -5464,8 +5357,8 @@ const toggleTradeDeadline = async () => {
 
 		// Delete scheduled trade deadline
 		const schedule = await season.getSchedule();
-		const tradeDeadline = schedule.find(
-			(game) => game.homeTid === -3 && game.awayTid === -3,
+		const tradeDeadline = schedule.find((game) =>
+			isTradeDeadline(game.homeTid, game.awayTid),
 		);
 		if (tradeDeadline) {
 			await idb.cache.schedule.delete(tradeDeadline.gid);
@@ -5729,7 +5622,7 @@ const api = {
 		setForceWin,
 		setForceWinAll,
 		setGOATFormula,
-		setLocal,
+		setAutoSave,
 		setNote,
 		setSavedTrade,
 		setScheduleFromEditor,

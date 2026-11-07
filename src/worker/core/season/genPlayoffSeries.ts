@@ -11,30 +11,17 @@ import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 import validatePlayoffSettings from "./validatePlayoffSettings.ts";
 import { range } from "../../../common/utils.ts";
 import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
-import { orderTeams } from "../../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	orderTeams,
+} from "../../util/orderTeams.ts";
 import { team } from "../index.ts";
 
 type MyTeam = TeamFiltered<
 	["tid"],
-	[
-		"cid",
-		"did",
-		"won",
-		"lost",
-		"tied",
-		"otl",
-		"winp",
-		"pts",
-		"wonDiv",
-		"lostDiv",
-		"tiedDiv",
-		"otlDiv",
-		"wonConf",
-		"lostConf",
-		"tiedConf",
-		"otlConf",
-	],
-	["pts", "oppPts", "gp"],
+	typeof ORDER_TEAMS_SEASON_ATTRS,
+	typeof ORDER_TEAMS_STATS,
 	number
 >;
 
@@ -350,25 +337,8 @@ export const genPlayoffSeriesFromTeams = async (
 const genPlayoffSeries = async () => {
 	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
-		seasonAttrs: [
-			"cid",
-			"did",
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"winp",
-			"pts",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-		],
-		stats: ["pts", "oppPts", "gp"],
+		seasonAttrs: ORDER_TEAMS_SEASON_ATTRS,
+		stats: ORDER_TEAMS_STATS,
 		season: g.get("season"),
 		showNoStats: true,
 	});

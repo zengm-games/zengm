@@ -5,6 +5,7 @@ import { getCols } from "../../common/getCols.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
 import { useBoxScoreSortBys } from "./useBoxScoreSortBys.ts";
 import { teamsInDisplayOrder } from "../util/boxScoreDisplayOrder.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
 
 const StatsTable = ({
 	Row,
@@ -101,7 +102,7 @@ const StatsTable = ({
 		);
 	}
 
-	const allStarGame = t.tid === -1 || t.tid === -2;
+	const allStarGame = isAllStarTid(t.tid);
 	const players = [...playersActiveOrPlayed, ...playersInjuredOrDNP];
 
 	return (

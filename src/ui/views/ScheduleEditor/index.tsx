@@ -27,6 +27,10 @@ import { csvFormatRows, csvParse } from "d3-dsv";
 import { downloadFile } from "../../util/downloadFile.ts";
 import { resetFileInput } from "../../util/resetFileInput.ts";
 import { IMPORT_FILE_STYLE } from "../../components/ImportFileButton.tsx";
+import {
+	ALL_STAR_GAME_TIDS,
+	TRADE_DEADLINE_TIDS,
+} from "../../../common/specialGames.ts";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 
@@ -198,8 +202,18 @@ const validateAndParseScheduleCSV = (
 			}
 			specials.push(
 				firstCell === ALL_STAR_GAME_LABEL
-					? { type: "allStarGame", day, homeTid: -1, awayTid: -2 }
-					: { type: "tradeDeadline", day, homeTid: -3, awayTid: -3 },
+					? {
+							type: "allStarGame",
+							day,
+							homeTid: ALL_STAR_GAME_TIDS[0],
+							awayTid: ALL_STAR_GAME_TIDS[1],
+						}
+					: {
+							type: "tradeDeadline",
+							day,
+							homeTid: TRADE_DEADLINE_TIDS[0],
+							awayTid: TRADE_DEADLINE_TIDS[1],
+						},
 			);
 			continue;
 		}
@@ -521,14 +535,14 @@ const reducer = (
 					? {
 							type: "allStarGame",
 							day: 0,
-							homeTid: -1,
-							awayTid: -2,
+							homeTid: ALL_STAR_GAME_TIDS[0],
+							awayTid: ALL_STAR_GAME_TIDS[1],
 						}
 					: {
 							type: "tradeDeadline",
 							day: 0,
-							homeTid: -3,
-							awayTid: -3,
+							homeTid: TRADE_DEADLINE_TIDS[0],
+							awayTid: TRADE_DEADLINE_TIDS[1],
 						};
 
 			let newNewSchedule;

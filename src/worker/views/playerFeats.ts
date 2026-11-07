@@ -8,6 +8,7 @@ import { getWatchPids } from "./news.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
+import { isAllStarTid } from "../../common/specialGames.ts";
 
 const processInputs = (params: RouteParams<"playerFeats">) => {
 	let season: number | "all";
@@ -84,7 +85,7 @@ export default defineView({
 				let type: "regularSeason" | "playoffs" | "allStar";
 				if (feat.playoffs) {
 					type = "playoffs";
-				} else if (feat.tid === -1 || feat.tid === -2) {
+				} else if (isAllStarTid(feat.tid)) {
 					type = "allStar";
 				} else {
 					type = "regularSeason";

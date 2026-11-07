@@ -27,7 +27,11 @@ import { randInt, shuffle, truncGauss } from "../../../common/random.ts";
 import { genMessage } from "./genMessage.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import { env } from "../../util/env.ts";
-import { orderTeams } from "../../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	orderTeams,
+} from "../../util/orderTeams.ts";
 import { doAwards } from "../awards/doAwards.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
@@ -125,25 +129,8 @@ const doInflation = async (conditions: Conditions) => {
 const setChampNoPlayoffs = async (conditions: Conditions) => {
 	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
-		seasonAttrs: [
-			"cid",
-			"did",
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"winp",
-			"pts",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-		],
-		stats: ["pts", "oppPts", "gp"],
+		seasonAttrs: ORDER_TEAMS_SEASON_ATTRS,
+		stats: ORDER_TEAMS_STATS,
 		season: g.get("season"),
 		showNoStats: true,
 	});

@@ -7,7 +7,7 @@ import { helpers } from "../util/helpers.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { ByConf, TeamSeason, View } from "../../common/types.ts";
 import { TIEBREAKERS } from "../../common/constants.ts";
-import { MovOrDiff } from "../components/MovOrDiff.tsx";
+import { TeamMovOrDiff } from "../components/MovOrDiff.tsx";
 import { ResponsiveTableWrapper } from "../components/ResponsiveTableWrapper.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -157,18 +157,7 @@ const GroupStandingsRow = ({
 			<td>{helpers.roundStat(t.stats.pts, "pts")}</td>
 			<td>{helpers.roundStat(t.stats.oppPts, "oppPts")}</td>
 			<td>
-				<MovOrDiff
-					stats={
-						__SPORT === "basketball"
-							? {
-									pts: t.stats.pts * t.stats.gp,
-									oppPts: t.stats.oppPts * t.stats.gp,
-									gp: t.stats.gp,
-								}
-							: t.stats
-					}
-					type={__SPORT === "basketball" ? "mov" : "diff"}
-				/>
+				<TeamMovOrDiff stats={t.stats} />
 			</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>

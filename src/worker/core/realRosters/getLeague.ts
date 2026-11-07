@@ -697,10 +697,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 			// Mark players as retired - don't delete, so we have full season stats and awards.
 			// This is done down here because it needs to be after the playoffSeries stuff adds the "Won Championship" award.
-			// Skip 2021 because we don't have 2021 data yet!
+			// Skip MAX_SEASON because we don't have next season's data yet!
 			if (
 				options.phase > PHASE.PLAYOFFS &&
-				options.season < 2021 &&
+				options.season < REAL_PLAYERS_INFO!.MAX_SEASON &&
 				!options.randomDebuts
 			) {
 				const nextSeasonSlugs = new Set<string>();

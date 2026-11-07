@@ -35,7 +35,7 @@ import type {
 	TeamStatsWithoutKey,
 } from "../../../common/types.ts";
 import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types.ts";
-import { CUMULATIVE_OBJECTS } from "../../api/leagueFileUpload.ts";
+import { CUMULATIVE_OBJECTS } from "./leagueFileObjects.ts";
 import { Cache, connectLeague, idb } from "../../db/index.ts";
 import {
 	helpers,
@@ -47,7 +47,7 @@ import {
 	updateStatus,
 } from "../../util/index.ts";
 import g, { wrapNewValueIfCurrentlyWrapped } from "../../util/g.ts";
-import type { Settings } from "../../views/settings.ts";
+import type { NewLeagueSettings, Settings } from "../../views/settings.ts";
 import { getAutoTicketPriceByTid } from "../game/attendance.ts";
 import addRelatives from "../realRosters/addRelatives.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
@@ -77,7 +77,6 @@ import {
 	upgradeGamesVersion65,
 	type LeagueDBStoreNames,
 } from "../../db/connectLeague.ts";
-import type { NewLeagueSettings } from "../../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { last } from "../../../common/utils.ts";

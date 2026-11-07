@@ -2295,24 +2295,8 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		// Delete stuff that isn't needed before returning
+		this.deleteGameSimOnlyProperties(this.team.map((t) => t.t));
 		for (const t of teamNums) {
-			delete this.team[t].t.compositeRating;
-			// @ts-expect-error
-			delete this.team[t].t.pace;
-
-			for (const p of this.team[t].t.player) {
-				// @ts-expect-error
-				delete p.age;
-				// @ts-expect-error
-				delete p.valueNoPot;
-				delete p.compositeRating;
-				// @ts-expect-error
-				delete p.ptModifier;
-				// @ts-expect-error
-				delete p.pFatigue;
-			}
-
 			this.team[t] = this.team[t].t as any;
 		}
 
@@ -2322,7 +2306,7 @@ class GameSim extends GameSimBase {
 			overtimes: this.overtimes,
 			team: this.team as unknown as [TeamGameSim, TeamGameSim],
 			clutchPlays: [],
-			playByPlay: this.playByPlay.getPlayByPlay(this.team),
+			playByPlay: this.playByPlay.getPlayByPlay(),
 			neutralSite: this.neutralSite,
 			scoringSummary: this.playByPlay.scoringSummary,
 		};
@@ -2391,44 +2375,26 @@ class GameSim extends GameSimBase {
 			return choice(this.team[t].depth.pitchers);
 		}) as [PlayerGameSim, PlayerGameSim];
 
-		const reversedTeamNums = [1, 0] as const;
-
-		for (const t of reversedTeamNums) {
-			const hitter = hitters[t];
-			const pitcher = pitchers[t];
-
-			this.playByPlay.logEvent({
-				type: "shootoutTeam",
-				t,
-				pid: hitter.id,
-				pitcherPid: pitcher.id,
-			});
-
-			for (let i = 0; i < this.shootoutRounds; i++) {
-				if (
-					this.shouldEndShootoutEarly(t, i, [
-						this.team[0].t.stat.sPts,
-						this.team[1].t.stat.sPts,
-					])
-				) {
-					break;
-				}
-
-				this.doShootoutShot(t, hitter, pitcher);
-			}
-		}
-
-		if (this.team[0].t.stat.sPts === this.team[1].t.stat.sPts) {
-			this.playByPlay.logEvent({
-				type: "shootoutTie",
-			});
-
-			while (this.team[0].t.stat.sPts === this.team[1].t.stat.sPts) {
-				for (const t of reversedTeamNums) {
-					this.doShootoutShot(t, hitters[t], pitchers[t]);
-				}
-			}
-		}
+		this.runShootoutShots({
+			format: "teamByTeam",
+			getSPts: () => [this.team[0].t.stat.sPts, this.team[1].t.stat.sPts],
+			onTeamStart: (t) => {
+				this.playByPlay.logEvent({
+					type: "shootoutTeam",
+					t,
+					pid: hitters[t].id,
+					pitcherPid: pitchers[t].id,
+				});
+			},
+			onTie: () => {
+				this.playByPlay.logEvent({
+					type: "shootoutTie",
+				});
+			},
+			shoot: (t) => {
+				this.doShootoutShot(t, hitters[t], pitchers[t]);
+			},
+		});
 	}
 
 	shouldIntentionalWalk() {
@@ -2784,7 +2750,6 @@ class GameSim extends GameSimBase {
 							// Tie
 							return true;
 						} else {
-							this.overtime = true;
 							this.overtimes += 1;
 						}
 					}

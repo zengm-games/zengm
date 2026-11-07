@@ -39,6 +39,7 @@ import {
 	getCurrentContract,
 	getNearestContractAmount,
 } from "../../../common/contracts.ts";
+import { userControlsTeam } from "../../util/userControlsTeam.ts";
 
 // When a player changes teams or leaves his team at the start of a new season without a normal signing or release (repeat season, forced historical rosters), his contract just ends before this season
 const endContractBeforeNewSeason = (
@@ -310,11 +311,7 @@ const newPhasePreseason = async (
 	for (const [t, popRank] of Iterator.zip([activeTeams, popRanks], {
 		mode: "strict",
 	})) {
-		if (
-			!g.get("userTids").includes(t.tid) ||
-			local.autoPlayUntil ||
-			g.get("spectator")
-		) {
+		if (!userControlsTeam(t.tid)) {
 			await team.resetTicketPrice(t, popRank);
 
 			// Sometimes update budget items for AI teams

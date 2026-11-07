@@ -5,9 +5,8 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import { groupByUnique } from "../../common/utils.ts";
-import { addMood } from "./freeAgents.ts";
+import { addMood, FREE_AGENT_STATS } from "./freeAgents.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { getSeasonState, validateSeason } from "../util/processInputs.ts";
 import { getFirstUpcomingFreeAgentsSeason } from "../../common/seasons.ts";
@@ -24,12 +23,7 @@ export default defineView({
 	id: "upcomingFreeAgents",
 	processInputs,
 	load: async ({ inputs }) => {
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: ["min", "pts", "trb", "ast", "per"],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		} as const);
+		const stats = FREE_AGENT_STATS;
 
 		const showActualFreeAgents =
 			g.get("phase") === PHASE.RESIGN_PLAYERS &&

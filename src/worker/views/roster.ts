@@ -8,7 +8,11 @@ import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { orderTeams } from "../util/orderTeams.ts";
+import {
+	ORDER_TEAMS_SEASON_ATTRS,
+	ORDER_TEAMS_STATS,
+	orderTeams,
+} from "../util/orderTeams.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 import { validateTeam } from "../util/processInputs.ts";
 import { validateSeason } from "../util/processInputs.ts";
@@ -61,25 +65,8 @@ const sortByPos = (p: {
 const getStandingsInfo = async (info: { season: number; tid: number }) => {
 	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
-		seasonAttrs: [
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-			"winp",
-			"pts",
-			"cid",
-			"did",
-		],
-		stats: ["pts", "oppPts", "gp"],
+		seasonAttrs: ORDER_TEAMS_SEASON_ATTRS,
+		stats: ORDER_TEAMS_STATS,
 		season: info.season,
 		showNoStats: true,
 	});

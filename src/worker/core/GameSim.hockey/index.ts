@@ -15,7 +15,7 @@ import type {
 import getCompositeFactor from "./getCompositeFactor.ts";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties.ts";
 import PenaltyBox from "./PenaltyBox.ts";
-import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
+import getInjuryRate from "../GameSim/getInjuryRate.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
 import { maxBy, orderBy, range } from "../../../common/utils.ts";
 import { getStartingAndBackupGoalies } from "./getStartingAndBackupGoalies.ts";
@@ -430,13 +430,11 @@ class GameSim extends GameSimBase {
 		// Simulate the game up to the end of regulation
 		this.simRegulation();
 
-		let numOvertimes = 0;
 		while (
 			this.team[0].stat.pts === this.team[1].stat.pts &&
-			numOvertimes < this.maxOvertimes
+			this.overtimes < this.maxOvertimes
 		) {
 			this.simOvertime();
-			numOvertimes += 1;
 		}
 
 		this.doShootout();
@@ -446,26 +444,7 @@ class GameSim extends GameSimBase {
 			clock: this.clock,
 		});
 
-		// Delete stuff that isn't needed before returning
-		for (const t of teamNums) {
-			delete this.team[t].compositeRating;
-			// @ts-expect-error
-			delete this.team[t].pace;
-
-			for (const p of this.team[t].player) {
-				// @ts-expect-error
-				delete p.age;
-				// @ts-expect-error
-				delete p.valueNoPot;
-				delete p.compositeRating;
-				// @ts-expect-error
-				delete p.ptModifier;
-				delete p.stat.benchTime;
-				delete p.stat.courtTime;
-				delete p.stat.energy;
-				delete p.numConsecutiveGamesG;
-			}
-		}
+		this.deleteGameSimOnlyProperties(this.team);
 
 		const out = {
 			gid: this.id,
@@ -473,7 +452,7 @@ class GameSim extends GameSimBase {
 			overtimes: this.overtimes,
 			team: this.team,
 			clutchPlays: [],
-			playByPlay: this.playByPlay.getPlayByPlay(this.team),
+			playByPlay: this.playByPlay.getPlayByPlay(),
 			neutralSite: this.neutralSite,
 			scoringSummary: this.playByPlay.scoringSummary,
 		};
@@ -529,8 +508,6 @@ class GameSim extends GameSimBase {
 		this.team[1].stat.sPts = 0;
 		this.team[1].stat.sAtt = 0;
 
-		const reversedTeamNums = [1, 0] as const;
-
 		this.playByPlay.logEvent({
 			type: "shootoutStart",
 			rounds: this.shootoutRounds,
@@ -559,35 +536,19 @@ class GameSim extends GameSimBase {
 			return skater;
 		};
 
-		SHOOTOUT_ROUNDS: for (let i = 0; i < this.shootoutRounds; i++) {
-			for (const t of reversedTeamNums) {
-				const p = getNextSkater(t);
-				this.doShootoutShot(t, p, goalies[t]);
-
-				if (
-					this.shouldEndShootoutEarly(t, i, [
-						this.team[0].stat.sPts,
-						this.team[1].stat.sPts,
-					])
-				) {
-					break SHOOTOUT_ROUNDS;
-				}
-			}
-		}
-
-		if (this.team[0].stat.sPts === this.team[1].stat.sPts) {
-			this.playByPlay.logEvent({
-				type: "shootoutTie",
-				clock: this.clock,
-			});
-
-			while (this.team[0].stat.sPts === this.team[1].stat.sPts) {
-				for (const t of reversedTeamNums) {
-					const p = getNextSkater(t);
-					this.doShootoutShot(t, p, goalies[t]);
-				}
-			}
-		}
+		this.runShootoutShots({
+			format: "alternating",
+			getSPts: () => [this.team[0].stat.sPts, this.team[1].stat.sPts],
+			onTie: () => {
+				this.playByPlay.logEvent({
+					type: "shootoutTie",
+					clock: this.clock,
+				});
+			},
+			shoot: (t) => {
+				this.doShootoutShot(t, getNextSkater(t), goalies[t]);
+			},
+		});
 	}
 
 	simRegulation() {
@@ -636,7 +597,6 @@ class GameSim extends GameSimBase {
 		this.minutesSinceLineChange[1].F = 0;
 		this.minutesSinceLineChange[1].D = 0;
 
-		this.overtime = true;
 		this.overtimes += 1;
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
@@ -1281,7 +1241,7 @@ class GameSim extends GameSimBase {
 		}
 
 		if (outcome === "goal") {
-			if (this.overtime) {
+			if (this.overtimes > 0) {
 				// Sudden death overtime
 				return;
 			}

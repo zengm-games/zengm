@@ -10,6 +10,10 @@ import getWinner from "../../../common/getWinner.ts";
 import { getCol } from "../../../common/getCol.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import {
+	isAllStarGame,
+	isTradeDeadline,
+} from "../../../common/specialGames.ts";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -205,8 +209,8 @@ export const ScoreBox = memo(
 
 		const gameSeason = game.season ?? season;
 
-		const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
-		const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;
+		const allStarGame = isAllStarGame(game.teams[0].tid, game.teams[1].tid);
+		const tradeDeadline = isTradeDeadline(game.teams[0].tid, game.teams[1].tid);
 
 		if (actions.length === 0 && final && !small) {
 			actions = [

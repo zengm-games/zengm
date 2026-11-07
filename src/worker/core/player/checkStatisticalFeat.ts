@@ -13,6 +13,7 @@ import type {
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { isAllStarGame } from "../../../common/specialGames.ts";
 
 const checkPlayer = bySport({
 	baseball: checkStatisticalFeatBaseball,
@@ -34,10 +35,12 @@ const checkStatisticalFeat = (
 		return;
 	}
 
+	const allStarGame = isAllStarGame(results.team[0].id, results.team[1].id);
+
 	const logFeat = async (text: string, score: number) => {
 		let allStars;
 
-		if (tid < 0 && results.team[0].id === -1 && results.team[1].id === -2) {
+		if (allStarGame) {
 			allStars = await idb.cache.allStars.get(g.get("season"));
 		}
 
@@ -70,7 +73,6 @@ const checkStatisticalFeat = (
 		results.team[0].id === tid ? ([0, 1] as const) : ([1, 0] as const);
 
 	const { score, feats } = checkPlayer(p, results.team[i].stat);
-	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 
 	const winner = getWinner([results.team[0].stat, results.team[1].stat]);
 	if (feats) {

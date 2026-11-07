@@ -3,9 +3,10 @@ import { player, team } from "../index.ts";
 import getBest from "./getBest.ts";
 import { getContractDemand } from "../contract/index.ts";
 import { idb } from "../../db/index.ts";
-import { g, local } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { shuffle } from "../../../common/random.ts";
+import { userControlsTeam } from "../../util/userControlsTeam.ts";
 
 /**
  * AI teams sign free agents.
@@ -34,11 +35,7 @@ const autoSign = async () => {
 
 	for (const t of teams) {
 		// Skip the user's team
-		if (
-			g.get("userTids").includes(t.tid) &&
-			!local.autoPlayUntil &&
-			!g.get("spectator")
-		) {
+		if (userControlsTeam(t.tid)) {
 			continue;
 		}
 

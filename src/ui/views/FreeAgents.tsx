@@ -28,6 +28,7 @@ import {
 	NegotiationModal,
 	useNegotiaionModal,
 } from "../components/NegotiationModal.tsx";
+import { canSignFreeAgentsInPhase } from "../../common/transactionPhases.ts";
 
 const useSeasonsFreeAgents = () => {
 	const { phase, season, startingSeason } = useLocal([
@@ -50,7 +51,7 @@ const useSeasonsFreeAgents = () => {
 		if (freeAgencySeason >= -10 && freeAgencySeason < 10) {
 			label = `${freeAgencySeason}-${freeAgencySeason + 1}`;
 		} else {
-			label = `${freeAgencySeason}-${String((freeAgencySeason + 1) % 100).padStart(2)}`;
+			label = `${freeAgencySeason}-${String((freeAgencySeason + 1) % 100).padStart(2, "0")}`;
 		}
 
 		return {
@@ -157,12 +158,7 @@ const FreeAgents = ({
 
 	const negotiationModal = useNegotiaionModal();
 
-	if (
-		((phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
-			phase === PHASE.FANTASY_DRAFT ||
-			phase === PHASE.EXPANSION_DRAFT) &&
-		season === "current"
-	) {
+	if (!canSignFreeAgentsInPhase(phase) && season === "current") {
 		return (
 			<div>
 				<MoreLinks type="freeAgents" page="free_agents" />

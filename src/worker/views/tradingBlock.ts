@@ -1,9 +1,8 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { defineView } from "../util/defineView.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { augmentOffers } from "../api/index.ts";
+import { augmentOffers, TRADE_STATS } from "./trade.ts";
 import { addMissingAssets } from "./savedTrades.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
@@ -26,12 +25,6 @@ export default defineView({
 			updateEvents.has("gameSim") ||
 			updateEvents.has("newPhase")
 		) {
-			const stats = bySport({
-				baseball: ["gp", "keyStats", "war"],
-				basketball: ["gp", "min", "pts", "trb", "ast", "per"],
-				football: ["gp", "keyStats", "av"],
-				hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-			} as const);
 			const userRosterAll = await idb.cache.players.indexGetAll(
 				"playersByTid",
 				g.get("userTid"),
@@ -51,7 +44,7 @@ export default defineView({
 						"draft",
 					],
 					ratings: ["ovr", "pot", "skills", "pos"],
-					stats,
+					stats: TRADE_STATS,
 					season: g.get("season"),
 					tid: g.get("userTid"),
 					showNoStats: true,
@@ -144,7 +137,7 @@ export default defineView({
 				initialPids: inputs.pids,
 				initialDpids: inputs.dpids,
 				savedTradingBlock,
-				stats,
+				stats: TRADE_STATS,
 				userPicks: userPicks2,
 				userRoster,
 			};

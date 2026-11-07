@@ -3,6 +3,7 @@ import { g, helpers, local, updatePlayMenu } from "../../util/index.ts";
 import autoProtect from "./autoProtect.ts";
 import { league, draft } from "../index.ts";
 import { PHASE } from "../../../common/constants.ts";
+import { userControlsTeam } from "../../util/userControlsTeam.ts";
 
 const start = async () => {
 	const expansionDraft = helpers.deepCopy(g.get("expansionDraft"));
@@ -16,14 +17,12 @@ const start = async () => {
 
 	local.fantasyDraftResults = [];
 
-	const userTids = g.get("userTids");
-
 	const protectedPids: number[] = [];
 	for (const [tidString, pids] of Object.entries(
 		expansionDraft.protectedPids,
 	)) {
 		const tid = Number.parseInt(tidString);
-		if (userTids.includes(tid) && !local.autoPlayUntil && !g.get("spectator")) {
+		if (userControlsTeam(tid)) {
 			protectedPids.push(...pids);
 		} else {
 			const autoPids = await autoProtect(tid);

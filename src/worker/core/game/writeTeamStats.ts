@@ -1,5 +1,9 @@
 import { payContracts } from "../contract/index.ts";
-import { PHASE } from "../../../common/constants.ts";
+import {
+	PHASE,
+	SALARY_CAP_SCALE,
+	SALARY_CAP_SCALE_LEGACY,
+} from "../../../common/constants.ts";
 import { player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -13,9 +17,10 @@ import { levelToAmount } from "../../../common/budgetLevels.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { isAllStarGame } from "../../../common/specialGames.ts";
 
 const writeTeamStats = async (results: GameResults) => {
-	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
+	const allStarGame = isAllStarGame(results.team[0].id, results.team[1].id);
 
 	if (allStarGame) {
 		return g.get("defaultStadiumCapacity");
@@ -108,21 +113,13 @@ const writeTeamStats = async (results: GameResults) => {
 			facilitiesPaid =
 				levelToAmount(t.budget.facilities, salaryCap) / g.get("numGames");
 
-			const salaryCapFactor =
-				salaryCap /
-				bySport({
-					// defaultGameAttributes.salaryCap, but frozen in time because otherwise various coefficients below would need to be updated when it changes
-					baseball: 175000,
-					basketball: 90000,
-					football: 200000,
-					hockey: 80000,
-				});
+			const salaryCapFactor = salaryCap / SALARY_CAP_SCALE;
 
 			// Only different for hockey
 			let salaryCapFactor2;
 			if (__SPORT === "hockey") {
 				// Legacy, should probably adjust other params
-				salaryCapFactor2 = salaryCap / 90000;
+				salaryCapFactor2 = salaryCap / SALARY_CAP_SCALE_LEGACY;
 			} else {
 				salaryCapFactor2 = salaryCapFactor;
 			}

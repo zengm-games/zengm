@@ -3,7 +3,7 @@ import {
 	PLAYER_STATS_TABLES,
 	RATINGS,
 } from "./constants.ts";
-import type { Col } from "../ui/components/DataTable/index.tsx";
+import type { Col } from "./types.ts";
 import type { AdvancedPlayerSearchPlayer } from "../worker/api/advancedPlayerSearch.ts";
 import { getNumericStat } from "./statValue.ts";
 

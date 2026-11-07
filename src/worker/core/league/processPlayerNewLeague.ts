@@ -6,7 +6,6 @@ import type {
 } from "../../../common/types.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { PreProcessParams } from "./createStream.ts";
-import { getImportedCurrentContract } from "../../../common/contracts.ts";
 
 export const applyRealPlayerPhotos = (
 	realPlayerPhotos: RealPlayerPhotos | undefined,
@@ -82,11 +81,9 @@ const processPlayerNewLeague = async ({
 		version,
 	);
 
-	// No current contract or contract demand in the file, so augmentPartialPlayer gave him a placeholder contract demand, which needs to be normalized. Then for players on a team, that will become their contract. Past contracts don't matter, like for a real player with no contract data for this season.
+	// No current contract or contract demand in the file, so augmentPartialPlayer gave him a placeholder contract demand (see repairContracts), which needs to be normalized. Then for players on a team, that will become their contract. Past contracts don't matter, like for a real player with no contract data for this season.
 	const noContractInfo =
-		!p.contract &&
-		!p.contractDemand &&
-		!getImportedCurrentContract(p2, g.get("season"));
+		!p.contract && !p.contractDemand && p2.contractDemand !== undefined;
 	if (noContractInfo && p2.contractDemand) {
 		p2.contractDemand.temp = true;
 	}

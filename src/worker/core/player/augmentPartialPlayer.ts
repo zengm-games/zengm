@@ -11,12 +11,8 @@ import stats from "./stats.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { convertLegacyContracts } from "../contract/convertLegacyContracts.ts";
-import { getImportedCurrentContract } from "../../../common/contracts.ts";
-import {
-	type ContractInput,
-	fillContractDefaults,
-	updateOwedByTids,
-} from "../contract/index.ts";
+import { repairContracts } from "../contract/repairContracts.ts";
+import { type ContractInput, fillContractDefaults } from "../contract/index.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
 
@@ -395,18 +391,6 @@ const augmentPartialPlayer = async (
 	delete p.contract;
 	delete p.salaries;
 
-	// Derived from contracts, so don't trust what was in the file
-	updateOwedByTids(p);
-
-	// A player on a team with a contract never has a contract demand (players who haven't re-signed yet are free agents during the re-signing phase), so it's a mistake, like in a hand-made league file. It would make his contract not count, see getCurrentContract.
-	if (
-		p.tid >= 0 &&
-		p.contractDemand &&
-		getImportedCurrentContract(p, currentSeason)
-	) {
-		delete p.contractDemand;
-	}
-
 	if (p.contractDemand) {
 		p.contractDemand.amount = helpers.roundContract(p.contractDemand.amount);
 
@@ -414,17 +398,8 @@ const augmentPartialPlayer = async (
 		delete p.contractDemand.temp;
 	}
 
-	// Every non-retired player needs a contract or a contract demand
-	if (
-		p.tid !== PLAYER.RETIRED &&
-		!getImportedCurrentContract(p, currentSeason) &&
-		!p.contractDemand
-	) {
-		p.contractDemand = {
-			amount: g.get("minContract"),
-			exp: currentSeason,
-		};
-	}
+	// Files can have anything in them, like a contract demand for a player with a contract, or nothing for a player whose contract data is missing for this season
+	repairContracts(p);
 
 	if (p.jerseyNumber === undefined && p.stats.length > 0) {
 		p.jerseyNumber = helpers.getJerseyNumber(p);

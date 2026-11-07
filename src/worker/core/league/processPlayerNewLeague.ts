@@ -1,5 +1,4 @@
 import { draft, player } from "../index.ts";
-import { PLAYER } from "../../../common/constants.ts";
 import type { FaceConfig } from "facesjs";
 import type {
 	PlayerWithoutKey,
@@ -7,7 +6,6 @@ import type {
 } from "../../../common/types.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { PreProcessParams } from "./createStream.ts";
-import { setContractDemandFromCurrentContract } from "../contract/index.ts";
 import { getImportedCurrentContract } from "../../../common/contracts.ts";
 
 export const applyRealPlayerPhotos = (
@@ -104,9 +102,8 @@ const processPlayerNewLeague = async ({
 	}
 
 	if (p2.tid >= 0 && !activeTids.includes(p2.tid)) {
-		// Like addToFreeAgents
-		setContractDemandFromCurrentContract(p2);
-		p2.tid = PLAYER.FREE_AGENT;
+		// His team was removed from the league
+		player.addToFreeAgents(p2, {}, { reason: "contraction" });
 	}
 
 	if (noStartingInjuries && p.injury) {

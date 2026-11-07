@@ -16,7 +16,7 @@ export type ContractEndReason =
 			tid: number;
 	  }
 	| {
-			reason: "fantasyDraft" | "contraction";
+			reason: "fantasyDraft" | "contraction" | "unknown";
 	  };
 
 /**
@@ -31,8 +31,8 @@ const addToFreeAgents = (
 	p: PlayerWithoutKey,
 	numPlayersTradedAwayNormalized: Record<number, number>,
 
-	// Required if he has a contract that's not fully paid yet
-	contractEndReason?: ContractEndReason,
+	// Why his contract ends, if it's not fully paid yet. null if he can't have a contract like that, like a player whose contract expired, or who is already a free agent.
+	contractEndReason: ContractEndReason | null,
 ) => {
 	const contract = getCurrentContract(p);
 
@@ -41,16 +41,18 @@ const addToFreeAgents = (
 
 	// His contract ends, so he has no current contract as a free agent
 	if (contract && !isContractFullyPaid(contract)) {
-		if (!contractEndReason) {
+		if (contractEndReason === null) {
 			throw new Error(
-				`No reason for ending the contract of ${p.firstName} ${p.lastName} (pid ${p.pid})`,
+				`Contract for ${p.firstName} ${p.lastName} (pid ${p.pid}) is not fully paid, so it needs a reason to end`,
 			);
 		}
 
 		endContract(contract, {
 			season: g.get("season"),
 			phase: g.get("phase"),
-			...contractEndReason,
+
+			// Extra check is for console scripts from before contractEndReason was a required parameter
+			...(contractEndReason ?? { reason: "unknown" }),
 		});
 		updateOwedByTids(p);
 	}

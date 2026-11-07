@@ -5055,7 +5055,12 @@ const upsertCustomizedPlayer = async (
 
 	// Handle making player a FA
 	if (p.tid === PLAYER.FREE_AGENT && originalTid !== PLAYER.FREE_AGENT) {
-		player.addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll());
+		// applyCustomizedContract already ended his contract
+		player.addToFreeAgents(
+			p,
+			await getNumPlayersTradedAwayNormalizedAll(),
+			null,
+		);
 	}
 
 	p.imgURL = helpers.stripBbcode(p.imgURL);

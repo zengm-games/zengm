@@ -308,7 +308,7 @@ const createRandomPlayers = async ({
 				exp: g.get("season"),
 				temp: true,
 			});
-			player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
+			player.addToFreeAgents(p, numPlayersTradedAwayNormalized, null);
 			players.push(p);
 		}
 	};

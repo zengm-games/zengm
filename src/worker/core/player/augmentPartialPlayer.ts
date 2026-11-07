@@ -398,6 +398,15 @@ const augmentPartialPlayer = async (
 	// Derived from contracts, so don't trust what was in the file
 	updateOwedByTids(p);
 
+	// A player on a team with a contract never has a contract demand (players who haven't re-signed yet are free agents during the re-signing phase), so it's a mistake, like in a hand-made league file. It would make his contract not count, see getCurrentContract.
+	if (
+		p.tid >= 0 &&
+		p.contractDemand &&
+		getImportedCurrentContract(p, currentSeason)
+	) {
+		delete p.contractDemand;
+	}
+
 	if (p.contractDemand) {
 		p.contractDemand.amount = helpers.roundContract(p.contractDemand.amount);
 

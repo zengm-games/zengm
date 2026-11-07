@@ -46,7 +46,7 @@ export const getCurrentContract = (
 
 // For players coming from outside the game (league files, real players data), which can have a player on a team whose contracts all ended before this season, like a real player whose contract data is missing for this season. Then his last contract is not really his current contract, and he needs a new one. In the game itself, an expired contract is replaced before the next season, so this isn't needed.
 //
-// This doesn't use getCurrentContract, because imported players can have both a contract and a placeholder contract demand that is replaced later.
+// This doesn't use getCurrentContract, because it's also used to clean up imported data, where a player on a team with a contract might also have a contract demand by mistake (see augmentPartialPlayer), and getCurrentContract would say he has no current contract.
 export const getImportedCurrentContract = (
 	p: Pick<PlayerWithoutKey, "contracts" | "tid">,
 	season: number,

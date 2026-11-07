@@ -7,6 +7,7 @@ import type {
 import {
 	GAME_ACRONYM,
 	PHASE,
+	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
 	PHASE_TEXT,
 	PLAYER,
 	PLAYER_STATS_TABLES,
@@ -4623,6 +4624,17 @@ const updateTeamInfo = async ({
 	const teams = await idb.cache.teams.getAll();
 
 	const newTeamsByTid = groupByUnique(newTeams, "tid");
+
+	const changesDisabled = teams.some((t) => {
+		const newTeam = newTeamsByTid[t.tid];
+		return newTeam !== undefined && !!newTeam.disabled !== !!t.disabled;
+	});
+	if (
+		changesDisabled &&
+		!PHASES_WHERE_TEAMS_CAN_BE_DISABLED.has(g.get("phase"))
+	) {
+		throw new Error("Teams can't be enabled or disabled in this phase.");
+	}
 
 	for (const t of teams) {
 		const newTeam = newTeamsByTid[t.tid];

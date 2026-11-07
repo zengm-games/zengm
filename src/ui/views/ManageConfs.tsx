@@ -10,6 +10,7 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	PHASE,
+	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
 } from "../../common/constants.ts";
 import {
 	Conferences,
@@ -20,10 +21,7 @@ import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
 import type { NewLeagueTeamWithoutRank } from "./NewLeague/types.ts";
 import { Modal } from "../components/Modal.tsx";
 import TeamForm, { getNumTeamsByDid } from "./ManageTeams/TeamForm.tsx";
-import {
-	nextSeasonWarning,
-	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
-} from "./ManageTeams/index.tsx";
+import { nextSeasonWarning } from "./ManageTeams/index.tsx";
 import { useBlocker } from "../hooks/useBlocker.ts";
 import { setTeamFormValue } from "./ManageTeams/teamFormValues.ts";
 

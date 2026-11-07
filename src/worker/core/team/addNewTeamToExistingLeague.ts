@@ -6,6 +6,7 @@ import genStatsRow from "./genStatsRow.ts";
 import { draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { PHASE } from "../../../common/constants.ts";
+import { actualPhase } from "../../util/actualPhase.ts";
 import { last } from "../../../common/utils.ts";
 import { getTeamInfoCache } from "./getTeamInfoCache.ts";
 
@@ -72,7 +73,8 @@ const addNewTeamToExistingLeague = async (
 			});
 	await idb.cache.teams.put(t);
 
-	if (g.get("phase") <= PHASE.PLAYOFFS) {
+	// Same condition as in team.disable, so a team that is disabled and then enabled again in the same season doesn't get a second teamSeason
+	if (actualPhase() < PHASE.PLAYOFFS) {
 		const teamSeason = genSeasonRow(t);
 		const teamStats = genStatsRow(t.tid);
 		await idb.cache.teamSeasons.put(teamSeason);

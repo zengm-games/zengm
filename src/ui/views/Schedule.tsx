@@ -90,7 +90,8 @@ const Schedule = ({
 								game.teams[1].tid,
 							);
 							const canWatch =
-								game.teams[0].playoffs || (canLiveSimFirstGame && i === 0);
+								game.canLiveSim ||
+								(!game.teams[0].playoffs && canLiveSimFirstGame && i === 0);
 
 							const actions =
 								canWatch && tradeDeadline

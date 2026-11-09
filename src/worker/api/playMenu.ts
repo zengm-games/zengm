@@ -8,7 +8,7 @@ import {
 	local,
 	helpers,
 	updatePlayMenu,
-	lock,
+	sim,
 	toUI,
 } from "../util/index.ts";
 import { runDraft } from "./actions.ts";
@@ -107,7 +107,7 @@ const playAmount = async (
 	amount: "day" | "week" | "month" | "untilPreseason",
 	conditions: Conditions,
 ) => {
-	if (lock.get("gameSim")) {
+	if (sim.isActive()) {
 		return;
 	}
 
@@ -156,15 +156,9 @@ const playAmount = async (
 	}
 };
 
+// The sim loop stops after its current day, and then it updates the status and play menu itself
 const playStop = async () => {
-	await lock.set("stopGameSim", true);
-
-	if (g.get("phase") !== PHASE.FREE_AGENCY) {
-		// This is needed because we can't be sure if core.game.play will be called again
-		await updateStatus();
-	}
-
-	await lock.set("gameSim", false);
+	sim.requestStop();
 	await updatePlayMenu();
 };
 

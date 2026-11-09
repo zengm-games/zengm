@@ -4,6 +4,7 @@ import { idb } from "../../db/index.ts";
 import {
 	local,
 	lock,
+	sim,
 	toUI,
 	updatePhase,
 	updatePlayMenu,
@@ -58,7 +59,7 @@ const finalize = async (
 	await updatePhase();
 
 	// If we're still simming games during a trade deadline phase change, no need to update status/menu because the next game will invalidate it. This removes some flicker
-	if (phase !== PHASE.AFTER_TRADE_DEADLINE || !lock.get("gameSim")) {
+	if (phase !== PHASE.AFTER_TRADE_DEADLINE || !sim.isActive()) {
 		await updatePlayMenu();
 		await updateStatus();
 	}

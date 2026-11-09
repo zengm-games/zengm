@@ -50,6 +50,7 @@ import {
 	helpers,
 	local,
 	lock,
+	sim,
 	updatePlayMenu,
 	updateStatus,
 	toUI,
@@ -62,7 +63,6 @@ import {
 	type Env,
 	type GameAttributesLeague,
 	type Local,
-	type LockName,
 	type Player,
 	type PlayerWithoutKey,
 	type UpdateEvent,
@@ -3035,7 +3035,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		[
 			{
 				fullNames: options.fullNames,
-				gameSimInProgress: lock.get("gameSim"),
+				gameSimInProgress: sim.isActive(),
 				keyboardShortcuts,
 				units: options.units,
 				workerBusy: lock.isWorkerBusy(),
@@ -3055,10 +3055,6 @@ const loadRetiredPlayers = async () => {
 	});
 
 	return finalizePlayersRelativesList(playerNames);
-};
-
-const lockSet = async ([name, value]: [LockName, boolean]) => {
-	await lock.set(name, value);
 };
 
 const ovr = ({
@@ -5618,7 +5614,6 @@ const api = {
 		init,
 		initGold,
 		loadRetiredPlayers,
-		lockSet,
 		ovr,
 		proposeTrade,
 		ratingsStatsPopoverInfo,

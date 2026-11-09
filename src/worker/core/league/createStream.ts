@@ -41,6 +41,7 @@ import {
 	helpers,
 	local,
 	lock,
+	sim,
 	logEvent,
 	toUI,
 	updatePhase,
@@ -1342,6 +1343,7 @@ const beforeDBStream = async ({
 	| "tid"
 >) => {
 	// These wouldn't be needed here, except the beforeView logic is fucked up
+	sim.reset();
 	lock.reset();
 	local.reset();
 

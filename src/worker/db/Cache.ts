@@ -5,7 +5,7 @@ import {
 import { helpers } from "../../common/helpers.ts";
 import { idb } from "./index.ts";
 import cmp from "./cmp.ts";
-import { g, local, lock } from "../util/index.ts";
+import { g, local, lock, sim } from "../util/index.ts";
 import type {
 	AllStars,
 	DraftLotteryResult,
@@ -992,7 +992,7 @@ class Cache {
 		if (this._dirty) {
 			const skipFlush =
 				this._status !== "full" ||
-				lock.get("gameSim") ||
+				sim.isActive() ||
 				lock.get("newPhase") ||
 				!!local.autoPlayUntil;
 

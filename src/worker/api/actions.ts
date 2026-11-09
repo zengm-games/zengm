@@ -166,11 +166,11 @@ const liveGame = async (gid: number, conditions: Conditions) => {
 		],
 		conditions,
 	);
-	game.play(1, conditions, true, gid, true);
+	game.play(1, conditions, gid, true);
 };
 
 const simGame = async (gid: number, conditions: Conditions) => {
-	await game.play(1, conditions, true, gid);
+	await game.play(1, conditions, gid);
 };
 
 const simToGame = async (gid: number, conditions: Conditions) => {

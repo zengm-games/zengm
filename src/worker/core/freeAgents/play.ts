@@ -4,30 +4,21 @@ import autoSign from "./autoSign.ts";
 import decreaseDemands from "./decreaseDemands.ts";
 import {
 	g,
-	lock,
+	sim,
 	updatePlayMenu,
 	updateStatus,
 	toUI,
 	helpers,
 } from "../../util/index.ts";
+import type { SimRun } from "../../util/sim.ts";
 import type { Conditions } from "../../../common/types.ts";
 import { recomputeLocalUITeamOvrs } from "../../util/recomputeLocalUITeamOvrs.ts";
 
-/**
- * Simulates one or more days of free agency.
- *
- * @memberOf core.freeAgents
- * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
- * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
- */
-async function play(
-	numDays: number,
-	conditions: Conditions,
-	start: boolean = true,
-) {
+// Simulates one day, then calls itself for the next day, until run is finished
+async function playDays(run: SimRun, numDays: number, conditions: Conditions) {
 	// This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
 	const cbNoDays = async () => {
-		await lock.set("gameSim", false);
+		await run.finish();
 		await updatePlayMenu();
 
 		// Check to see if free agency is over
@@ -51,21 +42,14 @@ async function play(
 				await recomputeLocalUITeamOvrs();
 				await updateStatus(helpers.daysLeft(true));
 				await trade.betweenAiTeams();
-				await play(numDays - 1, conditions, false);
+				await playDays(run, numDays - 1, conditions);
 			} else {
 				await cbNoDays();
 			}
 		};
 
-		// If we didn't just stop games, let's play
-		// Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
-		const stopGameSim = lock.get("stopGameSim");
-
-		if (numDays > 0 && (start || !stopGameSim)) {
-			if (stopGameSim) {
-				await lock.set("stopGameSim", false);
-			}
-
+		// Keep playing, unless a stop was requested
+		if (numDays > 0 && run.shouldContinue()) {
 			await cbYetAnother();
 		} else {
 			// If this is the last day, update play menu
@@ -73,18 +57,20 @@ async function play(
 		}
 	};
 
-	// If this is a request to start a new simulation... are we allowed to do
-	// that? If so, set the lock and update the play menu
-	if (start) {
-		const canStartGames = lock.canStartGames();
-
-		if (canStartGames) {
-			await updatePlayMenu();
-			await cbRunDay();
-		}
-	} else {
-		await cbRunDay();
-	}
+	await cbRunDay();
 }
+
+/**
+ * Simulates one or more days of free agency, if no other sim is running.
+ *
+ * @memberOf core.freeAgents
+ * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
+ */
+const play = async (numDays: number, conditions: Conditions) => {
+	await sim.run(async (run) => {
+		await updatePlayMenu();
+		await playDays(run, numDays, conditions);
+	});
+};
 
 export default play;

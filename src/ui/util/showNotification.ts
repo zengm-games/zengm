@@ -69,7 +69,7 @@ export const showNotification = ({
 		if (persistent) {
 			toWorker("main", "getLocal", "autoPlayUntil").then((autoPlayUntil) => {
 				if (!autoPlayUntil) {
-					toWorker("main", "lockSet", ["stopGameSim", true]);
+					toWorker("playMenu", "stop", undefined);
 				}
 			});
 		}

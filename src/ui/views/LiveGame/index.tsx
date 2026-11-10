@@ -305,6 +305,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 	const possessionChange = useRef<boolean | undefined>(undefined);
 	const componentIsMounted = useRef(false);
 	const events = useRef<unknown[] | undefined>(undefined);
+	const playbackTimeoutId = useRef<number | undefined>(undefined);
 	const sportState = useRef(
 		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
 	);
@@ -318,13 +319,19 @@ export const LiveGame = (props: View<"liveGame">) => {
 		initialDirty: true,
 	});
 
+	const clearPlaybackTimeout = useCallback(() => {
+		window.clearTimeout(playbackTimeoutId.current);
+		playbackTimeoutId.current = undefined;
+	}, []);
+
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
 		function processToNextPauseInner(force?: boolean): number {
 			if (
 				!componentIsMounted.current ||
 				(pausedRef.current && !force) ||
-				!events.current
+				!events.current ||
+				boxScore.current.gameOver
 			) {
 				return 0;
 			}
@@ -440,7 +447,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			if (events.current && events.current.length > 0) {
 				if (!pausedRef.current) {
-					setTimeout(() => {
+					clearPlaybackTimeout();
+					playbackTimeoutId.current = window.setTimeout(() => {
 						processToNextPauseInner();
 						setPlayIndex((prev) => prev + 1);
 					}, speedToMs(speedRef.current));
@@ -481,7 +489,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[props.confetti, props.otl, setDirty],
+		[clearPlaybackTimeout, props.confetti, props.otl, setDirty],
 	);
 
 	useEffect(() => {
@@ -489,19 +497,21 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 		return () => {
 			componentIsMounted.current = false;
+			clearPlaybackTimeout();
 			onLiveSimOver();
 		};
-	}, []);
+	}, [clearPlaybackTimeout]);
 
 	const startLiveGame = useCallback(
 		(events2: unknown[]) => {
 			events.current = events2;
-			setTimeout(() => {
+			clearPlaybackTimeout();
+			playbackTimeoutId.current = window.setTimeout(() => {
 				processToNextPause();
 				setPlayIndex((prev) => prev + 1);
 			}, speedToMs(DEFAULT_SPEED));
 		},
-		[processToNextPause],
+		[clearPlaybackTimeout, processToNextPause],
 	);
 
 	useEffect(() => {
@@ -521,12 +531,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 	const handlePause = useCallback(() => {
 		setPaused(true);
 		pausedRef.current = true;
-	}, []);
+		clearPlaybackTimeout();
+	}, [clearPlaybackTimeout]);
 
 	const handlePlay = useCallback(() => {
 		setPaused(false);
 
-		// Without pausedRef check, this was a race condition and could lead to incorrect post-game records (counting as 2 or more wins)
+		// Only restart playback if it was actually paused, otherwise there would be two timers running
 		if (pausedRef.current) {
 			pausedRef.current = false;
 			processToNextPause();

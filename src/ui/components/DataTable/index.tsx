@@ -398,7 +398,9 @@ export const DataTable = <Type extends MetadataType = undefined>({
 		state,
 	});
 	const numRowsFiltered = processedRows.length;
-	const start = 1 + (state.currentPage - 1) * state.perPage;
+	const numPages = Math.max(1, Math.ceil(numRowsFiltered / state.perPage));
+	const currentPage = Math.min(state.currentPage, numPages);
+	const start = 1 + (currentPage - 1) * state.perPage;
 	let end = start + state.perPage - 1;
 
 	if (end > processedRows.length) {
@@ -661,7 +663,7 @@ export const DataTable = <Type extends MetadataType = undefined>({
 								start={start}
 							/>
 							<Pagination
-								currentPage={state.currentPage}
+								currentPage={currentPage}
 								numRows={numRowsFiltered}
 								onClick={handlePagination}
 								perPage={state.perPage}

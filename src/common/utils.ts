@@ -110,42 +110,37 @@ export const countBy = <T>(
 type OrderByKey<Item> = keyof Item | ((item: Item) => number | string);
 type AscDesc = "asc" | "desc";
 
-const createSortFunction = <Item, Key extends OrderByKey<Item>>(
-	keys: Key | Key[],
-	orders?: AscDesc | AscDesc[],
+type SortValue = number | string;
+
+const compareSortValues = (
+	valuesA: SortValue[],
+	valuesB: SortValue[],
+	orders: AscDesc[] | undefined,
 ) => {
-	const keysArray = Array.isArray(keys) ? keys : [keys];
-	const ordersArray = typeof orders === "string" ? [orders] : orders;
+	for (let i = 0; i < valuesA.length; i++) {
+		const valueA = valuesA[i]!;
+		const valueB = valuesB[i]!;
 
-	return (a: Item, b: Item) => {
-		for (let i = 0; i < keysArray.length; i++) {
-			const key = keysArray[i]!;
-			const order = ordersArray?.[i];
+		const descending = orders?.[i] === "desc";
 
-			const valueA = getValueByIteratee(key, a) ?? Infinity;
-			const valueB = getValueByIteratee(key, b) ?? Infinity;
-
-			const descending = order === "desc";
-
-			const typeA = typeof valueA;
-			const typeB = typeof valueB;
-			if (typeA === "number" && typeB === "string") {
-				return descending ? -1 : 1;
-			}
-			if (typeA === "string" && typeB === "number") {
-				return descending ? 1 : -1;
-			}
-
-			if (valueA < valueB) {
-				return descending ? 1 : -1;
-			}
-
-			if (valueA > valueB) {
-				return descending ? -1 : 1;
-			}
+		const typeA = typeof valueA;
+		const typeB = typeof valueB;
+		if (typeA === "number" && typeB === "string") {
+			return descending ? -1 : 1;
 		}
-		return 0;
-	};
+		if (typeA === "string" && typeB === "number") {
+			return descending ? 1 : -1;
+		}
+
+		if (valueA < valueB) {
+			return descending ? 1 : -1;
+		}
+
+		if (valueA > valueB) {
+			return descending ? -1 : 1;
+		}
+	}
+	return 0;
 };
 
 export const orderBy = <Item, Key extends OrderByKey<Item>>(
@@ -158,9 +153,20 @@ export const orderBy = <Item, Key extends OrderByKey<Item>>(
 		return [];
 	}
 
-	const copied = Array.isArray(items) ? items.slice() : Array.from(items);
+	const keysArray = Array.isArray(keys) ? keys : [keys];
+	const ordersArray = typeof orders === "string" ? [orders] : orders;
 
-	return copied.sort(createSortFunction(keys, orders));
+	// Sort values are computed once per item, not on every comparison, because key functions can be expensive (like in DataTable)
+	const rows = Array.from(items, (item) => ({
+		item,
+		values: keysArray.map(
+			(key) => (getValueByIteratee(key, item) ?? Infinity) as SortValue,
+		),
+	}));
+
+	rows.sort((a, b) => compareSortValues(a.values, b.values, ordersArray));
+
+	return rows.map((row) => row.item);
 };
 
 type OrderByParams = Parameters<typeof orderBy>;

@@ -33,7 +33,7 @@ class CacheOnlyOneItemPlugin {
 }
 
 registerRoute(
-	new RegExp("/gen/real-player-data-*"),
+	/\/gen\/real-player-data-/,
 	new CacheFirst({
 		cacheName: "real-player-data",
 		plugins: [new CacheOnlyOneItemPlugin("real-player-data")],
@@ -41,7 +41,7 @@ registerRoute(
 );
 
 registerRoute(
-	new RegExp("/gen/real-player-stats-*"),
+	/\/gen\/real-player-stats-/,
 	new CacheFirst({
 		cacheName: "real-player-stats",
 		plugins: [new CacheOnlyOneItemPlugin("real-player-stats")],

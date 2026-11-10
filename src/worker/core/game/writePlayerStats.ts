@@ -400,7 +400,7 @@ const writePlayerStats = async (
 					}
 				}
 
-				const hasFeat = player.checkStatisticalFeat(
+				const hasFeat = await player.checkStatisticalFeat(
 					p.id,
 					t.id,
 					p,

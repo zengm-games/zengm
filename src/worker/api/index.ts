@@ -5071,7 +5071,7 @@ const upsertCustomizedPlayer = async (
 		player.addToFreeAgents(
 			p,
 			await getNumPlayersTradedAwayNormalizedAll(),
-			null,
+			"noContractToEnd",
 		);
 	}
 

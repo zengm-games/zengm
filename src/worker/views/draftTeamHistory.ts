@@ -87,7 +87,7 @@ export default defineView({
 						lotteryChange = preLotteryRank - p.draft.pick;
 
 						const { numPlayInTeams } = await getNumPlayoffTeams(p.draft.year);
-						const numToPick = await getNumToPick(
+						const numToPick = getNumToPick(
 							draftLottery.draftType ?? "nba1994",
 							draftLottery.result.length,
 							numPlayInTeams,

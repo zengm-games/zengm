@@ -4043,7 +4043,7 @@ const cancelExpansionDraft = async () => {
 		phase: g.get("nextPhase"),
 		nextPhase: undefined,
 	});
-	await updatePhase();
+	updatePhase();
 	await updatePlayMenu();
 };
 

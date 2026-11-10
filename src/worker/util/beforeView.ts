@@ -174,7 +174,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 	if (loadingNewLid !== newLid) {
 		return;
 	}
-	await updatePhase(conditions);
+	updatePhase(conditions);
 	if (loadingNewLid !== newLid) {
 		return;
 	}

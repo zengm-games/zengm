@@ -343,7 +343,7 @@ const PickStat = ({
 	className?: string;
 	label: "x" | "y";
 	state: AxisState;
-	updateUrl: (state: UpdateUrlParam) => void;
+	updateUrl: (state: UpdateUrlParam) => Promise<void>;
 	seasons: [number, number];
 	stats: string[];
 }) => {

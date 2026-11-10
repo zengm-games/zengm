@@ -271,7 +271,7 @@ const SettingsForm = ({
 }: {
 	onCancel?: () => void;
 	onCancelDefaultSetting?: (key: Key) => void;
-	onSave: (settings: Settings) => void;
+	onSave: (settings: Settings) => void | Promise<void>;
 	onUpdateExtra?: () => void;
 	hasPlayers?: boolean;
 	newLeague?: boolean;

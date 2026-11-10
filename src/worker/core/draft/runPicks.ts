@@ -179,7 +179,7 @@ const runPicks = async (
 				"playersByTid",
 				dp.tid,
 			);
-			const teamOvrDiffs = await getTeamOvrDiffs(teamPlayers, playersAll);
+			const teamOvrDiffs = getTeamOvrDiffs(teamPlayers, playersAll);
 
 			const score = (p: Player, i: number) => {
 				if (DRAFT_BY_TEAM_OVR) {

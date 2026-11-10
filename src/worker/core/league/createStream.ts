@@ -1858,7 +1858,7 @@ const afterDBStream = async ({
 	const realPlayers = !!getLeagueOptions;
 
 	if (!skipNewPhase || realPlayers) {
-		await updatePhase();
+		updatePhase();
 		await updateStatus();
 
 		// Auto sort rosters

@@ -116,7 +116,7 @@ export const LeagueFileUpload = ({
 	onDone,
 	onLoading,
 }: {
-	onDone: (b: Error | LeagueFileUploadOutput) => void;
+	onDone: (b: Error | LeagueFileUploadOutput) => void | Promise<void>;
 	disabled?: boolean;
 	enterURL?: boolean;
 	includePlayersInBasicInfo?: boolean;

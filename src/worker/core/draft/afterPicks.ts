@@ -95,7 +95,7 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 			}
 
 			// Do this after unlocking newPhase or it messes up the menu
-			await updatePhase();
+			updatePhase();
 			await updatePlayMenu();
 			await updateStatus();
 		}

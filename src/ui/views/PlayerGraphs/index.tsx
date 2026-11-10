@@ -179,7 +179,7 @@ const PickStat = ({
 	className?: string;
 	label: "x" | "y";
 	state: AxisState;
-	updateUrl: (state: UpdateUrlParam) => void;
+	updateUrl: (state: UpdateUrlParam) => Promise<void>;
 	stats: string[];
 }) => {
 	const statsXEnriched = getStatsWithLabels(stats, state.statType) as (Col & {

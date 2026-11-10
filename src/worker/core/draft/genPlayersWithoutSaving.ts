@@ -109,7 +109,7 @@ const genPlayersWithoutSaving = async (
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
 		const name = await player.name();
-		const p = await player.generate(
+		const p = player.generate(
 			PLAYER.UNDRAFTED,
 			baseAge,
 			draftYear,

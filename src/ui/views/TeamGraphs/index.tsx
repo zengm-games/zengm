@@ -354,13 +354,15 @@ const PickStat = ({
 	) as (Col & {
 		stat: string;
 	})[];
-	for (const [i, row] of statsXEnriched.entries()) {
-		row.stat = stats[i]!;
+	for (const [row, stat] of Iterator.zip([statsXEnriched, stats], {
+		mode: "strict",
+	})) {
+		row.stat = stat;
 	}
 
 	const dropdownSeasons = useDropdownOptions({ type: "seasons" });
 	const statTypes = [
-		// Keep in sync with statTypes in TeamGraphs.ts
+		// Keep in sync with statTypes in teamGraphs.ts
 		...dropdownOptions.teamOpponentAdvanced.map(addStatsSuffix),
 		{ key: "standings", label: "Standings" },
 		{ key: "powerRankings", label: "Power Rankings" },

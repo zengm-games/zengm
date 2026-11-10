@@ -284,7 +284,7 @@ export const playerScore = (
 ) => {
 	let score = 0;
 	for (const p of players) {
-		score = (p.ratings.pot + p.ratings.ovr) ** 2;
+		score += (p.ratings.pot + p.ratings.ovr) ** 2;
 	}
 	return score;
 };

@@ -142,7 +142,7 @@ const parseUnaryMinus = (string: string) => {
 				return UNARY_MINUS;
 			}
 			const prevChar = string[offset - 1];
-			return !!operators[prevChar] || prevChar === "("
+			return !!operators[prevChar] || prevChar === "(" || prevChar === ","
 				? UNARY_MINUS
 				: BINARY_MINUS;
 		});
@@ -186,14 +186,18 @@ const shuntingYard = (string: string) => {
 				stack.push(`${FUNCTION_PREFIX}${token}`);
 			} else if (operators[token]) {
 				const operator = operators[token];
-				while (
-					operators[stack.at(-1)!] !== undefined &&
-					((operator.associativity === "l" &&
-						operator.precedence <= operators[stack.at(-1)!]!.precedence) ||
-						(operator.associativity === "r" &&
-							operator.precedence < operators[stack.at(-1)!]!.precedence))
-				) {
-					output.push(stack.pop()!);
+
+				// A unary operator is a prefix with no left operand, so nothing already on the stack belongs before it
+				if (operator.operands === 2) {
+					while (
+						operators[stack.at(-1)!] !== undefined &&
+						((operator.associativity === "l" &&
+							operator.precedence <= operators[stack.at(-1)!]!.precedence) ||
+							(operator.associativity === "r" &&
+								operator.precedence < operators[stack.at(-1)!]!.precedence))
+					) {
+						output.push(stack.pop()!);
+					}
 				}
 				stack.push(token);
 			} else if (token === "(") {
@@ -367,9 +371,9 @@ export class FormulaEvaluator<
 					);
 				}
 
-				const params = [];
+				const params: number[] = [];
 				while (params.length < func.arity) {
-					params.push(stack.pop() ?? 0);
+					params.unshift(stack.pop() ?? 0);
 				}
 				stack.push(func.func(...params));
 			} else if (token.type === "number") {

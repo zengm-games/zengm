@@ -1407,7 +1407,7 @@ const migrate = async ({
 				}
 			}
 
-			// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
+			// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up with a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
 			const expenseLevelsKeys = [
 				"coaching",
 				"facilities",

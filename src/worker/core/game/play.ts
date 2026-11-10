@@ -148,7 +148,7 @@ const playDays = async (
 			// Update playoff series W/L
 			await updatePlayoffSeries(results, conditions);
 		} else {
-			// Update clinchedPlayoffs, only if there are games left in the schedule. Otherwise, this would be inaccruate (not correctly accounting for tiebreakers) and redundant (going to be called again on phase change)
+			// Update clinchedPlayoffs, only if there are games left in the schedule. Otherwise, this would be inaccurate (not correctly accounting for tiebreakers) and redundant (going to be called again on phase change)
 			const schedule = await season.getSchedule();
 			if (schedule.length > 0) {
 				await team.updateClinchedPlayoffs(false, conditions);
@@ -299,7 +299,7 @@ const playDays = async (
 		}
 
 		// More stuff for LeagueTopBar - update ovrs based on injuries, and (if user just played a game) update the score of the user's last game and add their next game
-		// This is safe to do down here because injuries have been processed (if necessay) and games have been deleted from the schedule
+		// This is safe to do down here because injuries have been processed (if necessary) and games have been deleted from the schedule
 		if (gameToUi) {
 			const gamesToUi = [gameToUi];
 

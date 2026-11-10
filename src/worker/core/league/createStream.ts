@@ -230,7 +230,7 @@ export type PreProcessParams = {
 	version: number | undefined;
 };
 
-// These obejcts have auto incrementing primary keys that aren't referenced by anything else, so it's safe to delete them when importing, and also prevents any issues from people manually editing league files and accidentally repeating a primary key, resulting in the latest one overwriting any earlier ones
+// These objects have auto incrementing primary keys that aren't referenced by anything else, so it's safe to delete them when importing, and also prevents any issues from people manually editing league files and accidentally repeating a primary key, resulting in the latest one overwriting any earlier ones
 const PRIMARY_KEYS_TO_DELETE: Record<string, string> = {
 	messages: "mid",
 	playerFeats: "fid",
@@ -875,7 +875,7 @@ const processTeamInfos = async ({
 					}
 				}
 				if (!teamSeason.expenseLevels) {
-					// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
+					// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up with a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
 					const expenseLevelsKeys = [
 						"coaching",
 						"facilities",
@@ -1974,7 +1974,7 @@ const afterDBStream = async ({
 
 	// Version 73 upgrade
 	if (migrationData["73"]) {
-		// Need to do this at the end of afterDBStream because we need all players (including activePlayers) to be in the databse. And then fill is to handle activePlayers already being in the cache
+		// Need to do this at the end of afterDBStream because we need all players (including activePlayers) to be in the database. And then fill is to handle activePlayers already being in the cache
 		await updatePlayerAwards({
 			...migrationData["73"],
 			playerStore: idb.league.transaction("players", "readwrite").store,

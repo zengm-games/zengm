@@ -123,7 +123,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 		await getLeague(newLid);
 		idb.league = await connectLeague(newLid);
 
-		// Do this after connecting to league, in case there is an error during connection, the lid will stil be in sync between worker and ui
+		// Do this after connecting to league, in case there is an error during connection, the lid will still be in sync between worker and ui
 		g.setWithoutSavingToDB("lid", newLid);
 
 		if (loadingNewLid !== newLid) {

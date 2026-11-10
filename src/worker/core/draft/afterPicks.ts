@@ -84,7 +84,7 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 			// After refreshing, clear results
 			local.fantasyDraftResults = [];
 
-			// This is a bit of a race condition. Should not be changing g.get("phase") outside of newPhase lock, cause user taking some action (nagivating to a new page or whatever) could see weird results. But it's needed currently for updating the UI with the results of the fantasy/expansion draft.
+			// This is a bit of a race condition. Should not be changing g.get("phase") outside of newPhase lock, cause user taking some action (navigating to a new page or whatever) could see weird results. But it's needed currently for updating the UI with the results of the fantasy/expansion draft.
 			await league.setGameAttributes({
 				phase: g.get("nextPhase"),
 				nextPhase: undefined,

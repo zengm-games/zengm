@@ -54,7 +54,7 @@ const genPlayersWithoutSaving = async (
 	forceScrubs?: boolean,
 ): Promise<PlayerWithoutKey[]> => {
 	// If user has increased the number of rounds - code below ensures excess players are scrubs.
-	// If user has descreased the number of rounds - keep number of prospects the same, more will go undrafted.
+	// If user has decreased the number of rounds - keep number of prospects the same, more will go undrafted.
 	const normalNumPlayers = Math.round(
 		(defaultGameAttributes.numDraftRounds * g.get("numActiveTeams") * 7) / 6,
 	);

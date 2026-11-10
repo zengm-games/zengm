@@ -14,7 +14,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 import { player } from "../index.ts";
 
-// This is from the old football awards sytem. Eventually should make All-Star teams use the same formulas as the default All-League awards...
+// This is from the old football awards system. Eventually should make All-Star teams use the same formulas as the default All-League awards...
 // Football players from player.formatAll, with currentStats added in create
 const mvpScoreStats = [
 	"defSk",

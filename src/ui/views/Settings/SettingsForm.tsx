@@ -285,7 +285,7 @@ const SettingsForm = ({
 	isInsideModal?: boolean;
 	hideGodModeToggle?: boolean;
 
-	// Used to filter diplayed settings, for the DefaultSettings page
+	// Used to filter displayed settings, for the DefaultSettings page
 	settingsShown?: Readonly<Key[]>;
 }) => {
 	useEffect(() => {

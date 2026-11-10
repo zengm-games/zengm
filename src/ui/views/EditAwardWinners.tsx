@@ -411,7 +411,7 @@ const EditAwardWinners = ({
 								return {};
 							}
 
-							// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award
+							// Use duplicate to maintain statOverrides in case box scores no longer exist for playoff series award
 							if (duplicate) {
 								return duplicate;
 							}
@@ -481,7 +481,7 @@ const EditAwardWinners = ({
 									return base;
 								}
 
-								// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award (not strictly necessary here because statOverrides are not in team awards, but I guess this is more future proof, although I'd also need to add code to create statOverrides when there is no duplicate like on the individual award branch above...)
+								// Use duplicate to maintain statOverrides in case box scores no longer exist for playoff series award (not strictly necessary here because statOverrides are not in team awards, but I guess this is more future proof, although I'd also need to add code to create statOverrides when there is no duplicate like on the individual award branch above...)
 								if (duplicate) {
 									return {
 										...duplicate,

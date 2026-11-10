@@ -756,7 +756,7 @@ const createLeague = async (
 				}
 			}
 
-			// Definitley need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
+			// Definitely need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
 			fromFile.gameAttributes = realLeague.gameAttributes;
 			fromFile.startingSeason = realLeague.startingSeason;
 			fromFile.teams = realLeague.teams;
@@ -2820,7 +2820,7 @@ const importPlayers = async ({
 			(p2 as any).real = p.real;
 		}
 
-		// Only add injury if the season wasn't chaned by the user. These variables copied from ImportPlayers init
+		// Only add injury if the season wasn't changed by the user. These variables copied from ImportPlayers init
 		const exportedSeason: number | undefined =
 			typeof p.exportedSeason === "number" ? p.exportedSeason : undefined;
 		const season2 =
@@ -2846,7 +2846,7 @@ const importPlayers = async ({
 					// No injuries from current season, if current season has not started yet
 					offset = -1;
 				} else if (key === "stats" && currentPhase <= PHASE.PLAYOFFS) {
-					// Don't include current season stats if the season has not started yet. Might be good to separate playoff stats and non-playoff stats and use differnet phase cutoffs, but whatever.
+					// Don't include current season stats if the season has not started yet. Might be good to separate playoff stats and non-playoff stats and use different phase cutoffs, but whatever.
 					offset = -1;
 				}
 			}

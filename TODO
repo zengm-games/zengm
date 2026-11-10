@@ -163,7 +163,7 @@ in BBGM sometimes (about once per decade) a player is injured immediately after 
 hockey live sim make power play or pulled goalie more prominent in UI https://discord.com/channels/@me/662077709836484618/1498390413315149976
 
 options for expansion team draft position
-- currently set in lotterySort.ts
+- currently set in getTeamsByRound.ts
 - FBGM should default to #1
 
 hockey pulled goalie scoring probability too high? https://app.fastmail.com/mail/Inbox/AXbF3uID79q3.StpQ3TODbYnk?u=433e4054

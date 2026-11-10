@@ -31,7 +31,7 @@ const showReleaseUndo = ({
 	showUndoNotification({
 		actionName: "release",
 		undoKey,
-		title: `You released ${name}`,
+		title: `Released ${name}`,
 	});
 };
 

@@ -3359,6 +3359,7 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		return `${notOnTeam.length} players are no longer on your team.`;
 	}
 
+	const undoFunctions: (() => Promise<boolean>)[] = [];
 	for (const p of players) {
 		const justDrafted = helpers.justDrafted(
 			{ draft: p.draft, contract: getContractSummaryOrThrow(p) },
@@ -3366,7 +3367,7 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 			g.get("season"),
 		);
 
-		await player.release(p, justDrafted);
+		undoFunctions.push(await player.release(p, justDrafted));
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
@@ -3377,6 +3378,15 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		type: "dummyExpiringContracts",
 		pids,
 	});
+
+	return local.undoLog.add(async () => {
+		const values = await Promise.all(undoFunctions.map((undo) => undo()));
+
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+		await recomputeLocalUITeamOvrs();
+
+		return values.every((value) => value === true);
+	}, ["advanceDay", "leagueChange", "newPhase", "transaction"]);
 };
 
 const expandVote = (

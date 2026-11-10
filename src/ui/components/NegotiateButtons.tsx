@@ -12,7 +12,7 @@ export const showSignUndo = ({
 	showUndoNotification({
 		actionName: "signing",
 		undoKey,
-		title: `You signed ${name}`,
+		title: `Signed ${name}`,
 	});
 };
 

@@ -31,6 +31,7 @@ import { CountryFlag } from "../../components/CountryFlag.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { confirm } from "../../util/confirm.tsx";
+import { showUndoNotification } from "../../components/UndoNotification.tsx";
 import { bySport } from "../../../common/sportFunctions.ts";
 
 const handleRelease = async (
@@ -74,13 +75,19 @@ const handleRelease = async (
 		okText: "Release player",
 	});
 	if (proceed) {
-		const errorMsg = await toWorker("main", "releasePlayer", {
+		const response = await toWorker("main", "releasePlayer", {
 			pids: [p.pid],
 		});
-		if (errorMsg) {
+		if (typeof response === "string") {
 			showNotification({
 				type: "error",
-				text: errorMsg,
+				text: response,
+			});
+		} else if (typeof response === "number") {
+			showUndoNotification({
+				actionName: "release",
+				undoKey: response,
+				title: `Released ${p.firstName} ${p.lastName}`,
 			});
 		}
 	}
@@ -437,15 +444,23 @@ const Roster = ({
 													return metadata.pid;
 												},
 											);
-											const errorMsg = await toWorker("main", "releasePlayer", {
+											const response = await toWorker("main", "releasePlayer", {
 												pids,
 											});
-											if (errorMsg) {
+											if (typeof response === "string") {
 												showNotification({
 													type: "error",
-													text: errorMsg,
+													text: response,
 												});
 											} else {
+												if (typeof response === "number") {
+													showUndoNotification({
+														actionName: "release",
+														undoKey: response,
+														title: `Released ${pids.length} ${helpers.plural("player", pids.length)}`,
+													});
+												}
+
 												// Clear because the selected players are no longer on this team!
 												selectedRows.clear();
 											}

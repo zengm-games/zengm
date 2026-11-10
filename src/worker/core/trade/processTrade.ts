@@ -5,6 +5,7 @@ import { idb } from "../../db/index.ts";
 import {
 	g,
 	helpers,
+	local,
 	logEvent,
 	toUI,
 	updatePlayMenu,
@@ -24,6 +25,8 @@ const processTrade = async (
 	rawTeams: TradeTeams,
 	initialHash: string | undefined,
 ) => {
+	local.undoLog.invalidate("transaction");
+
 	const tids: [number, number] = [rawTeams[0].tid, rawTeams[1].tid];
 	const pids: [number[], number[]] = [rawTeams[0].pids, rawTeams[1].pids];
 	const dpids: [number[], number[]] = [rawTeams[0].dpids, rawTeams[1].dpids];

@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common/constants.ts";
-import { g, helpers, logEvent } from "../../util/index.ts";
+import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { Phase, Player, FlatContractInfo } from "../../../common/types.ts";
 import genJerseyNumber from "./genJerseyNumber.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
@@ -11,6 +11,8 @@ const sign = async (
 	contractInput: FlatContractInfo,
 	phase: Phase,
 ) => {
+	local.undoLog.invalidate("transaction");
+
 	const isRookie =
 		p.stats.length === 0 &&
 		p.draft.year === g.get("season") &&

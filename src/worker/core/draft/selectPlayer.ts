@@ -32,6 +32,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	if (!canBeDrafted(p)) {
 		return false;
 	}
+
+	local.undoLog.invalidate("transaction");
+
 	const prevTid = p.tid;
 	p.tid = dp.tid;
 

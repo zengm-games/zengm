@@ -1,44 +1,29 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
-import { SummaryTeam } from "./Trade/Summary.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocal } from "../util/local.ts";
-import {
-	Offer,
-	OfferTable,
-	type OfferType,
-	pickScore,
-	playerScore,
-} from "./TradingBlock/index.tsx";
 import { Dropdown } from "react-bootstrap";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 import { TradeNotAllowed } from "../components/TradeNotAllowed.tsx";
+import { TradeSummaryOffers } from "../components/TradeOffers/TradeSummaryOffers.tsx";
 import { getTradeBlockedReason } from "../../common/transactionPhases.ts";
 
 const SavedTrades = ({ offers }: View<"savedTrades">) => {
 	useTitleBar({ title: "Saved Trades" });
 
 	const {
-		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
 		otherTeamsWantToHire,
 		phase,
-		salaryCap,
-		salaryCapType,
 		spectator,
-		teamInfoCache,
 	} = useLocal([
-		"challengeNoRatings",
 		"challengeNoTrades",
 		"gameOver",
 		"otherTeamsWantToHire",
 		"phase",
-		"salaryCap",
-		"salaryCapType",
 		"spectator",
-		"teamInfoCache",
 	]);
 
 	const tradeOffersSwitch = useTradeOffersSwitch();
@@ -53,34 +38,6 @@ const SavedTrades = ({ offers }: View<"savedTrades">) => {
 	if (tradeBlockedReason) {
 		return <TradeNotAllowed reason={tradeBlockedReason} />;
 	}
-
-	const handleNegotiate = async (offer: {
-		dpids: number[];
-		dpidsUser: number[];
-		pids: number[];
-		pidsUser: number[];
-		tid: number;
-	}) => {
-		await toWorker("actions", "tradeFor", {
-			otherDpids: offer.dpids,
-			otherPids: offer.pids,
-			tid: offer.tid,
-			userDpids: offer.dpidsUser,
-			userPids: offer.pidsUser,
-		});
-	};
-
-	const getSearchSortValues = (
-		players: OfferType["players"],
-		picks: OfferType["picks"],
-	) => {
-		return {
-			searchValue: `${players
-				.map((p) => `${p.firstName} ${p.lastName} ${p.ratings.pos}`)
-				.join(" ")} ${picks.map((pick) => pick.desc).join(" ")}`,
-			sortValue: playerScore(players) + pickScore(picks),
-		};
-	};
 
 	return (
 		<>
@@ -123,94 +80,7 @@ const SavedTrades = ({ offers }: View<"savedTrades">) => {
 			) : (
 				tradeOffersSwitch.toggle
 			)}
-			{tradeOffersSwitch.value === "table" ? (
-				<OfferTable
-					assetCols={[
-						{
-							title: "You receive",
-							sortSequence: ["desc", "asc"],
-							sortType: "number",
-						},
-						{
-							title: "You trade away",
-							sortSequence: ["desc", "asc"],
-							sortType: "number",
-						},
-					]}
-					getAssetColContents={(offer) => {
-						return [
-							{
-								value: (
-									<SummaryTeam
-										hideFinanceInfo
-										hideTeamOvr
-										missingAssets={offer.missing}
-										showInlinePlayerInfo
-										summary={offer.summary}
-										t={offer.summary.teams[0]}
-									/>
-								),
-								...getSearchSortValues(offer.players, offer.picks),
-							},
-							{
-								value: (
-									<SummaryTeam
-										hideFinanceInfo
-										hideTeamOvr
-										missingAssets={offer.missingUser}
-										showInlinePlayerInfo
-										summary={offer.summary}
-										t={offer.summary.teams[1]}
-									/>
-								),
-								...getSearchSortValues(offer.playersUser, offer.picksUser),
-							},
-						];
-					}}
-					challengeNoRatings={challengeNoRatings}
-					handleNegotiate={handleNegotiate}
-					offers={offers}
-					salaryCap={salaryCap}
-					salaryCapType={salaryCapType}
-				/>
-			) : (
-				<>
-					{offers.map((offer, i) => {
-						return (
-							<Offer
-								key={offer.hash}
-								challengeNoRatings={challengeNoRatings}
-								onNegotiate={() => {
-									handleNegotiate(offer);
-								}}
-								salaryCap={salaryCap}
-								salaryCapType={salaryCapType}
-								teamInfo={teamInfoCache[offer.tid]!}
-								hideTopTeamOvrs
-								first={i === 0}
-								{...offer}
-							>
-								<div className="d-flex gap-5">
-									{offer.summary.teams.map((t, j) => {
-										const missingKey = j === 0 ? "missing" : "missingUser";
-										return (
-											<div key={j}>
-												<SummaryTeam
-													hideFinanceInfo
-													missingAssets={offer[missingKey]}
-													showInlinePlayerInfo
-													summary={offer.summary}
-													t={t}
-												/>
-											</div>
-										);
-									})}
-								</div>
-							</Offer>
-						);
-					})}
-				</>
-			)}
+			<TradeSummaryOffers layout={tradeOffersSwitch.value} offers={offers} />
 		</>
 	);
 };

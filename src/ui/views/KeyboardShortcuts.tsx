@@ -164,7 +164,7 @@ const KeyboardShortcuts = ({
 	const categories = {
 		playMenu: "Play menu",
 		playPauseNext: "Play/pause/next",
-		commandPallete: "Command pallete",
+		commandPallete: "Command palette",
 		boxScore: "Box score",
 	};
 

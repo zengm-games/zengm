@@ -585,9 +585,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			const currentSeconds = getSeconds(boxScore.current.time);
 			const targetSeconds = 125; // 2 minutes plus 5 seconds, cause can't always be exact
-			const secoundsToPlay = currentSeconds - targetSeconds;
-			if (secoundsToPlay > 0) {
-				playSeconds(secoundsToPlay);
+			const secondsToPlay = currentSeconds - targetSeconds;
+			if (secondsToPlay > 0) {
+				playSeconds(secondsToPlay);
 			}
 		};
 

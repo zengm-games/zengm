@@ -161,7 +161,6 @@ const fetchRandomTeam = async (
 			shuffle(allSeasons);
 			for (const mySeason of allSeasons) {
 				t = await getTeam(mySeason);
-				console.log("fallback got", mySeason, t);
 				if (t) {
 					season = mySeason;
 					break;

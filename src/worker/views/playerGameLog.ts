@@ -234,7 +234,7 @@ export default defineView({
 				...topStuff,
 				showDecisionColumn,
 				gameLog,
-				numGamesPlayoffSeires: g.get("numGamesPlayoffSeries", season),
+				numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", season),
 				season,
 				seasonsWithStats,
 				stats,

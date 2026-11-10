@@ -191,7 +191,7 @@ export const DataTable = <Type extends MetadataType = undefined>({
 				`If you enable sortableRows, you must also enable hideAllControls`,
 			);
 		}
-		if (!hideAllControls) {
+		if (pagination) {
 			throw new Error(
 				`If you enable sortableRows, you cannot enable pagination`,
 			);

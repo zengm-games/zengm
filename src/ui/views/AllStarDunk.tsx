@@ -352,7 +352,7 @@ const UserDunkForm = ({
 	const [submitted, setSubmitted] = useState(false);
 
 	useEffect(() => {
-		const updateProjeted = async () => {
+		const updateProjected = async () => {
 			const newProjected = await toWorker("main", "dunkGetProjected", {
 				dunkAttempt,
 				index,
@@ -360,7 +360,7 @@ const UserDunkForm = ({
 			setProjected(newProjected);
 		};
 
-		updateProjeted();
+		updateProjected();
 	}, [dunkAttempt, index]);
 
 	const { units } = useLocal(["units"]);

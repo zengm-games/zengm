@@ -48,7 +48,7 @@ registerRoute(
 	}),
 );
 
-// Will be filled in by tools/build-sw.js
+// Will be filled in by tools/build/buildSw.ts
 precacheAndRoute(self.__WB_MANIFEST);
 
 const handler = createHandlerBoundToURL("/index.html");

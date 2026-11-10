@@ -157,7 +157,7 @@ export const deploy = async (sport: Sport, versionNumber: string) => {
 			console.log(response);
 		}
 	} else {
-		console.log("No Cloudfare cache invalidation needed in beta");
+		console.log("No Cloudflare cache invalidation needed in beta");
 	}
 
 	console.log("\nDone!");

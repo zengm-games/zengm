@@ -606,7 +606,7 @@ export const ERROR_MESSAGE_ONE_TAB =
 	"Your browser only supports opening a league in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.";
 export const ERROR_MESSAGE_UNDEFINED_SEASON =
 	"Undefined season - an error may have occurred while creating this league";
-export const ERROR_MESSSAGE_LEAGUE_NOT_FOUND = "League not found.";
+export const ERROR_MESSAGE_LEAGUE_NOT_FOUND = "League not found.";
 
 export const TEAM_AWARD_INFO:
 	| {

@@ -23,7 +23,7 @@ const create = async (
 	}
 
 	if (sim.isActive()) {
-		return "You cannot initiate a new negotiaion while game simulation is in progress.";
+		return "You cannot initiate a new negotiation while game simulation is in progress.";
 	}
 
 	if (g.get("phase") < 0) {

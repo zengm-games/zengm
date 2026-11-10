@@ -15,7 +15,7 @@ import { RosterComposition } from "../components/RosterComposition.tsx";
 import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
 import {
 	NegotiationModal,
-	useNegotiaionModal,
+	useNegotiationModal,
 } from "../components/NegotiationModal.tsx";
 import { useLocal } from "../util/local.ts";
 import clsx from "clsx";
@@ -62,7 +62,7 @@ const NegotiationList = ({
 
 	useTitleBar({ title });
 
-	const negotiationModal = useNegotiaionModal();
+	const negotiationModal = useNegotiationModal();
 
 	if (spectator) {
 		return <p>The AI will handle re-signing players in spectator mode.</p>;

@@ -1,6 +1,7 @@
 import { useReducer, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
+import { useAction } from "../util/useAction.ts";
 import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocal } from "../util/local.ts";
@@ -191,7 +192,7 @@ const ManageConfs = ({
 			teams: [...initialTeams],
 		},
 	);
-	const [saving, setSaving] = useState(false);
+	const { busy: saving, run } = useAction();
 
 	const [editTeam, setEditTeam] = useState<
 		NewLeagueTeamWithoutRank | undefined
@@ -248,37 +249,36 @@ const ManageConfs = ({
 							return;
 						}
 
-						setSaving(true);
+						await run(async () => {
+							await toWorker("main", "updateConfsDivs", {
+								confs,
+								divs,
+								teams: teams.map((t) => {
+									return {
+										...t,
 
-						await toWorker("main", "updateConfsDivs", {
-							confs,
-							divs,
-							teams: teams.map((t) => {
-								return {
-									...t,
+										// I don't think this is necessary, but it's complicated getting the types right!
+										colors: t.colors ?? DEFAULT_TEAM_COLORS,
+										jersey: t.jersey ?? DEFAULT_JERSEY,
+										stadiumCapacity:
+											t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
+									};
+								}),
+							});
 
-									// I don't think this is necessary, but it's complicated getting the types right!
-									colors: t.colors ?? DEFAULT_TEAM_COLORS,
-									jersey: t.jersey ?? DEFAULT_JERSEY,
-									stadiumCapacity:
-										t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
-								};
-							}),
+							let text = "Saved conferences and divisions.";
+
+							if (actualPhase >= PHASE.PLAYOFFS) {
+								text += `<br /><br />${nextSeasonWarning}`;
+							}
+
+							showNotification({
+								type: "success",
+								text,
+							});
+
+							setDirty(false);
 						});
-
-						let text = "Saved conferences and divisions.";
-
-						if (actualPhase >= PHASE.PLAYOFFS) {
-							text += `<br /><br />${nextSeasonWarning}`;
-						}
-
-						showNotification({
-							type: "success",
-							text,
-						});
-
-						setDirty(false);
-						setSaving(false);
 					}}
 				>
 					<button

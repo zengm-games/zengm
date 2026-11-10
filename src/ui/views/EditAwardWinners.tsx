@@ -6,7 +6,7 @@ import type {
 	View,
 } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
-import { showNotification } from "../util/showNotification.ts";
+import { useAction } from "../util/useAction.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
@@ -325,7 +325,7 @@ const EditAwardWinners = ({
 		},
 	});
 
-	const [saving, setSaving] = useState(false);
+	const { busy: saving, run } = useAction();
 
 	const [awardsState, setAwardsState] = useState(awards);
 
@@ -515,21 +515,17 @@ const EditAwardWinners = ({
 				key={season}
 				onSubmit={async (event) => {
 					event.preventDefault();
-					setSaving(true);
-					try {
-						await toWorker("main", "updateAwards", {
-							season,
-							awards: pruneEmptyWinners(awardsState),
-						});
-						setDirty(false);
-						realtimeUpdate([], helpers.leagueUrl(["history", season]));
-					} catch (error) {
-						showNotification({
-							type: "error",
-							text: error.message,
-						});
-						setSaving(false);
-					}
+					await run(
+						async () => {
+							await toWorker("main", "updateAwards", {
+								season,
+								awards: pruneEmptyWinners(awardsState),
+							});
+							setDirty(false);
+							realtimeUpdate([], helpers.leagueUrl(["history", season]));
+						},
+						{ keepProcessingOnSuccess: true },
+					);
 				}}
 			>
 				<div className="row">

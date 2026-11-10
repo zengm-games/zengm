@@ -6,7 +6,7 @@ import {
 } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { showNotification } from "../util/showNotification.ts";
+import { useAction } from "../util/useAction.ts";
 import { toWorker } from "../util/toWorker.ts";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types.ts";
 import {
@@ -58,7 +58,7 @@ const ExpansionDraft = ({
 		takeControl: false,
 	};
 
-	const [saving, setSaving] = useState(false);
+	const { busy: saving, run } = useAction();
 	const [teams, setTeams2] = useState<ExpansionDraftSetupTeam[]>(initialTeams);
 	const [numProtectedPlayers, setNumProtectedPlayers2] = useState(
 		initialNumProtectedPlayers,
@@ -73,20 +73,20 @@ const ExpansionDraft = ({
 
 	const setNumProtectedPlayers = async (newNum: string) => {
 		setNumProtectedPlayers2(newNum);
-		setSaving(true);
-		await toWorker("main", "updateExpansionDraftSetup", {
-			numProtectedPlayers: newNum,
-		});
-		setSaving(false);
+		await run(() =>
+			toWorker("main", "updateExpansionDraftSetup", {
+				numProtectedPlayers: newNum,
+			}),
+		);
 	};
 
 	const setNumPerTeam = async (newNum: string) => {
 		setNumPerTeam2(newNum);
-		setSaving(true);
-		await toWorker("main", "updateExpansionDraftSetup", {
-			numPerTeam: newNum,
-		});
-		setSaving(false);
+		await run(() =>
+			toWorker("main", "updateExpansionDraftSetup", {
+				numPerTeam: newNum,
+			}),
+		);
 	};
 
 	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
@@ -103,13 +103,13 @@ const ExpansionDraft = ({
 		setTeams2(newTeams);
 		setNumProtectedPlayers2(newNumProtectedPlayers);
 		setNumPerTeam2(newNumPerTeam);
-		setSaving(true);
-		await toWorker("main", "updateExpansionDraftSetup", {
-			numProtectedPlayers: newNumProtectedPlayers,
-			numPerTeam: newNumPerTeam,
-			teams: newTeams,
-		});
-		setSaving(false);
+		await run(() =>
+			toWorker("main", "updateExpansionDraftSetup", {
+				numProtectedPlayers: newNumProtectedPlayers,
+				numPerTeam: newNumPerTeam,
+				teams: newTeams,
+			}),
+		);
 	};
 
 	useTitleBar({ title: "Expansion Draft" });
@@ -161,21 +161,20 @@ const ExpansionDraft = ({
 			return;
 		}
 
-		setSaving(true);
+		await run(
+			async () => {
+				const errors = await toWorker(
+					"main",
+					"advanceToPlayerProtection",
+					undefined,
+				);
 
-		const errors = await toWorker(
-			"main",
-			"advanceToPlayerProtection",
-			undefined,
+				if (errors) {
+					throw new Error(`- ${errors.join("<br>- ")}`);
+				}
+			},
+			{ keepProcessingOnSuccess: true },
 		);
-
-		if (errors) {
-			showNotification({
-				type: "error",
-				text: `- ${errors.join("<br>- ")}`,
-			});
-			setSaving(false);
-		}
 	};
 
 	const handleTakeControl =

@@ -24,6 +24,7 @@ import type {
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
+import { useAction } from "../util/useAction.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 import SettingsForm from "./Settings/SettingsForm.tsx";
@@ -567,7 +568,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	const [playoffIntensity, setPlayoffIntensity] = useState(
 		defaultState.playoffIntensity,
 	);
-	const [simmingGame, setSimmingGame] = useState(false);
+	const { busy: simmingGame, run } = useAction();
 	const [gameAttributesInfo, setGameAttributesInfo] =
 		useState<GameAttributesInfo>(defaultState.gameAttributesInfo);
 	const [showCustomizeModal, setShowCustomizeModal] = useState(false);
@@ -716,53 +717,56 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 				onSubmit={async (event) => {
 					event.preventDefault();
 
-					setSimmingGame(true);
+					await run(
+						async () => {
+							const gameAttributes = getGameAttributesByType();
 
-					const gameAttributes = getGameAttributesByType();
+							const toSave: CachedSettings = {
+								gameAttributesInfo,
+								neutralSite,
+								playoffIntensity,
+								swapHomeAway: neutralSite ? undefined : swapHomeAway,
+								teams: teams.map((entry) => {
+									if (!entry) {
+										throw new Error("Missing entry");
+									}
 
-					const toSave: CachedSettings = {
-						gameAttributesInfo,
-						neutralSite,
-						playoffIntensity,
-						swapHomeAway: neutralSite ? undefined : swapHomeAway,
-						teams: teams.map((entry) => {
-							if (!entry) {
-								throw new Error("Missing entry");
-							}
+									if (entry.league.type === "real") {
+										return {
+											type: "real",
+											season: entry.t.season,
+											tid: entry.t.tid,
+										};
+									}
 
-							if (entry.league.type === "real") {
-								return {
-									type: "real",
-									season: entry.t.season,
-									tid: entry.t.tid,
-								};
-							}
-
-							return {
-								type: "league",
-								lid: entry.league.lid,
-								season: entry.t.season,
-								tid: entry.t.tid,
+									return {
+										type: "league",
+										lid: entry.league.lid,
+										season: entry.t.season,
+										tid: entry.t.tid,
+									};
+								}) as [CachedTeam, CachedTeam],
 							};
-						}) as [CachedTeam, CachedTeam],
-					};
-					safeLocalStorage.setItem(CACHE_KEY, JSON.stringify(toSave));
+							safeLocalStorage.setItem(CACHE_KEY, JSON.stringify(toSave));
 
-					const simTeams = teams.map((entry) => entry?.t) as [
-						ExhibitionTeam,
-						ExhibitionTeam,
-					];
+							const simTeams = teams.map((entry) => entry?.t) as [
+								ExhibitionTeam,
+								ExhibitionTeam,
+							];
 
-					if (swapHomeAway && !neutralSite) {
-						simTeams.reverse();
-					}
+							if (swapHomeAway && !neutralSite) {
+								simTeams.reverse();
+							}
 
-					await toWorker("exhibitionGame", "simExhibitionGame", {
-						neutralSite,
-						gameAttributes,
-						phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,
-						teams: simTeams,
-					});
+							await toWorker("exhibitionGame", "simExhibitionGame", {
+								neutralSite,
+								gameAttributes,
+								phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,
+								teams: simTeams,
+							});
+						},
+						{ keepProcessingOnSuccess: true },
+					);
 				}}
 			>
 				<div className="mb-2" style={{ width: 200 }}>

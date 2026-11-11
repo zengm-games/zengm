@@ -147,6 +147,8 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 							onChange={handleChange("number")}
 							value={state.number}
 							id="card-number"
+							autoComplete="cc-number"
+							inputMode="numeric"
 							className="form-control"
 						/>
 					</div>
@@ -160,6 +162,8 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 							onChange={handleChange("cvc")}
 							value={state.cvc}
 							id="cvc"
+							autoComplete="cc-csc"
+							inputMode="numeric"
 							className="form-control"
 						/>
 					</div>
@@ -176,6 +180,9 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 									value={state.exp_month}
 									placeholder="MM"
 									id="exp-month"
+									aria-label="Expiration month"
+									autoComplete="cc-exp-month"
+									inputMode="numeric"
 									className="form-control"
 								/>
 							</div>
@@ -185,6 +192,9 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 									onChange={handleChange("exp_year")}
 									value={state.exp_year}
 									placeholder="YYYY"
+									aria-label="Expiration year"
+									autoComplete="cc-exp-year"
+									inputMode="numeric"
 									className="form-control"
 								/>
 							</div>

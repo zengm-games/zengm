@@ -313,7 +313,7 @@ export const LeagueFileUpload = ({
 						}}
 						onKeyDown={(event) => {
 							// This is so "Enter" loads the file, rather than doing nothing or submitting the whole form
-							if (event.key === "Enter") {
+							if (event.key === "Enter" && !event.nativeEvent.isComposing) {
 								handleFileURL(event);
 							}
 						}}

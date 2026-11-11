@@ -85,8 +85,6 @@ When creating a new custom league, I'd love to just be able to import my setting
 
 btn-close vs glyphicon-remove vs CloseIcon
 
-default new league settings import should handle gameAttribute with history (take latest value)
-
 make GOAT lab use stats with derived variables, similar to awards
 - fixMax, etc
 

@@ -451,7 +451,6 @@ const writeTeamStats = async (results: GameResults) => {
 				fuzz: true,
 				ratings: ["ovr", "pos", "ovrs"],
 				season: g.get("season"),
-				tid: teamSeason.tid,
 			});
 			teamSeason.ovrStart = team.ovr(players);
 		}

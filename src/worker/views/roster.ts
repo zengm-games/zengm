@@ -216,10 +216,19 @@ export default defineView({
 				"untradable",
 				"hof",
 				"latestTransaction",
+				"value",
 				"awards",
 			] as const;
 
-			const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"] as const;
+			const ratings = [
+				"ovr",
+				"pot",
+				"dovr",
+				"dpot",
+				"skills",
+				"pos",
+				"ovrs",
+			] as const;
 			const stats2 = [
 				...stats,
 				"yearsWithTeam",

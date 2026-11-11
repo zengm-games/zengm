@@ -118,8 +118,6 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 		attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
 		ratings: ["pos"],
 		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
 	});
 
 	const rosterOrders = getRosterOrderByPid(players, tid, true);

@@ -31,8 +31,6 @@ export default defineView({
 			const players = await player.formatAll(playersRaw, {
 				ratings: ["ovr", "pot", ...extraRatings, ...RATINGS],
 				season: inputs.season,
-				showNoStats: true,
-				showRookies: true,
 				fuzz: true,
 			});
 

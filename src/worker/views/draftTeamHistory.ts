@@ -53,7 +53,6 @@ export default defineView({
 			ratings: ["ovr", "pot", "skills", "pos", "season"],
 			stats,
 			showNoStats: true,
-			showRookies: true,
 			fuzz: true,
 		} as const;
 		const abbrevs = await player.loadAbbrevs(formatOptions);

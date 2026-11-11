@@ -71,8 +71,6 @@ const genDepth = async (
 			attrs: ["pid"],
 			ratings: ["pos", "ovrs"],
 			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
 			fuzz: true,
 		});
 	}

@@ -136,7 +136,6 @@ export default defineView({
 								: "playoffs",
 					mergeStats: "totOnly",
 					showNoStats: true,
-					fuzz: true,
 				});
 				if (!p2) {
 					return;

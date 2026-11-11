@@ -282,8 +282,6 @@ export default defineView({
 				ratings: ["pos"],
 				stats: [],
 				season: g.get("season"),
-				showNoStats: true,
-				showRookies: true,
 			});
 
 			return {

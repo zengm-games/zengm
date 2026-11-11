@@ -1993,8 +1993,6 @@ const getNegotiationProps = async (pid: number) => {
 			],
 			ratings: ["ovr", "pot"],
 			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
 			fuzz: true,
 		});
 	}
@@ -2159,8 +2157,6 @@ const getPlayersCommandPalette = async () => {
 		attrs: ["pid", "firstName", "lastName", "abbrev", "age"],
 		ratings: ["pos", "ovr", "pot"],
 		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
 		fuzz: true,
 	});
 };

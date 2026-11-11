@@ -401,8 +401,6 @@ const genDepth = async (
 			attrs: ["pid"],
 			ratings: ["spd", "con", "hpw", "eye", "pos", "ovrs"],
 			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
 			fuzz: true,
 		});
 		players = playersFiltered.map((p) => ({

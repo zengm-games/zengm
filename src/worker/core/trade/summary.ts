@@ -74,9 +74,6 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		const players = await player.formatAll(playersOrdered, {
 			attrs: ["pid", "name", "contract", "draft"],
 			season: g.get("season"),
-			tid: tids[i],
-			showRookies: true,
-			showNoStats: true,
 		});
 		s.teams[i].trade = players;
 		s.teams[i].total = s.teams[i].trade.reduce(

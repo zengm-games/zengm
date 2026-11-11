@@ -13,9 +13,6 @@ export const getTeamOvr = async (tid: number) => {
 		attrs: ["injury", "value"],
 		ratings: ["ovr", "ovrs", "pos"],
 		season: g.get("season"),
-		tid,
-		showNoStats: true,
-		showRookies: true,
 		fuzz: true,
 	});
 	return team.ovr(players);
@@ -59,8 +56,6 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 				ratings: ["ovr", "pot", "pos", "skills"],
 				season: g.get("season"),
 				fuzz: true,
-				showNoStats: true,
-				showRookies: true,
 			}),
 			"value",
 			"desc",

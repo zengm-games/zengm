@@ -46,6 +46,7 @@ export type ExhibitionTeam = {
 	};
 	players: Player[];
 	ovr: number;
+	ovrHealthy: number;
 } & Pick<
 	Team,
 	| "abbrev"
@@ -379,7 +380,7 @@ const SelectTeam = ({
 					>
 						{teams.map((t) => (
 							<option key={t.tid} value={t.tid}>
-								{t.region} {t.name} ({t.ovr} ovr)
+								{t.region} {t.name} ({healInjuries ? t.ovrHealthy : t.ovr} ovr)
 							</option>
 						))}
 						{teams.length === 0 ? (
@@ -415,7 +416,7 @@ const SelectTeam = ({
 				</div>
 				{t ? (
 					<div className="ms-2" style={{ marginTop: 22 }}>
-						<h2>{t.ovr} ovr</h2>
+						<h2>{healInjuries ? t.ovrHealthy : t.ovr} ovr</h2>
 						{t.seasonInfo ? (
 							<>
 								<h2 className="mb-0">{record}</h2>

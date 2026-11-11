@@ -279,6 +279,7 @@ const getSeasonInfoLeague = async ({
 					roundsWonText,
 				},
 				ovr: 0,
+				ovrHealthy: 0,
 				players: teamPlayers,
 
 				// If current season, use current depth. Otherwise, auto generate later.
@@ -341,24 +342,23 @@ export const getSeasonInfo = async (
 
 	for (const t of teams) {
 		t.players = orderBy(t.players, (p) => last(p.ratings).ovr, "desc");
-		t.ovr = team.ovr(
-			t.players.map((p) => ({
-				pid: p.pid,
-				injury: p.injury,
-				value: p.value,
-				ratings: {
-					ovr: last(p.ratings).ovr,
-					ovrs: last(p.ratings).ovrs,
-					pos: last(p.ratings).pos,
-				},
-			})),
-			{
-				accountForInjuredPlayers: {
-					numDaysInFuture: 0,
-					playThroughInjuries: DEFAULT_PLAY_THROUGH_INJURIES,
-				},
+		const ovrPlayers = t.players.map((p) => ({
+			pid: p.pid,
+			injury: p.injury,
+			value: p.value,
+			ratings: {
+				ovr: last(p.ratings).ovr,
+				ovrs: last(p.ratings).ovrs,
+				pos: last(p.ratings).pos,
 			},
-		);
+		}));
+		t.ovr = team.ovr(ovrPlayers, {
+			accountForInjuredPlayers: {
+				numDaysInFuture: 0,
+				playThroughInjuries: DEFAULT_PLAY_THROUGH_INJURIES,
+			},
+		});
+		t.ovrHealthy = team.ovr(ovrPlayers);
 
 		for (const p of t.players) {
 			local.exhibitionGamePlayers[p.pid] = p;

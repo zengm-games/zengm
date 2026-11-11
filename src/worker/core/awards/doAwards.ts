@@ -68,13 +68,7 @@ export const doAwards = async (conditions: Conditions) => {
 
 	const teams = await team.getFormattedAll({
 		attrs: ["tid"],
-		seasonAttrs: [
-			...ORDER_TEAMS_SEASON_ATTRS,
-			"playoffRoundsWon",
-			"abbrev",
-			"region",
-			"name",
-		],
+		seasonAttrs: ORDER_TEAMS_SEASON_ATTRS,
 		stats: ORDER_TEAMS_STATS,
 		season,
 		showNoStats: true,

@@ -807,7 +807,6 @@ const advStats = async () => {
 			"blk",
 			"drtg",
 			"ortg",
-			"oppFg",
 			"oppFt",
 			"stl",
 			"tp",

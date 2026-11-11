@@ -287,7 +287,7 @@ const getTeamsByRound = async (
 	draftPicksIndexed: DraftPickWithoutKey[][],
 ) => {
 	const allTeams = await team.getFormattedAll({
-		attrs: ["tid", "draftLottery"],
+		attrs: ["tid"],
 		seasonAttrs: [...ORDER_TEAMS_SEASON_ATTRS, "playoffRoundsWon"],
 		stats: ORDER_TEAMS_STATS,
 		season: g.get("season"),

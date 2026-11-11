@@ -378,11 +378,13 @@ type ExhibitionGamePhase =
 export const simExhibitionGame = async (
 	{
 		neutralSite,
+		healInjuries,
 		gameAttributes,
 		phase,
 		teams,
 	}: {
 		neutralSite: boolean;
+		healInjuries: boolean;
 		gameAttributes: ExhibitionGameAttributes;
 		phase: ExhibitionGamePhase;
 		teams: [ExhibitionTeam, ExhibitionTeam];
@@ -409,11 +411,18 @@ export const simExhibitionGame = async (
 
 	const teamsProcessed = (await Promise.all(
 		teams.map(async (t, tid) => {
+			const players = healInjuries
+				? t.players.map((p) => ({
+						...p,
+						injury: { type: "Healthy", gamesRemaining: 0 },
+					}))
+				: t.players;
+
 			let depth: Team["depth"];
 			if (t.depth) {
 				depth = t.depth;
 			} else if (__SPORT !== "basketball") {
-				depth = await team.genDepth(t.players);
+				depth = await team.genDepth(players);
 			}
 
 			return processTeam(
@@ -430,7 +439,7 @@ export const simExhibitionGame = async (
 					cid: 0,
 					did: 0,
 				},
-				t.players,
+				players,
 			);
 		}),
 	)) as [any, any];

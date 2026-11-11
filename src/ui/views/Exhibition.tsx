@@ -139,6 +139,7 @@ const PlayerStatsSummary = ({
 
 const SelectTeam = ({
 	disabled,
+	healInjuries,
 	index,
 	initialTeam,
 	leagues,
@@ -147,6 +148,7 @@ const SelectTeam = ({
 	realTeamInfo,
 }: {
 	disabled: boolean;
+	healInjuries: boolean;
 	index: number;
 	initialTeam?: CachedTeam;
 	leagues: ExhibitionLeague[];
@@ -438,6 +440,7 @@ const SelectTeam = ({
 								lastName={p.lastName}
 								jerseyNumber={p.stats.at(-1)?.jerseyNumber ?? p.jerseyNumber}
 								skills={ratings.skills}
+								injury={healInjuries ? undefined : p.injury}
 								fullNames
 								disableNameLink
 								season={season}
@@ -495,6 +498,7 @@ type CachedTeam =
 	  };
 type CachedSettings = {
 	gameAttributesInfo: GameAttributesInfo;
+	healInjuries?: boolean;
 	neutralSite: boolean;
 	playoffIntensity: boolean;
 	swapHomeAway?: boolean;
@@ -547,6 +551,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			gameAttributesInfo: {
 				type: "t1",
 			} as GameAttributesInfo,
+			healInjuries: false,
 			neutralSite: true,
 			playoffIntensity: true,
 			swapHomeAway: false,
@@ -567,6 +572,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 	);
 	const [playoffIntensity, setPlayoffIntensity] = useState(
 		defaultState.playoffIntensity,
+	);
+	const [healInjuries, setHealInjuries] = useState(
+		defaultState.healInjuries ?? false,
 	);
 	const { busy: simmingGame, run } = useAction();
 	const [gameAttributesInfo, setGameAttributesInfo] =
@@ -683,6 +691,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					<h2>{neutralSite ? "Team 1" : swapHomeAway ? "Home" : "Away"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
+						healInjuries={healInjuries}
 						index={1}
 						initialTeam={defaultState.teams?.[1]}
 						leagues={leaguesDefined}
@@ -699,6 +708,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					<h2>{neutralSite ? "Team 2" : swapHomeAway ? "Away" : "Home"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
+						healInjuries={healInjuries}
 						index={0}
 						initialTeam={defaultState.teams?.[0]}
 						leagues={leaguesDefined}
@@ -722,6 +732,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 							const gameAttributes = getGameAttributesByType();
 
 							const toSave: CachedSettings = {
+								healInjuries,
 								gameAttributesInfo,
 								neutralSite,
 								playoffIntensity,
@@ -760,6 +771,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 
 							await toWorker("exhibitionGame", "simExhibitionGame", {
 								neutralSite,
+								healInjuries,
 								gameAttributes,
 								phase: playoffIntensity ? PHASE.PLAYOFFS : PHASE.REGULAR_SEASON,
 								teams: simTeams,
@@ -838,7 +850,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						</div>
 
 						{__SPORT === "basketball" ? (
-							<div className="form-check">
+							<div className="form-check mb-2">
 								<input
 									className="form-check-input"
 									type="checkbox"
@@ -857,6 +869,22 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 								</label>
 							</div>
 						) : null}
+
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="healInjuriesCheck"
+								checked={healInjuries}
+								disabled={simmingGame}
+								onChange={() => {
+									setHealInjuries(!healInjuries);
+								}}
+							/>
+							<label className="form-check-label" htmlFor="healInjuriesCheck">
+								Heal injuries
+							</label>
+						</div>
 					</div>
 
 					{!neutralSite ? (

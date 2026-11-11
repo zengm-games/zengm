@@ -5,35 +5,42 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { Modal } from "../components/Modal.tsx";
+import { Modal } from "../../components/Modal.tsx";
 import {
 	COURT,
 	DEFAULT_CONFS,
 	EXHIBITION_GAME_SETTINGS,
 	PHASE,
 	REAL_PLAYERS_INFO,
-} from "../../common/constants.ts";
-import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+} from "../../../common/constants.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import type {
 	GameAttributesLeague,
 	Player,
 	RealTeamInfo,
 	Team,
 	View,
-} from "../../common/types.ts";
-import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
-import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers } from "../util/helpers.ts";
-import { useAction } from "../util/useAction.ts";
-import { toWorker } from "../util/toWorker.ts";
-import { applyRealTeamInfos } from "./NewLeague/index.tsx";
-import SettingsForm from "./Settings/SettingsForm.tsx";
-import { last, orderBy, range } from "../../common/utils.ts";
-import { choice, randInt } from "../../common/random.ts";
-import { processPlayerStats } from "../util/processPlayerStats.ts";
-import { ActionButton } from "../components/ActionButton.tsx";
-import { safeLocalStorage } from "../util/safeLocalStorage.ts";
-import { showNotification } from "../util/showNotification.ts";
+} from "../../../common/types.ts";
+import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { useAction } from "../../util/useAction.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { applyRealTeamInfos } from "../NewLeague/index.tsx";
+import SettingsForm from "../Settings/SettingsForm.tsx";
+import { last, orderBy, range } from "../../../common/utils.ts";
+import { choice, randInt } from "../../../common/random.ts";
+import { processPlayerStats } from "../../util/processPlayerStats.ts";
+import { ActionButton } from "../../components/ActionButton.tsx";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
+import { showNotification } from "../../util/showNotification.ts";
+import { exhibitionHasDh } from "../../../common/exhibitionHasDh.ts";
+import {
+	getStartingLineup,
+	setStartingPitcher,
+	StartingPitcherSelect,
+	type BaseballDepth,
+} from "./BaseballLineup.tsx";
 
 export type ExhibitionTeam = {
 	season: number;
@@ -140,6 +147,7 @@ const PlayerStatsSummary = ({
 
 const SelectTeam = ({
 	disabled,
+	dh,
 	healInjuries,
 	index,
 	initialTeam,
@@ -149,6 +157,7 @@ const SelectTeam = ({
 	realTeamInfo,
 }: {
 	disabled: boolean;
+	dh: boolean;
 	healInjuries: boolean;
 	index: number;
 	initialTeam?: CachedTeam;
@@ -307,8 +316,20 @@ const SelectTeam = ({
 		record = helpers.formatRecord(t.seasonInfo);
 	}
 
-	const NUM_PLAYERS_TO_SHOW = 9;
-	const playersToShow = t?.players.slice(0, NUM_PLAYERS_TO_SHOW) ?? [];
+	// Baseball shows the starting lineup, other sports show the best players
+	const depth: BaseballDepth | undefined =
+		__SPORT === "baseball" && t?.depth && "LP" in t.depth ? t.depth : undefined;
+	const NUM_PLAYERS_TO_SHOW = __SPORT === "baseball" ? 10 : 9;
+	let rowsToShow: { slot?: string; p: Player }[];
+	if (__SPORT === "baseball" && t && depth) {
+		rowsToShow = getStartingLineup({ depth, dh, players: t.players }).flatMap(
+			({ slot, p }) => (p ? [{ slot, p }] : []),
+		);
+	} else {
+		rowsToShow = (t?.players.slice(0, NUM_PLAYERS_TO_SHOW) ?? []).map((p) => ({
+			p,
+		}));
+	}
 
 	return (
 		<>
@@ -428,13 +449,41 @@ const SelectTeam = ({
 					</div>
 				) : null}
 			</div>
+			{__SPORT === "baseball" && t && depth ? (
+				<div className="mb-2">
+					<StartingPitcherSelect
+						depth={depth}
+						disabled={disabled}
+						inputId={`startingPitcher${index}`}
+						onChange={(pid) => {
+							const newTeam = {
+								...t,
+								depth: setStartingPitcher(depth, pid),
+							};
+							setTeams(teams.map((t2) => (t2.tid === t.tid ? newTeam : t2)));
+							onChange(league!, newTeam, gameAttributes);
+						}}
+						players={t.players}
+					/>
+				</div>
+			) : null}
 			<ul className="list-unstyled mb-0">
-				{playersToShow.map((p, i) => {
+				{rowsToShow.map(({ slot, p }, i) => {
 					const stats = p.stats.at(-1);
 					const ratings = last(p.ratings);
 
 					return (
 						<li key={p.pid} className={playerRowClassName(i)}>
+							{slot !== undefined ? (
+								<>
+									<span
+										className="d-inline-block text-body-secondary"
+										style={{ width: 28 }}
+									>
+										{slot}
+									</span>
+								</>
+							) : null}
 							<PlayerNameLabels
 								pid={p.pid}
 								firstName={p.firstName}
@@ -454,8 +503,8 @@ const SelectTeam = ({
 						</li>
 					);
 				})}
-				{range(NUM_PLAYERS_TO_SHOW - playersToShow.length).map((j) => {
-					const i = playersToShow.length + j;
+				{range(NUM_PLAYERS_TO_SHOW - rowsToShow.length).map((j) => {
+					const i = rowsToShow.length + j;
 					return (
 						<li key={i} className={playerRowClassName(i)}>
 							<br />
@@ -623,6 +672,8 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		return gameAttributes;
 	};
 
+	const dh = exhibitionHasDh(getGameAttributesByType().dh);
+
 	const onHideCustomizeModal = () => {
 		setShowCustomizeModal(false);
 	};
@@ -692,6 +743,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					<h2>{neutralSite ? "Team 1" : swapHomeAway ? "Home" : "Away"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
+						dh={dh}
 						healInjuries={healInjuries}
 						index={1}
 						initialTeam={defaultState.teams?.[1]}
@@ -709,6 +761,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					<h2>{neutralSite ? "Team 2" : swapHomeAway ? "Away" : "Home"}</h2>
 					<SelectTeam
 						disabled={simmingGame}
+						dh={dh}
 						healInjuries={healInjuries}
 						index={0}
 						initialTeam={defaultState.teams?.[0]}

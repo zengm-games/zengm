@@ -13,7 +13,7 @@ import type {
 import type {
 	ExhibitionGameAttributes,
 	ExhibitionTeam,
-} from "../../ui/views/Exhibition.tsx";
+} from "../../ui/views/Exhibition/index.tsx";
 import { GameSim, player, realRosters, team } from "../core/index.ts";
 import { processTeam } from "../core/game/loadTeams.ts";
 import { gameSimToBoxScore } from "../core/game/writeGameStats.ts";
@@ -26,6 +26,7 @@ import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import { randInt } from "../../common/random.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { exhibitionHasDh } from "../../common/exhibitionHasDh.ts";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");
@@ -360,6 +361,11 @@ export const getSeasonInfo = async (
 		});
 		t.ovrHealthy = team.ovr(ovrPlayers);
 
+		// The UI shows the starting lineup, and lets the user change the starting pitcher, so the depth chart is needed before the game is simmed
+		if (__SPORT === "baseball" && !hasCompleteBaseballDepth(t)) {
+			t.depth = await team.genDepth(t.players);
+		}
+
 		for (const p of t.players) {
 			local.exhibitionGamePlayers[p.pid] = p;
 		}
@@ -369,6 +375,22 @@ export const getSeasonInfo = async (
 		gameAttributes,
 		teams,
 	};
+};
+
+// Depth charts from the current season can be missing players, such as ones who were released
+const hasCompleteBaseballDepth = (t: ExhibitionTeam) => {
+	const depth = t.depth;
+	if (!depth || !("LP" in depth)) {
+		return false;
+	}
+
+	return [depth.D, depth.DP, depth.P].every((pids) => {
+		const pidsSet = new Set(pids);
+		return (
+			pidsSet.size === t.players.length &&
+			t.players.every((p) => pidsSet.has(p.pid))
+		);
+	});
 };
 
 type ExhibitionGamePhase =
@@ -444,7 +466,7 @@ export const simExhibitionGame = async (
 		}),
 	)) as [any, any];
 
-	const dh = gameAttributes.dh === "all";
+	const dh = exhibitionHasDh(gameAttributes.dh);
 
 	for (const t of teamsProcessed) {
 		if (t.depth !== undefined) {

@@ -665,7 +665,7 @@ const processRatings = (
 					row.tid = tidTemp ?? tidTemp2;
 				}
 			} else if (attr === "ovrs" || attr === "pots") {
-				row[attr] = player.fuzzOvrs(pr[attr], pr.fuzz);
+				row[attr] = fuzz ? player.fuzzOvrs(pr[attr], pr.fuzz) : pr[attr];
 			} else if (
 				fuzz &&
 				attr !== "fuzz" &&

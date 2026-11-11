@@ -126,7 +126,7 @@ more baseball stats
 - more advanced stats https://discord.com/channels/290013534023057409/1500911214895566909/1500911214895566909
 - for ones with + versions, generalize and add to basketball/football too? maybe store just league averages somewhere
 
-use overflow-anchor for leaguetopbar scrolling https://x.com/mannupaaji/status/2053829832757407907 - Safari ?
+use overflow-anchor for leaguetopbar scrolling https://x.com/mannupaaji/status/2053829832757407907 - Safari 27
 
 race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)
 - cannot assume an object from our cache is stable after any await, could have any arbitrary changes such as new transactions, new stats rows, etc.
@@ -147,8 +147,6 @@ For "this only applies if" settings (like for things related to custom draft typ
 - generate the description text automatically
 - somehow fade/disable when not applicable
   - probably not actual disable, in case there is somehow an invalid value there that the user needs to change
-
-more granular access to draft variables in playersPlus, so we only need to do AbbrevsCache stuff when actually using the abbrev or originalAbbrev properties
 
 in BBGM sometimes (about once per decade) a player is injured immediately after subbing in, in which case they have 1 GP with 0 min because no time has elapsed
 

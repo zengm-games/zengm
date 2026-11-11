@@ -1420,10 +1420,9 @@ type PlayerAttrsPlus<Contract = FlatContractInfo> = Omit<
 	contract: Contract;
 	diedYear: number | null;
 	draft: Player["draft"] & {
-		abbrev: string;
 		age: number;
-		originalAbbrev: string;
 	};
+	draftAbbrev: string;
 	draftPosition: number;
 	experience: number;
 	hof: boolean;

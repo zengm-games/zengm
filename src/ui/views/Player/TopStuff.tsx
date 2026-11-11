@@ -343,10 +343,10 @@ const TopStuff = ({
 				<a
 					href={helpers.leagueUrl([
 						"draft_team_history",
-						`${player.draft.abbrev}_${player.draft.tid}`,
+						`${player.draftAbbrev}_${player.draft.tid}`,
 					])}
 				>
-					{player.draft.abbrev}
+					{player.draftAbbrev}
 				</a>
 				<br />
 			</>

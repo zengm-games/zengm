@@ -115,7 +115,7 @@ export const getUpcoming = async ({
 		);
 	}
 	const players = await player.formatAll(playersRaw, {
-		attrs: ["injury", "pid", "value", "tid"],
+		attrs: ["injury", "value", "tid"],
 		ratings: ["ovr", "pos", "ovrs"],
 		season: g.get("season"),
 		fuzz: true,

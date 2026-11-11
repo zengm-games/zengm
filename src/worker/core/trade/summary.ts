@@ -11,7 +11,7 @@ import isUntradable from "./isUntradable.ts";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await player.formatAll(playersRaw, {
-		attrs: ["injury", "pid", "value"],
+		attrs: ["injury", "value"],
 		fuzz: true,
 		ratings: ["ovr", "pos", "ovrs"],
 		season: g.get("season"),

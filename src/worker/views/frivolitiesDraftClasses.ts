@@ -125,8 +125,6 @@ export default defineView({
 							"draft",
 							"retiredYear",
 							"statsTids",
-							"born",
-							"diedYear",
 							"jerseyNumber",
 						],
 						ratings: ["season", "ovr", "pos"],

@@ -784,7 +784,7 @@ export default defineView({
 			const careerFormatOptions = {
 				attrs,
 				// season and ovr only needed for bestPos
-				ratings: ["season", "ovr", "skills", "pos"],
+				ratings: ["season", "ovr", "pos"],
 				stats: allStats,
 				seasonType: inputs.playoffs,
 				mergeStats: "totOnly",

@@ -182,7 +182,7 @@ const getProcessedPlayers = async (
 			"tid",
 			"awards",
 		],
-		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
+		ratings: ["pos", "season", "ovr", "dovr", "skills"],
 		stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
 		seasonType,
 		fuzz: true,
@@ -205,7 +205,6 @@ const getProcessedPlayers = async (
 			season: number;
 			ovr: number;
 			dovr: number;
-			pot: number;
 			skills: string[];
 		}>;
 		stats: StatsRow[];

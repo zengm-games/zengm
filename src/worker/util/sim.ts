@@ -76,12 +76,15 @@ export const run = async (cb: (run: SimRun) => Promise<void>) => {
 	}
 };
 
-// Ask the running sim loop to stop after its current day. No-op if no sim is running.
+// Ask the running sim loop to stop after its current day. No-op if no sim is running. Returns whether a stop was requested, so callers know if anything changed that they need to update the UI for.
 export const requestStop = () => {
-	if (state === "running") {
-		// Not awaited, so the stop takes effect synchronously. running -> stopping doesn't change whether a sim is active, so there's no UI update to wait for anyway.
-		void setState("stopping");
+	if (state !== "running") {
+		return false;
 	}
+
+	// Not awaited, so the stop takes effect synchronously. running -> stopping doesn't change whether a sim is active, so there's no UI update to wait for anyway.
+	void setState("stopping");
+	return true;
 };
 
 // Stop immediately rather than waiting for the sim loop to finish its day, like when closing a league. Any running loop sees its run is no longer current and stops at its next check.

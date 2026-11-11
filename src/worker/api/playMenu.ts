@@ -156,10 +156,13 @@ const playAmount = async (
 	}
 };
 
-// The sim loop stops after its current day, and then it updates the status and play menu itself
+// The sim loop stops after its current day, and then it updates the status and play menu itself. Until then, the play menu needs to stop offering anything.
 const playStop = async () => {
-	sim.requestStop();
-	await updatePlayMenu();
+	// If no sim is running, there's nothing to update. This matters because a persistent notification (like the changelog shown at startup) can request a stop before any league is loaded, when g isn't set and updating the play menu would throw.
+	const stopRequested = sim.requestStop();
+	if (stopRequested) {
+		await updatePlayMenu();
+	}
 };
 
 const playMenu = {

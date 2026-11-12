@@ -763,8 +763,9 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [mainScreenHiddenFor, setMainScreenHiddenFor] = useState<
 		Screen | undefined
 	>();
+	const onMainScreen = currentScreen === "default";
 	const mainScreenHidden =
-		currentScreen !== "default" && mainScreenHiddenFor === currentScreen;
+		!onMainScreen && mainScreenHiddenFor === currentScreen;
 
 	const leagueCreationID = useId();
 	const { leagueCreation, leagueCreationPercent } = useLocal([
@@ -1320,14 +1321,14 @@ const NewLeague = (props: View<"newLeague">) => {
 				<m.form
 					variants={animationVariants}
 					initial={false}
-					animate={currentScreen === "default" ? "visible" : "left"}
+					animate={onMainScreen ? "visible" : "left"}
 					onAnimationStart={(definition) => {
 						if (definition === "visible") {
 							setMainScreenHiddenFor(undefined);
 						}
 					}}
 					onAnimationComplete={(definition) => {
-						if (definition === "left" && currentScreen !== "default") {
+						if (definition === "left" && !onMainScreen) {
 							setMainScreenHiddenFor(currentScreen);
 						}
 					}}
@@ -1339,7 +1340,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						maxWidth: 800,
 
 						// While another screen is open, take this out of the layout so that screen is not pushed down while they slide past each other
-						...(currentScreen === "default"
+						...(onMainScreen
 							? undefined
 							: { position: "absolute", width: "100%" }),
 					}}

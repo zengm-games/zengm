@@ -2,6 +2,7 @@ import fastDeepEqual from "fast-deep-equal";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { m, AnimatePresence } from "framer-motion";
 import {
+	Activity,
 	useState,
 	useReducer,
 	useCallback,
@@ -69,6 +70,8 @@ import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { gameAttributesArrayToObject } from "../../../common/gameAttributesArrayToObject.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
+
+type Screen = "default" | "teams" | "settings";
 
 const animationVariants = {
 	visible: {
@@ -754,9 +757,14 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
 	);
-	const [currentScreen, setCurrentScreen] = useState<
-		"default" | "teams" | "settings"
-	>("default");
+	const [currentScreen, setCurrentScreen] = useState<Screen>("default");
+
+	// The main screen stays mounted (but hidden) while another screen is open, so nothing on it gets reset. It is only hidden after it finishes sliding out, hence this tracking which screen it was hidden for.
+	const [mainScreenHiddenFor, setMainScreenHiddenFor] = useState<
+		Screen | undefined
+	>();
+	const mainScreenHidden =
+		currentScreen !== "default" && mainScreenHiddenFor === currentScreen;
 
 	const leagueCreationID = useId();
 	const { leagueCreation, leagueCreationPercent } = useLocal([
@@ -1307,21 +1315,34 @@ const NewLeague = (props: View<"newLeague">) => {
 	const sortedDisplayedTeams = orderBy(displayedTeams, ["region", "name"]);
 
 	return (
-		<AnimatePresence mode="popLayout" initial={false}>
-			{subPage ? (
-				subPage
-			) : (
+		<>
+			<Activity mode={mainScreenHidden ? "hidden" : "visible"}>
 				<m.form
-					key="screen-main"
 					variants={animationVariants}
-					initial="left"
-					animate="visible"
-					exit="left"
+					initial={false}
+					animate={currentScreen === "default" ? "visible" : "left"}
+					onAnimationStart={(definition) => {
+						if (definition === "visible") {
+							setMainScreenHiddenFor(undefined);
+						}
+					}}
+					onAnimationComplete={(definition) => {
+						if (definition === "left" && currentScreen !== "default") {
+							setMainScreenHiddenFor(currentScreen);
+						}
+					}}
 					onSubmit={async (event) => {
 						event.preventDefault();
 						await createLeague();
 					}}
-					style={{ maxWidth: 800 }}
+					style={{
+						maxWidth: 800,
+
+						// While another screen is open, take this out of the layout so that screen is not pushed down while they slide past each other
+						...(currentScreen === "default"
+							? undefined
+							: { position: "absolute", width: "100%" }),
+					}}
 				>
 					{importing ? (
 						<>
@@ -1383,7 +1404,6 @@ const NewLeague = (props: View<"newLeague">) => {
 								<>
 									<div className="mb-3">
 										<LeagueMenu
-											loadOnMount={state.pendingInitialLeagueInfo}
 											value={String(state.season)}
 											values={seasons}
 											getLeagueInfo={async (value, value2) => {
@@ -1457,7 +1477,6 @@ const NewLeague = (props: View<"newLeague">) => {
 							{state.customize === "legends" ? (
 								<div className="mb-3">
 									<LeagueMenu
-										loadOnMount={state.pendingInitialLeagueInfo}
 										value={state.legend}
 										values={legends}
 										getLeagueInfo={async (value) => {
@@ -1903,8 +1922,11 @@ const NewLeague = (props: View<"newLeague">) => {
 						) : null}
 					</div>
 				</m.form>
-			)}
-		</AnimatePresence>
+			</Activity>
+			<AnimatePresence mode="popLayout" initial={false}>
+				{subPage}
+			</AnimatePresence>
+		</>
 	);
 };
 

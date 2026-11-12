@@ -17,7 +17,6 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 	value2,
 	values2,
 	onNewValue2,
-	loadOnMount,
 }: {
 	getLeagueInfo: (value: Value, value2: Value2) => Promise<LeagueInfo>;
 	onDone: (leagueInfo: any) => void;
@@ -28,9 +27,6 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 	value2?: Value2;
 	values2?: { key: Value2; value: string }[];
 	onNewValue2?: (key: Value2) => void;
-
-	// False when this is a remount (like coming back from another screen) and the league info for the current value is already loaded - loading it again would overwrite anything the user changed since
-	loadOnMount: boolean;
 }) => {
 	const waitingForInfo = useRef<string | undefined>(value);
 
@@ -57,8 +53,11 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 		}
 	};
 
+	// Only load once, not every time the effect runs, because inside <Activity> effects run again when the component is shown after being hidden
+	const didInitialLoad = useRef(false);
 	const handleInitialValue = useEffectEvent(() => {
-		if (loadOnMount) {
+		if (!didInitialLoad.current) {
+			didInitialLoad.current = true;
 			handleNewValue(value, value2);
 		}
 	});

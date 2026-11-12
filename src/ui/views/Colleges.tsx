@@ -4,7 +4,7 @@ import { getCols } from "../../common/getCols.ts";
 import { useLocal } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
-import { frivolitiesMenu } from "./Frivolities.tsx";
+import { frivolitiesMenu } from "../util/frivolities.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { CountryFlag } from "../components/CountryFlag.tsx";

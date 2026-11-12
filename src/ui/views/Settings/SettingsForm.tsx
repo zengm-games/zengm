@@ -252,6 +252,7 @@ export type NumPlayoffTeamsInfo =
 	  };
 
 const SettingsForm = ({
+	onBack,
 	onCancel,
 	onCancelDefaultSetting,
 	onSave,
@@ -269,6 +270,8 @@ const SettingsForm = ({
 	isInsideModal,
 	hideGodModeToggle,
 }: {
+	// Like onCancel, but keeps the (validated) edits rather than discarding them
+	onBack?: (settings: Settings) => void | Promise<void>;
 	onCancel?: () => void;
 	onCancelDefaultSetting?: (key: Key) => void;
 	onSave: (settings: Settings) => void | Promise<void>;
@@ -408,8 +411,10 @@ const SettingsForm = ({
 
 	const [submitting, setSubmitting] = useState(false);
 
-	const handleFormSubmit = async (event: SubmitEvent) => {
-		event.preventDefault();
+	// Validates the form, then passes the parsed settings to the callback
+	const submitWith = async (
+		callback: (settings: Settings) => void | Promise<void>,
+	) => {
 		setSubmitting(true);
 
 		const output = {} as Settings;
@@ -483,7 +488,7 @@ const SettingsForm = ({
 		}
 
 		try {
-			await onSave(output);
+			await callback(output);
 		} catch (error) {
 			console.error(error);
 			setSubmitting(false);
@@ -496,6 +501,11 @@ const SettingsForm = ({
 		}
 
 		setSubmitting(false);
+	};
+
+	const handleFormSubmit = async (event: SubmitEvent) => {
+		event.preventDefault();
+		await submitWith(onSave);
 	};
 
 	const visibleCategories = getVisibleCategories({
@@ -662,9 +672,21 @@ const SettingsForm = ({
 						/>
 
 						<div className="d-flex gap-2">
+							{onBack ? (
+								<button
+									className="btn btn-secondary"
+									type="button"
+									disabled={submitting}
+									onClick={() => {
+										void submitWith(onBack);
+									}}
+								>
+									Back
+								</button>
+							) : null}
 							{onCancel ? (
 								<button
-									className="btn btn-secondary text-nowrap"
+									className="btn btn-secondary"
 									type="button"
 									disabled={submitting}
 									onClick={onCancel}

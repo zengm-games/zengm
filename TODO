@@ -202,7 +202,6 @@ dev usability stuff
   - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
 - use zod in various places, including to replace schema/types difference
 - DRY stuff for adding a new setting
-- typescript for playersPlus
 - when updating GameAttributesLeagueWithHistory (for instance in setGameAttributes) we should always wrap or always not wrap based on ALWAYS_WRAP, not prior value
 - lint useLocalPartial
   - ensure all requested variables are destructured

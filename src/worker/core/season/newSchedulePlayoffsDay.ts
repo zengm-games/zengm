@@ -12,7 +12,10 @@ import {
 import { ALL_STAR_GAME_TIDS } from "../../../common/specialGames.ts";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
-const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
+export const betterSeedHome = (
+	numGamesPlayoffSeries: number,
+	gameNum: number,
+) => {
 	// For series lengths like 3, 7, 11, 15, etc., special case last 3 games to ensure the home team always gets the last game
 	const needsSpecialEnding = (numGamesPlayoffSeries + 1) % 4 === 0;
 

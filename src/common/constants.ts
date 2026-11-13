@@ -49,6 +49,8 @@ export const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
 	"random",
 ]);
 
+export const POMYMARKET_NAME = "Pomymarket";
+
 export const PHASE = {
 	EXPANSION_DRAFT: -2,
 	FANTASY_DRAFT: -1,

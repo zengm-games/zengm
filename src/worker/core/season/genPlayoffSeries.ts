@@ -229,7 +229,7 @@ export const genPlayoffSeriesFromTeams = async (
 					teamsMatchup.push(sorted[0]!);
 
 					if (teamsMatchup.length === 2) {
-						const { round } = await makeMatchups(
+						const { round } = makeMatchups(
 							await orderTeams(teamsMatchup, teams, orderTeamsOptions),
 							numPlayoffTeams / byConf,
 							numPlayoffByes / byConf,
@@ -251,7 +251,7 @@ export const genPlayoffSeriesFromTeams = async (
 					teamsConf &&
 					teamsConf.length >= numPlayoffAndPlayInTeams / byConf
 				) {
-					const { round, playIn } = await makeMatchups(
+					const { round, playIn } = makeMatchups(
 						await orderTeams(teamsConf, teams, orderTeamsOptions),
 						numPlayoffTeams / byConf,
 						numPlayoffByes / byConf,
@@ -291,7 +291,7 @@ export const genPlayoffSeriesFromTeams = async (
 		// Reset, in case it was partially set in prior branch
 		series = range(numRounds).map(() => []);
 
-		const { round, playIn } = await makeMatchups(
+		const { round, playIn } = makeMatchups(
 			await orderTeams(teams, teams, orderTeamsOptions),
 			numPlayoffTeams,
 			numPlayoffByes,

@@ -154,7 +154,7 @@ const Leaders = ({
 									{
 										value: j + 1,
 										style: {
-											// Need this here rather than in cols becuase we're using hideHeader
+											// Need this here rather than in cols because we're using hideHeader
 											width: 1,
 										},
 									},

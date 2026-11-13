@@ -167,7 +167,7 @@ export const keyboardShortcuts = {
 	},
 	commandPallete: {
 		open: {
-			name: "Open command pallete",
+			name: "Open command palette",
 			customizable: true,
 			shortcut: {
 				altKey: false,

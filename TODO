@@ -1,5 +1,3 @@
-decrease 3 point contest accuracy
-
 rookie contract default length
 
 GOAT franchise, like GOAT team but totals https://www.reddit.com/r/BasketballGM/comments/1wuks4k/monthly_suggestions_thread/pd4sl0j/
@@ -87,8 +85,6 @@ When creating a new custom league, I'd love to just be able to import my setting
 
 btn-close vs glyphicon-remove vs CloseIcon
 
-default new league settings import should handle gameAttribute with history (take latest value)
-
 make GOAT lab use stats with derived variables, similar to awards
 - fixMax, etc
 
@@ -126,15 +122,11 @@ combine leagueLeaders award calculation and getSeasonLeaders, since they are rea
 
 save multiple GOAT formulas somehow https://app.fastmail.com/mail/Inbox/AM4NH_t4SdKw.Stp1kcfDMlQk?u=433e4054
 
-exhibition game
-- option to select starting pitcher https://discord.com/channels/290013534023057409/1498138817121488956/1500369197060853954
-- option to disable injuries (or add new ones?) https://app.fastmail.com/mail/Inbox/A1asHb3nWvXc.StpQnND--4LB?u=433e4054
-
 more baseball stats
 - more advanced stats https://discord.com/channels/290013534023057409/1500911214895566909/1500911214895566909
 - for ones with + versions, generalize and add to basketball/football too? maybe store just league averages somewhere
 
-use overflow-anchor for leaguetopbar scrolling https://x.com/mannupaaji/status/2053829832757407907 - Safari ?
+use overflow-anchor for leaguetopbar scrolling https://x.com/mannupaaji/status/2053829832757407907 - Safari 27
 
 race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)
 - cannot assume an object from our cache is stable after any await, could have any arbitrary changes such as new transactions, new stats rows, etc.
@@ -156,14 +148,12 @@ For "this only applies if" settings (like for things related to custom draft typ
 - somehow fade/disable when not applicable
   - probably not actual disable, in case there is somehow an invalid value there that the user needs to change
 
-more granular access to draft variables in playersPlus, so we only need to do AbbrevsCache stuff when actually using the abbrev or originalAbbrev properties
-
 in BBGM sometimes (about once per decade) a player is injured immediately after subbing in, in which case they have 1 GP with 0 min because no time has elapsed
 
 hockey live sim make power play or pulled goalie more prominent in UI https://discord.com/channels/@me/662077709836484618/1498390413315149976
 
 options for expansion team draft position
-- currently set in lotterySort.ts
+- currently set in getTeamsByRound.ts
 - FBGM should default to #1
 
 hockey pulled goalie scoring probability too high? https://app.fastmail.com/mail/Inbox/AXbF3uID79q3.StpQ3TODbYnk?u=433e4054
@@ -212,7 +202,6 @@ dev usability stuff
   - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
 - use zod in various places, including to replace schema/types difference
 - DRY stuff for adding a new setting
-- typescript for playersPlus
 - when updating GameAttributesLeagueWithHistory (for instance in setGameAttributes) we should always wrap or always not wrap based on ALWAYS_WRAP, not prior value
 - lint useLocalPartial
   - ensure all requested variables are destructured

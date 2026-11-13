@@ -570,7 +570,7 @@ const yearRanges = (inputYears: number[]): string[] => {
 
 	return groups.map((group) => {
 		if (group.length <= 1) {
-			// If no consective years, display individually
+			// If no consecutive years, display individually
 			return String(group[0]);
 		} else {
 			// If consecutive, display as a range but with the common prefix removed, like 2019-20 for 2019-2020

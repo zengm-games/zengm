@@ -12,7 +12,7 @@ import {
 	GAME_NAME,
 	ERROR_MESSAGE_ONE_TAB,
 	WEBSITE_ROOT,
-	ERROR_MESSSAGE_LEAGUE_NOT_FOUND,
+	ERROR_MESSAGE_LEAGUE_NOT_FOUND,
 } from "../common/constants.ts";
 import Bugsnag from "@bugsnag/browser";
 import { LeagueNotFoundMessage } from "./components/LeagueNotFoundMessage.tsx";
@@ -169,7 +169,7 @@ const setupRoutes = async () => {
 				// Some "errors" are expected and need either some special UI or are not worth logging
 				if (error instanceof RouteNotFoundError) {
 					errorMessage = "Page not found.";
-				} else if (error.message === ERROR_MESSSAGE_LEAGUE_NOT_FOUND) {
+				} else if (error.message === ERROR_MESSAGE_LEAGUE_NOT_FOUND) {
 					errorMessage = <LeagueNotFoundMessage />;
 				} else if (error.name === "VersionError") {
 					errorMessage = (
@@ -235,7 +235,7 @@ const setupRoutes = async () => {
 	promiseWorker.register(([name, ...params]: any) => {
 		if (!Object.hasOwn(api, name)) {
 			throw new Error(
-				`API call to nonexistant UI function "${name}" with params ${JSON.stringify(
+				`API call to nonexistent UI function "${name}" with params ${JSON.stringify(
 					params,
 				)}`,
 			);

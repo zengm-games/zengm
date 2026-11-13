@@ -272,7 +272,7 @@ export default defineView({
 				}
 
 				for (const p of players) {
-					// Can alway release player, even if below the minimum roster limit, cause why not. Except in the playoffs.
+					// Can always release player, even if below the minimum roster limit, cause why not. Except in the playoffs.
 					if (
 						inputs.tid === g.get("userTid") &&
 						(g.get("phase") !== PHASE.PLAYOFFS ||

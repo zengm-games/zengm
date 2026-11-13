@@ -116,7 +116,7 @@ export const LeagueFileUpload = ({
 	onDone,
 	onLoading,
 }: {
-	onDone: (b: Error | LeagueFileUploadOutput) => void;
+	onDone: (b: Error | LeagueFileUploadOutput) => void | Promise<void>;
 	disabled?: boolean;
 	enterURL?: boolean;
 	includePlayersInBasicInfo?: boolean;
@@ -127,6 +127,8 @@ export const LeagueFileUpload = ({
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const isMounted = useRef(true);
 	useEffect(() => {
+		// Set to true here too, not just initially, because inside <Activity> effects run again when the component is shown after being hidden
+		isMounted.current = true;
 		return () => {
 			isMounted.current = false;
 		};
@@ -138,11 +140,15 @@ export const LeagueFileUpload = ({
 		"leagueCreationPercent",
 	]);
 
-	// Reset status when switching between file upload
+	// Reset status when switching between file upload and URL. Only when it actually changes, since inside <Activity> effects run again when the component is shown after being hidden.
+	const prevEnterURL = useRef(enterURL);
 	useEffect(() => {
-		dispatch({
-			type: "init",
-		});
+		if (prevEnterURL.current !== enterURL) {
+			prevEnterURL.current = enterURL;
+			dispatch({
+				type: "init",
+			});
+		}
 	}, [enterURL]);
 
 	const beforeFile = () => {
@@ -313,7 +319,7 @@ export const LeagueFileUpload = ({
 						}}
 						onKeyDown={(event) => {
 							// This is so "Enter" loads the file, rather than doing nothing or submitting the whole form
-							if (event.key === "Enter") {
+							if (event.key === "Enter" && !event.nativeEvent.isComposing) {
 								handleFileURL(event);
 							}
 						}}

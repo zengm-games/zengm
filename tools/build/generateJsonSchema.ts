@@ -968,6 +968,10 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					equalizeRegions: {
 						type: "boolean",
 					},
+					fantasyPoints: {
+						type: "string",
+						enum: ["standard", "ppr", "halfPpr"],
+					},
 					forceRetireAge: {
 						type: "integer",
 					},
@@ -1317,7 +1321,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						// Type would be required, but upgrades
 						required: ["startingSeason"],
 					},
-					riggedLootery: {
+					riggedLottery: {
 						type: "array",
 						items: {
 							anyOf: [

@@ -11,9 +11,7 @@ const getSeason = async (playersAll: Player[], season: number) => {
 	const playersAllFiltered = playersAll.filter((p) => p.draft.year === season);
 	const players = await player.formatAll(playersAllFiltered, {
 		attrs: ["pid", "firstName", "lastName", "age", "valueFuzz", "watch"],
-		ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
-		showNoStats: true,
-		showRookies: true,
+		ratings: ["ovr", "pot", "skills", "pos"],
 		fuzz: true,
 	});
 	players.sort((a, b) => b.valueFuzz - a.valueFuzz);

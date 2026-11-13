@@ -44,7 +44,7 @@ from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ## Setup
 
-First install [Node.js](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/) 11.
+First install [Node.js](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/) 12.
 
 Then install the dependencies:
 
@@ -75,9 +75,6 @@ Integration and unit tests spread out through the codebase in \*.test.ts files.
 Coverage is not great. They can be run from the command line with:
 
     node --run test
-
-Like the dev command, you can stick `SPORT=football ` or whatever in front of
-this command to run it for a non-basketball sport.
 
 ### Git workflow
 
@@ -125,7 +122,7 @@ As mentioned above, the core of a game runs in a Shared Worker. This makes
 debugging a little tricky. For instance, in Chrome, if you `console.log`
 something inside the Shared Worker, you won't see it in the normal JS console.
 Instead, you need to go to chrome://inspect/#workers and click "Inspect" under
-<http://localhost/gen/worker.js>.
+<http://localhost:3000/gen/worker.js>.
 
 In any browser, if you have two tabs open and you reload one of them, the worker
 process will not reload. So make sure you close all tabs except one before

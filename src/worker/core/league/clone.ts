@@ -117,7 +117,7 @@ const clone = async (lidOld: number) => {
 			while (true) {
 				const { done, records } = await dbStream.pull();
 
-				const tx = await dbNew.transaction(store, "readwrite");
+				const tx = dbNew.transaction(store, "readwrite");
 				for (const record of records) {
 					tx.store.put(record);
 				}
@@ -133,10 +133,10 @@ const clone = async (lidOld: number) => {
 		}
 	} finally {
 		if (dbOld) {
-			await dbOld.close();
+			dbOld.close();
 		}
 		if (dbNew) {
-			await dbNew.close();
+			dbNew.close();
 		}
 	}
 

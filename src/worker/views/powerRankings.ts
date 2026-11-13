@@ -228,7 +228,7 @@ export default defineView({
 			playoffs !== prevInputs?.playoffs
 		) {
 			const teams = await team.getFormattedAll({
-				attrs: ["tid", "depth", "playThroughInjuries"],
+				attrs: ["tid", "playThroughInjuries"],
 				seasonAttrs: [
 					"won",
 					"lost",

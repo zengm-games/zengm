@@ -22,7 +22,7 @@ export const Skyscraper = memo(() => {
 	useEffect(() => {
 		if (!window.mobile) {
 			const callback = () => {
-				ads.skyscraper.updateDislay(false);
+				ads.skyscraper.updateDisplay(false);
 			};
 
 			callback();

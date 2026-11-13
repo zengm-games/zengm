@@ -400,9 +400,9 @@ export const getDraftLotteryProbs = (
 		lastKey = key;
 		const mapKey = key + equivalenceClassIdx;
 
-		const existinEquivalence = equivalenceMap.get(mapKey);
-		if (existinEquivalence) {
-			existinEquivalence.teamIndices.push(i);
+		const existingEquivalence = equivalenceMap.get(mapKey);
+		if (existingEquivalence) {
+			existingEquivalence.teamIndices.push(i);
 		} else {
 			equivalenceMap.set(mapKey, {
 				chances,

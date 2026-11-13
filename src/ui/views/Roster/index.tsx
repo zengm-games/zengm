@@ -12,11 +12,7 @@ import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
 import PlayingTime, { ptModifiers } from "./PlayingTime.tsx";
 import TopStuff from "./TopStuff.tsx";
-import type {
-	GameAttributesLeague,
-	Phase,
-	View,
-} from "../../../common/types.ts";
+import type { Phase, View } from "../../../common/types.ts";
 import { wrappedContract } from "../../components/contract.tsx";
 import type {
 	DataTableRow,
@@ -30,59 +26,42 @@ import { groupByUnique } from "../../../common/utils.ts";
 import { CountryFlag } from "../../components/CountryFlag.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
-import { confirm } from "../../util/confirm.tsx";
+import { showUndoNotification } from "../../components/UndoNotification.tsx";
 import { bySport } from "../../../common/sportFunctions.ts";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
 	phase: Phase,
 	season: number,
-	gender: GameAttributesLeague["gender"],
 ) => {
-	const wasPlayerJustDrafted = helpers.justDrafted(p, phase, season);
+	const justDrafted = helpers.justDrafted(p, phase, season);
 
-	let releaseMessage;
-	if (wasPlayerJustDrafted) {
-		releaseMessage = `Are you sure you want to release ${p.firstName} ${
-			p.lastName
-		}? ${helpers.pronoun(
-			gender,
-			"He",
-		)} will become a free agent and no longer take up a roster spot on your team. Because you just drafted ${helpers.pronoun(
-			gender,
-			"him",
-		)} and the regular season has not started yet, you will not have to pay ${helpers.pronoun(
-			gender,
-			"his",
-		)} contract.`;
-	} else {
-		releaseMessage = `Are you sure you want to release ${p.firstName} ${
-			p.lastName
-		}? ${helpers.pronoun(
-			gender,
-			"He",
-		)} will become a free agent and no longer take up a roster spot on your team, but you will still have to pay ${helpers.pronoun(
-			gender,
-			"his",
-		)} salary (and have it count against the salary cap) until ${helpers.pronoun(
-			gender,
-			"his",
-		)} contract expires in ${p.contract.exp}.`;
-	}
-
-	const proceed = await confirm(releaseMessage, {
-		okText: "Release player",
+	const response = await toWorker("main", "releasePlayer", {
+		pids: [p.pid],
 	});
-	if (proceed) {
-		const errorMsg = await toWorker("main", "releasePlayer", {
-			pids: [p.pid],
+	if (typeof response === "string") {
+		showNotification({
+			type: "error",
+			text: response,
 		});
-		if (errorMsg) {
-			showNotification({
-				type: "error",
-				text: errorMsg,
-			});
-		}
+	} else if (typeof response === "number") {
+		showUndoNotification({
+			actionName: "release",
+			undoKey: response,
+			title: (
+				<>
+					Released {p.firstName} {p.lastName}
+					<br />
+					{justDrafted ? (
+						<span className="text-success">Non-guaranteed rookie contract</span>
+					) : (
+						<span className="text-danger">
+							Owed money through {p.contract.exp}
+						</span>
+					)}
+				</>
+			),
+		});
 	}
 };
 
@@ -348,7 +327,7 @@ const Roster = ({
 							<button
 								className="btn btn-light-bordered btn-xs"
 								disabled={!p.canRelease}
-								onClick={() => handleRelease(p, phase, currentSeason, gender)}
+								onClick={() => handleRelease(p, phase, currentSeason)}
 							>
 								Release
 							</button>,
@@ -422,33 +401,30 @@ const Roster = ({
 						? ([
 								{
 									onClick: async (selectedRows) => {
-										const proceed = await confirm(
-											`Are you sure you want to release ${helpers.numberWithCommas(selectedRows.map.size)} ${helpers.plural("player", selectedRows.map.size)}?`,
-											{
-												okText: helpers.plural(
-													"Release player",
-													selectedRows.map.size,
-												),
+										const pids = Array.from(selectedRows.map.values()).map(
+											(metadata) => {
+												return metadata.pid;
 											},
 										);
-										if (proceed) {
-											const pids = Array.from(selectedRows.map.values()).map(
-												(metadata) => {
-													return metadata.pid;
-												},
-											);
-											const errorMsg = await toWorker("main", "releasePlayer", {
-												pids,
+										const response = await toWorker("main", "releasePlayer", {
+											pids,
+										});
+										if (typeof response === "string") {
+											showNotification({
+												type: "error",
+												text: response,
 											});
-											if (errorMsg) {
-												showNotification({
-													type: "error",
-													text: errorMsg,
+										} else {
+											if (typeof response === "number") {
+												showUndoNotification({
+													actionName: "release",
+													undoKey: response,
+													title: `Released ${pids.length} ${helpers.plural("player", pids.length)}`,
 												});
-											} else {
-												// Clear because the selected players are no longer on this team!
-												selectedRows.clear();
 											}
+
+											// Clear because the selected players are no longer on this team!
+											selectedRows.clear();
 										}
 									},
 									text: "Release",

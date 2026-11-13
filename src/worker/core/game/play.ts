@@ -20,13 +20,14 @@ import { idb } from "../../db/index.ts";
 import {
 	g,
 	helpers,
-	lock,
+	sim,
 	logEvent,
 	toUI,
 	updatePlayMenu,
 	updateStatus,
 	local,
 } from "../../util/index.ts";
+import type { SimRun } from "../../util/sim.ts";
 import type {
 	Conditions,
 	GameResults,
@@ -48,27 +49,17 @@ import {
 	isTradeDeadline,
 } from "../../../common/specialGames.ts";
 
-/**
- * Play one or more days of games.
- *
- * This also handles the case where there are no more games to be played by switching the phase to either the playoffs or before the draft, as appropriate.
- *
- * @memberOf core.game
- * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
- * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
- * @param {number?} gidOneGame Game ID number if we just want to sim one game rather than the whole day. Must be defined if playByPlay is true.
- * @param {boolean?} playByPlay When true, an array of strings representing the play-by-play game simulation are included in the api.realtimeUpdate raw call.
- */
-const play = async (
+// Plays one day, then calls itself for the next day, until run is finished
+const playDays = async (
+	run: SimRun,
 	numDays: number,
 	conditions: Conditions,
-	start: boolean = true,
 	gidOneGame?: number,
 	playByPlay?: boolean,
 ) => {
 	// This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
 	const cbNoGames = async (playoffsOver: boolean = false) => {
-		await lock.set("gameSim", false);
+		await run.finish();
 
 		// Check to see if the season is over
 		const schedule = await season.getSchedule();
@@ -157,7 +148,7 @@ const play = async (
 			// Update playoff series W/L
 			await updatePlayoffSeries(results, conditions);
 		} else {
-			// Update clinchedPlayoffs, only if there are games left in the schedule. Otherwise, this would be inaccruate (not correctly accounting for tiebreakers) and redundant (going to be called again on phase change)
+			// Update clinchedPlayoffs, only if there are games left in the schedule. Otherwise, this would be inaccurate (not correctly accounting for tiebreakers) and redundant (going to be called again on phase change)
 			const schedule = await season.getSchedule();
 			if (schedule.length > 0) {
 				await team.updateClinchedPlayoffs(false, conditions);
@@ -287,7 +278,7 @@ const play = async (
 				await player.killOne(conditions);
 
 				if (g.get("stopOnInjury")) {
-					await lock.set("stopGameSim", true);
+					sim.requestStop();
 				}
 
 				updateEvents.push("playerMovement");
@@ -308,7 +299,7 @@ const play = async (
 		}
 
 		// More stuff for LeagueTopBar - update ovrs based on injuries, and (if user just played a game) update the score of the user's last game and add their next game
-		// This is safe to do down here because injuries have been processed (if necessay) and games have been deleted from the schedule
+		// This is safe to do down here because injuries have been processed (if necessary) and games have been deleted from the schedule
 		if (gameToUi) {
 			const gamesToUi = [gameToUi];
 
@@ -355,7 +346,7 @@ const play = async (
 		if (numDays - 1 <= 0 || playoffsOver) {
 			await cbNoGames(playoffsOver);
 		} else {
-			await play(numDays - 1, conditions, false);
+			await playDays(run, numDays - 1, conditions);
 		}
 	};
 
@@ -545,7 +536,7 @@ const play = async (
 						},
 						conditions,
 					);
-					await lock.set("stopGameSim", true);
+					sim.requestStop();
 				}
 			} else {
 				// Only do neutralSite when not forcing a win, since forcing a win uses homeCourtFactor and I don't want to worry about how that interacts with neutralSite
@@ -592,7 +583,7 @@ const play = async (
 			await idb.cache.schedule.delete(firstGame.gid);
 			await phase.newPhase(PHASE.AFTER_TRADE_DEADLINE, conditions);
 			await toUI("deleteGames", [[firstGame.gid]]);
-			await play(numDays - 1, conditions, false);
+			await playDays(run, numDays - 1, conditions);
 		} else {
 			// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
 			if (schedule.length === 0 && g.get("phase") !== PHASE.PLAYOFFS) {
@@ -628,16 +619,8 @@ const play = async (
 			await updatePlayMenu();
 
 			if (numDays > 0) {
-				// If we didn't just stop games, let's play
-				// Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
-				const stopGameSim = lock.get("stopGameSim");
-
-				if (start || !stopGameSim) {
-					// If start is set, then reset stopGames
-					if (stopGameSim) {
-						await lock.set("stopGameSim", false);
-					}
-
+				// Keep playing, unless a stop was requested
+				if (run.shouldContinue()) {
 					if (g.get("phase") !== PHASE.PLAYOFFS) {
 						await team.checkRosterSizes("other");
 					}
@@ -655,7 +638,7 @@ const play = async (
 				await cbNoGames(playoffsOver);
 			}
 		} else {
-			await lock.set("gameSim", false); // Counteract auto-start in lock.canStartGames
+			await run.finish();
 			await updatePlayMenu();
 			await updateStatus();
 			logEvent(
@@ -669,17 +652,28 @@ const play = async (
 		}
 	};
 
-	// If this is a request to start a new simulation... are we allowed to do
-	// that? If so, set the lock and update the play menu
-	if (start) {
-		const canStartGames = lock.canStartGames();
+	await cbRunDay();
+};
 
-		if (canStartGames) {
-			await cbRunDay();
-		}
-	} else {
-		await cbRunDay();
-	}
+/**
+ * Play one or more days of games, if no other sim is running.
+ *
+ * This also handles the case where there are no more games to be played by switching the phase to either the playoffs or before the draft, as appropriate.
+ *
+ * @memberOf core.game
+ * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
+ * @param {number?} gidOneGame Game ID number if we just want to sim one game rather than the whole day. Must be defined if playByPlay is true.
+ * @param {boolean?} playByPlay When true, an array of strings representing the play-by-play game simulation are included in the api.realtimeUpdate raw call.
+ */
+const play = async (
+	numDays: number,
+	conditions: Conditions,
+	gidOneGame?: number,
+	playByPlay?: boolean,
+) => {
+	await sim.run((run) =>
+		playDays(run, numDays, conditions, gidOneGame, playByPlay),
+	);
 };
 
 export default play;

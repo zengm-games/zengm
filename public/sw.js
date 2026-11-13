@@ -33,7 +33,7 @@ class CacheOnlyOneItemPlugin {
 }
 
 registerRoute(
-	new RegExp("/gen/real-player-data-*"),
+	/\/gen\/real-player-data-/,
 	new CacheFirst({
 		cacheName: "real-player-data",
 		plugins: [new CacheOnlyOneItemPlugin("real-player-data")],
@@ -41,14 +41,14 @@ registerRoute(
 );
 
 registerRoute(
-	new RegExp("/gen/real-player-stats-*"),
+	/\/gen\/real-player-stats-/,
 	new CacheFirst({
 		cacheName: "real-player-stats",
 		plugins: [new CacheOnlyOneItemPlugin("real-player-stats")],
 	}),
 );
 
-// Will be filled in by tools/build-sw.js
+// Will be filled in by tools/build/buildSw.ts
 precacheAndRoute(self.__WB_MANIFEST);
 
 const handler = createHandlerBoundToURL("/index.html");

@@ -929,8 +929,8 @@ const processLiveGameEvents = ({
 			if (e.type === "flag") {
 				play.flags.push(null);
 			} else if (e.type === "penalty" && e.offsetStatus !== "offset") {
-				// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penatly, which ruins the drama.
-				// Same for change of possession, don't want to show it early if 2 penatlies.
+				// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penalty, which ruins the drama.
+				// Same for change of possession, don't want to show it early if 2 penalties.
 				const accept = e.decision === "accept";
 				if (accept) {
 					/*// Penalty could have changed possession

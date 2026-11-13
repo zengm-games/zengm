@@ -53,8 +53,13 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 		}
 	};
 
+	// Only load once, not every time the effect runs, because inside <Activity> effects run again when the component is shown after being hidden
+	const didInitialLoad = useRef(false);
 	const handleInitialValue = useEffectEvent(() => {
-		handleNewValue(value, value2);
+		if (!didInitialLoad.current) {
+			didInitialLoad.current = true;
+			handleNewValue(value, value2);
+		}
 	});
 
 	// Handle initial value

@@ -6,6 +6,7 @@ import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import { useLocal } from "../util/local.ts";
+import { useAction } from "../util/useAction.ts";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
@@ -197,21 +198,21 @@ const Summary = ({
 };
 
 const ExportButton = ({ season }: { season: number }) => {
-	const [exporting, setExporting] = useState(false);
+	const { busy: exporting, run } = useAction();
 	return (
 		<button
 			className="btn btn-secondary"
 			disabled={exporting}
-			onClick={async () => {
-				setExporting(true);
-
-				const { filename, json } = await toWorker("main", "exportDraftClass", {
-					season,
-				});
-				downloadFile(filename, json, "application/json");
-
-				setExporting(false);
-			}}
+			onClick={() =>
+				run(async () => {
+					const { filename, json } = await toWorker(
+						"main",
+						"exportDraftClass",
+						{ season },
+					);
+					downloadFile(filename, json, "application/json");
+				})
+			}
 		>
 			Export draft class
 		</button>

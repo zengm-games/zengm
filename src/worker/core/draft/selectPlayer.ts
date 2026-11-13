@@ -32,6 +32,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	if (!canBeDrafted(p)) {
 		return false;
 	}
+
+	local.undoLog.invalidate("transaction");
+
 	const prevTid = p.tid;
 	p.tid = dp.tid;
 
@@ -101,7 +104,8 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			const i = dp.pick - 1 + g.get("numActiveTeams") * (dp.round - 1);
 
 			const contractDemand: FlatContractInfo = {
-				amount: rookieSalaries[i]!,
+				// The rookie scale only covers numDraftRounds full rounds, but some drafts have more picks, like real drafts with extra rounds or picks. The end of the scale is the min contract anyway.
+				amount: rookieSalaries[i] ?? g.get("minContract"),
 				exp: g.get("season"),
 				rookie: true,
 			};

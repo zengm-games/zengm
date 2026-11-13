@@ -1,6 +1,6 @@
 import setSchedule from "./setSchedule.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, local, lock } from "../../util/index.ts";
+import { g, helpers, local, sim } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
 import { season, team } from "../index.ts";
 import { chunk, groupByUnique } from "../../../common/utils.ts";
@@ -214,7 +214,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	// Playoffs are not over! Make another round
 	// Handle "Play until end of round"
 	if (local.playingUntilEndOfRound) {
-		await lock.set("stopGameSim", true);
+		sim.requestStop();
 		local.playingUntilEndOfRound = false;
 	}
 

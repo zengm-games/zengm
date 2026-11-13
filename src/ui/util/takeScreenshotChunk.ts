@@ -53,9 +53,12 @@ const takeScreenshotChunk = async () => {
 	watermark.innerHTML = `<nav class="navbar navbar-light bg-light rounded-3 px-3"><a class="navbar-brand me-auto" href="#">${logoHTML}${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text" style="color: ${
 		theme === "dark" ? "#fff" : "#000"
 	}; font-weight: bold">Play your own league free at ${WEBSITE_ROOT}</span></nav>
-	<nav class="navbar navbar-border navbar-light mb-2 px-0"><h1 class="mb-0">${
-		document.title
-	}</nav>`;
+	<nav class="navbar navbar-border navbar-light mb-2 px-0"><h1 class="mb-0"></h1></nav>`;
+	const titleEl = watermark.querySelector("h1");
+	if (!titleEl) {
+		throw new Error("Should never happen");
+	}
+	titleEl.textContent = document.title;
 	contentEl.insertBefore(watermark, contentEl.firstChild);
 	contentEl.style.padding = "8px";
 

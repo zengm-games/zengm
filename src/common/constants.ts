@@ -71,6 +71,14 @@ export const REMAINING_PLAYOFF_TEAMS_PHASES = new Set<Phase>([
 	PHASE.PLAYOFFS,
 ]);
 
+export const PHASES_WHERE_TEAMS_CAN_BE_DISABLED = new Set<Phase>([
+	PHASE.PRESEASON,
+	PHASE.DRAFT_LOTTERY,
+	PHASE.AFTER_DRAFT,
+	PHASE.RESIGN_PLAYERS,
+	PHASE.FREE_AGENCY,
+]);
+
 export const PLAYER = {
 	FREE_AGENT: -1,
 	UNDRAFTED: -2,
@@ -600,7 +608,7 @@ export const ERROR_MESSAGE_ONE_TAB =
 	"Your browser only supports opening a league in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.";
 export const ERROR_MESSAGE_UNDEFINED_SEASON =
 	"Undefined season - an error may have occurred while creating this league";
-export const ERROR_MESSSAGE_LEAGUE_NOT_FOUND = "League not found.";
+export const ERROR_MESSAGE_LEAGUE_NOT_FOUND = "League not found.";
 
 export const TEAM_AWARD_INFO:
 	| {

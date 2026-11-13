@@ -340,12 +340,10 @@ const processAttrs = (
 					p.ratings[0].fuzz,
 				);
 			}
-
-			// Inject abbrevs
-			output.draft.abbrev =
-				abbrevsCache?.get(output.draft.year, output.draft.tid) ?? "???";
-			output.draft.originalAbbrev =
-				abbrevsCache?.get(output.draft.year, output.draft.originalTid) ?? "???";
+		} else if (attr === "draftAbbrev") {
+			// Separate from "draft" so the abbrev lookup is only done when it's actually used
+			output.draftAbbrev =
+				abbrevsCache?.get(p.draft.year, p.draft.tid) ?? "???";
 		} else if (attr === "draftPosition") {
 			// Estimate pick number from draft round and pick. Would be better to store the real value
 			if (p.draft.round > 0 && p.draft.pick > 0) {
@@ -665,7 +663,7 @@ const processRatings = (
 					row.tid = tidTemp ?? tidTemp2;
 				}
 			} else if (attr === "ovrs" || attr === "pots") {
-				row[attr] = player.fuzzOvrs(pr[attr], pr.fuzz);
+				row[attr] = fuzz ? player.fuzzOvrs(pr[attr], pr.fuzz) : pr[attr];
 			} else if (
 				fuzz &&
 				attr !== "fuzz" &&
@@ -1539,7 +1537,7 @@ const getAbbrevsNeeded = ({
 	ratings,
 	stats,
 }: PlayerFormatOptionsRequired) => {
-	const draft = attrs.includes("draft");
+	const draftAbbrev = attrs.includes("draftAbbrev");
 	const latestTransaction = attrs.includes("latestTransaction");
 	const salaries = attrs.includes("salaries");
 
@@ -1547,8 +1545,8 @@ const getAbbrevsNeeded = ({
 	const stats2 = ratings.includes("abbrev") || stats.includes("abbrev");
 
 	return {
-		any: draft || latestTransaction || salaries || stats2,
-		draft,
+		any: draftAbbrev || latestTransaction || salaries || stats2,
+		draftAbbrev,
 		latestTransaction,
 		salaries,
 		stats: stats2,
@@ -1608,10 +1606,8 @@ export const formatAll = async <Options extends PlayerFormatOptions>(
 				}
 			}
 
-			if (abbrevsNeeded.draft) {
-				for (const tid of [p.draft.tid, p.draft.originalTid]) {
-					abbrevsCache.add(p.draft.year, tid);
-				}
+			if (abbrevsNeeded.draftAbbrev) {
+				abbrevsCache.add(p.draft.year, p.draft.tid);
 			}
 
 			if (abbrevsNeeded.latestTransaction) {
@@ -1655,7 +1651,7 @@ export const loadAbbrevs = async (optionsInput: PlayerFormatOptions) => {
 
 	// Draft, latest transaction, and salaries abbrevs can be from any season
 	const onlyOneSeason =
-		!abbrevsNeeded.draft &&
+		!abbrevsNeeded.draftAbbrev &&
 		!abbrevsNeeded.latestTransaction &&
 		!abbrevsNeeded.salaries;
 

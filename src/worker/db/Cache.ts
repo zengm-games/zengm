@@ -5,7 +5,7 @@ import {
 import { helpers } from "../../common/helpers.ts";
 import { idb } from "./index.ts";
 import cmp from "./cmp.ts";
-import { g, local, lock } from "../util/index.ts";
+import { g, local, lock, sim } from "../util/index.ts";
 import type {
 	AllStars,
 	DraftLotteryResult,
@@ -132,6 +132,9 @@ type IndexInfo = {
 	multiEntry?: boolean;
 
 	unique?: boolean;
+
+	// The same index in IndexedDB is unique, so a duplicate key would make every flush fail. When this is true, writing a duplicate to the cache throws instead. Not all unique indexes in the cache are like this, because some are only unique because of which rows are in the cache, like teamStatsByPlayoffsTid only having the current season.
+	uniqueInDatabase?: boolean;
 };
 
 const getIndexKey = (index: IndexInfo, row: any) => {
@@ -366,11 +369,13 @@ export const storeInfos: Record<Store, StoreInfo> = {
 				name: "teamSeasonsBySeasonTid",
 				key: ["season", "tid"],
 				unique: true,
+				uniqueInDatabase: true,
 			},
 			{
 				name: "teamSeasonsByTidSeason",
 				key: ["tid", "season"],
 				unique: true,
+				uniqueInDatabase: true,
 			},
 		],
 	},
@@ -987,7 +992,7 @@ class Cache {
 		if (this._dirty) {
 			const skipFlush =
 				this._status !== "full" ||
-				lock.get("gameSim") ||
+				sim.isActive() ||
 				lock.get("newPhase") ||
 				!!local.autoPlayUntil;
 
@@ -1111,6 +1116,36 @@ class Cache {
 		return output;
 	}
 
+	// Throw if another row already has the same key in an index that is unique in IndexedDB, because otherwise the error would only happen when flushing, and then keep happening on every flush
+	_checkUniqueInDatabase(store: Store, obj: any) {
+		const { indexes, pk } = storeInfos[store];
+		if (!indexes) {
+			return;
+		}
+
+		for (const index of indexes) {
+			if (!index.uniqueInDatabase) {
+				continue;
+			}
+
+			this._checkIndexFreshness(index.name);
+
+			const key = getIndexKey(index, obj);
+			const existing = this._indexes[index.name][key];
+
+			// The getIndexKey check is for a row whose key was changed in place but that hasn't been put back in the cache yet, so it's still indexed under its old key
+			if (
+				existing !== undefined &&
+				existing[pk] !== obj[pk] &&
+				getIndexKey(index, existing) === key
+			) {
+				throw new Error(
+					`Duplicate key ${key} in unique index "${index.name}" of "${store}"`,
+				);
+			}
+		}
+	}
+
 	_storeObj(
 		type: "add" | "put",
 		store: Store,
@@ -1144,6 +1179,8 @@ class Cache {
 			this._maxIds[store] += 1;
 			obj[pk] = this._maxIds[store];
 		}
+
+		this._checkUniqueInDatabase(store, obj);
 
 		const prevObj = this._data[store][obj[pk]];
 		this._data[store][obj[pk]] = obj;

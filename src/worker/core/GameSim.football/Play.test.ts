@@ -1707,7 +1707,7 @@ describe("one penalty on each team", () => {
 });
 
 describe("game sim issues", () => {
-	test("missed fg -> possesion change", async () => {
+	test("missed fg -> possession change", async () => {
 		const game = await initGameSim();
 		game.o = 0;
 		game.d = 1;

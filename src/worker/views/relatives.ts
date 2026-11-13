@@ -108,7 +108,6 @@ export default defineView({
 					"retiredYear",
 					"statsTids",
 					"hof",
-					"relatives",
 					"numBrothers",
 					"numFathers",
 					"numSons",

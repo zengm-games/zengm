@@ -11,7 +11,7 @@ import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
  * This should be called for a trade negotiation, as it will update the trade objectStore.
  *
  * @memberOf core.trade
- * @return {Promise.string} Resolves to a string containing a message to be dispalyed to the user, as if it came from the AI GM.
+ * @return {Promise.string} Resolves to a string containing a message to be displayed to the user, as if it came from the AI GM.
  */
 const makeItWorkTrade = async () => {
 	const tr = await get();

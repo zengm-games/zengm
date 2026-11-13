@@ -24,7 +24,7 @@ export const ColorPicker = ({
 		setHex(value);
 	}
 
-	// Using this (plus a wrapper div in Modal.tsx) fixed the bug mentioned below about the inputs, but it broke scrolling behavior of the modal body in Firefox, so switching to enforceFocus={false} manually applied to modals that conatin the color picker (only one currently)
+	// Using this (plus a wrapper div in Modal.tsx) fixed the bug mentioned below about the inputs, but it broke scrolling behavior of the modal body in Firefox, so switching to enforceFocus={false} manually applied to modals that contain the color picker (only one currently)
 	/*// modalRef stuff is needed until https://github.com/react-bootstrap/react-overlays/issues/1003 is fixed, otherwise can't type in inputs in color picker
 	const ref = useRef<HTMLButtonElement>(null);
 	const modalRef = useRef<HTMLElement | null>(null);

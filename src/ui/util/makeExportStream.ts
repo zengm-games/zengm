@@ -156,13 +156,13 @@ const makeExportStream = async (
 					}
 				}
 
-				await controller.enqueue(
+				controller.enqueue(
 					`{${newline}${tab}"version":${space}${LEAGUE_DATABASE_VERSION}`,
 				);
 
 				// If name is specified, include it in meta object. Currently this is only used when importing leagues, to set the name
 				if (name) {
-					await writeRootObject(controller, "meta", { name });
+					writeRootObject(controller, "meta", { name });
 				}
 			},
 
@@ -231,11 +231,7 @@ const makeExportStream = async (
 
 					const gameAttributesObject = gameAttributesArrayToObject(rows);
 
-					await writeRootObject(
-						controller,
-						"gameAttributes",
-						gameAttributesObject,
-					);
+					writeRootObject(controller, "gameAttributes", gameAttributesObject);
 
 					incrementNumRecordsSeen();
 				} else {
@@ -349,7 +345,7 @@ const makeExportStream = async (
 
 					if (storeIndex >= stores.length) {
 						// Done whole export!
-						await controller.enqueue(`${newline}}${newline}`);
+						controller.enqueue(`${newline}}${newline}`);
 
 						done();
 					}

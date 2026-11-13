@@ -4,8 +4,11 @@ import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import AddRemove from "./AddRemove.tsx";
-import type { Phase, View } from "../../../common/types.ts";
-import { PHASE } from "../../../common/constants.ts";
+import type { View } from "../../../common/types.ts";
+import {
+	PHASE,
+	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
+} from "../../../common/constants.ts";
 import TeamForm, { getNumTeamsByDid } from "./TeamForm.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { useLocal } from "../../util/local.ts";
@@ -125,14 +128,6 @@ const getUniqueAbbrevsErrorMessage = (teams: { abbrev: string }[]) => {
 		</>
 	);
 };
-
-export const PHASES_WHERE_TEAMS_CAN_BE_DISABLED = new Set<Phase>([
-	PHASE.PRESEASON,
-	PHASE.DRAFT_LOTTERY,
-	PHASE.AFTER_DRAFT,
-	PHASE.RESIGN_PLAYERS,
-	PHASE.FREE_AGENCY,
-]);
 
 const ManageTeams = (props: View<"manageTeams">) => {
 	const { godMode, phase } = useLocal(["godMode", "phase"]);

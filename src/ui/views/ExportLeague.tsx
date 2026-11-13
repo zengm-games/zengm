@@ -18,6 +18,8 @@ import { ProgressBarText } from "../components/ProgressBarText.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 
+const EXPORT_MAX_WIDTH = 500;
+
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
 const CANCEL_BUTTON = "Cancel button";
@@ -758,167 +760,165 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 					</div>
 				))}
 			</div>
-			<div className="row">
-				<div className="col-md-6 col-lg-5 col-xl-4">
-					<h2>Export options</h2>
+			<h2>Export options</h2>
+			<div style={{ maxWidth: EXPORT_MAX_WIDTH }}>
+				<div className="form-check mb-3">
+					<label className="form-check-label">
+						<input
+							className="form-check-input"
+							type="checkbox"
+							checked={compressed}
+							onChange={() => {
+								setCompressed((compressed) => !compressed);
+							}}
+						/>
+						Compress (no extra whitespace)
+					</label>
+				</div>
+				{typeof CompressionStream !== "undefined" ? (
 					<div className="form-check mb-3">
 						<label className="form-check-label">
 							<input
 								className="form-check-input"
 								type="checkbox"
-								checked={compressed}
+								checked={gzip}
 								onChange={() => {
-									setCompressed((compressed) => !compressed);
+									setGzip((gzip) => !gzip);
 								}}
 							/>
-							Compress (no extra whitespace)
+							Compress (gzip)
 						</label>
 					</div>
-					{typeof CompressionStream !== "undefined" ? (
-						<div className="form-check mb-3">
-							<label className="form-check-label">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									checked={gzip}
-									onChange={() => {
-										setGzip((gzip) => !gzip);
-									}}
-								/>
-								Compress (gzip)
-							</label>
-						</div>
-					) : null}
-					<div className="form-check">
-						<label className="form-check-label">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								checked={streamDownload}
-								onChange={() => {
-									setStreamDownload((streamDownload) => !streamDownload);
-								}}
-							/>
-							Streaming download
-							{HAS_FILE_SYSTEM_ACCESS_API ? (
-								<p className="text-body-secondary">
-									Keep this enabled unless you're having trouble getting your
-									browser to download an export. If that happens to you, please{" "}
-									<a
-										href="https://basketball-gm.com/manual/debugging/"
-										target="_blank"
-									>
-										help me figure out why it's not working
-									</a>
-									, because ideally it should always work with this enabled.
-								</p>
-							) : (
-								<p className="text-body-secondary">
-									This works better for large leagues, but is not supported well
-									in your browser so it might fail.
-								</p>
-							)}
-						</label>
+				) : null}
+				<div className="form-check">
+					<label className="form-check-label">
+						<input
+							className="form-check-input"
+							type="checkbox"
+							checked={streamDownload}
+							onChange={() => {
+								setStreamDownload((streamDownload) => !streamDownload);
+							}}
+						/>
+						Streaming download
+						{HAS_FILE_SYSTEM_ACCESS_API ? (
+							<p className="text-body-secondary">
+								Keep this enabled unless you're having trouble getting your
+								browser to download an export. If that happens to you, please{" "}
+								<a
+									href="https://basketball-gm.com/manual/debugging/"
+									target="_blank"
+								>
+									help me figure out why it's not working
+								</a>
+								, because ideally it should always work with this enabled.
+							</p>
+						) : (
+							<p className="text-body-secondary">
+								This works better for large leagues, but is not supported well
+								in your browser so it might fail.
+							</p>
+						)}
+					</label>
+				</div>
+
+				{showFirefoxWarning ? (
+					<div className="alert alert-warning d-inline-block">
+						<b>Firefox sometimes fails at streaming data to disk.</b> If the
+						progress bar gets stuck and it never prompts you to save a file,
+						please reload and try again.
 					</div>
+				) : null}
+			</div>
 
-					{showFirefoxWarning ? (
-						<div className="alert alert-warning d-inline-block">
-							<b>Firefox sometimes fails at streaming data to disk.</b> If the
-							progress bar gets stuck and it never prompts you to save a file,
-							please reload and try again.
-						</div>
-					) : null}
+			<div className="d-flex flex-wrap gap-2">
+				{state === "idle" || state === "download" ? (
+					<ActionButton
+						processing={state === "download"}
+						onClick={() => handleSubmit("download")}
+					>
+						<span className="glyphicon glyphicon-download-alt" /> Download file
+					</ActionButton>
+				) : null}
 
-					<div className="d-flex flex-wrap gap-2">
-						{state === "idle" || state === "download" ? (
+				{state === "idle" || state === "dropbox" ? (
+					dropboxAccessToken ? (
+						<>
 							<ActionButton
-								processing={state === "download"}
-								onClick={() => handleSubmit("download")}
+								maintainWidth={false}
+								processing={state === "dropbox"}
+								onClick={() => handleSubmit("dropbox")}
 							>
-								<span className="glyphicon glyphicon-download-alt" /> Download
-								file
+								<span className="glyphicon glyphicon-cloud-upload" /> Save to
+								Dropbox
 							</ActionButton>
-						) : null}
-
-						{state === "idle" || state === "dropbox" ? (
-							dropboxAccessToken ? (
-								<>
-									<ActionButton
-										className={state === "idle" ? "ms-2" : undefined}
-										maintainWidth={false}
-										processing={state === "dropbox"}
-										onClick={() => handleSubmit("dropbox")}
-									>
-										<span className="glyphicon glyphicon-cloud-upload" /> Save
-										to Dropbox
-									</ActionButton>
-									{state === "idle" ? (
-										<button
-											className="btn btn-danger"
-											onClick={() => {
-												safeLocalStorage.removeItem("dropboxAccessToken");
-												setDropboxAccessToken(null);
-											}}
-										>
-											Disconnect
-										</button>
-									) : null}
-								</>
-							) : (
+							{state === "idle" ? (
 								<button
-									className="btn btn-primary"
-									onClick={async () => {
-										if (lid === undefined) {
-											return;
-										}
-
-										const { getAuthenticationUrl } =
-											await import("../util/dropbox.ts");
-										const url = await getAuthenticationUrl(lid);
-
-										// Remember what was checked, since local state will be lost during redirect
-										saveDefaults(checked, compressed, gzip);
-
-										window.location.href = url;
+									className="btn btn-danger"
+									onClick={() => {
+										safeLocalStorage.removeItem("dropboxAccessToken");
+										setDropboxAccessToken(null);
 									}}
 								>
-									<span className="glyphicon glyphicon-cloud-upload" /> Connect
-									to Dropbox
+									Disconnect Dropbox
 								</button>
-							)
-						) : null}
+							) : null}
+						</>
+					) : (
+						<button
+							className="btn btn-secondary"
+							onClick={async () => {
+								if (lid === undefined) {
+									return;
+								}
 
-						{state !== "idle" ? (
-							<button
-								className="btn btn-secondary"
-								type="button"
-								disabled={aborting}
-								onClick={() => {
-									if (abortController.current) {
-										abortController.current.abort(new Error(CANCEL_BUTTON));
-										if (state === "dropbox") {
-											setAborting(true);
-										} else {
-											cleanupAfterStream();
-										}
-									}
-								}}
-							>
-								Cancel
-							</button>
-						) : null}
-					</div>
+								const { getAuthenticationUrl } =
+									await import("../util/dropbox.ts");
+								const url = await getAuthenticationUrl(lid);
 
-					{percentDone >= 0 ? (
-						<ProgressBarText
-							className="mt-3"
-							text={`Processing${
-								processingStore ? ` ${processingStore}` : ""
-							}...`}
-							percent={percentDone ?? 0}
-						/>
-					) : null}
-				</div>
+								// Remember what was checked, since local state will be lost during redirect
+								saveDefaults(checked, compressed, gzip);
+
+								window.location.href = url;
+							}}
+						>
+							<span className="glyphicon glyphicon-cloud-upload" /> Connect to
+							Dropbox
+						</button>
+					)
+				) : null}
+
+				{state !== "idle" ? (
+					<button
+						className="btn btn-secondary"
+						type="button"
+						disabled={aborting}
+						onClick={() => {
+							if (abortController.current) {
+								abortController.current.abort(new Error(CANCEL_BUTTON));
+								if (state === "dropbox") {
+									setAborting(true);
+								} else {
+									cleanupAfterStream();
+								}
+							}
+						}}
+					>
+						Cancel
+					</button>
+				) : null}
+			</div>
+
+			<div style={{ width: EXPORT_MAX_WIDTH }}>
+				{percentDone >= 0 ? (
+					<ProgressBarText
+						className="mt-3"
+						text={`Processing${
+							processingStore ? ` ${processingStore}` : ""
+						}...`}
+						percent={percentDone ?? 0}
+					/>
+				) : null}
 			</div>
 
 			{status && status !== "Exporting..." ? (

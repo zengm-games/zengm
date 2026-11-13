@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols } from "../../common/getCols.ts";
 import type { Col } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
-import { frivolitiesMenu } from "./Frivolities.tsx";
+import { frivolitiesMenu } from "../util/frivolities.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { useLocal } from "../util/local.ts";

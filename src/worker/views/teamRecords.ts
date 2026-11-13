@@ -143,7 +143,7 @@ const tallyAwards = (
 	return teamAwards;
 };
 
-const getRowInfo = async (
+const getRowInfo = (
 	tid: number,
 	seasonAttrs: {
 		season: number;
@@ -206,12 +206,12 @@ const getRowInfo = async (
 		lastPlayoffs,
 		lastFinals,
 		lastTitle,
-		...(await tallyAwards(
+		...tallyAwards(
 			tid,
 			new Set(seasonAttrs.map((x) => x.season)),
 			awards,
 			allStars,
-		)),
+		),
 	};
 	rowInfo.winp = helpers.calcWinp(rowInfo);
 	rowInfo.ptsPct = rowInfo.ptsMax !== 0 ? rowInfo.pts / rowInfo.ptsMax : 0;
@@ -386,7 +386,7 @@ export default defineView({
 					name: t.name,
 					imgURL: t.imgURL,
 					imgURLSmall: t.imgURLSmall,
-					...(await getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars)),
+					...getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars),
 					sortValue: teams.length,
 				};
 
@@ -399,7 +399,7 @@ export default defineView({
 				if (byType === "by_team") {
 					// by_team only - Any name changes or season gaps? If so, separate
 					const partials: typeof teams = [];
-					const addPartial = async (
+					const addPartial = (
 						tid: number,
 						seasonAttrs: typeof t.seasonAttrs,
 					) => {
@@ -409,7 +409,7 @@ export default defineView({
 							abbrev: seasonAttrs[0]!.abbrev,
 							region: seasonAttrs[0]!.region,
 							name: seasonAttrs[0]!.name,
-							...(await getRowInfo(tid, seasonAttrs, awards, allStars)),
+							...getRowInfo(tid, seasonAttrs, awards, allStars),
 							sortValue: teams.length + partials.length,
 						});
 					};
@@ -424,7 +424,7 @@ export default defineView({
 						if (prevName !== name || prevSeason !== ts.season + 1) {
 							// Either this is the first iteration of the loop, or the team name/region changed, or there is a gap in seasons
 							if (seasonAttrs.length > 0) {
-								await addPartial(t.tid, seasonAttrs);
+								addPartial(t.tid, seasonAttrs);
 							}
 
 							seasonAttrs = [];
@@ -436,7 +436,7 @@ export default defineView({
 
 					if (partials.length > 0) {
 						if (seasonAttrs.length > 0) {
-							await addPartial(t.tid, seasonAttrs);
+							addPartial(t.tid, seasonAttrs);
 						}
 
 						teams.push(...partials);

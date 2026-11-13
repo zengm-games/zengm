@@ -1349,12 +1349,8 @@ describe("getDraftLotteryProbs", () => {
 	];
 
 	for (const { name, numToPick, input, probs } of scenarios) {
-		test(name, async () => {
-			const output = await getDraftLotteryProbs(
-				input,
-				input.draftType,
-				numToPick,
-			);
+		test(name, () => {
+			const output = getDraftLotteryProbs(input, input.draftType, numToPick);
 
 			assert.deepStrictEqual(output.probs, probs);
 			assert.strictEqual(output.tooSlow, false);

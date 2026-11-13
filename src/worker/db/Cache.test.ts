@@ -7,8 +7,8 @@ import {
 	test,
 } from "vitest";
 import { resetCache, resetG } from "../../test/helpers.ts";
-import { player } from "../core/index.ts";
-import { g } from "../util/index.ts";
+import { player, team } from "../core/index.ts";
+import { g, helpers } from "../util/index.ts";
 import { idb } from "./index.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
 
@@ -260,5 +260,67 @@ describe("multiEntry index", () => {
 			players.map((p) => p.pid).sort((a, b) => a - b),
 			[0, 1],
 		);
+	});
+});
+
+describe("unique index", () => {
+	beforeEach(async () => {
+		resetG();
+
+		const teamsDefault = helpers.getTeamsDefault();
+		await resetCache({
+			teamSeasons: [0, 1].map((tid) => team.genSeasonRow(teamsDefault[tid]!)),
+		});
+	});
+
+	test("throw when adding a row with the same key as another row", async () => {
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[0, g.get("season")],
+		);
+		assert(teamSeason);
+
+		const { rid, ...duplicate } = teamSeason;
+
+		let error;
+		try {
+			await idb.cache.teamSeasons.add(duplicate);
+		} catch (error_) {
+			error = error_;
+		}
+		assert(error instanceof Error);
+		assert.match(error.message, /Duplicate key/);
+		assert.strictEqual((await idb.cache.teamSeasons.getAll()).length, 2);
+	});
+
+	test("allow replacing a row with a new object with the same primary key", async () => {
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[0, g.get("season")],
+		);
+		assert(teamSeason);
+
+		await idb.cache.teamSeasons.put({ ...teamSeason, won: 5 });
+
+		const teamSeason2 = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[0, g.get("season")],
+		);
+		assert.strictEqual(teamSeason2?.won, 5);
+	});
+
+	test("allow a key that another row had before it was changed in place", async () => {
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[0, g.get("season")],
+		);
+		assert(teamSeason);
+
+		const { rid, ...newTeamSeason } = teamSeason;
+		teamSeason.season -= 1;
+
+		await idb.cache.teamSeasons.add(newTeamSeason);
+		await idb.cache.teamSeasons.put(teamSeason);
+		assert.strictEqual((await idb.cache.teamSeasons.getAll()).length, 3);
 	});
 });

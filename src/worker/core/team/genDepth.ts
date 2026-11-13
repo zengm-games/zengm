@@ -9,7 +9,7 @@ const genDepth = async (
 	players: Player[],
 	initialDepth?: Team["depth"],
 	onlyNewPlayers?: boolean,
-	pos?: "L" | "LP" | "D" | "DP" | "P" | Position | "F" | "D" | "G",
+	pos?: "L" | "LP" | "D" | "DP" | "P" | Position | "F" | "G",
 ) => {
 	if (!initialDepth) {
 		initialDepth = bySport({

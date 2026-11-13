@@ -262,7 +262,7 @@ class Team<DH extends boolean> {
 				playerInGame.p.subIndex = this.subIndex;
 			}
 
-			// If players can switch positions mid game, this doens't make sense. Would need to store an array to track all positions
+			// If players can switch positions mid game, this doesn't make sense. Would need to store an array to track all positions
 			playerInGame.p.pos = playerInGame.pos;
 
 			// Age and the existing injury's duration stay fixed during a game.

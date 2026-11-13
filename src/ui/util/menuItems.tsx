@@ -6,7 +6,7 @@ import {
 	WEBSITE_ROOT,
 } from "../../common/constants.ts";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
-import { frivolities } from "../views/Frivolities.tsx";
+import { frivolities } from "./frivolities.ts";
 import { takeScreenshot } from "./takeScreenshot.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 

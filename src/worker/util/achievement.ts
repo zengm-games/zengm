@@ -133,7 +133,7 @@ async function getAll(): Promise<
 		};
 	});
 
-	// Handle any achivements stored in IndexedDB
+	// Handle any achievements stored in IndexedDB
 	const achievementsLocal = await idb.meta.getAll("achievements");
 
 	for (const achievementLocal of achievementsLocal) {

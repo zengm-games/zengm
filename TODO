@@ -595,10 +595,6 @@ If you go onto a team and start spam releasing players quickly (best way to do t
   - maybe make it generic to computing contracts, send some signal to UI like it does when simming games
   - should also affect bulk action buttons
 
-rolldown
-- prod build
-  - switch from timestamps in filename to hash
-
 hide least popular menu items
 - from GA, least popular main menu items are: player graphs, team graphs, and advanced player search
 
@@ -608,10 +604,6 @@ if a player comes back to your team for a 2nd stint but his jersey number is ret
 - what if 2 numbers are retired?
 - after implementing this, maybe the "Retire Jersey" button should be enabled for players still on your team, since they can keep their jersey number
 - retired jersey number should not block the player it was retired for, and instead they should favor it https://discord.com/channels/290013534023057409/331882115119448065/1434939012585488515
-
-update game screenshots
-
-intermittent "tid not found" error when starting real players league with all stats in 1977
 
 hype on league finances page https://discord.com/channels/290013534023057409/331882115119448065/1335735421145186440
 
@@ -625,6 +617,8 @@ add ability to export at any season/phase https://old.reddit.com/r/BasketballGM/
 - scheduled events
 
 starters should start the second half https://old.reddit.com/r/BasketballGM/comments/1hqsb4w/monthly_suggestions_thread/m7rpcrd/
+- make sure minutes played doesn't change too much
+- reset fatiuge too
 
 top padding bug https://discord.com/channels/290013534023057409/290015591216054273/1338025503390437478
 

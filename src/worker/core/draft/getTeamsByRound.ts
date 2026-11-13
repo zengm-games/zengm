@@ -115,6 +115,35 @@ export const getNba2027PlayIn = (
 	return nba2027PlayIn;
 };
 
+// For the coinFlip draft, the two teams in the coin flip are the worst non-playoff team in each conference, rather than the two worst overall. They need to be first in the list because the lottery takes its teams from the front. Everyone else keeps their order. If there aren't exactly 2 conferences, or a conference has no non-playoff team, the order is unchanged and the coin flip is between the two worst teams overall.
+const moveCoinFlipTeamsToFront = <T extends Pick<BaseTeam, "seasonAttrs">>(
+	nonPlayoffTeamsOrdered: T[],
+): T[] => {
+	if (g.get("confs", "current").length !== 2) {
+		return nonPlayoffTeamsOrdered;
+	}
+
+	const worstByConf = new Map<number, T>();
+	for (const t of nonPlayoffTeamsOrdered) {
+		if (!worstByConf.has(t.seasonAttrs.cid)) {
+			worstByConf.set(t.seasonAttrs.cid, t);
+		}
+	}
+	if (worstByConf.size !== 2) {
+		return nonPlayoffTeamsOrdered;
+	}
+
+	const coinFlipTeams = nonPlayoffTeamsOrdered.filter(
+		(t) =>
+			worstByConf.has(t.seasonAttrs.cid) &&
+			worstByConf.get(t.seasonAttrs.cid) === t,
+	);
+	return [
+		...coinFlipTeams,
+		...nonPlayoffTeamsOrdered.filter((t) => !coinFlipTeams.includes(t)),
+	];
+};
+
 // Order of teams in the first round before the lottery, given which teams made the playoffs. This is separate from getTeamsByRound so it can also be used on hypothetical standings
 export const getFirstRoundTeams = async <
 	T extends BaseTeam & {
@@ -163,7 +192,11 @@ export const getFirstRoundTeams = async <
 		})
 	).reverse();
 	checkForTies?.(nonPlayoffTeamsOrdered);
-	firstRound.push(...nonPlayoffTeamsOrdered);
+	firstRound.push(
+		...(draftType === "coinFlip"
+			? moveCoinFlipTeamsToFront(nonPlayoffTeamsOrdered)
+			: nonPlayoffTeamsOrdered),
+	);
 
 	if (nba2027PlayIn) {
 		const teamsByTid = groupByUnique(teams, "tid");

@@ -14,6 +14,7 @@ import type { Col } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { addPrefixForStat } from "../../../common/advancedPlayerSearch.ts";
 import { getNumericStat } from "../../../common/statValue.ts";
+import useRememberedGraphParams from "../../hooks/useRememberedGraphParams.ts";
 
 const getStatsWithLabels = (stats: string[], statType: string) => {
 	return getCols(stats.map((stat) => addPrefixForStat(statType, stat)));
@@ -359,10 +360,21 @@ const PlayerGraphs = ({
 		await realtimeUpdate([], url, undefined, true);
 	};
 
-	if (location.pathname.endsWith("/player_graphs")) {
-		// Set initial URL, for ctrl+r and reloading
-		updateUrl({});
-	}
+	// Season is not remembered, so it defaults to the current season
+	useRememberedGraphParams({
+		page: "playerGraphs",
+		current: {
+			statTypeX,
+			statTypeY,
+			playoffsX,
+			playoffsY,
+			statX,
+			statY,
+			minGames,
+		},
+		isBareUrl: location.pathname.endsWith("/player_graphs"),
+		updateUrl: () => updateUrl({}),
+	});
 
 	let minGamesInteger = Number.parseInt(minGames);
 	let minGamesError = false;

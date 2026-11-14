@@ -1,5 +1,6 @@
 import type { View } from "../../../common/types.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
+import useRememberedGraphParams from "../../hooks/useRememberedGraphParams.ts";
 import { StatGraph, type TooltipData } from "../PlayerGraphs/ScatterPlot.tsx";
 import useDropdownOptions, {
 	dropdownOptions,
@@ -530,10 +531,20 @@ const TeamGraphs = ({
 		await realtimeUpdate([], url, undefined, true);
 	};
 
-	if (location.pathname.endsWith("/team_graphs")) {
-		// Set initial URL, for ctrl+r and reloading
-		updateUrl({});
-	}
+	// Season is not remembered, so it defaults to the current season
+	useRememberedGraphParams({
+		page: "teamGraphs",
+		current: {
+			statTypeX,
+			statTypeY,
+			playoffsX,
+			playoffsY,
+			statX,
+			statY,
+		},
+		isBareUrl: location.pathname.endsWith("/team_graphs"),
+		updateUrl: () => updateUrl({}),
+	});
 
 	const seasons: [number, number] = [seasonX, seasonY];
 

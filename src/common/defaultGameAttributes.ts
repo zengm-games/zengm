@@ -25,6 +25,7 @@ export const wrapFromStart = <T>(value: T): GameAttributeWithHistory<T> => [
 export const gameAttributesKeysGameState: GameAttributeKey[] = [
 	"phase",
 	"nextPhase",
+	"firedTids",
 	"gameOver",
 	"godMode",
 	"godModeInPast",
@@ -488,6 +489,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	injuries: undefined,
 	tragicDeaths: undefined,
 	daysLeft: 0, // Used only for free agency
+	firedTids: [],
 	gameOver: false,
 	godMode: false,
 	godModeInPast: false,

@@ -5383,8 +5383,7 @@ const toggleTradeDeadline = async () => {
 			isTradeDeadline(game.homeTid, game.awayTid),
 		);
 		if (tradeDeadline) {
-			await idb.cache.schedule.delete(tradeDeadline.gid);
-			await toUI("deleteGames", [[tradeDeadline.gid]]);
+			await season.deleteScheduledTradeDeadline(tradeDeadline.gid);
 		}
 
 		await updatePlayMenu();

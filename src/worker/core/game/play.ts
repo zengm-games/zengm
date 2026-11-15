@@ -580,9 +580,8 @@ const playDays = async (
 
 		const firstGame = schedule[0];
 		if (firstGame && isTradeDeadline(firstGame.homeTid, firstGame.awayTid)) {
-			await idb.cache.schedule.delete(firstGame.gid);
+			await season.deleteScheduledTradeDeadline(firstGame.gid);
 			await phase.newPhase(PHASE.AFTER_TRADE_DEADLINE, conditions);
-			await toUI("deleteGames", [[firstGame.gid]]);
 			await playDays(run, numDays - 1, conditions);
 		} else {
 			// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games

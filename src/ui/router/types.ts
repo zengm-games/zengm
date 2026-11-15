@@ -59,10 +59,13 @@ type LinkParts<R extends Record<string, string>> = {
 	[P in keyof R]: P extends string ? LeaguePathParts<P> : never;
 }[keyof R];
 
-type MakeWildcardOptional<T, U = T> = T extends [...infer Init, PathWildcard]
-	? Extract<U, Init> extends never
-		? T
-		: [...Init, PathWildcard | undefined]
+// A trailing wildcard can be left out (passed as undefined) if the route without it also exists. This checks that the last part really is a wildcard, because a literal last part like "standings" is assignable to PathWildcard, and treating it as one would widen it to any string.
+type MakeWildcardOptional<T, U = T> = T extends [...infer Init, infer Last]
+	? PathWildcard extends Last
+		? Extract<U, Init> extends never
+			? T
+			: [...Init, PathWildcard | undefined]
+		: T
 	: T;
 
 export type LeagueUrlParts = MakeWildcardOptional<LinkParts<RouteInfos>>;

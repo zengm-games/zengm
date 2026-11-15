@@ -73,5 +73,5 @@ self.addEventListener("message", (event) => {
 	}
 });
 
-// Without this, can get into weird situations with the update checking logic in initServiceWorker, where a service worker has activated but is not yet contorlling the page, so we can't use the service worker to trigger refreshes
+// Without this, can get into weird situations with the update checking logic in initServiceWorker, where a service worker has activated but is not yet controlling the page, so we can't use the service worker to trigger refreshes
 clientsClaim();

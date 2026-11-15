@@ -15,6 +15,21 @@ if (!Array.prototype.findLast) {
 		writable: true,
 	});
 }
+if (!Array.prototype.findLastIndex) {
+	Object.defineProperty(Array.prototype, "findLastIndex", {
+		value(cb: any) {
+			for (let i = this.length - 1; i >= 0; i--) {
+				if (cb(this[i])) {
+					return i;
+				}
+			}
+			return -1;
+		},
+		configurable: true,
+		enumerable: false,
+		writable: true,
+	});
+}
 
 // Chrome 122, Firefox 127, Safari 17
 // https://github.com/rauschma/set-methods-polyfill/blob/894c17391303aec7190801636c64465f653479d8/src/library.ts

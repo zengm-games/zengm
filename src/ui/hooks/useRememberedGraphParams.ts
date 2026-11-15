@@ -8,10 +8,10 @@ import {
 /**
  * Remember the parameters of a graph page (everything except the season) in localStorage, and restore them when the page is opened without any parameters in the URL, rather than showing random ones.
  *
- * - key: localStorage key, unique per page
+ * - page: which graph page this is, which determines the localStorage key
  * - current: the parameters currently shown, which are saved whenever they change
- * - isBareUrl: true if the URL has no parameters, in which case `current` is random and is not saved
- * - updateUrl: navigates to the URL with these parameters overriding the current ones. Called with no remembered parameters if there are none.
+ * - isBareUrl: true if the URL has no parameters, in which case `current` is either the remembered parameters (applied by the worker) or random ones, and is not saved
+ * - updateUrl: navigates to the URL with the parameters currently shown. Called when the URL has no parameters.
  */
 const useRememberedGraphParams = <Params extends Record<string, string>>({
 	page,

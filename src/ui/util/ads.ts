@@ -5,7 +5,7 @@ import {
 } from "../../common/constants.ts";
 import { local, localActions } from "./local.ts";
 
-const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
+const SKYSCRAPER_WIDTH_CUTOFF = 1200 + 190;
 
 class Skyscraper {
 	displayed = false;
@@ -17,7 +17,7 @@ class Skyscraper {
 			const gold = !!div.dataset.gold;
 
 			if (
-				document.documentElement.clientWidth >= SKYSCAPER_WIDTH_CUTOFF &&
+				document.documentElement.clientWidth >= SKYSCRAPER_WIDTH_CUTOFF &&
 				!gold
 			) {
 				if (!this.displayed) {
@@ -125,7 +125,7 @@ class Ads {
 			}
 
 			window.freestar.queue.push(() => {
-				// Do moblie footer stuff before actually showing the ad, in case somehow `window.freestar.config.enabled_slots.push` causes an error that prevented subsequent code from running. Cause now 2 people have said the multi team menu is hiding behind ads on mobile, which must mean stickyFooterAd is not being set to true. Could somehow be Blockthrough (or whatever) running while Freestar code doesn't, but users say they aren't using an ad blocker...
+				// Do mobile footer stuff before actually showing the ad, in case somehow `window.freestar.config.enabled_slots.push` causes an error that prevented subsequent code from running. Cause now 2 people have said the multi team menu is hiding behind ads on mobile, which must mean stickyFooterAd is not being set to true. Could somehow be Blockthrough (or whatever) running while Freestar code doesn't, but users say they aren't using an ad blocker...
 				if (window.mobile) {
 					localActions.update({
 						stickyFooterAd: true,

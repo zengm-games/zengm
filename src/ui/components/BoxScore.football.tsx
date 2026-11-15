@@ -839,7 +839,7 @@ const FieldAndDrive = ({
 					<>
 						<VerticalLine
 							color={blue}
-							yards={sportState.scrimmage ?? sportState.scrimmage}
+							yards={sportState.scrimmage}
 							driveDirection={driveDirection}
 						/>
 						{!sportState.awaitingKickoff ? (

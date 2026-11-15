@@ -304,7 +304,7 @@ const ExpansionDraft = ({
 											<div className="alert alert-danger mb-0 mt-3">
 												You cannot set {godModeWarnings.join(" or ")} unless you
 												enable{" "}
-												<a href={helpers.leagueUrl(["godMode"])}>God Mode</a>.
+												<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
 											</div>
 										) : null}
 									</div>

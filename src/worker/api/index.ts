@@ -1,4 +1,5 @@
 import { csvFormat, csvFormatRows } from "d3-dsv";
+import fastDeepEqual from "fast-deep-equal";
 import type {
 	Contract,
 	FlatContractInfo,
@@ -5072,6 +5073,12 @@ const upsertCustomizedPlayer = async (
 	}
 
 	p.imgURL = helpers.stripBbcode(p.imgURL);
+
+	// Face aging leaves faces made or edited by the user alone
+	if (!prevPlayer || !fastDeepEqual(prevPlayer.face, p.face)) {
+		p.faceEdited = 1;
+		delete p.faceBase;
+	}
 
 	// Fix draft and ratings season
 	if (p.tid === PLAYER.UNDRAFTED) {

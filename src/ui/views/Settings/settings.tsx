@@ -1764,6 +1764,14 @@ export const settings: Setting[] = (
 				"See Height Factor for an explanation, this works the same way.",
 		},
 		{
+			category: "Players",
+			key: "faceAging",
+			name: "Face Aging",
+			type: "bool",
+			descriptionLong:
+				"Player faces change with age, updated every preseason: young players are a bit leaner with little facial hair, and older players get lines, gray hair, and fill out a bit. This is only cosmetic. Faces you edit and real player photos are never changed.",
+		},
+		{
 			category: "All-Star",
 			key: "allStarGame",
 			name: "Game Scheduling",

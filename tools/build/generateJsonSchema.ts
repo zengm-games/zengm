@@ -711,6 +711,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					aiJerseyRetirement: {
 						type: "boolean",
 					},
+					faceAging: {
+						type: "boolean",
+					},
 					aiTradesFactor: {
 						type: "number",
 					},

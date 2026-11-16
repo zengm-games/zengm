@@ -427,8 +427,6 @@ export class LiveGamePlaybackBasketball extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
-	readonly sport = "basketball";
-
 	protected override processStat(e: PlayByPlayEventStat) {
 		const { boxScore, playersByPid } = this;
 

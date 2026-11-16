@@ -6,6 +6,7 @@ import type {
 	PlayByPlayEventStat,
 	SportEvent,
 } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
+import type { FastForward } from "../components/PlayPauseNext.tsx";
 import { helpers } from "./helpers.ts";
 
 // One line of play-by-play
@@ -13,6 +14,32 @@ export type LiveGameEntry = {
 	t: TeamNum | undefined;
 	text: ReactNode;
 	textOnly: boolean;
+
+	// Only if the score changed since the previous entry
+	score?: {
+		diff: number;
+
+		// Score of each team after this entry. During a shootout, this is the shootout score.
+		pts: [number, number];
+
+		// Team to credit for the score, which is usually the same as the entry's team
+		t: TeamNum | undefined;
+
+		// For sports with different types of scores
+		type?: string;
+	};
+
+	// Only if this entry added outs
+	outs?: number;
+};
+
+// A sport-specific way to skip ahead in the game
+export type LiveGameFastForward = {
+	label: string;
+	keyboardShortcut: FastForward["keyboardShortcut"];
+
+	// Call this when starting to fast forward. Then call the function it returns after each `next`, until it returns true.
+	start: () => () => boolean;
 };
 
 type LiveGamePlayer = {
@@ -22,6 +49,7 @@ type LiveGamePlayer = {
 
 type LiveGameTeam = {
 	players: LiveGamePlayer[];
+	pts: number;
 	ptsQtrs: number[];
 	sAtt?: number;
 	sPts?: number;
@@ -72,8 +100,6 @@ export abstract class LiveGamePlaybackBase<
 	Event extends SportEvent,
 	BoxScore extends LiveGameBoxScore,
 > {
-	abstract readonly sport: string;
-
 	readonly boxScore: BoxScore;
 
 	// State that some sports track for their live game UI, beyond what's in the box score
@@ -103,15 +129,39 @@ export abstract class LiveGamePlaybackBase<
 
 	// Process events up to and including the next one that is shown in the play-by-play. Returns undefined if the events run out before finding one.
 	next(): LiveGameEntry | undefined {
+		// Decide this up front, so an entry that starts a shootout is still compared using the normal score
+		const { shootout } = this.boxScore;
+		const getPts = (): [number, number] => {
+			const [t0, t1] = this.boxScore.teams;
+			return shootout ? [t0.sPts ?? 0, t1.sPts ?? 0] : [t0.pts, t1.pts];
+		};
+
+		const prevPts = getPts();
+
 		while (!this.done) {
 			const e = this.events[this.cursor]!;
 			this.cursor += 1;
 
 			const entry = this.processEvent(e);
 			if (entry) {
+				const pts = getPts();
+				const diff = pts[0] + pts[1] - prevPts[0] - prevPts[1];
+				if (diff !== 0) {
+					entry.score = {
+						diff,
+						pts,
+						t: entry.t,
+					};
+				}
+
 				return entry;
 			}
 		}
+	}
+
+	// Override this in sports that have their own ways to skip ahead
+	getFastForwards(): LiveGameFastForward[] {
+		return [];
 	}
 
 	// Return an entry if this event is shown in the play-by-play

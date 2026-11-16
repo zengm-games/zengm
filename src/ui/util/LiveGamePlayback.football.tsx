@@ -23,6 +23,7 @@ import {
 	setStat,
 	type LiveGameBoxScore,
 	type LiveGameEntry,
+	type LiveGameFastForward,
 } from "./LiveGamePlaybackBase.ts";
 
 type BoxScorePlayer = {
@@ -37,6 +38,7 @@ type BoxScorePlayer = {
 type BoxScoreTeam = {
 	abbrev: string;
 	players: BoxScorePlayer[];
+	pts: number;
 	ptsQtrs: number[];
 	sAtt?: number;
 	sPts?: number;
@@ -597,16 +599,54 @@ export class LiveGamePlaybackFootball extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
-	readonly sport = "football";
-
 	override readonly sportState = getDefaultSportState();
 
 	// Was the latest entry from `next` a change of possession? See isPossessionChange for details.
-	possessionChange = false;
+	private possessionChange = false;
 
 	override next() {
 		this.possessionChange = false;
-		return super.next();
+
+		const entry = super.next();
+
+		if (entry?.score) {
+			const scoreInfo = this.sportState.plays.at(-1)?.scoreInfo;
+
+			// If no score type, then it must be a penalty overturning a score
+			entry.score.type = scoreInfo?.long ?? "Penalty overturned score";
+
+			// A safety is credited to the other team
+			if (scoreInfo?.type === "SF" && entry.t !== undefined) {
+				entry.score.t = entry.t === 0 ? 1 : 0;
+			}
+		}
+
+		return entry;
+	}
+
+	override getFastForwards(): LiveGameFastForward[] {
+		if (this.boxScore.shootout) {
+			return [];
+		}
+
+		return [
+			{
+				label: "Change of possession",
+				keyboardShortcut: "c",
+				start: () => {
+					// If currently on a change of possession, play through it before looking for the next one
+					let waitingForCurrentToEnd = this.possessionChange;
+
+					return () => {
+						if (waitingForCurrentToEnd && !this.possessionChange) {
+							waitingForCurrentToEnd = false;
+						}
+
+						return !waitingForCurrentToEnd && this.possessionChange;
+					};
+				},
+			},
+		];
 	}
 
 	private get currentPlay() {

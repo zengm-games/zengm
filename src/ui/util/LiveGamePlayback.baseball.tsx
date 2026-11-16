@@ -17,6 +17,7 @@ import {
 	LiveGamePlaybackBase,
 	type LiveGameBoxScore,
 	type LiveGameEntry,
+	type LiveGameFastForward,
 } from "./LiveGamePlaybackBase.ts";
 import { formatList } from "../../common/formatList.ts";
 
@@ -30,7 +31,9 @@ export type BoxScorePlayer = {
 };
 type BoxScoreTeam = {
 	abbrev: string;
+	hr: number;
 	players: BoxScorePlayer[];
+	pts: number;
 	ptsQtrs: number[];
 	sAtt?: number;
 	sPts?: number;
@@ -500,13 +503,117 @@ export class LiveGamePlaybackBaseball extends LiveGamePlaybackBase<
 	PlayByPlayEventInput,
 	BoxScore
 > {
-	readonly sport = "baseball";
-
 	override sportState = getDefaultSportState();
 
 	private inning = 0;
 
 	private getName = (pid: number) => this.playersByPid[pid]?.name ?? "???";
+
+	override next() {
+		const prevOuts = this.sportState.outs;
+
+		const entry = super.next();
+
+		if (entry && this.sportState.outs > prevOuts) {
+			entry.outs = this.sportState.outs;
+		}
+
+		return entry;
+	}
+
+	// Each half inning is a side
+	private get numSidesStarted() {
+		const [t0, t1] = this.boxScore.teams;
+		return t0.ptsQtrs.length + t1.ptsQtrs.length;
+	}
+
+	override getFastForwards(): LiveGameFastForward[] {
+		const { boxScore } = this;
+
+		if (boxScore.shootout) {
+			return [];
+		}
+
+		const fastForwards: LiveGameFastForward[] = [
+			{
+				label: "Next batter",
+				keyboardShortcut: "o",
+				start: () => {
+					const initialBatter = this.sportState.batterPid;
+
+					return () => {
+						// No batter between sides
+						const currentBatter = this.sportState.batterPid;
+						return currentBatter >= 0 && currentBatter !== initialBatter;
+					};
+				},
+			},
+			{
+				label: "Next baserunner",
+				keyboardShortcut: "t",
+				start: () => {
+					const getNumHomeRuns = () =>
+						boxScore.teams[0].hr + boxScore.teams[1].hr;
+
+					const initialBaserunners = new Set(
+						this.sportState.bases.filter((pid) => pid !== undefined),
+					);
+					const initialNumHomeRuns = getNumHomeRuns();
+
+					return () => {
+						const baserunners = this.sportState.bases.filter(
+							(pid) => pid !== undefined,
+						);
+						if (baserunners.length === 0) {
+							// Handle case where it's a new inning and the same guy gets on base
+							initialBaserunners.clear();
+						}
+
+						return (
+							baserunners.some((pid) => !initialBaserunners.has(pid)) ||
+							// Home run counts as new baserunner
+							getNumHomeRuns() !== initialNumHomeRuns
+						);
+					};
+				},
+			},
+			{
+				label: "Side is retired",
+				keyboardShortcut: "c",
+				start: () => {
+					const initialNumSides = this.numSidesStarted;
+
+					return () =>
+						this.numSidesStarted !== initialNumSides || !!boxScore.shootout;
+				},
+			},
+			{
+				label: "End of inning",
+				keyboardShortcut: "q",
+				start: () => {
+					const initialNumSides = this.numSidesStarted;
+
+					return () =>
+						// Odd number means the top of an inning just started
+						(this.numSidesStarted !== initialNumSides &&
+							this.numSidesStarted % 2 === 1) ||
+						!!boxScore.shootout;
+				},
+			},
+		];
+
+		// Only before the last inning starts
+		const numSidesBeforeLastInning = (boxScore.numPeriods - 1) * 2;
+		if (this.numSidesStarted <= numSidesBeforeLastInning) {
+			fastForwards.push({
+				label: `${helpers.ordinal(boxScore.numPeriods)} inning`,
+				keyboardShortcut: "u",
+				start: () => () => this.numSidesStarted > numSidesBeforeLastInning,
+			});
+		}
+
+		return fastForwards;
+	}
 
 	private updateSportState(e: PlayByPlayEvent<PlayByPlayEventInput>) {
 		const { boxScore } = this;

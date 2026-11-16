@@ -34,6 +34,7 @@ describe("LiveGamePlaybackFootball penalty yards", () => {
 	const team = (abbrev: string) => ({
 		abbrev,
 		players: [],
+		pts: 0,
 		ptsQtrs: [],
 		timeouts: 3,
 	});

@@ -4,7 +4,6 @@ import { LiveGamePlaybackBasketball } from "./LiveGamePlayback.basketball.tsx";
 import { LiveGamePlaybackFootball } from "./LiveGamePlayback.football.tsx";
 import { LiveGamePlaybackHockey } from "./LiveGamePlayback.hockey.tsx";
 
-// Check the `sport` property to narrow this to a specific sport
 export type LiveGamePlayback =
 	| LiveGamePlaybackBaseball
 	| LiveGamePlaybackBasketball

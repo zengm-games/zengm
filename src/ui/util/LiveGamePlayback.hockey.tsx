@@ -161,6 +161,7 @@ type BoxScorePlayer = {
 type BoxScoreTeam = {
 	abbrev: string;
 	players: BoxScorePlayer[];
+	pts: number;
 	ptsQtrs: number[];
 	sAtt?: number;
 	sPts?: number;
@@ -174,8 +175,6 @@ export class LiveGamePlaybackHockey extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
-	readonly sport = "hockey";
-
 	protected override processEvent(e: PlayByPlayEvent<PlayByPlayEventOutput>) {
 		const { boxScore, playersByPid } = this;
 

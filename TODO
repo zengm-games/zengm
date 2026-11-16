@@ -1037,11 +1037,6 @@ storing playByPlay
   - none (default)
 - don't include init
 
-unify processLiveGameEvents
-- make it a class, to more easily handle stuff like playersByPid
-  - after doing this, get rid of gid random.randInt hack in exhibitionGame.ts
-  - formatLiveGameStat could be simplified as a method
-
 FBGM move event text generation to UI
 - to fix after
   - bold text

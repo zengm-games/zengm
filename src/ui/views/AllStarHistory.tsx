@@ -46,6 +46,16 @@ const PlayerTeam = ({
 	);
 };
 
+const getOvertimeText = (overtimes: number) => {
+	// Ignore baseball, don't want to worry about numPeriods
+	if (__SPORT === "baseball") {
+		return "";
+	}
+
+	const overtimeText = helpers.overtimeText(overtimes, undefined);
+	return overtimeText === "" ? "" : ` (${overtimeText})`;
+};
+
 const resultText = ({
 	gid,
 	overtimes,
@@ -67,18 +77,7 @@ const resultText = ({
 	const tw = score[0] >= score[1] ? 0 : 1;
 	const tl = tw === 0 ? 1 : 0;
 
-	let overtimeText = "";
-
-	// Ignore baseball, don't want to worry about numPeriods
-	if (__SPORT !== "baseball") {
-		if (overtimes === 1) {
-			overtimeText = " (OT)";
-		} else if (overtimes > 1) {
-			overtimeText = ` (${overtimes}OT)`;
-		}
-	}
-
-	return `${teamNames[tw]} ${score[tw]}${sPts ? ` (${sPts[tw]})` : ""}, ${teamNames[tl]} ${score[tl]}${sPts ? ` (${sPts[tl]})` : ""}${overtimeText}`;
+	return `${teamNames[tw]} ${score[tw]}${sPts ? ` (${sPts[tw]})` : ""}, ${teamNames[tl]} ${score[tl]}${sPts ? ` (${sPts[tl]})` : ""}${getOvertimeText(overtimes)}`;
 };
 const ResultText = ({
 	gid,
@@ -102,13 +101,6 @@ const ResultText = ({
 	const tw = score[0] >= score[1] ? 0 : 1;
 	const tl = tw === 0 ? 1 : 0;
 
-	let overtimeText = "";
-	if (overtimes === 1) {
-		overtimeText = " (OT)";
-	} else if (overtimes > 1) {
-		overtimeText = ` (${overtimes}OT)`;
-	}
-
 	return (
 		<>
 			<a href={helpers.leagueUrl(["game_log", "special", season, gid])}>
@@ -116,7 +108,7 @@ const ResultText = ({
 				{sPts ? ` (${sPts[tw]})` : ""}, {teamNames[tl]} {score[tl]}
 				{sPts ? ` (${sPts[tl]})` : ""}
 			</a>
-			{overtimeText}
+			{getOvertimeText(overtimes)}
 		</>
 	);
 };

@@ -198,7 +198,7 @@ export const getText = (
 			const statTotal = pitcher ? formatLiveGameStat(pitcher, "soPit") : "";
 			text = event.swinging
 				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging${statTotal}`
-				: `Called strike three ${statTotal}`;
+				: `Called strike three${statTotal}`;
 			bold = true;
 			break;
 		}

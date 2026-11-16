@@ -17,6 +17,8 @@ import type makeExportStream from "../util/makeExportStream.ts";
 import { ProgressBarText } from "../components/ProgressBarText.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
+import { getNewLeagueLinkForURL } from "./NewLeague/getHashOption.ts";
+import { CopyableText } from "../components/CopyableText.tsx";
 
 const EXPORT_MAX_WIDTH = 500;
 
@@ -592,15 +594,23 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 								<p className="text-success">Upload complete!</p>
 								{url ? (
 									<>
-										<p>
-											URL: <a href={url}>{url}</a>
-										</p>
-										<p className="mb-0">
-											You can use this URL when{" "}
-											<a href="/new_league">making a new custom league</a>, just
-											select "Enter league file URL" under "Customize" and paste
-											in the URL.
-										</p>
+										<CopyableText
+											className="mb-3"
+											label="New league link"
+											value={getNewLeagueLinkForURL(url)}
+											description="Anyone can open this link to start a new league from this file."
+										/>
+										<CopyableText
+											label="File URL"
+											value={url}
+											description={
+												<>
+													Or paste this into "Enter league file URL" under
+													"Customize" when{" "}
+													<a href="/new_league">making a new custom league</a>.
+												</>
+											}
+										/>
 									</>
 								) : (
 									<>
@@ -922,7 +932,9 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 			</div>
 
 			{status && status !== "Exporting..." ? (
-				<div className="mt-3">{status}</div>
+				<div className="mt-3" style={{ maxWidth: EXPORT_MAX_WIDTH }}>
+					{status}
+				</div>
 			) : null}
 		</>
 	);

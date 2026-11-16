@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { showNotification } from "../../util/showNotification.ts";
+import { copyToClipboard } from "../../util/copyToClipboard.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import useLocalStorageState from "use-local-storage-state";
 
@@ -21,16 +22,11 @@ const LogOutput = ({ value }: { value: string }) => {
 				className="btn btn-secondary mt-2"
 				onClick={async () => {
 					if (textareaRef.current) {
-						try {
-							await navigator.clipboard.writeText(textareaRef.current.value);
+						const success = await copyToClipboard(textareaRef.current.value);
+						if (success) {
 							showNotification({
 								text: "Copied output to clipboard.",
 								type: "info",
-							});
-						} catch (error) {
-							showNotification({
-								text: `Error copying to clipboard: ${error.message}`,
-								type: "error",
 							});
 						}
 					}

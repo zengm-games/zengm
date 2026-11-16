@@ -71,3 +71,8 @@ export const getHashOption = (): HashOption | undefined => {
 		}
 	}
 };
+
+// Link to the new league page that prefills and loads this league file URL, the inverse of the #url= case of getHashOption
+export const getNewLeagueLinkForURL = (url: string) => {
+	return `${location.origin}/new_league#url=${encodeURIComponent(url)}`;
+};

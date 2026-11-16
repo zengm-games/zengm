@@ -36,7 +36,6 @@ import type {
 	GetLeagueOptions,
 	Div,
 	Conf,
-	GameAttributesLeague,
 	Phase,
 	NonEmptyArray,
 } from "../../../common/types.ts";
@@ -52,6 +51,7 @@ import CustomizeSettings from "./CustomizeSettings.tsx";
 import CustomizeTeams, { makeTIDsSequential } from "./CustomizeTeams.tsx";
 import type { BasicInfo } from "../../../worker/api/leagueFileUpload.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
+import { getHashOption } from "./getHashOption.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 import { choice } from "../../../common/random.ts";
@@ -729,30 +729,6 @@ const reducer = (state: State, action: Action): State => {
 	}
 };
 
-const getRebuildInfo = () => {
-	if (location.hash.startsWith("#rebuild=")) {
-		const rebuildSlug = location.hash.replace("#rebuild=", "");
-		const parts = rebuildSlug.split("_");
-		const abbrev = parts[1]?.toUpperCase();
-		const season = Number.parseInt(parts[2]!);
-		if (abbrev && !Number.isNaN(season)) {
-			return {
-				abbrev,
-				season,
-			};
-		}
-	}
-};
-
-const getGenderOverride = (): GameAttributesLeague["gender"] | undefined => {
-	if (location.hash.startsWith("#gender=")) {
-		const gender = location.hash.replace("#gender=", "");
-		if (gender === "male" || gender === "female") {
-			return gender;
-		}
-	}
-};
-
 const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
@@ -775,6 +751,13 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const importing = props.lid !== undefined;
 
+	// Only read once, when the page first loads
+	const [hashOption] = useState(getHashOption);
+	const initialURL =
+		hashOption?.type === "url" && props.type === "custom" && !importing
+			? hashOption.url
+			: undefined;
+
 	const [state, dispatch] = useReducer(
 		reducer,
 		props,
@@ -790,6 +773,9 @@ const NewLeague = (props: View<"newLeague">) => {
 			) {
 				customize = props.type;
 			}
+			if (initialURL !== undefined) {
+				customize = "custom-url";
+			}
 
 			const basicInfo = undefined;
 
@@ -802,7 +788,8 @@ const NewLeague = (props: View<"newLeague">) => {
 
 			let season;
 			let phase: Phase;
-			const rebuildInfo = getRebuildInfo();
+			const rebuildInfo =
+				hashOption?.type === "rebuild" ? hashOption : undefined;
 			if (rebuildInfo) {
 				season = rebuildInfo.season;
 				phase = PHASE.PRESEASON;
@@ -821,11 +808,10 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 
 			let settings;
-			const genderOverride = getGenderOverride();
-			if (genderOverride) {
+			if (hashOption?.type === "gender") {
 				settings = {
 					...props.defaultSettings,
-					gender: genderOverride,
+					gender: hashOption.gender,
 				};
 			} else {
 				settings = props.defaultSettings;
@@ -1905,6 +1891,7 @@ const NewLeague = (props: View<"newLeague">) => {
 														}}
 														onDone={handleNewLeagueFile}
 														enterURL={state.customize === "custom-url"}
+														initialURL={initialURL}
 													/>
 												</div>
 											) : null}

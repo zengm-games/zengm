@@ -274,6 +274,9 @@ type State = {
 	// Settings the user changed in the Customize Settings screen. These are kept separate from settings, which come from the league source (defaults, league file, etc.) and get replaced whenever that changes. The overrides are applied on top of whatever the source provides.
 	settingsOverrides: Partial<NewLeagueSettings>;
 	rebuildAbbrevPending?: string;
+
+	// League file URL from the page's URL hash, to prefill and load. Cleared once the user changes customize, so it doesn't get loaded again.
+	initialURL: string | undefined;
 };
 
 type Action =
@@ -487,6 +490,7 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				customize: action.customize,
 				allKeys,
+				initialURL: undefined,
 			};
 		}
 
@@ -751,17 +755,16 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const importing = props.lid !== undefined;
 
-	// Only read once, when the page first loads
-	const [hashOption] = useState(getHashOption);
-	const initialURL =
-		hashOption?.type === "url" && props.type === "custom" && !importing
-			? hashOption.url
-			: undefined;
-
 	const [state, dispatch] = useReducer(
 		reducer,
 		props,
 		(props: View<"newLeague">): State => {
+			const hashOption = getHashOption();
+			const initialURL =
+				hashOption?.type === "url" && props.type === "custom" && !importing
+					? hashOption.url
+					: undefined;
+
 			let customize: State["customize"] = "default";
 			if (importing) {
 				customize = "custom-rosters";
@@ -843,6 +846,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				settings,
 				settingsOverrides: {},
 				rebuildAbbrevPending: rebuildInfo?.abbrev,
+				initialURL,
 			};
 		},
 	);
@@ -1891,7 +1895,7 @@ const NewLeague = (props: View<"newLeague">) => {
 														}}
 														onDone={handleNewLeagueFile}
 														enterURL={state.customize === "custom-url"}
-														initialURL={initialURL}
+														initialURL={state.initialURL}
 													/>
 												</div>
 											) : null}

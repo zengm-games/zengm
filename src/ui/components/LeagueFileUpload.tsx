@@ -221,7 +221,7 @@ export const LeagueFileUpload = ({
 		}
 	};
 
-	const loadURL = async (url: string) => {
+	const loadURL = async () => {
 		beforeFile();
 
 		dispatch({
@@ -264,7 +264,7 @@ export const LeagueFileUpload = ({
 
 	const handleFileURL = (event: SyntheticEvent) => {
 		event.preventDefault();
-		loadURL(url);
+		loadURL();
 	};
 
 	// Only load initialURL once, not again when effects re-run inside <Activity>
@@ -272,7 +272,8 @@ export const LeagueFileUpload = ({
 	useEffect(() => {
 		if (enterURL && initialURL !== undefined && !loadedInitialURL.current) {
 			loadedInitialURL.current = true;
-			loadURL(initialURL);
+			// url state was initialized to initialURL
+			loadURL();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

@@ -606,22 +606,35 @@ export class LiveGamePlaybackFootball extends LiveGamePlaybackBase<
 
 	override next() {
 		this.possessionChange = false;
+		return super.next();
+	}
 
-		const entry = super.next();
+	protected override describeScore(entry: LiveGameEntry) {
+		const scoreInfo = this.sportState.plays.at(-1)?.scoreInfo;
 
-		if (entry?.score) {
-			const scoreInfo = this.sportState.plays.at(-1)?.scoreInfo;
-
+		let label;
+		if (this.boxScore.shootout) {
+			label = "It's good!";
+		} else {
 			// If no score type, then it must be a penalty overturning a score
-			entry.score.type = scoreInfo?.long ?? "Penalty overturned score";
-
-			// A safety is credited to the other team
-			if (scoreInfo?.type === "SF" && entry.t !== undefined) {
-				entry.score.t = entry.t === 0 ? 1 : 0;
-			}
+			label = `${scoreInfo?.long ?? "Penalty overturned score"}!`;
 		}
 
-		return entry;
+		// A safety is credited to the other team
+		let { t } = entry;
+		if (scoreInfo?.type === "SF" && t !== undefined) {
+			t = t === 0 ? 1 : 0;
+		}
+
+		return {
+			label,
+			t,
+		};
+	}
+
+	// The time is shown with the down and distance, not on each entry
+	protected override getEntryTime() {
+		return undefined;
 	}
 
 	override getFastForwards(): LiveGameFastForward[] {

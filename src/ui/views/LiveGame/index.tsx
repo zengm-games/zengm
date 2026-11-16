@@ -7,7 +7,6 @@ import {
 	useMemo,
 	useRef,
 	useState,
-	type ReactNode,
 	memo,
 	Fragment,
 	type RefObject,
@@ -20,6 +19,7 @@ import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { LiveGamePlayback } from "../../util/LiveGamePlayback.ts";
+import type { LiveGameEntry } from "../../util/LiveGamePlaybackBase.ts";
 import {
 	BoxScoreWrapper,
 	HeadlineScoreLive,
@@ -114,51 +114,41 @@ const getSeconds = (time: string | undefined) => {
 	return min * 60 + sec;
 };
 
-type PlayByPlayEntryInfo = {
+type PlayByPlayEntryInfo = LiveGameEntry & {
 	key: number;
-	score: ReactNode | undefined;
-	scoreDiff: number;
-	scoreType: string | undefined;
-	outs: number | undefined;
-	t: 0 | 1 | undefined;
-	text: ReactNode;
-	textOnly: boolean;
-	time: string;
 };
 
 const PlayByPlayEntry = memo(
 	({ boxScore, entry }: { boxScore: any; entry: PlayByPlayEntryInfo }) => {
 		let scoreBlock = null;
-		if (entry.score) {
-			if (__SPORT === "basketball") {
-				scoreBlock = entry.score;
+		if (entry.score && entry.score.t !== undefined) {
+			const { diff, label, pts, t: scoreT } = entry.score;
+
+			const score = TEAM_NUMS_DISPLAY_ORDER.map((t, i) => (
+				<Fragment key={t}>
+					{i > 0 ? "-" : null}
+					{t === scoreT ? (
+						<b>{pts[t]}</b>
+					) : (
+						<span className="text-body-secondary">{pts[t]}</span>
+					)}
+				</Fragment>
+			));
+
+			if (label === undefined) {
+				scoreBlock = score;
 			} else {
+				// Red if it's bad for the team this entry is about, like a safety or a penalty that takes points away
+				const good = diff > 0 && scoreT === entry.t;
+
 				scoreBlock = (
 					<>
 						<span
-							className={`fw-bold ${
-								entry.scoreDiff >= 0 &&
-								(__SPORT !== "football" || entry.scoreType !== "Safety")
-									? "text-success"
-									: "text-danger"
-							}`}
+							className={`fw-bold ${good ? "text-success" : "text-danger"}`}
 						>
-							{bySport({
-								baseball: boxScore.shootout
-									? "Home run!"
-									: `${entry.scoreDiff} ${helpers.plural(
-											"run scores",
-											entry.scoreDiff,
-											"runs score",
-										)}!`,
-								basketball: "",
-								football: boxScore.shootout
-									? "It's good!"
-									: `${entry.scoreType ?? "???"}!`,
-								hockey: "Goal!",
-							})}
+							{label}
 						</span>{" "}
-						{entry.score}
+						{score}
 					</>
 				);
 			}
@@ -333,65 +323,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			const startSeconds = getSeconds(boxScore.current.time);
 
-			// Save here since it can change in pb.next
-			const shootout = !!boxScore.current.shootout;
-
 			const entry = pb.next();
-
 			if (entry) {
-				const { t, text, textOnly } = entry;
-
-				let score;
-				if (entry.score && entry.score.t !== undefined) {
-					const { pts, t: scoreT } = entry.score;
-					score = (
-						<>
-							{TEAM_NUMS_DISPLAY_ORDER.map((t2, i) => (
-								<Fragment key={t2}>
-									{i > 0 ? "-" : null}
-									{t2 === scoreT ? (
-										<b>{pts[t2]}</b>
-									) : (
-										<span className="text-body-secondary">{pts[t2]}</span>
-									)}
-								</Fragment>
-							))}
-						</>
-					);
-				}
-
-				let time;
-				// Baseball has no time, football it's displayed with down/distance before play. In both cases, skip showing time for individual entries.
-				if (
-					bySport({
-						baseball: false,
-						basketball: true,
-						football: false,
-						hockey: true,
-					})
-				) {
-					if (shootout && t !== undefined) {
-						time = `Attempt ${boxScore.current.teams[t].sAtt}`;
-					} else if (
-						__SPORT === "basketball" &&
-						boxScore.current.elamTarget !== undefined
-					) {
-						time = `Target: ${boxScore.current.elamTarget}`;
-					} else {
-						time = boxScore.current.time;
-					}
-				}
-
 				playByPlayEntries.current.unshift({
+					...entry,
 					key: playByPlayEntries.current.length,
-					score,
-					scoreDiff: entry.score?.diff ?? 0,
-					scoreType: entry.score?.type,
-					outs: entry.outs,
-					text,
-					textOnly,
-					t,
-					time,
 				});
 			}
 

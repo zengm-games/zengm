@@ -427,6 +427,15 @@ export class LiveGamePlaybackBasketball extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
+	protected override getEntryTime(entry: LiveGameEntry, shootout: boolean) {
+		// No clock in the Elam Ending
+		if (this.boxScore.elamTarget !== undefined) {
+			return `Target: ${this.boxScore.elamTarget}`;
+		}
+
+		return super.getEntryTime(entry, shootout);
+	}
+
 	protected override processStat(e: PlayByPlayEventStat) {
 		const { boxScore, playersByPid } = this;
 

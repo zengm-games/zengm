@@ -25,9 +25,12 @@ export type LiveGameEntry = {
 		// Team to credit for the score, which is usually the same as the entry's team
 		t: TeamNum | undefined;
 
-		// For sports with different types of scores
-		type?: string;
+		// Describes the score, in sports where that is shown along with the new score
+		label?: string;
 	};
+
+	// Shown above the text, in sports where each entry has a time
+	time?: string;
 
 	// Only if this entry added outs
 	outs?: number;
@@ -150,13 +153,41 @@ export abstract class LiveGamePlaybackBase<
 					entry.score = {
 						diff,
 						pts,
-						t: entry.t,
+						...this.describeScore(entry, diff),
 					};
 				}
+
+				entry.time = this.getEntryTime(entry, !!shootout);
 
 				return entry;
 			}
 		}
+	}
+
+	// Which team gets credit for a change in score, and the text describing it. Override this in sports where the default isn't right.
+	protected describeScore(
+		entry: LiveGameEntry,
+
+		diff: number,
+	): {
+		label?: string;
+		t: TeamNum | undefined;
+	} {
+		return {
+			t: entry.t,
+		};
+	}
+
+	// Override this in sports where entries show something else, or nothing. `shootout` is if the shootout had already started before this entry.
+	protected getEntryTime(
+		entry: LiveGameEntry,
+		shootout: boolean,
+	): string | undefined {
+		if (shootout && entry.t !== undefined) {
+			return `Attempt ${this.boxScore.teams[entry.t].sAtt}`;
+		}
+
+		return this.boxScore.time;
 	}
 
 	// Override this in sports that have their own ways to skip ahead

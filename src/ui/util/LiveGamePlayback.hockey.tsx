@@ -175,6 +175,13 @@ export class LiveGamePlaybackHockey extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
+	protected override describeScore(entry: LiveGameEntry) {
+		return {
+			label: "Goal!",
+			t: entry.t,
+		};
+	}
+
 	protected override processEvent(e: PlayByPlayEvent<PlayByPlayEventOutput>) {
 		const { boxScore, playersByPid } = this;
 

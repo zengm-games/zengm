@@ -521,6 +521,20 @@ export class LiveGamePlaybackBaseball extends LiveGamePlaybackBase<
 		return entry;
 	}
 
+	protected override describeScore(entry: LiveGameEntry, diff: number) {
+		return {
+			label: this.boxScore.shootout
+				? "Home run!"
+				: `${diff} ${helpers.plural("run scores", diff, "runs score")}!`,
+			t: entry.t,
+		};
+	}
+
+	// No clock in baseball
+	protected override getEntryTime() {
+		return undefined;
+	}
+
 	// Each half inning is a side
 	private get numSidesStarted() {
 		const [t0, t1] = this.boxScore.teams;

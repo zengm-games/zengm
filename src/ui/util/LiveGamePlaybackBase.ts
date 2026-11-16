@@ -60,6 +60,7 @@ type LiveGameTeam = {
 
 // The parts of a box score that are updated the same way in every sport
 export type LiveGameBoxScore<Team extends LiveGameTeam = LiveGameTeam> = {
+	gameOver?: boolean;
 	numPeriods: number;
 	overtime?: string;
 	possession: TeamNum | undefined;
@@ -94,6 +95,18 @@ export const setStat = (object: object, stat: string, value: number) => {
 	asStats(object)[stat] = value;
 };
 
+export const getPlayersByPid = <Player extends { pid: number }>(
+	teams: readonly { players: Player[] }[],
+) => {
+	const playersByPid: Record<number, Player> = {};
+	for (const t of teams) {
+		for (const p of t.players) {
+			playersByPid[p.pid] = p;
+		}
+	}
+	return playersByPid;
+};
+
 /**
  * Plays back the events of one game. Each call to `next` advances to the next play-by-play entry, updating `boxScore` (in place!) along the way.
  *
@@ -106,9 +119,9 @@ export abstract class LiveGamePlaybackBase<
 	readonly boxScore: BoxScore;
 
 	// State that some sports track for their live game UI, beyond what's in the box score
-	readonly sportState: unknown;
+	sportState: unknown;
 
-	protected readonly playersByPid: Record<number, PlayerOf<BoxScore>> = {};
+	protected readonly playersByPid: Record<number, PlayerOf<BoxScore>>;
 
 	private readonly events: readonly PlayByPlayEvent<Event>[];
 
@@ -118,12 +131,7 @@ export abstract class LiveGamePlaybackBase<
 	constructor(boxScore: BoxScore, events: readonly PlayByPlayEvent<Event>[]) {
 		this.boxScore = boxScore;
 		this.events = events;
-
-		for (const t of boxScore.teams) {
-			for (const p of t.players) {
-				this.playersByPid[p.pid] = p;
-			}
-		}
+		this.playersByPid = getPlayersByPid(boxScore.teams);
 	}
 
 	get done() {
@@ -132,6 +140,18 @@ export abstract class LiveGamePlaybackBase<
 
 	// Process events up to and including the next one that is shown in the play-by-play. Returns undefined if the events run out before finding one.
 	next(): LiveGameEntry | undefined {
+		const entry = this.nextEntry();
+
+		if (this.done) {
+			this.boxScore.time = "0:00";
+			this.boxScore.gameOver = true;
+			this.boxScore.possession = undefined;
+		}
+
+		return entry;
+	}
+
+	private nextEntry(): LiveGameEntry | undefined {
 		// Decide this up front, so an entry that starts a shootout is still compared using the normal score
 		const { shootout } = this.boxScore;
 		const getPts = (): [number, number] => {
@@ -152,41 +172,37 @@ export abstract class LiveGamePlaybackBase<
 				if (diff !== 0) {
 					entry.score = {
 						diff,
+						label: this.getScoreLabel(diff),
 						pts,
-						...this.describeScore(entry, diff),
+						t: this.getScoreTeam(entry),
 					};
 				}
 
-				entry.time = this.getEntryTime(entry, !!shootout);
+				const clockText = this.getClockText();
+				if (clockText !== undefined) {
+					entry.time =
+						shootout && entry.t !== undefined
+							? `Attempt ${this.boxScore.teams[entry.t].sAtt}`
+							: clockText;
+				}
 
 				return entry;
 			}
 		}
 	}
 
-	// Which team gets credit for a change in score, and the text describing it. Override this in sports where the default isn't right.
-	protected describeScore(
-		entry: LiveGameEntry,
-
-		diff: number,
-	): {
-		label?: string;
-		t: TeamNum | undefined;
-	} {
-		return {
-			t: entry.t,
-		};
+	// Text describing a change in score. Override this in sports that show one.
+	protected getScoreLabel(diff: number): string | undefined {
+		return undefined;
 	}
 
-	// Override this in sports where entries show something else, or nothing. `shootout` is if the shootout had already started before this entry.
-	protected getEntryTime(
-		entry: LiveGameEntry,
-		shootout: boolean,
-	): string | undefined {
-		if (shootout && entry.t !== undefined) {
-			return `Attempt ${this.boxScore.teams[entry.t].sAtt}`;
-		}
+	// Which team gets credit for a change in score. Override this in sports where it's not always the entry's team.
+	protected getScoreTeam(entry: LiveGameEntry) {
+		return entry.t;
+	}
 
+	// Shown as the time of each entry. Override this in sports where entries show something else, or nothing.
+	protected getClockText(): string | undefined {
 		return this.boxScore.time;
 	}
 
@@ -211,8 +227,14 @@ export abstract class LiveGamePlaybackBase<
 		return this.boxScore.teams[0].ptsQtrs.length;
 	}
 
-	// For sports with a clock. There is no event for the start of the 1st period, so call this on the first event of the game, and then whenever an event signals the start of a new period.
-	protected startPeriod() {
+	// For sports with a clock. Call this for every event, saying if the event signals the start of a new period. There is no event for the start of the 1st period, so that starts on the first event of the game.
+	protected startPeriodIfNeeded(isPeriodEvent: boolean) {
+		if (this.numPeriodsStarted === 0 || isPeriodEvent) {
+			this.startPeriod();
+		}
+	}
+
+	private startPeriod() {
 		const { boxScore } = this;
 
 		boxScore.teams[0].ptsQtrs.push(0);
@@ -221,9 +243,10 @@ export abstract class LiveGamePlaybackBase<
 		const period = this.numPeriodsStarted;
 		const overtimes = period - boxScore.numPeriods;
 		if (overtimes > 0) {
-			boxScore.overtime = overtimes === 1 ? "(OT)" : `(${overtimes}OT)`;
+			const overtimeText = helpers.overtimeText(overtimes, boxScore.numPeriods);
+			boxScore.overtime = `(${overtimeText})`;
 			boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
-			boxScore.quarterShort = overtimes === 1 ? "OT" : `${overtimes}OT`;
+			boxScore.quarterShort = overtimeText;
 		} else {
 			boxScore.quarter = `${helpers.ordinal(period)} ${getPeriodName(
 				boxScore.numPeriods,

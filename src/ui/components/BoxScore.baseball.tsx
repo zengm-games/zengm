@@ -10,6 +10,7 @@ import {
 	getText,
 	type SportState,
 } from "../util/LiveGamePlayback.baseball.tsx";
+import { getPlayersByPid } from "../util/LiveGamePlaybackBase.ts";
 import { PlayerNameLabels } from "./PlayerNameLabels.tsx";
 import {
 	outsToInnings,
@@ -419,15 +420,10 @@ const BoxScore = ({
 		[boxScore.scoringSummary],
 	);
 
-	const playersByPid = useMemo(() => {
-		const playersByPid: PlayersByPid = {};
-		for (const t of boxScore.teams) {
-			for (const p of t.players) {
-				playersByPid[p.pid] = p;
-			}
-		}
-		return playersByPid;
-	}, [boxScore.teams]);
+	const playersByPid: PlayersByPid = useMemo(
+		() => getPlayersByPid(boxScore.teams),
+		[boxScore.teams],
+	);
 
 	return (
 		<div className="mb-3">
@@ -441,7 +437,6 @@ const BoxScore = ({
 
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
-				key={boxScore.gid}
 				playersByPid={playersByPid}
 				processedEvents={processedEvents}
 				teams={boxScore.teams}

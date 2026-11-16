@@ -505,33 +505,21 @@ export class LiveGamePlaybackBaseball extends LiveGamePlaybackBase<
 > {
 	override sportState = getDefaultSportState();
 
-	private inning = 0;
-
 	private getName = (pid: number) => this.playersByPid[pid]?.name ?? "???";
 
-	override next() {
-		const prevOuts = this.sportState.outs;
-
-		const entry = super.next();
-
-		if (entry && this.sportState.outs > prevOuts) {
-			entry.outs = this.sportState.outs;
-		}
-
-		return entry;
+	// Team 1 bats first, so it has an entry for every inning that has started
+	private get inning() {
+		return this.boxScore.teams[1].ptsQtrs.length;
 	}
 
-	protected override describeScore(entry: LiveGameEntry, diff: number) {
-		return {
-			label: this.boxScore.shootout
-				? "Home run!"
-				: `${diff} ${helpers.plural("run scores", diff, "runs score")}!`,
-			t: entry.t,
-		};
+	protected override getScoreLabel(diff: number) {
+		return this.boxScore.shootout
+			? "Home run!"
+			: `${diff} ${helpers.plural("run scores", diff, "runs score")}!`;
 	}
 
 	// No clock in baseball
-	protected override getEntryTime() {
+	protected override getClockText() {
 		return undefined;
 	}
 
@@ -566,18 +554,16 @@ export class LiveGamePlaybackBaseball extends LiveGamePlaybackBase<
 				label: "Next baserunner",
 				keyboardShortcut: "t",
 				start: () => {
+					const getBaserunners = () =>
+						this.sportState.bases.filter((pid) => pid !== undefined);
 					const getNumHomeRuns = () =>
 						boxScore.teams[0].hr + boxScore.teams[1].hr;
 
-					const initialBaserunners = new Set(
-						this.sportState.bases.filter((pid) => pid !== undefined),
-					);
+					const initialBaserunners = new Set(getBaserunners());
 					const initialNumHomeRuns = getNumHomeRuns();
 
 					return () => {
-						const baserunners = this.sportState.bases.filter(
-							(pid) => pid !== undefined,
-						);
+						const baserunners = getBaserunners();
 						if (baserunners.length === 0) {
 							// Handle case where it's a new inning and the same guy gets on base
 							initialBaserunners.clear();
@@ -633,11 +619,10 @@ export class LiveGamePlaybackBaseball extends LiveGamePlaybackBase<
 		const { boxScore } = this;
 
 		if (e.type === "sideStart") {
-			this.inning = e.inning;
 			boxScore.teams[e.t].ptsQtrs.push(0);
 
 			if (e.t === 1) {
-				const inning = boxScore.teams[1].ptsQtrs.length;
+				const { inning } = this;
 				if (inning > boxScore.numPeriods) {
 					boxScore.overtime = `(${inning})`;
 				}
@@ -721,6 +706,7 @@ export class LiveGamePlaybackBaseball extends LiveGamePlaybackBase<
 	): LiveGameEntry | undefined {
 		const { boxScore } = this;
 
+		const prevOuts = this.sportState.outs;
 		this.updateSportState(e);
 
 		if (e.type === "stat") {
@@ -747,6 +733,8 @@ export class LiveGamePlaybackBaseball extends LiveGamePlaybackBase<
 		}
 
 		return {
+			outs: this.sportState.outs > prevOuts ? this.sportState.outs : undefined,
+
 			// Always the batting team
 			t: this.sportState.o,
 			text: output.bold ? <b>{output.text}</b> : output.text,

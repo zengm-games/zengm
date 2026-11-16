@@ -609,31 +609,31 @@ export class LiveGamePlaybackFootball extends LiveGamePlaybackBase<
 		return super.next();
 	}
 
-	protected override describeScore(entry: LiveGameEntry) {
-		const scoreInfo = this.sportState.plays.at(-1)?.scoreInfo;
+	// Only meaningful right after an entry that changed the score
+	private get latestScoreInfo() {
+		return this.sportState.plays.at(-1)?.scoreInfo;
+	}
 
-		let label;
+	protected override getScoreLabel() {
 		if (this.boxScore.shootout) {
-			label = "It's good!";
-		} else {
-			// If no score type, then it must be a penalty overturning a score
-			label = `${scoreInfo?.long ?? "Penalty overturned score"}!`;
+			return "It's good!";
 		}
 
+		// If no score type, then it must be a penalty overturning a score
+		return `${this.latestScoreInfo?.long ?? "Penalty overturned score"}!`;
+	}
+
+	protected override getScoreTeam(entry: LiveGameEntry) {
 		// A safety is credited to the other team
-		let { t } = entry;
-		if (scoreInfo?.type === "SF" && t !== undefined) {
-			t = t === 0 ? 1 : 0;
+		if (this.latestScoreInfo?.type === "SF" && entry.t !== undefined) {
+			return entry.t === 0 ? 1 : 0;
 		}
 
-		return {
-			label,
-			t,
-		};
+		return entry.t;
 	}
 
 	// The time is shown with the down and distance, not on each entry
-	protected override getEntryTime() {
+	protected override getClockText() {
 		return undefined;
 	}
 
@@ -1042,13 +1042,7 @@ export class LiveGamePlaybackFootball extends LiveGamePlaybackBase<
 			this.numPeriodsStarted,
 		);
 
-		if (
-			this.numPeriodsStarted === 0 ||
-			e.type === "quarter" ||
-			e.type === "overtime"
-		) {
-			this.startPeriod();
-		}
+		this.startPeriodIfNeeded(e.type === "quarter" || e.type === "overtime");
 
 		if (e.type === "shootoutStart") {
 			this.startShootout();

@@ -372,7 +372,7 @@ const getText = (
 	}
 };
 
-// true means the event's team has the ball, false means the other team does
+// See updatePossession
 const newPossessionTypes: Record<string, boolean> = {
 	fgAtRim: true,
 	fgAtRimAndOne: true,
@@ -427,13 +427,13 @@ export class LiveGamePlaybackBasketball extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
-	protected override getEntryTime(entry: LiveGameEntry, shootout: boolean) {
+	protected override getClockText() {
 		// No clock in the Elam Ending
 		if (this.boxScore.elamTarget !== undefined) {
 			return `Target: ${this.boxScore.elamTarget}`;
 		}
 
-		return super.getEntryTime(entry, shootout);
+		return super.getClockText();
 	}
 
 	protected override processStat(e: PlayByPlayEventStat) {
@@ -467,13 +467,7 @@ export class LiveGamePlaybackBasketball extends LiveGamePlaybackBase<
 	): LiveGameEntry | undefined {
 		const { boxScore, playersByPid } = this;
 
-		if (
-			this.numPeriodsStarted === 0 ||
-			e.type === "period" ||
-			e.type === "overtime"
-		) {
-			this.startPeriod();
-		}
+		this.startPeriodIfNeeded(e.type === "period" || e.type === "overtime");
 
 		if (e.type === "shootoutStart") {
 			this.startShootout();

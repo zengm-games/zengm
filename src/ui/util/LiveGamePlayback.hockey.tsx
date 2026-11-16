@@ -16,7 +16,7 @@ import {
 	type LiveGameEntry,
 } from "./LiveGamePlaybackBase.ts";
 
-// true means the event's team has the ball, false means the other team does
+// See updatePossession
 const newPossessionTypes: Record<string, boolean> = {
 	faceoff: true,
 	gv: false,
@@ -175,11 +175,8 @@ export class LiveGamePlaybackHockey extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
-	protected override describeScore(entry: LiveGameEntry) {
-		return {
-			label: "Goal!",
-			t: entry.t,
-		};
+	protected override getScoreLabel() {
+		return "Goal!";
 	}
 
 	protected override processEvent(e: PlayByPlayEvent<PlayByPlayEventOutput>) {
@@ -187,13 +184,7 @@ export class LiveGamePlaybackHockey extends LiveGamePlaybackBase<
 
 		let entry: LiveGameEntry | undefined;
 
-		if (
-			this.numPeriodsStarted === 0 ||
-			e.type === "quarter" ||
-			e.type === "overtime"
-		) {
-			this.startPeriod();
-		}
+		this.startPeriodIfNeeded(e.type === "quarter" || e.type === "overtime");
 
 		if (e.type === "shootoutStart") {
 			this.startShootout();

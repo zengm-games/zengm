@@ -340,10 +340,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 					}, speedToMs(speedRef.current));
 				}
 			} else {
-				boxScore.current.time = "0:00";
-				boxScore.current.gameOver = true;
-				boxScore.current.possession = undefined;
-
 				// Update team records with result of game
 				if (!boxScore.current.exhibition) {
 					for (const t of boxScore.current.teams) {
@@ -388,20 +384,17 @@ export const LiveGame = (props: View<"liveGame">) => {
 		};
 	}, [clearPlaybackTimeout]);
 
-	const startLiveGame = useCallback(() => {
-		clearPlaybackTimeout();
-		playbackTimeoutId.current = window.setTimeout(() => {
-			processToNextPause();
-			setPlayIndex((prev) => prev + 1);
-		}, speedToMs(DEFAULT_SPEED));
-	}, [clearPlaybackTimeout, processToNextPause]);
-
 	useEffect(() => {
 		if (props.events && !started) {
 			setStarted(true);
-			startLiveGame();
+
+			clearPlaybackTimeout();
+			playbackTimeoutId.current = window.setTimeout(() => {
+				processToNextPause();
+				setPlayIndex((prev) => prev + 1);
+			}, speedToMs(DEFAULT_SPEED));
 		}
-	}, [props.events, started, startLiveGame]);
+	}, [clearPlaybackTimeout, processToNextPause, props.events, started]);
 
 	const handleSpeedChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const speed = event.target.value;
@@ -432,9 +425,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 		setPlayIndex((prev) => prev + 1);
 	}, [processToNextPause]);
 
-	// Sum of both teams, because in baseball each team bats in its own half of the inning
+	// The fast forward menu changes when a new period starts. Sum of both teams, because in baseball each team bats in its own half of the inning.
 	const { teams } = boxScore.current;
-	const numPeriodsStarted = teams
+	const numPeriodStarts = teams
 		? teams[0].ptsQtrs.length + teams[1].ptsQtrs.length
 		: 0;
 
@@ -673,7 +666,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		boxScore.current.elamTarget,
 		boxScore.current.overtime,
 		boxScore.current.shootout,
-		numPeriodsStarted,
+		numPeriodStarts,
 		processToNextPause,
 		props.quarterLength,
 		started,

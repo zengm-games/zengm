@@ -9,22 +9,14 @@ import type { PlayerInjury } from "../../common/types.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.hockey.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
+import {
+	getEventTeam,
+	LiveGamePlaybackBase,
+	type LiveGameBoxScore,
+	type LiveGameEntry,
+} from "./LiveGamePlaybackBase.ts";
 
-let playersByPidGid: number | undefined;
-let playersByPid:
-	| Record<
-			number,
-			{
-				name: string;
-				inGame: boolean;
-				inPenaltyBox: boolean;
-				injury: PlayerInjury;
-				seasonStats: Record<string, number>;
-			}
-	  >
-	| undefined;
-
-// false means assign possession to other team
+// true means the event's team has the ball, false means the other team does
 const newPossessionTypes: Record<string, boolean> = {
 	faceoff: true,
 	gv: false,
@@ -157,121 +149,54 @@ const getText = (
 	return text;
 };
 
-// Mutates boxScore!!!
-const processLiveGameEvents = ({
-	events,
-	boxScore,
-	overtimes,
-	quarters,
-}: {
-	events: PlayByPlayEvent<PlayByPlayEventOutput>[];
-	boxScore: {
-		gid: number;
-		quarter: string;
-		quarterShort: string;
-		numPeriods: number;
-		overtime?: string;
-		possession: 0 | 1 | undefined;
-		teams: any;
-		time: string;
-		scoringSummary: PlayByPlayEventScore[];
-		shootout?: boolean;
-	};
-	overtimes: number;
-	quarters: number[];
-}) => {
-	if (
-		!playersByPid ||
-		boxScore.gid !== playersByPidGid ||
-		events[0]?.type === "init"
-	) {
-		playersByPidGid = boxScore.gid;
-		playersByPid = {};
-		for (const t of boxScore.teams) {
-			for (const p of t.players) {
-				playersByPid[p.pid] = p;
-			}
-		}
-	}
-	let stop = false;
-	let text;
-	let t: 0 | 1 | undefined;
-	let textOnly = false;
+type BoxScorePlayer = {
+	pid: number;
+	name: string;
+	inGame: boolean;
+	inPenaltyBox: boolean;
+	injury: PlayerInjury;
+	seasonStats: Record<string, number>;
+};
 
-	while (!stop && events.length > 0) {
-		const e = events.shift();
-		if (!e) {
-			continue;
-		}
+type BoxScoreTeam = {
+	abbrev: string;
+	players: BoxScorePlayer[];
+	ptsQtrs: number[];
+	sAtt?: number;
+	sPts?: number;
+};
 
-		const eAny = e as any;
+type BoxScore = LiveGameBoxScore<BoxScoreTeam> & {
+	scoringSummary: PlayByPlayEventScore[];
+};
 
-		const eventT: 0 | 1 | undefined =
-			eAny.t === 0 || eAny.t === 1 ? eAny.t : undefined;
+export class LiveGamePlaybackHockey extends LiveGamePlaybackBase<
+	PlayByPlayEventOutput,
+	BoxScore
+> {
+	readonly sport = "hockey";
+
+	protected override processEvent(e: PlayByPlayEvent<PlayByPlayEventOutput>) {
+		const { boxScore, playersByPid } = this;
+
+		let entry: LiveGameEntry | undefined;
 
 		if (
-			e.type !== "init" &&
-			e.type !== "stat" &&
-			e.quarter !== undefined &&
-			!quarters.includes(e.quarter)
+			this.numPeriodsStarted === 0 ||
+			e.type === "quarter" ||
+			e.type === "overtime"
 		) {
-			quarters.push(e.quarter);
-			boxScore.teams[0].ptsQtrs.push(0);
-			boxScore.teams[1].ptsQtrs.push(0);
-
-			const quarter = boxScore.teams[0].ptsQtrs.length;
-			if (quarter > boxScore.numPeriods) {
-				overtimes += 1;
-				if (overtimes === 1) {
-					boxScore.overtime = "(OT)";
-				} else if (overtimes > 1) {
-					boxScore.overtime = `(${overtimes}OT)`;
-				}
-				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
-				boxScore.quarterShort = overtimes === 1 ? "OT" : `${overtimes}OT`;
-			} else {
-				boxScore.quarter = `${helpers.ordinal(quarter)} ${getPeriodName(
-					boxScore.numPeriods,
-				)}`;
-				boxScore.quarterShort = `${getPeriodName(
-					boxScore.numPeriods,
-					true,
-				)}${quarter}`;
-			}
-
-			if (e.type !== "playersOnIce") {
-				boxScore.time = formatClock(e.clock);
-			}
+			this.startPeriod();
 		}
 
 		if (e.type === "shootoutStart") {
-			boxScore.shootout = true;
-			boxScore.teams[0].sPts = 0;
-			boxScore.teams[0].sAtt = 0;
-			boxScore.teams[1].sPts = 0;
-			boxScore.teams[1].sAtt = 0;
+			this.startShootout();
 		}
 
 		if (e.type === "stat") {
-			// Quarter-by-quarter score
-			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[eventT!].ptsQtrs;
-				ptsQtrs[ptsQtrs.length - 1] += e.amt;
-				boxScore.teams[eventT!].ptsQtrs = ptsQtrs;
-			}
-
-			// Everything else
-			if (e.pid != undefined) {
-				const p = playersByPid[e.pid];
-				if ((p as any)?.[e.s] !== undefined) {
-					(p as any)[e.s] += e.amt;
-				}
-			}
-			if (boxScore.teams[eventT!][e.s] !== undefined) {
-				boxScore.teams[eventT!][e.s] += e.amt;
-			}
+			this.processStat(e);
 		} else if (e.type === "playersOnIce") {
-			for (const p of boxScore.teams[eventT!].players) {
+			for (const p of boxScore.teams[e.t].players) {
 				p.inGame = e.pids.includes(p.pid);
 			}
 		} else if (e.type !== "init") {
@@ -289,25 +214,19 @@ const processLiveGameEvents = ({
 				p.inPenaltyBox = false;
 			}
 
-			text = getText(e, boxScore);
-			t = eventT;
-			textOnly =
-				e.type === "gameOver" ||
-				e.type === "quarter" ||
-				e.type === "overtime" ||
-				e.type === "shootoutStart" ||
-				e.type === "shootoutTie";
+			entry = {
+				t: getEventTeam(e),
+				text: getText(e, boxScore),
+				textOnly:
+					e.type === "gameOver" ||
+					e.type === "quarter" ||
+					e.type === "overtime" ||
+					e.type === "shootoutStart" ||
+					e.type === "shootoutTie",
+			};
 			boxScore.time = formatClock(e.clock);
 
-			if (Object.hasOwn(newPossessionTypes, eAny.type)) {
-				boxScore.possession = newPossessionTypes[eAny.type]
-					? eventT
-					: eventT === 0
-						? 1
-						: 0;
-			}
-
-			stop = true;
+			this.updatePossession(e, newPossessionTypes);
 		}
 
 		//  Handle filtering of scoringSummary
@@ -318,15 +237,7 @@ const processLiveGameEvents = ({
 				scoringSummaryEvent,
 			];
 		}
+
+		return entry;
 	}
-
-	return {
-		overtimes,
-		quarters,
-		t,
-		text,
-		textOnly,
-	};
-};
-
-export default processLiveGameEvents;
+}

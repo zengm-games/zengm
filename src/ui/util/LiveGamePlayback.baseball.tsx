@@ -13,6 +13,11 @@ import type { PlayerInjury } from "../../common/types.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.baseball.ts";
 import { formatLiveGameStat } from "./formatLiveGameStat.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
+import {
+	LiveGamePlaybackBase,
+	type LiveGameBoxScore,
+	type LiveGameEntry,
+} from "./LiveGamePlaybackBase.ts";
 import { formatList } from "../../common/formatList.ts";
 
 export type BoxScorePlayer = {
@@ -30,11 +35,6 @@ type BoxScoreTeam = {
 	sAtt?: number;
 	sPts?: number;
 };
-
-let playersByPidGid: number | undefined;
-export let playersByPid: Record<number, BoxScorePlayer> = {};
-
-const getName = (pid: number) => playersByPid[pid]?.name ?? "???";
 
 const getDirectionInfield = (
 	direction: Extract<PlayByPlayEventInput, { type: "fly" }>["direction"],
@@ -148,7 +148,9 @@ const formatRunners = (
 export const getText = (
 	event: PlayByPlayEventInput,
 	getName: (pid: number) => string,
-	sportState: SportState | undefined,
+
+	// undefined when there is no live game, like when showing the scoring summary of a completed game
+	pitcher: BoxScorePlayer | undefined,
 ) => {
 	let text;
 
@@ -190,9 +192,7 @@ export const getText = (
 			break;
 		}
 		case "strikeOut": {
-			const statTotal = sportState
-				? formatLiveGameStat(playersByPid[sportState.pitcherPid], "soPit")
-				: "";
+			const statTotal = pitcher ? formatLiveGameStat(pitcher, "soPit") : "";
 			text = event.swinging
 				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging${statTotal}`
 				: `Called strike three ${statTotal}`;
@@ -481,224 +481,158 @@ export type SportState = {
 	o: 0 | 1;
 };
 
-export const DEFAULT_SPORT_STATE: SportState = {
-	bases: [undefined, undefined, undefined] as [
-		number | undefined,
-		number | undefined,
-		number | undefined,
-	],
+// Function rather than a constant so every caller gets its own copy
+const getDefaultSportState = (): SportState => ({
+	bases: [undefined, undefined, undefined],
 	outs: 0,
 	balls: 0,
 	strikes: 0,
 	batterPid: -1,
 	pitcherPid: -1,
 	o: 0,
+});
+
+type BoxScore = LiveGameBoxScore<BoxScoreTeam> & {
+	scoringSummary: PlayByPlayEventScore[];
 };
 
-// Mutates boxScore!!!
-const processLiveGameEvents = ({
-	events,
-	boxScore,
-	overtimes,
-	quarters,
-	sportState,
-}: {
-	events: PlayByPlayEvent<PlayByPlayEventInput>[];
-	boxScore: {
-		gid: number;
-		quarter: string;
-		quarterShort: string;
-		numPeriods: number;
-		overtime?: string;
-		possession: 0 | 1 | undefined;
-		shootout?: boolean;
-		teams: [BoxScoreTeam, BoxScoreTeam];
-		time: string;
-		scoringSummary: PlayByPlayEventScore[];
-	};
-	overtimes: number;
-	quarters: number[];
-	sportState: SportState;
-}) => {
-	if (
-		!playersByPid ||
-		boxScore.gid !== playersByPidGid ||
-		events[0]?.type === "init"
-	) {
-		playersByPidGid = boxScore.gid;
-		playersByPid = {};
-		for (const t of boxScore.teams) {
-			for (const p of t.players) {
-				playersByPid[p.pid] = p;
-			}
-		}
-	}
-	let stop = false;
-	let text;
-	let t: 0 | 1 | undefined;
-	let textOnly = false;
+export class LiveGamePlaybackBaseball extends LiveGamePlaybackBase<
+	PlayByPlayEventInput,
+	BoxScore
+> {
+	readonly sport = "baseball";
 
-	while (!stop && events.length > 0) {
-		const e = events.shift();
-		if (!e) {
-			continue;
-		}
+	override sportState = getDefaultSportState();
 
-		const eAny = e as any;
+	private inning = 0;
 
-		const eventT: 0 | 1 | undefined =
-			eAny.t === 0 || eAny.t === 1 ? eAny.t : undefined;
+	private getName = (pid: number) => this.playersByPid[pid]?.name ?? "???";
+
+	private updateSportState(e: PlayByPlayEvent<PlayByPlayEventInput>) {
+		const { boxScore } = this;
 
 		if (e.type === "sideStart") {
-			quarters.push(e.inning);
-			boxScore.teams[eventT!].ptsQtrs.push(0);
+			this.inning = e.inning;
+			boxScore.teams[e.t].ptsQtrs.push(0);
 
-			if (eventT === 1) {
+			if (e.t === 1) {
 				const inning = boxScore.teams[1].ptsQtrs.length;
 				if (inning > boxScore.numPeriods) {
-					overtimes += 1;
-					boxScore.overtime = `(${boxScore.numPeriods + overtimes})`;
+					boxScore.overtime = `(${inning})`;
 				}
 				const ordinal = helpers.ordinal(inning);
 				boxScore.quarter = `${ordinal} ${getPeriodName(boxScore.numPeriods)}`;
 				boxScore.quarterShort = `${inning}`;
 			}
 
-			Object.assign(sportState, DEFAULT_SPORT_STATE);
-			sportState.pitcherPid = e.pitcherPid;
-			sportState.batterPid = -1;
-			sportState.o = eventT!;
-			boxScore.possession = eventT;
-			t = eventT;
+			this.sportState = {
+				...getDefaultSportState(),
+				pitcherPid: e.pitcherPid,
+				o: e.t,
+			};
+			boxScore.possession = e.t;
 		} else if (e.type === "reliefPitcher") {
-			sportState.pitcherPid = e.pidOn;
+			this.sportState.pitcherPid = e.pidOn;
 		} else if (e.type === "ball" || e.type === "strike" || e.type === "foul") {
-			sportState.balls = e.balls;
-			sportState.strikes = e.strikes;
+			this.sportState.balls = e.balls;
+			this.sportState.strikes = e.strikes;
 		} else if (e.type === "plateAppearance") {
-			sportState.balls = 0;
-			sportState.strikes = 0;
-			sportState.batterPid = e.pid;
+			this.sportState.balls = 0;
+			this.sportState.strikes = 0;
+			this.sportState.batterPid = e.pid;
 		} else if (
 			e.type === "hitResult" ||
 			e.type === "strikeOut" ||
 			e.type === "stealEnd"
 		) {
 			if (e.type === "strikeOut") {
-				sportState.strikes = 3;
+				this.sportState.strikes = 3;
 			}
 
-			if (e.outs >= 3) {
-				// Don't update bases, since it didn't happen
-				sportState.outs = e.outs;
-			} else {
-				sportState.bases = e.bases;
-				sportState.outs = e.outs;
+			if (e.outs < NUM_OUTS_PER_INNING) {
+				// If the side is retired, don't update bases, since it didn't happen
+				this.sportState.bases = e.bases;
 			}
+			this.sportState.outs = e.outs;
 		} else if (e.type === "walk") {
 			if (!e.intentional) {
-				sportState.balls = 4;
+				this.sportState.balls = 4;
 			}
-			sportState.bases = e.bases;
+			this.sportState.bases = e.bases;
 		} else if (
 			e.type === "balk" ||
 			e.type === "wildPitch" ||
 			e.type === "passedBall" ||
 			e.type === "hitByPitch"
 		) {
-			sportState.bases = e.bases;
+			this.sportState.bases = e.bases;
 		} else if (e.type === "shootoutStart") {
-			boxScore.shootout = true;
-			boxScore.teams[0].sPts = 0;
-			boxScore.teams[0].sAtt = 0;
-			boxScore.teams[1].sPts = 0;
-			boxScore.teams[1].sAtt = 0;
-
-			sportState = {
-				...DEFAULT_SPORT_STATE,
-			};
+			this.startShootout();
+			this.sportState = getDefaultSportState();
 		} else if (e.type === "shootoutTeam" || e.type === "shootoutShot") {
-			sportState.batterPid = e.pid;
-			sportState.pitcherPid = e.pitcherPid;
-			sportState.o = eventT!;
-		}
+			this.sportState.batterPid = e.pid;
+			this.sportState.pitcherPid = e.pitcherPid;
+			this.sportState.o = e.t;
+		} else if (e.type === "injury") {
+			const p = this.playersByPid[e.pid]!;
+			p.injury = {
+				type: "Injured",
+				gamesRemaining: -1,
+			};
 
-		if (e.type === "stat") {
-			// Quarter-by-quarter score
-			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[eventT!].ptsQtrs;
-				// eslint-disable-next-line unicorn/prefer-at
-				ptsQtrs[ptsQtrs.length - 1]! += e.amt;
-				boxScore.teams[eventT!].ptsQtrs = ptsQtrs;
-			}
-
-			// Everything else
-			if (e.pid != undefined) {
-				const p = playersByPid[e.pid];
-				// @ts-expect-error
-				if (p?.[e.s] !== undefined) {
-					// @ts-expect-error
-					p[e.s] += e.amt;
+			const { replacementPid } = e;
+			if (replacementPid !== undefined) {
+				if (this.sportState.pitcherPid === e.pid) {
+					this.sportState.pitcherPid = replacementPid;
 				}
-			}
-			if (Object.hasOwn(boxScore.teams[eventT!], e.s)) {
-				// @ts-expect-error
-				boxScore.teams[eventT][e.s] += e.amt;
-			}
-		} else if (e.type !== "init") {
-			if (e.type === "injury") {
-				const p = playersByPid[e.pid]!;
-				p.injury = {
-					type: "Injured",
-					gamesRemaining: -1,
-				};
 
-				// Replace in sportState
-				if (e.replacementPid !== undefined) {
-					if (sportState.pitcherPid === e.pid) {
-						sportState.pitcherPid = e.replacementPid;
-					}
+				// Purposely don't update batterPid, because injury only happens after an at bat, so they'll be replaced in bases
 
-					// Purposely don't update batterPid, because injury only happens after an at bat, so they'll be replaced in bases
-
-					sportState.bases = sportState.bases.map((base) => {
-						if (base === e.pid) {
-							return e.replacementPid;
-						}
-
-						return base;
-					}) as SportState["bases"];
-				}
-			}
-
-			const output = getText(e, getName, sportState);
-			text = output.bold ? <b>{output.text}</b> : output.text;
-			textOnly =
-				e.type === "sideStart" ||
-				e.type === "sideOver" ||
-				e.type === "gameOver";
-
-			stop = true;
-
-			const inning = Math.ceil(quarters.length / 2);
-			const scoringSummaryEvent = formatScoringSummaryEvent(e, inning);
-			if (scoringSummaryEvent) {
-				boxScore.scoringSummary = [
-					...boxScore.scoringSummary,
-					scoringSummaryEvent,
-				];
+				this.sportState.bases = this.sportState.bases.map((base) => {
+					return base === e.pid ? replacementPid : base;
+				}) as SportState["bases"];
 			}
 		}
 	}
 
-	return {
-		overtimes,
-		quarters,
-		sportState,
-		t,
-		text,
-		textOnly,
-	};
-};
+	protected override processEvent(
+		e: PlayByPlayEvent<PlayByPlayEventInput>,
+	): LiveGameEntry | undefined {
+		const { boxScore } = this;
 
-export default processLiveGameEvents;
+		this.updateSportState(e);
+
+		if (e.type === "stat") {
+			this.processStat(e);
+			return;
+		}
+
+		if (e.type === "init") {
+			return;
+		}
+
+		const output = getText(
+			e,
+			this.getName,
+			this.playersByPid[this.sportState.pitcherPid],
+		);
+
+		const scoringSummaryEvent = formatScoringSummaryEvent(e, this.inning);
+		if (scoringSummaryEvent) {
+			boxScore.scoringSummary = [
+				...boxScore.scoringSummary,
+				scoringSummaryEvent,
+			];
+		}
+
+		return {
+			// Always the batting team
+			t: this.sportState.o,
+			text: output.bold ? <b>{output.text}</b> : output.text,
+			textOnly:
+				e.type === "sideStart" ||
+				e.type === "sideOver" ||
+				e.type === "gameOver",
+		};
+	}
+}

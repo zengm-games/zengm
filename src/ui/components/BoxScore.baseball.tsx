@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode, useState, useEffect, useMemo } from "react";
+import { Fragment, type ReactNode, useMemo } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
@@ -8,9 +8,8 @@ import { useBoxScoreSortBys } from "./useBoxScoreSortBys.ts";
 import {
 	type BoxScorePlayer,
 	getText,
-	playersByPid,
 	type SportState,
-} from "../util/processLiveGameEvents.baseball.tsx";
+} from "../util/LiveGamePlayback.baseball.tsx";
 import { PlayerNameLabels } from "./PlayerNameLabels.tsx";
 import {
 	outsToInnings,
@@ -239,37 +238,21 @@ const processEvents = (events: PlayByPlayEventScore[]) => {
 	return processedEvents;
 };
 
+type PlayersByPid = Record<number, BoxScorePlayer>;
+
 const ScoringSummary = ({
+	playersByPid,
 	processedEvents,
 	teams,
 }: {
+	playersByPid: PlayersByPid;
 	processedEvents: ReturnType<typeof processEvents>;
 	teams: [Team, Team];
 }) => {
 	let prevInning: number | "Shootout";
 	let prevT: number;
 
-	const [playersByPid, setPlayersByPid] = useState<
-		Record<number, BoxScorePlayer>
-	>({});
-
-	const someEvents = processedEvents.length > 0;
-
-	useEffect(() => {
-		if (!someEvents) {
-			return;
-		}
-
-		const updated: typeof playersByPid = {};
-		for (const t of teams) {
-			for (const p of t.players) {
-				updated[p.pid] = p;
-			}
-		}
-		setPlayersByPid(updated);
-	}, [someEvents, teams]);
-
-	if (!someEvents) {
+	if (processedEvents.length === 0) {
 		return <p>None</p>;
 	}
 
@@ -366,9 +349,11 @@ const batterStats = (p: any) => {
 const BatterAndPitcher = ({
 	batterPid,
 	pitcherPid,
+	playersByPid,
 }: {
 	batterPid: number;
 	pitcherPid: number;
+	playersByPid: PlayersByPid;
 }) => {
 	const batter: any = playersByPid[batterPid];
 	const pitcher: any = playersByPid[pitcherPid];
@@ -434,18 +419,30 @@ const BoxScore = ({
 		[boxScore.scoringSummary],
 	);
 
+	const playersByPid = useMemo(() => {
+		const playersByPid: PlayersByPid = {};
+		for (const t of boxScore.teams) {
+			for (const p of t.players) {
+				playersByPid[p.pid] = p;
+			}
+		}
+		return playersByPid;
+	}, [boxScore.teams]);
+
 	return (
 		<div className="mb-3">
 			{liveGameSim ? (
 				<BatterAndPitcher
 					batterPid={sportState.batterPid}
 					pitcherPid={sportState.pitcherPid}
+					playersByPid={playersByPid}
 				/>
 			) : undefined}
 
 			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}
+				playersByPid={playersByPid}
 				processedEvents={processedEvents}
 				teams={boxScore.teams}
 			/>

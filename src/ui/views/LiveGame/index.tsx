@@ -19,9 +19,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import useLocalStorageState from "use-local-storage-state";
-import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../../util/processLiveGameEvents.baseball.tsx";
-import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../../util/processLiveGameEvents.football.tsx";
-import { processLiveGameEvents } from "../../util/processLiveGameEvents.ts";
+import { LiveGamePlayback } from "../../util/LiveGamePlayback.ts";
 import {
 	BoxScoreWrapper,
 	HeadlineScoreLive,
@@ -115,13 +113,6 @@ const getSeconds = (time: string | undefined) => {
 	const [min, sec] = parts as [number, number];
 	return min * 60 + sec;
 };
-
-const DEFAULT_SPORT_STATE = bySport<any>({
-	baseball: DEFAULT_SPORT_STATE_BASEBALL,
-	basketball: undefined,
-	football: DEFAULT_SPORT_STATE_FOOTBALL,
-	hockey: undefined,
-});
 
 type PlayByPlayEntryInfo = {
 	key: number;
@@ -299,16 +290,19 @@ export const LiveGame = (props: View<"liveGame">) => {
 		props.initialBoxScore ? props.initialBoxScore : {},
 	);
 
-	const overtimes = useRef(0);
+	// All state about the playback of the game lives in here. It's created as soon as the game is available, so the first render of the game already has it.
+	const playback = useRef<LiveGamePlayback | undefined>(undefined);
+	if (!playback.current && props.events) {
+		boxScore.current = props.initialBoxScore;
+		playback.current = new LiveGamePlayback(
+			props.initialBoxScore,
+			props.events,
+		);
+	}
+
 	const playByPlayDiv = useRef<HTMLDivElement | null>(null);
-	const quarters = useRef([]);
-	const possessionChange = useRef<boolean | undefined>(undefined);
 	const componentIsMounted = useRef(false);
-	const events = useRef<unknown[] | undefined>(undefined);
 	const playbackTimeoutId = useRef<number | undefined>(undefined);
-	const sportState = useRef(
-		DEFAULT_SPORT_STATE ? { ...DEFAULT_SPORT_STATE } : undefined,
-	);
 
 	const playByPlayEntries = useRef<PlayByPlayEntryInfo[]>([]);
 
@@ -327,10 +321,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
 		function processToNextPauseInner(force?: boolean): number {
+			const pb = playback.current;
 			if (
 				!componentIsMounted.current ||
 				(pausedRef.current && !force) ||
-				!events.current ||
+				!pb ||
 				boxScore.current.gameOver
 			) {
 				return 0;
@@ -341,48 +336,38 @@ export const LiveGame = (props: View<"liveGame">) => {
 			const shootout = !!boxScore.current.shootout;
 			const ptsKey = shootout ? "sPts" : "pts";
 
-			// Save here since it is mutated in processLiveGameEvents
-			const prevOuts = sportState.current?.outs;
+			// Save here since these change in pb.next
+			const prevOuts = pb.sport === "baseball" ? pb.sportState.outs : undefined;
 			const prevPts =
 				boxScore.current.teams[0][ptsKey] + boxScore.current.teams[1][ptsKey];
 
-			const output = processLiveGameEvents({
-				boxScore: boxScore.current,
-				events: events.current,
-				overtimes: overtimes.current,
-				quarters: quarters.current,
-				sportState: sportState.current,
-			});
-			const text = output.text;
+			const entry = pb.next();
 			const currentPts =
 				boxScore.current.teams[0][ptsKey] + boxScore.current.teams[1][ptsKey];
 			const scoreDiff = currentPts - prevPts;
 
-			overtimes.current = output.overtimes;
-			quarters.current = output.quarters;
-			possessionChange.current = output.possessionChange;
-			sportState.current = output.sportState;
+			if (entry) {
+				const { t, text, textOnly } = entry;
 
-			if (text !== undefined) {
 				let outs;
-				if (__SPORT === "baseball" && output.sportState.outs > prevOuts) {
-					outs = output.sportState.outs;
+				if (
+					pb.sport === "baseball" &&
+					prevOuts !== undefined &&
+					pb.sportState.outs > prevOuts
+				) {
+					outs = pb.sportState.outs;
 				}
-
-				// For baseball, always show logo of the batting team, since t is not always sent in output (or maybe never sent)
-				const t = __SPORT === "baseball" ? sportState.current.o : output.t;
 
 				let score;
 				let scoreType;
 				if (scoreDiff !== 0) {
+					const scoreInfo =
+						pb.sport === "football"
+							? pb.sportState.plays.at(-1)?.scoreInfo
+							: undefined;
+
 					// Swap team for safety
-					const scoreT =
-						__SPORT === "football" &&
-						sportState.current.plays.at(-1)?.scoreInfo?.type === "SF"
-							? t === 0
-								? 1
-								: 0
-							: t;
+					const scoreT = scoreInfo?.type === "SF" ? (t === 0 ? 1 : 0) : t;
 
 					score =
 						scoreT !== undefined ? (
@@ -402,11 +387,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 							</>
 						) : undefined;
 
-					if (__SPORT === "football") {
+					if (pb.sport === "football") {
 						// If no score type, then it must be a penalty overturning a score
-						scoreType =
-							sportState.current.plays.at(-1)?.scoreInfo?.long ??
-							"Penalty overturned score";
+						scoreType = scoreInfo?.long ?? "Penalty overturned score";
 					}
 				}
 
@@ -439,13 +422,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 					scoreType,
 					outs,
 					text,
-					textOnly: output.textOnly,
+					textOnly,
 					t,
 					time,
 				});
 			}
 
-			if (events.current && events.current.length > 0) {
+			if (!pb.done) {
 				if (!pausedRef.current) {
 					clearPlaybackTimeout();
 					playbackTimeoutId.current = window.setTimeout(() => {
@@ -502,25 +485,20 @@ export const LiveGame = (props: View<"liveGame">) => {
 		};
 	}, [clearPlaybackTimeout]);
 
-	const startLiveGame = useCallback(
-		(events2: unknown[]) => {
-			events.current = events2;
-			clearPlaybackTimeout();
-			playbackTimeoutId.current = window.setTimeout(() => {
-				processToNextPause();
-				setPlayIndex((prev) => prev + 1);
-			}, speedToMs(DEFAULT_SPEED));
-		},
-		[clearPlaybackTimeout, processToNextPause],
-	);
+	const startLiveGame = useCallback(() => {
+		clearPlaybackTimeout();
+		playbackTimeoutId.current = window.setTimeout(() => {
+			processToNextPause();
+			setPlayIndex((prev) => prev + 1);
+		}, speedToMs(DEFAULT_SPEED));
+	}, [clearPlaybackTimeout, processToNextPause]);
 
 	useEffect(() => {
 		if (props.events && !started) {
-			boxScore.current = props.initialBoxScore;
 			setStarted(true);
-			startLiveGame(props.events.slice());
+			startLiveGame();
 		}
-	}, [props.events, props.initialBoxScore, started, startLiveGame]);
+	}, [props.events, started, startLiveGame]);
 
 	const handleSpeedChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const speed = event.target.value;
@@ -550,6 +528,12 @@ export const LiveGame = (props: View<"liveGame">) => {
 		processToNextPause(true);
 		setPlayIndex((prev) => prev + 1);
 	}, [processToNextPause]);
+
+	// Sum of both teams, because in baseball each team bats in its own half of the inning
+	const { teams } = boxScore.current;
+	const numPeriodsStarted = teams
+		? teams[0].ptsQtrs.length + teams[1].ptsQtrs.length
+		: 0;
 
 	const fastForwardMenuItems = useMemo(() => {
 		// boxScore is still empty before the game loads, and these all assume it has teams
@@ -583,8 +567,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 		};
 
 		const playUntilLastTwoMinutes = () => {
-			// quarters.current.length can be 0 early in the game
-			const initialQuarter = Math.max(1, quarters.current.length);
+			// No period has started yet early in the game
+			const initialQuarter = Math.max(
+				1,
+				boxScore.current.teams[0].ptsQtrs.length,
+			);
 
 			const quartersToPlay =
 				initialQuarter >= boxScore.current.numPeriods
@@ -635,16 +622,19 @@ export const LiveGame = (props: View<"liveGame">) => {
 		const playUntilChangeOfPossession = () => {
 			let numPlays = 0;
 
+			const isPossessionChange = () => {
+				const pb = playback.current;
+				return pb?.sport === "football" && pb.possessionChange;
+			};
+
 			// If currently on one, play through it
-			if (possessionChange.current) {
-				while (possessionChange.current && !boxScore.current.gameOver) {
-					processToNextPause(true);
-					numPlays += 1;
-				}
+			while (isPossessionChange() && !boxScore.current.gameOver) {
+				processToNextPause(true);
+				numPlays += 1;
 			}
 
 			// Find next one
-			while (!possessionChange.current && !boxScore.current.gameOver) {
+			while (!isPossessionChange() && !boxScore.current.gameOver) {
 				processToNextPause(true);
 				numPlays += 1;
 			}
@@ -692,6 +682,12 @@ export const LiveGame = (props: View<"liveGame">) => {
 			return true;
 		});
 
+		// Read this fresh each time, because a new object is created when the side changes
+		const getBaseballState = () => {
+			const pb = playback.current;
+			return pb?.sport === "baseball" ? pb.sportState : undefined;
+		};
+
 		const getNumSidesSoFar = () =>
 			boxScore.current.teams === undefined
 				? 0
@@ -718,12 +714,12 @@ export const LiveGame = (props: View<"liveGame">) => {
 								onClick: () => {
 									let numPlays = 0;
 
-									const initialBatter = sportState.current?.batterPid;
+									const initialBatter = getBaseballState()?.batterPid;
 									while (!boxScore.current.gameOver) {
 										processToNextPause(true);
 										numPlays += 1;
 
-										const currentBatter = sportState.current?.batterPid;
+										const currentBatter = getBaseballState()?.batterPid;
 										if (
 											currentBatter !== undefined &&
 											currentBatter >= 0 &&
@@ -740,9 +736,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 								label: "Next baserunner",
 								keyboardShortcut: "t",
 								onClick: () => {
-									const sportStateBaseball =
-										sportState.current as typeof DEFAULT_SPORT_STATE_BASEBALL;
-									const initialBases = sportStateBaseball.bases ?? [];
+									const initialBases = getBaseballState()?.bases ?? [];
 									const initialBaserunners = new Set(
 										initialBases.filter((pid) => pid !== undefined),
 									);
@@ -757,9 +751,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 										numPlays += 1;
 
 										// Any new baserunner -> stop
-										const baserunners = (sportStateBaseball.bases ?? []).filter(
-											(pid) => pid !== undefined,
-										);
+										const baserunners = (
+											getBaseballState()?.bases ?? []
+										).filter((pid) => pid !== undefined);
 										if (baserunners.length === 0) {
 											// Handle case where it's a new inning and the same guy gets on base
 											initialBaserunners.clear();
@@ -952,7 +946,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		boxScore.current.elamTarget,
 		boxScore.current.overtime,
 		boxScore.current.shootout,
-		quarters.current.length,
+		numPeriodsStarted,
 		processToNextPause,
 		props.quarterLength,
 		started,
@@ -1075,7 +1069,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 							boxScore={boxScore.current}
 							live
 							playIndex={playIndex}
-							sportState={sportState.current}
+							sportState={playback.current?.sportState}
 						/>
 					) : (
 						<h2>Loading...</h2>

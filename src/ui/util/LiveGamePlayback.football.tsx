@@ -8,10 +8,23 @@ import type {
 } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";
 import { formatClock } from "../../common/formatClock.ts";
-import type { PlayerInjury } from "../../common/types.ts";
+import type { PlayerInjury, TeamNum } from "../../common/types.ts";
 import { formatLiveGameStat } from "./formatLiveGameStat.ts";
-import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
+import type {
+	PlayByPlayEvent,
+	PlayByPlayEventStat,
+} from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
 import { assertDefined } from "../../common/utils.ts";
+import {
+	addStat,
+	getEventTeam,
+	hasStat,
+	LiveGamePlaybackBase,
+	setStat,
+	type LiveGameBoxScore,
+	type LiveGameEntry,
+} from "./LiveGamePlaybackBase.ts";
+
 type BoxScorePlayer = {
 	name: string;
 	pid: number;
@@ -30,17 +43,6 @@ type BoxScoreTeam = {
 	timeouts: number;
 	[key: string]: string | number | BoxScorePlayer[] | number[] | undefined;
 };
-let playersByPidGid: number | undefined;
-let playersByPid:
-	| Record<
-			number,
-			{
-				name: string;
-				inGame: boolean;
-				seasonStats: { [stat: string]: number };
-			}
-	  >
-	| undefined;
 export type SportState = {
 	awaitingAfterTouchdown: boolean;
 	awaitingKickoff: boolean;
@@ -72,7 +74,8 @@ export type SportState = {
 	newPeriodText: ReactNode | undefined;
 };
 
-export const DEFAULT_SPORT_STATE: SportState = {
+// Function rather than a constant so every game gets its own copy
+const getDefaultSportState = (): SportState => ({
 	awaitingAfterTouchdown: false,
 	awaitingKickoff: true,
 	awaitingShootout: false,
@@ -82,7 +85,7 @@ export const DEFAULT_SPORT_STATE: SportState = {
 	plays: [],
 	text: "",
 	newPeriodText: undefined,
-};
+});
 
 export const scrimmageToFieldPos = (
 	scrimmage: number,
@@ -546,145 +549,456 @@ export const penaltySegments = (yards: number, penaltyYards: number) => {
 		: { play: Math.abs(yards), penalty: 0 };
 };
 
-// Mutates boxScore!!!
-const processLiveGameEvents = ({
-	events,
-	boxScore,
-	overtimes,
-	quarters,
-	sportState,
-}: {
-	events: PlayByPlayEvent<PlayByPlayEventOutput>[];
-	boxScore: {
-		gid: number;
-		quarter: string;
-		quarterShort: string;
-		numPeriods: number;
-		overtime?: string;
-		possession: 0 | 1 | undefined;
-		shootout?: boolean;
-		teams: [BoxScoreTeam, BoxScoreTeam];
-		time: string;
-		scoringSummary: PlayByPlayEventScore[];
-	};
-	overtimes: number;
-	quarters: string[];
-	sportState: SportState;
-}) => {
-	if (
-		!playersByPid ||
-		boxScore.gid !== playersByPidGid ||
-		events[0]?.type === "init"
-	) {
-		playersByPidGid = boxScore.gid;
-		playersByPid = {};
-		for (const t of boxScore.teams) {
-			for (const p of t.players) {
-				playersByPid[p.pid] = p;
-			}
-		}
+type Event = PlayByPlayEvent<PlayByPlayEventOutput>;
+
+// Events that are part of a play, rather than something happening between plays
+type PlayEvent = Exclude<
+	Event,
+	{
+		type:
+			| "clock"
+			| "init"
+			| "overtime"
+			| "quarter"
+			| "removeLastScore"
+			| "stat"
+			| "timeouts";
 	}
-	let stop = false;
-	let text;
-	let t: 0 | 1 | undefined;
-	let textOnly = false;
-	let possessionChange: boolean = false;
+>;
 
-	while (!stop && events.length > 0) {
-		const e = events.shift();
-		if (!e) {
-			continue;
-		}
+type BoxScore = LiveGameBoxScore<BoxScoreTeam> & {
+	scoringSummary: PlayByPlayEventScore[];
+};
 
-		const eAny = e as any;
+// This is designed to stop at the end of the previous possession, so you can see the prior drive leading up to it. Only exception is the start of a new quarter/overtime, because the drive is cleared before that.
+// This ignores the possibility of penalties, which can delay or overturn the change of possession. I think that's fine, most people are probably interested in potential changes of possession too.
+const isPossessionChange = (e: Event) => {
+	const { safety, twoPointConversionTeam } = e as {
+		safety?: boolean;
+		twoPointConversionTeam?: TeamNum;
+	};
 
-		const eventT: 0 | 1 | undefined =
-			eAny.t === 0 || eAny.t === 1 ? eAny.t : undefined;
-		const otherT = eventT === 0 ? 1 : 0;
+	return (
+		((e.type === "quarter" || e.type === "overtime") && e.startsWithKickoff) ||
+		e.type === "punt" ||
+		e.type === "interception" ||
+		(e.type === "fumbleRecovery" && e.lost) ||
+		e.type === "turnoverOnDowns" ||
+		e.type === "fieldGoal" ||
+		e.type === "extraPoint" ||
+		!!safety ||
+		twoPointConversionTeam !== undefined ||
+		// Needed for failed 2 point conversions that end with an event without twoPointConversionTeam, like an incomplete pass
+		e.type === "twoPointConversionFailed"
+	);
+};
 
-		const scoringSummaryEvent = formatScoringSummaryEvent(e, quarters.length);
+export class LiveGamePlaybackFootball extends LiveGamePlaybackBase<
+	PlayByPlayEventOutput,
+	BoxScore
+> {
+	readonly sport = "football";
 
-		let quarterText;
-		if (quarters.length === 0) {
-			quarterText = "Q1";
-		} else if (e.type === "quarter") {
-			quarterText = `Q${e.quarter}`;
-		} else if (e.type === "overtime") {
-			quarterText = `OT${e.overtimes}`;
-		}
+	override readonly sportState = getDefaultSportState();
 
-		if (quarterText !== undefined && !quarters.includes(quarterText)) {
-			quarters.push(quarterText);
-			boxScore.teams[0].ptsQtrs.push(0);
-			boxScore.teams[1].ptsQtrs.push(0);
+	// Was the latest entry from `next` a change of possession? See isPossessionChange for details.
+	possessionChange = false;
 
-			const quarter = boxScore.teams[0].ptsQtrs.length;
-			if (quarter > boxScore.numPeriods) {
-				overtimes += 1;
-				if (overtimes === 1) {
-					boxScore.overtime = "(OT)";
-				} else if (overtimes > 1) {
-					boxScore.overtime = `(${overtimes}OT)`;
-				}
-				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
-				boxScore.quarterShort = overtimes === 1 ? "OT" : `${overtimes}OT`;
-			} else {
-				boxScore.quarter = `${helpers.ordinal(quarter)} ${getPeriodName(
-					boxScore.numPeriods,
-				)}`;
-				boxScore.quarterShort = `${getPeriodName(
-					boxScore.numPeriods,
-					true,
-				)}${quarter}`;
-			}
+	override next() {
+		this.possessionChange = false;
+		return super.next();
+	}
 
-			if ((e as any).clock !== undefined) {
-				boxScore.time = formatClock((e as any).clock);
-			}
-		}
+	private get currentPlay() {
+		const play = this.sportState.plays.at(-1);
+		assertDefined(play);
+		return play;
+	}
 
-		const addNewPlay = ({
+	private addPlay({
+		down,
+		toGo,
+		scrimmage,
+		intendedPossessionChange,
+		subPlay,
+		t,
+	}: {
+		down: number;
+		toGo: number;
+		scrimmage: number;
+		intendedPossessionChange: boolean;
+		subPlay: boolean;
+		t: TeamNum | undefined;
+	}) {
+		assertDefined(t);
+		this.sportState.plays.push({
+			t,
 			down,
 			toGo,
 			scrimmage,
+			yards: 0,
+			texts: [],
+			scoreInfo: undefined,
 			intendedPossessionChange,
+			turnover: false,
+			flags: [],
+			countsTowardsNumPlays: false,
+			countsTowardsYards: false,
+			tagOverride: undefined,
 			subPlay,
-			tOverride,
-		}: {
-			down: number;
-			toGo: number;
-			scrimmage: number;
-			intendedPossessionChange: boolean;
-			subPlay: boolean;
-			tOverride?: 0 | 1;
-		}) => {
-			const t = tOverride ?? eventT;
-			assertDefined(t);
-			sportState.plays.push({
-				t,
-				down,
-				toGo,
-				scrimmage,
-				yards: 0,
-				texts: [],
-				scoreInfo: undefined,
-				intendedPossessionChange,
-				turnover: false,
-				flags: [],
-				countsTowardsNumPlays: false,
-				countsTowardsYards: false,
-				tagOverride: undefined,
-				subPlay,
-				penaltyYards: 0,
-			});
-		};
+			penaltyYards: 0,
+		});
+	}
+
+	protected override processStat(e: PlayByPlayEventStat) {
+		this.addPeriodPts(e);
+
+		const t = this.boxScore.teams[e.t];
+		if (hasStat(t, e.s) && e.s !== "min") {
+			if (e.pid != undefined) {
+				const p = this.playersByPid[e.pid]!;
+				if (e.s.endsWith("Lng")) {
+					setStat(p, e.s, e.amt);
+				} else {
+					addStat(p, e.s, e.amt);
+				}
+			}
+			addStat(t, e.s, e.amt);
+		}
+	}
+
+	// A clock event comes before each play, with the situation at the snap
+	private processClock(
+		e: Extract<Event, { type: "clock" }>,
+	): LiveGameEntry | undefined {
+		const { boxScore, sportState } = this;
+		const eventT = getEventTeam(e);
+		const awaitingKickoff = e.awaitingKickoff !== undefined;
+
+		let entry: LiveGameEntry | undefined;
+
+		const textParts = [];
+		if (!e.awaitingAfterTouchdown) {
+			const time = formatClock(e.clock);
+
+			if (awaitingKickoff) {
+				textParts.push("Kick off");
+			} else {
+				const fieldPos = scrimmageToFieldPos(
+					e.scrimmage,
+					boxScore.teams[eventT!].abbrev,
+					boxScore.teams[eventT === 0 ? 1 : 0].abbrev,
+				);
+
+				textParts.push(
+					formatDownAndDistance(e.down, e.toGo, e.scrimmage),
+					fieldPos,
+				);
+			}
+
+			entry = {
+				t: eventT,
+				text: (
+					<>
+						{time}
+						{textParts.map((part, i) => (
+							<span className={`ps-3${i === 0 ? " fw-bold" : ""}`} key={i}>
+								{part}
+							</span>
+						))}
+					</>
+				),
+				textOnly: false,
+			};
+			boxScore.time = time;
+		}
+
+		if (eventT !== undefined && (awaitingKickoff || sportState.t !== eventT)) {
+			sportState.t = eventT;
+			sportState.plays = [];
+		}
+		sportState.awaitingAfterTouchdown = e.awaitingAfterTouchdown;
+		sportState.awaitingKickoff = awaitingKickoff;
+		sportState.text = textParts.join(", ");
+		sportState.newPeriodText = undefined;
+		sportState.scrimmage = e.scrimmage;
+		sportState.toGo = e.toGo;
+		this.addPlay({
+			down: e.down,
+			toGo: e.toGo,
+			scrimmage: e.scrimmage,
+			intendedPossessionChange: awaitingKickoff,
+			subPlay: false,
+			t: eventT,
+		});
+
+		// After touchdown, scrimmage is moved weirdly for the XP
+		if (!sportState.awaitingAfterTouchdown) {
+			const prevPlay = sportState.plays.at(-2);
+			if (prevPlay) {
+				if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
+					console.log(
+						"Yards mismatch",
+						prevPlay.yards,
+						e.scrimmage,
+						sportState,
+						e,
+					);
+				}
+				prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
+			}
+		}
+
+		boxScore.possession = eventT;
+
+		return entry;
+	}
+
+	// A penalty might overturn a score or a turnover or multiple turnovers. In this case, we want to immediately update the play bar on the field, so it's no longer showing a turnover or score erroneously (looks weird after yardage changes). But we don't have the event for the actual reverted turnover/score yet. Solution? Look ahead and find it!
+	// We also need to handle punt returns here, in the case where a penalty on the play results in another down for the kicking team. Basically, anything that adds a subplay needs to be here, except kickoff returns because currently penalties there are always assessed on the return.
+	private removeLastScoreOrTurnoversOrPuntReturnIfNecessary() {
+		const { sportState } = this;
+
+		// Look at all events up until the next "clock" event, which is the start of the next play
+		for (const event of this.upcomingEvents()) {
+			if (event.type === "clock") {
+				break;
+			}
+
+			// For turnovers, look for a negative interception or a negative fumble recovery
+			if (event.type === "stat") {
+				if (
+					event.amt === -1 &&
+					(event.s === "defInt" || event.s === "defFmbRec" || event.s === "pnt")
+				) {
+					sportState.plays.pop();
+
+					// If we removed a sub-play, then the parent play can't be a turnover
+					const prevPlay = sportState.plays.at(-1);
+					if (prevPlay?.turnover) {
+						prevPlay.turnover = false;
+					}
+				}
+			}
+
+			// For scoring, there is a dedicated removeLastScore event which we can use rather than looking for negative values of scoring stats
+			if (event.type === "removeLastScore") {
+				sportState.plays.at(-1)!.scoreInfo = undefined;
+			}
+		}
+	}
+
+	// For penalties that are not offsetting
+	private processPenalty(
+		e: Extract<PlayEvent, { type: "penalty" }>,
+		text: ReactNode,
+	) {
+		const { sportState } = this;
+
+		// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penalty, which ruins the drama.
+		// Same for change of possession, don't want to show it early if 2 penalties.
+		const accept = e.decision === "accept";
+		if (accept) {
+			/*// Penalty could have changed possession
+			if (play.t !== e.possessionAfter) {
+				play.t = e.possessionAfter;
+			}*/
+
+			this.removeLastScoreOrTurnoversOrPuntReturnIfNecessary();
+
+			// Get the play only now, because the previous current play might have just been removed
+			const play = this.currentPlay;
+
+			// For penalties before the snap, still count them (except awaitingAfterTouchdown, where these should never be true)
+			if (!sportState.awaitingAfterTouchdown) {
+				play.countsTowardsNumPlays = true;
+				play.countsTowardsYards = true;
+			}
+
+			const reversedField = play.t !== sportState.t;
+			let scrimmageAfter = e.scrimmageAfter;
+			if (reversedField) {
+				scrimmageAfter = 100 - scrimmageAfter;
+			}
+
+			// A foul added on after the play keeps the play's own yards; any
+			// other accepted foul wipes the play out, so all of it is penalty
+			const penaltyBase = e.tackOn
+				? play.scrimmage + play.yards
+				: play.scrimmage;
+			play.penaltyYards = scrimmageAfter - penaltyBase;
+			play.yards = scrimmageAfter - play.scrimmage;
+		}
+
+		// Realize the flag by replacing the blank flag with the penalty details. Need to search prior plays in case the current play is a sub-play (like interception return, but flag was for offsides before the interception)
+		let flagFound = false;
+		for (let i = sportState.plays.length - 1; i >= 0; i--) {
+			const flagPlay = sportState.plays[i]!;
+			const flagIndex = flagPlay.flags.indexOf(null);
+			if (flagIndex >= 0) {
+				flagPlay.flags[flagIndex] = {
+					text,
+					accept,
+				};
+
+				flagFound = true;
+				break;
+			}
+		}
+		if (!flagFound) {
+			console.log("Flag not found", sportState.plays, e);
+		}
+	}
+
+	// Offsetting penalties are skipped by processPenalty. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
+	// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
+	private processOffsettingPenalties(text: ReactNode) {
+		this.removeLastScoreOrTurnoversOrPuntReturnIfNecessary();
+
+		// Get the play only now, because the previous current play might have just been removed
+		const play = this.currentPlay;
+
+		play.countsTowardsNumPlays = false;
+		play.yards = 0;
+		play.penaltyYards = 0;
+
+		play.flags = play.flags.map(() => {
+			return {
+				text,
+				accept: false,
+			};
+		});
+	}
+
+	private processPlayEvent(
+		e: PlayEvent,
+		isScoringEvent: boolean,
+	): LiveGameEntry | undefined {
+		const { boxScore, sportState } = this;
+
+		if (e.type === "interception") {
+			// Interceptions are always turnovers, so set it here. But for fumbles we need to wait for the recovery, done elsewhere
+			this.currentPlay.turnover = true;
+		}
+
+		let entry: LiveGameEntry | undefined;
+
+		// Some events are not shown in the play-by-play, like the handoff on a QB keeper
+		const text = getText(e, boxScore.numPeriods);
+		if (text !== undefined) {
+			if (e.type === "injury") {
+				this.playersByPid[e.injuredPID]!.injury = {
+					type: "Injured",
+					gamesRemaining: -1,
+				};
+			}
+
+			boxScore.time = formatClock(e.clock);
+			entry = {
+				t: getEventTeam(e),
+				text,
+				textOnly:
+					e.type === "twoMinuteWarning" ||
+					e.type === "gameOver" ||
+					e.type === "shootoutStart" ||
+					e.type === "shootoutTie",
+			};
+
+			this.currentPlay.texts.push(text);
+		}
+
+		if (e.type === "flag") {
+			this.currentPlay.flags.push(null);
+		} else if (e.type === "penalty" && e.offsetStatus !== "offset") {
+			this.processPenalty(e, text);
+		} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
+			this.processOffsettingPenalties(text);
+		} else if (
+			e.type === "dropback" ||
+			e.type === "handoff" ||
+			e.type === "kneel"
+		) {
+			if (!sportState.awaitingAfterTouchdown) {
+				this.currentPlay.countsTowardsNumPlays = true;
+				this.currentPlay.countsTowardsYards = true;
+			}
+		}
+
+		// Get the play only now, because a penalty might have just removed the previous current play
+		const play = this.currentPlay;
+
+		if (e.type === "kickoff") {
+			// yds is the distance kicked to
+			play.yards = 100 - sportState.scrimmage - e.yds;
+		} else if (
+			e.type === "kickoffReturn" ||
+			e.type === "punt" ||
+			e.type === "puntReturn" ||
+			e.type === "fumbleRecovery" ||
+			e.type === "interception" ||
+			e.type === "interceptionReturn" ||
+			e.type === "sack" ||
+			e.type === "passComplete" ||
+			e.type === "run" ||
+			e.type === "kneel"
+		) {
+			const reversedField = play.t !== sportState.t;
+
+			// Temporarily update play.yards with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
+			if (
+				(e.type === "fumbleRecovery" || e.type === "interceptionReturn") &&
+				e.touchback
+			) {
+				const SCRIMMAGE_TOUCHBACK = 20;
+
+				// (100 - play.scrimmage) is for the case when scrimmage is further than 100 (never happens?) or less than 100 (presumably momentum carried defender a yard or two into the endzone)
+				play.yards = -SCRIMMAGE_TOUCHBACK + (100 - play.scrimmage);
+			} else {
+				play.yards += (reversedField ? -1 : 1) * e.yds;
+			}
+		}
+
+		if (e.type === "kickoff" || e.type === "onsideKick" || e.type === "punt") {
+			play.intendedPossessionChange = true;
+		}
+
+		if (isScoringEvent) {
+			const scoreInfo = getScoreInfo(e);
+			if (scoreInfo) {
+				play.scoreInfo = scoreInfo;
+			}
+		}
+
+		if (e.type === "extraPointAttempt") {
+			play.tagOverride = "XPA";
+		} else if (e.type === "twoPointConversion") {
+			play.tagOverride = "2PA";
+		} else if (e.type === "shootoutShot") {
+			play.tagOverride = "FGA";
+		}
+
+		return entry;
+	}
+
+	protected override processEvent(e: Event): LiveGameEntry | undefined {
+		const { boxScore, sportState } = this;
+		const eventT = getEventTeam(e);
+
+		const scoringSummaryEvent = formatScoringSummaryEvent(
+			e,
+			this.numPeriodsStarted,
+		);
+
+		if (
+			this.numPeriodsStarted === 0 ||
+			e.type === "quarter" ||
+			e.type === "overtime"
+		) {
+			this.startPeriod();
+		}
 
 		if (e.type === "shootoutStart") {
-			boxScore.shootout = true;
-			boxScore.teams[0].sPts = 0;
-			boxScore.teams[0].sAtt = 0;
-			boxScore.teams[1].sPts = 0;
-			boxScore.teams[1].sAtt = 0;
+			this.startShootout();
 
 			sportState.plays = [];
 			sportState.awaitingAfterTouchdown = false;
@@ -695,24 +1009,24 @@ const processLiveGameEvents = ({
 
 			// Away team
 			sportState.t = 1;
-			addNewPlay({
+			this.addPlay({
 				down: 1,
 				toGo: 10,
 				scrimmage: 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
-				tOverride: 1,
+				t: 1,
 			});
 		}
 
-		// Update team with possession
+		// These events start a sub-play, by the team that now has the ball
 		if (
 			e.type === "kickoffReturn" ||
 			e.type === "puntReturn" ||
 			e.type === "fumbleRecovery" ||
 			e.type === "interceptionReturn"
 		) {
-			const prevPlay = sportState.plays.at(-1)!;
+			const prevPlay = this.currentPlay;
 			if (e.type === "fumbleRecovery" && e.lost) {
 				prevPlay.turnover = true;
 			}
@@ -721,14 +1035,13 @@ const processLiveGameEvents = ({
 				prevPlay.yards += e.ydsBefore;
 			}
 
-			const scrimmage = prevPlay.scrimmage + prevPlay.yards;
-
-			addNewPlay({
+			this.addPlay({
 				down: prevPlay.down,
 				toGo: prevPlay.toGo,
-				scrimmage,
+				scrimmage: prevPlay.scrimmage + prevPlay.yards,
 				intendedPossessionChange: false,
 				subPlay: true,
+				t: eventT,
 			});
 		}
 
@@ -738,355 +1051,47 @@ const processLiveGameEvents = ({
 				sportState.awaitingShootout = false;
 			}
 
-			addNewPlay({
+			this.addPlay({
 				down: 1,
 				toGo: 10,
 				// Home team is kicking in the opposite direction
 				scrimmage: eventT === 0 ? 33 : 100 - 33,
 				intendedPossessionChange: false,
 				subPlay: false,
+				t: eventT,
 			});
 		}
 
+		let entry: LiveGameEntry | undefined;
+
 		if (e.type === "clock") {
-			const awaitingKickoff = e.awaitingKickoff !== undefined;
-
-			const textParts = [];
-			if (!e.awaitingAfterTouchdown) {
-				const time = formatClock(e.clock);
-
-				if (awaitingKickoff) {
-					textParts.push("Kick off");
-				} else {
-					const fieldPos = scrimmageToFieldPos(
-						e.scrimmage,
-						boxScore.teams[eventT!].abbrev,
-						boxScore.teams[otherT].abbrev,
-					);
-
-					textParts.push(
-						formatDownAndDistance(e.down, e.toGo, e.scrimmage),
-						fieldPos,
-					);
-				}
-				t = eventT;
-
-				text = (
-					<>
-						{time}
-						{textParts.map((part, i) => (
-							<span className={`ps-3${i === 0 ? " fw-bold" : ""}`} key={i}>
-								{part}
-							</span>
-						))}
-					</>
-				);
-				boxScore.time = time;
-				stop = true;
-			}
-
-			if (
-				eventT !== undefined &&
-				(awaitingKickoff || sportState.t !== eventT)
-			) {
-				sportState.t = eventT;
-				sportState.plays = [];
-			}
-			sportState.awaitingAfterTouchdown = e.awaitingAfterTouchdown;
-			sportState.awaitingKickoff = awaitingKickoff;
-			sportState.text = textParts.join(", ");
-			sportState.newPeriodText = undefined;
-			sportState.scrimmage = e.scrimmage;
-			sportState.toGo = e.toGo;
-			addNewPlay({
-				down: e.down,
-				toGo: e.toGo,
-				scrimmage: e.scrimmage,
-				intendedPossessionChange: awaitingKickoff,
-				subPlay: false,
-			});
-
-			// After touchdown, scrimmage is moved weirdly for the XP
-			if (!sportState.awaitingAfterTouchdown) {
-				const prevPlay = sportState.plays.at(-2);
-				if (prevPlay) {
-					if (prevPlay.yards !== e.scrimmage - prevPlay.scrimmage) {
-						console.log(
-							"Yards mismatch",
-							prevPlay.yards,
-							e.scrimmage,
-							sportState,
-							e,
-						);
-					}
-					prevPlay.yards = e.scrimmage - prevPlay.scrimmage;
-				}
-			}
-
-			boxScore.possession = eventT;
+			entry = this.processClock(e);
 		} else if (e.type === "stat") {
-			// Quarter-by-quarter score
-			if (e.s === "pts") {
-				const { ptsQtrs } = boxScore.teams[eventT!];
-				// eslint-disable-next-line unicorn/prefer-at
-				ptsQtrs[ptsQtrs.length - 1]! += e.amt;
-				boxScore.teams[eventT!].ptsQtrs = ptsQtrs;
-			}
-
-			// Everything else
-			if (boxScore.teams[eventT!][e.s] !== undefined && e.s !== "min") {
-				if (e.pid != undefined) {
-					const p = playersByPid[e.pid] as any;
-					if (e.s.endsWith("Lng")) {
-						p[e.s] = e.amt;
-					} else {
-						p[e.s] += e.amt;
-					}
-				}
-				let stat = boxScore.teams[eventT!][e.s] as number;
-				stat += e.amt;
-				boxScore.teams[eventT!][e.s] = stat;
-			}
+			this.processStat(e);
 		} else if (e.type === "removeLastScore") {
 			// This happens a tick after sportState is updated, which I think is okay
 			boxScore.scoringSummary.pop();
 		} else if (e.type === "quarter" || e.type === "overtime") {
-			text = getText(e, boxScore.numPeriods);
-			textOnly = true;
+			const text = getText(e, boxScore.numPeriods);
 			boxScore.time = formatClock(e.clock);
-			stop = true;
 			if (e.startsWithKickoff) {
 				sportState.newPeriodText = text;
 				sportState.plays = [];
 			}
+			entry = {
+				t: undefined,
+				text,
+				textOnly: true,
+			};
 		} else if (e.type === "timeouts") {
 			boxScore.teams[0].timeouts = e.timeouts[0];
 			boxScore.teams[1].timeouts = e.timeouts[1];
 		} else if (e.type !== "init") {
-			let play = sportState.plays.at(-1);
-			assertDefined(play);
-
-			if (e.type === "interception") {
-				// Interceptions are always turnovers, so set it here. But for fumbles we need to wait for the recovery, done elsewhere
-				play.turnover = true;
-			}
-
-			const initialText = getText(e, boxScore.numPeriods);
-			if (initialText !== undefined) {
-				if (e.type === "injury") {
-					const p = playersByPid[e.injuredPID] as any;
-					p.injury = {
-						type: "Injured",
-						gamesRemaining: -1,
-					};
-				}
-
-				text = initialText;
-				boxScore.time = formatClock(e.clock);
-				stop = true;
-				t = eventT;
-				textOnly =
-					e.type === "twoMinuteWarning" ||
-					e.type === "gameOver" ||
-					e.type === "shootoutStart" ||
-					e.type === "shootoutTie";
-
-				play.texts.push(text);
-			}
-
-			// A penalty might overturn a score or a turnover or multiple turnovers. In this case, we want to immediately update the play bar on the field, so it's no longer showing a turnover or score erroneously (looks weird after yardage changes). But we don't have the event for the actual reverted turnover/score yet. Solution? Look ahead and find it!
-			// We also need to handle punt returns here, in the case where a penalty on the play results in another down for the kicking team. Basically, anything that adds a subplay needs to be here, except kickoff returns because currently penalties there are always assessed on the return.
-			const removeLastScoreOrTurnoversOrPuntReturnIfNecessary = () => {
-				// Look at all events up until the next "clock" event, which is the start of the next play
-				for (const event of events) {
-					if (event.type === "clock") {
-						break;
-					}
-
-					// For turnovers, look for a negative interception or a negative fumble recovery
-					if (event.type === "stat") {
-						if (
-							event.amt === -1 &&
-							(event.s === "defInt" ||
-								event.s === "defFmbRec" ||
-								event.s === "pnt")
-						) {
-							sportState.plays.pop();
-
-							// If we removed a sub-play, then the parent play can't be a turnover
-							const prevPlay = sportState.plays.at(-1);
-							if (prevPlay?.turnover) {
-								prevPlay.turnover = false;
-							}
-						}
-					}
-
-					// For scoring, there is a dedicated removeLastScore event which we can use rather than looking for negative values of scoring stats
-					if (event.type === "removeLastScore") {
-						sportState.plays.at(-1)!.scoreInfo = undefined;
-					}
-				}
-			};
-
-			if (e.type === "flag") {
-				play.flags.push(null);
-			} else if (e.type === "penalty" && e.offsetStatus !== "offset") {
-				// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penalty, which ruins the drama.
-				// Same for change of possession, don't want to show it early if 2 penalties.
-				const accept = e.decision === "accept";
-				if (accept) {
-					/*// Penalty could have changed possession
-					if (play.t !== e.possessionAfter) {
-						play.t = e.possessionAfter;
-					}*/
-
-					removeLastScoreOrTurnoversOrPuntReturnIfNecessary();
-
-					// play might have been removed by removeLastScoreOrTurnoversIfNecessary
-					play = sportState.plays.at(-1);
-					assertDefined(play);
-
-					// For penalties before the snap, still count them (except awaitingAfterTouchdown, where these should never be true)
-					if (!sportState.awaitingAfterTouchdown) {
-						play.countsTowardsNumPlays = true;
-						play.countsTowardsYards = true;
-					}
-
-					const reversedField = play.t !== sportState.t;
-					let scrimmageAfter = e.scrimmageAfter;
-					if (reversedField) {
-						scrimmageAfter = 100 - scrimmageAfter;
-					}
-
-					// A foul added on after the play keeps the play's own yards; any
-					// other accepted foul wipes the play out, so all of it is penalty
-					const penaltyBase = e.tackOn
-						? play.scrimmage + play.yards
-						: play.scrimmage;
-					play.penaltyYards = scrimmageAfter - penaltyBase;
-					play.yards = scrimmageAfter - play.scrimmage;
-				}
-
-				// Realize the flag by replacing the blank flag with the penalty details. Need to search prior plays in case the current play is a sub-play (like interception return, but flag was for offsides before the interception)
-				let flagFound = false;
-				for (let i = sportState.plays.length - 1; i >= 0; i--) {
-					const flagPlay = sportState.plays[i]!;
-					const flagIndex = flagPlay.flags.indexOf(null);
-					if (flagIndex >= 0) {
-						flagPlay.flags[flagIndex] = {
-							text,
-							accept,
-						};
-
-						flagFound = true;
-						break;
-					}
-				}
-				if (!flagFound) {
-					console.log("Flag not found", sportState.plays, e);
-				}
-			} else if (e.type === "penaltyCount" && e.offsetStatus === "offset") {
-				removeLastScoreOrTurnoversOrPuntReturnIfNecessary();
-
-				// play might have been removed by removeLastScoreOrTurnoversIfNecessary
-				play = sportState.plays.at(-1);
-				assertDefined(play);
-
-				// Offsetting penalties don't make it this far in the penalty event, because they have are filtered out above. But we can find them here in penaltyCount, which corresponds with when text is generated for the play-by-play. No play since the down is replayed.
-				// Maybe accepted penalties that lead to replaying the down should also be considered here, but I'm not totally sure how to find those (!e.tackOn penalty events maybe?) and I'm not sure it's actually useful to do that (can have weird stuff like a 5 yard drive from 0 plays). https://www.nflpenalties.com/blog/what-is-a-play? argues similarly
-				play.countsTowardsNumPlays = false;
-				play.yards = 0;
-				play.penaltyYards = 0;
-
-				play.flags = play.flags.map(() => {
-					return {
-						text: text!,
-						accept: false,
-					};
-				});
-			} else if (
-				e.type === "dropback" ||
-				e.type === "handoff" ||
-				e.type === "kneel"
-			) {
-				if (!sportState.awaitingAfterTouchdown) {
-					play.countsTowardsNumPlays = true;
-					play.countsTowardsYards = true;
-				}
-			}
-
-			if (e.type === "kickoff") {
-				// yds is the distance kicked to
-				play.yards = 100 - sportState.scrimmage - e.yds;
-			} else if (
-				e.type === "kickoffReturn" ||
-				e.type === "punt" ||
-				e.type === "puntReturn" ||
-				e.type === "fumbleRecovery" ||
-				e.type === "interception" ||
-				e.type === "interceptionReturn" ||
-				e.type === "sack" ||
-				e.type === "passComplete" ||
-				e.type === "run" ||
-				e.type === "kneel"
-			) {
-				const reversedField = play.t !== sportState.t;
-
-				// Temporarily update play.yards with the from yardage in this play. Final value for next line of scrimmage comes in subsequent clock event
-				if (
-					(e.type === "fumbleRecovery" || e.type === "interceptionReturn") &&
-					e.touchback
-				) {
-					const SCRIMMAGE_TOUCHBACK = 20;
-
-					// (100 - play.scrimmage) is for the case when scrimmage is further than 100 (never happens?) or less than 100 (presumably momentum carried defender a yard or two into the endzone)
-					play.yards = -SCRIMMAGE_TOUCHBACK + (100 - play.scrimmage);
-				} else {
-					play.yards += (reversedField ? -1 : 1) * e.yds;
-				}
-			}
-
-			if (
-				e.type === "kickoff" ||
-				e.type === "onsideKick" ||
-				e.type === "punt"
-			) {
-				play.intendedPossessionChange = true;
-			}
-
-			// Extra fieldGoal check is to include missed field goals
-			if (scoringSummaryEvent) {
-				const scoreInfo = getScoreInfo(e);
-				if (scoreInfo) {
-					play.scoreInfo = scoreInfo;
-				}
-			}
-
-			if (e.type === "extraPointAttempt") {
-				play.tagOverride = "XPA";
-			} else if (e.type === "twoPointConversion") {
-				play.tagOverride = "2PA";
-			} else if (e.type === "shootoutShot") {
-				play.tagOverride = "FGA";
-			}
+			entry = this.processPlayEvent(e, scoringSummaryEvent !== undefined);
 		}
 
-		if (text !== undefined) {
-			// This is designed to stop at the end of the previous possession, so you can see the prior drive leading up to it. Only exception is the start of a new quarter/overtime, because the drive is cleared before that.
-			// This ignores the possibility of penalties, which can delay or overturn the change of possession. I think that's fine, most people are probably interested in potential changes of possession too.
-			possessionChange =
-				((e.type === "quarter" || e.type === "overtime") &&
-					e.startsWithKickoff) ||
-				e.type === "punt" ||
-				e.type === "interception" ||
-				(e.type === "fumbleRecovery" && e.lost) ||
-				e.type === "turnoverOnDowns" ||
-				e.type === "fieldGoal" ||
-				e.type === "extraPoint" ||
-				(e as any).safety ||
-				(e as any).twoPointConversionTeam !== undefined ||
-				// Needed for failed 2 point conversions that end with an event without twoPointConversionTeam, like an incomplete pass
-				e.type === "twoPointConversionFailed";
+		if (entry) {
+			this.possessionChange = isPossessionChange(e);
 
 			if (
 				e.type === "puntReturn" ||
@@ -1096,24 +1101,14 @@ const processLiveGameEvents = ({
 			) {
 				boxScore.possession = eventT;
 			} else if (e.type === "turnoverOnDowns") {
-				boxScore.possession = otherT;
+				boxScore.possession = eventT === 0 ? 1 : 0;
 			}
 		}
 
 		if (scoringSummaryEvent) {
 			boxScore.scoringSummary.push(scoringSummaryEvent);
 		}
+
+		return entry;
 	}
-
-	return {
-		overtimes,
-		possessionChange,
-		quarters,
-		sportState,
-		t,
-		text,
-		textOnly,
-	};
-};
-
-export default processLiveGameEvents;
+}

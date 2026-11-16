@@ -1,9 +1,8 @@
 import { assert, describe, test } from "vitest";
-import processLiveGameEvents, {
-	DEFAULT_SPORT_STATE,
+import {
+	LiveGamePlaybackFootball,
 	penaltySegments,
-	type SportState,
-} from "./processLiveGameEvents.football.tsx";
+} from "./LiveGamePlayback.football.tsx";
 
 describe("penaltySegments", () => {
 	test("no penalty: the whole bar is the play", () => {
@@ -31,7 +30,7 @@ describe("penaltySegments", () => {
 	});
 });
 
-describe("processLiveGameEvents penalty yards", () => {
+describe("LiveGamePlaybackFootball penalty yards", () => {
 	const team = (abbrev: string) => ({
 		abbrev,
 		players: [],
@@ -41,10 +40,7 @@ describe("processLiveGameEvents penalty yards", () => {
 
 	// Feed every event through, the way the live game view does
 	const run = (events: any[]) => {
-		const sportState: SportState = structuredClone(DEFAULT_SPORT_STATE);
-		const quarters: string[] = [];
 		const boxScore = {
-			gid: 1,
 			quarter: "",
 			quarterShort: "",
 			numPeriods: 4,
@@ -53,17 +49,11 @@ describe("processLiveGameEvents penalty yards", () => {
 			time: "",
 			scoringSummary: [],
 		};
-		const queue = [...events];
-		while (queue.length > 0) {
-			processLiveGameEvents({
-				events: queue,
-				boxScore,
-				overtimes: 0,
-				quarters,
-				sportState,
-			});
+		const playback = new LiveGamePlaybackFootball(boxScore, events);
+		while (!playback.done) {
+			playback.next();
 		}
-		return sportState;
+		return playback.sportState;
 	};
 
 	const clock = (scrimmage: number) => ({

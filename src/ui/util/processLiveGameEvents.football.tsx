@@ -438,12 +438,13 @@ export const getText = (event: PlayByPlayEventOutput, numPeriods: number) => {
 			const automaticFirstDownText = event.automaticFirstDown
 				? " and an automatic first down"
 				: "";
+			let distanceText;
 			if (event.halfDistanceToGoal) {
-				text += `, half the distance to the goal${spotFoulText}`;
+				distanceText = `Half the distance to the goal${automaticFirstDownText}`;
 			} else if (event.placeOnOne) {
-				text += `, the ball will be placed at the 1 yard line${automaticFirstDownText}`;
+				distanceText = `The ball will be placed at the 1 yard line${automaticFirstDownText}`;
 			} else {
-				text += `, ${event.yds} yards${spotFoulText}${automaticFirstDownText}`;
+				distanceText = `${event.yds} yards${spotFoulText}${automaticFirstDownText}`;
 			}
 
 			const innerText =
@@ -462,6 +463,7 @@ export const getText = (event: PlayByPlayEventOutput, numPeriods: number) => {
 				<>
 					{" "}
 					- <b>{innerText}</b>
+					<div className="text-body-secondary">{distanceText}</div>
 				</>
 			);
 		}

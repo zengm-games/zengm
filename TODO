@@ -891,10 +891,6 @@ drag and drop
     - https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx
   - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
 
-injured players in hockey shootouts https://discord.com/channels/@me/778760871911751700/1238301880489345184
-
-players switching numbers when they don't switch teams https://discord.com/channels/290013534023057409/290013534023057409/1239346257151918130
-
 support importing players from league file with non-augmented player objects https://discord.com/channels/@me/361954501365858304/1237815968147701760
 - need to do all of augmentPartialPlayer, not just name. cause we need ovr/pot too
 - should run augmentPartialPlayer after reading file in LeagueFileUpload but before showing in UI for ImportPlayers
@@ -965,14 +961,6 @@ hockey: add offsides, icing, puck out of play https://discord.com/channels/@me/7
 - Puck out of play -> Leads to faceoff
 - other stuff: https://discord.com/channels/@me/778760871911751700/1223414545234530425
 
-event log
-- make sure numbers look reasonable
-- offline support
-- add yearly prior data
-- add to website
-  - current value
-  - history
-
 FBGM snap counts https://discord.com/channels/@me/778760871911751700/1206814062621491233
 - by position?
 
@@ -987,7 +975,6 @@ danger zone thing to change current season
 random debuts option to shuffle entire draft class years https://old.reddit.com/r/BasketballGM/comments/194kdbc/new_saved_trades_page_under_the_players_menu_save/koj2fg1/?context=3
 
 fix subscriptions
-- should not be possible to have multiple subscriptions active for same account
 - should be harder to have multiple subscriptions active for different accounts with same email
 - password recovery should handle multiple usernames for email
 

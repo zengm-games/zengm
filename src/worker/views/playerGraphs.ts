@@ -6,7 +6,7 @@ import {
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { getActiveSeasonSelector } from "../db/merged/players.ts";
-import { g, helpers } from "../util/index.ts";
+import { g, helpers, toUI } from "../util/index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
 import { POS_NUMBERS } from "../../common/constants.baseball.ts";
 import { last, maxBy } from "../../common/utils.ts";
@@ -43,11 +43,39 @@ const processInputs = (params: RouteParams<"playerGraphs">) => {
 		playoffsY,
 		minGames,
 
+		// True if opened with no parameters in the URL, in which case the remembered parameters are used, if there are any
+		isBareUrl: params.statTypeX === undefined,
+
 		// Defaults to random stat if undefined
 		statTypeX: params.statTypeX,
 		statTypeY: params.statTypeY,
 		statX: params.statX,
 		statY: params.statY,
+	};
+};
+
+// If the page was opened with no parameters in the URL, use the ones remembered by the UI, except for the season
+const withRememberedInputs = async (
+	inputs: ReturnType<typeof processInputs>,
+) => {
+	if (!inputs.isBareUrl) {
+		return inputs;
+	}
+
+	const remembered = await toUI("getRememberedGraphParams", ["playerGraphs"]);
+	if (!remembered) {
+		return inputs;
+	}
+
+	return {
+		...inputs,
+		statTypeX: remembered.statTypeX,
+		statTypeY: remembered.statTypeY,
+		statX: remembered.statX,
+		statY: remembered.statY,
+		playoffsX: validateSeasonType(remembered.playoffsX),
+		playoffsY: validateSeasonType(remembered.playoffsY),
+		minGames: remembered.minGames ?? inputs.minGames,
 	};
 };
 
@@ -327,9 +355,10 @@ export default defineView({
 	id: "playerGraphs",
 	processInputs,
 	load: async (args) => {
-		const x = await updatePlayers("X", args);
-		const y = await updatePlayers("Y", args);
+		const args2 = { ...args, inputs: await withRememberedInputs(args.inputs) };
+		const x = await updatePlayers("X", args2);
+		const y = await updatePlayers("Y", args2);
 
-		return Object.assign({}, x, y, updateClientSide(args, x, y));
+		return Object.assign({}, x, y, updateClientSide(args2, x, y));
 	},
 });

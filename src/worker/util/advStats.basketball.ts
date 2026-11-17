@@ -743,7 +743,7 @@ const calculateRatings = (
 };
 
 /**
- * Calcualte the advanced stats for each active player and write them to the database.
+ * Calculate the advanced stats for each active player and write them to the database.
  *
  * Currently this is just PER.
  *
@@ -807,7 +807,6 @@ const advStats = async () => {
 			"blk",
 			"drtg",
 			"ortg",
-			"oppFg",
 			"oppFt",
 			"stl",
 			"tp",

@@ -16,6 +16,11 @@ import { autoPlayDialog } from "../util/autoPlayDialog.tsx";
 import { confirmDeleteAllLeagues } from "../util/confirmDeleteAllLeagues.tsx";
 import { requestPersistentStorage } from "../util/requestPersistentStorage.tsx";
 import { confirm } from "../util/confirm.tsx";
+import {
+	rememberedGraphParamsKeys,
+	type RememberedGraphParams,
+	type RememberedGraphParamsPage,
+} from "../../common/rememberedGraphParams.ts";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 import Bugsnag from "@bugsnag/browser";
 import { registerGlobal } from "../../common/registerGlobal.ts";
@@ -123,6 +128,20 @@ const bugsnagNotify = (
 	});
 };
 
+const getRememberedGraphParams = (
+	page: RememberedGraphParamsPage,
+): RememberedGraphParams | undefined => {
+	const json = safeLocalStorage.getItem(rememberedGraphParamsKeys[page]);
+	if (json === null) {
+		return undefined;
+	}
+	try {
+		return JSON.parse(json);
+	} catch {
+		return undefined;
+	}
+};
+
 const api = {
 	analyticsEvent,
 	autoPlayDialog,
@@ -131,6 +150,7 @@ const api = {
 	confirmDeleteAllLeagues,
 	crossTabEmit,
 	deleteGames,
+	getRememberedGraphParams,
 	initAds,
 	initGold,
 	mergeGames,

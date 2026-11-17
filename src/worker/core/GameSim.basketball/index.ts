@@ -1040,7 +1040,7 @@ class GameSim extends GameSimBase {
 						(onCourtIsIneligible && benchIsEligible)
 					) {
 						// Check if position of substitute makes for a valid lineup
-						// Requre 2 Gs (or 1 PG) and 2 Fs (or 1 C)
+						// Require 2 Gs (or 1 PG) and 2 Fs (or 1 C)
 						if (positions === undefined) {
 							positions = { numG: 0, numPG: 0, numF: 0, numC: 0 };
 							for (let j = 0; j < this.playersOnCourt[t].length; j++) {

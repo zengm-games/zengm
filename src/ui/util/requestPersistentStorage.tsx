@@ -84,7 +84,7 @@ export const requestPersistentStorage = async () => {
 					}
 
 					if (!persisted || permission.state === "prompt") {
-						await showNotification({
+						showNotification({
 							extraClass: "",
 							type: "info",
 							text: <PersistentStorageNotification />,

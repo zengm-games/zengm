@@ -314,7 +314,7 @@ const createGameAttributes = async (
 		}
 	}
 
-	// For simple upgrades, add stuff to simpleGameAttribtuesUpgrade!
+	// For simple upgrades, add stuff to simpleGameAttributesUpgrade!
 
 	return gameAttributes;
 };

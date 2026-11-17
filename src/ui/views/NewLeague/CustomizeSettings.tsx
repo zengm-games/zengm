@@ -2,14 +2,14 @@ import type { Settings } from "../../../worker/views/settings.ts";
 import SettingsForm from "../Settings/SettingsForm.tsx";
 
 const CustomizeSettings = ({
-	onCancel,
+	onBack,
 	onSave,
 	initial,
 	saveText,
 	hasPlayers,
 	realPlayers,
 }: {
-	onCancel: () => void;
+	onBack: (settings: Settings) => void;
 	onSave: (settings: Settings) => void;
 	initial: Settings;
 	saveText: string;
@@ -26,7 +26,7 @@ const CustomizeSettings = ({
 			<SettingsForm
 				onSave={onSave}
 				saveText={saveText}
-				onCancel={onCancel}
+				onBack={onBack}
 				initialSettings={initial}
 				newLeague
 				hasPlayers={hasPlayers}

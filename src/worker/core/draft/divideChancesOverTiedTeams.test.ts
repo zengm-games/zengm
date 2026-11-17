@@ -1,92 +1,54 @@
-import { afterAll, assert, beforeAll, test } from "vitest";
-import { loadTeamSeasons } from "./testHelpers.ts";
-import lotterySort from "./lotterySort.ts";
+import { assert, beforeAll, test } from "vitest";
 import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams.ts";
-import { idb } from "../../db/index.ts";
-import { g } from "../../util/index.ts";
-import { mockIDBLeague, resetG } from "../../../test/helpers.ts";
-import { team } from "../index.ts";
+import { resetG } from "../../../test/helpers.ts";
 
-beforeAll(async () => {
+beforeAll(() => {
 	resetG();
-	idb.league = mockIDBLeague();
-
-	await loadTeamSeasons();
-});
-afterAll(() => {
-	// @ts-expect-error
-	idb.league = undefined;
 });
 
-test("distribute combinations to teams with the same record", async () => {
-	const teams = await team.getFormattedAll({
-		attrs: ["tid"],
-		seasonAttrs: [
-			"playoffRoundsWon",
-			"cid",
-			"did",
-			"won",
-			"lost",
-			"tied",
-			"otl",
-			"winp",
-			"pts",
-			"wonDiv",
-			"lostDiv",
-			"tiedDiv",
-			"otlDiv",
-			"wonConf",
-			"lostConf",
-			"tiedConf",
-			"otlConf",
-		],
-		stats: ["pts", "oppPts", "gp"],
-		season: g.get("season"),
-		addDummySeason: true,
-		active: true,
-	});
-	const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+const getChances = () => [
+	250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5,
+];
 
-	// index instead of tid
-	const sameRec = [
-		[6, 7, 8],
-		[10, 11, 12],
-	];
-	await lotterySort(teams);
+// Sorted worst first, like going into the lottery. Indexes 6-8 and 10-12 are tied.
+const teams = [
+	0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.4, 0.4, 0.45, 0.5, 0.5, 0.5, 0.55,
+	0.6, 0.7,
+].map((winp) => ({
+	seasonAttrs: {
+		pts: 0,
+		winp,
+	},
+}));
+
+test("tied teams split their combined chances evenly", () => {
+	const chances = getChances();
 	divideChancesOverTiedTeams(chances, teams, false);
 
-	for (const tids of sameRec) {
-		let value = 0;
+	assert.deepStrictEqual(chances, [
+		250,
+		199,
+		156,
+		119,
+		88,
+		63,
+		88 / 3,
+		88 / 3,
+		88 / 3,
+		11,
+		7,
+		7,
+		7,
+		5,
+	]);
+});
 
-		for (const tid of tids) {
-			const chance = chances[tid];
-			assert(chance);
-			if (value === 0) {
-				value = chance;
-			} else {
-				assert.strictEqual(value, chance);
-			}
-		}
-	}
-
-	// test if isFinal is true
+test("when isFinal is true, the remainder goes to the first tied teams", () => {
+	const chances = getChances();
 	divideChancesOverTiedTeams(chances, teams, true);
 
-	for (const tids of sameRec) {
-		let value = 0;
-		let maxIdx = -1;
-
-		for (let j = tids.length - 1; j >= 0; j--) {
-			const tid = tids[j];
-			assert(tid);
-			const chance = chances[tid];
-			assert(chance);
-			if (value <= chance) {
-				value = chance;
-				maxIdx = j;
-			}
-		}
-
-		assert.strictEqual(maxIdx, 0);
-	}
+	assert.deepStrictEqual(
+		chances,
+		[250, 199, 156, 119, 88, 63, 30, 29, 29, 11, 7, 7, 7, 5],
+	);
 });

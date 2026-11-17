@@ -33,7 +33,7 @@ export const toRoman = (num: number): string => {
 	return result;
 };
 
-// This doens't validate order of characters, but whatever
+// This doesn't validate order of characters, but whatever
 type RomanChar = "M" | "D" | "C" | "L" | "X" | "V" | "I";
 type RomanNumeral = `${RomanChar | Lowercase<RomanChar>}`;
 

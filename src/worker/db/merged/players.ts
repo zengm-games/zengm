@@ -11,6 +11,7 @@ export type PlayersSelector = Exclusive<
 	// number or [min, max]. Only works for players in the cache, so not retired players.
 	| { tid: number | [number, number] }
 	| { retiredYear: number }
+	| { retired: true; minDraftYear: number }
 	// All except draft prospects
 	| { activeAndRetired: true }
 	// Everyone in the cache except retired players, which includes draft prospects
@@ -135,6 +136,19 @@ class PlayersStore extends MergedStore<"players", PlayersSelector> {
 			return {
 				fromDb: () => retiredYearFromDb(retiredYear),
 				matches: (p) => p.retiredYear === retiredYear,
+			};
+		}
+
+		if (selector.retired) {
+			const minDraftYear = selector.minDraftYear;
+			return {
+				fromDb: () =>
+					idb.league
+						.transaction("players")
+						.store.index("draft.year, retiredYear")
+						.iterate(IDBKeyRange.bound([minDraftYear], [""])),
+				matches: (p) =>
+					p.tid === PLAYER.RETIRED && p.draft.year >= minDraftYear,
 			};
 		}
 

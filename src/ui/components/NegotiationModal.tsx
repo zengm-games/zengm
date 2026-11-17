@@ -13,7 +13,7 @@ import { useRef, useState } from "react";
 import type api from "../../worker/api/index.ts";
 import { showSignUndo } from "./NegotiateButtons.tsx";
 
-type NegotaitionModalProps = Exclude<
+type NegotiationModalProps = Exclude<
 	Awaited<ReturnType<typeof api.main.getNegotiationProps>>,
 	string
 >;
@@ -88,7 +88,7 @@ const NegotiationHeader = ({
 	salaryCapType,
 	t,
 }: Pick<
-	NegotaitionModalProps,
+	NegotiationModalProps,
 	| "capSpace"
 	| "challengeNoRatings"
 	| "payroll"
@@ -187,7 +187,7 @@ const Negotiation = ({
 	contractOptions,
 	close,
 	p,
-}: Pick<NegotaitionModalProps, "contractOptions" | "p"> & {
+}: Pick<NegotiationModalProps, "contractOptions" | "p"> & {
 	close: () => void;
 }) => {
 	return (
@@ -228,7 +228,7 @@ export const NegotiationModal = ({
 	show,
 }: {
 	close: () => void;
-	negotiationProps: NegotaitionModalProps | undefined;
+	negotiationProps: NegotiationModalProps | undefined;
 	show: boolean;
 }) => {
 	return (
@@ -256,11 +256,11 @@ export const NegotiationModal = ({
 	);
 };
 
-export const useNegotiaionModal = () => {
+export const useNegotiationModal = () => {
 	const [state, setState] = useState<
 		| {
 				status: "loaded";
-				props: NegotaitionModalProps;
+				props: NegotiationModalProps;
 				show: boolean;
 		  }
 		| {

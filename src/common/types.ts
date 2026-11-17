@@ -894,15 +894,6 @@ export type League = {
 	imgURL?: string; // Should contain imgURLSmall if it exists
 };
 
-export type Locks = {
-	drafting: boolean;
-	gameSim: boolean;
-	newPhase: boolean;
-	stopGameSim: boolean;
-};
-
-export type LockName = "drafting" | "newPhase" | "gameSim" | "stopGameSim";
-
 export type LogEventType =
 	| "achievement"
 	| "ageFraud"
@@ -1429,10 +1420,9 @@ type PlayerAttrsPlus<Contract = FlatContractInfo> = Omit<
 	contract: Contract;
 	diedYear: number | null;
 	draft: Player["draft"] & {
-		abbrev: string;
 		age: number;
-		originalAbbrev: string;
 	};
+	draftAbbrev: string;
 	draftPosition: number;
 	experience: number;
 	hof: boolean;

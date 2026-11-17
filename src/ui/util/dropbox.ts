@@ -1,5 +1,6 @@
 import { Dropbox, DropboxAuth } from "dropbox";
 import { bySport } from "../../common/sportFunctions.ts";
+import { createDropboxAuthState } from "./dropboxAuthState.ts";
 
 // Client ID aka app key
 const CLIENT_ID = bySport({
@@ -14,7 +15,7 @@ export const getAuthenticationUrl = async (lid: number) => {
 
 	// https://dropbox.github.io/dropbox-sdk-js/global.html#getAuthenticationUrl
 	const redirectUri = `${window.location.origin}/dropbox`;
-	const state = `${lid}`;
+	const state = createDropboxAuthState(lid);
 
 	const authUrl = await dropboxAuth.getAuthenticationUrl(redirectUri, state);
 

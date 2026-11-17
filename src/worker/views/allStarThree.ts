@@ -55,7 +55,7 @@ export default defineView({
 					"awards",
 				],
 				ratings: ["ovr", "pot", "tp", "pos"],
-				stats: ["gp", "pts", "tpa", "tpp", "jerseyNumber"],
+				stats: ["pts", "tpa", "tpp", "jerseyNumber"],
 				season,
 				fuzz: true,
 				mergeStats: "totOnly",

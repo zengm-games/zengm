@@ -154,7 +154,7 @@ const getBasicInfo = async ({
 
 	const schemaErrors = [];
 
-	const reader = await stream.pipeThrough(parseJSON()).getReader();
+	const reader = stream.pipeThrough(parseJSON()).getReader();
 
 	const requiredPartsNotYetSeen = new Set();
 	for (const [key, { required }] of Object.entries(validators)) {

@@ -3,6 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
+import { useAction } from "../util/useAction.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 
 const DeleteOldData = () => {
@@ -16,7 +17,7 @@ const DeleteOldData = () => {
 		playerStatsUnnotable: true,
 		playerStats: true,
 	});
-	const [deleting, setDeleting] = useState(false);
+	const { busy: deleting, run } = useAction();
 
 	const handleChange =
 		(name: keyof typeof state) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -28,15 +29,14 @@ const DeleteOldData = () => {
 
 	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
-		setDeleting(true);
+		await run(async () => {
+			await toWorker("main", "deleteOldData", state);
 
-		await toWorker("main", "deleteOldData", state);
-
-		showNotification({
-			type: "success",
-			text: "Data successfully deleted.",
+			showNotification({
+				type: "success",
+				text: "Data successfully deleted.",
+			});
 		});
-		setDeleting(false);
 	};
 
 	useTitleBar({ title: "Delete Old Data" });

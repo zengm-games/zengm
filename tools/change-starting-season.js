@@ -31,7 +31,7 @@ if (Object.hasOwn(league, "startingSeason")) {
 	currentSeason = league.gameAttributes.startingSeason;
 }
 
-if (typeof currentSeason !== "number" || Number.isNaN(targetSeason)) {
+if (typeof currentSeason !== "number" || Number.isNaN(currentSeason)) {
 	console.error("Error: no startingSeason found in league file");
 	process.exit(1);
 }

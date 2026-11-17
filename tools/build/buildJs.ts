@@ -65,7 +65,7 @@ export const buildJs = async (sport: Sport, versionNumber: string) => {
 		.flat()
 		.map((filename) => `/${FOLDER}/${filename}`);
 
-	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
+	// Hack because otherwise I'm somehow left with no newline before the source map URL, which confuses Bugsnag
 	const replacePaths = (await fs.readdir(path.join("build", FOLDER)))
 		.filter((filename) => filename.endsWith(".js"))
 		.map((filename) => path.join("build", FOLDER, filename));

@@ -35,7 +35,7 @@ promiseWorker.register(([type, name, param]: any, hostID) => {
 	// @ts-expect-error
 	if (!api[type] || !Object.hasOwn(api[type], name)) {
 		throw new Error(
-			`API call to nonexistant worker function "${type}.${name}"`,
+			`API call to nonexistent worker function "${type}.${name}"`,
 		);
 	}
 

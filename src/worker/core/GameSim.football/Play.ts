@@ -444,7 +444,7 @@ class Play {
 		return yds;
 	}
 
-	// state is state immedaitely before this event happens. But since possession changes happen only in discrete events, state.o is always the team with the ball, even for things like "int" and "kr"
+	// state is state immediately before this event happens. But since possession changes happen only in discrete events, state.o is always the team with the ball, even for things like "int" and "kr"
 	getStatChanges(event: PlayEvent, state: State) {
 		const statChanges: StatChange[] = [];
 

@@ -1,8 +1,7 @@
-import { PLAYER } from "../../../common/constants.ts";
 import { draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import type { Conditions, PhaseReturn } from "../../../common/types.ts";
+import type { Conditions, PhaseReturn, Player } from "../../../common/types.ts";
 import { NotEnoughTeamsError } from "../draft/genOrder.ts";
 
 const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
@@ -10,37 +9,34 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 	await idb.cache.schedule.clear();
 
 	// Kill off old retired players (done here since not much else happens in this phase change, so making it a little
-	// slower is fine). This assumes all killable players have no changes in the cache, which is almost certainly true,
-	// but under certain rare cases could cause a minor problem. For performance reasons, this also assumes that any
-	// player drafted more than 110 years ago is dead already. If that's not true, congrats on immortality!
-	const promises: Promise<unknown>[] = [];
-
+	// slower is fine). For performance reasons, this assumes that any player drafted more than 110 years ago is dead
+	// already. If that's not true, congrats on immortality!
 	const currentSeason = g.get("season");
-	for await (const { value: p } of idb.league
-		.transaction("players")
-		.store.index("draft.year, retiredYear")
-		.iterate(IDBKeyRange.bound([currentSeason - 110], [""]))) {
-		// Skip non-retired players and dead players
-		if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
-			continue;
-		}
+	const playersWhoDied: Player[] = [];
+	await idb.merged.players.forEach(
+		{ retired: true, minDraftYear: currentSeason - 110 },
+		(p) => {
+			if (typeof p.diedYear === "number") {
+				return;
+			}
 
-		// Skip real players dying young
-		if (p.real && currentSeason - p.born.year < 70) {
-			continue;
-		}
+			// Skip real players dying young
+			if (p.real && currentSeason - p.born.year < 70) {
+				return;
+			}
 
-		// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
-		const probDeath =
-			0.0001165111 * Math.exp(0.0761889274 * (currentSeason - p.born.year));
+			// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
+			const probDeath =
+				0.0001165111 * Math.exp(0.0761889274 * (currentSeason - p.born.year));
 
-		if (Math.random() < probDeath) {
-			p.diedYear = currentSeason;
-			promises.push(idb.cache.players.put(p));
-		}
-	}
+			if (Math.random() < probDeath) {
+				p.diedYear = currentSeason;
+				playersWhoDied.push(p);
+			}
+		},
+	);
 
-	await Promise.all(promises);
+	await idb.cache.players.putAll(playersWhoDied);
 
 	await draft.genPlayers(currentSeason);
 

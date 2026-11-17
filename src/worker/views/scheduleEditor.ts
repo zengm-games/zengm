@@ -86,7 +86,7 @@ export default defineView({
 
 			const teams = await team.getFormattedAll({
 				attrs: ["tid"],
-				seasonAttrs: ["abbrev", "region", "name", "tid", "cid", "did"],
+				seasonAttrs: ["abbrev", "region", "name", "cid", "did"],
 				season: g.get("season"),
 				active: true,
 			});
@@ -94,7 +94,6 @@ export default defineView({
 			let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;
 			if (canRegenerateSchedule) {
 				const teams = await team.getFormattedAll({
-					attrs: ["tid"],
 					stats: ["gp"],
 					season: g.get("season"),
 				});

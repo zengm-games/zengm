@@ -438,12 +438,13 @@ export const getText = (event: PlayByPlayEventOutput, numPeriods: number) => {
 			const automaticFirstDownText = event.automaticFirstDown
 				? " and an automatic first down"
 				: "";
+			let distanceText;
 			if (event.halfDistanceToGoal) {
-				text += `, half the distance to the goal${spotFoulText}`;
+				distanceText = `Half the distance to the goal${automaticFirstDownText}`;
 			} else if (event.placeOnOne) {
-				text += `, the ball will be placed at the 1 yard line${automaticFirstDownText}`;
+				distanceText = `The ball will be placed at the 1 yard line${automaticFirstDownText}`;
 			} else {
-				text += `, ${event.yds} yards${spotFoulText}${automaticFirstDownText}`;
+				distanceText = `${event.yds} yards${spotFoulText}${automaticFirstDownText}`;
 			}
 
 			const innerText =
@@ -462,6 +463,7 @@ export const getText = (event: PlayByPlayEventOutput, numPeriods: number) => {
 				<>
 					{" "}
 					- <b>{innerText}</b>
+					<div className="text-body-secondary">{distanceText}</div>
 				</>
 			);
 		}
@@ -929,8 +931,8 @@ const processLiveGameEvents = ({
 			if (e.type === "flag") {
 				play.flags.push(null);
 			} else if (e.type === "penalty" && e.offsetStatus !== "offset") {
-				// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penatly, which ruins the drama.
-				// Same for change of possession, don't want to show it early if 2 penatlies.
+				// Only apply yardage from accepted penalties. Otherwise if there are 2 penalties on the same play, the end result would be the same, but yardage would show up when applying the first declined penalty, which ruins the drama.
+				// Same for change of possession, don't want to show it early if 2 penalties.
 				const accept = e.decision === "accept";
 				if (accept) {
 					/*// Penalty could have changed possession

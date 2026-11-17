@@ -72,7 +72,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 			await lock.set("newPhase", true);
 
 			if (phase !== PHASE.AFTER_TRADE_DEADLINE) {
-				// Adter trade deadline is so fast that it's not worth the flicker, maybe applies to others too sometimes
+				// After trade deadline is so fast that it's not worth the flicker, maybe applies to others too sometimes
 				await updateStatus("Processing...");
 			}
 			await updatePlayMenu();

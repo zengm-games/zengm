@@ -342,11 +342,6 @@ a.god-mode.active {
 	}
 }
 
-.dashboard-controls {
-	padding-top: 0 !important;
-	padding-bottom: 0 !important;
-}
-
 .dashboard-play-loading {
 	animation: oscillate-bg 1.5s infinite;
 }
@@ -363,14 +358,6 @@ a.god-mode.active {
 	100% {
 		background-color: lighten($success, 8);
 	}
-}
-
-.negotiation-team-years {
-	width: 110px;
-}
-
-.negotiation-team-amount {
-	width: 180px;
 }
 
 // A <button> that looks like the bare icon inside it. Defined before .help-icon and .watch so their colors take precedence.
@@ -966,9 +953,6 @@ tr.table-warning:hover > td {
 	outline: none;
 }
 
-.cursor-default {
-	cursor: default;
-}
 .cursor-pointer {
 	cursor: pointer;
 }
@@ -1393,13 +1377,6 @@ button.fast-forward {
 	// override inline styles in JS file
 	margin-bottom: 0 !important;
 	height: 52px;
-}
-
-.SortableHelper {
-	display: flex;
-}
-.SortableHelper button {
-	white-space: nowrap;
 }
 
 @include media-breakpoint-up(sm) {

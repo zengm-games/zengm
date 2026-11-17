@@ -41,7 +41,7 @@ export class SafeIdb<T extends DBSchema | unknown> {
 
 	async clear(name: StoreNames<T>) {
 		const db = await this.getDb();
-		db.clear(name);
+		await db.clear(name);
 	}
 
 	async close() {

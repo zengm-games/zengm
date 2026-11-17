@@ -158,3 +158,42 @@ describe("nested variables", () => {
 		}, 'Cannot use variable "x" with nesting (like "x.foo")');
 	});
 });
+
+describe("unary minus", () => {
+	test("after a comma in a function call", () => {
+		const formulaEvaluator = new FormulaEvaluator("max(a,-b)", ["a", "b"], []);
+		assert.equal(formulaEvaluator.evaluate({ a: 2, b: 3 }), 2);
+		assert.equal(formulaEvaluator.evaluate({ a: -5, b: 3 }), -3);
+	});
+
+	test("as an exponent", () => {
+		const formulaEvaluator = new FormulaEvaluator("a^-b", ["a", "b"], []);
+		assert.equal(formulaEvaluator.evaluate({ a: 2, b: 1 }), 0.5);
+
+		const formulaEvaluator2 = new FormulaEvaluator("2^-2", [], []);
+		assert.equal(formulaEvaluator2.evaluate({}), 0.25);
+
+		// 2^(-(1^2))
+		const formulaEvaluator3 = new FormulaEvaluator("a^-b^2", ["a", "b"], []);
+		assert.equal(formulaEvaluator3.evaluate({ a: 2, b: 1 }), 0.5);
+	});
+
+	test("existing behavior is unchanged", () => {
+		assert.equal(
+			new FormulaEvaluator("-a^2", ["a"], []).evaluate({ a: 2 }),
+			-4,
+		);
+		assert.equal(
+			new FormulaEvaluator("a*-b", ["a", "b"], []).evaluate({ a: 2, b: 3 }),
+			-6,
+		);
+		assert.equal(
+			new FormulaEvaluator("a--b", ["a", "b"], []).evaluate({ a: 2, b: 3 }),
+			5,
+		);
+		assert.equal(
+			new FormulaEvaluator("-a-b", ["a", "b"], []).evaluate({ a: 2, b: 3 }),
+			-5,
+		);
+	});
+});

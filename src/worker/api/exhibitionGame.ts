@@ -13,7 +13,7 @@ import type {
 import type {
 	ExhibitionGameAttributes,
 	ExhibitionTeam,
-} from "../../ui/views/Exhibition.tsx";
+} from "../../ui/views/Exhibition/index.tsx";
 import { GameSim, player, realRosters, team } from "../core/index.ts";
 import { processTeam } from "../core/game/loadTeams.ts";
 import { gameSimToBoxScore } from "../core/game/writeGameStats.ts";
@@ -26,6 +26,7 @@ import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import { randInt } from "../../common/random.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { exhibitionHasDh } from "../../common/exhibitionHasDh.ts";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");
@@ -279,6 +280,7 @@ const getSeasonInfoLeague = async ({
 					roundsWonText,
 				},
 				ovr: 0,
+				ovrHealthy: 0,
 				players: teamPlayers,
 
 				// If current season, use current depth. Otherwise, auto generate later.
@@ -341,24 +343,28 @@ export const getSeasonInfo = async (
 
 	for (const t of teams) {
 		t.players = orderBy(t.players, (p) => last(p.ratings).ovr, "desc");
-		t.ovr = team.ovr(
-			t.players.map((p) => ({
-				pid: p.pid,
-				injury: p.injury,
-				value: p.value,
-				ratings: {
-					ovr: last(p.ratings).ovr,
-					ovrs: last(p.ratings).ovrs,
-					pos: last(p.ratings).pos,
-				},
-			})),
-			{
-				accountForInjuredPlayers: {
-					numDaysInFuture: 0,
-					playThroughInjuries: DEFAULT_PLAY_THROUGH_INJURIES,
-				},
+		const ovrPlayers = t.players.map((p) => ({
+			pid: p.pid,
+			injury: p.injury,
+			value: p.value,
+			ratings: {
+				ovr: last(p.ratings).ovr,
+				ovrs: last(p.ratings).ovrs,
+				pos: last(p.ratings).pos,
 			},
-		);
+		}));
+		t.ovr = team.ovr(ovrPlayers, {
+			accountForInjuredPlayers: {
+				numDaysInFuture: 0,
+				playThroughInjuries: DEFAULT_PLAY_THROUGH_INJURIES,
+			},
+		});
+		t.ovrHealthy = team.ovr(ovrPlayers);
+
+		// The UI shows the starting lineup, and lets the user change the starting pitcher, so the depth chart is needed before the game is simmed
+		if (__SPORT === "baseball" && !hasCompleteBaseballDepth(t)) {
+			t.depth = await team.genDepth(t.players);
+		}
 
 		for (const p of t.players) {
 			local.exhibitionGamePlayers[p.pid] = p;
@@ -371,6 +377,22 @@ export const getSeasonInfo = async (
 	};
 };
 
+// Depth charts from the current season can be missing players, such as ones who were released
+const hasCompleteBaseballDepth = (t: ExhibitionTeam) => {
+	const depth = t.depth;
+	if (!depth || !("LP" in depth)) {
+		return false;
+	}
+
+	return [depth.D, depth.DP, depth.P].every((pids) => {
+		const pidsSet = new Set(pids);
+		return (
+			pidsSet.size === t.players.length &&
+			t.players.every((p) => pidsSet.has(p.pid))
+		);
+	});
+};
+
 type ExhibitionGamePhase =
 	| (typeof PHASE)["REGULAR_SEASON"]
 	| (typeof PHASE)["PLAYOFFS"];
@@ -378,11 +400,13 @@ type ExhibitionGamePhase =
 export const simExhibitionGame = async (
 	{
 		neutralSite,
+		healInjuries,
 		gameAttributes,
 		phase,
 		teams,
 	}: {
 		neutralSite: boolean;
+		healInjuries: boolean;
 		gameAttributes: ExhibitionGameAttributes;
 		phase: ExhibitionGamePhase;
 		teams: [ExhibitionTeam, ExhibitionTeam];
@@ -409,11 +433,18 @@ export const simExhibitionGame = async (
 
 	const teamsProcessed = (await Promise.all(
 		teams.map(async (t, tid) => {
+			const players = healInjuries
+				? t.players.map((p) => ({
+						...p,
+						injury: { type: "Healthy", gamesRemaining: 0 },
+					}))
+				: t.players;
+
 			let depth: Team["depth"];
 			if (t.depth) {
 				depth = t.depth;
 			} else if (__SPORT !== "basketball") {
-				depth = await team.genDepth(t.players);
+				depth = await team.genDepth(players);
 			}
 
 			return processTeam(
@@ -430,12 +461,12 @@ export const simExhibitionGame = async (
 					cid: 0,
 					did: 0,
 				},
-				t.players,
+				players,
 			);
 		}),
 	)) as [any, any];
 
-	const dh = gameAttributes.dh === "all";
+	const dh = exhibitionHasDh(gameAttributes.dh);
 
 	for (const t of teamsProcessed) {
 		if (t.depth !== undefined) {

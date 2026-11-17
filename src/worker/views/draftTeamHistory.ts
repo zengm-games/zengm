@@ -53,7 +53,6 @@ export default defineView({
 			ratings: ["ovr", "pot", "skills", "pos", "season"],
 			stats,
 			showNoStats: true,
-			showRookies: true,
 			fuzz: true,
 		} as const;
 		const abbrevs = await player.loadAbbrevs(formatOptions);
@@ -87,7 +86,7 @@ export default defineView({
 						lotteryChange = preLotteryRank - p.draft.pick;
 
 						const { numPlayInTeams } = await getNumPlayoffTeams(p.draft.year);
-						const numToPick = await getNumToPick(
+						const numToPick = getNumToPick(
 							draftLottery.draftType ?? "nba1994",
 							draftLottery.result.length,
 							numPlayInTeams,

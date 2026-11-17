@@ -53,7 +53,7 @@ export const LoadFromURL = ({
 					}}
 					onKeyDown={(event) => {
 						// This is so "Enter" loads the file, rather than submitting the whole form
-						if (event.key === "Enter") {
+						if (event.key === "Enter" && !event.nativeEvent.isComposing) {
 							load(event);
 						}
 					}}

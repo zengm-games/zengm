@@ -31,7 +31,7 @@ export { default as DraftTeamHistory } from "./DraftTeamHistory.tsx";
 export { default as Dropbox } from "./Dropbox.tsx";
 export { default as EditAwardWinners } from "./EditAwardWinners.tsx";
 export { default as EightyTwoZeroDraft } from "./EightyTwoZeroDraft.tsx";
-export { default as Exhibition } from "./Exhibition.tsx";
+export { default as Exhibition } from "./Exhibition/index.tsx";
 export { default as ExhibitionGame } from "./ExhibitionGame.tsx";
 export { default as ExpansionDraft } from "./ExpansionDraft.tsx";
 export { default as ExportLeague } from "./ExportLeague.tsx";

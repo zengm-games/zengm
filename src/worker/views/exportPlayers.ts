@@ -36,8 +36,6 @@ export default defineView({
 					],
 					ratings: ["ovr", "pot", "skills", "pos"],
 					season,
-					showNoStats: true,
-					showRookies: true,
 					fuzz: true,
 				}),
 			);

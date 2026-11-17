@@ -7,6 +7,19 @@ Bugsnag.start({
 	appVersion: window.bbgmVersion,
 	autoTrackSessions: false,
 	onError: (event) => {
+		// The InMobi consent manager's GPP message handler (src/ui/util/adScripts/consentManager.ts) calls event.source.postMessage without checking that event.source still exists, which fails when the sender has gone away. It's vendor code and harmless.
+		if (
+			event.errors.some(
+				(error) =>
+					error.errorMessage.includes("event.source.postMessage") &&
+					error.stacktrace.some((row) =>
+						row.file?.startsWith("https://cmp.inmobi.com/"),
+					),
+			)
+		) {
+			return false;
+		}
+
 		// Normalize league URLs to all look the same
 		if (event && typeof event.context === "string") {
 			event.context = event.context.replace(/^\/l\/\d+/, "/l/0");

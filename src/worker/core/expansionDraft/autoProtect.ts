@@ -13,7 +13,7 @@ const autoProtect = async (tid: number): Promise<number[]> => {
 	}
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const maxNumCanProtext = Math.max(
+	const maxNumCanProtect = Math.max(
 		Math.min(
 			expansionDraft.numProtectedPlayers,
 			players.length - expansionDraft.numPerTeam,
@@ -23,7 +23,7 @@ const autoProtect = async (tid: number): Promise<number[]> => {
 		0,
 	);
 	const pids = orderBy(players, "valueFuzz", "desc")
-		.slice(0, maxNumCanProtext)
+		.slice(0, maxNumCanProtect)
 		.map((p) => p.pid);
 	return pids;
 };

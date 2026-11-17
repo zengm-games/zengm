@@ -76,7 +76,7 @@ export const showStatsByType: Partial<
 		sp: ["keyStats"],
 		rp: ["sv", "era", "ip"],
 		offense: ["keyStats"],
-		defense: ["keyStats"], // Showing actualy defensive stats would be annoying because arrays
+		defense: ["keyStats"], // Showing actually defensive stats would be annoying because arrays
 	},
 	basketball: {
 		offense: ["pts", "trb", "ast"],

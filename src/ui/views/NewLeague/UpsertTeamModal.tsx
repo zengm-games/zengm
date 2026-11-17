@@ -22,7 +22,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import {
 	corruptedLeagueMessage,
 	type ExhibitionLeagueWithSeasons,
-} from "../Exhibition.tsx";
+} from "../Exhibition/index.tsx";
 import TeamForm, { getNumTeamsByDid } from "../ManageTeams/TeamForm.tsx";
 import type { AddEditTeamInfo } from "./CustomizeTeams.tsx";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";

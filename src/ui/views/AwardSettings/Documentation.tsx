@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { getVariables } from "../../../worker/api/awardSettings.ts";
 import { getCol } from "../../../common/getCol.ts";
@@ -248,8 +247,8 @@ export const Documentation = () => {
 						<p>
 							You can edit award settings outside of God Mode because they don't
 							make the game any easier or harder. However, there are some{" "}
-							<a href={helpers.leagueUrl(["achievements"])}>achievements</a>{" "}
-							based on awards. Those are affected by your award settings.
+							<a href="/achievements">achievements</a> based on awards. Those
+							are affected by your award settings.
 						</p>
 						<p>
 							All of the award-based achievements mention specific awards (MVP,

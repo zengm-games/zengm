@@ -22,6 +22,7 @@ import {
 import ScheduledEventEditor, { type Editing } from "./ScheduledEventEditor.tsx";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { useLocal } from "../../util/local.ts";
+import { useAction } from "../../util/useAction.ts";
 
 const teamInfoKey = (key: string) => {
 	if (key === "region") {
@@ -316,7 +317,7 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 		  }
 		| undefined
 	>();
-	const [deletingProcessing, setDeletingProcessing] = useState(false);
+	const { busy: deletingProcessing, run } = useAction();
 
 	const deleteEvent = async (id: number) => {
 		const { changes } = await toWorker("main", "deleteScheduledEvent", {
@@ -521,10 +522,10 @@ const ScheduledEvents = (props: View<"scheduledEvents">) => {
 						disabled={deletingProcessing}
 						onClick={async () => {
 							if (deleting) {
-								setDeletingProcessing(true);
-								await deleteScheduledEvent(deleting.id);
-								setDeletingProcessing(false);
-								setDeleting(undefined);
+								await run(async () => {
+									await deleteScheduledEvent(deleting.id);
+									setDeleting(undefined);
+								});
 							}
 						}}
 					>

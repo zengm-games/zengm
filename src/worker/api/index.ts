@@ -7,6 +7,7 @@ import type {
 import {
 	GAME_ACRONYM,
 	PHASE,
+	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
 	PHASE_TEXT,
 	PLAYER,
 	PLAYER_STATS_TABLES,
@@ -49,6 +50,7 @@ import {
 	helpers,
 	local,
 	lock,
+	sim,
 	updatePlayMenu,
 	updateStatus,
 	toUI,
@@ -61,7 +63,6 @@ import {
 	type Env,
 	type GameAttributesLeague,
 	type Local,
-	type LockName,
 	type Player,
 	type PlayerWithoutKey,
 	type UpdateEvent,
@@ -756,7 +757,7 @@ const createLeague = async (
 				}
 			}
 
-			// Definitley need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
+			// Definitely need this for realStats=="all", but maybe elsewhere too. This is needed because we don't know if we're keeping history or not when we call getLeagueInfo to display the team/settings in the UI.
 			fromFile.gameAttributes = realLeague.gameAttributes;
 			fromFile.startingSeason = realLeague.startingSeason;
 			fromFile.teams = realLeague.teams;
@@ -1993,8 +1994,6 @@ const getNegotiationProps = async (pid: number) => {
 			],
 			ratings: ["ovr", "pot"],
 			season: g.get("season"),
-			showNoStats: true,
-			showRookies: true,
 			fuzz: true,
 		});
 	}
@@ -2159,8 +2158,6 @@ const getPlayersCommandPalette = async () => {
 		attrs: ["pid", "firstName", "lastName", "abbrev", "age"],
 		ratings: ["pos", "ovr", "pot"],
 		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
 		fuzz: true,
 	});
 };
@@ -2820,7 +2817,7 @@ const importPlayers = async ({
 			(p2 as any).real = p.real;
 		}
 
-		// Only add injury if the season wasn't chaned by the user. These variables copied from ImportPlayers init
+		// Only add injury if the season wasn't changed by the user. These variables copied from ImportPlayers init
 		const exportedSeason: number | undefined =
 			typeof p.exportedSeason === "number" ? p.exportedSeason : undefined;
 		const season2 =
@@ -2846,7 +2843,7 @@ const importPlayers = async ({
 					// No injuries from current season, if current season has not started yet
 					offset = -1;
 				} else if (key === "stats" && currentPhase <= PHASE.PLAYOFFS) {
-					// Don't include current season stats if the season has not started yet. Might be good to separate playoff stats and non-playoff stats and use differnet phase cutoffs, but whatever.
+					// Don't include current season stats if the season has not started yet. Might be good to separate playoff stats and non-playoff stats and use different phase cutoffs, but whatever.
 					offset = -1;
 				}
 			}
@@ -3035,7 +3032,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		[
 			{
 				fullNames: options.fullNames,
-				gameSimInProgress: lock.get("gameSim"),
+				gameSimInProgress: sim.isActive(),
 				keyboardShortcuts,
 				units: options.units,
 				workerBusy: lock.isWorkerBusy(),
@@ -3055,10 +3052,6 @@ const loadRetiredPlayers = async () => {
 	});
 
 	return finalizePlayersRelativesList(playerNames);
-};
-
-const lockSet = async ([name, value]: [LockName, boolean]) => {
-	await lock.set(name, value);
 };
 
 const ovr = ({
@@ -3363,6 +3356,7 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		return `${notOnTeam.length} players are no longer on your team.`;
 	}
 
+	const undoFunctions: (() => Promise<boolean>)[] = [];
 	for (const p of players) {
 		const justDrafted = helpers.justDrafted(
 			{ draft: p.draft, contract: getContractSummaryOrThrow(p) },
@@ -3370,7 +3364,7 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 			g.get("season"),
 		);
 
-		await player.release(p, justDrafted);
+		undoFunctions.push(await player.release(p, justDrafted));
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
@@ -3381,6 +3375,15 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		type: "dummyExpiringContracts",
 		pids,
 	});
+
+	return local.undoLog.add(async () => {
+		const values = await Promise.all(undoFunctions.map((undo) => undo()));
+
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+		await recomputeLocalUITeamOvrs();
+
+		return values.every((value) => value === true);
+	}, ["advanceDay", "leagueChange", "newPhase", "transaction"]);
 };
 
 const expandVote = (
@@ -4095,7 +4098,7 @@ const cancelExpansionDraft = async () => {
 		phase: g.get("nextPhase"),
 		nextPhase: undefined,
 	});
-	await updatePhase();
+	updatePhase();
 	await updatePlayMenu();
 };
 
@@ -4673,6 +4676,17 @@ const updateTeamInfo = async ({
 
 	const newTeamsByTid = groupByUnique(newTeams, "tid");
 
+	const changesDisabled = teams.some((t) => {
+		const newTeam = newTeamsByTid[t.tid];
+		return newTeam !== undefined && !!newTeam.disabled !== !!t.disabled;
+	});
+	if (
+		changesDisabled &&
+		!PHASES_WHERE_TEAMS_CAN_BE_DISABLED.has(g.get("phase"))
+	) {
+		throw new Error("Teams can't be enabled or disabled in this phase.");
+	}
+
 	for (const t of teams) {
 		const newTeam = newTeamsByTid[t.tid];
 		if (!newTeam) {
@@ -5102,7 +5116,7 @@ const upsertCustomizedPlayer = async (
 		player.addToFreeAgents(
 			p,
 			await getNumPlayersTradedAwayNormalizedAll(),
-			null,
+			"noContractToEnd",
 		);
 	}
 
@@ -5418,8 +5432,7 @@ const toggleTradeDeadline = async () => {
 			isTradeDeadline(game.homeTid, game.awayTid),
 		);
 		if (tradeDeadline) {
-			await idb.cache.schedule.delete(tradeDeadline.gid);
-			await toUI("deleteGames", [[tradeDeadline.gid]]);
+			await season.deleteScheduledTradeDeadline(tradeDeadline.gid);
 		}
 
 		await updatePlayMenu();
@@ -5655,7 +5668,6 @@ const api = {
 		init,
 		initGold,
 		loadRetiredPlayers,
-		lockSet,
 		ovr,
 		proposeTrade,
 		ratingsStatsPopoverInfo,

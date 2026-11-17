@@ -101,7 +101,7 @@ const formatRunners = (
 		// When true, only report runners who are out, since the side is retired the other ones don't matter
 		sideRetired?: boolean;
 
-		// When true, only report runners who are out or scored, since anything else is not really relevent and it's meaningless where runners wind up
+		// When true, only report runners who are out or scored, since anything else is not really relevant and it's meaningless where runners wind up
 		gameWinningRunScoredWithLiveBall?: boolean;
 	} = {},
 ) => {
@@ -441,15 +441,16 @@ export const getText = (
 					? [
 							`${he} hits a deep fly ball.. and it's gone!`,
 							`${he} rockets one down the line... and it's fair!`,
-							"He blasts one way over the fence!",
+							`${he} blasts one way over the fence!`,
 							"Home run!",
 						]
 					: [
 							`${he} hits a deep fly ball.. and it falls short.`,
 							`${he} rockets one down the line... and it's foul.`,
 							"A swing and a miss",
-							"He makes contact, but it falls short",
-						])[event.flavor]
+							`${he} makes contact, but it falls short`,
+						]
+				)[event.flavor]
 			}`;
 			break;
 		}

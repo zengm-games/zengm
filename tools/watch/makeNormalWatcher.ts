@@ -8,7 +8,7 @@ export const makeNormalWatcher = ({
 	outFilename,
 	watchFiles,
 }: {
-	build: (sport: Sport, signal: AbortSignal) => void;
+	build: (sport: Sport, signal: AbortSignal) => Promise<void>;
 	outFilename: string;
 	watchFiles: string | string[];
 }) => {

@@ -19,7 +19,7 @@ const addStatsRow = (
 	season: number,
 	playoffs: boolean,
 ) => {
-	// Never add duplicate row, such as player beign signed as FA by team who released him
+	// Never add duplicate row, such as player being signed as FA by team who released him
 	const ps = p.stats.at(-1);
 	const hasStats = statsRowIsCurrent(ps, p.tid, playoffs);
 	if (hasStats) {

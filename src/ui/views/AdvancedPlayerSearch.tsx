@@ -584,7 +584,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 	});
 
 	const loadInitialPlayers = useEffectEvent(() => {
-		// If URL has some paramters in it, load initial players
+		// If URL has some parameters in it, load initial players
 		if (!location.pathname.endsWith("/advanced_player_search")) {
 			updatePlayers();
 		}

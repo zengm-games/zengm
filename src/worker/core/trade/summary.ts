@@ -11,7 +11,7 @@ import isUntradable from "./isUntradable.ts";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await player.formatAll(playersRaw, {
-		attrs: ["injury", "pid", "value"],
+		attrs: ["injury", "value"],
 		fuzz: true,
 		ratings: ["ovr", "pos", "ovrs"],
 		season: g.get("season"),
@@ -25,7 +25,7 @@ const getTeamOvr = async (playersRaw: Player[]) => {
  *
  * @memberOf core.trade
  * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
- * @return {Promise.Object} Resolves to an object contianing the trade summary.
+ * @return {Promise.Object} Resolves to an object containing the trade summary.
  */
 const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 	const tids = [teams[0].tid, teams[1].tid] as const;
@@ -74,9 +74,6 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		const players = await player.formatAll(playersOrdered, {
 			attrs: ["pid", "name", "contract", "draft"],
 			season: g.get("season"),
-			tid: tids[i],
-			showRookies: true,
-			showNoStats: true,
 		});
 		s.teams[i].trade = players;
 		s.teams[i].total = s.teams[i].trade.reduce(

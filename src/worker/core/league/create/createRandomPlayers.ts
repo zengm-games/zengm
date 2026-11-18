@@ -18,7 +18,7 @@ export const getNumPlayersPerTeam = () => {
 	return Math.max(g.get("maxRosterSize") - 2, g.get("minRosterSize"));
 };
 
-const createRandomPlayers = async ({
+export const createRandomPlayers = async ({
 	activeTids,
 	onlyFreeAgents,
 	scoutingLevel,
@@ -131,7 +131,7 @@ const createRandomPlayers = async ({
 				}
 
 				const contract: FlatContractInfo = {
-					amount: rookieSalaries[i]!,
+					amount: draft.getRookieSalary({ round, pick }, rookieSalaries),
 					exp: g.get("season") - numYearsAgo + years,
 				};
 				if (g.get("draftPickAutoContract")) {
@@ -308,7 +308,11 @@ const createRandomPlayers = async ({
 				exp: g.get("season"),
 				temp: true,
 			});
-			player.addToFreeAgents(p, numPlayersTradedAwayNormalized, null);
+			player.addToFreeAgents(
+				p,
+				numPlayersTradedAwayNormalized,
+				"noContractToEnd",
+			);
 			players.push(p);
 		}
 	};
@@ -345,5 +349,3 @@ const createRandomPlayers = async ({
 
 	return players;
 };
-
-export default createRandomPlayers;

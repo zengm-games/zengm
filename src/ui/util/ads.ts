@@ -5,19 +5,19 @@ import {
 } from "../../common/constants.ts";
 import { local, localActions } from "./local.ts";
 
-const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
+const SKYSCRAPER_WIDTH_CUTOFF = 1200 + 190;
 
 class Skyscraper {
 	displayed = false;
 
-	updateDislay(initial: boolean) {
+	updateDisplay(initial: boolean) {
 		const div = document.getElementById(AD_DIVS.rail);
 
 		if (div) {
 			const gold = !!div.dataset.gold;
 
 			if (
-				document.documentElement.clientWidth >= SKYSCAPER_WIDTH_CUTOFF &&
+				document.documentElement.clientWidth >= SKYSCRAPER_WIDTH_CUTOFF &&
 				!gold
 			) {
 				if (!this.displayed) {
@@ -78,7 +78,7 @@ class Ads {
 		}
 	}
 
-	init() {
+	async init() {
 		// Prevent race condition by assuring we run this only after the account has been checked and the UI has been rendered, otherwise (especially when opening a 2nd tab) this was sometimes running before the UI was rendered, which resulted in no ads being displayed
 		if (this.state !== "none") {
 			// Must have already ran somehow?
@@ -98,7 +98,7 @@ class Ads {
 		if (gold) {
 			this.state = "gold";
 		} else {
-			// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this regardless of window.freestar, so Blockthrough can still work for some users.
+			// _disabled names are to hide from Blockthrough, so it doesn't leak through for Gold subscribers. Run this before loading any ad code, so Blockthrough can still work for some users.
 			const divsAll = VIDEO_ADS
 				? [AD_DIVS.mobile, AD_DIVS.rail]
 				: [
@@ -115,8 +115,17 @@ class Ads {
 				}
 			}
 
+			// Third party ad code is only ever downloaded here, after we know the user is not Gold. Divs were renamed above, before loading, so Blockthrough sees them.
+			try {
+				const { loadAdScripts } = await import("./adScripts/loadAdScripts.ts");
+				loadAdScripts();
+			} catch {
+				// Chunk failed to load, most likely offline. No ads this session, but nothing else should break.
+				return;
+			}
+
 			window.freestar.queue.push(() => {
-				// Do moblie footer stuff before actually showing the ad, in case somehow `window.freestar.config.enabled_slots.push` causes an error that prevented subsequent code from running. Cause now 2 people have said the multi team menu is hiding behind ads on mobile, which must mean stickyFooterAd is not being set to true. Could somehow be Blockthrough (or whatever) running while Freestar code doesn't, but users say they aren't using an ad blocker...
+				// Do mobile footer stuff before actually showing the ad, in case somehow `window.freestar.config.enabled_slots.push` causes an error that prevented subsequent code from running. Cause now 2 people have said the multi team menu is hiding behind ads on mobile, which must mean stickyFooterAd is not being set to true. Could somehow be Blockthrough (or whatever) running while Freestar code doesn't, but users say they aren't using an ad blocker...
 				if (window.mobile) {
 					localActions.update({
 						stickyFooterAd: true,
@@ -166,7 +175,7 @@ class Ads {
 				const rail = document.getElementById(AD_DIVS.rail);
 				if (rail) {
 					delete rail.dataset.gold;
-					this.skyscraper.updateDislay(true);
+					this.skyscraper.updateDisplay(true);
 				}
 
 				for (const id of divs) {
@@ -216,7 +225,7 @@ class Ads {
 			const rail = document.getElementById(AD_DIVS.rail);
 			if (rail) {
 				rail.dataset.gold = "true";
-				this.skyscraper.updateDislay(false);
+				this.skyscraper.updateDisplay(false);
 			}
 
 			localActions.update({

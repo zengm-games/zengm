@@ -115,7 +115,7 @@ export const getUpcoming = async ({
 		);
 	}
 	const players = await player.formatAll(playersRaw, {
-		attrs: ["injury", "pid", "value", "tid"],
+		attrs: ["injury", "value", "tid"],
 		ratings: ["ovr", "pos", "ovrs"],
 		season: g.get("season"),
 		fuzz: true,
@@ -137,7 +137,7 @@ export const getUpcoming = async ({
 
 		const t = teamsByTid[tid];
 
-		// For basketball this is fast, but for other sports it's a bit slow. Could cache sometimes, depending on which players are injured (if nobody is in playThroughInjuries window). This would apply by default in the regualr season, which is what matters, since the default is 0
+		// For basketball this is fast, but for other sports it's a bit slow. Could cache sometimes, depending on which players are injured (if nobody is in playThroughInjuries window). This would apply by default in the regular season, which is what matters, since the default is 0
 		const ovr = team.ovr(playersByTid.get(tid) ?? [], {
 			accountForInjuredPlayers: {
 				numDaysInFuture: day - todayDay,

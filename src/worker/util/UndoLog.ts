@@ -1,7 +1,7 @@
 // Return true for success, false for failure
 type Undo = () => Promise<boolean>;
 
-type InvalidateOn = "advanceDay" | "leagueChange" | "newPhase";
+type InvalidateOn = "advanceDay" | "leagueChange" | "newPhase" | "transaction";
 
 export class UndoLog {
 	private nextKey = 0;

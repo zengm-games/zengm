@@ -12,7 +12,7 @@ import { describe, test } from "vitest";
 import { PLAYER } from "../../../common/constants.ts";
 import { resetG } from "../../../test/helpers.ts";
 import { g } from "../../util/index.ts";
-import createRandomPlayers from "../league/create/createRandomPlayers.ts";
+import { createRandomPlayers } from "../league/create/createRandomPlayers.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { last, range } from "../../../common/utils.ts";
 

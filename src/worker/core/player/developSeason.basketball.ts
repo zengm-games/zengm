@@ -139,7 +139,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	},
 	dnk: {
 		ageModifier: (age: number) => {
-			// Like shootingForumla, except for old players
+			// Like shootingFormula, except for old players
 			if (age <= 27) {
 				return 0;
 			}

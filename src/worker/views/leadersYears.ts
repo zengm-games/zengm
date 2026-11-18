@@ -95,17 +95,8 @@ export default defineView({
 			}
 
 			const formatOptions = {
-				attrs: [
-					"pid",
-					"firstName",
-					"lastName",
-					"injury",
-					"watch",
-					"jerseyNumber",
-					"hof",
-					"retiredYear",
-				],
-				ratings: ["skills", "pos"],
+				attrs: ["pid", "firstName", "lastName", "watch", "hof"],
+				ratings: ["pos"],
 				stats: ["tid", ...stats],
 				seasonType: inputs.playoffs,
 				mergeStats: "totOnly",

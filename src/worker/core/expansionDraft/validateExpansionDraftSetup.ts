@@ -24,7 +24,7 @@ const validateExpansionDraftSetup = async () => {
 
 	const errors = [];
 	const teams = await idb.cache.teams.getAll();
-	const divs = await g.get("divs");
+	const divs = g.get("divs");
 
 	// Do some error checking
 	const expansionTeams = expansionTeamsRaw.map((t) => {

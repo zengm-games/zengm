@@ -102,7 +102,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 	}
 
 	const teams = await team.getFormattedAll({
-		attrs: ["abbrev", "region", "name", "strategy", "tid"],
+		attrs: ["strategy", "tid"],
 		seasonAttrs: ["won", "lost", "tied", "otl"],
 		season: g.get("season"),
 		addDummySeason: true,

@@ -8,8 +8,12 @@ import genPlayersWithoutSaving from "./genPlayersWithoutSaving.ts";
 import getOrder from "./getOrder.ts";
 import getRookieContractLength from "./getRookieContractLength.ts";
 import getRookieSalaries from "./getRookieSalaries.ts";
+import {
+	getRookieSalary,
+	getRookieSalaryByPickNumber,
+} from "./getRookieSalary.ts";
 import runPicks from "./runPicks.ts";
-import selectPlayer from "./selectPlayer.ts";
+import { selectPlayer } from "./selectPlayer.ts";
 
 export default {
 	afterPicks,
@@ -22,6 +26,8 @@ export default {
 	getOrder,
 	getRookieContractLength,
 	getRookieSalaries,
+	getRookieSalary,
+	getRookieSalaryByPickNumber,
 	runPicks,
 	selectPlayer,
 };

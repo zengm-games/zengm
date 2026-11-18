@@ -75,7 +75,7 @@ export const calcDistance = (
 	return (lat1 - lat2) ** 2 + (lon1 - lon2) ** 2;
 };
 
-// This is normal k-means clustering, just with some very crudely imposed static cluster sizes. Still seems to work pretty well, assuing `points` is fairly small and `NUM_TRIES` is fairly large.
+// This is normal k-means clustering, just with some very crudely imposed static cluster sizes. Still seems to work pretty well, assuming `points` is fairly small and `NUM_TRIES` is fairly large.
 export const kmeansFixedSize = (
 	points: Readonly<[number, number]>[],
 	clusterSizes: number[],

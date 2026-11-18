@@ -8,7 +8,7 @@ import {
 	local,
 	helpers,
 	updatePlayMenu,
-	lock,
+	sim,
 	toUI,
 } from "../util/index.ts";
 import { runDraft } from "./actions.ts";
@@ -107,7 +107,7 @@ const playAmount = async (
 	amount: "day" | "week" | "month" | "untilPreseason",
 	conditions: Conditions,
 ) => {
-	if (lock.get("gameSim")) {
+	if (sim.isActive()) {
 		return;
 	}
 
@@ -156,16 +156,13 @@ const playAmount = async (
 	}
 };
 
+// The sim loop stops after its current day, and then it updates the status and play menu itself. Until then, the play menu needs to stop offering anything.
 const playStop = async () => {
-	await lock.set("stopGameSim", true);
-
-	if (g.get("phase") !== PHASE.FREE_AGENCY) {
-		// This is needed because we can't be sure if core.game.play will be called again
-		await updateStatus();
+	// If no sim is running, there's nothing to update. This matters because a persistent notification (like the changelog shown at startup) can request a stop before any league is loaded, when g isn't set and updating the play menu would throw.
+	const stopRequested = sim.requestStop();
+	if (stopRequested) {
+		await updatePlayMenu();
 	}
-
-	await lock.set("gameSim", false);
-	await updatePlayMenu();
 };
 
 const playMenu = {

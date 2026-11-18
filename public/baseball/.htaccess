@@ -3,7 +3,7 @@
   Header set Cache-Control "max-age=31536000"
 </FilesMatch>
 
-<FilesMatch "^(chunk|ui|worker)-.*\.js$">
+<FilesMatch "^(ui|worker)-.*\.js$">
   Header set Cache-Control "max-age=31536000,immutable"
 </FilesMatch>
 

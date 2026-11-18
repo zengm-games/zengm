@@ -85,7 +85,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 		// Shuffle each day so it doesn't keep picking the same team first
 		shuffle(seriesKeys);
 
-		// Order by number of series reamining, otherwise it tends to have some bunched series against the same team at the end of the season
+		// Order by number of series remaining, otherwise it tends to have some bunched series against the same team at the end of the season
 		seriesKeys = orderBy(
 			seriesKeys,
 			(key) => seriesGroupedByTeams[key]!.length,

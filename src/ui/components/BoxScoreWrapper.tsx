@@ -306,7 +306,7 @@ const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
  * Do those calculations for each team, then do the difference so things approximately add up to the final score difference.
  */
 const getFourFactorsNetPoints = (teams: any[]) => {
-	// These should be adjusted for league averages, but doens't seem to matter much, so whatever
+	// These should be adjusted for league averages, but doesn't seem to matter much, so whatever
 	const lgEffic = 1.15;
 	const lgOrbPct = 0.28;
 
@@ -409,7 +409,7 @@ const FourFactorsTotalLine = ({
 const FourFactors = ({ teams }: { teams: any[] }) => {
 	const fourFactorsNetPoints = getFourFactorsNetPoints(teams);
 
-	// +10 shows up in the gradient as maximum color, unless there is one component beyond that, in which case we use that value to highlight how extreme it is. But keeping +10 as the minumum possible max is good to show when they are all pretty close.
+	// +10 shows up in the gradient as maximum color, unless there is one component beyond that, in which case we use that value to highlight how extreme it is. But keeping +10 as the minimum possible max is good to show when they are all pretty close.
 	const maxMagnitude = Math.max(
 		Math.max(...Object.values(fourFactorsNetPoints).map((x) => Math.abs(x))),
 		10,
@@ -1107,7 +1107,7 @@ export const BoxScoreWrapper = ({
 	useEffect(() => {
 		prevPlayIndex.current = playIndex;
 	}, [playIndex]);
-	// If more than one play has happend between renders, force update of every row of the live box score, in case a player was subbed out in the missing play
+	// If more than one play has happened between renders, force update of every row of the live box score, in case a player was subbed out in the missing play
 	let forceRowUpdate =
 		playIndex !== undefined &&
 		prevPlayIndex.current !== undefined &&

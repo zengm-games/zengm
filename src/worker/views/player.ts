@@ -74,6 +74,7 @@ export const getPlayer = async <
 			"diedYear",
 			"contract",
 			"draft",
+			"draftAbbrev",
 			"face",
 			"injury",
 			"injuries",

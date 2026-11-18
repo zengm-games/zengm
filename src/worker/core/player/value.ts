@@ -18,7 +18,7 @@ import { last } from "../../../common/utils.ts";
  * @memberOf core.player
  * @param {Object} p Player object.
  * @param {Object=} options Object containing several optional options:
- *     noPot: When true, don't include potential in the value calcuation (useful for roster
+ *     noPot: When true, don't include potential in the value calculation (useful for roster
  *         ordering and game simulation). Default false.
  *     fuzz: When true, used fuzzed ratings (useful for roster ordering, draft prospect
  *         ordering). Default false.

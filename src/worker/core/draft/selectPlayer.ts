@@ -1,6 +1,7 @@
 import { PHASE } from "../../../common/constants.ts";
 import { player, league, team } from "../index.ts";
 import getRookieSalaries from "./getRookieSalaries.ts";
+import { getRookieSalary } from "./getRookieSalary.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { DraftPick, FlatContractInfo } from "../../../common/types.ts";
@@ -19,7 +20,7 @@ import { canBeDrafted } from "./canBeDrafted.ts";
  * @param {number} pid Integer player ID for the player to be drafted.
  * @return {Promise<boolean>} false if the player is not available to be drafted, like if the user double clicked on a player who was already picked.
  */
-const selectPlayer = async (dp: DraftPick, pid: number) => {
+export const selectPlayer = async (dp: DraftPick, pid: number) => {
 	if (dp.pick <= 0) {
 		console.log(dp);
 		throw new Error(`Invalid draft pick number "${dp.pick}"`);
@@ -32,6 +33,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	if (!canBeDrafted(p)) {
 		return false;
 	}
+
+	local.undoLog.invalidate("transaction");
+
 	const prevTid = p.tid;
 	p.tid = dp.tid;
 
@@ -97,11 +101,8 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 				exp: g.get("season"),
 			});
 		} else {
-			const rookieSalaries = getRookieSalaries();
-			const i = dp.pick - 1 + g.get("numActiveTeams") * (dp.round - 1);
-
 			const contractDemand: FlatContractInfo = {
-				amount: rookieSalaries[i]!,
+				amount: getRookieSalary(dp, getRookieSalaries()),
 				exp: g.get("season"),
 				rookie: true,
 			};
@@ -225,5 +226,3 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
 	return true;
 };
-
-export default selectPlayer;

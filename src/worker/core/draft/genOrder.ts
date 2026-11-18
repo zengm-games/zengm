@@ -439,7 +439,7 @@ const genOrder = async (
 		const chanceTotal = Math.sumPrecise(chances);
 		const chancePct = chances.map((c) => (c / chanceTotal) * 100);
 
-		// Idenfity chances indexes protected by riggedLottery
+		// Identify chances indexes protected by riggedLottery
 		const riggedLotteryIndexes = riggedLottery
 			? riggedLottery.map((dpid) => {
 					if (typeof dpid === "number") {

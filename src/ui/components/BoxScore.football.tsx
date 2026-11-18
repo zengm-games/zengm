@@ -19,7 +19,7 @@ import {
 	penaltySegments,
 	scrimmageToFieldPos,
 	type SportState,
-} from "../util/processLiveGameEvents.football.tsx";
+} from "../util/LiveGamePlayback.football.tsx";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import { range } from "../../common/utils.ts";
@@ -839,7 +839,7 @@ const FieldAndDrive = ({
 					<>
 						<VerticalLine
 							color={blue}
-							yards={sportState.scrimmage ?? sportState.scrimmage}
+							yards={sportState.scrimmage}
 							driveDirection={driveDirection}
 						/>
 						{!sportState.awaitingKickoff ? (

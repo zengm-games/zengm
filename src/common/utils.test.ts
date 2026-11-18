@@ -212,6 +212,41 @@ describe("orderBy", () => {
 			]);
 		}
 	});
+
+	test("calls each key function once per item", () => {
+		const items = [5, 3, 8, 1, 9, 2, 7, 4, 6, 0].map((a) => ({ a }));
+		let numCalls = 0;
+		const sorted = orderBy(
+			items,
+			(item) => {
+				numCalls += 1;
+				return item.a;
+			},
+			"asc",
+		);
+		assert.deepStrictEqual(
+			sorted.map((item) => item.a),
+			[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+		);
+		assert.strictEqual(numCalls, items.length);
+	});
+
+	test("keeps input order for equal sort values", () => {
+		const items = [
+			{ a: 1, id: "x" },
+			{ a: 0, id: "y" },
+			{ a: 1, id: "z" },
+			{ a: 0, id: "w" },
+		];
+		assert.deepStrictEqual(
+			orderBy(items, "a", "asc").map((item) => item.id),
+			["y", "w", "x", "z"],
+		);
+		assert.deepStrictEqual(
+			orderBy(items, "a", "desc").map((item) => item.id),
+			["x", "z", "y", "w"],
+		);
+	});
 });
 
 test("chunk", () => {

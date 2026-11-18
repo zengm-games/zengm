@@ -6,7 +6,7 @@ import type {
 	View,
 } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
-import { showNotification } from "../util/showNotification.ts";
+import { useAction } from "../util/useAction.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
@@ -325,7 +325,7 @@ const EditAwardWinners = ({
 		},
 	});
 
-	const [saving, setSaving] = useState(false);
+	const { busy: saving, run } = useAction();
 
 	const [awardsState, setAwardsState] = useState(awards);
 
@@ -411,7 +411,7 @@ const EditAwardWinners = ({
 								return {};
 							}
 
-							// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award
+							// Use duplicate to maintain statOverrides in case box scores no longer exist for playoff series award
 							if (duplicate) {
 								return duplicate;
 							}
@@ -481,7 +481,7 @@ const EditAwardWinners = ({
 									return base;
 								}
 
-								// Use duplicate to maintain statOverides in case box scores no longer exist for playoff series award (not strictly necessary here because statOverrides are not in team awards, but I guess this is more future proof, although I'd also need to add code to create statOverrides when there is no duplicate like on the individual award branch above...)
+								// Use duplicate to maintain statOverrides in case box scores no longer exist for playoff series award (not strictly necessary here because statOverrides are not in team awards, but I guess this is more future proof, although I'd also need to add code to create statOverrides when there is no duplicate like on the individual award branch above...)
 								if (duplicate) {
 									return {
 										...duplicate,
@@ -515,21 +515,17 @@ const EditAwardWinners = ({
 				key={season}
 				onSubmit={async (event) => {
 					event.preventDefault();
-					setSaving(true);
-					try {
-						await toWorker("main", "updateAwards", {
-							season,
-							awards: pruneEmptyWinners(awardsState),
-						});
-						setDirty(false);
-						realtimeUpdate([], helpers.leagueUrl(["history", season]));
-					} catch (error) {
-						showNotification({
-							type: "error",
-							text: error.message,
-						});
-						setSaving(false);
-					}
+					await run(
+						async () => {
+							await toWorker("main", "updateAwards", {
+								season,
+								awards: pruneEmptyWinners(awardsState),
+							});
+							setDirty(false);
+							realtimeUpdate([], helpers.leagueUrl(["history", season]));
+						},
+						{ keepProcessingOnSuccess: true },
+					);
 				}}
 			>
 				<div className="row">

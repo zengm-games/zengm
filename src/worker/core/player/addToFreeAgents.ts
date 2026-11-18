@@ -26,8 +26,8 @@ const addToFreeAgents = (
 
 	// If his contract is not fully paid yet, it ends. This is the team that released him, which still owes the rest of it, or undefined if nobody owes it, like when his team is removed from the league. Console scripts from before this was a parameter also get undefined.
 	//
-	// null if he can't have a contract like that, like a player whose contract expired, or who is already a free agent.
-	releasedByTid: number | undefined | null,
+	// "noContractToEnd" is the caller saying he has no unpaid contract, like a player whose contract expired or who is already a free agent. It throws if he has one anyway.
+	releasedByTid: number | undefined | "noContractToEnd",
 ) => {
 	const contract = getCurrentContract(p);
 
@@ -36,7 +36,7 @@ const addToFreeAgents = (
 
 	// His contract ends, so he has no current contract as a free agent
 	if (contract && !isContractFullyPaid(contract)) {
-		if (releasedByTid === null) {
+		if (releasedByTid === "noContractToEnd") {
 			throw new Error(
 				`Contract for ${p.firstName} ${p.lastName} (pid ${p.pid}) is not fully paid, so it needs a reason to end`,
 			);

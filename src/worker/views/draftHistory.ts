@@ -123,7 +123,6 @@ export default defineView({
 			ratings: ["ovr", "pot", "skills", "pos", "season"],
 			stats,
 			showNoStats: true,
-			showRookies: true,
 			fuzz: true,
 		});
 		const players = playersAll

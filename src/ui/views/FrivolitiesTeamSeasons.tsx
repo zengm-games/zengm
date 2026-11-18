@@ -3,7 +3,7 @@ import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
-import { frivolitiesMenu } from "./Frivolities.tsx";
+import { frivolitiesMenu } from "../util/frivolities.ts";
 import { getValue } from "./Most/index.tsx";
 import {
 	teamMovOrDiffStat,

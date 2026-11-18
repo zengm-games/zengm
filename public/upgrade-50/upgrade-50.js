@@ -84,7 +84,7 @@ const initForm = async () => {
 
 		log(`Attempting to connect to league ${lid}`);
 		const db = await idb.openDB(`league${lid}`, 50, {
-			async upgrade(db, oldVersion, newVerison, transaction) {
+			async upgrade(db, oldVersion, newVersion, transaction) {
 				log("Creating new indexes...");
 				const playerStore = transaction.objectStore("players");
 

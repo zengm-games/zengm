@@ -1,4 +1,7 @@
-import fs from "node:fs/promises";
+import {
+	JSON_SCHEMA_FILENAME,
+	writeJsonSchemaFile,
+} from "../build/createJsonSchemaFile.ts";
 import { makeNormalWatcher } from "./makeNormalWatcher.ts";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
@@ -6,8 +9,6 @@ const importFresh = async (modulePath: string) => {
 	const cacheBustingModulePath = `${modulePath}?update=${Date.now()}`;
 	return await import(cacheBustingModulePath);
 };
-
-const outFilename = "build/files/league-schema.json";
 
 export const watchJsonSchema = makeNormalWatcher({
 	build: async (sport, signal) => {
@@ -19,19 +20,9 @@ export const watchJsonSchema = makeNormalWatcher({
 			return;
 		}
 
-		const jsonSchema = generateJsonSchema(sport);
-		const output = JSON.stringify(jsonSchema);
-
-		await fs.mkdir("build/files", { recursive: true });
-		if (signal.aborted) {
-			return;
-		}
-
-		await fs.writeFile(outFilename, output, {
-			signal,
-		});
+		await writeJsonSchemaFile(generateJsonSchema(sport), signal);
 	},
-	outFilename,
+	outFilename: JSON_SCHEMA_FILENAME,
 	watchFiles: "tools/build/generateJsonSchema.ts",
 });
 

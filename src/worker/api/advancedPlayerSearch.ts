@@ -238,7 +238,7 @@ export const advancedPlayerSearch = async ({
 		// Set to "unique" so the draft prospects are the only ones appearing in the excess seasons. This works only because we confirm seasonStart === seasonEnd, in which case normally the unique/all setting doesn't matter
 		seasonRangeType = "unique";
 	} else {
-		// If we're looking for a range of seasons only, then each player can only appear in our results once, so unique is waht we want.
+		// If we're looking for a range of seasons only, then each player can only appear in our results once, so unique is what we want.
 		seasonRangeType = seasonRange ? "unique" : "all";
 	}
 

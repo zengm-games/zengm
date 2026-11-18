@@ -66,7 +66,6 @@ export default defineView({
 				ratings: ["ovr", "pot", "dovr", "dpot", "pos", "skills", "ovrs"],
 				season,
 				fuzz: true,
-				showNoStats: true,
 			});
 
 			const playersTopAll = orderBy(players, (p) => p.ratings.ovr, "desc");

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import { Dropdown } from "react-bootstrap";
 import { PHASE, PLAYER } from "../../common/constants.ts";
@@ -7,6 +6,7 @@ import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import { useLocal } from "../util/local.ts";
+import { useAction } from "../util/useAction.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { Phase, View } from "../../common/types.ts";
@@ -220,7 +220,7 @@ const WatchList = ({
 	statType,
 	stats,
 }: View<"watchList">) => {
-	const [clearing, setClearing] = useState(false);
+	const { busy: clearing, run } = useAction();
 
 	useTitleBar({
 		title: "Watch List",
@@ -295,13 +295,13 @@ const WatchList = ({
 			<ClearButton
 				players={players}
 				onClick={async (type) => {
-					setClearing(true);
-					const undoKey = await toWorker("main", "clearWatchList", type);
-					setClearing(false);
+					await run(async () => {
+						const undoKey = await toWorker("main", "clearWatchList", type);
 
-					showUndoNotification({
-						undoKey,
-						title: `Cleared watch list${type === "all" ? "" : ` ${type}`}`,
+						showUndoNotification({
+							undoKey,
+							title: `Cleared watch list${type === "all" ? "" : ` ${type}`}`,
+						});
 					});
 				}}
 				processing={clearing}

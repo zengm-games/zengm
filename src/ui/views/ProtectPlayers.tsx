@@ -164,7 +164,7 @@ const ProtectPlayers = ({
 
 	const protectedPids = expansionDraft.protectedPids[userTid] ?? [];
 
-	const maxNumCanProtext = Math.max(
+	const maxNumCanProtect = Math.max(
 		Math.min(
 			expansionDraft.numProtectedPlayers,
 			players.length - (expansionDraft.numPerTeam ?? 0),
@@ -174,7 +174,7 @@ const ProtectPlayers = ({
 		0,
 	);
 
-	const numRemaining = maxNumCanProtext - protectedPids.length;
+	const numRemaining = maxNumCanProtect - protectedPids.length;
 
 	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();

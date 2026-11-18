@@ -61,7 +61,11 @@ const newPhaseResignPlayers = async (
 		await getNumPlayersTradedAwayNormalizedAll();
 	const playersToMakeFreeAgents = [...existingFreeAgents, ...undraftedPlayers];
 	for (const p of playersToMakeFreeAgents) {
-		player.addToFreeAgents(p, numPlayersTradedAwayNormalized, null);
+		player.addToFreeAgents(
+			p,
+			numPlayersTradedAwayNormalized,
+			"noContractToEnd",
+		);
 	}
 	await idb.cache.players.putAll(playersToMakeFreeAgents);
 
@@ -174,7 +178,11 @@ const newPhaseResignPlayers = async (
 		) {
 			const tid = p.tid;
 
-			player.addToFreeAgents(p, numPlayersTradedAwayNormalized, null);
+			player.addToFreeAgents(
+				p,
+				numPlayersTradedAwayNormalized,
+				"noContractToEnd",
+			);
 
 			await idb.cache.players.put(p);
 			const info = await contractNegotiation.create(p.pid, true, tid);
@@ -280,7 +288,7 @@ const newPhaseResignPlayers = async (
 						}
 
 						// Need to recompute team value stuff now that a player was signed
-						await valueChangeCalculator.invalidateCache({
+						valueChangeCalculator.invalidateCache({
 							teams: [p.tid],
 						});
 					} else {
@@ -290,7 +298,11 @@ const newPhaseResignPlayers = async (
 			}
 
 			if (!reSignPlayer) {
-				player.addToFreeAgents(p, numPlayersTradedAwayNormalized, null);
+				player.addToFreeAgents(
+					p,
+					numPlayersTradedAwayNormalized,
+					"noContractToEnd",
+				);
 			}
 
 			await idb.cache.players.put(p);

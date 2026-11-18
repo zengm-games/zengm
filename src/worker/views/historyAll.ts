@@ -58,7 +58,6 @@ export default defineView({
 					"imgURL",
 					"imgURLSmall",
 				],
-				addDummySeason: true,
 			});
 			const teamsByTid = groupByUnique(teams, "tid");
 

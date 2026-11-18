@@ -91,7 +91,7 @@ const newPhasePlayoffs = async (
 			teamSeason.tid,
 		);
 		const players = await player.formatAll(playersRaw, {
-			attrs: ["age", "injury", "value", "pid"],
+			attrs: ["age", "injury", "value"],
 			fuzz: true,
 			stats: ["gp", "min"],
 			ratings: ["ovr", "pos", "ovrs"],

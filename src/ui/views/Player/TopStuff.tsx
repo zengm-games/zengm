@@ -32,7 +32,7 @@ import { getCols } from "../../../common/getCols.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import {
 	NegotiationModal,
-	useNegotiaionModal,
+	useNegotiationModal,
 } from "../../components/NegotiationModal.tsx";
 import { useLocal } from "../../util/local.ts";
 
@@ -343,10 +343,10 @@ const TopStuff = ({
 				<a
 					href={helpers.leagueUrl([
 						"draft_team_history",
-						`${player.draft.abbrev}_${player.draft.tid}`,
+						`${player.draftAbbrev}_${player.draft.tid}`,
 					])}
 				>
-					{player.draft.abbrev}
+					{player.draftAbbrev}
 				</a>
 				<br />
 			</>
@@ -446,7 +446,7 @@ const TopStuff = ({
 	const college =
 		player.college && player.college !== "" ? player.college : "None";
 
-	const negotiationModal = useNegotiaionModal();
+	const negotiationModal = useNegotiationModal();
 
 	const buttonsAvailableOutsideGodMode = (
 		<>

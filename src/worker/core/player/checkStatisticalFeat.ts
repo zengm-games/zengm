@@ -22,7 +22,7 @@ const checkPlayer = bySport({
 	hockey: checkStatisticalFeatHockey,
 });
 
-const checkStatisticalFeat = (
+const checkStatisticalFeat = async (
 	pid: number,
 	tid: number,
 	p: GamePlayer,
@@ -123,11 +123,11 @@ const checkStatisticalFeat = (
 			results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
 		} ${scoreText} ${endPart}.`;
 
-		logFeat(featText, score);
+		await logFeat(featText, score);
 
 		const result = tied ? "T" : won ? "W" : "L";
 
-		idb.cache.playerFeats.add({
+		await idb.cache.playerFeats.add({
 			pid,
 			name: p.name,
 			pos: p.pos,

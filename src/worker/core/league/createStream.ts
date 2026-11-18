@@ -41,6 +41,7 @@ import {
 	helpers,
 	local,
 	lock,
+	sim,
 	logEvent,
 	toUI,
 	updatePhase,
@@ -52,7 +53,7 @@ import { getAutoTicketPriceByTid } from "../game/attendance.ts";
 import addRelatives from "../realRosters/addRelatives.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import addDraftProspects from "./create/addDraftProspects.ts";
-import createRandomPlayers from "./create/createRandomPlayers.ts";
+import { createRandomPlayers } from "./create/createRandomPlayers.ts";
 import getRealTeamPlayerData from "./create/getRealTeamPlayerData.ts";
 import createGameAttributes from "./createGameAttributes.ts";
 import initRandomDebutsForRandomPlayersLeague from "./initRandomDebutsForRandomPlayersLeague.ts";
@@ -229,7 +230,7 @@ export type PreProcessParams = {
 	version: number | undefined;
 };
 
-// These obejcts have auto incrementing primary keys that aren't referenced by anything else, so it's safe to delete them when importing, and also prevents any issues from people manually editing league files and accidentally repeating a primary key, resulting in the latest one overwriting any earlier ones
+// These objects have auto incrementing primary keys that aren't referenced by anything else, so it's safe to delete them when importing, and also prevents any issues from people manually editing league files and accidentally repeating a primary key, resulting in the latest one overwriting any earlier ones
 const PRIMARY_KEYS_TO_DELETE: Record<string, string> = {
 	messages: "mid",
 	playerFeats: "fid",
@@ -874,7 +875,7 @@ const processTeamInfos = async ({
 					}
 				}
 				if (!teamSeason.expenseLevels) {
-					// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up wtih a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
+					// Compute historical expense levels, assuming budget was the same as it is now. In theory could come up with a better estimate from expenses, but historical salary cap data is not stored so it wouldn't be perfect, and also who cares
 					const expenseLevelsKeys = [
 						"coaching",
 						"facilities",
@@ -1232,46 +1233,14 @@ const finalizeActivePlayers = async ({
 	// WHY IS THIS NEEDED? Can't use players0 because the addRelatives call above might make a copy of a player object and write it to the cache, in which case the prior objects for those players in players0 will be stale.
 	const players = await idb.cache.players.getAll();
 
-	// Adjustment for hard cap - lower contracts for teams above cap
-	if (!fileHasPlayers && g.get("salaryCapType") === "hard") {
-		const minContract = g.get("minContract");
-
-		const teams = await idb.cache.teams.getAll();
-		for (const t of teams) {
-			if (t.disabled) {
-				continue;
-			}
-			// Contract demands of random players, which become their contracts below
-			const roster = players
-				.filter((p) => p.tid === t.tid)
-				.map((p) => p.contractDemand)
-				.filter((contractDemand) => contractDemand !== undefined);
-			let payroll = await team.getPayroll(t.tid);
-			for (const contractDemand of roster) {
-				payroll += contractDemand.amount;
-			}
-
-			while (payroll > g.get("salaryCap")) {
-				let foundAny = false;
-
-				for (const contractDemand of roster) {
-					if (contractDemand.amount >= minContract + 10) {
-						payroll -= 10;
-						contractDemand.amount -= 10;
-						foundAny = true;
-					} else if (contractDemand.amount > minContract) {
-						payroll -= contractDemand.amount - minContract;
-						contractDemand.amount = minContract;
-						foundAny = true;
-					}
-				}
-
-				if (!foundAny) {
-					throw new Error(
-						"Invalid combination of salaryCapType, salaryCap, and minContract - a team full of min contract players is still over the hard cap",
-					);
-				}
-			}
+	// Adjustment for hard cap - lower contracts of random players for teams above cap. Their contract demands become their contracts below.
+	if (!fileHasPlayers) {
+		const tidsOverCap =
+			await freeAgents.lowerContractDemandsForHardCap(players);
+		if (tidsOverCap.length > 0) {
+			throw new Error(
+				"Invalid combination of salaryCapType, salaryCap, and minContract - a team full of min contract players is still over the hard cap",
+			);
 		}
 	}
 
@@ -1342,6 +1311,7 @@ const beforeDBStream = async ({
 	| "tid"
 >) => {
 	// These wouldn't be needed here, except the beforeView logic is fucked up
+	sim.reset();
 	lock.reset();
 	local.reset();
 
@@ -1675,11 +1645,9 @@ const afterDBStream = async ({
 
 				// This may not be ideal for a season before the rookie contract scale existed, but whatever
 				if ((p2 as any).rookieContract && draftPickAutoContract) {
-					const pickIndex =
-						(p2.draft.round - 1) * g.get("numActiveTeams") + p2.draft.pick - 1;
 					// Not temp, so this won't be normalized. Then it becomes his contract in finalizeActivePlayers.
 					player.setContractDemand(p2, {
-						amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1)!,
+						amount: draft.getRookieSalary(p2.draft, rookieSalaries),
 						exp: p2.contractDemand!.exp,
 						rookie: true,
 					});
@@ -1856,7 +1824,7 @@ const afterDBStream = async ({
 	const realPlayers = !!getLeagueOptions;
 
 	if (!skipNewPhase || realPlayers) {
-		await updatePhase();
+		updatePhase();
 		await updateStatus();
 
 		// Auto sort rosters
@@ -1972,7 +1940,7 @@ const afterDBStream = async ({
 
 	// Version 73 upgrade
 	if (migrationData["73"]) {
-		// Need to do this at the end of afterDBStream because we need all players (including activePlayers) to be in the databse. And then fill is to handle activePlayers already being in the cache
+		// Need to do this at the end of afterDBStream because we need all players (including activePlayers) to be in the database. And then fill is to handle activePlayers already being in the cache
 		await updatePlayerAwards({
 			...migrationData["73"],
 			playerStore: idb.league.transaction("players", "readwrite").store,
@@ -1981,7 +1949,7 @@ const afterDBStream = async ({
 	}
 };
 
-const createStream = async (
+export const createStream = async (
 	leagueData: ReadableStream | Record<string, unknown>,
 	{
 		conditions,
@@ -2107,5 +2075,3 @@ const createStream = async (
 		throw error;
 	}
 };
-
-export default createStream;

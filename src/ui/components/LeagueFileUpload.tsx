@@ -113,20 +113,25 @@ export const LeagueFileUpload = ({
 	disabled,
 	enterURL,
 	includePlayersInBasicInfo,
+	initialURL,
 	onDone,
 	onLoading,
 }: {
-	onDone: (b: Error | LeagueFileUploadOutput) => void;
+	onDone: (b: Error | LeagueFileUploadOutput) => void | Promise<void>;
 	disabled?: boolean;
 	enterURL?: boolean;
 	includePlayersInBasicInfo?: boolean;
+	// With enterURL, prefill this URL and load it immediately
+	initialURL?: string;
 	// onLoading is called when it starts reading the file into memory
 	onLoading?: () => void;
 }) => {
-	const [url, setURL] = useState("");
+	const [url, setURL] = useState(initialURL ?? "");
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const isMounted = useRef(true);
 	useEffect(() => {
+		// Set to true here too, not just initially, because inside <Activity> effects run again when the component is shown after being hidden
+		isMounted.current = true;
 		return () => {
 			isMounted.current = false;
 		};
@@ -138,11 +143,15 @@ export const LeagueFileUpload = ({
 		"leagueCreationPercent",
 	]);
 
-	// Reset status when switching between file upload
+	// Reset status when switching between file upload and URL. Only when it actually changes, since inside <Activity> effects run again when the component is shown after being hidden.
+	const prevEnterURL = useRef(enterURL);
 	useEffect(() => {
-		dispatch({
-			type: "init",
-		});
+		if (prevEnterURL.current !== enterURL) {
+			prevEnterURL.current = enterURL;
+			dispatch({
+				type: "init",
+			});
+		}
 	}, [enterURL]);
 
 	const beforeFile = () => {
@@ -212,9 +221,7 @@ export const LeagueFileUpload = ({
 		}
 	};
 
-	const handleFileURL = async (event: SyntheticEvent) => {
-		event.preventDefault();
-
+	const loadURL = async () => {
 		beforeFile();
 
 		dispatch({
@@ -254,6 +261,22 @@ export const LeagueFileUpload = ({
 			return;
 		}
 	};
+
+	const handleFileURL = (event: SyntheticEvent) => {
+		event.preventDefault();
+		loadURL();
+	};
+
+	// Only load initialURL once, not again when effects re-run inside <Activity>
+	const loadedInitialURL = useRef(false);
+	useEffect(() => {
+		if (enterURL && initialURL !== undefined && !loadedInitialURL.current) {
+			loadedInitialURL.current = true;
+			// url state was initialized to initialURL
+			loadURL();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
 		beforeFile();
@@ -313,7 +336,7 @@ export const LeagueFileUpload = ({
 						}}
 						onKeyDown={(event) => {
 							// This is so "Enter" loads the file, rather than doing nothing or submitting the whole form
-							if (event.key === "Enter") {
+							if (event.key === "Enter" && !event.nativeEvent.isComposing) {
 								handleFileURL(event);
 							}
 						}}

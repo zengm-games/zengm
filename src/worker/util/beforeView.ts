@@ -12,7 +12,7 @@ import {
 import type { Conditions, League } from "../../common/types.ts";
 import {
 	ERROR_MESSAGE_ONE_TAB,
-	ERROR_MESSSAGE_LEAGUE_NOT_FOUND,
+	ERROR_MESSAGE_LEAGUE_NOT_FOUND,
 } from "../../common/constants.ts";
 import { env } from "./env.ts";
 import { initUILocalGames } from "./initUILocalGames.ts";
@@ -27,7 +27,7 @@ const getLeague = async (lid: number) => {
 	const l = await idb.meta.get("leagues", lid);
 
 	if (l === undefined) {
-		throw new Error(ERROR_MESSSAGE_LEAGUE_NOT_FOUND);
+		throw new Error(ERROR_MESSAGE_LEAGUE_NOT_FOUND);
 	}
 
 	return l;
@@ -123,7 +123,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 		await getLeague(newLid);
 		idb.league = await connectLeague(newLid);
 
-		// Do this after connecting to league, in case there is an error during connection, the lid will stil be in sync between worker and ui
+		// Do this after connecting to league, in case there is an error during connection, the lid will still be in sync between worker and ui
 		g.setWithoutSavingToDB("lid", newLid);
 
 		if (loadingNewLid !== newLid) {
@@ -174,7 +174,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 	if (loadingNewLid !== newLid) {
 		return;
 	}
-	await updatePhase(conditions);
+	updatePhase(conditions);
 	if (loadingNewLid !== newLid) {
 		return;
 	}

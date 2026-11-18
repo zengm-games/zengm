@@ -81,7 +81,7 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 	// Check for retired jersey numbers (would be more efficient to get retiredJerseyNumbers once per team and check before calling genJerseyNumber, but oh well)
 	for (const p of [...userTeam, ...worstTeam]) {
 		if (p.jerseyNumber !== undefined) {
-			await player.setJerseyNumber(p, await player.genJerseyNumber(p));
+			player.setJerseyNumber(p, await player.genJerseyNumber(p));
 		}
 	}
 

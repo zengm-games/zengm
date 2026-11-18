@@ -17,7 +17,7 @@ import { getTradeBlockedReason } from "../../../common/transactionPhases.ts";
  *
  * @memberOf core.trade
  * @param {boolean} forceTrade When true (like in God Mode), this trade is accepted regardless of the AI
- * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
+ * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be displayed to the user.
  */
 const propose = async (forceTrade: boolean = false) => {
 	const tradeBlockedReason = getTradeBlockedReason({

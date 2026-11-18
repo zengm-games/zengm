@@ -231,7 +231,7 @@ const countryCodes: Record<string, string> = {
 	Swaziland: "sz",
 	Sweden: "se",
 	Switzerland: "ch",
-	"Syrian Arab Republic": "sy",
+	Syria: "sy",
 	Taiwan: "tw",
 	Tajikistan: "tj",
 	Tanzania: "tz",

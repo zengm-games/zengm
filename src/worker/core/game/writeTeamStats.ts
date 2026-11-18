@@ -447,11 +447,10 @@ const writeTeamStats = async (results: GameResults) => {
 				teamSeason.tid,
 			);
 			const players = await player.formatAll(playersRaw, {
-				attrs: ["pid", "injury", "value"],
+				attrs: ["injury", "value"],
 				fuzz: true,
 				ratings: ["ovr", "pos", "ovrs"],
 				season: g.get("season"),
-				tid: teamSeason.tid,
 			});
 			teamSeason.ovrStart = team.ovr(players);
 		}

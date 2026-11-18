@@ -45,7 +45,7 @@ const connectIndexedDB = async <DBTypes>({
 	}) => Promise<void>;
 }) => {
 	const db = await openDB<DBTypes>(name, version, {
-		async upgrade(db, oldVersion, newVerison, transaction) {
+		async upgrade(db, oldVersion, newVersion, transaction) {
 			try {
 				if (oldVersion === 0) {
 					create(db);

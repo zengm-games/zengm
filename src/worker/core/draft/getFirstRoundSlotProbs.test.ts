@@ -275,3 +275,38 @@ test("assumes no playoffs if the playoff settings are not valid for the teams", 
 		assert.strictEqual(probs.get(t.teamSeason.tid)!.indexOf(1), i);
 	}
 });
+
+test("coinFlip is between the worst non-playoff team in each conference", async () => {
+	// Every team in conference 0 is worse than every team in conference 1, so the 2 worst teams overall are both in conference 0
+	const counts = [0, 0];
+	const teams = getTeams().map((t) => {
+		const cid = t.teamSeason.cid;
+		const i = counts[cid]!;
+		counts[cid]! += 1;
+		return {
+			...t,
+			winp: (cid === 0 ? 0.2 : 0.6) + 0.01 * i,
+			winpStd: 0,
+		};
+	});
+	const worstInConf = (cid: number) =>
+		teams.find((t) => t.teamSeason.cid === cid)!;
+	const secondWorstInConf0 = teams.filter((t) => t.teamSeason.cid === 0)[1]!;
+
+	const probs = await getFirstRoundSlotProbs({
+		teams,
+		draftType: "coinFlip",
+		numSims: NUM_SIMS,
+		season: g.get("season"),
+	});
+
+	// Worst team in each conference takes slot 0 or 1, never the second worst team overall
+	for (const cid of [0, 1]) {
+		const p = probs.get(worstInConf(cid).teamSeason.tid)!;
+		assert.strictEqual(p[0]! + p[1]!, 1);
+	}
+	assert.strictEqual(
+		probs.get(secondWorstInConf0.teamSeason.tid)!.indexOf(1),
+		2,
+	);
+});

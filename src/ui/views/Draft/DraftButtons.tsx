@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { toWorker } from "../../util/toWorker.ts";
+import { useAction } from "../../util/useAction.ts";
 import { confirm } from "../../util/confirm.tsx";
 
 export const DraftButtons = ({
@@ -12,44 +12,31 @@ export const DraftButtons = ({
 	usersTurn: boolean;
 }) => {
 	// This doesn't capture everything, since things can be triggered from outside of this component, but it's something
-	const [running, setRunning] = useState(false);
+	const { busy: running, run } = useAction();
 
 	return (
 		<div className="btn-group">
 			<button
 				className="btn btn-light-bordered"
 				disabled={(usersTurn && !spectator) || running}
-				onClick={async () => {
-					try {
-						setRunning(true);
-						await toWorker("playMenu", "onePick", undefined);
-					} finally {
-						setRunning(false);
-					}
-				}}
+				onClick={() => run(() => toWorker("playMenu", "onePick", undefined))}
 			>
 				Sim one pick
 			</button>
 			<button
 				className="btn btn-light-bordered"
 				disabled={(usersTurn && !spectator) || !userRemaining || running}
-				onClick={async () => {
-					try {
-						setRunning(true);
-						await toWorker("playMenu", "untilYourNextPick", undefined);
-					} finally {
-						setRunning(false);
-					}
-				}}
+				onClick={() =>
+					run(() => toWorker("playMenu", "untilYourNextPick", undefined))
+				}
 			>
 				To your next pick
 			</button>
 			<button
 				className="btn btn-light-bordered"
 				disabled={running}
-				onClick={async () => {
-					try {
-						setRunning(true);
+				onClick={() =>
+					run(async () => {
 						if (userRemaining && !spectator) {
 							const result = await confirm(
 								"If you proceed, the AI will make your remaining picks for you. Are you sure?",
@@ -64,10 +51,8 @@ export const DraftButtons = ({
 							}
 						}
 						await toWorker("playMenu", "untilEnd", undefined);
-					} finally {
-						setRunning(false);
-					}
-				}}
+					})
+				}
 			>
 				To end of draft
 			</button>

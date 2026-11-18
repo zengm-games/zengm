@@ -46,7 +46,7 @@ const getPlayerInfo = async (
 		attrs: ["pid", "injury", "watch", "age", "numAllStar"],
 		ratings: ["ovr", "skills", "pos"],
 		season,
-		stats: [...stats, "jerseyNumber", "tid", "abbrev", ...extraStats],
+		stats: [...stats, "jerseyNumber", ...extraStats],
 		fuzz: true,
 		showNoStats: true,
 		mergeStats: "totOnly",

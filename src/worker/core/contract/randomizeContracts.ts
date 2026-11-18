@@ -10,7 +10,6 @@ import { getContractStartSeason } from "../../util/getContractStartSeason.ts";
 import { draft, freeAgents } from "../index.ts";
 import {
 	addContract,
-	contractToSummary,
 	createContract,
 	endContract,
 	getContractDemand,
@@ -57,10 +56,10 @@ const isSameRemainingContract = (contract: Contract, newContract: Contract) => {
 // Like in a new league (see createRandomPlayers), with rookie scale contracts, a drafted player whose rookie scale contract would still be running gets one for his draft slot, rather than a contract based on his value. undefined if he doesn't get one.
 const getRookieScaleContract = (
 	p: Pick<Player, "draft">,
-	rookieSalaries: number[] | undefined,
+	rookieSalaries: number[],
 	startSeason: number,
 ): FlatContractInfo | undefined => {
-	if (!rookieSalaries || p.draft.round <= 0) {
+	if (!g.get("draftPickAutoContract") || p.draft.round <= 0) {
 		return;
 	}
 
@@ -76,12 +75,25 @@ const getRookieScaleContract = (
 	};
 };
 
+// Contract demand that normalizeContractDemands starts from, the same as for random players in a new league (see createRandomPlayers): his rookie salary if he was drafted, otherwise the min contract. Not his current contract, because normalizeContractDemands mostly adjusts the amount it starts from, so expensive contracts would tend to stay expensive.
+const getInitialContractDemand = (
+	p: Pick<Player, "draft">,
+	rookieSalaries: number[],
+	startSeason: number,
+): FlatContractInfo => {
+	return {
+		amount:
+			p.draft.round > 0
+				? draft.getRookieSalary(p.draft, rookieSalaries)
+				: g.get("minContract"),
+		exp: startSeason,
+	};
+};
+
 // Give every player on a team a new contract, like random players in a new league: a rookie scale contract for recent draft picks (see getRookieScaleContract), otherwise a contract based on his value (see normalizeContractDemands). The new contracts start at the first season that isn't fully paid yet, and the old contracts stay in contract history up to then.
 export const randomizeContracts = async () => {
 	const startSeason = getContractStartSeason();
-	const rookieSalaries = g.get("draftPickAutoContract")
-		? draft.getRookieSalaries()
-		: undefined;
+	const rookieSalaries = draft.getRookieSalaries();
 
 	const playersChanged: Player[] = [];
 	const pidsToNormalize: number[] = [];
@@ -114,10 +126,13 @@ export const randomizeContracts = async () => {
 			replaceContractFrom(p, contract, startSeason);
 			addContract(p, newContract);
 		} else {
-			// Like random players in a new league, he gets a contract demand, which is normalized below and then becomes his contract. His current contract is the starting point for that.
-			const { amount, exp } = contractToSummary(contract);
+			// Like random players in a new league, he gets a contract demand, which is normalized below and then becomes his contract
 			replaceContractFrom(p, contract, startSeason);
-			p.contractDemand = { amount, exp };
+			p.contractDemand = getInitialContractDemand(
+				p,
+				rookieSalaries,
+				startSeason,
+			);
 			pidsToNormalize.push(p.pid);
 		}
 		playersChanged.push(p);

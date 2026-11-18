@@ -217,7 +217,7 @@ const setupRoutes = async () => {
 				errorPage(context);
 			} else if (!context.state.noTrack) {
 				// If this is not an error page, initialize ads. init() will do nothing if it's already initialized
-				ads.init();
+				void ads.init();
 			}
 
 			if (!context.state.noTrack && window.enableLogging) {

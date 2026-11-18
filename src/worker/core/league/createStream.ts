@@ -53,7 +53,7 @@ import { getAutoTicketPriceByTid } from "../game/attendance.ts";
 import addRelatives from "../realRosters/addRelatives.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import addDraftProspects from "./create/addDraftProspects.ts";
-import createRandomPlayers from "./create/createRandomPlayers.ts";
+import { createRandomPlayers } from "./create/createRandomPlayers.ts";
 import getRealTeamPlayerData from "./create/getRealTeamPlayerData.ts";
 import createGameAttributes from "./createGameAttributes.ts";
 import initRandomDebutsForRandomPlayersLeague from "./initRandomDebutsForRandomPlayersLeague.ts";
@@ -1233,46 +1233,14 @@ const finalizeActivePlayers = async ({
 	// WHY IS THIS NEEDED? Can't use players0 because the addRelatives call above might make a copy of a player object and write it to the cache, in which case the prior objects for those players in players0 will be stale.
 	const players = await idb.cache.players.getAll();
 
-	// Adjustment for hard cap - lower contracts for teams above cap
-	if (!fileHasPlayers && g.get("salaryCapType") === "hard") {
-		const minContract = g.get("minContract");
-
-		const teams = await idb.cache.teams.getAll();
-		for (const t of teams) {
-			if (t.disabled) {
-				continue;
-			}
-			// Contract demands of random players, which become their contracts below
-			const roster = players
-				.filter((p) => p.tid === t.tid)
-				.map((p) => p.contractDemand)
-				.filter((contractDemand) => contractDemand !== undefined);
-			let payroll = await team.getPayroll(t.tid);
-			for (const contractDemand of roster) {
-				payroll += contractDemand.amount;
-			}
-
-			while (payroll > g.get("salaryCap")) {
-				let foundAny = false;
-
-				for (const contractDemand of roster) {
-					if (contractDemand.amount >= minContract + 10) {
-						payroll -= 10;
-						contractDemand.amount -= 10;
-						foundAny = true;
-					} else if (contractDemand.amount > minContract) {
-						payroll -= contractDemand.amount - minContract;
-						contractDemand.amount = minContract;
-						foundAny = true;
-					}
-				}
-
-				if (!foundAny) {
-					throw new Error(
-						"Invalid combination of salaryCapType, salaryCap, and minContract - a team full of min contract players is still over the hard cap",
-					);
-				}
-			}
+	// Adjustment for hard cap - lower contracts of random players for teams above cap. Their contract demands become their contracts below.
+	if (!fileHasPlayers) {
+		const tidsOverCap =
+			await freeAgents.lowerContractDemandsForHardCap(players);
+		if (tidsOverCap.length > 0) {
+			throw new Error(
+				"Invalid combination of salaryCapType, salaryCap, and minContract - a team full of min contract players is still over the hard cap",
+			);
 		}
 	}
 
@@ -1677,11 +1645,9 @@ const afterDBStream = async ({
 
 				// This may not be ideal for a season before the rookie contract scale existed, but whatever
 				if ((p2 as any).rookieContract && draftPickAutoContract) {
-					const pickIndex =
-						(p2.draft.round - 1) * g.get("numActiveTeams") + p2.draft.pick - 1;
 					// Not temp, so this won't be normalized. Then it becomes his contract in finalizeActivePlayers.
 					player.setContractDemand(p2, {
-						amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1)!,
+						amount: draft.getRookieSalary(p2.draft, rookieSalaries),
 						exp: p2.contractDemand!.exp,
 						rookie: true,
 					});
@@ -1983,7 +1949,7 @@ const afterDBStream = async ({
 	}
 };
 
-const createStream = async (
+export const createStream = async (
 	leagueData: ReadableStream | Record<string, unknown>,
 	{
 		conditions,
@@ -2109,5 +2075,3 @@ const createStream = async (
 		throw error;
 	}
 };
-
-export default createStream;

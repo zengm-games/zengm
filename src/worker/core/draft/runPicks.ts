@@ -2,7 +2,7 @@ import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common/constants.ts";
 import afterPicks from "./afterPicks.ts";
 import { canBeDrafted } from "./canBeDrafted.ts";
 import getOrder from "./getOrder.ts";
-import selectPlayer from "./selectPlayer.ts";
+import { selectPlayer } from "./selectPlayer.ts";
 import { idb } from "../../db/index.ts";
 import { g, local, lock } from "../../util/index.ts";
 import type {

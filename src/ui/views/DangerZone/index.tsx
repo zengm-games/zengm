@@ -6,9 +6,10 @@ import { useLocal } from "../../util/local.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import AutoSave from "./AutoSave.tsx";
+import { RandomizeContracts } from "./RandomizeContracts.tsx";
 import WorkerConsole from "./WorkerConsole.tsx";
 
-const DangerZone = ({ autoSave }: View<"dangerZone">) => {
+export const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 	useTitleBar({
 		title: "Danger Zone",
 	});
@@ -96,7 +97,7 @@ const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 					{phase === PHASE.AFTER_TRADE_DEADLINE ? (
 						<button
 							type="button"
-							className="btn btn-god-mode border-0"
+							className="btn btn-god-mode"
 							disabled={!godMode}
 							onClick={() => {
 								toWorker("main", "toggleTradeDeadline", undefined);
@@ -107,7 +108,7 @@ const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 					) : (
 						<button
 							type="button"
-							className="btn btn-god-mode border-0"
+							className="btn btn-god-mode"
 							disabled={phase !== PHASE.REGULAR_SEASON || !godMode}
 							onClick={() => {
 								toWorker("main", "toggleTradeDeadline", undefined);
@@ -142,7 +143,7 @@ const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 
 						<button
 							type="button"
-							className="btn btn-god-mode border-0"
+							className="btn btn-god-mode"
 							disabled={
 								(phase !== PHASE.REGULAR_SEASON &&
 									phase !== PHASE.AFTER_TRADE_DEADLINE) ||
@@ -159,6 +160,10 @@ const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 						>
 							Schedule All-Star Game now
 						</button>
+					</div>
+
+					<div className="mt-5">
+						<RandomizeContracts godMode={godMode} />
 					</div>
 				</div>
 
@@ -213,5 +218,3 @@ const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 		</>
 	);
 };
-
-export default DangerZone;

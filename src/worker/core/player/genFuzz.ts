@@ -4,12 +4,12 @@ import {
 } from "../../../common/budgetLevels.ts";
 import { gauss } from "../../../common/random.ts";
 
-const genFuzz = (souctingLevel: number): number => {
+const genFuzz = (scoutingLevel: number): number => {
 	// 1 to 8
-	const cutoff = scoutingEffectCutoff(souctingLevel);
+	const cutoff = scoutingEffectCutoff(scoutingLevel);
 
 	// 1 to 3
-	const stddev = scoutingEffectStddev(souctingLevel);
+	const stddev = scoutingEffectStddev(scoutingLevel);
 
 	let fuzz = gauss(0, stddev);
 

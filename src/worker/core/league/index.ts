@@ -1,7 +1,7 @@
 import autoPlay from "./autoPlay.ts";
 import clone from "./clone.ts";
 import close from "./close.ts";
-import createStream from "./createStream.ts";
+import { createStream } from "./createStream.ts";
 import getName from "./getName.ts";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
 import initAutoPlay from "./initAutoPlay.ts";

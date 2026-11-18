@@ -130,7 +130,21 @@
 				window.releaseStage = "development";
 			}
 		</script>
-		BANNER_ADS_CODE
+		<link rel="preconnect" href="https://a.pub.network/" crossorigin />
+		<link rel="preconnect" href="https://d.pub.network/" crossorigin />
+		<link rel="preconnect" href="https://c.amazon-adsystem.com" crossorigin />
+		<link rel="preconnect" href="https://s.amazon-adsystem.com" crossorigin />
+		<link rel="preconnect" href="https://btloader.com/" crossorigin />
+		<link rel="preconnect" href="https://api.btloader.com/" crossorigin />
+		<script>
+			// The actual ad code is loaded by src/ui/util/adScripts/loadAdScripts.ts after we know the user is not a Gold subscriber, but other code queues calls here before that.
+			window.freestar = window.freestar || {};
+			window.freestar.hitTime = Date.now();
+			window.freestar.queue = window.freestar.queue || [];
+			window.freestar.config = window.freestar.config || {};
+			window.freestar.debug = location.search.indexOf("fsdebug") !== -1;
+			window.freestar.config.enabled_slots = [];
+		</script>
 	</head>
 
 	<body class="h-100" style="padding-top: 52px">

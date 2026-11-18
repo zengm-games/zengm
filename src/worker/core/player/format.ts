@@ -239,8 +239,13 @@ const getSalaryRows = (p: Player) => {
 				}));
 			const paid = Math.sumPrecise(payers.map((payer) => payer.amount));
 
+			// For a contract that ended early with no team owing the rest of it, like when it was replaced by a new contract during the season, nobody will pay the rest, so like for past seasons only what was already paid counts
+			const onlyPaid =
+				type === "past" ||
+				(endedEarly !== undefined && remainingTid === undefined);
+
 			let amount;
-			if (type === "past") {
+			if (onlyPaid) {
 				// Nothing was paid, like for an expiring contract in a league created after the season ended
 				if (payers.length === 0) {
 					continue;

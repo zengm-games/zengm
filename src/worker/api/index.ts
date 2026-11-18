@@ -165,6 +165,7 @@ import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToO
 import { bySport } from "../../common/sportFunctions.ts";
 import { generateContractOptions } from "../core/contractNegotiation/generateContractOptions.ts";
 import { convertLegacyContracts } from "../core/contract/convertLegacyContracts.ts";
+import { randomizeContracts as randomizeContractsCore } from "../core/contract/randomizeContracts.ts";
 import {
 	addContract,
 	createContract,
@@ -5363,6 +5364,11 @@ const toggleColaOptOut = async () => {
 	await toUI("realtimeUpdate", [["draftLottery"]]);
 };
 
+const randomizeContracts = async () => {
+	await randomizeContractsCore();
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
 const toggleTradeDeadline = async () => {
 	const currentPhase = g.get("phase");
 	if (currentPhase === PHASE.AFTER_TRADE_DEADLINE) {
@@ -5637,6 +5643,7 @@ const api = {
 		reorderRosterDrag,
 		resetPlayingTime,
 		retiredJerseyNumberDelete,
+		randomizeContracts,
 		retiredJerseyNumberUpsert,
 		runBefore,
 		setForceWin,

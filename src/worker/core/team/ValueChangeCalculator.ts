@@ -753,11 +753,7 @@ const getPickInfo = async (
 
 	let contractValue = getContractValue(
 		{
-			// Could be undefined if there are picks beyond numDraftRounds
-			amount:
-				rookieSalaries[estPick - 1] ??
-				rookieSalaries.at(-1) ??
-				g.get("minContract"),
+			amount: draft.getRookieSalaryByPickNumber(estPick, rookieSalaries),
 			exp: season + 2,
 		},
 		getPickValue(cache, season, estPick),

@@ -34,7 +34,15 @@ const getProb = ({
 		},
 		homeCourtAdvantage: 1,
 		quarterLength: 12,
-		sportState: { bases, o: bottom ? 0 : 1, outs },
+		sportState: {
+			balls: 0,
+			bases,
+			batterPid: -1,
+			o: bottom ? 0 : 1,
+			outs,
+			pitcherPid: -1,
+			strikes: 0,
+		},
 	})!.prob;
 
 test("before the first pitch is close to the pre-game value", () => {

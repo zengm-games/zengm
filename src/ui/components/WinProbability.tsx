@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { roundWinPercents } from "../../common/gamePrediction.ts";
 import { TEAM_NUMS_DISPLAY_ORDER } from "../util/boxScoreDisplayOrder.ts";
 import { getLiveWinp } from "../util/getLiveWinp.ts";
+import type { LiveGameSportState } from "../util/LiveGamePlayback.ts";
 import { useLocal } from "../util/local.ts";
 
 type WinPercents = ReturnType<typeof roundWinPercents>;
@@ -78,7 +79,7 @@ export const LiveWinProbability = ({
 }: {
 	boxScore: any;
 	quarterLength: number;
-	sportState: any;
+	sportState: LiveGameSportState;
 }) => {
 	const { homeCourtAdvantage } = useLocal(["homeCourtAdvantage"]);
 

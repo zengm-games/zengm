@@ -15,7 +15,7 @@ test("a level score at the end of regulation stays even", () => {
 		},
 		homeCourtAdvantage: 1,
 		quarterLength: 15,
-		sportState: { plays: [] },
+		sportState: undefined,
 	});
 	assert.strictEqual(result?.prob, 0.5);
 });

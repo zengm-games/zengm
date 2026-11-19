@@ -1,6 +1,11 @@
 import { getWinProbabilityBaseball } from "../../common/baseballWinProbability.ts";
 import { getSeconds } from "../../common/formatClock.ts";
 import { helpers } from "../../common/helpers.ts";
+import type { SportState as SportStateBaseball } from "./LiveGamePlayback.baseball.tsx";
+import {
+	isSportStateBaseball,
+	type LiveGameSportState,
+} from "./LiveGamePlayback.ts";
 import {
 	getGameLengthScale,
 	getGamePrediction,
@@ -17,10 +22,10 @@ const getLiveWinpBaseball = ({
 }: {
 	boxScore: any;
 	spread: number;
-	sportState: any;
+	sportState: SportStateBaseball;
 }) => {
 	const { numPeriods, teams } = boxScore;
-	const o: 0 | 1 = sportState?.o ?? 1;
+	const { bases, o, outs } = sportState;
 	const inning = teams[o].ptsQtrs.length;
 
 	// Before the first pitch, the away team is about to bat
@@ -36,18 +41,17 @@ const getLiveWinpBaseball = ({
 		});
 	}
 
-	const bases: unknown[] = sportState?.bases ?? [];
 	return getWinProbabilityBaseball({
-		basesOccupied: [0, 1, 2].map((i) => bases[i] !== undefined) as [
-			boolean,
-			boolean,
-			boolean,
+		basesOccupied: [
+			bases[0] !== undefined,
+			bases[1] !== undefined,
+			bases[2] !== undefined,
 		],
 		inning,
 		margin: teams[0].pts - teams[1].pts,
 		numInnings: numPeriods,
 		o,
-		outs: sportState?.outs ?? 0,
+		outs,
 		spread,
 	});
 };
@@ -94,7 +98,7 @@ export const getLiveWinp = ({
 	boxScore: any;
 	homeCourtAdvantage: number;
 	quarterLength: number;
-	sportState: any;
+	sportState: LiveGameSportState;
 }) => {
 	const { numPeriods, teams } = boxScore;
 
@@ -126,7 +130,7 @@ export const getLiveWinp = ({
 		quarterLength,
 	});
 
-	if (__SPORT === "baseball") {
+	if (__SPORT === "baseball" && isSportStateBaseball(sportState)) {
 		return {
 			prob: getLiveWinpBaseball({
 				boxScore,

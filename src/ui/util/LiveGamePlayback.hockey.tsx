@@ -175,6 +175,9 @@ export class LiveGamePlaybackHockey extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
+	// No extra state for the live game UI
+	override sportState = undefined;
+
 	protected override getScoreLabel() {
 		return "Goal!";
 	}

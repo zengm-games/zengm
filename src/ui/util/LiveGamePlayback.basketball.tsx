@@ -427,6 +427,9 @@ export class LiveGamePlaybackBasketball extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
+	// No extra state for the live game UI
+	override sportState = undefined;
+
 	protected override getClockText() {
 		// No clock in the Elam Ending
 		if (this.boxScore.elamTarget !== undefined) {

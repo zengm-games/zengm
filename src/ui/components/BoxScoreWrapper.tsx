@@ -20,6 +20,10 @@ import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { useLocal } from "../util/local.ts";
 import {
+	isSportStateBaseball,
+	type LiveGameSportState,
+} from "../util/LiveGamePlayback.ts";
+import {
 	TEAM_NUMS_DISPLAY_ORDER,
 	teamsInDisplayOrder,
 } from "../util/boxScoreDisplayOrder.ts";
@@ -822,7 +826,7 @@ const DetailedScore = ({
 	nextGid?: number;
 	prevGid?: number;
 	showNextPrev?: boolean;
-	sportState: any;
+	sportState: LiveGameSportState;
 	tid?: number;
 }) => {
 	const teams = teamsInDisplayOrder(boxScore.teams as [any, any]);
@@ -968,7 +972,9 @@ const DetailedScore = ({
 						</tbody>
 					</table>
 				</div>
-				{__SPORT === "baseball" && liveGameSim ? (
+				{__SPORT === "baseball" &&
+				liveGameSim &&
+				isSportStateBaseball(sportState) ? (
 					<div className="ms-4 mx-xs-auto d-sm-inline-block text-start">
 						<BaseballDiamond {...sportState} />
 					</div>
@@ -1099,7 +1105,7 @@ export const BoxScoreWrapper = ({
 	playIndex?: number;
 	prevGid?: number;
 	showNextPrev?: boolean;
-	sportState: unknown;
+	sportState: LiveGameSportState;
 	tid?: number;
 	Row: unknown;
 }) => {

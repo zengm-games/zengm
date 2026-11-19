@@ -593,7 +593,7 @@ export type GameAttributesLeague = {
 	allStarDunk: boolean;
 	allStarThree: boolean;
 	alwaysShowCountry: boolean;
-	pomymarket: boolean;
+	gamePrediction: "probability" | "spread";
 	autoExpand:
 		| {
 				phase: "vote";

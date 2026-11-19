@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { POMYMARKET_NAME } from "../../common/constants.ts";
 import { roundWinPercents } from "../../common/winProbability.ts";
 import { TEAM_NUMS_DISPLAY_ORDER } from "../util/boxScoreDisplayOrder.ts";
 import { getLiveWinp } from "../util/getLiveWinp.ts";
@@ -11,7 +10,7 @@ const isFavorite = ({ percents }: WinPercents, i: 0 | 1) => {
 	return percents[i] > percents[i === 0 ? 1 : 0];
 };
 
-export const PomymarketPercent = ({
+export const WinPercent = ({
 	i,
 	preGame,
 	winPercents,
@@ -26,7 +25,7 @@ export const PomymarketPercent = ({
 		return (
 			<span
 				className="text-body-secondary"
-				title={`${POMYMARKET_NAME} win percentage before the game`}
+				title="Win probability before the game"
 			>
 				{percent} pre-game
 			</span>
@@ -39,14 +38,14 @@ export const PomymarketPercent = ({
 				"text-success": !winPercents.even && isFavorite(winPercents, i),
 				"text-danger": !winPercents.even && !isFavorite(winPercents, i),
 			})}
-			title={`${POMYMARKET_NAME} win percentage`}
+			title="Win probability"
 		>
 			{percent}
 		</span>
 	);
 };
 
-export const PomymarketBar = ({
+export const WinProbabilityBar = ({
 	className,
 	order,
 	winPercents,
@@ -72,7 +71,7 @@ export const PomymarketBar = ({
 	);
 };
 
-export const PomymarketLive = ({
+export const LiveWinProbability = ({
 	boxScore,
 	quarterLength,
 	sportState,
@@ -81,12 +80,9 @@ export const PomymarketLive = ({
 	quarterLength: number;
 	sportState: any;
 }) => {
-	const { homeCourtAdvantage, pomymarket } = useLocal([
-		"homeCourtAdvantage",
-		"pomymarket",
-	]);
+	const { homeCourtAdvantage } = useLocal(["homeCourtAdvantage"]);
 
-	if (!pomymarket || boxScore.exhibition) {
+	if (boxScore.exhibition) {
 		return null;
 	}
 
@@ -108,11 +104,11 @@ export const PomymarketLive = ({
 				{TEAM_NUMS_DISPLAY_ORDER.map((i) => (
 					<div key={i}>
 						{boxScore.teams[i].abbrev}{" "}
-						<PomymarketPercent i={i} winPercents={winPercents} />
+						<WinPercent i={i} winPercents={winPercents} />
 					</div>
 				))}
 			</div>
-			<PomymarketBar
+			<WinProbabilityBar
 				order={TEAM_NUMS_DISPLAY_ORDER}
 				winPercents={winPercents}
 			/>

@@ -22,7 +22,7 @@ import {
 	getWinProbability,
 	roundWinPercents,
 } from "../../../common/winProbability.ts";
-import { PomymarketBar, PomymarketPercent } from "../PomymarketOdds.tsx";
+import { WinPercent, WinProbabilityBar } from "../WinProbability.tsx";
 import { TEAM_NUMS_DISPLAY_ORDER } from "../../util/boxScoreDisplayOrder.ts";
 
 type Team = {
@@ -111,22 +111,22 @@ export const ScoreBox = memo(
 	}) => {
 		const {
 			challengeNoRatings,
+			gamePrediction,
 			homeCourtAdvantage,
 			neutralSite,
 			numPeriods,
 			phase,
-			pomymarket,
 			quarterLength,
 			season,
 			teamInfoCache,
 			userTid,
 		} = useLocal([
 			"challengeNoRatings",
+			"gamePrediction",
 			"homeCourtAdvantage",
 			"neutralSite",
 			"numPeriods",
 			"phase",
-			"pomymarket",
 			"quarterLength",
 			"season",
 			"teamInfoCache",
@@ -167,7 +167,7 @@ export const ScoreBox = memo(
 				quarterLength,
 			} as const;
 
-			if (pomymarket) {
+			if (gamePrediction === "probability") {
 				winPercents = roundWinPercents(
 					getWinProbability(getWinModelInputs(gameInfo)),
 				);
@@ -418,7 +418,7 @@ export const ScoreBox = memo(
 													{winPercents ? (
 														<>
 															,{" "}
-															<PomymarketPercent
+															<WinPercent
 																i={i}
 																preGame={final}
 																winPercents={winPercents}
@@ -446,7 +446,7 @@ export const ScoreBox = memo(
 										{(spreads || winPercents) && small ? (
 											<div className="text-end score-box-score me-2">
 												{winPercents ? (
-													<PomymarketPercent i={i} winPercents={winPercents} />
+													<WinPercent i={i} winPercents={winPercents} />
 												) : (
 													spreads?.[i]
 												)}
@@ -553,7 +553,7 @@ export const ScoreBox = memo(
 						})
 					)}
 					{winPercents && !small && !final ? (
-						<PomymarketBar
+						<WinProbabilityBar
 							order={TEAM_NUMS_DISPLAY_ORDER}
 							winPercents={winPercents}
 						/>

@@ -2,7 +2,6 @@ import {
 	COURT,
 	DIFFICULTY,
 	GAME_NAME,
-	POMYMARKET_NAME,
 	REAL_DRAFT_RATINGS,
 	REAL_PLAYERS_INFO,
 	TIEBREAKERS,
@@ -2998,11 +2997,15 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "UI",
-			key: "pomymarket",
-			name: POMYMARKET_NAME,
-			type: "bool",
+			key: "gamePrediction",
+			name: "Game Predictions",
+			type: "string",
+			values: [
+				{ key: "probability", value: "Win probability" },
+				{ key: "spread", value: "Point spread" },
+			],
 			description:
-				"A parody prediction market, just for fun. Shows title odds on the Power Rankings page and win percentages in place of point spreads, including during live games. All numbers come from the game's own model, even with the No Visible Player Ratings challenge. There is no betting and no real market.",
+				"Whether score boxes for games, like on the schedule, show the point spread or each team's win probability.",
 		},
 		{
 			category: "UI",

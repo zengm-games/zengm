@@ -7,7 +7,7 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import type { TitleOdds } from "../../worker/core/team/getTitleOdds.ts";
-import { POMYMARKET_NAME, POSITIONS, RATINGS } from "../../common/constants.ts";
+import { POSITIONS, RATINGS } from "../../common/constants.ts";
 import { formatTitleOdds } from "../../common/winProbability.ts";
 import {
 	teamMovOrDiffStat,
@@ -95,14 +95,12 @@ const PowerRankings = ({
 		challengeNoRatings,
 		gameSimInProgress,
 		phase,
-		pomymarket,
 		season: currentSeason,
 		userTid,
 	} = useLocal([
 		"challengeNoRatings",
 		"gameSimInProgress",
 		"phase",
-		"pomymarket",
 		"season",
 		"userTid",
 	]);
@@ -110,15 +108,13 @@ const PowerRankings = ({
 	const [showHealthy, setShowHealthy] = useState(true);
 	const actualShowHealthy = showHealthy || currentSeason !== season;
 
-	const showTitleOdds = titleOddsAvailable && pomymarket;
-
 	// undefined means still loading, and null means there are no odds to show
 	const [titleOdds, setTitleOdds] = useState<TitleOdds | null>();
 	const [titleOddsLoading, setTitleOddsLoading] = useState(false);
 
 	// Not in the worker view, because that runs after every day of a sim. phase is here because the sim ends before the phase changes to the playoffs.
 	useEffect(() => {
-		if (!showTitleOdds || gameSimInProgress) {
+		if (!titleOddsAvailable || gameSimInProgress) {
 			return;
 		}
 
@@ -141,7 +137,7 @@ const PowerRankings = ({
 		return () => {
 			stale = true;
 		};
-	}, [currentSeason, gameSimInProgress, phase, showTitleOdds]);
+	}, [currentSeason, gameSimInProgress, phase, titleOddsAvailable]);
 
 	const [otherKeys, otherKeysTitle, otherKeysPrefix] = bySport({
 		baseball: [
@@ -167,10 +163,10 @@ const PowerRankings = ({
 			title: "Team Rating",
 			colspan: 2,
 		},
-		...(showTitleOdds ? [{ title: POMYMARKET_NAME, colspan: 1 }] : []),
 		{
 			title: "",
-			colspan: 5 + (ties ? 1 : 0) + (otl ? 1 : 0),
+			colspan:
+				5 + (titleOddsAvailable ? 1 : 0) + (ties ? 1 : 0) + (otl ? 1 : 0),
 		},
 		{
 			title: (
@@ -200,7 +196,7 @@ const PowerRankings = ({
 		"Division",
 		"Current",
 		"Healthy",
-		...(showTitleOdds ? ["Title Odds"] : []),
+		...(titleOddsAvailable ? ["Title Odds"] : []),
 		"W",
 		"L",
 		...(otl ? ["OTL"] : []),
@@ -272,7 +268,7 @@ const PowerRankings = ({
 					)
 				) : null,
 				!challengeNoRatings ? t.powerRankings.ovr : null,
-				...(showTitleOdds
+				...(titleOddsAvailable
 					? [getTitleOddsCell(t.tid, t.powerRankings.rank)]
 					: []),
 				t.seasonAttrs.won,
@@ -322,7 +318,7 @@ const PowerRankings = ({
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				defaultStickyCols={2}
-				name={showTitleOdds ? "PowerRankingsTitleOdds" : "PowerRankings"}
+				name={titleOddsAvailable ? "PowerRankingsTitleOdds" : "PowerRankings"}
 				nonfluid
 				rows={rows}
 				superCols={superCols}

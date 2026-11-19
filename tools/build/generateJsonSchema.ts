@@ -743,8 +743,8 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					alwaysShowCountry: {
 						type: "boolean",
 					},
-					pomymarket: {
-						type: "boolean",
+					gamePrediction: {
+						enum: ["probability", "spread"],
 					},
 					autoExpand: {
 						type: "object",

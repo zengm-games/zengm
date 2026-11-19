@@ -18,7 +18,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { getSeconds } from "../../../common/formatClock.ts";
-import { PomymarketLive } from "../../components/PomymarketOdds.tsx";
+import { LiveWinProbability } from "../../components/WinProbability.tsx";
 import useLocalStorageState from "use-local-storage-state";
 import { LiveGamePlayback } from "../../util/LiveGamePlayback.ts";
 import type { LiveGameEntry } from "../../util/LiveGamePlaybackBase.ts";
@@ -701,7 +701,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 									boxScore={boxScore.current}
 									isStuck={isStuck}
 								/>
-								<PomymarketLive
+								<LiveWinProbability
 									boxScore={boxScore.current}
 									quarterLength={props.quarterLength}
 									sportState={playback.current?.sportState}

@@ -56,7 +56,7 @@ const getLeagueState = (): Pick<
 	| "playMenuOptions"
 > => ({
 	alwaysShowCountry: false,
-	pomymarket: false,
+	gamePrediction: defaultGameAttributes.gamePrediction,
 	budget: defaultGameAttributes.budget,
 	challengeNoRatings: false,
 	challengeNoTrades: false,

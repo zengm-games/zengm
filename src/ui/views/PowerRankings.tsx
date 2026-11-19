@@ -9,6 +9,7 @@ import type { View } from "../../common/types.ts";
 import type { TeamOdds } from "../../worker/core/team/getTeamOdds.ts";
 import { POSITIONS, RATINGS } from "../../common/constants.ts";
 import { formatOdds } from "../../common/gamePrediction.ts";
+import { TextUnderlineBar } from "../components/TextUnderlineBar.tsx";
 import {
 	teamMovOrDiffStat,
 	wrappedTeamMovOrDiff,
@@ -50,15 +51,13 @@ const OddsCell = ({
 	text: string;
 }) => {
 	return (
-		<div className={clsx({ "text-body-secondary": dimmed })}>
+		<TextUnderlineBar
+			barClassName="bg-success"
+			className={clsx({ "text-body-secondary": dimmed })}
+			percent={(prob ?? 0) * 100}
+		>
 			{text}
-			{prob ? (
-				<div
-					className="bg-success"
-					style={{ height: 2, width: `${prob * 100}%` }}
-				/>
-			) : null}
-		</div>
+		</TextUnderlineBar>
 	);
 };
 
@@ -112,7 +111,7 @@ const PowerRankings = ({
 	const [teamOdds, setTeamOdds] = useState<TeamOdds | null>();
 	const [teamOddsLoading, setTeamOddsLoading] = useState(false);
 
-	// Not in the worker view, because that runs after every day of a sim. phase is here because the sim ends before the phase changes to the playoffs.
+	// Loaded here rather than in the worker view, because that reruns after every day of a sim, and this is too slow for that (~300ms). Instead it waits until the sim stops (gameSimInProgress), which only the UI knows about, and it doesn't hold up rendering the rest of the table. phase is here because the sim ends before the phase changes to the playoffs.
 	useEffect(() => {
 		if (!teamOddsAvailable || gameSimInProgress) {
 			return;

@@ -6,9 +6,9 @@ import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
-import type { TitleOdds } from "../../worker/core/team/getTitleOdds.ts";
+import type { TeamOdds } from "../../worker/core/team/getTeamOdds.ts";
 import { POSITIONS, RATINGS } from "../../common/constants.ts";
-import { formatTitleOdds } from "../../common/winProbability.ts";
+import { formatOdds } from "../../common/winProbability.ts";
 import {
 	teamMovOrDiffStat,
 	wrappedTeamMovOrDiff,
@@ -40,7 +40,7 @@ const Other = ({
 	);
 };
 
-const TitleOddsCell = ({
+const OddsCell = ({
 	dimmed,
 	prob,
 	text,
@@ -69,7 +69,7 @@ const PowerRankings = ({
 	season,
 	teams,
 	ties,
-	titleOddsAvailable,
+	teamOddsAvailable,
 	otl,
 }: View<"powerRankings">) => {
 	useTitleBar({
@@ -109,27 +109,27 @@ const PowerRankings = ({
 	const actualShowHealthy = showHealthy || currentSeason !== season;
 
 	// undefined means still loading, and null means there are no odds to show
-	const [titleOdds, setTitleOdds] = useState<TitleOdds | null>();
-	const [titleOddsLoading, setTitleOddsLoading] = useState(false);
+	const [teamOdds, setTeamOdds] = useState<TeamOdds | null>();
+	const [teamOddsLoading, setTeamOddsLoading] = useState(false);
 
 	// Not in the worker view, because that runs after every day of a sim. phase is here because the sim ends before the phase changes to the playoffs.
 	useEffect(() => {
-		if (!titleOddsAvailable || gameSimInProgress) {
+		if (!teamOddsAvailable || gameSimInProgress) {
 			return;
 		}
 
 		let stale = false;
-		setTitleOddsLoading(true);
+		setTeamOddsLoading(true);
 		const load = async () => {
-			let newTitleOdds;
+			let newTeamOdds;
 			try {
-				newTitleOdds = await toWorker("main", "getTitleOdds", undefined);
+				newTeamOdds = await toWorker("main", "getTeamOdds", undefined);
 			} catch (error) {
 				console.error(error);
 			}
 			if (!stale) {
-				setTitleOdds(newTitleOdds ?? null);
-				setTitleOddsLoading(false);
+				setTeamOdds(newTeamOdds ?? null);
+				setTeamOddsLoading(false);
 			}
 		};
 		load();
@@ -137,7 +137,7 @@ const PowerRankings = ({
 		return () => {
 			stale = true;
 		};
-	}, [currentSeason, gameSimInProgress, phase, titleOddsAvailable]);
+	}, [currentSeason, gameSimInProgress, phase, teamOddsAvailable]);
 
 	const [otherKeys, otherKeysTitle, otherKeysPrefix] = bySport({
 		baseball: [
@@ -163,10 +163,10 @@ const PowerRankings = ({
 			title: "Team Rating",
 			colspan: 2,
 		},
+		...(teamOddsAvailable ? [{ title: "Odds", colspan: 2 }] : []),
 		{
 			title: "",
-			colspan:
-				5 + (titleOddsAvailable ? 1 : 0) + (ties ? 1 : 0) + (otl ? 1 : 0),
+			colspan: 5 + (ties ? 1 : 0) + (otl ? 1 : 0),
 		},
 		{
 			title: (
@@ -196,7 +196,7 @@ const PowerRankings = ({
 		"Division",
 		"Current",
 		"Healthy",
-		...(titleOddsAvailable ? ["Title Odds"] : []),
+		...(teamOddsAvailable ? ["Playoff Odds", "Title Odds"] : []),
 		"W",
 		"L",
 		...(otl ? ["OTL"] : []),
@@ -207,7 +207,11 @@ const PowerRankings = ({
 		...otherKeys.map((key) => `${otherKeysPrefix}:${key}`),
 	];
 
-	const cols = getCols(colNames);
+	// The "Odds" super column already says what these are
+	const cols = getCols(colNames, {
+		"Playoff Odds": { title: "Playoffs" },
+		"Title Odds": { title: "Title" },
+	});
 
 	if (__SPORT === "basketball") {
 		for (const [colName, col] of Iterator.zip([colNames, cols], {
@@ -219,18 +223,22 @@ const PowerRankings = ({
 		}
 	}
 
-	const getTitleOddsCell = (tid: number, rank: number) => {
-		const odds = titleOdds?.[tid];
+	const getOddsCell = (
+		tid: number,
+		rank: number,
+		type: keyof TeamOdds[number],
+	) => {
+		const odds = teamOdds?.[tid]?.[type];
 		const text = odds
-			? formatTitleOdds(odds.prob, odds.resolved)
-			: titleOdds === undefined
+			? formatOdds(odds.prob, odds.resolved)
+			: teamOdds === undefined
 				? "..."
 				: "N/A";
 
 		return {
 			value: (
-				<TitleOddsCell
-					dimmed={gameSimInProgress || titleOddsLoading}
+				<OddsCell
+					dimmed={gameSimInProgress || teamOddsLoading}
 					prob={odds?.prob}
 					text={text}
 				/>
@@ -268,8 +276,11 @@ const PowerRankings = ({
 					)
 				) : null,
 				!challengeNoRatings ? t.powerRankings.ovr : null,
-				...(titleOddsAvailable
-					? [getTitleOddsCell(t.tid, t.powerRankings.rank)]
+				...(teamOddsAvailable
+					? [
+							getOddsCell(t.tid, t.powerRankings.rank, "playoffs"),
+							getOddsCell(t.tid, t.powerRankings.rank, "title"),
+						]
 					: []),
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
@@ -318,7 +329,7 @@ const PowerRankings = ({
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				defaultStickyCols={2}
-				name={titleOddsAvailable ? "PowerRankingsTitleOdds" : "PowerRankings"}
+				name={teamOddsAvailable ? "PowerRankingsOdds" : "PowerRankings"}
 				nonfluid
 				rows={rows}
 				superCols={superCols}

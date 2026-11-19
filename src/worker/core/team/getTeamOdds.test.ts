@@ -1,21 +1,21 @@
 import { afterAll, assert, beforeAll, describe, test } from "vitest";
 import { mockIDBLeague, resetCache, resetG } from "../../../test/helpers.ts";
-import type { PlayoffSeries } from "../../../common/types.ts";
+import type { PlayoffSeries, TeamSeason } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { PHASE } from "../../../common/constants.ts";
 import {
 	getTeamStrength,
-	getTitleOdds,
-	isTitleOddsAvailable,
-	simTitleOdds,
-} from "./getTitleOdds.ts";
+	getTeamOdds,
+	isTeamOddsAvailable,
+	simTeamOdds,
+} from "./getTeamOdds.ts";
 
 const NUM_SIMS = 300;
 
 const getTeams = (ovrs?: (tid: number) => number, gamesLeft = 82) => {
 	return helpers.getTeamsDefault().map((t) => ({
-		eliminated: false,
+		clinchedPlayoffs: undefined as TeamSeason["clinchedPlayoffs"],
 		gamesLeft,
 		ovr: ovrs ? ovrs(t.tid) : 50,
 		teamSeason: {
@@ -69,8 +69,8 @@ const makeBracket = (won: [number, number] = [0, 0]) =>
 		0,
 	);
 
-const sim = (args: Partial<Parameters<typeof simTitleOdds>[0]> = {}) =>
-	simTitleOdds({
+const sim = (args: Partial<Parameters<typeof simTeamOdds>[0]> = {}) =>
+	simTeamOdds({
 		numSims: NUM_SIMS,
 		season: g.get("season"),
 		teams: getTeams(),
@@ -92,13 +92,16 @@ afterAll(() => {
 describe("regular season", () => {
 	test("probabilities sum to 1", async () => {
 		const odds = await sim({ teams: getTeams((tid) => 40 + tid) });
-		const total = Object.values(odds!).reduce((sum, t) => sum + t.prob, 0);
+		const total = Object.values(odds!).reduce(
+			(sum, t) => sum + t.title.prob,
+			0,
+		);
 		assert.closeTo(total, 1, 1e-9);
 	});
 
 	test("a stronger team gets higher odds with the same record", async () => {
 		const odds = (await sim({ teams: getTeams((tid) => 30 + tid * 1.5) }))!;
-		assert.isAbove(odds[29]!.prob, odds[0]!.prob);
+		assert.isAbove(odds[29]!.title.prob, odds[0]!.title.prob);
 	});
 
 	test("depends on the size of the rating gap, not just rank", async () => {
@@ -108,7 +111,7 @@ describe("regular season", () => {
 		const large = (await sim({
 			teams: getTeams((tid) => (tid === 0 ? 75 : 50)),
 		}))!;
-		assert.isAbove(large[0]!.prob, small[0]!.prob * 2);
+		assert.isAbove(large[0]!.title.prob, small[0]!.title.prob * 2);
 	});
 
 	test("is deterministic", async () => {
@@ -118,17 +121,46 @@ describe("regular season", () => {
 
 	test("an eliminated team gets exactly 0, as a resolved value", async () => {
 		const teams = getTeams((tid) => (tid === 0 ? 90 : 50));
-		teams[0]!.eliminated = true;
+		teams[0]!.clinchedPlayoffs = "o";
 		const odds = (await sim({ teams }))!;
-		assert.deepEqual(odds[0], { prob: 0, resolved: true });
+		assert.deepEqual(odds[0]!.title, { prob: 0, resolved: true });
+		assert.deepEqual(odds[0]!.playoffs, { prob: 0, resolved: true });
+	});
+
+	test("playoff odds add up to the number of playoff teams", async () => {
+		const odds = (await sim({ teams: getTeams((tid) => 40 + tid) }))!;
+		const total = Object.values(odds).reduce(
+			(sum, t) => sum + t.playoffs.prob,
+			0,
+		);
+		assert.closeTo(total, 2 ** g.get("numGamesPlayoffSeries").length, 1e-9);
+	});
+
+	test("clinching the playoffs is resolved, but clinching the play-in is not", async () => {
+		const teams = getTeams((tid) => 40 + tid);
+		teams[0]!.clinchedPlayoffs = "x";
+		teams[1]!.clinchedPlayoffs = "w";
+		const odds = (await sim({ teams }))!;
+		assert.deepEqual(odds[0]!.playoffs, { prob: 1, resolved: true });
+		assert.isUndefined(odds[1]!.playoffs.resolved);
+	});
+
+	test("with no games left and no play-in, team strength does not change who makes the playoffs", async () => {
+		g.setWithoutSavingToDB("playIn", false);
+		const odds = (await sim({ teams: getTeams((tid) => 40 + tid, 0) }))!;
+		g.setWithoutSavingToDB("playIn", true);
+
+		for (const { playoffs } of Object.values(odds)) {
+			assert.include([0, 1], playoffs.prob);
+		}
 	});
 
 	test("a live team with no simulated titles is not resolved", async () => {
 		const odds = (await sim({
 			teams: getTeams((tid) => (tid === 0 ? 0 : 50)),
 		}))!;
-		assert.strictEqual(odds[0]!.prob, 0);
-		assert.isUndefined(odds[0]!.resolved);
+		assert.strictEqual(odds[0]!.title.prob, 0);
+		assert.isUndefined(odds[0]!.title.resolved);
 	});
 
 	test("invalid playoff settings return undefined", async () => {
@@ -150,16 +182,20 @@ describe("playoffs", () => {
 	test("a 3-0 lead beats a 0-0 start", async () => {
 		const start = (await sim({ playoffSeries: makeBracket() }))!;
 		const lead = (await sim({ playoffSeries: makeBracket([3, 0]) }))!;
-		assert.isAbove(lead[0]!.prob, start[0]!.prob);
-		assert.isBelow(lead[3]!.prob, start[3]!.prob);
+		assert.isAbove(lead[0]!.title.prob, start[0]!.title.prob);
+		assert.isBelow(lead[3]!.title.prob, start[3]!.title.prob);
 	});
 
 	test("teams out of the bracket and series losers get exactly 0", async () => {
 		const odds = (await sim({ playoffSeries: makeBracket([0, 4]) }))!;
-		assert.deepEqual(odds[0], { prob: 0, resolved: true });
-		assert.deepEqual(odds[10], { prob: 0, resolved: true });
-		assert.isAbove(odds[3]!.prob, 0);
-		assert.isUndefined(odds[3]!.resolved);
+		assert.deepEqual(odds[0]!.title, { prob: 0, resolved: true });
+		assert.deepEqual(odds[10]!.title, { prob: 0, resolved: true });
+
+		// Losing in the playoffs still counts as making the playoffs
+		assert.deepEqual(odds[0]!.playoffs, { prob: 1, resolved: true });
+		assert.deepEqual(odds[10]!.playoffs, { prob: 0, resolved: true });
+		assert.isAbove(odds[3]!.title.prob, 0);
+		assert.isUndefined(odds[3]!.title.resolved);
 	});
 
 	test("a team with a bye advances without a game", async () => {
@@ -176,8 +212,12 @@ describe("playoffs", () => {
 			),
 			teams: getTeams((tid) => (tid === 0 ? 50 : 50)),
 		}))!;
-		assert.isAbove(odds[0]!.prob, odds[1]!.prob);
-		assert.closeTo(odds[0]!.prob + odds[1]!.prob + odds[2]!.prob, 1, 1e-9);
+		assert.isAbove(odds[0]!.title.prob, odds[1]!.title.prob);
+		assert.closeTo(
+			odds[0]!.title.prob + odds[1]!.title.prob + odds[2]!.title.prob,
+			1,
+			1e-9,
+		);
 	});
 
 	test("a decided champion is resolved without simulating", async () => {
@@ -192,9 +232,11 @@ describe("playoffs", () => {
 			1,
 		);
 		const odds = (await sim({ numSims: 0, playoffSeries }))!;
-		assert.deepEqual(odds[1], { prob: 1, resolved: true });
-		assert.deepEqual(odds[0], { prob: 0, resolved: true });
-		assert.deepEqual(odds[5], { prob: 0, resolved: true });
+		assert.deepEqual(odds[1]!.title, { prob: 1, resolved: true });
+		assert.deepEqual(odds[0]!.title, { prob: 0, resolved: true });
+		assert.deepEqual(odds[5]!.title, { prob: 0, resolved: true });
+		assert.deepEqual(odds[1]!.playoffs, { prob: 1, resolved: true });
+		assert.deepEqual(odds[5]!.playoffs, { prob: 0, resolved: true });
 	});
 
 	test("a bracket with a tid that no longer exists does not throw", async () => {
@@ -202,7 +244,7 @@ describe("playoffs", () => {
 			playoffSeries: makeBracket(),
 			teams: getTeams().slice(1),
 		}))!;
-		assert.isAbove(odds[1]!.prob, 0);
+		assert.isAbove(odds[1]!.title.prob, 0);
 	});
 
 	test("reseeds later rounds", async () => {
@@ -233,7 +275,7 @@ describe("playoffs", () => {
 		g.setWithoutSavingToDB("playoffsByConf", true);
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7] as any);
 
-		assert.isBelow(reseeded[5]!.prob, notReseeded[5]!.prob - 0.02);
+		assert.isBelow(reseeded[5]!.title.prob, notReseeded[5]!.title.prob - 0.02);
 	});
 
 	describe("play-in", () => {
@@ -272,11 +314,18 @@ describe("playoffs", () => {
 
 		test("two games played", async () => {
 			const odds = (await sim({ playoffSeries: makePlayIn() }))!;
-			assert.deepEqual(odds[3], { prob: 0, resolved: true });
-			assert.isUndefined(odds[2]!.resolved);
-			assert.isUndefined(odds[4]!.resolved);
+			assert.deepEqual(odds[3]!.title, { prob: 0, resolved: true });
+			assert.isUndefined(odds[2]!.title.resolved);
+			assert.isUndefined(odds[4]!.title.resolved);
+
+			// Team 1 won its play-in game, so it's in. Teams 2 and 4 play for the last spot.
+			assert.deepEqual(odds[1]!.playoffs, { prob: 1, resolved: true });
+			assert.deepEqual(odds[3]!.playoffs, { prob: 0, resolved: true });
+			assert.isAbove(odds[2]!.playoffs.prob, 0);
+			assert.isAbove(odds[4]!.playoffs.prob, 0);
+			assert.closeTo(odds[2]!.playoffs.prob + odds[4]!.playoffs.prob, 1, 1e-9);
 			assert.closeTo(
-				[0, 1, 2, 4, 5].reduce((sum, tid) => sum + odds[tid]!.prob, 0),
+				[0, 1, 2, 4, 5].reduce((sum, tid) => sum + odds[tid]!.title.prob, 0),
 				1,
 				1e-9,
 			);
@@ -284,8 +333,8 @@ describe("playoffs", () => {
 
 		test("three games played", async () => {
 			const odds = (await sim({ playoffSeries: makePlayIn(true) }))!;
-			assert.deepEqual(odds[2], { prob: 0, resolved: true });
-			assert.isUndefined(odds[4]!.resolved);
+			assert.deepEqual(odds[2]!.title, { prob: 0, resolved: true });
+			assert.isUndefined(odds[4]!.title.resolved);
 		});
 
 		test("winning the lower game does not win the third game", async () => {
@@ -314,7 +363,10 @@ describe("playoffs", () => {
 			const odds = (await sim({ numSims: 3000, playoffSeries }))!;
 
 			// Teams 2 and 3 get the winner's slot, and the loser of their game is still alive for team 5's slot
-			assert.isAbove(odds[2]!.prob + odds[3]!.prob, odds[5]!.prob * 2);
+			assert.isAbove(
+				odds[2]!.title.prob + odds[3]!.title.prob,
+				odds[5]!.title.prob * 2,
+			);
 		});
 	});
 
@@ -328,11 +380,11 @@ describe("playoffs", () => {
 		g.setWithoutSavingToDB("neutralSite", "never");
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7] as any);
 
-		assert.isBelow(neutral[0]!.prob, notNeutral[0]!.prob - 0.02);
+		assert.isBelow(neutral[0]!.title.prob, notNeutral[0]!.title.prob - 0.02);
 	});
 });
 
-describe("getTitleOdds", () => {
+describe("getTeamOdds", () => {
 	const season = 2025;
 
 	beforeAll(async () => {
@@ -359,20 +411,21 @@ describe("getTitleOdds", () => {
 	});
 
 	test("maps eliminated teams and skips disabled teams", async () => {
-		const odds = (await getTitleOdds())!;
-		assert.deepEqual(odds[0], { prob: 0, resolved: true });
+		const odds = (await getTeamOdds())!;
+		assert.deepEqual(odds[0]!.title, { prob: 0, resolved: true });
+		assert.deepEqual(odds[0]!.playoffs, { prob: 0, resolved: true });
 		assert.isUndefined(odds[1]);
 		assert.isDefined(odds[2]);
 	});
 
 	test("returns undefined in the playoffs with no bracket", async () => {
 		g.setWithoutSavingToDB("phase", PHASE.PLAYOFFS);
-		assert.isUndefined(await getTitleOdds());
+		assert.isUndefined(await getTeamOdds());
 		g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	});
 });
 
-test("isTitleOddsAvailable", () => {
+test("isTeamOddsAvailable", () => {
 	const season = g.get("season");
 
 	for (const phase of [
@@ -381,17 +434,17 @@ test("isTitleOddsAvailable", () => {
 		PHASE.DRAFT_LOTTERY,
 	]) {
 		g.setWithoutSavingToDB("phase", phase);
-		assert.isTrue(isTitleOddsAvailable(season));
+		assert.isTrue(isTeamOddsAvailable(season));
 	}
 
-	assert.isFalse(isTitleOddsAvailable(season - 1));
+	assert.isFalse(isTeamOddsAvailable(season - 1));
 
 	g.setWithoutSavingToDB("phase", PHASE.FANTASY_DRAFT);
-	assert.isFalse(isTitleOddsAvailable(season));
+	assert.isFalse(isTeamOddsAvailable(season));
 
 	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 	g.setWithoutSavingToDB("numGamesPlayoffSeries", [] as any);
-	assert.isFalse(isTitleOddsAvailable(season));
+	assert.isFalse(isTeamOddsAvailable(season));
 	resetG();
 });
 

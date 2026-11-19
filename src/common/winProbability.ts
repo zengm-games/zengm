@@ -97,7 +97,7 @@ export const roundWinPercents = (prob: number, resolved?: boolean) => {
 };
 
 // resolved is for 0% and 100% that come from game state, like an eliminated team or a champion
-export const formatTitleOdds = (prob: number, resolved?: boolean) => {
+export const formatOdds = (prob: number, resolved?: boolean) => {
 	if (!resolved) {
 		if (prob < 0.005) {
 			return "<1%";

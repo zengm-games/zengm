@@ -2,7 +2,7 @@ import { afterAll, assert, beforeAll, test } from "vitest";
 import { mockIDBLeague, resetCache, resetG } from "../../../test/helpers.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import { simTitleOdds } from "./getTitleOdds.ts";
+import { simTeamOdds } from "./getTeamOdds.ts";
 
 const seriesTeam = (tid: number, seed: number) => ({
 	cid: 0,
@@ -13,7 +13,6 @@ const seriesTeam = (tid: number, seed: number) => ({
 
 const getTeams = () =>
 	helpers.getTeamsDefault().map((t) => ({
-		eliminated: false,
 		gamesLeft: 0,
 		ovr: 50 + t.tid,
 		teamSeason: { tid: t.tid, cid: t.cid, did: t.did } as any,
@@ -45,7 +44,7 @@ for (const numGamesPlayoffSeries of [
 			home: seriesTeam(i, i + 1),
 			away: seriesTeam(15 - i, 16 - i),
 		}));
-		const odds = (await simTitleOdds({
+		const odds = (await simTeamOdds({
 			numSims: 200,
 			playoffSeries: {
 				currentRound: 0,
@@ -55,8 +54,8 @@ for (const numGamesPlayoffSeries of [
 			teams: getTeams(),
 		}))!;
 
-		const total = Object.values(odds).reduce((sum, t) => sum + t.prob, 0);
+		const total = Object.values(odds).reduce((sum, t) => sum + t.title.prob, 0);
 		assert.closeTo(total, 1, 1e-9);
-		assert.strictEqual(odds[20]!.prob, 0);
+		assert.strictEqual(odds[20]!.title.prob, 0);
 	});
 }

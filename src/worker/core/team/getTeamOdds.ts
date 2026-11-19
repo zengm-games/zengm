@@ -5,6 +5,7 @@ import type {
 	PlayInTournament,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
+	TeamSeason,
 } from "../../../common/types.ts";
 import {
 	getWinModelInputs,
@@ -37,6 +38,13 @@ import ovr from "./ovr.ts";
 
 const DEFAULT_NUM_SIMS = 1000;
 
+// Clinched at least a spot in the playoffs proper, not just the play-in
+const CLINCHED_PLAYOFFS = new Set<TeamSeason["clinchedPlayoffs"]>([
+	"x",
+	"y",
+	"z",
+]);
+
 // How far a team's true strength can be from its ovr, in ovr points. Measured from how far season MOV is from what preseason ovr predicts, after taking out single game noise. One value is drawn per team per sim and used for all of its games, otherwise the best team wins too often, since it never has a bad season or a bad playoff run.
 const STRENGTH_STD = bySport({
 	baseball: 5.5,
@@ -45,9 +53,8 @@ const STRENGTH_STD = bySport({
 	hockey: 11,
 });
 
-type TitleOddsTeam = {
-	// Mathematically out of the playoffs
-	eliminated: boolean;
+type TeamOddsTeam = {
+	clinchedPlayoffs?: TeamSeason["clinchedPlayoffs"];
 
 	gamesLeft: number;
 	ovr: number;
@@ -55,11 +62,15 @@ type TitleOddsTeam = {
 };
 
 // resolved means prob comes from the state of the game, not from a simulation
-export type TitleOdds = Record<number, { prob: number; resolved?: boolean }>;
+type Odds = { prob: number; resolved?: boolean };
+
+export type TeamOdds = Record<number, { playoffs: Odds; title: Odds }>;
 
 type Bracket = Pick<PlayoffSeries, "currentRound" | "playIns" | "series">;
 
 type PlayInGame = PlayInTournament[number];
+
+type Matchup = Bracket["series"][number][number];
 
 type SimInfo = {
 	byConf: number | false;
@@ -152,8 +163,23 @@ const simPlayIns = (bracket: Bracket, info: SimInfo) => {
 	return firstRound;
 };
 
-// Returns the tid of the champion. This only reads bracket, so the same one can be used for every sim.
-const simBracket = async (bracket: Bracket, info: SimInfo) => {
+// The first round of the bracket that still needs to be played, after simulating any remaining play-in games. This only reads bracket, so the same one can be used for every sim.
+const getStartingMatchups = (bracket: Bracket, info: SimInfo) => {
+	return {
+		matchups:
+			bracket.currentRound === -1
+				? simPlayIns(bracket, info)
+				: bracket.series[bracket.currentRound]!,
+		round: Math.max(bracket.currentRound, 0),
+	};
+};
+
+// Returns the tid of the champion
+const simBracket = async (
+	startingMatchups: Matchup[],
+	startingRound: number,
+	info: SimInfo,
+) => {
 	const { byConf, getGameProb, numGamesPlayoffSeries, random, season } = info;
 
 	// After the conference rounds, seeds from different conferences are not comparable, so use the simulated records
@@ -162,11 +188,8 @@ const simBracket = async (bracket: Bracket, info: SimInfo) => {
 	const orderAcrossConfs = (teams: PlayoffSeriesTeam[]) =>
 		teams.toSorted((a, b) => getRecordScore(b) - getRecordScore(a));
 
-	let round = Math.max(bracket.currentRound, 0);
-	let matchups =
-		bracket.currentRound === -1
-			? simPlayIns(bracket, info)
-			: bracket.series[round]!;
+	let round = startingRound;
+	let matchups = startingMatchups;
 
 	while (true) {
 		const neutral = isNeutral(matchups.length);
@@ -209,6 +232,18 @@ const simBracket = async (bracket: Bracket, info: SimInfo) => {
 		}));
 		round += 1;
 	}
+};
+
+// Everyone in these matchups, including teams with a bye
+const getFirstRoundTids = (matchups: Matchup[]) => {
+	const tids = new Set<number>();
+	for (const { home, away } of matchups) {
+		tids.add(home.tid);
+		if (away) {
+			tids.add(away.tid);
+		}
+	}
+	return tids;
 };
 
 const getChampion = (bracket: Bracket, season: number) => {
@@ -278,7 +313,7 @@ const getAliveTids = (bracket: Bracket, season: number) => {
  *
  * Returns undefined if the playoff settings are not valid for these teams.
  */
-export const simTitleOdds = async ({
+export const simTeamOdds = async ({
 	numSims = DEFAULT_NUM_SIMS,
 	playoffSeries,
 	season,
@@ -287,18 +322,56 @@ export const simTitleOdds = async ({
 	numSims?: number;
 	playoffSeries?: Bracket;
 	season: number;
-	teams: TitleOddsTeam[];
-}): Promise<TitleOdds | undefined> => {
-	const odds: TitleOdds = {};
+	teams: TeamOddsTeam[];
+}): Promise<TeamOdds | undefined> => {
+	// Teams that are sure to be in the playoffs, and teams that still might be
+	let clinchedTids;
+	let playoffsAliveTids;
+	if (playoffSeries) {
+		clinchedTids = getFirstRoundTids(
+			playoffSeries.series[0]!.map(({ home, away }) => ({
+				home,
+				away: away?.pendingPlayIn ? undefined : away,
+			})),
+		);
+		playoffsAliveTids = new Set([
+			...clinchedTids,
+			...getAliveTids(playoffSeries, season),
+		]);
+	} else {
+		clinchedTids = new Set(
+			teams
+				.filter(({ clinchedPlayoffs }) =>
+					CLINCHED_PLAYOFFS.has(clinchedPlayoffs),
+				)
+				.map((t) => t.teamSeason.tid),
+		);
+		playoffsAliveTids = new Set(
+			teams
+				.filter((t) => t.clinchedPlayoffs !== "o")
+				.map((t) => t.teamSeason.tid),
+		);
+	}
+	const getPlayoffsOdds = (tid: number, count: number, numCounted: number) => {
+		if (clinchedTids.has(tid)) {
+			return { prob: 1, resolved: true };
+		}
+		if (!playoffsAliveTids.has(tid)) {
+			return { prob: 0, resolved: true };
+		}
+		return { prob: count / Math.max(numCounted, 1) };
+	};
 
 	const champion = playoffSeries
 		? getChampion(playoffSeries, season)
 		: undefined;
 	if (champion !== undefined) {
+		const odds: TeamOdds = {};
 		for (const { teamSeason } of teams) {
-			odds[teamSeason.tid] = {
-				prob: teamSeason.tid === champion ? 1 : 0,
-				resolved: true,
+			const { tid } = teamSeason;
+			odds[tid] = {
+				playoffs: getPlayoffsOdds(tid, 0, 0),
+				title: { prob: tid === champion ? 1 : 0, resolved: true },
 			};
 		}
 		return odds;
@@ -337,7 +410,7 @@ export const simTitleOdds = async ({
 
 	const aliveTids = playoffSeries
 		? getAliveTids(playoffSeries, season)
-		: new Set(teams.filter((t) => !t.eliminated).map((t) => t.teamSeason.tid));
+		: playoffsAliveTids;
 
 	const random = makeSeededRandom(1);
 	const avgOvr =
@@ -354,8 +427,9 @@ export const simTitleOdds = async ({
 		recordScores.set(teamSeason.tid, usePts ? pts : winp);
 	}
 
-	const counts = new Map<number, number>();
-	let numCounted = 0;
+	const playoffsCounts = new Map<number, number>();
+	const titleCounts = new Map<number, number>();
+	let numTitlesCounted = 0;
 
 	for (let sim = 0; sim < numSims; sim++) {
 		const strengths = new Map<number, number>();
@@ -391,8 +465,21 @@ export const simTitleOdds = async ({
 				const { teamSeason } = t;
 
 				// The schedule is not known here, so play an average team with home and away canceling out
-				const winp = t.eliminated ? 0 : getGameProb(teamSeason.tid, -1, true);
-				const won = t.gamesLeft * winp;
+				const winp =
+					t.clinchedPlayoffs === "o"
+						? 0
+						: getGameProb(teamSeason.tid, -1, true);
+
+				// Luck in the remaining games, on top of the uncertainty in strength. Normal approximation of a binomial distribution, since only the total matters.
+				const won = helpers.bound(
+					realGauss(
+						t.gamesLeft * winp,
+						Math.sqrt(t.gamesLeft * winp * (1 - winp)),
+						random,
+					),
+					0,
+					t.gamesLeft,
+				);
 				const simTeam = getHypotheticalTeam({
 					teamSeason,
 					won,
@@ -427,18 +514,29 @@ export const simTitleOdds = async ({
 			};
 		}
 
-		const champ = await simBracket(bracket, info);
+		const { matchups, round } = getStartingMatchups(bracket, info);
+		for (const tid of getFirstRoundTids(matchups)) {
+			playoffsCounts.set(tid, (playoffsCounts.get(tid) ?? 0) + 1);
+		}
+
+		const champ = await simBracket(matchups, round, info);
 		if (champ !== undefined && aliveTids.has(champ)) {
-			counts.set(champ, (counts.get(champ) ?? 0) + 1);
-			numCounted += 1;
+			titleCounts.set(champ, (titleCounts.get(champ) ?? 0) + 1);
+			numTitlesCounted += 1;
 		}
 	}
 
+	const odds: TeamOdds = {};
 	for (const { teamSeason } of teams) {
 		const { tid } = teamSeason;
-		odds[tid] = aliveTids.has(tid)
-			? { prob: (counts.get(tid) ?? 0) / Math.max(numCounted, 1) }
-			: { prob: 0, resolved: true };
+		odds[tid] = {
+			playoffs: getPlayoffsOdds(tid, playoffsCounts.get(tid) ?? 0, numSims),
+			title: aliveTids.has(tid)
+				? {
+						prob: (titleCounts.get(tid) ?? 0) / Math.max(numTitlesCounted, 1),
+					}
+				: { prob: 0, resolved: true },
+		};
 	}
 
 	return odds;
@@ -466,7 +564,7 @@ export const getTeamStrength = (
 };
 
 // Cheap enough to call when loading a view. If this is true, title odds may still be undefined for invalid playoff settings.
-export const isTitleOddsAvailable = (season: number) => {
+export const isTeamOddsAvailable = (season: number) => {
 	return (
 		season === g.get("season") &&
 		g.get("phase") >= PHASE.PRESEASON &&
@@ -475,7 +573,7 @@ export const isTitleOddsAvailable = (season: number) => {
 };
 
 // Returns undefined if title odds can't be computed
-export const getTitleOdds = async () => {
+export const getTeamOdds = async () => {
 	const season = g.get("season");
 	const phase = g.get("phase");
 	const playoffs = phase === PHASE.PLAYOFFS;
@@ -518,7 +616,7 @@ export const getTitleOdds = async () => {
 			const gp = helpers.getTeamSeasonGp(teamSeason);
 
 			return {
-				eliminated: teamSeason.clinchedPlayoffs === "o",
+				clinchedPlayoffs: teamSeason.clinchedPlayoffs,
 				gamesLeft: Math.max(g.get("numGames") - gp, 0),
 				ovr: getTeamStrength(playersByTid.get(tid) ?? [], {
 					numDaysInFuture,
@@ -529,5 +627,5 @@ export const getTitleOdds = async () => {
 			};
 		});
 
-	return simTitleOdds({ playoffSeries, season, teams });
+	return simTeamOdds({ playoffSeries, season, teams });
 };

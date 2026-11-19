@@ -1,6 +1,6 @@
 import { assert, describe, test } from "vitest";
 import {
-	formatTitleOdds,
+	formatOdds,
 	getWinModelInputs,
 	getWinProbability,
 	roundWinPercents,
@@ -144,22 +144,22 @@ describe("roundWinPercents", () => {
 	});
 });
 
-describe("formatTitleOdds", () => {
+describe("formatOdds", () => {
 	test("never shows 0% or 100% from rounding", () => {
-		assert.strictEqual(formatTitleOdds(0), "<1%");
-		assert.strictEqual(formatTitleOdds(0.004), "<1%");
-		assert.strictEqual(formatTitleOdds(0.996), ">99%");
-		assert.strictEqual(formatTitleOdds(0.995), ">99%");
-		assert.strictEqual(formatTitleOdds(1), ">99%");
+		assert.strictEqual(formatOdds(0), "<1%");
+		assert.strictEqual(formatOdds(0.004), "<1%");
+		assert.strictEqual(formatOdds(0.996), ">99%");
+		assert.strictEqual(formatOdds(0.995), ">99%");
+		assert.strictEqual(formatOdds(1), ">99%");
 	});
 
 	test("shows whole percentages", () => {
-		assert.strictEqual(formatTitleOdds(0.005), "1%");
-		assert.strictEqual(formatTitleOdds(0.234), "23%");
+		assert.strictEqual(formatOdds(0.005), "1%");
+		assert.strictEqual(formatOdds(0.234), "23%");
 	});
 
 	test("shows 0% and 100% from game state", () => {
-		assert.strictEqual(formatTitleOdds(0, true), "0%");
-		assert.strictEqual(formatTitleOdds(1, true), "100%");
+		assert.strictEqual(formatOdds(0, true), "0%");
+		assert.strictEqual(formatOdds(1, true), "100%");
 	});
 });

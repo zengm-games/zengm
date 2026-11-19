@@ -21,6 +21,7 @@ import {
 	InvalidPlayoffSettingsError,
 } from "../season/genPlayoffSeries.ts";
 import getDaysLeftSchedule from "../season/getDaysLeftSchedule.ts";
+import { getGamesLeftSchedule } from "../season/getGamesLeftSchedule.ts";
 import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
 import {
 	betterSeedHome,
@@ -593,10 +594,16 @@ export const getTeamOdds = async () => {
 	const teamsRaw = await idb.cache.teams.getAll();
 	const teamsByTid = new Map(teamsRaw.map((t) => [t.tid, t]));
 
-	// Before the regular season, there may be no schedule yet, so assume that the playoffs are about as far away as the number of games
+	// Same as in updateClinchedPlayoffs, so odds agree with what has been clinched. Before the regular season there is no schedule yet, so every team has a full season left, and the playoffs are about as far away as the number of games.
+	const preseason = phase === PHASE.PRESEASON;
+	const gamesLeftByTid = await getGamesLeftSchedule();
+	const getGamesLeft = (tid: number) =>
+		preseason ? g.get("numGames") : (gamesLeftByTid.get(tid) ?? 0);
 	const numDaysInFuture = playoffs
 		? 0
-		: (await getDaysLeftSchedule()) || g.get("numGames");
+		: preseason
+			? g.get("numGames")
+			: await getDaysLeftSchedule();
 
 	const players = await player.formatAll(
 		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
@@ -613,11 +620,10 @@ export const getTeamOdds = async () => {
 		.filter((teamSeason) => !teamsByTid.get(teamSeason.tid)?.disabled)
 		.map((teamSeason) => {
 			const { tid } = teamSeason;
-			const gp = helpers.getTeamSeasonGp(teamSeason);
 
 			return {
 				clinchedPlayoffs: teamSeason.clinchedPlayoffs,
-				gamesLeft: Math.max(g.get("numGames") - gp, 0),
+				gamesLeft: getGamesLeft(tid),
 				ovr: getTeamStrength(playersByTid.get(tid) ?? [], {
 					numDaysInFuture,
 					playoffs,

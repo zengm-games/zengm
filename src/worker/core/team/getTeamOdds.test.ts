@@ -9,6 +9,7 @@ import {
 	getTeamOdds,
 	isTeamOddsAvailable,
 	simTeamOdds,
+	type TeamOdds,
 } from "./getTeamOdds.ts";
 
 const NUM_SIMS = 300;
@@ -416,6 +417,23 @@ describe("getTeamOdds", () => {
 		assert.deepEqual(odds[0]!.playoffs, { prob: 0, resolved: true });
 		assert.isUndefined(odds[1]);
 		assert.isDefined(odds[2]);
+	});
+
+	test("games left come from the schedule, or a full season in the preseason", async () => {
+		g.setWithoutSavingToDB("playIn", false);
+		const isDecided = (odds: TeamOdds) =>
+			Object.values(odds).every(
+				({ playoffs }) => playoffs.prob === 0 || playoffs.prob === 1,
+			);
+
+		// Nothing on the schedule, so the regular season is over
+		assert.isTrue(isDecided((await getTeamOdds())!));
+
+		g.setWithoutSavingToDB("phase", PHASE.PRESEASON);
+		assert.isFalse(isDecided((await getTeamOdds())!));
+
+		g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
+		g.setWithoutSavingToDB("playIn", true);
 	});
 
 	test("returns undefined in the playoffs with no bracket", async () => {

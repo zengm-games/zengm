@@ -19,8 +19,7 @@ import {
 	getWinProbability,
 	roundWinPercents,
 } from "../../../common/gamePrediction.ts";
-import { WinPercent, WinProbabilityBar } from "../WinProbability.tsx";
-import { TEAM_NUMS_DISPLAY_ORDER } from "../../util/boxScoreDisplayOrder.ts";
+import { WinPercent } from "../WinProbability.tsx";
 
 type Team = {
 	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
@@ -547,12 +546,6 @@ export const ScoreBox = memo(
 							);
 						})
 					)}
-					{winPercents && !small && !final ? (
-						<WinProbabilityBar
-							order={TEAM_NUMS_DISPLAY_ORDER}
-							winPercents={winPercents}
-						/>
-					) : null}
 				</div>
 				{small && overtimes ? (
 					<div

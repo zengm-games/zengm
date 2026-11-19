@@ -47,16 +47,14 @@ export const WinPercent = ({
 };
 
 export const WinProbabilityBar = ({
-	className,
 	order,
 	winPercents,
 }: {
-	className?: string;
 	order: readonly [0 | 1, 0 | 1];
 	winPercents: WinPercents;
 }) => {
 	return (
-		<div className={clsx("d-flex", className)} style={{ height: 3 }}>
+		<div className="d-flex" style={{ height: 3 }}>
 			{order.map((i) => (
 				<div
 					key={i}

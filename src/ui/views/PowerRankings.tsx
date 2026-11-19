@@ -8,7 +8,7 @@ import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import type { TeamOdds } from "../../worker/core/team/getTeamOdds.ts";
 import { POSITIONS, RATINGS } from "../../common/constants.ts";
-import { formatOdds } from "../../common/winProbability.ts";
+import { formatOdds } from "../../common/gamePrediction.ts";
 import {
 	teamMovOrDiffStat,
 	wrappedTeamMovOrDiff,

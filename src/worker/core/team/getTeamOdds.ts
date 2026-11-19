@@ -8,9 +8,9 @@ import type {
 	TeamSeason,
 } from "../../../common/types.ts";
 import {
-	getWinModelInputs,
+	getGamePrediction,
 	getWinProbability,
-} from "../../../common/winProbability.ts";
+} from "../../../common/gamePrediction.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { getDivisionRanks } from "../../util/orderTeams.ts";
@@ -443,7 +443,7 @@ export const simTeamOdds = async ({
 
 		const getGameProb = (home: number, away: number, neutral: boolean) => {
 			return getWinProbability(
-				getWinModelInputs({
+				getGamePrediction({
 					...gameInfo,
 					neutral,
 					ovrs: [strengths.get(home) ?? avgOvr, strengths.get(away) ?? avgOvr],

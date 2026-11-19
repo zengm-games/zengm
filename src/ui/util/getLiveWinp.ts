@@ -1,10 +1,10 @@
 import { getSeconds } from "../../common/formatClock.ts";
-import { getGameLengthScale } from "../../common/getGameSpread.ts";
 import { helpers } from "../../common/helpers.ts";
 import {
-	getWinModelInputs,
+	getGameLengthScale,
+	getGamePrediction,
 	getWinProbability,
-} from "../../common/winProbability.ts";
+} from "../../common/gamePrediction.ts";
 
 // Approximate points per team in a default length game, to turn Elam points left into a fraction of a game
 const ELAM_POINTS_PER_GAME = 100;
@@ -112,7 +112,7 @@ export const getLiveWinp = ({
 	}
 
 	const allStarGame = teams[0].tid === -1;
-	const { expectedMargin, sigma } = getWinModelInputs({
+	const prediction = getGamePrediction({
 		homeCourtAdvantage,
 		neutral: !!boxScore.neutralSite || allStarGame,
 		numPeriods,
@@ -125,7 +125,7 @@ export const getLiveWinp = ({
 
 	return {
 		prob: getWinProbability({
-			expectedMargin,
+			...prediction,
 			frac: getFrac({
 				boxScore,
 				expectedGamePoints,
@@ -133,7 +133,6 @@ export const getLiveWinp = ({
 				sportState,
 			}),
 			margin: teams[0].pts - teams[1].pts,
-			sigma,
 		}),
 	};
 };

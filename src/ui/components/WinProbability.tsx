@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { roundWinPercents } from "../../common/winProbability.ts";
+import { roundWinPercents } from "../../common/gamePrediction.ts";
 import { TEAM_NUMS_DISPLAY_ORDER } from "../util/boxScoreDisplayOrder.ts";
 import { getLiveWinp } from "../util/getLiveWinp.ts";
 import { useLocal } from "../util/local.ts";

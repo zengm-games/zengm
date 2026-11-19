@@ -10,18 +10,15 @@ import { getCol } from "../../../common/getCol.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import {
-	formatGameSpreads,
-	getGameSpread,
-} from "../../../common/getGameSpread.ts";
-import {
 	isAllStarGame,
 	isTradeDeadline,
 } from "../../../common/specialGames.ts";
 import {
-	getWinModelInputs,
+	formatGameSpreads,
+	getGamePrediction,
 	getWinProbability,
 	roundWinPercents,
-} from "../../../common/winProbability.ts";
+} from "../../../common/gamePrediction.ts";
 import { WinPercent, WinProbabilityBar } from "../WinProbability.tsx";
 import { TEAM_NUMS_DISPLAY_ORDER } from "../../util/boxScoreDisplayOrder.ts";
 
@@ -159,20 +156,18 @@ export const ScoreBox = memo(
 				(neutralSite === "finals" && !!game.finals) ||
 				(neutralSite === "playoffs" && phase === PHASE.PLAYOFFS);
 
-			const gameInfo = {
+			const prediction = getGamePrediction({
 				homeCourtAdvantage,
 				neutral,
 				numPeriods,
 				ovrs: [game.teams[0].ovr, game.teams[1].ovr],
 				quarterLength,
-			} as const;
+			});
 
 			if (gamePrediction === "probability") {
-				winPercents = roundWinPercents(
-					getWinProbability(getWinModelInputs(gameInfo)),
-				);
+				winPercents = roundWinPercents(getWinProbability(prediction));
 			} else {
-				spreads = formatGameSpreads(getGameSpread(gameInfo));
+				spreads = formatGameSpreads(prediction.spread);
 			}
 		}
 

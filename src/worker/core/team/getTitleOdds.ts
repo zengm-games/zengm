@@ -2,10 +2,10 @@ import { PHASE } from "../../../common/constants.ts";
 import { makeSeededRandom, realGauss } from "../../../common/random.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import type {
+	PlayInTournament,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
 } from "../../../common/types.ts";
-import { chunk } from "../../../common/utils.ts";
 import {
 	getWinModelInputs,
 	getWinProbability,
@@ -21,7 +21,14 @@ import {
 } from "../season/genPlayoffSeries.ts";
 import getDaysLeftSchedule from "../season/getDaysLeftSchedule.ts";
 import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
-import { betterSeedHome } from "../season/newSchedulePlayoffsDay.ts";
+import {
+	betterSeedHome,
+	getNextRoundMatchups,
+	getPlayInFinalGame,
+	getPlayInTargetTid,
+	getPlayInWinnerLoser,
+	placePlayInWinner,
+} from "../season/playoffBracket.ts";
 import {
 	getHypotheticalTeam,
 	type TeamSeasonRecord,
@@ -50,16 +57,9 @@ type TitleOddsTeam = {
 // resolved means prob comes from the state of the game, not from a simulation
 export type TitleOdds = Record<number, { prob: number; resolved?: boolean }>;
 
-type BracketTeam = Pick<
-	PlayoffSeriesTeam,
-	"pendingPlayIn" | "seed" | "tid" | "won"
->;
+type Bracket = Pick<PlayoffSeries, "currentRound" | "playIns" | "series">;
 
-type Matchup = { home: BracketTeam; away?: BracketTeam };
-
-type Bracket = Pick<PlayoffSeries, "currentRound" | "playIns"> & {
-	series: Matchup[][];
-};
+type PlayInGame = PlayInTournament[number];
 
 type SimInfo = {
 	byConf: number | false;
@@ -117,99 +117,50 @@ const isNeutral = (numMatchups: number) => {
 	);
 };
 
-// Same order as the home team is decided in newSchedulePlayoffsDay
-const getNextMatchups = (winners: BracketTeam[], info: SimInfo) => {
-	const { byConf, recordScores } = info;
-
-	const getRecordScore = (t: BracketTeam) => recordScores.get(t.tid) ?? 0;
-
-	// After the conference rounds, seeds from different conferences are not comparable
-	const crossConf = byConf !== false && winners.length <= byConf;
-
-	let teams = winners;
-	if (g.get("playoffsReseed")) {
-		const groups =
-			byConf !== false && winners.length > byConf
-				? chunk(winners, Math.ceil(winners.length / byConf))
-				: [winners];
-
-		teams = groups.flatMap((group) => {
-			const ordered = group.toSorted((a, b) =>
-				crossConf ? getRecordScore(b) - getRecordScore(a) : a.seed - b.seed,
-			);
-
-			const interleaved: BracketTeam[] = [];
-			while (ordered.length > 0) {
-				interleaved.push(
-					interleaved.length % 2 === 0 ? ordered.shift()! : ordered.pop()!,
-				);
-			}
-			return interleaved;
-		});
-	}
-
-	return chunk(teams, 2).map(([team1, team2]) => {
-		const firstTeamHome = crossConf
-			? getRecordScore(team1!) >= getRecordScore(team2!)
-			: team1!.seed < team2!.seed;
-		const [home, away] = firstTeamHome ? [team1!, team2!] : [team2!, team1!];
-		return { home: { ...home, won: 0 }, away: { ...away, won: 0 } };
-	});
-};
-
-const simPlayIns = (bracket: Bracket, info: SimInfo): Matchup[] => {
+const simPlayIns = (bracket: Bracket, info: SimInfo) => {
 	const neutral = g.get("neutralSite") === "playoffs";
 
-	// Winners and losers in that order
-	const playGame = ({
-		home,
-		away,
-	}: {
-		home: BracketTeam;
-		away: BracketTeam;
-	}) => {
-		if (home.won > 0) {
-			return [home, away] as const;
+	// Returns a copy of the game with the winner decided, if it was not already played
+	const playGame = (game: PlayInGame): PlayInGame => {
+		if (game.home.won > 0 || game.away.won > 0) {
+			return game;
 		}
-		if (away.won > 0) {
-			return [away, home] as const;
-		}
-		return info.random() < info.getGameProb(home.tid, away.tid, neutral)
-			? ([home, away] as const)
-			: ([away, home] as const);
+		const homeWins =
+			info.random() < info.getGameProb(game.home.tid, game.away.tid, neutral);
+		return homeWins
+			? { ...game, home: { ...game.home, won: 1 } }
+			: { ...game, away: { ...game.away, won: 1 } };
 	};
 
-	const winnersBySlot = new Map<number, BracketTeam>();
+	const firstRound = bracket.series[0]!.map((matchup) => ({ ...matchup }));
 	for (const playIn of bracket.playIns ?? []) {
-		const [game0, game1, game2] = playIn;
-		const [winner0, loser0] = playGame(game0);
-		const [winner1] = playGame(game1);
-		const [winner2] = playGame(
-			game2 ?? {
-				home: { ...loser0, won: 0 },
-				away: { ...winner1, won: 0 },
-			},
-		);
+		const played: PlayInTournament = [playGame(playIn[0]), playGame(playIn[1])];
+		played.push(playGame(playIn[2] ?? getPlayInFinalGame(played)));
 
-		// Same as in updatePlayoffSeries, these are the placeholder tids in the first round of the playoffs
-		winnersBySlot.set(game0.home.tid, winner0);
-		winnersBySlot.set(game0.away.tid, winner2);
+		for (const [gameIndex, game] of played.entries()) {
+			const targetTid = getPlayInTargetTid(played, gameIndex);
+			if (targetTid !== undefined) {
+				placePlayInWinner(
+					firstRound,
+					targetTid,
+					getPlayInWinnerLoser(game).winner,
+				);
+			}
+		}
 	}
 
-	const fillSlot = (t: BracketTeam) => {
-		const winner = t.pendingPlayIn ? winnersBySlot.get(t.tid) : undefined;
-		return winner ? { ...winner, seed: t.seed, won: 0 } : t;
-	};
-
-	return bracket.series[0]!.map(({ home, away }) => ({
-		home: fillSlot(home),
-		away: away ? fillSlot(away) : undefined,
-	}));
+	return firstRound;
 };
 
 // Returns the tid of the champion. This only reads bracket, so the same one can be used for every sim.
-const simBracket = (bracket: Bracket, info: SimInfo) => {
-	const { getGameProb, numGamesPlayoffSeries, random, season } = info;
+const simBracket = async (bracket: Bracket, info: SimInfo) => {
+	const { byConf, getGameProb, numGamesPlayoffSeries, random, season } = info;
+
+	// After the conference rounds, seeds from different conferences are not comparable, so use the simulated records
+	const getRecordScore = (t: PlayoffSeriesTeam) =>
+		info.recordScores.get(t.tid) ?? 0;
+	const orderAcrossConfs = (teams: PlayoffSeriesTeam[]) =>
+		teams.toSorted((a, b) => getRecordScore(b) - getRecordScore(a));
 
 	let round = Math.max(bracket.currentRound, 0);
 	let matchups =
@@ -245,7 +196,17 @@ const simBracket = (bracket: Bracket, info: SimInfo) => {
 			return winners[0]?.tid;
 		}
 
-		matchups = getNextMatchups(winners, info);
+		matchups = (
+			await getNextRoundMatchups({
+				orderAcrossConfs,
+				playoffsByConf: byConf,
+				reseed: g.get("playoffsReseed"),
+				teamsWon: winners,
+			})
+		).map(({ home, away }) => ({
+			home: { ...home, won: 0 },
+			away: { ...away, won: 0 },
+		}));
 		round += 1;
 	}
 };
@@ -279,24 +240,15 @@ const getAliveTids = (bracket: Bracket, season: number) => {
 			}
 		}
 
-		const getLoser = (game?: { home: BracketTeam; away: BracketTeam }) => {
-			if (game) {
-				return game.home.won > 0
-					? game.away
-					: game.away.won > 0
-						? game.home
-						: undefined;
-			}
-		};
 		for (const playIn of bracket.playIns ?? []) {
 			for (const { home, away } of playIn) {
 				alive.add(home.tid);
 				alive.add(away.tid);
 			}
+			// Losing the game between the bottom 2 teams or the last game is elimination
 			for (const game of [playIn[1], playIn[2]]) {
-				const loser = getLoser(game);
-				if (loser) {
-					alive.delete(loser.tid);
+				if (game && game.home.won + game.away.won > 0) {
+					alive.delete(getPlayInWinnerLoser(game).loser.tid);
 				}
 			}
 		}
@@ -475,7 +427,7 @@ export const simTitleOdds = async ({
 			};
 		}
 
-		const champ = simBracket(bracket, info);
+		const champ = await simBracket(bracket, info);
 		if (champ !== undefined && aliveTids.has(champ)) {
 			counts.set(champ, (counts.get(champ) ?? 0) + 1);
 			numCounted += 1;

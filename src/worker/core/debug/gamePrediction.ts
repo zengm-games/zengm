@@ -3,6 +3,7 @@ import type { GameAttributesLeague } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import { getGameResult } from "../game/play.ts";
+import GameSim from "../GameSim.ts";
 import loadTeams from "../game/loadTeams.ts";
 import { team } from "../index.ts";
 
@@ -15,18 +16,66 @@ type PredictionSettings = Partial<
 	>
 >;
 
+// Game state before each plate appearance in baseball. o is the team batting, bases is a bitmask of occupied bases (1 is first base).
+type BaseballState = {
+	inning: number;
+	o: number;
+	outs: number;
+	bases: number;
+	pts: [number, number];
+};
+
+// Records BaseballState for every plate appearance in games simulated while this is on, by wrapping GameSim. Baseball only.
+const recordBaseballStates = () => {
+	const proto = GameSim.prototype as any;
+	const original = proto.simPlateAppearance;
+	let states: BaseballState[] = [];
+	proto.simPlateAppearance = function (this: any) {
+		states.push({
+			inning: this.inning,
+			o: this.o,
+			outs: this.outs,
+			bases: this.bases.reduce(
+				(mask: number, runner: unknown, i: number) =>
+					runner ? mask | (1 << i) : mask,
+				0,
+			),
+			pts: [this.team[0].t.stat.pts, this.team[1].t.stat.pts],
+		});
+		return original.call(this);
+	};
+
+	return {
+		takeStates: () => {
+			const taken = states;
+			states = [];
+			return taken;
+		},
+		stop: () => {
+			proto.simPlateAppearance = original;
+		},
+	};
+};
+
 /**
  * Simulates games between random pairs of teams, without saving anything. ovrs are the same injury adjusted ovrs that are shown for upcoming games.
+ *
+ * recordStates (baseball only) also returns the game state before every plate appearance, for evaluating live win probability.
  */
 export const simGamesForPrediction = async ({
 	neutralSite = false,
 	numGames,
+	recordStates = false,
 	settings = {},
 }: {
 	neutralSite?: boolean;
 	numGames: number;
+	recordStates?: boolean;
 	settings?: PredictionSettings;
 }) => {
+	if (recordStates && __SPORT !== "baseball") {
+		throw new Error("recordStates is only supported in baseball");
+	}
 	const tids = (await idb.cache.teams.getAll())
 		.filter((t) => !t.disabled)
 		.map((t) => t.tid);
@@ -37,6 +86,7 @@ export const simGamesForPrediction = async ({
 		g.setWithoutSavingToDB(key, settings[key]!);
 	}
 
+	const recorder = recordStates ? recordBaseballStates() : undefined;
 	const results = [];
 	try {
 		for (let i = 0; i < numGames; i++) {
@@ -61,9 +111,11 @@ export const simGamesForPrediction = async ({
 				pts: result.team.map((t: any) => t.stat.pts),
 				ptsQtrs: result.team.map((t: any) => t.stat.ptsQtrs),
 				sPts: result.team.map((t: any) => t.stat.sPts),
+				states: recorder?.takeStates(),
 			});
 		}
 	} finally {
+		recorder?.stop();
 		for (const key of Object.keys(original) as (keyof PredictionSettings)[]) {
 			g.setWithoutSavingToDB(key, original[key]!);
 		}

@@ -1,3 +1,4 @@
+import { getWinProbabilityBaseball } from "../../common/baseballWinProbability.ts";
 import { getSeconds } from "../../common/formatClock.ts";
 import { helpers } from "../../common/helpers.ts";
 import {
@@ -9,47 +10,56 @@ import {
 // Approximate points per team in a default length game, to turn Elam points left into a fraction of a game
 const ELAM_POINTS_PER_GAME = 100;
 
-const BASEBALL_OUTS_PER_INNING = 3;
-
-const getFracBaseball = ({
-	numPeriods,
-	outs,
-	teams,
+const getLiveWinpBaseball = ({
+	boxScore,
+	spread,
+	sportState,
 }: {
-	numPeriods: number;
-	outs: number;
-	teams: any[];
+	boxScore: any;
+	spread: number;
+	sportState: any;
 }) => {
-	const inning = teams[1].ptsQtrs.length;
-	if (inning === 0 || numPeriods === 0) {
-		return 1;
+	const { numPeriods, teams } = boxScore;
+	const o: 0 | 1 = sportState?.o ?? 1;
+	const inning = teams[o].ptsQtrs.length;
+
+	// Before the first pitch, the away team is about to bat
+	if (inning === 0) {
+		return getWinProbabilityBaseball({
+			basesOccupied: [false, false, false],
+			inning: 1,
+			margin: 0,
+			numInnings: numPeriods,
+			o: 1,
+			outs: 0,
+			spread,
+		});
 	}
 
-	const bottom = teams[0].ptsQtrs.length === inning;
-	const totalOuts = 2 * numPeriods * BASEBALL_OUTS_PER_INNING;
-
-	// Any extra inning could be the last, so only the current one counts as left
-	const halfInningsPlayed = inning > numPeriods ? 0 : 2 * (inning - 1);
-	const halfInningsTotal = inning > numPeriods ? 2 : 2 * numPeriods;
-	const outsLeft =
-		(halfInningsTotal - halfInningsPlayed - (bottom ? 1 : 0)) *
-			BASEBALL_OUTS_PER_INNING -
-		outs;
-
-	// Floored because the trailing team always has a turn at bat left when this is used
-	return Math.max(outsLeft, 1) / totalOuts;
+	const bases: unknown[] = sportState?.bases ?? [];
+	return getWinProbabilityBaseball({
+		basesOccupied: [0, 1, 2].map((i) => bases[i] !== undefined) as [
+			boolean,
+			boolean,
+			boolean,
+		],
+		inning,
+		margin: teams[0].pts - teams[1].pts,
+		numInnings: numPeriods,
+		o,
+		outs: sportState?.outs ?? 0,
+		spread,
+	});
 };
 
 const getFrac = ({
 	boxScore,
 	expectedGamePoints,
 	quarterLength,
-	sportState,
 }: {
 	boxScore: any;
 	expectedGamePoints: number;
 	quarterLength: number;
-	sportState: any;
 }) => {
 	const { numPeriods, teams } = boxScore;
 
@@ -57,10 +67,6 @@ const getFrac = ({
 		const pointsLeft =
 			boxScore.elamTarget - Math.max(teams[0].pts, teams[1].pts);
 		return Math.max(pointsLeft, 1) / expectedGamePoints;
-	}
-
-	if (__SPORT === "baseball") {
-		return getFracBaseball({ numPeriods, outs: sportState?.outs ?? 0, teams });
 	}
 
 	const regulationSeconds = numPeriods * quarterLength * 60;
@@ -120,6 +126,16 @@ export const getLiveWinp = ({
 		quarterLength,
 	});
 
+	if (__SPORT === "baseball") {
+		return {
+			prob: getLiveWinpBaseball({
+				boxScore,
+				spread: prediction.spread,
+				sportState,
+			}),
+		};
+	}
+
 	const expectedGamePoints =
 		ELAM_POINTS_PER_GAME * getGameLengthScale({ numPeriods, quarterLength });
 
@@ -130,7 +146,6 @@ export const getLiveWinp = ({
 				boxScore,
 				expectedGamePoints,
 				quarterLength,
-				sportState,
 			}),
 			margin: teams[0].pts - teams[1].pts,
 		}),

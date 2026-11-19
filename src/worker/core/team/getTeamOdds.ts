@@ -20,8 +20,9 @@ import {
 	genPlayoffSeriesFromTeams,
 	InvalidPlayoffSettingsError,
 } from "../season/genPlayoffSeries.ts";
-import getDaysLeftSchedule from "../season/getDaysLeftSchedule.ts";
-import { getGamesLeftSchedule } from "../season/getGamesLeftSchedule.ts";
+import addDaysToSchedule from "../season/addDaysToSchedule.ts";
+import getSchedule from "../season/getSchedule.ts";
+import { addSpecialGames, genScheduleMatchups } from "../season/newSchedule.ts";
 import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
 import {
 	betterSeedHome,
@@ -54,12 +55,38 @@ const STRENGTH_STD = bySport({
 	hockey: 11,
 });
 
+// A team's ovr by day, which only changes when an injured player gets healthier. ovr is for today, and each change applies from its day on, counting days from today.
+export type OvrByDay = {
+	changes: { day: number; ovr: number }[];
+	ovr: number;
+};
+
+export const getOvrOnDay = ({ changes, ovr }: OvrByDay, day: number) => {
+	let ovrOnDay = ovr;
+	for (const change of changes) {
+		if (change.day > day) {
+			break;
+		}
+		ovrOnDay = change.ovr;
+	}
+	return ovrOnDay;
+};
+
 type TeamOddsTeam = {
 	clinchedPlayoffs?: TeamSeason["clinchedPlayoffs"];
 
-	gamesLeft: number;
-	ovr: number;
+	// For playoff games. Regular season games have their own ovrs in RemainingGame.
+	playoffsOvrs: OvrByDay;
+
 	teamSeason: TeamSeasonRecord;
+};
+
+// A regular season game left, with each team's ovr on the day of the game, since injured players heal during the season
+export type RemainingGame = {
+	away: number;
+	awayOvr: number;
+	home: number;
+	homeOvr: number;
 };
 
 // resolved means prob comes from the state of the game, not from a simulation
@@ -75,7 +102,15 @@ type Matchup = Bracket["series"][number][number];
 
 type SimInfo = {
 	byConf: number | false;
-	getGameProb: (home: number, away: number, neutral: boolean) => number;
+	// day is days from today
+	getGameProb: (
+		home: number,
+		away: number,
+		neutral: boolean,
+		day: number,
+	) => number;
+
+	numDaysUntilPlayoffs: number;
 	numGamesPlayoffSeries: number[];
 	random: () => number;
 
@@ -85,22 +120,29 @@ type SimInfo = {
 	season: number;
 };
 
-// Probability that home wins a series, given the current number of wins for each team. In each game, the team hosting depends on the number of games already played.
+// Probability that home wins a series, given the current number of wins for each team. getProbHomeWins is the probability that home wins a game, by the number of games already played in the series.
 const getSeriesProb = ({
 	awayWon,
+	getProbHomeWins,
 	homeWon,
-	numGames,
 	numGamesToWin,
-	probHomeWinsAtAway,
-	probHomeWinsAtHome,
 }: {
 	awayWon: number;
+	getProbHomeWins: (gameIndex: number) => number;
 	homeWon: number;
-	numGames: number;
 	numGamesToWin: number;
-	probHomeWinsAtAway: number;
-	probHomeWinsAtHome: number;
 }) => {
+	// Each game's probability is used by several states of the series, so compute each one once
+	const probsByGame: number[] = [];
+	const getProb = (gameIndex: number) => {
+		let prob = probsByGame[gameIndex];
+		if (prob === undefined) {
+			prob = getProbHomeWins(gameIndex);
+			probsByGame[gameIndex] = prob;
+		}
+		return prob;
+	};
+
 	// probs[homeWins][awayWins]
 	const probs: number[][] = [];
 	for (let i = numGamesToWin; i >= homeWon; i--) {
@@ -109,9 +151,7 @@ const getSeriesProb = ({
 
 	for (let i = numGamesToWin - 1; i >= homeWon; i--) {
 		for (let j = numGamesToWin - 1; j >= awayWon; j--) {
-			const prob = betterSeedHome(numGames, i + j)
-				? probHomeWinsAtHome
-				: probHomeWinsAtAway;
+			const prob = getProb(i + j);
 			const ifWin = i + 1 === numGamesToWin ? 1 : probs[i + 1]![j]!;
 			const ifLose = j + 1 === numGamesToWin ? 0 : probs[i]![j + 1]!;
 			probs[i]![j] = prob * ifWin + (1 - prob) * ifLose;
@@ -129,16 +169,44 @@ const isNeutral = (numMatchups: number) => {
 	);
 };
 
+const isPlayed = (game: PlayInGame | undefined) =>
+	game !== undefined && game.home.won + game.away.won > 0;
+
+// The first 2 games of each play-in are on the first day, and the last game is on the next day
+const getNumPlayInDaysLeft = (bracket: Bracket) => {
+	if (bracket.currentRound !== -1 || !bracket.playIns) {
+		return 0;
+	}
+	if (
+		bracket.playIns.some(
+			(playIn) => !isPlayed(playIn[0]) || !isPlayed(playIn[1]),
+		)
+	) {
+		return 2;
+	}
+	if (bracket.playIns.some((playIn) => !isPlayed(playIn[2]))) {
+		return 1;
+	}
+	return 0;
+};
+
 const simPlayIns = (bracket: Bracket, info: SimInfo) => {
 	const neutral = g.get("neutralSite") === "playoffs";
+	const numDaysLeft = getNumPlayInDaysLeft(bracket);
 
 	// Returns a copy of the game with the winner decided, if it was not already played
-	const playGame = (game: PlayInGame): PlayInGame => {
-		if (game.home.won > 0 || game.away.won > 0) {
+	const playGame = (game: PlayInGame, day: number): PlayInGame => {
+		if (isPlayed(game)) {
 			return game;
 		}
 		const homeWins =
-			info.random() < info.getGameProb(game.home.tid, game.away.tid, neutral);
+			info.random() <
+			info.getGameProb(
+				game.home.tid,
+				game.away.tid,
+				neutral,
+				info.numDaysUntilPlayoffs + day,
+			);
 		return homeWins
 			? { ...game, home: { ...game.home, won: 1 } }
 			: { ...game, away: { ...game.away, won: 1 } };
@@ -146,8 +214,13 @@ const simPlayIns = (bracket: Bracket, info: SimInfo) => {
 
 	const firstRound = bracket.series[0]!.map((matchup) => ({ ...matchup }));
 	for (const playIn of bracket.playIns ?? []) {
-		const played: PlayInTournament = [playGame(playIn[0]), playGame(playIn[1])];
-		played.push(playGame(playIn[2] ?? getPlayInFinalGame(played)));
+		const played: PlayInTournament = [
+			playGame(playIn[0], 0),
+			playGame(playIn[1], 0),
+		];
+		played.push(
+			playGame(playIn[2] ?? getPlayInFinalGame(played), numDaysLeft - 1),
+		);
 
 		for (const [gameIndex, game] of played.entries()) {
 			const targetTid = getPlayInTargetTid(played, gameIndex);
@@ -164,9 +237,10 @@ const simPlayIns = (bracket: Bracket, info: SimInfo) => {
 	return firstRound;
 };
 
-// The first round of the bracket that still needs to be played, after simulating any remaining play-in games. This only reads bracket, so the same one can be used for every sim.
+// The first round of the bracket that still needs to be played, after simulating any remaining play-in games, and the number of days from today until that round started or starts. This only reads bracket, so the same one can be used for every sim.
 const getStartingMatchups = (bracket: Bracket, info: SimInfo) => {
 	return {
+		day: info.numDaysUntilPlayoffs + getNumPlayInDaysLeft(bracket),
 		matchups:
 			bracket.currentRound === -1
 				? simPlayIns(bracket, info)
@@ -175,10 +249,11 @@ const getStartingMatchups = (bracket: Bracket, info: SimInfo) => {
 	};
 };
 
-// Returns the tid of the champion
+// Returns the tid of the champion. startingDay is the number of days from today until the next game of startingMatchups.
 const simBracket = async (
 	startingMatchups: Matchup[],
 	startingRound: number,
+	startingDay: number,
 	info: SimInfo,
 ) => {
 	const { byConf, getGameProb, numGamesPlayoffSeries, random, season } = info;
@@ -191,11 +266,15 @@ const simBracket = async (
 
 	let round = startingRound;
 	let matchups = startingMatchups;
+	let day = startingDay;
 
 	while (true) {
 		const neutral = isNeutral(matchups.length);
 		const numGamesToWin = helpers.numGamesToWinRound(round, season);
 		const numGames = numGamesPlayoffSeries[round]!;
+
+		// Every series that is still going plays one game per day, and the next round starts once they are all done. This assumes the longest series goes the distance.
+		let numDaysInRound = 0;
 
 		const winners = matchups.map(({ home, away }) => {
 			if (!away || home.won >= numGamesToWin) {
@@ -205,16 +284,26 @@ const simBracket = async (
 				return away;
 			}
 
+			const numGamesPlayed = home.won + away.won;
+			numDaysInRound = Math.max(
+				numDaysInRound,
+				2 * numGamesToWin - 1 - numGamesPlayed,
+			);
+
 			const prob = getSeriesProb({
 				awayWon: away.won,
+				getProbHomeWins: (gameIndex) => {
+					const gameDay = day + gameIndex - numGamesPlayed;
+					return betterSeedHome(numGames, gameIndex)
+						? getGameProb(home.tid, away.tid, neutral, gameDay)
+						: 1 - getGameProb(away.tid, home.tid, neutral, gameDay);
+				},
 				homeWon: home.won,
-				numGames,
 				numGamesToWin,
-				probHomeWinsAtAway: 1 - getGameProb(away.tid, home.tid, neutral),
-				probHomeWinsAtHome: getGameProb(home.tid, away.tid, neutral),
 			});
 			return random() < prob ? home : away;
 		});
+		day += numDaysInRound;
 
 		if (winners.length <= 1) {
 			return winners[0]?.tid;
@@ -233,6 +322,21 @@ const simBracket = async (
 		}));
 		round += 1;
 	}
+};
+
+// Teams play each other more than once, and a team's ovr only changes when an injured player gets healthier, so this avoids computing the same win probability again for every game
+const groupRemainingGames = (remainingGames: readonly RemainingGame[]) => {
+	const matchups = new Map<string, RemainingGame & { numGames: number }>();
+	for (const game of remainingGames) {
+		const key = `${game.home},${game.away},${game.homeOvr},${game.awayOvr}`;
+		const matchup = matchups.get(key);
+		if (matchup) {
+			matchup.numGames += 1;
+		} else {
+			matchups.set(key, { ...game, numGames: 1 });
+		}
+	}
+	return [...matchups.values()];
 };
 
 // Everyone in these matchups, including teams with a bye
@@ -315,13 +419,21 @@ const getAliveTids = (bracket: Bracket, season: number) => {
  * Returns undefined if the playoff settings are not valid for these teams.
  */
 export const simTeamOdds = async ({
+	numDaysUntilPlayoffs,
 	numSims = DEFAULT_NUM_SIMS,
 	playoffSeries,
+	remainingGames,
 	season,
 	teams,
 }: {
+	// 0 if the playoffs already started
+	numDaysUntilPlayoffs: number;
+
 	numSims?: number;
 	playoffSeries?: Bracket;
+
+	remainingGames: readonly RemainingGame[];
+
 	season: number;
 	teams: TeamOddsTeam[];
 }): Promise<TeamOdds | undefined> => {
@@ -415,7 +527,11 @@ export const simTeamOdds = async ({
 
 	const random = makeSeededRandom(1);
 	const avgOvr =
-		teams.reduce((sum, t) => sum + t.ovr, 0) / Math.max(teams.length, 1);
+		teams.reduce((sum, t) => sum + t.playoffsOvrs.ovr, 0) /
+		Math.max(teams.length, 1);
+	const playoffsOvrs = new Map(
+		teams.map((t) => [t.teamSeason.tid, t.playoffsOvrs]),
+	);
 
 	const recordScores = new Map<number, number>();
 	for (const { teamSeason } of teams) {
@@ -428,32 +544,54 @@ export const simTeamOdds = async ({
 		recordScores.set(teamSeason.tid, usePts ? pts : winp);
 	}
 
+	const remainingMatchups = groupRemainingGames(remainingGames);
+
 	const playoffsCounts = new Map<number, number>();
 	const titleCounts = new Map<number, number>();
 	let numTitlesCounted = 0;
 
+	const getProb = (homeOvr: number, awayOvr: number, neutral: boolean) => {
+		return getWinProbability(
+			getGamePrediction({
+				...gameInfo,
+				neutral,
+				ovrs: [homeOvr, awayOvr],
+			}),
+		);
+	};
+
 	for (let sim = 0; sim < numSims; sim++) {
-		const strengths = new Map<number, number>();
+		// How much better or worse than its ovr each team is in this sim
+		const strengthOffsets = new Map<number, number>();
 		for (const t of teams) {
-			strengths.set(
-				t.teamSeason.tid,
-				t.ovr + realGauss(0, STRENGTH_STD, random),
-			);
+			strengthOffsets.set(t.teamSeason.tid, realGauss(0, STRENGTH_STD, random));
 		}
 
-		const getGameProb = (home: number, away: number, neutral: boolean) => {
-			return getWinProbability(
-				getGamePrediction({
-					...gameInfo,
-					neutral,
-					ovrs: [strengths.get(home) ?? avgOvr, strengths.get(away) ?? avgOvr],
-				}),
+		const getPlayoffsStrength = (tid: number, day: number) => {
+			const ovrs = playoffsOvrs.get(tid);
+			return (
+				(ovrs ? getOvrOnDay(ovrs, day) : avgOvr) +
+				(strengthOffsets.get(tid) ?? 0)
+			);
+		};
+
+		const getGameProb = (
+			home: number,
+			away: number,
+			neutral: boolean,
+			day: number,
+		) => {
+			return getProb(
+				getPlayoffsStrength(home, day),
+				getPlayoffsStrength(away, day),
+				neutral,
 			);
 		};
 
 		const info = {
 			byConf,
 			getGameProb,
+			numDaysUntilPlayoffs,
 			numGamesPlayoffSeries,
 			random,
 			recordScores,
@@ -462,37 +600,50 @@ export const simTeamOdds = async ({
 
 		let bracket = playoffSeries;
 		if (!bracket) {
-			const simTeams = teams.map((t) => {
-				const { teamSeason } = t;
-
-				// The schedule is not known here, so play an average team with home and away canceling out
-				const winp =
-					t.clinchedPlayoffs === "o"
-						? 0
-						: getGameProb(teamSeason.tid, -1, true);
-
-				// Luck in the remaining games, on top of the uncertainty in strength. Normal approximation of a binomial distribution, since only the total matters.
-				const won = helpers.bound(
-					realGauss(
-						t.gamesLeft * winp,
-						Math.sqrt(t.gamesLeft * winp * (1 - winp)),
-						random,
-					),
-					0,
-					t.gamesLeft,
+			const won = new Map<number, number>();
+			const lost = new Map<number, number>();
+			for (const {
+				away,
+				awayOvr,
+				home,
+				homeOvr,
+				numGames,
+			} of remainingMatchups) {
+				const prob = getProb(
+					homeOvr + (strengthOffsets.get(home) ?? 0),
+					awayOvr + (strengthOffsets.get(away) ?? 0),
+					false,
 				);
-				const simTeam = getHypotheticalTeam({
-					teamSeason,
-					won,
-					lost: t.gamesLeft - won,
-					usePts,
+				let homeWins = 0;
+				for (let i = 0; i < numGames; i++) {
+					if (random() < prob) {
+						homeWins += 1;
+					}
+				}
+				const awayWins = numGames - homeWins;
+				won.set(home, (won.get(home) ?? 0) + homeWins);
+				lost.set(home, (lost.get(home) ?? 0) + awayWins);
+				won.set(away, (won.get(away) ?? 0) + awayWins);
+				lost.set(away, (lost.get(away) ?? 0) + homeWins);
+			}
+
+			// Tiebreakers are skipped, which leaves tied teams in this order, so shuffle it
+			const simTeams = teams
+				.map(({ teamSeason }) => ({ teamSeason, tieOrder: random() }))
+				.sort((a, b) => a.tieOrder - b.tieOrder)
+				.map(({ teamSeason }) => {
+					const simTeam = getHypotheticalTeam({
+						teamSeason,
+						won: won.get(teamSeason.tid) ?? 0,
+						lost: lost.get(teamSeason.tid) ?? 0,
+						usePts,
+					});
+
+					const { pts, winp } = simTeam.seasonAttrs;
+					recordScores.set(teamSeason.tid, usePts ? pts : winp);
+
+					return simTeam;
 				});
-
-				const { pts, winp: recordWinp } = simTeam.seasonAttrs;
-				recordScores.set(teamSeason.tid, usePts ? pts : recordWinp);
-
-				return simTeam;
-			});
 
 			const divisionRanks = needDivisionRanks
 				? await getDivisionRanks(simTeams, simTeams, {
@@ -515,12 +666,12 @@ export const simTeamOdds = async ({
 			};
 		}
 
-		const { matchups, round } = getStartingMatchups(bracket, info);
+		const { day, matchups, round } = getStartingMatchups(bracket, info);
 		for (const tid of getFirstRoundTids(matchups)) {
 			playoffsCounts.set(tid, (playoffsCounts.get(tid) ?? 0) + 1);
 		}
 
-		const champ = await simBracket(matchups, round, info);
+		const champ = await simBracket(matchups, round, day, info);
 		if (champ !== undefined && aliveTids.has(champ)) {
 			titleCounts.set(champ, (titleCounts.get(champ) ?? 0) + 1);
 			numTitlesCounted += 1;
@@ -573,11 +724,46 @@ export const isTeamOddsAvailable = (season: number) => {
 	);
 };
 
+// A team's ovr only changes on the days when an injured player heals or gets closer to healing while playing through the injury, so it is only computed on those days
+export const getOvrsByDay = (
+	players: Parameters<typeof getTeamStrength>[0],
+	{
+		playoffs,
+		t,
+	}: {
+		playoffs: boolean;
+		t: Parameters<typeof getActualPlayThroughInjuries>[0];
+	},
+): OvrByDay => {
+	const playThroughInjuries = getActualPlayThroughInjuries(t)[playoffs ? 1 : 0];
+	const changeDays = new Set<number>();
+	for (const p of players) {
+		const { gamesRemaining } = p.injury;
+		for (
+			let day = gamesRemaining - playThroughInjuries;
+			day <= gamesRemaining;
+			day++
+		) {
+			if (day > 0) {
+				changeDays.add(day);
+			}
+		}
+	}
+
+	const getOvr = (numDaysInFuture: number) =>
+		getTeamStrength(players, { numDaysInFuture, playoffs, t });
+	return {
+		changes: [...changeDays]
+			.sort((a, b) => a - b)
+			.map((day) => ({ day, ovr: getOvr(day) })),
+		ovr: getOvr(0),
+	};
+};
+
 // Returns undefined if title odds can't be computed
 export const getTeamOdds = async () => {
 	const season = g.get("season");
 	const phase = g.get("phase");
-	const playoffs = phase === PHASE.PLAYOFFS;
 
 	let playoffSeries;
 	if (phase >= PHASE.PLAYOFFS) {
@@ -594,16 +780,17 @@ export const getTeamOdds = async () => {
 	const teamsRaw = await idb.cache.teams.getAll();
 	const teamsByTid = new Map(teamsRaw.map((t) => [t.tid, t]));
 
-	// Same as in updateClinchedPlayoffs, so odds agree with what has been clinched. Before the regular season there is no schedule yet, so every team has a full season left, and the playoffs are about as far away as the number of games.
-	const preseason = phase === PHASE.PRESEASON;
-	const gamesLeftByTid = await getGamesLeftSchedule();
-	const getGamesLeft = (tid: number) =>
-		preseason ? g.get("numGames") : (gamesLeftByTid.get(tid) ?? 0);
-	const numDaysInFuture = playoffs
-		? 0
-		: preseason
-			? g.get("numGames")
-			: await getDaysLeftSchedule();
+	const activeTeamSeasons = teamSeasons.filter(
+		(teamSeason) => !teamsByTid.get(teamSeason.tid)?.disabled,
+	);
+
+	const schedule = await getRegularSeasonSchedule({
+		phase,
+		teamSeasons: activeTeamSeasons,
+	});
+	const today = schedule[0]?.day ?? 0;
+	const lastDay = schedule.at(-1)?.day;
+	const numDaysUntilPlayoffs = lastDay === undefined ? 0 : lastDay - today + 1;
 
 	const players = await player.formatAll(
 		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
@@ -616,22 +803,75 @@ export const getTeamOdds = async () => {
 	);
 	const playersByTid = Map.groupBy(players, (p) => p.tid);
 
-	const teams = teamSeasons
-		.filter((teamSeason) => !teamsByTid.get(teamSeason.tid)?.disabled)
-		.map((teamSeason) => {
-			const { tid } = teamSeason;
+	const regularSeasonOvrs = new Map<number, OvrByDay>();
+	const teams = activeTeamSeasons.map((teamSeason) => {
+		const { tid } = teamSeason;
+		const teamPlayers = playersByTid.get(tid) ?? [];
+		const t = teamsByTid.get(tid) ?? "default";
 
-			return {
-				clinchedPlayoffs: teamSeason.clinchedPlayoffs,
-				gamesLeft: getGamesLeft(tid),
-				ovr: getTeamStrength(playersByTid.get(tid) ?? [], {
-					numDaysInFuture,
-					playoffs,
-					t: teamsByTid.get(tid) ?? "default",
-				}),
-				teamSeason,
-			};
-		});
+		regularSeasonOvrs.set(
+			tid,
+			getOvrsByDay(teamPlayers, { playoffs: false, t }),
+		);
 
-	return simTeamOdds({ playoffSeries, season, teams });
+		return {
+			clinchedPlayoffs: teamSeason.clinchedPlayoffs,
+			playoffsOvrs: getOvrsByDay(teamPlayers, { playoffs: true, t }),
+			teamSeason,
+		};
+	});
+
+	const remainingGames: RemainingGame[] = [];
+	for (const game of schedule) {
+		// Skips special games like the All-Star Game, which have negative tids
+		const homeOvrs = regularSeasonOvrs.get(game.homeTid);
+		const awayOvrs = regularSeasonOvrs.get(game.awayTid);
+		if (homeOvrs && awayOvrs) {
+			const day = game.day - today;
+			remainingGames.push({
+				away: game.awayTid,
+				awayOvr: getOvrOnDay(awayOvrs, day),
+				home: game.homeTid,
+				homeOvr: getOvrOnDay(homeOvrs, day),
+			});
+		}
+	}
+
+	return simTeamOdds({
+		numDaysUntilPlayoffs,
+		playoffSeries,
+		remainingGames,
+		season,
+		teams,
+	});
+};
+
+// The same schedule updateClinchedPlayoffs uses, so odds agree with what has been clinched. Before the regular season there is no schedule yet, so this generates one like the real one will be.
+const getRegularSeasonSchedule = async ({
+	phase,
+	teamSeasons,
+}: {
+	phase: number;
+	teamSeasons: TeamSeason[];
+}): Promise<{ awayTid: number; day: number; homeTid: number }[]> => {
+	if (phase === PHASE.PRESEASON) {
+		const { tids } = genScheduleMatchups(
+			teamSeasons.map(({ cid, did, tid }) => ({
+				seasonAttrs: { cid, did },
+				tid,
+			})),
+		);
+		return addDaysToSchedule(
+			addSpecialGames(tids).map(([homeTid, awayTid]) => ({
+				awayTid,
+				homeTid,
+			})),
+		);
+	}
+
+	if (phase === PHASE.REGULAR_SEASON) {
+		return await getSchedule();
+	}
+
+	return [];
 };

@@ -13,8 +13,7 @@ const seriesTeam = (tid: number, seed: number) => ({
 
 const getTeams = () =>
 	helpers.getTeamsDefault().map((t) => ({
-		gamesLeft: 0,
-		ovr: 50 + t.tid,
+		playoffsOvrs: { changes: [], ovr: 50 + t.tid },
 		teamSeason: { tid: t.tid, cid: t.cid, did: t.did } as any,
 	}));
 
@@ -45,12 +44,14 @@ for (const numGamesPlayoffSeries of [
 			away: seriesTeam(15 - i, 16 - i),
 		}));
 		const odds = (await simTeamOdds({
+			numDaysUntilPlayoffs: 0,
 			numSims: 200,
 			playoffSeries: {
 				currentRound: 0,
 				series: [first, [], [], []],
 			},
 			season: g.get("season"),
+			remainingGames: [],
 			teams: getTeams(),
 		}))!;
 

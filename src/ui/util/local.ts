@@ -3,6 +3,7 @@ import { shallow } from "zustand/shallow";
 import type { LocalStateUI, GameAttributesLeague } from "../../common/types.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { safeLocalStorage } from "./safeLocalStorage.ts";
+import { DEFAULT_GAME_PREDICTION } from "../../common/constants.ts";
 import { gameAttributesSyncedToUi } from "../../common/gameAttributesSyncedToUi.ts";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
@@ -63,7 +64,6 @@ const getLeagueState = (): Pick<
 	draftType: defaultGameAttributes.draftType,
 	fantasyPoints: undefined,
 	gameOver: false,
-	gamePrediction: defaultGameAttributes.gamePrediction,
 	gender: defaultGameAttributes.gender,
 	godMode: false,
 	hideDisabledTeams: false,
@@ -104,6 +104,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 		email: undefined,
 		flagOverrides: {},
 		fullNames: false,
+		gamePrediction: DEFAULT_GAME_PREDICTION,
 		gameSimInProgress: false,
 		gold: undefined,
 		keyboardShortcuts: undefined,

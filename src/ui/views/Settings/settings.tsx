@@ -2997,16 +2997,6 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "UI",
-			key: "gamePrediction",
-			name: "Game Predictions",
-			type: "string",
-			values: [
-				{ key: "probability", value: "Win probability" },
-				{ key: "spread", value: "Point spread" },
-			],
-		},
-		{
-			category: "UI",
 			key: "currencyFormat",
 			name: "Currency Format",
 			type: "custom",

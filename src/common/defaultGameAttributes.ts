@@ -642,7 +642,6 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	autoRelocateRebrand: true,
 	autoRelocateRealign: true,
 	alwaysShowCountry: false,
-	gamePrediction: "probability",
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

@@ -654,7 +654,6 @@ export type GameAttributesLeague = {
 	foulsUntilBonus: [number, number, number];
 	foulRateFactor: number;
 	gameOver: boolean;
-	gamePrediction: "probability" | "spread";
 	gender: "female" | "male";
 	goatFormula?: string;
 	goatSeasonFormula?: string;
@@ -1035,6 +1034,8 @@ export type Option = {
 	keyboardShortcut?: keyof KeyboardShortcuts["playMenu"];
 };
 
+export type GamePrediction = "probability" | "spread";
+
 export type Options = {
 	fullNames?: boolean;
 	phaseChangeRedirects: Phase[];
@@ -1075,6 +1076,7 @@ export type LocalStateUI = {
 		teams: [LocalStateUIGameTeam, LocalStateUIGameTeam];
 	}[];
 	fullNames: boolean;
+	gamePrediction: GamePrediction;
 	gold?: boolean;
 	keyboardShortcuts: KeyboardShortcutsLocal;
 	leagueCreation?: {

@@ -426,6 +426,8 @@ export const ALL_STAR_GAME_ONLY = bySport({
 
 export const DEFAULT_PHASE_CHANGE_REDIRECTS = [1, 3, 4, 5, 7, 8] as Phase[];
 
+export const DEFAULT_GAME_PREDICTION = "probability";
+
 export const EXHIBITION_GAME_SETTINGS = [
 	"maxOvertimes",
 	"shootoutRounds",

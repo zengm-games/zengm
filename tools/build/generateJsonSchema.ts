@@ -993,9 +993,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					gameOver: {
 						type: "boolean",
 					},
-					gamePrediction: {
-						enum: ["probability", "spread"],
-					},
 					gender: {
 						enum: ["female", "male"],
 					},

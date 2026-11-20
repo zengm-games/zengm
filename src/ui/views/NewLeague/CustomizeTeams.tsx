@@ -620,7 +620,7 @@ const CardHeader = ({
 					<button
 						type="button"
 						className={clsx(
-							"btn btn-link p-0 border-0 text-reset text-decoration-none",
+							"btn btn-link p-0 border-0 text-reset",
 							alignButtonsRight ? "me-auto" : "me-2",
 						)}
 						onClick={() => {

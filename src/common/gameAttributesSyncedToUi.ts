@@ -7,7 +7,6 @@ export const gameAttributesSyncedToUi = [
 	"draftType",
 	"fantasyPoints",
 	"gameOver",
-	"gamePrediction",
 	"gender",
 	"godMode",
 	"hideDisabledTeams",

@@ -34,14 +34,7 @@ export const WinPercent = ({
 	const percent = `${winPercents[i]}%`;
 
 	if (preGame) {
-		return (
-			<span
-				className="text-body-secondary"
-				title="Win probability before the game"
-			>
-				{percent} pre-game
-			</span>
-		);
+		return <span className="text-body-secondary">{percent} pre-game</span>;
 	}
 
 	const status = getFavoriteStatus(winPercents, i, live);
@@ -52,7 +45,6 @@ export const WinPercent = ({
 				"text-success": status === "favorite",
 				"text-danger": status === "underdog",
 			})}
-			title="Win probability"
 		>
 			{percent}
 		</span>
@@ -119,6 +111,7 @@ export const LiveWinProbability = ({
 			<div
 				className="d-flex align-items-center gap-1"
 				style={{ fontVariantNumeric: "tabular-nums" }}
+				title="Win probability"
 			>
 				<WidestPercentWidth className="text-end">
 					<WinPercent i={left} live winPercents={winPercents} />

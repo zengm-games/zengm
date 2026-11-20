@@ -20,6 +20,8 @@ import {
 	roundWinPercents,
 } from "../../../common/gamePrediction.ts";
 import { WinPercent } from "../WinProbability.tsx";
+import { toWorker } from "../../util/toWorker.ts";
+import type { GamePrediction } from "../../../common/types.ts";
 
 type Team = {
 	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
@@ -65,6 +67,40 @@ const getRecord = (t: Team) => {
 	}
 
 	return helpers.formatRecord({ ...t, won: t.won, lost: t.lost });
+};
+
+// Clicking a prediction switches every score box between win probability and point spread
+const GamePredictionToggle = ({
+	children,
+	final,
+	gamePrediction,
+}: {
+	children: ReactNode;
+	final: boolean;
+	gamePrediction: GamePrediction;
+}) => {
+	let title;
+	let otherGamePrediction: GamePrediction;
+	if (gamePrediction === "probability") {
+		title = `Win probability${final ? " before the game" : ""} - click to show point spreads.`;
+		otherGamePrediction = "spread";
+	} else {
+		title = `Point spread${final ? " before the game" : ""} - click to show win probabilities.`;
+		otherGamePrediction = "probability";
+	}
+
+	return (
+		<button
+			type="button"
+			className="btn btn-link p-0 border-0 align-baseline text-reset"
+			onClick={async () => {
+				await toWorker("main", "updateGamePrediction", otherGamePrediction);
+			}}
+			title={title}
+		>
+			{children}
+		</button>
+	);
 };
 
 const smallStyle = {
@@ -412,17 +448,25 @@ export const ScoreBox = memo(
 													{winPercents ? (
 														<>
 															,{" "}
-															<WinPercent
-																i={i}
-																preGame={final}
-																winPercents={winPercents}
-															/>
+															<GamePredictionToggle
+																final={final}
+																gamePrediction={gamePrediction}
+															>
+																<WinPercent
+																	i={i}
+																	preGame={final}
+																	winPercents={winPercents}
+																/>
+															</GamePredictionToggle>
 														</>
 													) : null}
 													{spreads?.[i] ? (
 														<>
 															,{" "}
-															<span title="Point spread or betting line">
+															<GamePredictionToggle
+																final={final}
+																gamePrediction={gamePrediction}
+															>
 																<span
 																	className={
 																		!final ? "text-success" : undefined
@@ -431,7 +475,7 @@ export const ScoreBox = memo(
 																	{spreads[i]}
 																</span>{" "}
 																spread
-															</span>
+															</GamePredictionToggle>
 														</>
 													) : null}
 												</div>
@@ -439,11 +483,18 @@ export const ScoreBox = memo(
 										</div>
 										{(spreads || winPercents) && small ? (
 											<div className="text-end score-box-score me-2">
-												{winPercents ? (
-													<WinPercent i={i} winPercents={winPercents} />
-												) : (
-													spreads?.[i]
-												)}
+												{winPercents || spreads?.[i] ? (
+													<GamePredictionToggle
+														final={final}
+														gamePrediction={gamePrediction}
+													>
+														{winPercents ? (
+															<WinPercent i={i} winPercents={winPercents} />
+														) : (
+															spreads?.[i]
+														)}
+													</GamePredictionToggle>
+												) : null}
 											</div>
 										) : null}
 										{final ? (

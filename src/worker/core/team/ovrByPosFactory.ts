@@ -57,11 +57,20 @@ const getPlayerInfo = (
 
 	return orderedPlayers.map((p) => {
 		const pos = baseballPositions.get(p) ?? p.ratings.pos;
+		const posOvr = p.ratings.ovrs?.[pos] ?? p.ratings.ovr;
 
-		return {
-			pos,
-			value: wholeRoster ? p.value : (p.ratings.ovrs?.[pos] ?? p.ratings.ovr),
-		};
+		let value;
+		if (wholeRoster) {
+			value = p.value;
+			if (pos !== p.ratings.pos) {
+				// value reflects the player's natural position, so adjust it for how well they play the position they were assigned to in the depth chart. Otherwise a good pitcher playing catcher counts as a good catcher.
+				value += posOvr - p.ratings.ovr;
+			}
+		} else {
+			value = posOvr;
+		}
+
+		return { pos, value };
 	});
 };
 

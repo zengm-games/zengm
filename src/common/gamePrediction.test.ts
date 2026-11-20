@@ -207,27 +207,27 @@ describe("formatGameSpreads", () => {
 
 describe("roundWinPercents", () => {
 	test("0.496 rounds to an even 50/50", () => {
-		assert.deepEqual(roundWinPercents(0.496).percents, [50, 50]);
+		assert.deepEqual(roundWinPercents(0.496), [50, 50]);
 	});
 
 	test("clamps to 1..99 unless resolved", () => {
-		assert.deepEqual(roundWinPercents(0.999).percents, [99, 1]);
-		assert.deepEqual(roundWinPercents(0.001).percents, [1, 99]);
-		assert.deepEqual(roundWinPercents(1, true).percents, [100, 0]);
-		assert.deepEqual(roundWinPercents(0, true).percents, [0, 100]);
+		assert.deepEqual(roundWinPercents(0.999), [99, 1]);
+		assert.deepEqual(roundWinPercents(0.001), [1, 99]);
+		assert.deepEqual(roundWinPercents(1, true), [100, 0]);
+		assert.deepEqual(roundWinPercents(0, true), [0, 100]);
 	});
 
 	test("the sides always sum to 100", () => {
 		for (let i = 0; i <= 1000; i++) {
-			const { percents } = roundWinPercents(i / 1000);
+			const percents = roundWinPercents(i / 1000);
 			assert.strictEqual(percents[0] + percents[1], 100);
 		}
 	});
 
 	test("rounds the same for either side", () => {
 		for (let i = 0; i <= 1000; i++) {
-			const { percents } = roundWinPercents(i / 1000);
-			const flipped = roundWinPercents(1 - i / 1000).percents;
+			const percents = roundWinPercents(i / 1000);
+			const flipped = roundWinPercents(1 - i / 1000);
 			assert.deepEqual(percents, [flipped[1], flipped[0]]);
 		}
 	});

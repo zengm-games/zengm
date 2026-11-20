@@ -56,7 +56,6 @@ const getLeagueState = (): Pick<
 	| "playMenuOptions"
 > => ({
 	alwaysShowCountry: false,
-	gamePrediction: defaultGameAttributes.gamePrediction,
 	budget: defaultGameAttributes.budget,
 	challengeNoRatings: false,
 	challengeNoTrades: false,
@@ -64,6 +63,7 @@ const getLeagueState = (): Pick<
 	draftType: defaultGameAttributes.draftType,
 	fantasyPoints: undefined,
 	gameOver: false,
+	gamePrediction: defaultGameAttributes.gamePrediction,
 	gender: defaultGameAttributes.gender,
 	godMode: false,
 	hideDisabledTeams: false,

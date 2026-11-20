@@ -227,17 +227,18 @@ export const formatGameSpreads = (
 };
 
 // Rounds the favorite and gives the rest to the other team, so the two always sum to 100. Only a game that is over should be resolved, otherwise neither team can reach 0 or 100.
-export const roundWinPercents = (prob: number, resolved?: boolean) => {
+export const roundWinPercents = (
+	prob: number,
+	resolved?: boolean,
+): [number, number] => {
 	const favorite = Math.max(prob, 1 - prob);
 	const rounded = Math.round(favorite * 100);
 	const favoritePercent = resolved ? rounded : Math.min(rounded, 99);
 	const otherPercent = 100 - favoritePercent;
 
-	return {
-		percents: (prob >= 0.5
-			? [favoritePercent, otherPercent]
-			: [otherPercent, favoritePercent]) as [number, number],
-	};
+	return prob >= 0.5
+		? [favoritePercent, otherPercent]
+		: [otherPercent, favoritePercent];
 };
 
 // resolved is for 0% and 100% that come from game state, like an eliminated team or a champion

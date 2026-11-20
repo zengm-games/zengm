@@ -3004,8 +3004,6 @@ export const settings: Setting[] = (
 				{ key: "probability", value: "Win probability" },
 				{ key: "spread", value: "Point spread" },
 			],
-			description:
-				"Whether score boxes for games, like on the schedule, show the point spread or each team's win probability.",
 		},
 		{
 			category: "UI",

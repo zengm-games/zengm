@@ -49,7 +49,6 @@ import {
 	isTradeDeadline,
 } from "../../../common/specialGames.ts";
 
-// Plays one day, then calls itself for the next day, until run is finished
 // Simulates one game, with the same settings as a real game in the league
 export const getGameResult = ({
 	gid,
@@ -110,6 +109,7 @@ export const getGameResult = ({
 	}).run();
 };
 
+// Plays one day, then calls itself for the next day, until run is finished
 const playDays = async (
 	run: SimRun,
 	numDays: number,

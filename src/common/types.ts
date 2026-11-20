@@ -593,7 +593,6 @@ export type GameAttributesLeague = {
 	allStarDunk: boolean;
 	allStarThree: boolean;
 	alwaysShowCountry: boolean;
-	gamePrediction: "probability" | "spread";
 	autoExpand:
 		| {
 				phase: "vote";
@@ -655,6 +654,7 @@ export type GameAttributesLeague = {
 	foulsUntilBonus: [number, number, number];
 	foulRateFactor: number;
 	gameOver: boolean;
+	gamePrediction: "probability" | "spread";
 	gender: "female" | "male";
 	goatFormula?: string;
 	goatSeasonFormula?: string;

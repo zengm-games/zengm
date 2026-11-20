@@ -9,11 +9,7 @@ import { useLocal } from "../util/local.ts";
 type WinPercents = ReturnType<typeof roundWinPercents>;
 
 // In a live game, at 50/50 the team displayed first counts as the favorite, because showing neither team as the favorite would make the colors flash on and off whenever a close game goes back and forth across 50/50. Before a game, the odds don't change rapidly, so 50/50 can be shown as even.
-const getFavoriteStatus = (
-	{ percents }: WinPercents,
-	i: 0 | 1,
-	live: boolean,
-) => {
+const getFavoriteStatus = (percents: WinPercents, i: 0 | 1, live: boolean) => {
 	const other = percents[i === 0 ? 1 : 0];
 	if (percents[i] === other) {
 		if (!live) {
@@ -35,7 +31,7 @@ export const WinPercent = ({
 	preGame?: boolean;
 	winPercents: WinPercents;
 }) => {
-	const percent = `${winPercents.percents[i]}%`;
+	const percent = `${winPercents[i]}%`;
 
 	if (preGame) {
 		return (
@@ -82,7 +78,7 @@ export const WinProbabilityBar = ({
 							"bg-success": status === "favorite",
 							"bg-danger": status === "underdog",
 						})}
-						style={{ width: `${winPercents.percents[i]}%` }}
+						style={{ width: `${winPercents[i]}%` }}
 					/>
 				);
 			})}

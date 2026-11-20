@@ -65,10 +65,7 @@ test("up 40 at 0:00 without gameOver stays clamped to 99", () => {
 	const result = getProb(
 		makeBoxScore({ period: 4, pts: [120, 80], time: "0:00" }),
 	)!;
-	assert.deepEqual(
-		roundWinPercents(result.prob, result.resolved).percents,
-		[99, 1],
-	);
+	assert.deepEqual(roundWinPercents(result.prob, result.resolved), [99, 1]);
 });
 
 test("reads the sub-minute clock", () => {

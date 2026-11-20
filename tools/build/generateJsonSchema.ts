@@ -743,9 +743,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					alwaysShowCountry: {
 						type: "boolean",
 					},
-					gamePrediction: {
-						enum: ["probability", "spread"],
-					},
 					autoExpand: {
 						type: "object",
 						properties: {
@@ -995,6 +992,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					},
 					gameOver: {
 						type: "boolean",
+					},
+					gamePrediction: {
+						enum: ["probability", "spread"],
 					},
 					gender: {
 						enum: ["female", "male"],

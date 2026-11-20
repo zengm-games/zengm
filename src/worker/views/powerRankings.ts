@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { TeamFiltered } from "../../common/types.ts";
-import { defineView } from "../util/defineView.ts";
+import { defineView, type ViewArgs } from "../util/defineView.ts";
 import { player, team } from "../core/index.ts";
 import { getTeamOdds, isTeamOddsAvailable } from "../core/team/getTeamOdds.ts";
 import {
@@ -218,69 +218,99 @@ export const addPowerRankingsStuffToTeams = async <
 	return teamsWithRankings;
 };
 
+type Args = ViewArgs<typeof processInputs>;
+
+// Both the rankings and the odds of the current season change when games are played or rosters change
+const isCurrentSeasonChanged = ({ inputs: { season }, updateEvents }: Args) =>
+	season === g.get("season") &&
+	(updateEvents.has("gameSim") || updateEvents.has("playerMovement"));
+
+const updateTeams = async (args: Args) => {
+	const {
+		inputs: { playoffs, season },
+		prevInputs,
+	} = args;
+	if (
+		isCurrentSeasonChanged(args) ||
+		season !== prevInputs?.season ||
+		playoffs !== prevInputs?.playoffs
+	) {
+		const teams = await team.getFormattedAll({
+			attrs: ["tid", "playThroughInjuries"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"lastTen",
+				"abbrev",
+				"region",
+				"name",
+				"cid",
+				"did",
+				"imgURL",
+				"imgURLSmall",
+			],
+			stats: ["gp", "mov", "pts", "oppPts"],
+			season,
+			showNoStats: true,
+		});
+
+		const teamsWithRankings = await addPowerRankingsStuffToTeams(
+			teams,
+			season,
+			playoffs,
+		);
+
+		let ties = false;
+		let otl = false;
+		for (const t of teams) {
+			if (t.seasonAttrs.tied > 0) {
+				ties = true;
+			}
+			if (t.seasonAttrs.otl > 0) {
+				otl = true;
+			}
+			if (ties && otl) {
+				break;
+			}
+		}
+
+		return {
+			confs: g.get("confs", season),
+			divs: g.get("divs", season),
+			playoffs,
+			season,
+			teams: teamsWithRankings,
+			ties: hasTies(season) || ties,
+			otl: g.get("otl", season) || otl,
+		};
+	}
+};
+
+// Separate from updateTeams, because the odds don't depend on the playoffs input and they are slow to compute
+const updateTeamOdds = async (args: Args) => {
+	const {
+		inputs: { season },
+		prevInputs,
+	} = args;
+	if (isCurrentSeasonChanged(args) || season !== prevInputs?.season) {
+		const teamOddsAvailable = isTeamOddsAvailable(season);
+		return {
+			teamOdds: teamOddsAvailable ? await getTeamOdds() : undefined,
+			teamOddsAvailable,
+		};
+	}
+};
+
 export default defineView({
 	id: "powerRankings",
 	processInputs,
-	load: async ({ inputs: { playoffs, season }, updateEvents, prevInputs }) => {
-		if (
-			(season === g.get("season") && updateEvents.has("gameSim")) ||
-			season !== prevInputs?.season ||
-			playoffs !== prevInputs?.playoffs
-		) {
-			const teams = await team.getFormattedAll({
-				attrs: ["tid", "playThroughInjuries"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"tied",
-					"otl",
-					"lastTen",
-					"abbrev",
-					"region",
-					"name",
-					"cid",
-					"did",
-					"imgURL",
-					"imgURLSmall",
-				],
-				stats: ["gp", "mov", "pts", "oppPts"],
-				season,
-				showNoStats: true,
-			});
-
-			const teamsWithRankings = await addPowerRankingsStuffToTeams(
-				teams,
-				season,
-				playoffs,
-			);
-
-			let ties = false;
-			let otl = false;
-			for (const t of teams) {
-				if (t.seasonAttrs.tied > 0) {
-					ties = true;
-				}
-				if (t.seasonAttrs.otl > 0) {
-					otl = true;
-				}
-				if (ties && otl) {
-					break;
-				}
-			}
-
-			const teamOddsAvailable = isTeamOddsAvailable(season);
-
-			return {
-				confs: g.get("confs", season),
-				divs: g.get("divs", season),
-				playoffs,
-				season,
-				teams: teamsWithRankings,
-				ties: hasTies(season) || ties,
-				teamOdds: teamOddsAvailable ? await getTeamOdds() : undefined,
-				teamOddsAvailable,
-				otl: g.get("otl", season) || otl,
-			};
-		}
+	load: async (args) => {
+		return Object.assign(
+			{},
+			await updateTeams(args),
+			await updateTeamOdds(args),
+		);
 	},
 });

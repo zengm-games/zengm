@@ -575,6 +575,29 @@ describe("getTeamOdds", () => {
 		g.setWithoutSavingToDB("phase", PHASE.PRESEASON);
 		assert.isFalse(isDecided((await getTeamOdds())!));
 
+		// Games left on the schedule count both before and after the trade deadline
+		const tids = helpers
+			.getTeamsDefault()
+			.map((t) => t.tid)
+			.filter((tid) => tid !== 1);
+		let gid = 0;
+		for (let day = 0; day < 10; day++) {
+			for (let i = 0; i + 1 < tids.length; i += 2) {
+				await idb.cache.schedule.put({
+					awayTid: tids[i + (day % 2)]!,
+					day,
+					gid,
+					homeTid: tids[i + 1 - (day % 2)]!,
+				});
+				gid += 1;
+			}
+		}
+		for (const phase of [PHASE.REGULAR_SEASON, PHASE.AFTER_TRADE_DEADLINE]) {
+			g.setWithoutSavingToDB("phase", phase);
+			assert.isFalse(isDecided((await getTeamOdds())!));
+		}
+		await idb.cache.schedule.clear();
+
 		g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
 		g.setWithoutSavingToDB("playIn", true);
 	});

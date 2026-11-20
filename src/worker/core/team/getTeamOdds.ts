@@ -915,7 +915,7 @@ const getRegularSeasonSchedule = async ({
 		);
 	}
 
-	if (phase === PHASE.REGULAR_SEASON) {
+	if (phase === PHASE.REGULAR_SEASON || phase === PHASE.AFTER_TRADE_DEADLINE) {
 		return await getSchedule();
 	}
 

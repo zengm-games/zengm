@@ -9,6 +9,7 @@ import {
 } from "../season/playoffBracket.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
+import { deleteScheduledGamesForCompletedSeries } from "../season/playoffSchedule.ts";
 
 const updatePlayoffSeries = async (
 	results: GameResults,
@@ -218,6 +219,7 @@ const updatePlayoffSeries = async (
 	}
 
 	await idb.cache.playoffSeries.put(playoffSeries);
+	await deleteScheduledGamesForCompletedSeries(playoffSeries);
 };
 
 export default updatePlayoffSeries;

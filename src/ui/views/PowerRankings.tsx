@@ -1,5 +1,4 @@
-import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { dropdownOptions } from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
@@ -17,7 +16,6 @@ import {
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
 import { useLocal } from "../util/local.ts";
-import { toWorker } from "../util/toWorker.ts";
 
 const Other = ({
 	actualShowHealthy,
@@ -41,26 +39,6 @@ const Other = ({
 	);
 };
 
-const OddsCell = ({
-	dimmed,
-	prob,
-	text,
-}: {
-	dimmed: boolean;
-	prob: number | undefined;
-	text: string;
-}) => {
-	return (
-		<TextUnderlineBar
-			barClassName="bg-success"
-			className={clsx({ "text-body-secondary": dimmed })}
-			percent={(prob ?? 0) * 100}
-		>
-			{text}
-		</TextUnderlineBar>
-	);
-};
-
 const PowerRankings = ({
 	confs,
 	divs,
@@ -68,6 +46,7 @@ const PowerRankings = ({
 	season,
 	teams,
 	ties,
+	teamOdds,
 	teamOddsAvailable,
 	otl,
 }: View<"powerRankings">) => {
@@ -92,51 +71,12 @@ const PowerRankings = ({
 
 	const {
 		challengeNoRatings,
-		gameSimInProgress,
-		phase,
 		season: currentSeason,
 		userTid,
-	} = useLocal([
-		"challengeNoRatings",
-		"gameSimInProgress",
-		"phase",
-		"season",
-		"userTid",
-	]);
+	} = useLocal(["challengeNoRatings", "season", "userTid"]);
 
 	const [showHealthy, setShowHealthy] = useState(true);
 	const actualShowHealthy = showHealthy || currentSeason !== season;
-
-	// undefined means still loading, and null means there are no odds to show
-	const [teamOdds, setTeamOdds] = useState<TeamOdds | null>();
-	const [teamOddsLoading, setTeamOddsLoading] = useState(false);
-
-	// Loaded here rather than in the worker view, because that reruns after every day of a sim, and this is too slow for that (~300ms). Instead it waits until the sim stops (gameSimInProgress), which only the UI knows about, and it doesn't hold up rendering the rest of the table. phase is here because the sim ends before the phase changes to the playoffs.
-	useEffect(() => {
-		if (!teamOddsAvailable || gameSimInProgress) {
-			return;
-		}
-
-		let stale = false;
-		setTeamOddsLoading(true);
-		const load = async () => {
-			let newTeamOdds;
-			try {
-				newTeamOdds = await toWorker("main", "getTeamOdds", undefined);
-			} catch (error) {
-				console.error(error);
-			}
-			if (!stale) {
-				setTeamOdds(newTeamOdds ?? null);
-				setTeamOddsLoading(false);
-			}
-		};
-		load();
-
-		return () => {
-			stale = true;
-		};
-	}, [currentSeason, gameSimInProgress, phase, teamOddsAvailable]);
 
 	const [otherKeys, otherKeysTitle, otherKeysPrefix] = bySport({
 		baseball: [
@@ -228,19 +168,16 @@ const PowerRankings = ({
 		type: keyof TeamOdds[number],
 	) => {
 		const odds = teamOdds?.[tid]?.[type];
-		const text = odds
-			? formatOdds(odds.prob, odds.resolved)
-			: teamOdds === undefined
-				? "..."
-				: "N/A";
+		const text = odds ? formatOdds(odds.prob, odds.resolved) : "N/A";
 
 		return {
 			value: (
-				<OddsCell
-					dimmed={gameSimInProgress || teamOddsLoading}
-					prob={odds?.prob}
-					text={text}
-				/>
+				<TextUnderlineBar
+					barClassName="bg-success"
+					percent={(odds?.prob ?? 0) * 100}
+				>
+					{text}
+				</TextUnderlineBar>
 			),
 			searchValue: text,
 

@@ -1867,10 +1867,6 @@ const getDefaultTragicDeaths = () => {
 	return defaultTragicDeaths;
 };
 
-const getTeamOdds = () => {
-	return team.getTeamOdds();
-};
-
 const getEightyTwoZeroDraftPlayer = (pid: number) => {
 	const draft = local.eightyTwoZeroDraft;
 	if (!draft) {
@@ -5586,7 +5582,6 @@ const api = {
 		evalOnWorker,
 		exportDraftClass,
 		getExportFilename,
-		getTeamOdds,
 		exportPlayerAveragesCsv,
 		exportPlayerGamesCsv,
 		generateFace: generateFace2,

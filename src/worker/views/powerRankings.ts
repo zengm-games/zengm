@@ -3,7 +3,7 @@ import { g } from "../util/index.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { player, team } from "../core/index.ts";
-import { isTeamOddsAvailable } from "../core/team/getTeamOdds.ts";
+import { getTeamOdds, isTeamOddsAvailable } from "../core/team/getTeamOdds.ts";
 import {
 	NOT_REAL_POSITIONS,
 	POSITIONS,
@@ -268,6 +268,8 @@ export default defineView({
 				}
 			}
 
+			const teamOddsAvailable = isTeamOddsAvailable(season);
+
 			return {
 				confs: g.get("confs", season),
 				divs: g.get("divs", season),
@@ -275,7 +277,8 @@ export default defineView({
 				season,
 				teams: teamsWithRankings,
 				ties: hasTies(season) || ties,
-				teamOddsAvailable: isTeamOddsAvailable(season),
+				teamOdds: teamOddsAvailable ? await getTeamOdds() : undefined,
+				teamOddsAvailable,
 				otl: g.get("otl", season) || otl,
 			};
 		}

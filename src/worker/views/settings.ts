@@ -166,6 +166,7 @@ const gameAttributeKeys = [
 	"autoRelocateRealign",
 	"autoRelocateRebrand",
 	"alwaysShowCountry",
+	"pomymarket",
 	"neutralSite",
 	"rpdPot",
 	"saveOldBoxScores",

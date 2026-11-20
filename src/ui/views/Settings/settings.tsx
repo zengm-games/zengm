@@ -2,6 +2,7 @@ import {
 	COURT,
 	DIFFICULTY,
 	GAME_NAME,
+	POMYMARKET_NAME,
 	REAL_DRAFT_RATINGS,
 	REAL_PLAYERS_INFO,
 	TIEBREAKERS,
@@ -2994,6 +2995,14 @@ export const settings: Setting[] = (
 			type: "bool",
 			description:
 				"This will show a player's birth country flag in most places his name is displayed.",
+		},
+		{
+			category: "UI",
+			key: "pomymarket",
+			name: POMYMARKET_NAME,
+			type: "bool",
+			description:
+				"A parody prediction market, just for fun. Shows title odds on the Power Rankings page and win percentages in place of point spreads, including during live games. All numbers come from the game's own model, even with the No Visible Player Ratings challenge. There is no betting and no real market.",
 		},
 		{
 			category: "UI",

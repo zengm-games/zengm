@@ -128,6 +128,9 @@ export abstract class LiveGamePlaybackBase<
 	// Index of the next event to process
 	private cursor = 0;
 
+	// Clock after the latest entry from `next`, kept because the game over reset sets boxScore.time to 0:00
+	lastPlayTime: string | undefined;
+
 	constructor(boxScore: BoxScore, events: readonly PlayByPlayEvent<Event>[]) {
 		this.boxScore = boxScore;
 		this.events = events;
@@ -141,6 +144,7 @@ export abstract class LiveGamePlaybackBase<
 	// Process events up to and including the next one that is shown in the play-by-play. Returns undefined if the events run out before finding one.
 	next(): LiveGameEntry | undefined {
 		const entry = this.nextEntry();
+		this.lastPlayTime = this.boxScore.time;
 
 		if (this.done) {
 			this.boxScore.time = "0:00";

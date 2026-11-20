@@ -30,3 +30,20 @@ export const formatClock = (clock: number) => {
 
 	return `${Math.floor(clock)}:${sec}`;
 };
+
+export const getSeconds = (time: string | undefined) => {
+	if (!time) {
+		return 0;
+	}
+
+	const parts = time.split(":").map((x) => Number.parseInt(x));
+	if (parts.length === 0) {
+		return 0;
+	}
+	if (parts.length === 1) {
+		// Seconds only being displayed
+		return Number.parseFloat(time);
+	}
+	const [min, sec] = parts as [number, number];
+	return min * 60 + sec;
+};

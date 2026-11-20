@@ -17,6 +17,20 @@ import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { getSeconds } from "../../../common/formatClock.ts";
+import { PomymarketChart } from "../../components/PomymarketChart.tsx";
+import {
+	PomymarketLive,
+	showPomymarketLive,
+} from "../../components/PomymarketOdds.tsx";
+import {
+	getLiveWinpElapsedSeconds,
+	getLiveWinpXDomain,
+	getNextLiveWinpSample,
+	INITIAL_LIVE_WINP_X_STATE,
+	type LiveWinpSample,
+} from "../../util/liveWinpChart.ts";
+import { local, useLocal } from "../../util/local.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { LiveGamePlayback } from "../../util/LiveGamePlayback.ts";
 import type { LiveGameEntry } from "../../util/LiveGamePlaybackBase.ts";
@@ -95,23 +109,6 @@ class PlayerRow extends Component<PlayerRowProps> {
 const onLiveSimOver = () => {
 	// Send to worker, rather than doing `localActions.update({ liveGameInProgress: false });`, so it works in all tabs
 	toWorker("main", "onLiveSimOver", undefined);
-};
-
-const getSeconds = (time: string | undefined) => {
-	if (!time) {
-		return 0;
-	}
-
-	const parts = time.split(":").map((x) => Number.parseInt(x));
-	if (parts.length === 0) {
-		return 0;
-	}
-	if (parts.length === 1) {
-		// Seconds only being displayed
-		return Number.parseFloat(time);
-	}
-	const [min, sec] = parts as [number, number];
-	return min * 60 + sec;
 };
 
 type PlayByPlayEntryInfo = LiveGameEntry & {
@@ -296,6 +293,27 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	const playByPlayEntries = useRef<PlayByPlayEntryInfo[]>([]);
 
+	// Recorded even when Pomymarket is off, so turning it on mid-game shows the whole game
+	const winpSamples = useRef<LiveWinpSample[]>([]);
+	const winpXState = useRef(INITIAL_LIVE_WINP_X_STATE);
+	const recordWinpSample = useCallback(
+		(elapsedSeconds: number) => {
+			const next = getNextLiveWinpSample({
+				boxScore: boxScore.current,
+				elapsedSeconds,
+				homeCourtAdvantage: local.getState().homeCourtAdvantage,
+				quarterLength: props.quarterLength,
+				sportState: playback.current?.sportState,
+				xState: winpXState.current,
+			});
+			if (next) {
+				winpXState.current = next.xState;
+				winpSamples.current.push(next.sample);
+			}
+		},
+		[props.quarterLength],
+	);
+
 	const navigateWarning = getNavigateWarning(boxScore.current.exhibition);
 
 	const { setDirty } = useBlocker({
@@ -365,13 +383,33 @@ export const LiveGame = (props: View<"liveGame">) => {
 				onLiveSimOver();
 			}
 
+			recordWinpSample(
+				getLiveWinpElapsedSeconds({
+					// Clock before the game over reset to 0:00, so a sudden-death winner does not add the unplayed time
+					endSeconds: getSeconds(pb.lastPlayTime),
+					gameOver: !!boxScore.current.gameOver,
+					overtimes: Math.max(
+						0,
+						boxScore.current.teams[0].ptsQtrs.length -
+							boxScore.current.numPeriods,
+					),
+					startSeconds,
+				}),
+			);
+
 			const endSeconds = getSeconds(boxScore.current.time);
 
 			// This is negative when rolling over to a new quarter
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[clearPlaybackTimeout, props.confetti, props.otl, setDirty],
+		[
+			clearPlaybackTimeout,
+			props.confetti,
+			props.otl,
+			recordWinpSample,
+			setDirty,
+		],
 	);
 
 	useEffect(() => {
@@ -386,6 +424,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	useEffect(() => {
 		if (props.events && !started) {
+			winpSamples.current = [];
+			winpXState.current = INITIAL_LIVE_WINP_X_STATE;
+			recordWinpSample(0);
 			setStarted(true);
 
 			clearPlaybackTimeout();
@@ -394,7 +435,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 				setPlayIndex((prev) => prev + 1);
 			}, speedToMs(DEFAULT_SPEED));
 		}
-	}, [clearPlaybackTimeout, processToNextPause, props.events, started]);
+	}, [
+		clearPlaybackTimeout,
+		processToNextPause,
+		props.events,
+		recordWinpSample,
+		started,
+	]);
 
 	const handleSpeedChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const speed = event.target.value;
@@ -685,6 +732,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 		useState<HTMLElement | null>(null);
 	const isStuck = useIsStuck(liveGameStickyDiv);
 
+	const { pomymarket } = useLocal(["pomymarket"]);
+
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
@@ -715,6 +764,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 								<HeadlineScoreLive
 									boxScore={boxScore.current}
 									isStuck={isStuck}
+								/>
+								<PomymarketLive
+									boxScore={boxScore.current}
+									quarterLength={props.quarterLength}
+									sportState={playback.current?.sportState}
 								/>
 								<div className="d-flex align-items-center d-md-none pt-2">
 									<PlayPauseNext
@@ -782,6 +836,19 @@ export const LiveGame = (props: View<"liveGame">) => {
 								</div>
 							</div>
 						</div>
+					) : null}
+					{boxScore.current.gid >= 0 &&
+					showPomymarketLive(pomymarket, boxScore.current) ? (
+						<PomymarketChart
+							gameOver={!!boxScore.current.gameOver}
+							samples={winpSamples.current}
+							teams={boxScore.current.teams}
+							xDomain={getLiveWinpXDomain({
+								boxScore: boxScore.current,
+								quarterLength: props.quarterLength,
+								x: winpXState.current.x,
+							})}
+						/>
 					) : null}
 					{boxScore.current.gid >= 0 ? (
 						<BoxScoreWrapper

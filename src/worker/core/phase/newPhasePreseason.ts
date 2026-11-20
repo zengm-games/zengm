@@ -481,6 +481,7 @@ const newPhasePreseason = async (
 			// Update ratings
 			player.addRatingsRow(p, scoutingLevel);
 			await player.develop(p, 1, false, coachingLevels[p.tid]);
+			player.applyFaceAging(p, newSeason);
 		}
 
 		if (

@@ -55,6 +55,9 @@ const genPlayers = async (
 		// @ts-expect-error
 		await player.addRelatives(p);
 
+		// @ts-expect-error
+		player.applyFaceAging(p, draftYear);
+
 		await player.updateValues(p);
 	}
 

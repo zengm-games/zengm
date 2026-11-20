@@ -595,6 +595,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playerMoodTraits: true,
 	numPlayersOnCourt: 5,
 	aiJerseyRetirement: true,
+	faceAging: true,
 	tiebreakers: wrapFromStart([
 		"headToHeadRecord",
 		"divWinner",

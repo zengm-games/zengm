@@ -1,6 +1,7 @@
 import * as z from "zod";
 import type { IsExact } from "conditional-type-checks";
 import type { FaceConfig } from "facesjs";
+import type { FaceBase } from "./ageFace.ts";
 import type { ReactNode } from "react";
 import type * as views from "../worker/views/index.ts";
 
@@ -637,6 +638,7 @@ export type GameAttributesLeague = {
 	draftAges: [number, number];
 	draftPickAutoContract: boolean;
 	draftPickAutoContractPercent: number;
+	faceAging: boolean;
 	draftPickAutoContractRounds: number;
 	draftType: DraftType;
 	draftLotteryCustomChances: number[];
@@ -1280,6 +1282,8 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 		dpid?: number;
 	};
 	face: FaceConfig;
+	faceBase?: FaceBase; // Face as generated, for face aging
+	faceEdited?: 1; // Face made or edited by the user, so not aged
 	firstName: string;
 	gamesUntilTradable: number;
 	hgt: number;

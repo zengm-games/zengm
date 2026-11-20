@@ -234,7 +234,6 @@ export const roundWinPercents = (prob: number, resolved?: boolean) => {
 	const otherPercent = 100 - favoritePercent;
 
 	return {
-		even: favoritePercent === 50,
 		percents: (prob >= 0.5
 			? [favoritePercent, otherPercent]
 			: [otherPercent, favoritePercent]) as [number, number],

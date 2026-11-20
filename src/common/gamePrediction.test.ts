@@ -207,10 +207,7 @@ describe("formatGameSpreads", () => {
 
 describe("roundWinPercents", () => {
 	test("0.496 rounds to an even 50/50", () => {
-		assert.deepEqual(roundWinPercents(0.496), {
-			even: true,
-			percents: [50, 50],
-		});
+		assert.deepEqual(roundWinPercents(0.496).percents, [50, 50]);
 	});
 
 	test("clamps to 1..99 unless resolved", () => {

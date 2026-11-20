@@ -695,16 +695,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 			<div className="row" ref={scrollTop}>
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
-						<div className="live-game-sticky mb-3" ref={setLiveGameStickyDiv}>
+						<div className="live-game-sticky" ref={setLiveGameStickyDiv}>
 							<div className="pt-1 pt-md-0 live-game-score-wrapper">
 								<HeadlineScoreLive
 									boxScore={boxScore.current}
 									isStuck={isStuck}
-								/>
-								<LiveWinProbability
-									boxScore={boxScore.current}
-									quarterLength={props.quarterLength}
-									sportState={playback.current?.sportState}
 								/>
 								<div className="d-flex align-items-center d-md-none pt-2">
 									<PlayPauseNext
@@ -771,6 +766,16 @@ export const LiveGame = (props: View<"liveGame">) => {
 									</button>
 								</div>
 							</div>
+						</div>
+					) : null}
+					{boxScore.current.gid >= 0 ? (
+						// Not in live-game-sticky, because it would take up too much space when scrolled down. On large screens, there is already blank space above the line score next to the team logos, so it doesn't need any margin below.
+						<div className="mt-3 mt-md-1 mb-3 mb-lg-0">
+							<LiveWinProbability
+								boxScore={boxScore.current}
+								quarterLength={props.quarterLength}
+								sportState={playback.current?.sportState}
+							/>
 						</div>
 					) : null}
 					{boxScore.current.gid >= 0 ? (

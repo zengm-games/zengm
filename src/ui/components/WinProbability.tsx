@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import type { ReactNode } from "react";
 import { roundWinPercents } from "../../common/gamePrediction.ts";
 import { TEAM_NUMS_DISPLAY_ORDER } from "../util/boxScoreDisplayOrder.ts";
 import { getLiveWinp } from "../util/getLiveWinp.ts";
@@ -7,16 +8,30 @@ import { useLocal } from "../util/local.ts";
 
 type WinPercents = ReturnType<typeof roundWinPercents>;
 
-const isFavorite = ({ percents }: WinPercents, i: 0 | 1) => {
-	return percents[i] > percents[i === 0 ? 1 : 0];
+// In a live game, at 50/50 the team displayed first counts as the favorite, because showing neither team as the favorite would make the colors flash on and off whenever a close game goes back and forth across 50/50. Before a game, the odds don't change rapidly, so 50/50 can be shown as even.
+const getFavoriteStatus = (
+	{ percents }: WinPercents,
+	i: 0 | 1,
+	live: boolean,
+) => {
+	const other = percents[i === 0 ? 1 : 0];
+	if (percents[i] === other) {
+		if (!live) {
+			return "even";
+		}
+		return i === TEAM_NUMS_DISPLAY_ORDER[0] ? "favorite" : "underdog";
+	}
+	return percents[i] > other ? "favorite" : "underdog";
 };
 
 export const WinPercent = ({
 	i,
+	live = false,
 	preGame,
 	winPercents,
 }: {
 	i: 0 | 1;
+	live?: boolean;
 	preGame?: boolean;
 	winPercents: WinPercents;
 }) => {
@@ -33,11 +48,13 @@ export const WinPercent = ({
 		);
 	}
 
+	const status = getFavoriteStatus(winPercents, i, live);
+
 	return (
 		<span
 			className={clsx({
-				"text-success": !winPercents.even && isFavorite(winPercents, i),
-				"text-danger": !winPercents.even && !isFavorite(winPercents, i),
+				"text-success": status === "favorite",
+				"text-danger": status === "underdog",
 			})}
 			title="Win probability"
 		>
@@ -55,17 +72,20 @@ export const WinProbabilityBar = ({
 }) => {
 	return (
 		<div className="d-flex" style={{ height: 3 }}>
-			{order.map((i) => (
-				<div
-					key={i}
-					className={clsx({
-						"bg-secondary": winPercents.even,
-						"bg-success": !winPercents.even && isFavorite(winPercents, i),
-						"bg-danger": !winPercents.even && !isFavorite(winPercents, i),
-					})}
-					style={{ width: `${winPercents.percents[i]}%` }}
-				/>
-			))}
+			{order.map((i) => {
+				// Only used in live games
+				const status = getFavoriteStatus(winPercents, i, true);
+				return (
+					<div
+						key={i}
+						className={clsx({
+							"bg-success": status === "favorite",
+							"bg-danger": status === "underdog",
+						})}
+						style={{ width: `${winPercents.percents[i]}%` }}
+					/>
+				);
+			})}
 		</div>
 	);
 };
@@ -96,22 +116,48 @@ export const LiveWinProbability = ({
 	}
 
 	const winPercents = roundWinPercents(liveWinp.prob, liveWinp.resolved);
+	const [left, right] = TEAM_NUMS_DISPLAY_ORDER;
 
 	return (
-		<div className="mx-auto mt-1 small" style={{ maxWidth: 300 }}>
-			<div className="d-flex justify-content-between">
-				{TEAM_NUMS_DISPLAY_ORDER.map((i) => (
-					<div key={i}>
-						{boxScore.teams[i].abbrev}{" "}
-						<WinPercent i={i} winPercents={winPercents} />
-					</div>
-				))}
+		<div className="mx-auto small" style={{ maxWidth: 300 }}>
+			<div
+				className="d-flex align-items-center gap-1"
+				style={{ fontVariantNumeric: "tabular-nums" }}
+			>
+				<WidestPercentWidth className="text-end">
+					<WinPercent i={left} live winPercents={winPercents} />
+				</WidestPercentWidth>
+				<div className="flex-grow-1">
+					<WinProbabilityBar
+						order={TEAM_NUMS_DISPLAY_ORDER}
+						winPercents={winPercents}
+					/>
+				</div>
+				<WidestPercentWidth>
+					<WinPercent i={right} live winPercents={winPercents} />
+				</WidestPercentWidth>
 			</div>
-			<WinProbabilityBar
-				order={TEAM_NUMS_DISPLAY_ORDER}
-				winPercents={winPercents}
-			/>
 			{liveWinp.tied ? <div className="text-center">Tied</div> : null}
 		</div>
+	);
+};
+
+// Always as wide as "100%", so the bar next to it doesn't change size when the number of digits changes. The hidden text and the real text are in the same grid cell, so the cell is as wide as the wider of them.
+const WidestPercentWidth = ({
+	children,
+	className,
+}: {
+	children: ReactNode;
+	className?: string;
+}) => {
+	return (
+		<span className="d-inline-grid">
+			<span aria-hidden className="invisible" style={{ gridArea: "1 / 1" }}>
+				100%
+			</span>
+			<span className={className} style={{ gridArea: "1 / 1" }}>
+				{children}
+			</span>
+		</span>
 	);
 };

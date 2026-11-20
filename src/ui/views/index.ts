@@ -17,7 +17,7 @@ export { default as ComparePlayers } from "./ComparePlayers/index.tsx";
 export { default as Countries } from "./Countries.tsx";
 export { default as CustomizePlayer } from "./CustomizePlayer/index.tsx";
 export { default as DailySchedule } from "./DailySchedule.tsx";
-export { default as DangerZone } from "./DangerZone/index.tsx";
+export { DangerZone } from "./DangerZone/index.tsx";
 export { default as Dashboard } from "./Dashboard.tsx";
 export { default as DefaultNewLeagueSettings } from "./DefaultNewLeagueSettings/index.tsx";
 export { default as DeleteOldData } from "./DeleteOldData.tsx";

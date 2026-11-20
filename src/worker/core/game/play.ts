@@ -49,6 +49,66 @@ import {
 	isTradeDeadline,
 } from "../../../common/specialGames.ts";
 
+// Simulates one game, with the same settings as a real game in the league
+export const getGameResult = ({
+	gid,
+	day,
+	teams,
+	doPlayByPlay = false,
+	homeCourtFactor = 1,
+	neutralSite = false,
+}: {
+	gid: number;
+	day: number | undefined;
+	teams: [any, any];
+	doPlayByPlay?: boolean;
+	homeCourtFactor?: number;
+	neutralSite?: boolean;
+}) => {
+	let dh;
+	if (__SPORT === "baseball") {
+		const dhSetting = g.get("dh");
+		const cidHome = teams[0].cid;
+		dh =
+			dhSetting === "all" ||
+			(Array.isArray(dhSetting) && dhSetting.includes(cidHome));
+	}
+
+	// In FBGM, need to do depth chart generation here (after deepCopy in forceWin case) to maintain referential integrity of players (same object in depth and team).
+	for (const t of teams) {
+		if (t.depth !== undefined) {
+			t.depth = team.getDepthPlayers(t.depth, t.player, dh);
+		}
+	}
+
+	let baseInjuryRate;
+	const allStarGame = isAllStarGame(teams[0].id, teams[1].id);
+	if (allStarGame) {
+		// Fewer injuries in All-Star Game, and no injuries in playoffs All-Star Game
+		if (g.get("phase") === PHASE.PLAYOFFS) {
+			baseInjuryRate = 0;
+		} else {
+			baseInjuryRate = g.get("injuryRate") / 4;
+		}
+	} else {
+		baseInjuryRate = g.get("injuryRate");
+	}
+
+	return new GameSim({
+		gid,
+		day,
+		teams,
+		doPlayByPlay,
+		homeCourtFactor,
+		neutralSite: neutralSite || allStarGame,
+		allStarGame,
+		baseInjuryRate,
+
+		// @ts-expect-error
+		dh,
+	}).run();
+};
+
 // Plays one day, then calls itself for the next day, until run is finished
 const playDays = async (
 	run: SimRun,
@@ -350,65 +410,6 @@ const playDays = async (
 		}
 	};
 
-	const getResult = ({
-		gid,
-		day,
-		teams,
-		doPlayByPlay = false,
-		homeCourtFactor = 1,
-		neutralSite = false,
-	}: {
-		gid: number;
-		day: number | undefined;
-		teams: [any, any];
-		doPlayByPlay?: boolean;
-		homeCourtFactor?: number;
-		neutralSite?: boolean;
-	}) => {
-		let dh;
-		if (__SPORT === "baseball") {
-			const dhSetting = g.get("dh");
-			const cidHome = teams[0].cid;
-			dh =
-				dhSetting === "all" ||
-				(Array.isArray(dhSetting) && dhSetting.includes(cidHome));
-		}
-
-		// In FBGM, need to do depth chart generation here (after deepCopy in forceWin case) to maintain referential integrity of players (same object in depth and team).
-		for (const t of teams) {
-			if (t.depth !== undefined) {
-				t.depth = team.getDepthPlayers(t.depth, t.player, dh);
-			}
-		}
-
-		let baseInjuryRate;
-		const allStarGame = isAllStarGame(teams[0].id, teams[1].id);
-		if (allStarGame) {
-			// Fewer injuries in All-Star Game, and no injuries in playoffs All-Star Game
-			if (g.get("phase") === PHASE.PLAYOFFS) {
-				baseInjuryRate = 0;
-			} else {
-				baseInjuryRate = g.get("injuryRate") / 4;
-			}
-		} else {
-			baseInjuryRate = g.get("injuryRate");
-		}
-
-		return new GameSim({
-			gid,
-			day,
-			teams,
-			doPlayByPlay,
-			homeCourtFactor,
-			neutralSite: neutralSite || allStarGame,
-			allStarGame,
-			baseInjuryRate,
-
-			// @ts-expect-error
-			dh,
-		}).run();
-	};
-
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
 	const cbSimGames = async (
 		schedule: ScheduleGame[],
@@ -474,7 +475,7 @@ const playDays = async (
 						}
 					}
 
-					const result = getResult({
+					const result = getGameResult({
 						gid: game.gid,
 						day: game.day,
 						teams: helpers.deepCopy(teamsInput), // So stats start at 0 each time
@@ -545,7 +546,7 @@ const playDays = async (
 					(g.get("neutralSite") === "playoffs" ||
 						(g.get("neutralSite") === "finals" && game.finals));
 
-				const result = getResult({
+				const result = getGameResult({
 					gid: game.gid,
 					day: game.day,
 					teams: teamsInput,

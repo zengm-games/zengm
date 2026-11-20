@@ -6,28 +6,6 @@ import type {
 	ScheduleGame,
 } from "../../../common/types.ts";
 
-// Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
-export const betterSeedHome = (
-	numGamesPlayoffSeries: number,
-	gameNum: number,
-) => {
-	// For series lengths like 3, 7, 11, 15, etc., special case last 3 games to ensure the home team always gets the last game
-	const needsSpecialEnding = (numGamesPlayoffSeries + 1) % 4 === 0;
-
-	if (needsSpecialEnding) {
-		// Special case for last 3 games
-		if (gameNum >= numGamesPlayoffSeries - 3) {
-			return (
-				gameNum === numGamesPlayoffSeries - 3 ||
-				gameNum === numGamesPlayoffSeries - 1
-			);
-		}
-	}
-
-	const num = Math.floor(gameNum / 2);
-	return num % 2 === 0;
-};
-
 export const seriesIsNotOver = (
 	home: PlayoffSeriesTeam,
 	away: PlayoffSeriesTeam | undefined,

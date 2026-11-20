@@ -474,7 +474,7 @@ export const simExhibitionGame = async (
 		}
 	}
 
-	// Hacky, but if you send the same gid once, processLiveGameEvents won't reset playersByPid
+	// Box score components use gid as their React key, so each exhibition game needs a different one
 	const gid = randInt(0, 1000000000);
 
 	const result = new GameSim({

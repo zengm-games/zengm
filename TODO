@@ -1037,12 +1037,6 @@ storing playByPlay
   - none (default)
 - don't include init
 
-FBGM move event text generation to UI
-- to fix after
-  - bold text
-  - is "clock" really needed in every PlayEvent? i think it's only needed in the actual clock ones. even scoring plays don't need it, they just use the snap time
-  - too many formatClock calls
-
 FBGM drive chart
 - later
   - would be nice to make "1st & 10" gray box have dynamic width in play log
@@ -1120,12 +1114,6 @@ wrong team abbrev various places
   - make tid and originalTid children of t and originalT
 - processPlayersHallOfFame returns legacyTid - should be a way to get legacyAbbrev, ideally not just based on tid but based on the most common abbrev over the range of years the player was on that team, or maybe weighted by WS
 
-button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
-- handle contract history
-- option to have it ignore rookie contracts
-- put in danger zone
-- maybe build into fantasy draft too?
-
 Salary cap soft isn't deleted in scheduled events for league finance changes. The only way to delete it is to delete all scheduled future events. https://discord.com/channels/290013534023057409/290015591216054273/1165502045269282816
 
 Biggest busts and draft class rankings don't show NBA history and are empty in new leagues, but best player at every pick and biggest steals do. https://discord.com/channels/290013534023057409/290015591216054273/1165499365771726898
@@ -1158,10 +1146,6 @@ when adding team, check if there is already a team in that city, and if so copy 
   - relocation vote
   - relocation from UI
   - manual edit from UI
-
-ad ideas
-- remove bottom ads
-- no ads for first N minutes if 0 leagues
 
 settings for magnitude of budget effects https://old.reddit.com/r/Football_GM/comments/15scd9z/revert_to_version_v202308021178/
 

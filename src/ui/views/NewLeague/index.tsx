@@ -36,7 +36,6 @@ import type {
 	GetLeagueOptions,
 	Div,
 	Conf,
-	GameAttributesLeague,
 	Phase,
 	NonEmptyArray,
 } from "../../../common/types.ts";
@@ -52,6 +51,7 @@ import CustomizeSettings from "./CustomizeSettings.tsx";
 import CustomizeTeams, { makeTIDsSequential } from "./CustomizeTeams.tsx";
 import type { BasicInfo } from "../../../worker/api/leagueFileUpload.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
+import { getHashOption } from "./getHashOption.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 import { choice } from "../../../common/random.ts";
@@ -274,6 +274,9 @@ type State = {
 	// Settings the user changed in the Customize Settings screen. These are kept separate from settings, which come from the league source (defaults, league file, etc.) and get replaced whenever that changes. The overrides are applied on top of whatever the source provides.
 	settingsOverrides: Partial<NewLeagueSettings>;
 	rebuildAbbrevPending?: string;
+
+	// League file URL from the page's URL hash, to prefill and load. Cleared once the user changes customize, so it doesn't get loaded again.
+	initialURL: string | undefined;
 };
 
 type Action =
@@ -487,6 +490,7 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				customize: action.customize,
 				allKeys,
+				initialURL: undefined,
 			};
 		}
 
@@ -729,30 +733,6 @@ const reducer = (state: State, action: Action): State => {
 	}
 };
 
-const getRebuildInfo = () => {
-	if (location.hash.startsWith("#rebuild=")) {
-		const rebuildSlug = location.hash.replace("#rebuild=", "");
-		const parts = rebuildSlug.split("_");
-		const abbrev = parts[1]?.toUpperCase();
-		const season = Number.parseInt(parts[2]!);
-		if (abbrev && !Number.isNaN(season)) {
-			return {
-				abbrev,
-				season,
-			};
-		}
-	}
-};
-
-const getGenderOverride = (): GameAttributesLeague["gender"] | undefined => {
-	if (location.hash.startsWith("#gender=")) {
-		const gender = location.hash.replace("#gender=", "");
-		if (gender === "male" || gender === "female") {
-			return gender;
-		}
-	}
-};
-
 const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
@@ -779,6 +759,12 @@ const NewLeague = (props: View<"newLeague">) => {
 		reducer,
 		props,
 		(props: View<"newLeague">): State => {
+			const hashOption = getHashOption();
+			const initialURL =
+				hashOption?.type === "url" && props.type === "custom" && !importing
+					? hashOption.url
+					: undefined;
+
 			let customize: State["customize"] = "default";
 			if (importing) {
 				customize = "custom-rosters";
@@ -789,6 +775,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				props.type === "crossEra"
 			) {
 				customize = props.type;
+			}
+			if (initialURL !== undefined) {
+				customize = "custom-url";
 			}
 
 			const basicInfo = undefined;
@@ -802,7 +791,8 @@ const NewLeague = (props: View<"newLeague">) => {
 
 			let season;
 			let phase: Phase;
-			const rebuildInfo = getRebuildInfo();
+			const rebuildInfo =
+				hashOption?.type === "rebuild" ? hashOption : undefined;
 			if (rebuildInfo) {
 				season = rebuildInfo.season;
 				phase = PHASE.PRESEASON;
@@ -821,11 +811,10 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 
 			let settings;
-			const genderOverride = getGenderOverride();
-			if (genderOverride) {
+			if (hashOption?.type === "gender") {
 				settings = {
 					...props.defaultSettings,
-					gender: genderOverride,
+					gender: hashOption.gender,
 				};
 			} else {
 				settings = props.defaultSettings;
@@ -857,6 +846,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				settings,
 				settingsOverrides: {},
 				rebuildAbbrevPending: rebuildInfo?.abbrev,
+				initialURL,
 			};
 		},
 	);
@@ -1905,6 +1895,7 @@ const NewLeague = (props: View<"newLeague">) => {
 														}}
 														onDone={handleNewLeagueFile}
 														enterURL={state.customize === "custom-url"}
+														initialURL={state.initialURL}
 													/>
 												</div>
 											) : null}

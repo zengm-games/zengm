@@ -14,10 +14,8 @@ import { idb } from "../../db/index.ts";
 import { PHASE } from "../../../common/constants.ts";
 import type { PlayoffSeries } from "../../../common/types.ts";
 import newSchedulePlayoffsDay from "./newSchedulePlayoffsDay.ts";
-import {
-	betterSeedHome,
-	deleteScheduledGamesForCompletedSeries,
-} from "./playoffSchedule.ts";
+import { betterSeedHome } from "./playoffBracket.ts";
+import { deleteScheduledGamesForCompletedSeries } from "./playoffSchedule.ts";
 import { getUpcoming } from "../../views/schedule.ts";
 import api from "../../api/index.ts";
 import team from "../team/index.ts";

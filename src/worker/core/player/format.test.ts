@@ -1,6 +1,6 @@
 import { assert, beforeAll, describe, test } from "vitest";
 import { assert as typeAssert, type IsExact } from "conditional-type-checks";
-import { PLAYER } from "../../../common/constants.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -1057,4 +1057,48 @@ describe("TypeScript", () => {
 
 		typeAssert<IsExact<Exclude<typeof pf, undefined>, { pid: number }>>(true);
 	});
+});
+
+test("salaries only include what was paid of a contract that ended early during the season with no team owing the rest", async () => {
+	const season = g.get("season");
+	const prevPhase = g.get("phase");
+	g.setWithoutSavingToDB("phase", PHASE.REGULAR_SEASON);
+
+	const p2: Player = {
+		...p,
+		pid: 1,
+		tid: 4,
+		contractDemand: undefined,
+		contracts: [
+			// Replaced by a new contract during the season
+			{
+				type: "unknown",
+				start: season,
+				amounts: [1000],
+				payments: [{ season, tid: 4, amount: 100 }],
+				endedEarly: { season, phase: PHASE.REGULAR_SEASON },
+			},
+			{
+				type: "unknown",
+				start: season,
+				amounts: [2000, 2000],
+				payments: [],
+			},
+		],
+	};
+
+	const pf = await player.format(p2, {
+		attrs: ["salaries", "salariesTotal"],
+	});
+	g.setWithoutSavingToDB("phase", prevPhase);
+
+	assert.deepStrictEqual(
+		pf!.salaries.map((row) => [row.season, row.amount]),
+		[
+			[season, 0.1],
+			[season, 2],
+			[season + 1, 2],
+		],
+	);
+	assert.strictEqual(pf!.salariesTotal, 4.1);
 });

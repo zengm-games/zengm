@@ -3,7 +3,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, sim } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
 import { season, team } from "../index.ts";
-import { chunk, groupByUnique } from "../../../common/utils.ts";
+import { groupByUnique } from "../../../common/utils.ts";
 import {
 	ORDER_TEAMS_SEASON_ATTRS,
 	ORDER_TEAMS_STATS,
@@ -12,6 +12,10 @@ import {
 import { ALL_STAR_GAME_TIDS } from "../../../common/specialGames.ts";
 import {
 	betterSeedHome,
+	getNextRoundMatchups,
+	getPlayInFinalGame,
+} from "./playoffBracket.ts";
+import {
 	deleteScheduledGamesForCompletedSeries,
 	getScheduledGamesForSeries,
 	seriesIsNotOver,
@@ -55,23 +59,7 @@ const newSchedulePlayoffsDay = async ({
 				playIn[0].home.won + playIn[0].away.won === 1 &&
 				playIn[1].home.won + playIn[1].away.won === 1;
 			if (needsSecondRound) {
-				const getTeam = (i: number, type: "won" | "lost") => {
-					const oldTeam =
-						(playIn[i]!.home.won > 0 && type === "won") ||
-						(playIn[i]!.away.won > 0 && type === "lost")
-							? playIn[i]!.home
-							: playIn[i]!.away;
-
-					return {
-						...helpers.deepCopy(oldTeam),
-						pts: undefined,
-						won: 0,
-					};
-				};
-				const matchup = {
-					home: getTeam(0, "lost"),
-					away: getTeam(1, "won"),
-				};
+				const matchup = getPlayInFinalGame(playIn);
 				playIn.push(matchup);
 
 				tids.push([matchup.home.tid, matchup.away.tid]);
@@ -214,7 +202,7 @@ const newSchedulePlayoffsDay = async ({
 	// Set matchups for next round
 
 	// Which teams won?
-	let teamsWon: PlayoffSeriesTeam[] = [];
+	const teamsWon: PlayoffSeriesTeam[] = [];
 	for (const { home, away } of series[rnd]!) {
 		let teamWon;
 		if (home.won >= numGamesToWin || !away) {
@@ -247,100 +235,41 @@ const newSchedulePlayoffsDay = async ({
 	// Can't just look in playoffSeries.byConf because of upgraded leagues and real players leagues started in the playoffs
 	const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
-	let teamsForOrderTeams; // cache
+	let teamsForOrderTeams: Awaited<ReturnType<typeof getTeamsForOrderTeams>>;
+	const orderAcrossConfs = async (teams: PlayoffSeriesTeam[]) => {
+		teamsForOrderTeams ??= await getTeamsForOrderTeams();
+		const tids = new Set(teams.map((t) => t.tid));
+		const orderedTeams = await orderTeams(
+			teamsForOrderTeams.filter((t) => tids.has(t.tid)),
+			teamsForOrderTeams,
+			{
+				skipDivisionLeaders: true,
+			},
+		);
 
-	// Need to reorder for reseeding?
-	if (g.get("playoffsReseed")) {
-		let groups: PlayoffSeriesTeam[][];
-
-		// teamsWon.length > playoffsByConf check is so it stops grouping by conference when all the intraconference matchups are complete
-		if (playoffsByConf !== false && teamsWon.length > playoffsByConf) {
-			const groupSize = Math.ceil(teamsWon.length / playoffsByConf);
-			groups = chunk(teamsWon, groupSize);
-		} else {
-			groups = [[...teamsWon]];
+		// Should never happen, but just in case a team is missing, seeds are better than nothing
+		if (orderedTeams.length !== teams.length) {
+			return teams.toSorted((a, b) => a.seed - b.seed);
 		}
 
-		if (!teamsForOrderTeams) {
-			teamsForOrderTeams = await getTeamsForOrderTeams();
-		}
+		const teamsByTid = groupByUnique(teams, "tid");
+		return orderedTeams.map((t) => teamsByTid[t.tid]!);
+	};
 
-		// Sort the groups so that each 2 teams are a matchup (best team, worst team, 2nd best team, 2nd worst team, etc)
-		for (const [i, group] of groups.entries()) {
-			let orderedGroup;
-
-			// If playoffByConf, we can only reseed based on seed if we're still in the conference bracket, otherwise the seeds are not comparable. This matters if you have 4 conferences, because then it's not just the home/away in the finals that matter, it's the actual matchups too!
-			if (playoffsByConf !== false && teamsWon.length <= playoffsByConf) {
-				const groupByTid = groupByUnique(group, "tid");
-				const orderedTeams = await orderTeams(
-					teamsForOrderTeams.filter((t) => !!groupByTid[t.tid]),
-					teamsForOrderTeams,
-					{
-						skipDivisionLeaders: true,
-					},
-				);
-				orderedGroup = orderedTeams.map((t) => groupByTid[t.tid]!);
-			} else {
-				orderedGroup = group.sort((a, b) => a.seed - b.seed);
-			}
-
-			const interleaved: PlayoffSeriesTeam[] = [];
-			while (orderedGroup.length > 0) {
-				const t =
-					interleaved.length % 2 === 0
-						? orderedGroup.shift()!
-						: orderedGroup.pop()!;
-				interleaved.push(t);
-			}
-			groups[i] = interleaved;
-		}
-
-		teamsWon = groups.flat();
-	}
-
-	for (let i = 0; i < teamsWon.length; i += 2) {
-		const team1 = teamsWon[i]!;
-		const team2 = teamsWon[i + 1]!;
-
-		// Set home/away in the next round - seed ties should be impossible except maybe in the finals, which is handled below
-		let firstTeamHome = team1.seed < team2.seed;
-
-		// Special case for after the byConf rounds end - go by winp not seed, since the seeds are not directly comparable. This is somewhat redundant if the above orderTeams code ran, but is necessary if reseeding is disabled. Probably this could be refactored so there is only one orderTeams
-		if (playoffsByConf !== false && teamsWon.length <= playoffsByConf) {
-			if (!teamsForOrderTeams) {
-				teamsForOrderTeams = await getTeamsForOrderTeams();
-			}
-			const matchupTeams = teamsForOrderTeams.filter(
-				(t) => t.tid === team1.tid || t.tid === team2.tid,
-			);
-			if (matchupTeams.length === 2) {
-				const orderedTeams = await orderTeams(
-					matchupTeams,
-					teamsForOrderTeams,
-					{
-						skipDivisionLeaders: true,
-					},
-				);
-				firstTeamHome = orderedTeams[0]!.tid === team1.tid;
-			}
-		}
-
-		const matchup = firstTeamHome
-			? {
-					home: team1,
-					away: team2,
-				}
-			: {
-					home: team2,
-					away: team1,
-				};
+	const matchups = await getNextRoundMatchups({
+		orderAcrossConfs,
+		playoffsByConf,
+		reseed: g.get("playoffsReseed"),
+		teamsWon,
+	});
+	for (const [i, matchup] of matchups.entries()) {
 		matchup.home.pts = undefined;
 		matchup.away.pts = undefined;
 		matchup.home.sPts = undefined;
 		matchup.away.sPts = undefined;
 		matchup.home.won = 0;
 		matchup.away.won = 0;
-		series[rnd + 1]![i / 2] = matchup;
+		series[rnd + 1]![i] = matchup;
 	}
 
 	// Previously was just `playoffSeries.currentRound += 1` but some people reported that playoffSeries.currentRound was somehow getting too high, resulting in errors in other parts of the code. Not sure how that happened, but maybe this fixes it? I don't see anywhere else where playoffSeries.currentRound is updated.

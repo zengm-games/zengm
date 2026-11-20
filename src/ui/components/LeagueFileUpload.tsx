@@ -113,6 +113,7 @@ export const LeagueFileUpload = ({
 	disabled,
 	enterURL,
 	includePlayersInBasicInfo,
+	initialURL,
 	onDone,
 	onLoading,
 }: {
@@ -120,10 +121,12 @@ export const LeagueFileUpload = ({
 	disabled?: boolean;
 	enterURL?: boolean;
 	includePlayersInBasicInfo?: boolean;
+	// With enterURL, prefill this URL and load it immediately
+	initialURL?: string;
 	// onLoading is called when it starts reading the file into memory
 	onLoading?: () => void;
 }) => {
-	const [url, setURL] = useState("");
+	const [url, setURL] = useState(initialURL ?? "");
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const isMounted = useRef(true);
 	useEffect(() => {
@@ -218,9 +221,7 @@ export const LeagueFileUpload = ({
 		}
 	};
 
-	const handleFileURL = async (event: SyntheticEvent) => {
-		event.preventDefault();
-
+	const loadURL = async () => {
 		beforeFile();
 
 		dispatch({
@@ -260,6 +261,22 @@ export const LeagueFileUpload = ({
 			return;
 		}
 	};
+
+	const handleFileURL = (event: SyntheticEvent) => {
+		event.preventDefault();
+		loadURL();
+	};
+
+	// Only load initialURL once, not again when effects re-run inside <Activity>
+	const loadedInitialURL = useRef(false);
+	useEffect(() => {
+		if (enterURL && initialURL !== undefined && !loadedInitialURL.current) {
+			loadedInitialURL.current = true;
+			// url state was initialized to initialURL
+			loadURL();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
 		beforeFile();

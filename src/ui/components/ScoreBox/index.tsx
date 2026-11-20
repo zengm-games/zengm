@@ -82,10 +82,10 @@ const GamePredictionToggle = ({
 	let title;
 	let otherGamePrediction: GamePrediction;
 	if (gamePrediction === "probability") {
-		title = `Win probability${final ? " before the game" : ""} - click to show point spreads.`;
+		title = `Win probability${final ? " before the game" : ""} - click to show point spreads`;
 		otherGamePrediction = "spread";
 	} else {
-		title = `Point spread${final ? " before the game" : ""} - click to show win probabilities.`;
+		title = `Point spread${final ? " before the game" : ""} - click to show win probabilities`;
 		otherGamePrediction = "probability";
 	}
 

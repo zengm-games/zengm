@@ -88,15 +88,66 @@ export const getGamePrediction = ({
 	ovrs: readonly [number, number];
 	quarterLength: number;
 }) => {
-	const lengthScale = getGameLengthScale({ numPeriods, quarterLength });
-	const homeCourtOvr = neutral
-		? 0
-		: constants.homeCourtOvr * homeCourtAdvantage;
+	const settings = getPredictionSettings({
+		constants,
+		homeCourtAdvantage,
+		numPeriods,
+		quarterLength,
+	});
 
 	return {
-		spread: constants.perOvr * (ovrs[0] - ovrs[1] + homeCourtOvr) * lengthScale,
+		spread: getSpread(settings, ovrs[0], ovrs[1], neutral),
+		sigma: settings.sigma,
+	};
+};
+
+type PredictionSettingsInput = {
+	constants?: GamePredictionConstants;
+	homeCourtAdvantage: number;
+	numPeriods: number;
+	quarterLength: number;
+};
+
+// The parts of a prediction that only depend on the settings, not the teams
+const getPredictionSettings = ({
+	constants = GAME_PREDICTION_CONSTANTS,
+	homeCourtAdvantage,
+	numPeriods,
+	quarterLength,
+}: PredictionSettingsInput) => {
+	const lengthScale = getGameLengthScale({ numPeriods, quarterLength });
+	return {
+		homeCourtOvr: constants.homeCourtOvr * homeCourtAdvantage,
+		lengthScale,
+		perOvr: constants.perOvr,
 		sigma: constants.sigma * Math.sqrt(lengthScale),
 	};
+};
+
+const getSpread = (
+	settings: ReturnType<typeof getPredictionSettings>,
+	homeOvr: number,
+	awayOvr: number,
+	neutral: boolean,
+) => {
+	const homeCourtOvr = neutral ? 0 : settings.homeCourtOvr;
+	return (
+		settings.perOvr * (homeOvr - awayOvr + homeCourtOvr) * settings.lengthScale
+	);
+};
+
+/**
+ * Same as getWinProbability(getGamePrediction(...)), but for when many games with the same settings are needed, like when simulating a season. Creating objects for every game makes that several times slower.
+ */
+export const makeGetPregameWinProbability = (
+	input: PredictionSettingsInput,
+) => {
+	const settings = getPredictionSettings(input);
+	return (homeOvr: number, awayOvr: number, neutral: boolean) =>
+		getProbFromNormal(
+			getSpread(settings, homeOvr, awayOvr, neutral),
+			settings.sigma,
+		);
 };
 
 /**
@@ -121,11 +172,16 @@ export const getWinProbability = ({
 		(1 - constants.liveLeadDecay * frac) * margin + spread * frac;
 	const sigmaLeft = sigma * frac ** constants.liveSigmaExponent;
 
-	if (sigmaLeft === 0) {
-		return expectedMargin > 0 ? 1 : expectedMargin < 0 ? 0 : 0.5;
+	return getProbFromNormal(expectedMargin, sigmaLeft);
+};
+
+// Probability that a normally distributed margin is positive
+const getProbFromNormal = (mean: number, sd: number) => {
+	if (sd === 0) {
+		return mean > 0 ? 1 : mean < 0 ? 0 : 0.5;
 	}
 
-	return normalCdf(expectedMargin / sigmaLeft);
+	return normalCdf(mean / sd);
 };
 
 // Abramowitz and Stegun 26.2.17, since there is no normal CDF elsewhere

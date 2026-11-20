@@ -380,6 +380,7 @@ describe("playoffs", () => {
 
 	test("a bracket with a tid that no longer exists does not throw", async () => {
 		const odds = (await sim({
+			matchups: [],
 			playoffSeries: makeBracket(),
 			teams: getTeams().slice(1),
 		}))!;

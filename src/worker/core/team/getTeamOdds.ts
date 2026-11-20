@@ -7,10 +7,7 @@ import type {
 	PlayoffSeriesTeam,
 	TeamSeason,
 } from "../../../common/types.ts";
-import {
-	getGamePrediction,
-	getWinProbability,
-} from "../../../common/gamePrediction.ts";
+import { makeGetPregameWinProbability } from "../../../common/gamePrediction.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { getDivisionRanks } from "../../util/orderTeams.ts";
@@ -324,16 +321,53 @@ const simBracket = async (
 	}
 };
 
+// A team in one simulated season. These are reused for every sim and referenced directly by the grouped games, rather than looked up in maps by tid, because the regular season loop is the slowest part.
+type SimTeamState = {
+	lost: number;
+
+	// How much better or worse than its ovr the team is in this sim
+	strengthOffset: number;
+
+	won: number;
+};
+
 // Teams play each other more than once, and a team's ovr only changes when an injured player gets healthier, so this avoids computing the same win probability again for every game
-const groupRemainingGames = (remainingGames: readonly RemainingGame[]) => {
-	const matchups = new Map<string, RemainingGame & { numGames: number }>();
+const groupRemainingGames = (
+	remainingGames: readonly RemainingGame[],
+	simStates: Map<number, SimTeamState>,
+) => {
+	const matchups = new Map<
+		string,
+		{
+			away: SimTeamState;
+			awayOvr: number;
+			home: SimTeamState;
+			homeOvr: number;
+			numGames: number;
+		}
+	>();
+
+	const getState = (tid: number) => {
+		const state = simStates.get(tid);
+		if (!state) {
+			throw new Error(`Remaining game for team ${tid}, which is not in teams`);
+		}
+		return state;
+	};
+
 	for (const game of remainingGames) {
 		const key = `${game.home},${game.away},${game.homeOvr},${game.awayOvr}`;
 		const matchup = matchups.get(key);
 		if (matchup) {
 			matchup.numGames += 1;
 		} else {
-			matchups.set(key, { ...game, numGames: 1 });
+			matchups.set(key, {
+				away: getState(game.away),
+				awayOvr: game.awayOvr,
+				home: getState(game.home),
+				homeOvr: game.homeOvr,
+				numGames: 1,
+			});
 		}
 	}
 	return [...matchups.values()];
@@ -544,34 +578,32 @@ export const simTeamOdds = async ({
 		recordScores.set(teamSeason.tid, usePts ? pts : winp);
 	}
 
-	const remainingMatchups = groupRemainingGames(remainingGames);
+	const simStates = new Map<number, SimTeamState>(
+		teams.map((t) => [
+			t.teamSeason.tid,
+			{ lost: 0, strengthOffset: 0, won: 0 },
+		]),
+	);
+	const remainingMatchups = groupRemainingGames(remainingGames, simStates);
 
 	const playoffsCounts = new Map<number, number>();
 	const titleCounts = new Map<number, number>();
 	let numTitlesCounted = 0;
 
-	const getProb = (homeOvr: number, awayOvr: number, neutral: boolean) => {
-		return getWinProbability(
-			getGamePrediction({
-				...gameInfo,
-				neutral,
-				ovrs: [homeOvr, awayOvr],
-			}),
-		);
-	};
+	const getProb = makeGetPregameWinProbability(gameInfo);
 
 	for (let sim = 0; sim < numSims; sim++) {
-		// How much better or worse than its ovr each team is in this sim
-		const strengthOffsets = new Map<number, number>();
-		for (const t of teams) {
-			strengthOffsets.set(t.teamSeason.tid, realGauss(0, STRENGTH_STD, random));
+		for (const state of simStates.values()) {
+			state.lost = 0;
+			state.strengthOffset = realGauss(0, STRENGTH_STD, random);
+			state.won = 0;
 		}
 
 		const getPlayoffsStrength = (tid: number, day: number) => {
 			const ovrs = playoffsOvrs.get(tid);
 			return (
 				(ovrs ? getOvrOnDay(ovrs, day) : avgOvr) +
-				(strengthOffsets.get(tid) ?? 0)
+				(simStates.get(tid)?.strengthOffset ?? 0)
 			);
 		};
 
@@ -600,8 +632,6 @@ export const simTeamOdds = async ({
 
 		let bracket = playoffSeries;
 		if (!bracket) {
-			const won = new Map<number, number>();
-			const lost = new Map<number, number>();
 			for (const {
 				away,
 				awayOvr,
@@ -610,8 +640,8 @@ export const simTeamOdds = async ({
 				numGames,
 			} of remainingMatchups) {
 				const prob = getProb(
-					homeOvr + (strengthOffsets.get(home) ?? 0),
-					awayOvr + (strengthOffsets.get(away) ?? 0),
+					homeOvr + home.strengthOffset,
+					awayOvr + away.strengthOffset,
 					false,
 				);
 				let homeWins = 0;
@@ -621,10 +651,10 @@ export const simTeamOdds = async ({
 					}
 				}
 				const awayWins = numGames - homeWins;
-				won.set(home, (won.get(home) ?? 0) + homeWins);
-				lost.set(home, (lost.get(home) ?? 0) + awayWins);
-				won.set(away, (won.get(away) ?? 0) + awayWins);
-				lost.set(away, (lost.get(away) ?? 0) + homeWins);
+				home.won += homeWins;
+				home.lost += awayWins;
+				away.won += awayWins;
+				away.lost += homeWins;
 			}
 
 			// Tiebreakers are skipped, which leaves tied teams in this order, so shuffle it
@@ -634,8 +664,8 @@ export const simTeamOdds = async ({
 				.map(({ teamSeason }) => {
 					const simTeam = getHypotheticalTeam({
 						teamSeason,
-						won: won.get(teamSeason.tid) ?? 0,
-						lost: lost.get(teamSeason.tid) ?? 0,
+						won: simStates.get(teamSeason.tid)?.won ?? 0,
+						lost: simStates.get(teamSeason.tid)?.lost ?? 0,
 						usePts,
 					});
 

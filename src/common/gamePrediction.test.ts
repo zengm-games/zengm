@@ -4,6 +4,7 @@ import {
 	formatOdds,
 	getGamePrediction,
 	getWinProbability,
+	makeGetPregameWinProbability,
 	roundWinPercents,
 } from "./gamePrediction.ts";
 
@@ -166,6 +167,33 @@ describe("getWinProbability", () => {
 			0.5,
 		);
 	});
+});
+
+test("makeGetPregameWinProbability matches getWinProbability", () => {
+	for (const quarterLength of [12, 0]) {
+		for (const neutral of [false, true]) {
+			const settings = {
+				constants,
+				homeCourtAdvantage: 1.5,
+				numPeriods: 4,
+				quarterLength,
+			};
+			const getProb = makeGetPregameWinProbability(settings);
+			for (const ovrs of [
+				[60, 50],
+				[50, 50],
+				[45, 55],
+			] as const) {
+				assert.strictEqual(
+					getProb(ovrs[0], ovrs[1], neutral),
+					getWinProbability({
+						...getGamePrediction({ ...settings, neutral, ovrs }),
+						constants,
+					}),
+				);
+			}
+		}
+	}
 });
 
 describe("formatGameSpreads", () => {

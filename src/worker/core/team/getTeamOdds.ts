@@ -35,7 +35,20 @@ import {
 } from "./getHypotheticalTeam.ts";
 import ovr from "./ovr.ts";
 
-const DEFAULT_NUM_SIMS = 1000;
+// Fewer sims make the odds noisier, about 1.4 percentage points RMS error in playoff odds at 1000 and 2.8 at 250
+const MAX_NUM_SIMS = 1000;
+const MIN_NUM_SIMS = 250;
+
+// Run time is proportional to the number of sims times this work, which is mostly simulating regular season games, plus some per team work like playoff seeding that costs about as much as 10 games. This budget is enough for MAX_NUM_SIMS in a 30 team league with a 162 game season, and big leagues get fewer sims so updating the odds after every day doesn't get too slow.
+const WORK_BUDGET = 3_000_000;
+export const getNumSims = (numRemainingGames: number, numTeams: number) => {
+	const workPerSim = numRemainingGames + 10 * numTeams;
+	return helpers.bound(
+		Math.floor(WORK_BUDGET / Math.max(workPerSim, 1)),
+		MIN_NUM_SIMS,
+		MAX_NUM_SIMS,
+	);
+};
 
 // Clinched at least a spot in the playoffs proper, not just the play-in
 const CLINCHED_PLAYOFFS = new Set<TeamSeason["clinchedPlayoffs"]>([
@@ -454,7 +467,7 @@ const getAliveTids = (bracket: Bracket, season: number) => {
  */
 export const simTeamOdds = async ({
 	numDaysUntilPlayoffs,
-	numSims = DEFAULT_NUM_SIMS,
+	numSims: numSimsOverride,
 	playoffSeries,
 	remainingGames,
 	season,
@@ -463,6 +476,7 @@ export const simTeamOdds = async ({
 	// 0 if the playoffs already started
 	numDaysUntilPlayoffs: number;
 
+	// Defaults to as many as the work budget allows
 	numSims?: number;
 	playoffSeries?: Bracket;
 
@@ -559,6 +573,8 @@ export const simTeamOdds = async ({
 		? getAliveTids(playoffSeries, season)
 		: playoffsAliveTids;
 
+	const numSims =
+		numSimsOverride ?? getNumSims(remainingGames.length, teams.length);
 	const random = makeSeededRandom(1);
 	const avgOvr =
 		teams.reduce((sum, t) => sum + t.playoffsOvrs.ovr, 0) /

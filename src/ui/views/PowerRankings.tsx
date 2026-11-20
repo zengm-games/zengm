@@ -5,7 +5,10 @@ import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
+import type { TeamOdds } from "../../worker/core/team/getTeamOdds.ts";
 import { POSITIONS, RATINGS } from "../../common/constants.ts";
+import { formatOdds } from "../../common/gamePrediction.ts";
+import { TextUnderlineBar } from "../components/TextUnderlineBar.tsx";
 import {
 	teamMovOrDiffStat,
 	wrappedTeamMovOrDiff,
@@ -43,6 +46,8 @@ const PowerRankings = ({
 	season,
 	teams,
 	ties,
+	teamOdds,
+	teamOddsAvailable,
 	otl,
 }: View<"powerRankings">) => {
 	useTitleBar({
@@ -97,6 +102,7 @@ const PowerRankings = ({
 			title: "Team Rating",
 			colspan: 2,
 		},
+		...(teamOddsAvailable ? [{ title: "Odds", colspan: 2 }] : []),
 		{
 			title: "",
 			colspan: 5 + (ties ? 1 : 0) + (otl ? 1 : 0),
@@ -129,6 +135,7 @@ const PowerRankings = ({
 		"Division",
 		"Current",
 		"Healthy",
+		...(teamOddsAvailable ? ["Playoff Odds", "Title Odds"] : []),
 		"W",
 		"L",
 		...(otl ? ["OTL"] : []),
@@ -139,7 +146,11 @@ const PowerRankings = ({
 		...otherKeys.map((key) => `${otherKeysPrefix}:${key}`),
 	];
 
-	const cols = getCols(colNames);
+	// The "Odds" super column already says what these are
+	const cols = getCols(colNames, {
+		"Playoff Odds": { title: "Playoffs" },
+		"Title Odds": { title: "Title" },
+	});
 
 	if (__SPORT === "basketball") {
 		for (const [colName, col] of Iterator.zip([colNames, cols], {
@@ -150,6 +161,30 @@ const PowerRankings = ({
 			}
 		}
 	}
+
+	const getOddsCell = (
+		tid: number,
+		rank: number,
+		type: keyof TeamOdds[number],
+	) => {
+		const odds = teamOdds?.[tid]?.[type];
+		const text = odds ? formatOdds(odds.prob, odds.resolved) : "N/A";
+
+		return {
+			value: (
+				<TextUnderlineBar
+					barClassName="bg-success"
+					percent={(odds?.prob ?? 0) * 100}
+				>
+					{text}
+				</TextUnderlineBar>
+			),
+			searchValue: text,
+
+			// Rank is the tiebreaker. Teams with no odds sort below any real value.
+			sortValue: (odds?.prob ?? -1) - rank * 1e-6,
+		};
+	};
 
 	const rows = teams.map((t) => {
 		const conf = confs.find((conf) => conf.cid === t.seasonAttrs.cid);
@@ -177,6 +212,12 @@ const PowerRankings = ({
 					)
 				) : null,
 				!challengeNoRatings ? t.powerRankings.ovr : null,
+				...(teamOddsAvailable
+					? [
+							getOddsCell(t.tid, t.powerRankings.rank, "playoffs"),
+							getOddsCell(t.tid, t.powerRankings.rank, "title"),
+						]
+					: []),
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
 				...(otl ? [t.seasonAttrs.otl] : []),
@@ -224,7 +265,7 @@ const PowerRankings = ({
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				defaultStickyCols={2}
-				name="PowerRankings"
+				name={teamOddsAvailable ? "PowerRankingsOdds" : "PowerRankings"}
 				nonfluid
 				rows={rows}
 				superCols={superCols}

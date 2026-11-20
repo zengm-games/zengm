@@ -4,7 +4,6 @@ import { helpers } from "../../util/helpers.ts";
 import { useLocal } from "../../util/local.ts";
 import React, { memo, type ReactNode } from "react";
 import { TeamLogoInline } from "../TeamLogoInline.tsx";
-import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import { PlayerNameLabels } from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
 import { getCol } from "../../../common/getCol.ts";
@@ -14,10 +13,13 @@ import {
 	isAllStarGame,
 	isTradeDeadline,
 } from "../../../common/specialGames.ts";
-
-const roundHalf = (x: number) => {
-	return Math.round(x * 2) / 2;
-};
+import {
+	formatGameSpreads,
+	getGamePrediction,
+	getWinProbability,
+	roundWinPercents,
+} from "../../../common/gamePrediction.ts";
+import { WinPercent } from "../WinProbability.tsx";
 
 type Team = {
 	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
@@ -105,6 +107,7 @@ export const ScoreBox = memo(
 	}) => {
 		const {
 			challengeNoRatings,
+			gamePrediction,
 			homeCourtAdvantage,
 			neutralSite,
 			numPeriods,
@@ -115,6 +118,7 @@ export const ScoreBox = memo(
 			userTid,
 		} = useLocal([
 			"challengeNoRatings",
+			"gamePrediction",
 			"homeCourtAdvantage",
 			"neutralSite",
 			"numPeriods",
@@ -139,69 +143,30 @@ export const ScoreBox = memo(
 			userTid === game.teams[0].tid || userTid === game.teams[1].tid;
 
 		let spreads: [string | undefined, string | undefined] | undefined;
+		let winPercents: ReturnType<typeof roundWinPercents> | undefined;
 		if (
 			game.teams[0].ovr !== undefined &&
 			game.teams[1].ovr !== undefined &&
 			(!small || !final)
 		) {
-			let actualHomeCourtAdvantage;
-			if (game.neutralSite) {
-				// Completed game at neutral site
-				actualHomeCourtAdvantage = 0;
-			} else if (neutralSite === "finals" && game.finals) {
-				// Upcoming game at neutral site
-				actualHomeCourtAdvantage = 0;
-			} else if (neutralSite === "playoffs" && phase === PHASE.PLAYOFFS) {
-				// Upcoming game at neutral site
-				actualHomeCourtAdvantage = 0;
+			// game.neutralSite is for completed games, the others are for upcoming games
+			const neutral =
+				!!game.neutralSite ||
+				(neutralSite === "finals" && !!game.finals) ||
+				(neutralSite === "playoffs" && phase === PHASE.PLAYOFFS);
+
+			const prediction = getGamePrediction({
+				homeCourtAdvantage,
+				neutral,
+				numPeriods,
+				ovrs: [game.teams[0].ovr, game.teams[1].ovr],
+				quarterLength,
+			});
+
+			if (gamePrediction === "probability") {
+				winPercents = roundWinPercents(getWinProbability(prediction));
 			} else {
-				// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
-				// Default homeCourtAdvantage is 1
-				actualHomeCourtAdvantage =
-					bySport({
-						baseball: 1,
-						basketball: 3.3504,
-						football: 3,
-						hockey: 0.25,
-					}) * homeCourtAdvantage;
-			}
-
-			const ovr0 = game.teams[0].ovr;
-			const ovr1 = game.teams[1].ovr;
-			let spread = bySport({
-				baseball: () => (1 / 10) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
-
-				basketball: () => (15 / 50) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
-
-				football: () => (3 / 10) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
-
-				hockey: () => (1.8 / 100) * (ovr0 - ovr1) + actualHomeCourtAdvantage,
-			})();
-
-			// Adjust for game length
-			spread *=
-				(numPeriods * quarterLength) /
-				(defaultGameAttributes.numPeriods *
-					defaultGameAttributes.quarterLength);
-
-			spread = roundHalf(spread);
-
-			if (spread > 0) {
-				spreads = [
-					(-spread).toLocaleString("en-US", {
-						maximumFractionDigits: 1,
-					}),
-					undefined,
-				];
-			} else if (spread < 0) {
-				spreads = [
-					undefined,
-					spread.toLocaleString("en-US", {
-						maximumFractionDigits: 1,
-					}),
-				];
-			} else {
-				spreads = [undefined, "PK"];
+				spreads = formatGameSpreads(prediction.spread);
 			}
 		}
 
@@ -444,6 +409,16 @@ export const ScoreBox = memo(
 															</span>
 														</>
 													) : null}
+													{winPercents ? (
+														<>
+															,{" "}
+															<WinPercent
+																i={i}
+																preGame={final}
+																winPercents={winPercents}
+															/>
+														</>
+													) : null}
 													{spreads?.[i] ? (
 														<>
 															,{" "}
@@ -462,9 +437,13 @@ export const ScoreBox = memo(
 												</div>
 											) : null}
 										</div>
-										{spreads && small ? (
+										{(spreads || winPercents) && small ? (
 											<div className="text-end score-box-score me-2">
-												{spreads[i]}
+												{winPercents ? (
+													<WinPercent i={i} winPercents={winPercents} />
+												) : (
+													spreads?.[i]
+												)}
 											</div>
 										) : null}
 										{final ? (

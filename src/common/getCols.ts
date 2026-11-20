@@ -3387,6 +3387,11 @@ const cols: {
 		sortType: "number",
 		title: "Playoffs",
 	},
+	"Playoff Odds": {
+		desc: "Chance of Making the Playoffs",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Playoffs: {},
 	Pos: {
 		desc: "Position",
@@ -3526,6 +3531,11 @@ const cols: {
 	},
 	"Three-Point Winner": {
 		desc: "Three-Point Contest Winner",
+	},
+	"Title Odds": {
+		desc: "Chance of Winning the Title",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	Titles: {
 		desc: "Championships Won",

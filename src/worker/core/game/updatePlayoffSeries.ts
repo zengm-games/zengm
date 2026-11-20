@@ -3,6 +3,10 @@ import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Conditions, GameResults } from "../../../common/types.ts";
 import season from "../season/index.ts";
 import { findSeries } from "./writeGameStats.ts";
+import {
+	getPlayInTargetTid,
+	placePlayInWinner,
+} from "../season/playoffBracket.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
 
@@ -190,35 +194,14 @@ const updatePlayoffSeries = async (
 				}
 
 				// If this is the first game (top 2 teams) or last game (2nd round) of a play-in tournament, move the winner to the appropriate spot in the playoffs
-				let targetTid; // Team to replace in initial playoff matchups
-				if (playInIndex === 0) {
-					targetTid = playoffSeries.playIns[playInsIndex]![0].home.tid;
-				} else if (playInIndex === 2) {
-					targetTid = playoffSeries.playIns[playInsIndex]![0].away.tid;
-				}
+				const targetTid = getPlayInTargetTid(
+					playoffSeries.playIns[playInsIndex]!,
+					playInIndex,
+				);
 				if (targetTid !== undefined) {
 					const winner =
 						series.away.tid === winnerTid ? series.away : series.home;
-
-					// Find target team in playoffSeries and replace with winner of this game
-					for (const matchup of playoffSeries.series[0]!) {
-						for (const type of ["home", "away"] as const) {
-							const matchupTeam = matchup[type];
-							if (
-								matchupTeam &&
-								matchupTeam.pendingPlayIn &&
-								matchupTeam.tid === targetTid
-							) {
-								matchup[type] = {
-									...winner,
-									seed: matchupTeam.seed,
-									won: 0,
-									pts: undefined,
-									pendingPlayIn: undefined,
-								};
-							}
-						}
-					}
+					placePlayInWinner(playoffSeries.series[0]!, targetTid, winner);
 
 					// Update playoffRoundsWon, since now team has actually made the playoffs
 					const teamSeason = await idb.cache.teamSeasons.indexGet(

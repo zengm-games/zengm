@@ -121,14 +121,18 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 
 		// Confirm league exists before proceeding
 		await getLeague(newLid);
-		idb.league = await connectLeague(newLid);
+		const leagueDB = await connectLeague(newLid);
+
+		// Check before assigning idb.league, otherwise a slow connection to a league the user already navigated away from would replace the connection to the current league, and the current league's cache would then be flushed into the wrong database
+		if (loadingNewLid !== newLid) {
+			leagueDB.close();
+			return;
+		}
+
+		idb.league = leagueDB;
 
 		// Do this after connecting to league, in case there is an error during connection, the lid will still be in sync between worker and ui
 		g.setWithoutSavingToDB("lid", newLid);
-
-		if (loadingNewLid !== newLid) {
-			return;
-		}
 
 		// Reuse existing cache, if it was just created while generating a new league
 		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions

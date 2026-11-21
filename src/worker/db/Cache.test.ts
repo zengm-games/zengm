@@ -1,11 +1,4 @@
-import {
-	afterEach,
-	assert,
-	beforeAll,
-	beforeEach,
-	describe,
-	test,
-} from "vitest";
+import { assert, beforeAll, beforeEach, describe, test } from "vitest";
 import { resetCache, resetG } from "../../test/helpers.ts";
 import { player, team } from "../core/index.ts";
 import { g, helpers } from "../util/index.ts";
@@ -63,11 +56,6 @@ describe("flush", () => {
 		await resetCache({}, { stubFlush: false });
 	});
 
-	afterEach(() => {
-		// @ts-expect-error
-		idb.league = undefined;
-	});
-
 	const mockLeague = ({
 		failPut,
 		failTransaction,
@@ -90,7 +78,7 @@ describe("flush", () => {
 			resolve();
 		}
 
-		idb.league = {
+		idb.cache._db = {
 			transaction: () => ({
 				abort: () => {
 					info.aborted = true;

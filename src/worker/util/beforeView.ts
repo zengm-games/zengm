@@ -123,7 +123,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 		await getLeague(newLid);
 		const leagueDB = await connectLeague(newLid);
 
-		// Check before assigning idb.league, otherwise a slow connection to a league the user already navigated away from would replace the connection to the current league, and the current league's cache would then be flushed into the wrong database
+		// Check before assigning idb.league, otherwise a slow connection to a league the user already navigated away from (like if it needed a slow upgrade) would replace the connection to the league they are actually viewing
 		if (loadingNewLid !== newLid) {
 			leagueDB.close();
 			return;

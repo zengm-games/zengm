@@ -40,7 +40,7 @@ import type {
 	NonEmptyArray,
 	Awards,
 } from "../../common/types.ts";
-import type { IDBPTransaction } from "@dumbmatter/idb";
+import type { IDBPDatabase, IDBPTransaction } from "@dumbmatter/idb";
 import type { LeagueDB } from "./connectLeague.ts";
 import getAll from "../../common/getAll.ts";
 import { league } from "../core/index.ts";
@@ -508,6 +508,9 @@ export class StoreAPI<
 class Cache {
 	_data: Record<Store, any>;
 
+	// The league database this cache was filled from. Flushes always write here, rather than to whatever idb.league currently is, so a cache can never write into a different league's database.
+	_db: IDBPDatabase<LeagueDB> | undefined;
+
 	_deletes: Record<Store, Set<number | string>>;
 
 	_dirty: boolean;
@@ -610,6 +613,7 @@ class Cache {
 	constructor() {
 		this._status = "empty";
 		this._data = {} as Record<Store, any>;
+		this._db = undefined;
 		this._deletes = {} as Record<Store, Set<number | string>>;
 		this._dirty = false;
 		this._dirtyIndexes = new Set();
@@ -840,6 +844,8 @@ class Cache {
 
 		this._setStatus("filling");
 
+		const db = idb.league;
+
 		let season2 = season;
 
 		if (season2 === undefined) {
@@ -849,7 +855,7 @@ class Cache {
 		}
 
 		if (season2 === undefined) {
-			const seasonAttr = await idb.league.get("gameAttributes", "season");
+			const seasonAttr = await db.get("gameAttributes", "season");
 
 			if (seasonAttr) {
 				season2 = seasonAttr.value;
@@ -867,19 +873,9 @@ class Cache {
 
 		for (const store of STORES) {
 			if (local.autoSave) {
-				await this._loadStore(
-					store,
-					idb.league.transaction([store]),
-					season2,
-					false,
-				);
+				await this._loadStore(store, db.transaction([store]), season2, false);
 			} else if (storeInfos[store].getDataWithAutoSaveDisabled) {
-				await this._loadStore(
-					store,
-					idb.league.transaction([store]),
-					season2,
-					true,
-				);
+				await this._loadStore(store, db.transaction([store]), season2, true);
 			}
 		}
 
@@ -887,6 +883,7 @@ class Cache {
 			this._dirty = false;
 		}
 
+		this._db = db;
 		this._setStatus("full");
 	}
 
@@ -904,6 +901,11 @@ class Cache {
 		}
 
 		this._validateStatus("full");
+
+		const db = this._db;
+		if (db === undefined) {
+			throw new Error("Should never happen");
+		}
 
 		// Only open transaction on stores with dirty records - code below does nothing unless this._deletes or this._dirtyRecords has something in it
 		const stores = storesToCheck.filter(
@@ -931,7 +933,7 @@ class Cache {
 
 		let tx: IDBPTransaction<LeagueDB, Store[], "readwrite"> | undefined;
 		try {
-			tx = idb.league.transaction(stores, "readwrite");
+			tx = db.transaction(stores, "readwrite");
 
 			for (const { store, deletes, dirtyRecords } of pending) {
 				const objectStore = tx.objectStore(store);

@@ -1,4 +1,4 @@
-import type { IDBPTransaction } from "@dumbmatter/idb";
+import type { IDBPDatabase, IDBPTransaction } from "@dumbmatter/idb";
 import {
 	draft,
 	finances,
@@ -76,6 +76,7 @@ import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
 import {
 	colaUpdate,
 	upgradeGamesVersion65,
+	type LeagueDB,
 	type LeagueDBStoreNames,
 } from "../../db/connectLeague.ts";
 import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
@@ -142,18 +143,18 @@ const addLeagueMeta = async ({
 	}
 
 	await idb.meta.add("leagues", l);
-
-	idb.league = await connectLeague(lid);
 };
 
 class Buffer {
+	db: IDBPDatabase<LeagueDB>;
 	MAX_BUFFER_SIZE: number;
 	keptKeys: Set<string>;
 	keys: Set<LeagueDBStoreNames>;
 	rows: [LeagueDBStoreNames, any][];
 	previousTransaction: IDBPTransaction<any, any, any> | undefined;
 
-	constructor(keptKeys: Set<string>) {
+	constructor(db: IDBPDatabase<LeagueDB>, keptKeys: Set<string>) {
+		this.db = db;
 		this.MAX_BUFFER_SIZE = 10000;
 		this.keptKeys = keptKeys;
 
@@ -192,7 +193,7 @@ class Buffer {
 		await this.waitForPreviousTransaction();
 
 		if (this.keys.size > 0) {
-			const transaction = idb.league.transaction(
+			const transaction = this.db.transaction(
 				Array.from(this.keys),
 				"readwrite",
 			);
@@ -372,17 +373,19 @@ type ExtraFromStream = {
 const LEGACY_RELEASED_PLAYERS = "releasedPlayers" as LeagueDBStoreNames;
 
 const getSaveToDB = ({
+	db,
 	keptKeys,
 	maxGid,
 	preProcessParams,
 	setLeagueCreationStatus,
 }: {
+	db: IDBPDatabase<LeagueDB>;
 	keptKeys: Set<LeagueDBStoreNames>;
 	maxGid: number | undefined;
 	preProcessParams: PreProcessParams;
 	setLeagueCreationStatus: CreateStreamProps["setLeagueCreationStatus"];
 }) => {
-	const buffer = new Buffer(keptKeys);
+	const buffer = new Buffer(db, keptKeys);
 
 	const extraFromStream: ExtraFromStream = {
 		activePlayers: [],
@@ -619,15 +622,17 @@ const finalizeGameAttributes = async ({
 };
 
 const finalizeDBExceptPlayers = async ({
+	db,
 	teamSeasons,
 	teamStats,
 	teams,
 }: {
+	db: IDBPDatabase<LeagueDB>;
 	teamSeasons: TeamSeasonWithoutKey[];
 	teamStats: TeamStatsWithoutKey[];
 	teams: Team[];
 }) => {
-	const tx = idb.league.transaction(
+	const tx = db.transaction(
 		["games", "schedule", "teamSeasons", "teamStats", "teams", "trade"],
 		"readwrite",
 	);
@@ -1445,9 +1450,13 @@ const beforeDBStream = async ({
 		tid,
 	});
 
+	// Not assigned to idb.league yet, because another league might still be open. See the comment in afterDBStream where this league becomes the current league.
+	const db = await connectLeague(lid);
+
 	return {
 		activeTids,
 		averagePopulation,
+		db,
 		gameAttributes,
 		noStartingInjuries,
 		realPlayerPhotos,
@@ -1488,6 +1497,7 @@ const adjustSeasonPlayer = (p: Partial<PlayerWithoutKey>) => {
 
 const afterDBStream = async ({
 	activeTids,
+	db,
 	extraFromStream,
 	fromFile,
 	hasRookieContracts,
@@ -1519,6 +1529,7 @@ const afterDBStream = async ({
 	Pick<
 		Awaited<ReturnType<typeof beforeDBStream>>,
 		| "activeTids"
+		| "db"
 		| "gameAttributes"
 		| "repeatSeason"
 		| "scoutingLevel"
@@ -1756,6 +1767,7 @@ const afterDBStream = async ({
 
 	// Write final versions of everything to the DB, except active players because some post-processing uses functions that read from the cache
 	await finalizeDBExceptPlayers({
+		db,
 		teamSeasons,
 		teamStats,
 		teams,
@@ -1767,12 +1779,13 @@ const afterDBStream = async ({
 		await migrateScheduledEvents74({
 			confs: unwrapGameAttribute(gameAttributes, "confs"),
 			divs: unwrapGameAttribute(gameAttributes, "divs"),
-			scheduledEventsStore: idb.league.transaction(
-				"scheduledEvents",
-				"readwrite",
-			).store,
+			scheduledEventsStore: db.transaction("scheduledEvents", "readwrite")
+				.store,
 		});
 	}
+
+	// Everything above wrote to db directly. From here on, the new league becomes the current league, and the code below uses idb.league and idb.cache like the rest of the app.
+	idb.league = db;
 
 	// Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
 	helpers.resetG();
@@ -1972,6 +1985,7 @@ export const createStream = async (
 	const {
 		activeTids,
 		averagePopulation,
+		db,
 		gameAttributes,
 		noStartingInjuries,
 		realPlayerPhotos,
@@ -2001,6 +2015,7 @@ export const createStream = async (
 	const migrationData: PreProcessParams["migrationData"] = {};
 
 	const { close, extraFromStream, write } = getSaveToDB({
+		db,
 		keptKeys,
 		maxGid: fromFile.maxGid,
 		preProcessParams: {
@@ -2045,6 +2060,7 @@ export const createStream = async (
 
 		await afterDBStream({
 			activeTids,
+			db,
 			extraFromStream,
 			fromFile,
 			gameAttributes,
@@ -2065,7 +2081,8 @@ export const createStream = async (
 		});
 		// console.timeEnd("createStream");
 	} catch (error) {
-		// League was already added to the meta database in beforeDBStream, so delete it rather than leave a broken partial league in the list
+		// League was already added to the meta database in beforeDBStream, so delete it rather than leave a broken partial league in the list. Close this connection first, otherwise it would block deleting the database (if the error happened after this league became the current league, remove will close it too, which is harmless).
+		db.close();
 		try {
 			await remove(lid);
 		} catch (error_) {

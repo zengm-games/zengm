@@ -1,6 +1,6 @@
 import local from "./local.ts";
 import lock from "./lock.ts";
-import toUI from "./toUI.ts";
+import { toUI } from "./toUI.ts";
 import updatePlayMenu from "./updatePlayMenu.ts";
 import updateStatus from "./updateStatus.ts";
 

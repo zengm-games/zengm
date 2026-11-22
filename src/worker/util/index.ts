@@ -7,7 +7,7 @@ export { default as local } from "./local.ts";
 export { default as lock } from "./lock.ts";
 export { default as logEvent } from "./logEvent.ts";
 export * as sim from "./sim.ts";
-export { default as toUI } from "./toUI.ts";
+export { toUI, toUIWithoutWaiting } from "./toUI.ts";
 export { default as updatePhase } from "./updatePhase.ts";
 export { default as updatePlayMenu } from "./updatePlayMenu.ts";
 export { default as updateStatus } from "./updateStatus.ts";

@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
-import toUI from "./toUI.ts";
+import { toUIWithoutWaiting } from "./toUI.ts";
 import type {
 	Conditions,
 	DistributiveOmit,
@@ -40,7 +40,7 @@ const logEvent = async <SaveToDb extends boolean = true>(
 	}
 
 	if (showNotification && event.text) {
-		void toUI(
+		toUIWithoutWaiting(
 			"showNotification",
 			[
 				{

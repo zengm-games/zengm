@@ -1,6 +1,12 @@
 import { season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
+import {
+	g,
+	helpers,
+	local,
+	logEvent,
+	toUIWithoutWaiting,
+} from "../../util/index.ts";
 import type { Conditions, Game, PhaseReturn } from "../../../common/types.ts";
 import {
 	EMAIL_ADDRESS,
@@ -158,7 +164,8 @@ const newPhaseRegularSeason = async (
 
 	if (!local.autoPlayUntil) {
 		if (g.get("season") > g.get("startingSeason") && Math.random() < 0.1) {
-			await toUI("requestPersistentStorage", [], conditions);
+			// Not awaited, because nothing depends on it, and if the tab closed before responding, the error would abort this phase change after its work is done but before finalize sets the phase
+			toUIWithoutWaiting("requestPersistentStorage", [], conditions);
 		} else {
 			const naggedMailingList =
 				(await getMetaAttribute("naggedMailingList")) ?? 0;

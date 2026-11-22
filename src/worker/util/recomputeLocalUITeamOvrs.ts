@@ -1,7 +1,7 @@
 import type { LocalStateUI } from "../../common/types.ts";
 import { getUpcoming } from "../views/schedule.ts";
 import g from "./g.ts";
-import toUI from "./toUI.ts";
+import { toUI } from "./toUI.ts";
 
 export const getOneUpcomingGame = async (): Promise<
 	LocalStateUI["games"][number] | undefined

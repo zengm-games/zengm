@@ -10,7 +10,7 @@ import helpers from "./helpers.ts";
 import local from "./local.ts";
 import lock from "./lock.ts";
 import * as sim from "./sim.ts";
-import toUI from "./toUI.ts";
+import { toUI } from "./toUI.ts";
 import type { Option } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import { bySport } from "../../common/sportFunctions.ts";

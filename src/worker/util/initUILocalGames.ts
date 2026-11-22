@@ -1,6 +1,6 @@
 import g from "./g.ts";
 import { getProcessedGames } from "./getProcessedGames.ts";
-import toUI from "./toUI.ts";
+import { toUI } from "./toUI.ts";
 import type { LocalStateUI } from "../../common/types.ts";
 import { getOneUpcomingGame } from "./recomputeLocalUITeamOvrs.ts";
 

@@ -2,7 +2,7 @@ import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import local from "./local.ts";
-import toUI from "./toUI.ts";
+import { toUI } from "./toUI.ts";
 import { helpers } from "./index.ts";
 
 const updateStatusIfNew = (statusText: string) => {

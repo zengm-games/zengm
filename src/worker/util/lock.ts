@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import toUI from "./toUI.ts";
+import { toUI } from "./toUI.ts";
 import helpers from "./helpers.ts";
 import local from "./local.ts";
 import * as sim from "./sim.ts";

@@ -4,7 +4,7 @@ import achievements from "./achievements.ts";
 import g from "./g.ts";
 import logEvent from "./logEvent.ts";
 import type { AchievementWhen, Conditions } from "../../common/types.ts";
-import toUI from "./toUI.ts";
+import { toUIWithoutWaiting } from "./toUI.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
 
 type Difficulty = "insane" | "hard" | "normal" | "easy";
@@ -61,7 +61,7 @@ async function add(
 			conditions,
 		);
 
-		toUI(
+		toUIWithoutWaiting(
 			"analyticsEvent",
 			[
 				"unlock_achievement",

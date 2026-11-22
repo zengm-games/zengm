@@ -55,6 +55,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 	toUI,
+	toUIWithoutWaiting,
 	updatePhase,
 	logEvent,
 } from "../util/index.ts";
@@ -711,7 +712,7 @@ const createLeague = async (
 	]) as Set<LeagueDBStoreNames>;
 
 	const setLeagueCreationStatus = (status: string) => {
-		toUI(
+		toUIWithoutWaiting(
 			"updateLocal",
 			[
 				{
@@ -828,7 +829,7 @@ const createLeague = async (
 	} finally {
 		delete self.stream0;
 
-		toUI(
+		toUIWithoutWaiting(
 			"updateLocal",
 			[
 				{

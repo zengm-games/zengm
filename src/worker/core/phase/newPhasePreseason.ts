@@ -12,7 +12,14 @@ import {
 	team,
 } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
+import {
+	g,
+	helpers,
+	local,
+	logEvent,
+	toUI,
+	toUIWithoutWaiting,
+} from "../../util/index.ts";
 import type {
 	Conditions,
 	Contract,
@@ -596,7 +603,7 @@ const newPhasePreseason = async (
 
 	// No ads during multi season auto sim
 	if (env.enableLogging && !local.autoPlayUntil) {
-		toUI("showModal", [], conditions);
+		toUIWithoutWaiting("showModal", [], conditions);
 	}
 
 	return {

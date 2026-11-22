@@ -23,6 +23,7 @@ import {
 	sim,
 	logEvent,
 	toUI,
+	toUIWithoutWaiting,
 	updatePlayMenu,
 	updateStatus,
 	local,
@@ -152,7 +153,7 @@ const playDays = async (
 			const allStarNext = await allStar.nextGameIsAllStar(schedule);
 
 			if (allStarNext && gidOneGame === undefined) {
-				toUI(
+				toUIWithoutWaiting(
 					"realtimeUpdate",
 					[
 						[],

@@ -91,7 +91,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 	const switchingDatabaseLid = newLid !== g.get("lid");
 
 	if (switchingDatabaseLid) {
-		await league.close(true);
+		await league.close();
 	}
 
 	if (loadingNewLid !== newLid) {
@@ -199,7 +199,7 @@ export const beforeNonLeague = async (conditions: Conditions) => {
 	if (!beforeNonLeagueRunning) {
 		try {
 			beforeNonLeagueRunning = true;
-			await league.close(false);
+			await league.stopAndSave();
 			await toUI("resetLeague", [], conditions);
 
 			if (!env.useSharedWorker) {

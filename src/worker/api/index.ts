@@ -1183,7 +1183,7 @@ const deleteScheduledEvents = async (type: string) => {
 
 const discardUnsavedProgress = async () => {
 	const lid = g.get("lid");
-	await league.close(true);
+	await league.close();
 	await beforeLeague(lid);
 };
 

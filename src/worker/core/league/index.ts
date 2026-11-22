@@ -1,6 +1,6 @@
 import autoPlay from "./autoPlay.ts";
 import clone from "./clone.ts";
-import { close } from "./close.ts";
+import { close, stopAndSave } from "./close.ts";
 import { createStream } from "./createStream.ts";
 import getName from "./getName.ts";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
@@ -24,6 +24,7 @@ export default {
 	loadGameAttributes,
 	remove,
 	setGameAttributes,
+	stopAndSave,
 	swapWorstRoster,
 	updateMeta,
 };

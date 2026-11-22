@@ -593,7 +593,6 @@ export type GameAttributesLeague = {
 	allStarDunk: boolean;
 	allStarThree: boolean;
 	alwaysShowCountry: boolean;
-	pomymarket: boolean;
 	autoExpand:
 		| {
 				phase: "vote";
@@ -1035,6 +1034,8 @@ export type Option = {
 	keyboardShortcut?: keyof KeyboardShortcuts["playMenu"];
 };
 
+export type GamePrediction = "probability" | "spread";
+
 export type Options = {
 	fullNames?: boolean;
 	phaseChangeRedirects: Phase[];
@@ -1075,6 +1076,7 @@ export type LocalStateUI = {
 		teams: [LocalStateUIGameTeam, LocalStateUIGameTeam];
 	}[];
 	fullNames: boolean;
+	gamePrediction: GamePrediction;
 	gold?: boolean;
 	keyboardShortcuts: KeyboardShortcutsLocal;
 	leagueCreation?: {

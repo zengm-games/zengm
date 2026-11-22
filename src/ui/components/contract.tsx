@@ -58,7 +58,7 @@ const RemainingSeasons = ({
 			rootClose
 		>
 			<button
-				className="btn btn-link p-0 border-0 align-baseline text-reset text-decoration-none"
+				className="btn btn-link p-0 border-0 align-baseline text-reset"
 				title="Different amounts in different seasons"
 				type="button"
 			>

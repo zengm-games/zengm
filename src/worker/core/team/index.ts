@@ -15,7 +15,7 @@ import getDepthPlayers from "./getDepthPlayers.ts";
 import { getFormatted, getFormattedAll } from "./getFormatted.ts";
 import getPayroll from "./getPayroll.ts";
 import getPayrolls from "./getPayrolls.ts";
-import { getTitleOdds } from "./getTitleOdds.ts";
+import { getTeamOdds } from "./getTeamOdds.ts";
 import ovr from "./ovr.ts";
 import processStats from "./processStats.ts";
 import ptsMax from "./ptsMax.ts";
@@ -47,7 +47,7 @@ export default {
 	getFormattedAll,
 	getPayroll,
 	getPayrolls,
-	getTitleOdds,
+	getTeamOdds,
 	ovr,
 	processStats,
 	ptsMax,

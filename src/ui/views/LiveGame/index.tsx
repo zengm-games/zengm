@@ -18,11 +18,8 @@ import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { getSeconds } from "../../../common/formatClock.ts";
-import { PomymarketChart } from "../../components/PomymarketChart.tsx";
-import {
-	PomymarketLive,
-	showPomymarketLive,
-} from "../../components/PomymarketOdds.tsx";
+import { LiveWinProbability } from "../../components/WinProbability.tsx";
+import { WinProbabilityChart } from "../../components/WinProbabilityChart.tsx";
 import {
 	getLiveWinpElapsedSeconds,
 	getLiveWinpXDomain,
@@ -30,7 +27,7 @@ import {
 	INITIAL_LIVE_WINP_X_STATE,
 	type LiveWinpSample,
 } from "../../util/liveWinpChart.ts";
-import { local, useLocal } from "../../util/local.ts";
+import { local } from "../../util/local.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { LiveGamePlayback } from "../../util/LiveGamePlayback.ts";
 import type { LiveGameEntry } from "../../util/LiveGamePlaybackBase.ts";
@@ -293,7 +290,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	const playByPlayEntries = useRef<PlayByPlayEntryInfo[]>([]);
 
-	// Recorded even when Pomymarket is off, so turning it on mid-game shows the whole game
 	const winpSamples = useRef<LiveWinpSample[]>([]);
 	const winpXState = useRef(INITIAL_LIVE_WINP_X_STATE);
 	const recordWinpSample = useCallback(
@@ -732,8 +728,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 		useState<HTMLElement | null>(null);
 	const isStuck = useIsStuck(liveGameStickyDiv);
 
-	const { pomymarket } = useLocal(["pomymarket"]);
-
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
@@ -759,16 +753,11 @@ export const LiveGame = (props: View<"liveGame">) => {
 			<div className="row" ref={scrollTop}>
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
-						<div className="live-game-sticky mb-3" ref={setLiveGameStickyDiv}>
+						<div className="live-game-sticky" ref={setLiveGameStickyDiv}>
 							<div className="pt-1 pt-md-0 live-game-score-wrapper">
 								<HeadlineScoreLive
 									boxScore={boxScore.current}
 									isStuck={isStuck}
-								/>
-								<PomymarketLive
-									boxScore={boxScore.current}
-									quarterLength={props.quarterLength}
-									sportState={playback.current?.sportState}
 								/>
 								<div className="d-flex align-items-center d-md-none pt-2">
 									<PlayPauseNext
@@ -837,9 +826,18 @@ export const LiveGame = (props: View<"liveGame">) => {
 							</div>
 						</div>
 					) : null}
-					{boxScore.current.gid >= 0 &&
-					showPomymarketLive(pomymarket, boxScore.current) ? (
-						<PomymarketChart
+					{boxScore.current.gid >= 0 ? (
+						// Not in live-game-sticky, because it would take up too much space when scrolled down. On large screens, there is already blank space above the line score next to the team logos, so it doesn't need any margin below.
+						<div className="mt-3 mt-md-1 mb-3 mb-lg-0">
+							<LiveWinProbability
+								boxScore={boxScore.current}
+								quarterLength={props.quarterLength}
+								sportState={playback.current?.sportState}
+							/>
+						</div>
+					) : null}
+					{boxScore.current.gid >= 0 && !boxScore.current.exhibition ? (
+						<WinProbabilityChart
 							gameOver={!!boxScore.current.gameOver}
 							samples={winpSamples.current}
 							teams={boxScore.current.teams}

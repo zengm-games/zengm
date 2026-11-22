@@ -8,25 +8,32 @@ import {
 	TRADE_DEADLINE_TIDS,
 } from "../../../common/specialGames.ts";
 
-const newSchedule = (
-	teams: {
-		seasonAttrs: {
-			cid: number;
-			did: number;
-		};
-		tid: number;
-	}[],
-	conditions?: Conditions,
-) => {
+type ScheduleTeam = {
+	seasonAttrs: {
+		cid: number;
+		did: number;
+	};
+	tid: number;
+};
+
+/**
+ * Just the regular season matchups, as [homeTid, awayTid], without special games like the All-Star Game. warning is set if the schedule settings couldn't be met.
+ */
+export const genScheduleMatchups = (
+	teams: ScheduleTeam[],
+): { tids: [number, number][]; warning?: string } => {
 	if (__SPORT === "football") {
 		const tids = getRealSchedule(teams);
 		if (tids) {
-			return tids;
+			return { tids };
 		}
 	}
 
-	const { tids, warning } = newScheduleGood(teams);
+	return newScheduleGood(teams);
+};
 
+// Adds the trade deadline and All-Star Game to the regular season matchups, in place
+export const addSpecialGames = (tids: [number, number][]) => {
 	// Add trade deadline
 	const tradeDeadline = g.get("tradeDeadline");
 	if (tradeDeadline < 1) {
@@ -40,6 +47,13 @@ const newSchedule = (
 		const ind = Math.round(allStarGame * tids.length);
 		tids.splice(ind, 0, [...ALL_STAR_GAME_TIDS]);
 	}
+
+	return tids;
+};
+
+const newSchedule = (teams: ScheduleTeam[], conditions?: Conditions) => {
+	const { tids, warning } = genScheduleMatchups(teams);
+	addSpecialGames(tids);
 
 	if (warning !== undefined) {
 		// console.log(g.get("season"), warning);

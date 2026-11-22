@@ -1,9 +1,9 @@
 import { assert, test } from "vitest";
 import {
-	getWinModelInputs,
+	getGamePrediction,
 	getWinProbability,
 	roundWinPercents,
-} from "../../common/winProbability.ts";
+} from "../../common/gamePrediction.ts";
 import { getLiveWinp } from "./getLiveWinp.ts";
 
 const makeBoxScore = ({
@@ -41,7 +41,7 @@ test("before the first play equals the pre-game value", () => {
 	assert.strictEqual(
 		result?.prob,
 		getWinProbability(
-			getWinModelInputs({
+			getGamePrediction({
 				homeCourtAdvantage: 1,
 				neutral: false,
 				numPeriods: 4,
@@ -65,10 +65,7 @@ test("up 40 at 0:00 without gameOver stays clamped to 99", () => {
 	const result = getProb(
 		makeBoxScore({ period: 4, pts: [120, 80], time: "0:00" }),
 	)!;
-	assert.deepEqual(
-		roundWinPercents(result.prob, result.resolved).percents,
-		[99, 1],
-	);
+	assert.deepEqual(roundWinPercents(result.prob, result.resolved), [99, 1]);
 });
 
 test("reads the sub-minute clock", () => {
@@ -178,12 +175,14 @@ test("an All-Star game has no home edge", () => {
 	assert.closeTo(getProb(boxScore)!.prob, 0.5, 1e-6);
 });
 
-test("quarterLength of 0 is even", () => {
-	const { prob } = getLiveWinp({
-		boxScore: makeBoxScore({ pts: [5, 0], time: "0:00" }),
-		homeCourtAdvantage: 1,
-		quarterLength: 0,
-		sportState: undefined,
-	})!;
-	assert.strictEqual(prob, 0.5);
+test("quarterLength of 0 has no time left, so it's decided by the lead and not NaN", () => {
+	const getProbQuarterLength0 = (pts: [number, number]) =>
+		getLiveWinp({
+			boxScore: makeBoxScore({ pts, time: "0:00" }),
+			homeCourtAdvantage: 1,
+			quarterLength: 0,
+			sportState: undefined,
+		})!.prob;
+	assert.strictEqual(getProbQuarterLength0([5, 0]), 1);
+	assert.strictEqual(getProbQuarterLength0([0, 0]), 0.5);
 });

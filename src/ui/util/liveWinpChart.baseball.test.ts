@@ -36,7 +36,15 @@ const getX = ({
 		boxScore: makeBoxScore({ bottom, inning }),
 		elapsedSeconds: 0,
 		quarterLength: 12,
-		sportState: { outs },
+		sportState: {
+			balls: 0,
+			bases: [undefined, undefined, undefined],
+			batterPid: -1,
+			o: bottom ? 0 : 1,
+			outs,
+			pitcherPid: -1,
+			strikes: 0,
+		},
 		state,
 	}).x;
 

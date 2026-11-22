@@ -108,6 +108,10 @@ export const resetCache = async (
 		await idb.cache.players.addAll(data.players);
 	}
 
+	if (data.schedule) {
+		await idb.cache.schedule.addAll(data.schedule);
+	}
+
 	if (data.teams) {
 		await idb.cache.teams.addAll(data.teams);
 	}

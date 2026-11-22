@@ -1,6 +1,10 @@
 import { getLiveWinp } from "./getLiveWinp.ts";
+import {
+	isSportStateBaseball,
+	type LiveGameSportState,
+} from "./LiveGamePlayback.ts";
 
-// Maps live game state to a game-progress x position for the Pomymarket win chart. This is not the time-left fraction from getLiveWinp, because that one restarts every overtime period and extra inning and so would run backwards.
+// Maps live game state to a game-progress x position for the live win probability chart. This is not the time-left fraction from getLiveWinp, because that one restarts every overtime period and extra inning and so would run backwards.
 
 const BASEBALL_OUTS_PER_HALF_INNING = 3;
 
@@ -92,7 +96,7 @@ export const advanceLiveWinpX = ({
 	boxScore: any;
 	elapsedSeconds: number;
 	quarterLength: number;
-	sportState: any;
+	sportState: LiveGameSportState;
 	state: LiveWinpXState;
 }): LiveWinpXState => {
 	const { numPeriods } = boxScore;
@@ -115,7 +119,13 @@ export const advanceLiveWinpX = ({
 	if (__SPORT === "baseball") {
 		return {
 			...state,
-			x: Math.max(state.x, getBaseballOuts(boxScore, sportState?.outs ?? 0)),
+			x: Math.max(
+				state.x,
+				getBaseballOuts(
+					boxScore,
+					isSportStateBaseball(sportState) ? sportState.outs : 0,
+				),
+			),
 		};
 	}
 
@@ -174,7 +184,7 @@ export const getNextLiveWinpSample = ({
 	elapsedSeconds: number;
 	homeCourtAdvantage: number;
 	quarterLength: number;
-	sportState: any;
+	sportState: LiveGameSportState;
 	xState: LiveWinpXState;
 }) => {
 	if (boxScore.exhibition) {

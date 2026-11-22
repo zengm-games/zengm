@@ -3387,6 +3387,11 @@ const cols: {
 		sortType: "number",
 		title: "Playoffs",
 	},
+	"Playoff Odds": {
+		desc: "Chance of Making the Playoffs",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Playoffs: {},
 	Pos: {
 		desc: "Position",

@@ -18,6 +18,7 @@ import {
 	REAL_PLAYERS_INFO,
 	getPlayerStatsTableStats,
 	DEFAULT_REAL_DRAFT_RATINGS,
+	DEFAULT_GAME_PREDICTION,
 } from "../../common/constants.ts";
 import { isGoldActive } from "../../common/isGoldActive.ts";
 import actions from "./actions.ts";
@@ -62,6 +63,7 @@ import {
 	type Conditions,
 	type Env,
 	type GameAttributesLeague,
+	type GamePrediction,
 	type Local,
 	type Player,
 	type PlayerWithoutKey,
@@ -1867,10 +1869,6 @@ const getDefaultTragicDeaths = () => {
 	return defaultTragicDeaths;
 };
 
-const getTitleOdds = () => {
-	return team.getTitleOdds();
-};
-
 const getEightyTwoZeroDraftPlayer = (pid: number) => {
 	const draft = local.eightyTwoZeroDraft;
 	if (!draft) {
@@ -3030,12 +3028,15 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 
 	// Send options and current state to all new tabs
 	const options = (await getMetaAttribute("options")) ?? {};
+	const gamePrediction =
+		(await getMetaAttribute("gamePrediction")) ?? DEFAULT_GAME_PREDICTION;
 	const keyboardShortcuts = await getMetaAttribute("keyboardShortcuts");
 	await toUI(
 		"updateLocal",
 		[
 			{
 				fullNames: options.fullNames,
+				gamePrediction,
 				gameSimInProgress: sim.isActive(),
 				keyboardShortcuts,
 				units: options.units,
@@ -4296,6 +4297,11 @@ const updateKeyboardShortcuts = async (
 ) => {
 	await putMetaAttribute("keyboardShortcuts", keyboardShortcuts);
 	await toUI("updateLocal", [{ keyboardShortcuts }]);
+};
+
+const updateGamePrediction = async (gamePrediction: GamePrediction) => {
+	await putMetaAttribute("gamePrediction", gamePrediction);
+	await toUI("updateLocal", [{ gamePrediction }]);
 };
 
 const updateLeague = async ({
@@ -5586,7 +5592,6 @@ const api = {
 		evalOnWorker,
 		exportDraftClass,
 		getExportFilename,
-		getTitleOdds,
 		exportPlayerAveragesCsv,
 		exportPlayerGamesCsv,
 		generateFace: generateFace2,
@@ -5678,6 +5683,7 @@ const api = {
 		updateDefaultSettingsOverrides,
 		updateGameAttributes,
 		updateGameAttributesGodMode,
+		updateGamePrediction,
 		updateKeepRosterSorted,
 		updateKeyboardShortcuts,
 		updateLeague,

@@ -12,8 +12,8 @@ import {
 	InvalidPlayoffSettingsError,
 } from "../season/genPlayoffSeries.ts";
 import { getHypotheticalTeam } from "./getHypotheticalTeam.ts";
+import { getGamesLeftSchedule } from "../season/getGamesLeftSchedule.ts";
 import { season } from "../index.ts";
-import { assertDefined } from "../../../common/utils.ts";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 
@@ -27,25 +27,8 @@ const getClinchedPlayoffs = async (
 
 	const usePts = g.get("pointsFormula", "current") !== "";
 
-	const schedule = await season.getSchedule();
-	const gamesLeftByTid: Record<number, number> = {};
-	for (const t of teamSeasons) {
-		gamesLeftByTid[t.tid] = 0;
-	}
-	for (const { awayTid, homeTid } of schedule) {
-		if (gamesLeftByTid[awayTid] !== undefined) {
-			gamesLeftByTid[awayTid] += 1;
-		}
-		if (gamesLeftByTid[homeTid] !== undefined) {
-			gamesLeftByTid[homeTid] += 1;
-		}
-	}
-
-	const getGamesLeft = (tid: number) => {
-		const gamesLeft = gamesLeftByTid[tid];
-		assertDefined(gamesLeft);
-		return gamesLeft;
-	};
+	const gamesLeftByTid = await getGamesLeftSchedule();
+	const getGamesLeft = (tid: number) => gamesLeftByTid.get(tid) ?? 0;
 
 	// We can skip tiebreakers because we add an extra 0.1 to the best/worst case win totals. Without skipping tiebreakers, it's way too slow. You could imagine using tiebreakers only on the last few games of the season... but really it doesn't even work. The bestCases check below isn't actually using the schedule, and it doesn't consider all permutations of game outcomes (which technically would be necessary for all possible tiebreakers) - that would be needed.
 	// const skipTiebreakers = teamSeasons.every(row => numGames - helpers.getTeamSeasonGp(row) > 3);

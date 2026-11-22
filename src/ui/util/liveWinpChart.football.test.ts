@@ -19,7 +19,7 @@ const advance = (state: typeof INITIAL_LIVE_WINP_X_STATE, elapsed: number) =>
 		boxScore,
 		elapsedSeconds: elapsed,
 		quarterLength: 15,
-		sportState: {},
+		sportState: undefined,
 		state,
 	});
 

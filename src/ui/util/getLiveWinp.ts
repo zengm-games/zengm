@@ -1,55 +1,69 @@
+import { getWinProbabilityBaseball } from "../../common/baseballWinProbability.ts";
 import { getSeconds } from "../../common/formatClock.ts";
-import { getGameLengthScale } from "../../common/getGameSpread.ts";
 import { helpers } from "../../common/helpers.ts";
+import type { SportState as SportStateBaseball } from "./LiveGamePlayback.baseball.tsx";
 import {
-	getWinModelInputs,
+	isSportStateBaseball,
+	type LiveGameSportState,
+} from "./LiveGamePlayback.ts";
+import {
+	getGameLengthScale,
+	getGamePrediction,
 	getWinProbability,
-} from "../../common/winProbability.ts";
+} from "../../common/gamePrediction.ts";
 
 // Approximate points per team in a default length game, to turn Elam points left into a fraction of a game
 const ELAM_POINTS_PER_GAME = 100;
 
-const BASEBALL_OUTS_PER_INNING = 3;
-
-const getFracBaseball = ({
-	numPeriods,
-	outs,
-	teams,
+const getLiveWinpBaseball = ({
+	boxScore,
+	spread,
+	sportState,
 }: {
-	numPeriods: number;
-	outs: number;
-	teams: any[];
+	boxScore: any;
+	spread: number;
+	sportState: SportStateBaseball;
 }) => {
-	const inning = teams[1].ptsQtrs.length;
-	if (inning === 0 || numPeriods === 0) {
-		return 1;
+	const { numPeriods, teams } = boxScore;
+	const { bases, o, outs } = sportState;
+	const inning = teams[o].ptsQtrs.length;
+
+	// Before the first pitch, the away team is about to bat
+	if (inning === 0) {
+		return getWinProbabilityBaseball({
+			basesOccupied: [false, false, false],
+			inning: 1,
+			margin: 0,
+			numInnings: numPeriods,
+			o: 1,
+			outs: 0,
+			spread,
+		});
 	}
 
-	const bottom = teams[0].ptsQtrs.length === inning;
-	const totalOuts = 2 * numPeriods * BASEBALL_OUTS_PER_INNING;
-
-	// Any extra inning could be the last, so only the current one counts as left
-	const halfInningsPlayed = inning > numPeriods ? 0 : 2 * (inning - 1);
-	const halfInningsTotal = inning > numPeriods ? 2 : 2 * numPeriods;
-	const outsLeft =
-		(halfInningsTotal - halfInningsPlayed - (bottom ? 1 : 0)) *
-			BASEBALL_OUTS_PER_INNING -
-		outs;
-
-	// Floored because the trailing team always has a turn at bat left when this is used
-	return Math.max(outsLeft, 1) / totalOuts;
+	return getWinProbabilityBaseball({
+		basesOccupied: [
+			bases[0] !== undefined,
+			bases[1] !== undefined,
+			bases[2] !== undefined,
+		],
+		inning,
+		margin: teams[0].pts - teams[1].pts,
+		numInnings: numPeriods,
+		o,
+		outs,
+		spread,
+	});
 };
 
 const getFrac = ({
 	boxScore,
 	expectedGamePoints,
 	quarterLength,
-	sportState,
 }: {
 	boxScore: any;
 	expectedGamePoints: number;
 	quarterLength: number;
-	sportState: any;
 }) => {
 	const { numPeriods, teams } = boxScore;
 
@@ -57,10 +71,6 @@ const getFrac = ({
 		const pointsLeft =
 			boxScore.elamTarget - Math.max(teams[0].pts, teams[1].pts);
 		return Math.max(pointsLeft, 1) / expectedGamePoints;
-	}
-
-	if (__SPORT === "baseball") {
-		return getFracBaseball({ numPeriods, outs: sportState?.outs ?? 0, teams });
 	}
 
 	const regulationSeconds = numPeriods * quarterLength * 60;
@@ -88,7 +98,7 @@ export const getLiveWinp = ({
 	boxScore: any;
 	homeCourtAdvantage: number;
 	quarterLength: number;
-	sportState: any;
+	sportState: LiveGameSportState;
 }) => {
 	const { numPeriods, teams } = boxScore;
 
@@ -112,7 +122,7 @@ export const getLiveWinp = ({
 	}
 
 	const allStarGame = teams[0].tid === -1;
-	const { expectedMargin, sigma } = getWinModelInputs({
+	const prediction = getGamePrediction({
 		homeCourtAdvantage,
 		neutral: !!boxScore.neutralSite || allStarGame,
 		numPeriods,
@@ -120,20 +130,28 @@ export const getLiveWinp = ({
 		quarterLength,
 	});
 
+	if (__SPORT === "baseball" && isSportStateBaseball(sportState)) {
+		return {
+			prob: getLiveWinpBaseball({
+				boxScore,
+				spread: prediction.spread,
+				sportState,
+			}),
+		};
+	}
+
 	const expectedGamePoints =
 		ELAM_POINTS_PER_GAME * getGameLengthScale({ numPeriods, quarterLength });
 
 	return {
 		prob: getWinProbability({
-			expectedMargin,
+			...prediction,
 			frac: getFrac({
 				boxScore,
 				expectedGamePoints,
 				quarterLength,
-				sportState,
 			}),
 			margin: teams[0].pts - teams[1].pts,
-			sigma,
 		}),
 	};
 };

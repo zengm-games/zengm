@@ -5,8 +5,7 @@ import { Chart } from "@tanstack/charts/react";
 import { scaleLinear } from "@tanstack/charts/scales/linear";
 import { curveStepAfter } from "d3-shape";
 import { useMemo } from "react";
-import { POMYMARKET_NAME } from "../../common/constants.ts";
-import { roundWinPercents } from "../../common/winProbability.ts";
+import { roundWinPercents } from "../../common/gamePrediction.ts";
 import { TEAM_NUMS_DISPLAY_ORDER } from "../util/boxScoreDisplayOrder.ts";
 import {
 	getLabelYs,
@@ -35,7 +34,7 @@ type ChartTeam = {
 	colors: string[];
 };
 
-export const PomymarketChart = ({
+export const WinProbabilityChart = ({
 	gameOver,
 	samples,
 	teams,
@@ -60,7 +59,7 @@ export const PomymarketChart = ({
 
 		const abbrevs = [abbrev0, abbrev1];
 		const lineColors = getLineColors([colors0.split(","), colors1.split(",")]);
-		const { percents } = roundWinPercents(last.prob, gameOver);
+		const percents = roundWinPercents(last.prob, gameOver);
 		const probs: [number, number] = [last.prob, 1 - last.prob];
 		const labelYs = getLabelYs(probs, MIN_LABEL_GAP);
 		const labels = TEAM_NUMS_DISPLAY_ORDER.map((i) => ({
@@ -152,7 +151,7 @@ export const PomymarketChart = ({
 			margin: MARGIN,
 		});
 
-		const ariaLabel = `${POMYMARKET_NAME} win probability over time: ${labels
+		const ariaLabel = `Win probability over time: ${labels
 			.map((label) => `${label.abbrev} ${label.percent}`)
 			.join(", ")}`;
 
@@ -167,7 +166,6 @@ export const PomymarketChart = ({
 
 	return (
 		<div className="mb-3">
-			<div className="text-body-secondary small">{POMYMARKET_NAME}</div>
 			<Chart
 				definition={info.definition}
 				height={HEIGHT}

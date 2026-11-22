@@ -5,6 +5,7 @@ import type {
 	StoreNames,
 } from "@dumbmatter/idb";
 import type {
+	GamePrediction,
 	League,
 	Options,
 	RealPlayerPhotos,
@@ -18,6 +19,7 @@ import { env } from "../util/env.ts";
 // Value type for each key in the attributes store
 export type MetaAttributes = {
 	defaultSettingsOverrides: Partial<Settings>;
+	gamePrediction: GamePrediction;
 	keyboardShortcuts: KeyboardShortcutsLocal;
 	lastChangesVersion: string;
 	nagged: number;

@@ -3,6 +3,7 @@ import { posRatings } from "../../../common/posRatings.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { ratingsGradientStyle } from "../../components/RatingsStatsPopover/ratingsGradientStyle.ts";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
+import { TextUnderlineBar } from "../../components/TextUnderlineBar.tsx";
 import { type ReactNode } from "react";
 
 export const RatingsOverview = ({
@@ -507,17 +508,13 @@ export const RatingsOverview = ({
 					<div key={i} className={i === 0 ? undefined : "ms-2 ms-sm-5"}>
 						{Object.entries(column).map(([name, categories], j) => (
 							<div key={name} className={j === 0 ? undefined : "mt-2"}>
-								<div className="fw-bold">
+								<TextUnderlineBar
+									barClassName="ratings-overview-title-underline"
+									className="fw-bold"
+									percent={100}
+								>
 									{name}
-									<div
-										className="ratings-overview-title-underline"
-										style={{
-											height: 2,
-											width: "100%",
-											marginTop: -4,
-										}}
-									/>
-								</div>
+								</TextUnderlineBar>
 								<table>
 									<tbody>
 										{categories.map(({ label, rating }, j) => {
@@ -525,26 +522,21 @@ export const RatingsOverview = ({
 												? ratingsGradientStyle(currentSeason[rating])
 												: undefined;
 											const current = currentSeason[rating];
-											const paddingTop = { paddingTop: 2 };
 											return (
 												<tr key={j}>
-													<td className="px-0 pb-0" style={paddingTop}>
-														<div className="flex-grow-1">
+													<td className="px-0 py-0">
+														<TextUnderlineBar
+															barStyle={highlightStyle}
+															className="flex-grow-1"
+															percent={current < 50 ? 100 - current : current}
+														>
 															<div className="d-flex">
 																<span>{label}:&nbsp;</span>
 																<span className="ms-auto">{current}</span>
 															</div>
-															<div
-																style={{
-																	...highlightStyle,
-																	height: 2,
-																	width: `${current < 50 ? 100 - current : current}%`,
-																	marginTop: -4,
-																}}
-															/>
-														</div>
+														</TextUnderlineBar>
 													</td>
-													<td className="px-0 pb-0 ps-1" style={paddingTop}>
+													<td className="px-0 py-0 ps-1">
 														<RatingWithChange
 															change={current - lastSeason[rating]}
 														/>

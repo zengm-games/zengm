@@ -10,20 +10,18 @@ import { getCol } from "../../../common/getCol.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import {
-	formatGameSpreads,
-	getGameSpread,
-} from "../../../common/getGameSpread.ts";
-import {
 	isAllStarGame,
 	isTradeDeadline,
 } from "../../../common/specialGames.ts";
 import {
-	getWinModelInputs,
+	formatGameSpreads,
+	getGamePrediction,
 	getWinProbability,
 	roundWinPercents,
-} from "../../../common/winProbability.ts";
-import { PomymarketBar, PomymarketPercent } from "../PomymarketOdds.tsx";
-import { TEAM_NUMS_DISPLAY_ORDER } from "../../util/boxScoreDisplayOrder.ts";
+} from "../../../common/gamePrediction.ts";
+import { WinPercent } from "../WinProbability.tsx";
+import { toWorker } from "../../util/toWorker.ts";
+import type { GamePrediction } from "../../../common/types.ts";
 
 type Team = {
 	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
@@ -71,6 +69,40 @@ const getRecord = (t: Team) => {
 	return helpers.formatRecord({ ...t, won: t.won, lost: t.lost });
 };
 
+// Clicking a prediction switches every score box between win probability and point spread
+const GamePredictionToggle = ({
+	children,
+	final,
+	gamePrediction,
+}: {
+	children: ReactNode;
+	final: boolean;
+	gamePrediction: GamePrediction;
+}) => {
+	let title;
+	let otherGamePrediction: GamePrediction;
+	if (gamePrediction === "probability") {
+		title = `Win probability${final ? " before the game" : ""} - click to show point spreads.`;
+		otherGamePrediction = "spread";
+	} else {
+		title = `Point spread${final ? " before the game" : ""} - click to show win probabilities.`;
+		otherGamePrediction = "probability";
+	}
+
+	return (
+		<button
+			type="button"
+			className="btn btn-link p-0 border-0 align-baseline text-reset"
+			onClick={async () => {
+				await toWorker("main", "updateGamePrediction", otherGamePrediction);
+			}}
+			title={title}
+		>
+			{children}
+		</button>
+	);
+};
+
 const smallStyle = {
 	display: "inline-block",
 };
@@ -111,22 +143,22 @@ export const ScoreBox = memo(
 	}) => {
 		const {
 			challengeNoRatings,
+			gamePrediction,
 			homeCourtAdvantage,
 			neutralSite,
 			numPeriods,
 			phase,
-			pomymarket,
 			quarterLength,
 			season,
 			teamInfoCache,
 			userTid,
 		} = useLocal([
 			"challengeNoRatings",
+			"gamePrediction",
 			"homeCourtAdvantage",
 			"neutralSite",
 			"numPeriods",
 			"phase",
-			"pomymarket",
 			"quarterLength",
 			"season",
 			"teamInfoCache",
@@ -159,20 +191,18 @@ export const ScoreBox = memo(
 				(neutralSite === "finals" && !!game.finals) ||
 				(neutralSite === "playoffs" && phase === PHASE.PLAYOFFS);
 
-			const gameInfo = {
+			const prediction = getGamePrediction({
 				homeCourtAdvantage,
 				neutral,
 				numPeriods,
 				ovrs: [game.teams[0].ovr, game.teams[1].ovr],
 				quarterLength,
-			} as const;
+			});
 
-			if (pomymarket) {
-				winPercents = roundWinPercents(
-					getWinProbability(getWinModelInputs(gameInfo)),
-				);
+			if (gamePrediction === "probability") {
+				winPercents = roundWinPercents(getWinProbability(prediction));
 			} else {
-				spreads = formatGameSpreads(getGameSpread(gameInfo));
+				spreads = formatGameSpreads(prediction.spread);
 			}
 		}
 
@@ -418,17 +448,25 @@ export const ScoreBox = memo(
 													{winPercents ? (
 														<>
 															,{" "}
-															<PomymarketPercent
-																i={i}
-																preGame={final}
-																winPercents={winPercents}
-															/>
+															<GamePredictionToggle
+																final={final}
+																gamePrediction={gamePrediction}
+															>
+																<WinPercent
+																	i={i}
+																	preGame={final}
+																	winPercents={winPercents}
+																/>
+															</GamePredictionToggle>
 														</>
 													) : null}
 													{spreads?.[i] ? (
 														<>
 															,{" "}
-															<span title="Point spread or betting line">
+															<GamePredictionToggle
+																final={final}
+																gamePrediction={gamePrediction}
+															>
 																<span
 																	className={
 																		!final ? "text-success" : undefined
@@ -437,7 +475,7 @@ export const ScoreBox = memo(
 																	{spreads[i]}
 																</span>{" "}
 																spread
-															</span>
+															</GamePredictionToggle>
 														</>
 													) : null}
 												</div>
@@ -445,11 +483,18 @@ export const ScoreBox = memo(
 										</div>
 										{(spreads || winPercents) && small ? (
 											<div className="text-end score-box-score me-2">
-												{winPercents ? (
-													<PomymarketPercent i={i} winPercents={winPercents} />
-												) : (
-													spreads?.[i]
-												)}
+												{winPercents || spreads?.[i] ? (
+													<GamePredictionToggle
+														final={final}
+														gamePrediction={gamePrediction}
+													>
+														{winPercents ? (
+															<WinPercent i={i} winPercents={winPercents} />
+														) : (
+															spreads?.[i]
+														)}
+													</GamePredictionToggle>
+												) : null}
 											</div>
 										) : null}
 										{final ? (
@@ -552,12 +597,6 @@ export const ScoreBox = memo(
 							);
 						})
 					)}
-					{winPercents && !small && !final ? (
-						<PomymarketBar
-							order={TEAM_NUMS_DISPLAY_ORDER}
-							winPercents={winPercents}
-						/>
-					) : null}
 				</div>
 				{small && overtimes ? (
 					<div

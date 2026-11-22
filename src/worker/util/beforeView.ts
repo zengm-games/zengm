@@ -39,19 +39,19 @@ const runHeartbeat = async (l: League) => {
 	await idb.meta.put("leagues", l);
 };
 
+const stopHeartbeat = () => {
+	clearInterval(heartbeatIntervalID);
+};
+
 const startHeartbeat = async (l: Awaited<ReturnType<typeof getLeague>>) => {
-	// First one within this transaction
 	await runHeartbeat(l);
 
-	// Then in new transaction
+	// Started right away rather than after a delay, so there's no pending timer that stopHeartbeat can't clear
+	stopHeartbeat();
 	const lid = l.lid;
-	setTimeout(() => {
-		clearInterval(heartbeatIntervalID); // Shouldn't be necessary, but just in case
-
-		heartbeatIntervalID = setInterval(async () => {
-			const l2 = await getLeague(lid);
-			await runHeartbeat(l2);
-		}, 1000);
+	heartbeatIntervalID = setInterval(async () => {
+		const l2 = await getLeague(lid);
+		await runHeartbeat(l2);
 	}, 1000);
 };
 
@@ -102,7 +102,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 	// If this is a Web Worker, only one tab of a league can be open at a time
 
 	if (!env.useSharedWorker) {
-		clearInterval(heartbeatIntervalID);
+		stopHeartbeat();
 		await checkHeartbeat(newLid);
 	}
 
@@ -203,7 +203,7 @@ export const beforeNonLeague = async (conditions: Conditions) => {
 			await toUI("resetLeague", [], conditions);
 
 			if (!env.useSharedWorker) {
-				clearInterval(heartbeatIntervalID);
+				stopHeartbeat();
 			}
 
 			beforeNonLeagueRunning = false;

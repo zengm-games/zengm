@@ -9,7 +9,6 @@ import {
 	helpers,
 	updatePlayMenu,
 	sim,
-	toUI,
 } from "../util/index.ts";
 import { runDraft } from "./actions.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -250,35 +249,11 @@ const playMenu = {
 			await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
 		}
 	},
+	// The UI confirms with getUntilFreeAgencyWarning before calling this
 	untilFreeAgency: async (param: unknown, conditions: Conditions) => {
 		if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
-			const negotiations = await idb.cache.negotiations.getAll();
-			const numRemaining = negotiations.length; // Show warning dialog only if there are players remaining un-re-signed
-
-			let proceed = true;
-
-			if (numRemaining > 0) {
-				// This function always returns a boolean if no defaultValue is supplied, but couldn't figure out how to get it to work correctly with TypeScript.
-				proceed = await toUI(
-					"confirm",
-					[
-						`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team${
-							g.get("salaryCapType") === "soft"
-								? ""
-								: ", and you won't be able to go over the salary cap to sign them"
-						}.`,
-						{
-							okText: "Proceed",
-						},
-					],
-					conditions,
-				);
-			}
-
-			if (proceed) {
-				await phase.newPhase(PHASE.FREE_AGENCY, conditions);
-				await updateStatus(helpers.daysLeft(true));
-			}
+			await phase.newPhase(PHASE.FREE_AGENCY, conditions);
+			await updateStatus(helpers.daysLeft(true));
 		}
 	},
 	untilPreseason: async (param: unknown, conditions: Conditions) => {
@@ -294,6 +269,25 @@ const playMenu = {
 		updatePlayMenu();
 		await playStop();
 	},
+};
+
+// Text for the UI to confirm with before untilFreeAgency, or undefined if there's nothing to warn about
+export const getUntilFreeAgencyWarning = async () => {
+	if (g.get("phase") !== PHASE.RESIGN_PLAYERS) {
+		return;
+	}
+
+	const negotiations = await idb.cache.negotiations.getAll();
+	const numRemaining = negotiations.length;
+	if (numRemaining === 0) {
+		return;
+	}
+
+	return `Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team${
+		g.get("salaryCapType") === "soft"
+			? ""
+			: ", and you won't be able to go over the salary cap to sign them"
+	}.`;
 };
 
 export default playMenu;

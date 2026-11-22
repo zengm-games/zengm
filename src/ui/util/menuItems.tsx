@@ -1,4 +1,6 @@
 import { toWorker } from "./toWorker.ts";
+import { autoPlayDialog } from "./autoPlayDialog.tsx";
+import { confirmDeleteAllLeagues } from "./confirmDeleteAllLeagues.tsx";
 import {
 	DAILY_SCHEDULE,
 	DEPTH_CHART_NAME,
@@ -667,12 +669,25 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				commandPalette: true,
 
 				async onClick() {
-					const response = await toWorker(
+					const info = await toWorker(
 						"toolsMenu",
-						"autoPlaySeasons",
+						"getAutoPlayDialogInfo",
 						undefined,
 					);
-					return response;
+					if (!info) {
+						return false;
+					}
+
+					const choice = await autoPlayDialog(
+						info.season,
+						info.forceHistoricalRosters,
+						info.repeatSeason,
+					);
+					if (!choice) {
+						return false;
+					}
+
+					return toWorker("toolsMenu", "autoPlaySeasons", choice);
 				},
 
 				text: "Auto Play",
@@ -841,9 +856,10 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				commandPalette: true,
 
 				async onClick(): Promise<false> {
-					const response = await toWorker("toolsMenu", "resetDb", undefined);
+					const type = await confirmDeleteAllLeagues();
 
-					if (response) {
+					if (type) {
+						await toWorker("toolsMenu", "resetDb", type);
 						window.location.reload();
 					}
 

@@ -1,6 +1,6 @@
 import { useCallback, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
-import { toWorker } from "../util/toWorker.ts";
+import { runPlayMenuOption } from "../util/runPlayMenuOption.ts";
 import { router } from "../router/index.ts";
 import { local, useLocal } from "../util/local.ts";
 import type { Option } from "../../common/types.ts";
@@ -14,7 +14,7 @@ import { confirm } from "../util/confirm.tsx";
 const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {
 		event.preventDefault();
-		toWorker("playMenu", option.id as any, undefined);
+		void runPlayMenuOption(option.id);
 	}
 };
 
@@ -61,7 +61,7 @@ const PlayMenu = ({
 						scrollToTop: true,
 					});
 				} else {
-					void toWorker("playMenu", option.id as any, undefined);
+					void runPlayMenuOption(option.id);
 				}
 			},
 			[options],

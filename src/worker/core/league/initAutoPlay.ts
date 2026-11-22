@@ -1,8 +1,9 @@
 import { startAutoPlay } from "./autoPlay.ts";
-import { toUI, g, logEvent } from "../../util/index.ts";
+import { g, logEvent } from "../../util/index.ts";
 import type { Conditions, Phase } from "../../../common/types.ts";
 
-const initAutoPlay = async (conditions: Conditions) => {
+// If auto play can't start, tells the user why and returns false
+const checkCanAutoPlay = (conditions: Conditions) => {
 	if (g.get("gameOver")) {
 		logEvent(
 			{
@@ -17,22 +18,33 @@ const initAutoPlay = async (conditions: Conditions) => {
 		return false;
 	}
 
-	const result = await toUI(
-		"autoPlayDialog",
-		[
-			g.get("season"),
-			g.get("forceHistoricalRosters"),
-			g.get("repeatSeason")?.type,
-		],
-		conditions,
-	);
+	return true;
+};
 
-	if (!result) {
+// What the UI's auto play dialog needs, or undefined if auto play can't start
+export const getAutoPlayDialogInfo = (conditions: Conditions) => {
+	if (!checkCanAutoPlay(conditions)) {
+		return;
+	}
+
+	return {
+		season: g.get("season"),
+		forceHistoricalRosters: g.get("forceHistoricalRosters"),
+		repeatSeason: g.get("repeatSeason")?.type,
+	};
+};
+
+// Starts auto play until the season and phase picked in the UI's auto play dialog. Checks again whether auto play can start, since the league might have changed while the dialog was open.
+export const initAutoPlay = (
+	choice: { season: string; phase: string },
+	conditions: Conditions,
+) => {
+	if (!checkCanAutoPlay(conditions)) {
 		return false;
 	}
 
-	const season = Number.parseInt(result.season);
-	const phase = Number.parseInt(result.phase);
+	const season = Number.parseInt(choice.season);
+	const phase = Number.parseInt(choice.phase);
 
 	if (
 		season > g.get("season") ||
@@ -43,5 +55,3 @@ const initAutoPlay = async (conditions: Conditions) => {
 		return false;
 	}
 };
-
-export default initAutoPlay;

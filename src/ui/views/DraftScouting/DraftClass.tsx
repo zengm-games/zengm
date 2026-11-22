@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
+import { confirm } from "../../util/confirm.tsx";
 import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
 import { WEBSITE_ROOT } from "../../../common/constants.ts";
@@ -98,6 +99,16 @@ const DraftClass = ({
 								className="btn btn-outline-god-mode btn-xs"
 								disabled={status === "exporting" || status === "loading"}
 								onClick={async () => {
+									const proceed = await confirm(
+										"This will delete the existing draft class and replace it with a new one filled with randomly generated players. Are you sure you want to do that?",
+										{
+											okText: "Regenerate draft class",
+										},
+									);
+									if (!proceed) {
+										return;
+									}
+
 									setStatus("loading");
 
 									await toWorker("main", "regenerateDraftClass", season);

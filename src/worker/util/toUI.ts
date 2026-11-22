@@ -3,6 +3,8 @@ import type api from "../../ui/api/index.ts";
 import type { Conditions } from "../../common/types.ts";
 
 // When conditions.hostID is set, the message goes to that tab only, and the returned promise rejects with a HostClosedError if that tab closes before responding. Broadcasts (no hostID) can't get that error.
+//
+// Never use this to ask the user something (a confirm dialog or similar) in the middle of worker code. The league could change while the dialog is open, and the work would continue in the wrong league. Ask in the UI before calling the worker instead.
 export const toUI = <Name extends keyof typeof api>(
 	name: Name,
 	args: Parameters<(typeof api)[Name]>,

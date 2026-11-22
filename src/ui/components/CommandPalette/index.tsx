@@ -19,6 +19,7 @@ import type {
 import { helpers } from "../../util/helpers.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
+import { runPlayMenuOption } from "../../util/runPlayMenuOption.ts";
 import { focusOnMount } from "../../util/refCallbacks.ts";
 import { getText, makeAnchorProps } from "../../util/menuItemLinks.ts";
 import { Modal } from "../Modal.tsx";
@@ -188,7 +189,7 @@ const getResultsGroupedDefault = ({
 				onClick: () => {
 					onHide();
 					if (!option.url) {
-						toWorker("playMenu", option.id as any, undefined);
+						void runPlayMenuOption(option.id);
 					}
 				},
 			},

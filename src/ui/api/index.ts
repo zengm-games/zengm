@@ -12,10 +12,7 @@ import type {
 import { crossTabEmitter } from "../util/crossTabEmitter.ts";
 import { ads } from "../util/ads.ts";
 import { analyticsEvent } from "../util/analyticsEvent.ts";
-import { autoPlayDialog } from "../util/autoPlayDialog.tsx";
-import { confirmDeleteAllLeagues } from "../util/confirmDeleteAllLeagues.tsx";
 import { requestPersistentStorage } from "../util/requestPersistentStorage.tsx";
-import { confirm } from "../util/confirm.tsx";
 import {
 	rememberedGraphParamsKeys,
 	type RememberedGraphParams,
@@ -144,10 +141,7 @@ const getRememberedGraphParams = (
 
 const api = {
 	analyticsEvent,
-	autoPlayDialog,
 	bugsnagNotify,
-	confirm,
-	confirmDeleteAllLeagues,
 	crossTabEmit,
 	deleteGames,
 	getRememberedGraphParams,

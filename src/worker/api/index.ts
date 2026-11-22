@@ -111,7 +111,7 @@ import {
 	type LeagueDB,
 	type LeagueDBStoreNames,
 } from "../db/connectLeague.ts";
-import playMenu from "./playMenu.ts";
+import playMenu, { getUntilFreeAgencyWarning } from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
 import eightyTwoZeroDraft from "./eightyTwoZeroDraft.ts";
 import {
@@ -3290,37 +3290,25 @@ const realtimeUpdate = async (updateEvents: UpdateEvents) => {
 	await toUI("realtimeUpdate", [updateEvents]);
 };
 
-const regenerateDraftClass = async (season: number, conditions: Conditions) => {
-	const proceed = await toUI(
-		"confirm",
-		[
-			"This will delete the existing draft class and replace it with a new one filled with randomly generated players. Are you sure you want to do that?",
-			{
-				okText: "Regenerate Draft Class",
-			},
-		],
-		conditions,
+// The UI confirms before calling this
+const regenerateDraftClass = async (season: number) => {
+	// Delete old players from draft class
+	const oldPlayers = await idb.cache.players.indexGetAll(
+		"playersByDraftYearRetiredYear",
+		[[season], [season, Infinity]],
 	);
 
-	if (proceed) {
-		// Delete old players from draft class
-		const oldPlayers = await idb.cache.players.indexGetAll(
-			"playersByDraftYearRetiredYear",
-			[[season], [season, Infinity]],
-		);
-
-		const toRemove = [];
-		for (const p of oldPlayers) {
-			if (p.tid === PLAYER.UNDRAFTED) {
-				toRemove.push(p.pid);
-			}
+	const toRemove = [];
+	for (const p of oldPlayers) {
+		if (p.tid === PLAYER.UNDRAFTED) {
+			toRemove.push(p.pid);
 		}
-		await player.remove(toRemove);
-
-		// Generate new players
-		await draft.genPlayers(season);
-		await toUI("realtimeUpdate", [["playerMovement"]]);
 	}
+	await player.remove(toRemove);
+
+	// Generate new players
+	await draft.genPlayers(season);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
@@ -5626,6 +5614,7 @@ const api = {
 		getSavedTrade,
 		getTeamGraphStat,
 		getTradingBlockOffers,
+		getUntilFreeAgencyWarning,
 		ping,
 		prefetchRealPlayerStats,
 		handleUploadedDraftClass,

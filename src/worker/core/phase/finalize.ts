@@ -18,8 +18,10 @@ import { processScheduledEvents } from "./processScheduledEvents.ts";
 import { autoPlayStopsAt, cleanupAutoPlay } from "../league/autoPlay.ts";
 
 const save = async () => {
-	await updateStatus("Saving...");
-	await idb.cache.flush();
+	if (idb.cache.dirty) {
+		await updateStatus("Saving...");
+		await idb.cache.flush();
+	}
 };
 
 /**

@@ -143,7 +143,7 @@ const playDays = async (
 			newPhaseCalled = true;
 		}
 
-		if (!local.autoPlayUntil && !newPhaseCalled) {
+		if (!local.autoPlayUntil && !newPhaseCalled && idb.cache.dirty) {
 			await updateStatus("Saving...");
 			await idb.cache.flush();
 		}

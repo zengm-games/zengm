@@ -1,5 +1,5 @@
 import { deleteDB } from "@dumbmatter/idb";
-import close from "./close.ts";
+import { close } from "./close.ts";
 import { idb } from "../../db/index.ts";
 import { g, logEvent } from "../../util/index.ts";
 

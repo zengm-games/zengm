@@ -515,6 +515,11 @@ class Cache {
 
 	_dirty: boolean;
 
+	// Whether there is anything to flush. Check this before showing a "Saving..." status, to prevent UI flicker when there is nothing to save
+	get dirty() {
+		return this._dirty;
+	}
+
 	_dirtyIndexes: Set<Store>;
 
 	_dirtyRecords: Record<Store, Set<number | string>>;

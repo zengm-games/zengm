@@ -26,12 +26,16 @@ const resolveAll = (callbacks: (() => void)[]) => {
 	}
 };
 
+// Resolves when the running phase change releases the newPhase lock. Another phase change could start before the caller gets to run, like during auto play, so callers check the lock again in a loop.
+const newPhaseDone = () => {
+	const { promise, resolve } = Promise.withResolvers<void>();
+	onNewPhaseDone.push(resolve);
+	return promise;
+};
+
 const runView = async <T>(cb: () => T | Promise<T>) => {
-	// Loop in case another phase change starts before this gets a chance to run, like during auto play
 	while (locks.newPhase) {
-		const { promise, resolve } = Promise.withResolvers<void>();
-		onNewPhaseDone.push(resolve);
-		await promise;
+		await newPhaseDone();
 	}
 
 	numViewsRunning += 1;
@@ -142,6 +146,7 @@ const unreadMessage = async () => {
 export default {
 	reset,
 	get,
+	newPhaseDone,
 	runView,
 	set,
 	unreadMessage,

@@ -1,4 +1,5 @@
 import fastDeepEqual from "fast-deep-equal";
+import { applyBenchPenalty, selectBasketballTeams } from "./basketballTeamSelection.ts";
 import {
 	FormulaEvaluator,
 	InvalidVariableError,
@@ -615,7 +616,16 @@ export const processAwards = async ({
 						if (Number.isNaN(score)) {
 							return -Infinity;
 						}
-						return score;
+						return __SPORT === "basketball" &&
+							award.numTeams !== undefined &&
+							award.benchPenalty
+							? applyBenchPenalty(
+									score,
+									p.currentStats[statRange] as
+										| { gp?: number; gs?: number }
+										| undefined,
+								)
+							: score;
 					};
 
 					const sortedPlayers = orderBy(filteredPlayers, getScore, "desc");
@@ -696,6 +706,23 @@ export const processAwards = async ({
 						);
 					} else {
 						// Team award
+						if (
+							__SPORT === "basketball" &&
+							award.numTeams !== undefined &&
+							award.positionalSelection
+						) {
+							const winner = selectBasketballTeams(
+								sortedPlayers.filter((p) => p.currentStats[statRange]),
+								numTeams,
+								getScore,
+							).map((team) =>
+								team.map((p) => ({
+									pid: p.pid,
+									tid: p.currentStats[statRange]!.tid,
+								})),
+							);
+							return { ...award, numTeams, group, winner };
+						}
 						if (TEAM_AWARD_INFO.byPos) {
 							let positions =
 								TEAM_AWARD_INFO.positions[award.showStats] ??

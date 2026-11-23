@@ -502,7 +502,7 @@ const finalizeStartingSeason = (
 
 type GameAttributeOverrides = Partial<Record<keyof GameAttributesLeague, any>>;
 
-const finalizeGameAttributes = async ({
+const finalizeGameAttributes = ({
 	conditions,
 	gameAttributes,
 	gameAttributeOverrides,
@@ -607,7 +607,7 @@ const finalizeGameAttributes = async ({
 	}
 
 	// Also mutates teamInfos
-	const finalized2 = await createGameAttributes(
+	const finalized2 = createGameAttributes(
 		{
 			gameAttributesInput: finalized,
 			startingSeason,
@@ -1369,7 +1369,7 @@ const beforeDBStream = async ({
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
 
-	const gameAttributes = await finalizeGameAttributes({
+	const gameAttributes = finalizeGameAttributes({
 		conditions,
 		// Use fromFile.gameAttributes in addition to gameAttributeOverrides because it preserves history and any non-standard settings
 		gameAttributes: filteredFromFile.gameAttributes ?? {},

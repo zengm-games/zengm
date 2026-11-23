@@ -22,7 +22,7 @@ import { connectLeague, idb } from "../db/index.ts";
 import { getPlayersActiveSeason } from "../db/merged/players.ts";
 import { g, helpers, local, toUI } from "../util/index.ts";
 import { boxScoreToLiveSim } from "../views/liveGame.ts";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { getPlayoffsByConfFromSettings } from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import { randInt } from "../../common/random.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
@@ -160,12 +160,13 @@ const getSeasonInfoLeague = async ({
 				roundsWonText = helpers.roundsWonText({
 					playoffRoundsWon: teamSeason.playoffRoundsWon,
 					numPlayoffRounds: numGamesPlayoffSeries.length,
-					playoffsByConf: await getPlayoffsByConf(teamSeason.season, {
-						confs,
-						playoffSeries,
-						playoffsByConf,
-						skipPlayoffSeries: !playoffSeries,
-					}),
+					// Not in a league, so this can't use getPlayoffsByConf
+					playoffsByConf:
+						playoffSeries?.byConf ??
+						getPlayoffsByConfFromSettings({
+							confs,
+							playoffsByConf,
+						}),
 					showMissedPlayoffs: true,
 				});
 			}

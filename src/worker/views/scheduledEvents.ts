@@ -4,7 +4,7 @@ import { getScheduledEventsCurrent } from "../api/scheduledEvents.ts";
 import { idb } from "../db/index.ts";
 import { defineView } from "../util/defineView.ts";
 import { g } from "../util/index.ts";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "../core/season/getPlayoffsByConf.ts";
 import { getInitialSettings } from "./settings.ts";
 
 export default defineView({

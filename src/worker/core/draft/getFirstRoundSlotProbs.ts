@@ -5,7 +5,7 @@ import {
 	genPlayoffSeriesFromTeams,
 	InvalidPlayoffSettingsError,
 } from "../season/genPlayoffSeries.ts";
-import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "../season/getPlayoffsByConf.ts";
 import { getFirstRoundTeams, getNba2027PlayIn } from "./getTeamsByRound.ts";
 import { getDivisionRanks } from "../../util/orderTeams.ts";
 import {

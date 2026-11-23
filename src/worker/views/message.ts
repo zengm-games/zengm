@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers, updatePlayMenu, updateStatus } from "../util/index.ts";
 import { defineView, keepType } from "../util/defineView.ts";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "../core/season/getPlayoffsByConf.ts";
 import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
 

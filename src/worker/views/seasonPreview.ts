@@ -5,7 +5,7 @@ import { player, team } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { PHASE } from "../../common/constants.ts";
 import { loadAbbrevs } from "./gameLog.ts";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "../core/season/getPlayoffsByConf.ts";
 import { validateSeasonOnly } from "../util/processInputs.ts";
 
 export default defineView({

@@ -189,6 +189,7 @@ import { checkNaNs } from "../util/checkNaNs.ts";
 import { checkChanges } from "../util/checkChanges.ts";
 import { checkAccount } from "../util/checkAccount.ts";
 import { generateFace } from "../util/face.ts";
+import { getPlayoffsByConfFromSettings } from "../core/season/getPlayoffsByConf.ts";
 import { choice } from "../../common/random.ts";
 import { getNewLeagueLid } from "../util/getNewLeagueLid.ts";
 import { env } from "../util/env.ts";
@@ -1832,11 +1833,17 @@ const exportDraftClass = async ({
 	};
 };
 
+// For a player in the current league. The race comes from the league's player bio info, for the player's country.
 const generateFace2 = async (country: string | undefined) => {
 	const { race } = await player.name(
 		country ? helpers.getCountry(country) : undefined,
 	);
 	return generateFace({ race });
+};
+
+// Just to show off a team's jersey, so it doesn't need a realistic race, and it doesn't depend on any league's player bio info. That matters because it's also used before a league exists, on the new league page.
+const generateJerseyFace = () => {
+	return generateFace();
 };
 
 const getAutoPos = (ratings: any) => {
@@ -2057,7 +2064,7 @@ const getNegotiationProps = async (pid: number) => {
 	};
 };
 
-const getNumPlayoffTeams = async ({
+const getNumPlayoffTeams = ({
 	confs,
 	numRounds,
 	numPlayoffByes,
@@ -2070,9 +2077,7 @@ const getNumPlayoffTeams = async ({
 	playIn: boolean;
 	playoffsByConf: boolean;
 }) => {
-	// Season doesn't matter, since we provide overrides and skipPlayoffSeries
-	const byConf = await season.getPlayoffsByConf(Infinity, {
-		skipPlayoffSeries: true,
+	const byConf = getPlayoffsByConfFromSettings({
 		playoffsByConf,
 		confs,
 	});
@@ -3748,24 +3753,16 @@ const retiredJerseyNumberUpsert = async ({
 	await toUI("realtimeUpdate", [["retiredJerseys", "playerMovement"]]);
 };
 
-const runBefore = async (
-	{
-		viewId,
-		params,
-		ctxBBGM,
-		updateEvents,
-		prevOutput,
-		prevInputs,
-	}: {
-		viewId: string;
-		params: unknown;
-		ctxBBGM: unknown;
-		updateEvents: ReadonlySet<UpdateEvent>;
-		prevOutput: unknown;
-		prevInputs: unknown;
-	},
-	conditions: Conditions,
-): Promise<void | {
+type RunBeforeArgs = {
+	viewId: string;
+	params: unknown;
+	ctxBBGM: unknown;
+	updateEvents: ReadonlySet<UpdateEvent>;
+	prevOutput: unknown;
+	prevInputs: unknown;
+};
+
+type RunBeforeResult = {
 	data: {
 		[key: string]: any;
 	};
@@ -3775,16 +3772,21 @@ const runBefore = async (
 
 	// Next time, prevOutput only needs to contain these properties
 	keepPrevOutputKeys?: string[];
-}> => {
-	// Special case for errors, so that the condition right below (when league is loading) does not cause no update
-	if (viewId === "error") {
-		return { data: {} };
-	}
+};
 
-	if (typeof g.get("lid") === "number" && !local.leagueLoaded) {
-		return;
-	}
-
+// Shared by runBeforeLeague and runBeforeGlobal. runLoad wraps the view's load function.
+const runBeforeView = async (
+	{
+		viewId,
+		params,
+		ctxBBGM,
+		updateEvents,
+		prevOutput,
+		prevInputs,
+	}: RunBeforeArgs,
+	conditions: Conditions,
+	runLoad: <T>(load: () => Promise<T>) => Promise<T>,
+): Promise<RunBeforeResult> => {
 	// https://github.com/microsoft/TypeScript/issues/21732
 	// @ts-expect-error
 	const view = views[viewId];
@@ -3802,7 +3804,7 @@ const runBefore = async (
 	}
 
 	if (view) {
-		const data = await lock.runView(() =>
+		const data = await runLoad(() =>
 			view.load({
 				inputs,
 				updateEvents,
@@ -3819,6 +3821,27 @@ const runBefore = async (
 	}
 
 	return { data: {}, inputs };
+};
+
+// For views in a league (URLs starting with /l/)
+const runBeforeLeague = async (
+	args: RunBeforeArgs,
+	conditions: Conditions,
+): Promise<RunBeforeResult | undefined> => {
+	if (typeof g.get("lid") === "number" && !local.leagueLoaded) {
+		return;
+	}
+
+	// A phase change leaves league data inconsistent until it's done, so wait for it
+	return await runBeforeView(args, conditions, lock.runView);
+};
+
+// For views outside of a league. These never read league data, so they don't need to wait for the league to load or for a phase change.
+const runBeforeGlobal = async (
+	args: RunBeforeArgs,
+	conditions: Conditions,
+): Promise<RunBeforeResult> => {
+	return await runBeforeView(args, conditions, (load) => load());
 };
 
 const setForceWin = async ({
@@ -5413,7 +5436,7 @@ const validatePointsFormula = (pointsFormula: string) => {
 	}
 };
 
-const validatePlayoffSettings = async ({
+const validatePlayoffSettings = ({
 	numRounds,
 	numPlayoffByes,
 	numActiveTeams,
@@ -5428,9 +5451,7 @@ const validatePlayoffSettings = async ({
 	playoffsByConf: boolean;
 	confs: GameAttributesLeague["confs"];
 }) => {
-	// Season doesn't matter, since we provide overrides and skipPlayoffSeries
-	const byConf = await season.getPlayoffsByConf(Infinity, {
-		skipPlayoffSeries: true,
+	const byConf = getPlayoffsByConfFromSettings({
 		playoffsByConf,
 		confs,
 	});
@@ -5584,6 +5605,7 @@ const api = {
 		exportPlayerAveragesCsv,
 		exportPlayerGamesCsv,
 		generateFace: generateFace2,
+		generateJerseyFace,
 		getAutoPos,
 		getBornLoc,
 		getDefaultInjuries,
@@ -5645,7 +5667,8 @@ const api = {
 		retiredJerseyNumberDelete,
 		randomizeContracts,
 		retiredJerseyNumberUpsert,
-		runBefore,
+		runBeforeGlobal,
+		runBeforeLeague,
 		setForceWin,
 		setForceWinAll,
 		setGOATFormula,

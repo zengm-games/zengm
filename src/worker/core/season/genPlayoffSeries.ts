@@ -7,7 +7,7 @@ import type {
 	ByConf,
 } from "../../../common/types.ts";
 import genPlayoffSeeds from "./genPlayoffSeeds.ts";
-import getPlayoffsByConf from "./getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "./getPlayoffsByConf.ts";
 import validatePlayoffSettings from "./validatePlayoffSettings.ts";
 import { range } from "../../../common/utils.ts";
 import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";

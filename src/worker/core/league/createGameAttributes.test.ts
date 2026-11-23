@@ -4,8 +4,8 @@ import createGameAttributes from "./createGameAttributes.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
-test("save integer in wrapped format", async () => {
-	const gameAttributes = await createGameAttributes({
+test("save integer in wrapped format", () => {
+	const gameAttributes = createGameAttributes({
 		startingSeason: 2015,
 		gameAttributesInput: {},
 		teamInfos: helpers.getTeamsDefault(),
@@ -17,8 +17,8 @@ test("save integer in wrapped format", async () => {
 	]);
 });
 
-test("maintain history", async () => {
-	const gameAttributes = await createGameAttributes({
+test("maintain history", () => {
+	const gameAttributes = createGameAttributes({
 		startingSeason: 2015,
 		gameAttributesInput: {
 			startingSeason: 2010,
@@ -37,8 +37,8 @@ test("maintain history", async () => {
 	]);
 });
 
-test("maintain history while selecting a new team", async () => {
-	const gameAttributes = await createGameAttributes({
+test("maintain history while selecting a new team", () => {
+	const gameAttributes = createGameAttributes({
 		startingSeason: 2015,
 		gameAttributesInput: {
 			startingSeason: 2010,
@@ -58,8 +58,8 @@ test("maintain history while selecting a new team", async () => {
 	]);
 });
 
-test("maintain history while selecting a new team, overwriting current season", async () => {
-	const gameAttributes = await createGameAttributes({
+test("maintain history while selecting a new team, overwriting current season", () => {
+	const gameAttributes = createGameAttributes({
 		startingSeason: 2015,
 		gameAttributesInput: {
 			startingSeason: 2010,
@@ -78,8 +78,8 @@ test("maintain history while selecting a new team, overwriting current season", 
 	]);
 });
 
-test("new team after playoffs", async () => {
-	const gameAttributes = await createGameAttributes({
+test("new team after playoffs", () => {
+	const gameAttributes = createGameAttributes({
 		startingSeason: 2015,
 		gameAttributesInput: {
 			startingSeason: 2010,
@@ -107,8 +107,8 @@ describe("tiebreakers", () => {
 		gameAttributesInput: {},
 	};
 
-	test("apply new default to an empty league file", async () => {
-		const gameAttributes = await createGameAttributes({
+	test("apply new default to an empty league file", () => {
+		const gameAttributes = createGameAttributes({
 			...defaultArgs,
 			startingSeason: 2021,
 		});
@@ -119,8 +119,8 @@ describe("tiebreakers", () => {
 		);
 	});
 
-	test("apply new default to an old version league file with no gameAttributes", async () => {
-		const gameAttributes = await createGameAttributes({
+	test("apply new default to an old version league file with no gameAttributes", () => {
+		const gameAttributes = createGameAttributes({
 			...defaultArgs,
 			version: 40,
 			startingSeason: 2021,
@@ -133,8 +133,8 @@ describe("tiebreakers", () => {
 	});
 
 	describe("apply new default to an old version league file, only for upcoming season", () => {
-		test("during regular season", async () => {
-			const gameAttributes = await createGameAttributes({
+		test("during regular season", () => {
+			const gameAttributes = createGameAttributes({
 				...defaultArgs,
 				version: 40,
 				startingSeason: 2021,
@@ -153,8 +153,8 @@ describe("tiebreakers", () => {
 			);
 		});
 
-		test("after regular season", async () => {
-			const gameAttributes = await createGameAttributes({
+		test("after regular season", () => {
+			const gameAttributes = createGameAttributes({
 				...defaultArgs,
 				version: 40,
 				startingSeason: 2021,
@@ -173,8 +173,8 @@ describe("tiebreakers", () => {
 			);
 		});
 
-		test("during expansion draft after season", async () => {
-			const gameAttributes = await createGameAttributes({
+		test("during expansion draft after season", () => {
+			const gameAttributes = createGameAttributes({
 				...defaultArgs,
 				version: 40,
 				startingSeason: 2021,
@@ -195,8 +195,8 @@ describe("tiebreakers", () => {
 		});
 	});
 
-	test("do nothing to new version league file", async () => {
-		const gameAttributes = await createGameAttributes({
+	test("do nothing to new version league file", () => {
+		const gameAttributes = createGameAttributes({
 			...defaultArgs,
 			version: 43,
 			startingSeason: 2021,

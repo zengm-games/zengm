@@ -2,7 +2,7 @@ import type { ByConf } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
-import getPlayoffsByConf from "./getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "./getPlayoffsByConf.ts";
 
 export const getNumPlayoffTeamsRaw = ({
 	numRounds,

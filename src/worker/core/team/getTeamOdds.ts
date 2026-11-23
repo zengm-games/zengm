@@ -20,7 +20,7 @@ import {
 import addDaysToSchedule from "../season/addDaysToSchedule.ts";
 import getSchedule from "../season/getSchedule.ts";
 import { addSpecialGames, genScheduleMatchups } from "../season/newSchedule.ts";
-import getPlayoffsByConf from "../season/getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "../season/getPlayoffsByConf.ts";
 import {
 	betterSeedHome,
 	getNextRoundMatchups,

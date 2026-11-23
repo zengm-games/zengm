@@ -23,7 +23,7 @@ export const TeamLogoJerseyInfo = ({
 
 	useLayoutEffect(() => {
 		(async () => {
-			setFace(await toWorker("main", "generateFace", undefined));
+			setFace(await toWorker("main", "generateJerseyFace", undefined));
 		})();
 	}, []);
 

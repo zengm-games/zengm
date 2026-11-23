@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { type ByConf, type PlayerStatType } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "../core/season/getPlayoffsByConf.ts";
 import { processDraftPicks } from "./draftPicks.ts";
 import getWinner from "../../common/getWinner.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";

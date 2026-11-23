@@ -7,7 +7,7 @@ import getInitialNumGamesConfDivSettings from "./getInitialNumGamesConfDivSettin
 import getLeaderRequirements from "./getLeaderRequirements.ts";
 import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
 import getNumPlayoffTeams from "./getNumPlayoffTeams.ts";
-import getPlayoffsByConf from "./getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "./getPlayoffsByConf.ts";
 import getSchedule from "./getSchedule.ts";
 import getSeasonLeaders from "./getSeasonLeaders.ts";
 import hasTies from "./hasTies.ts";

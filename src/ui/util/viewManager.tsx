@@ -318,8 +318,7 @@ class ViewManager {
 		const ctxBBGM = { ...context.state };
 		delete ctxBBGM.err; // Can't send Error to worker
 
-		// Resolve all the promises before updating the UI to minimize flicker
-		const resultsAndInputs = await toWorker("main", "runBefore", {
+		const runBeforeArgs = {
 			viewId: id,
 			params: context.params,
 			ctxBBGM,
@@ -330,7 +329,12 @@ class ViewManager {
 					.map((key) => [key, prevData[key]]),
 			),
 			prevInputs,
-		});
+		};
+
+		// Resolve all the promises before updating the UI to minimize flicker
+		const resultsAndInputs = inLeague
+			? await toWorker("main", "runBeforeLeague", runBeforeArgs)
+			: await toWorker("main", "runBeforeGlobal", runBeforeArgs);
 
 		if (navigationId !== this.navigationId) {
 			return;

@@ -12,7 +12,7 @@ import type {
 } from "../../common/types.ts";
 import { defineView } from "../util/defineView.ts";
 import { player, team } from "../core/index.ts";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "../core/season/getPlayoffsByConf.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText.ts";

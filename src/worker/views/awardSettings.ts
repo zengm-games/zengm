@@ -3,7 +3,7 @@ import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { PHASE } from "../../common/constants.ts";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { getPlayoffsByConf } from "../core/season/getPlayoffsByConf.ts";
 import { defaultAwards } from "../../common/defaultGameAttributes.ts";
 import { defineView } from "../util/defineView.ts";
 import { team } from "../core/index.ts";

@@ -9,6 +9,7 @@ import type {
 import { logEvent } from "../../util/index.ts";
 import { wrapNewValueIfCurrentlyWrapped } from "../../util/g.ts";
 import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings.ts";
+import { getPlayoffsByConfFromSettings } from "../season/getPlayoffsByConf.ts";
 import type { TeamInfo } from "./createStream.ts";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
@@ -21,7 +22,7 @@ import {
 import { last } from "../../../common/utils.ts";
 import { getTeamInfoCache } from "../team/getTeamInfoCache.ts";
 
-const createGameAttributes = async (
+const createGameAttributes = (
 	{
 		gameAttributesInput,
 		startingSeason,
@@ -162,8 +163,7 @@ const createGameAttributes = async (
 	let newNumGames = oldNumGames;
 	let legacyPlayoffs = (gameAttributes as any).numPlayoffRounds !== undefined;
 	try {
-		const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
-			skipPlayoffSeries: true,
+		const byConf = getPlayoffsByConfFromSettings({
 			playoffsByConf: gameAttributes.playoffsByConf,
 			confs: unwrapGameAttribute(gameAttributes, "confs"),
 		});
@@ -261,8 +261,7 @@ const createGameAttributes = async (
 
 	// If cannot handle the play-in tournament, disable
 	if (gameAttributes.playIn) {
-		const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
-			skipPlayoffSeries: true,
+		const byConf = getPlayoffsByConfFromSettings({
 			playoffsByConf: gameAttributes.playoffsByConf,
 			confs: unwrapGameAttribute(gameAttributes, "confs"),
 		});

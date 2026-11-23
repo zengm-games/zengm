@@ -123,6 +123,8 @@ export const StatsTable = ({
 
 	const isBaseballFielding = __SPORT === "baseball" && name === "Fielding";
 
+	const careerLabel = `${rangeFooter.state.seasons.length} yrs`;
+
 	let footer: FooterRow[];
 	if (isBaseballFielding) {
 		playerStats = expandFieldingStats({
@@ -136,7 +138,7 @@ export const StatsTable = ({
 			addDummyPosIndex: true,
 		}).map((object, i) => ({
 			data: [
-				i === 0 ? "Career" : null,
+				i === 0 ? careerLabel : null,
 				null,
 				null,
 				...stats.map((stat) => formatStatGameHigh(object, stat)),
@@ -147,7 +149,7 @@ export const StatsTable = ({
 		footer = [
 			{
 				data: [
-					"Career",
+					careerLabel,
 					null,
 					null,
 					...stats.map((stat) => formatStatGameHigh(careerStats, stat)),

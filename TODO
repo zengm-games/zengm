@@ -1,3 +1,7 @@
+show career totals per team at bottom of stats tables in player profile pages
+- add some extra option to playersPlus like careerStatsPerTeam
+- repeat headers at the bottom if enough seasons - how many?
+
 rookie contract default length
 
 GOAT franchise, like GOAT team but totals https://www.reddit.com/r/BasketballGM/comments/1wuks4k/monthly_suggestions_thread/pd4sl0j/
@@ -642,9 +646,6 @@ https://www.compart.com/en/unicode/U+1F3C6 rather than ring
 apply checkbox td hack to buttons too
 - should correctly handle hover state
 - bootstrap utility?
-
-show career totals per team at bottom of stats tables in player profile pages
-- add some extra option to playersPlus like careerStatsPerTeam
 
 more aggressively use closers in playoffs https://discord.com/channels/290013534023057409/290015591216054273/1332735406176735263
 
@@ -2865,13 +2866,6 @@ export/import roster
   some way to specify startingSeason
   easily edit in excel?
 increase hype for big free agent signings
-how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
-  for roster, want just a player's stats with this team this season
-    this currently works, just pass a tid
-  for player stats view, want total among all teams for one season
-    no pass tid and you only get the latest row. need added logic to do sum
-  for player view, want separate and combined rows in careerStats without fucking up totals (including PER)
-    no pass tid and you get each team separately, but no merged stats as above
 if fouling out drops team below 5 active players, play fouled out players but add a FT each foul (technical)
 show old contracts on old roster view
 core.trade refactoring

@@ -15,6 +15,7 @@ const RANGE_FOOTER_NUM_SEASONS_CUTOFF = 3;
 type State =
 	| {
 			type: "disabled";
+			seasons: number[];
 	  }
 	| {
 			type: "closed";
@@ -129,6 +130,7 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 		if (seasons.length < RANGE_FOOTER_NUM_SEASONS_CUTOFF) {
 			setState({
 				type: "disabled",
+				seasons,
 			});
 		} else if (state.type === "closed" || state.type === "disabled") {
 			setState({

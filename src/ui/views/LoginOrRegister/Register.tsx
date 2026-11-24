@@ -160,7 +160,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 						name="mailinglist"
 					/>
 					<label className="form-check-label" htmlFor="register-mailinglist">
-						Join the mailing list (one email per quarter)
+						Join the mailing list (1 email every 3 months)
 					</label>
 				</div>
 				<ActionButton type="submit" processing={submitting}>

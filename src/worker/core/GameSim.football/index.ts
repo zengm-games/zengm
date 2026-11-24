@@ -20,7 +20,6 @@ import type {
 	TeamGameSim,
 	Formation,
 } from "./types.ts";
-import getInjuryRate from "../GameSim/getInjuryRate.ts";
 import Play, {
 	SCRIMMAGE_EXTRA_POINT,
 	SCRIMMAGE_KICKOFF,
@@ -226,6 +225,7 @@ class GameSim extends GameSimBase {
 
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
+		this.initInjuryRates(this.team, this.baseInjuryRate);
 
 		this.playersOnField = [{}, {}];
 
@@ -2993,13 +2993,7 @@ class GameSim extends GameSimBase {
 			}
 
 			for (const p of onField) {
-				const injuryRate = getInjuryRate(
-					this.baseInjuryRate,
-					p.age,
-					p.injury.gamesRemaining > 0,
-				);
-
-				if (Math.random() < injuryRate) {
+				if (Math.random() < p.injuryRate) {
 					// 50% as many injuries for some positions
 					if (FEWER_INJURIES_POS.has(p.pos) && Math.random() < 0.5) {
 						continue;

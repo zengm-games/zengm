@@ -15,7 +15,6 @@ import type {
 import getCompositeFactor from "./getCompositeFactor.ts";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties.ts";
 import PenaltyBox from "./PenaltyBox.ts";
-import getInjuryRate from "../GameSim/getInjuryRate.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
 import { maxBy, orderBy, range } from "../../../common/utils.ts";
 import { getStartingAndBackupGoalies } from "./getStartingAndBackupGoalies.ts";
@@ -132,6 +131,7 @@ class GameSim extends GameSimBase {
 
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
+		this.initInjuryRates(this.team, this.baseInjuryRate);
 
 		this.synergyFactor = 1;
 
@@ -1789,11 +1789,7 @@ class GameSim extends GameSimBase {
 			for (const t of teamNums) {
 				for (const pos of POSITIONS) {
 					for (const p of this.playersOnIce[t][pos]) {
-						let injuryRate = getInjuryRate(
-							this.baseInjuryRate,
-							p.age,
-							p.injury.gamesRemaining > 0,
-						);
+						let injuryRate = p.injuryRate;
 
 						// Fewer injuries for G
 						if (pos === "G") {

@@ -34,6 +34,7 @@ export type PlayerGameSim = {
 	numConsecutiveGamesG?: number;
 	seasonStats: Record<string, number>;
 	energy: number;
+	injuryRate: number;
 };
 
 export type PlayersOnIce = Record<Position, PlayerGameSim[]>;

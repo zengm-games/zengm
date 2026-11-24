@@ -1,5 +1,6 @@
 import { PHASE } from "../../../common/constants.ts";
 import { g } from "../../util/index.ts";
+import getInjuryRate from "./getInjuryRate.ts";
 
 class GameSimBase {
 	id: number;
@@ -39,6 +40,30 @@ class GameSimBase {
 		this.allStarGame = allStarGame;
 		this.baseInjuryRate = baseInjuryRate;
 		this.neutralSite = neutralSite;
+	}
+
+	// A player's age and whether they are playing through an injury don't change during a game, so this computes injury rates once, rather than every time injuries are checked
+	initInjuryRates(
+		teams: readonly {
+			player: {
+				age: number;
+				injury: {
+					gamesRemaining: number;
+				};
+				injuryRate: number;
+			}[];
+		}[],
+		baseRate: number,
+	) {
+		for (const t of teams) {
+			for (const p of t.player) {
+				p.injuryRate = getInjuryRate(
+					baseRate,
+					p.age,
+					p.injury.gamesRemaining > 0,
+				);
+			}
+		}
 	}
 
 	// Runs the shots of a shootout, after each sport sets it up. Away team shoots first. "teamByTeam" means each team takes all of its shots before the other team shoots, "alternating" means the teams alternate shots. If still tied after that, the teams alternate shots until there's a winner.

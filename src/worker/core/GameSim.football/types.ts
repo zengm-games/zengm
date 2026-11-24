@@ -46,6 +46,7 @@ export type PlayerGameSim = {
 	ovrs: Record<Position, number>;
 	seasonStats: Record<string, number>;
 	energy: number;
+	injuryRate: number;
 };
 export type PlayersOnField = Partial<Record<Position, PlayerGameSim[]>>;
 

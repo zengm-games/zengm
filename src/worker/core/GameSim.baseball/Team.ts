@@ -8,7 +8,6 @@ import type { Position } from "../../../common/types.baseball.ts";
 import { groupByUnique, orderBy } from "../../../common/utils.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher.ts";
-import getInjuryRate from "../GameSim/getInjuryRate.ts";
 import type { PlayerGameSim, TeamGameSim } from "./types.ts";
 
 type GamePositions<DH extends boolean> =
@@ -20,7 +19,6 @@ type PlayerInGame<DH extends boolean> = {
 	p: PlayerGameSim;
 	battingOrder: number;
 	pos: GamePositions<DH>;
-	injuryRate?: number; // Gets filled in by rebuildIndexes
 };
 
 const NUM_BATTERS_PER_SIDE = 9;
@@ -39,7 +37,6 @@ class Team<DH extends boolean> {
 	dh: DH;
 	allStarGame: boolean;
 	playoffs: boolean;
-	baseInjuryRate: number;
 	playersByPid: Record<number, PlayerGameSim>;
 	playersInGame: Record<number, PlayerInGame<DH>>;
 	playersInGameByPos: Record<GamePositions<DH>, PlayerInGame<DH>>;
@@ -63,18 +60,11 @@ class Team<DH extends boolean> {
 	// Depth chart, but adjusted to remove injured players and capped at the number of active players
 	depth: Depth;
 
-	constructor(
-		t: TeamGameSim,
-		dh: DH,
-		allStarGame: boolean,
-		playoffs: boolean,
-		baseInjuryRate: number,
-	) {
+	constructor(t: TeamGameSim, dh: DH, allStarGame: boolean, playoffs: boolean) {
 		this.t = t;
 		this.dh = dh;
 		this.allStarGame = allStarGame;
 		this.playoffs = playoffs;
-		this.baseInjuryRate = baseInjuryRate;
 
 		this.playersInGame = {};
 
@@ -264,13 +254,6 @@ class Team<DH extends boolean> {
 
 			// If players can switch positions mid game, this doesn't make sense. Would need to store an array to track all positions
 			playerInGame.p.pos = playerInGame.pos;
-
-			// Age and the existing injury's duration stay fixed during a game.
-			playerInGame.injuryRate ??= getInjuryRate(
-				this.baseInjuryRate,
-				playerInGame.p.age,
-				playerInGame.p.injury.gamesRemaining > 0,
-			);
 		}
 
 		// Keep the position insertion order used by injury checks. Replacing this

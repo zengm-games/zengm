@@ -20,6 +20,7 @@ export type PlayerGameSim = {
 	lineupPos: string;
 	pFatigue: number;
 	seasonStats: Record<string, number>;
+	injuryRate: number;
 
 	// Used for box score ordering only
 	battingOrder?: number;

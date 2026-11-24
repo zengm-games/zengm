@@ -120,11 +120,13 @@ class GameSim extends GameSimBase {
 
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 
+		this.initInjuryRates(teams, this.baseInjuryRate);
+
 		// If a team plays twice in a day, this needs to be a deep copy
 		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 		this.team = [
-			new Team(teams[0], dh, this.allStarGame, playoffs, this.baseInjuryRate),
-			new Team(teams[1], dh, this.allStarGame, playoffs, this.baseInjuryRate),
+			new Team(teams[0], dh, this.allStarGame, playoffs),
+			new Team(teams[1], dh, this.allStarGame, playoffs),
 		];
 
 		if (!neutralSite) {
@@ -2658,7 +2660,7 @@ class GameSim extends GameSimBase {
 			const weight = i === -1 || playerInGame.pos === "P" ? 5 : 1;
 			const p = playerInGame.p;
 
-			const injuryRate = playerInGame.injuryRate! * weight;
+			const injuryRate = p.injuryRate * weight;
 
 			if (Math.random() < injuryRate) {
 				p.injured = true;

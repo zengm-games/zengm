@@ -1,7 +1,6 @@
 import { g, helpers } from "../../util/index.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
-import getInjuryRate from "../GameSim/getInjuryRate.ts";
 import type {
 	GameAttributesLeague,
 	PlayerInjury,
@@ -91,6 +90,7 @@ type PlayerGameSim = {
 	energy: number;
 	courtTime: number;
 	benchTime: number;
+	injuryRate: number;
 };
 type TeamGameSim = {
 	id: number;
@@ -250,6 +250,12 @@ class GameSim extends GameSimBase {
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
+
+		// Modulate by pace - since injuries are evaluated per possession, but really probably happen per minute played
+		this.initInjuryRates(
+			this.team,
+			this.baseInjuryRate * (100 / g.get("pace")),
+		);
 
 		// Read every possession, so cache them rather than calling g.get each time. Needs to be before updatePlayersOnCourt.
 		this.quarterLength = g.get("quarterLength");
@@ -1340,22 +1346,12 @@ class GameSim extends GameSimBase {
 		}
 
 		let newInjury = false;
-		let baseRate = this.baseInjuryRate;
-
-		// Modulate by pace - since injuries are evaluated per possession, but really probably happen per minute played
-		baseRate *= 100 / g.get("pace");
 
 		for (const t of teamNums) {
 			for (const p of this.team[t].player) {
 				// Only players on the court can be injured
 				if (this.playersOnCourt[t].includes(p)) {
-					const injuryRate = getInjuryRate(
-						baseRate,
-						p.age,
-						p.injury.gamesRemaining > 0,
-					);
-
-					if (Math.random() < injuryRate) {
+					if (Math.random() < p.injuryRate) {
 						p.injured = true;
 						p.newInjury = true;
 						newInjury = true;

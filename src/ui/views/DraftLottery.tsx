@@ -23,7 +23,7 @@ import type {
 } from "../../common/types.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { getDraftLotteryProbs } from "../../worker/core/draft/draftLottery.ts";
-import useStickyXX from "../components/DataTable/useStickyXX.ts";
+import { useStickyXX } from "../components/DataTable/useStickyXX.ts";
 import { range } from "../../common/utils.ts";
 import {
 	COLA_ALPHA,

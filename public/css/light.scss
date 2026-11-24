@@ -1517,11 +1517,13 @@ $sticky-cols: (
 );
 
 @each $class, $col-num in $sticky-cols {
+	// .sticky-divider is for a footer cell spanning multiple columns, ending with the last sticky column
 	table.#{$class} {
 		// Add space for box-shadow - $table-cell-padding-x + 2px
 		tr {
 			td:nth-child(#{$col-num}),
-			th:nth-child(#{$col-num}) {
+			th:nth-child(#{$col-num}),
+			th.sticky-divider {
 				padding-right: 10px;
 			}
 		}
@@ -1529,7 +1531,8 @@ $sticky-cols: (
 		// :before because :after conflicts with sort arrows from datatable.scss
 		tr {
 			td:nth-child(#{$col-num}),
-			th:nth-child(#{$col-num}) {
+			th:nth-child(#{$col-num}),
+			th.sticky-divider {
 				&:before {
 					box-shadow: 0px 0px 0px 1px $border-color;
 					content: " ";
@@ -1546,7 +1549,8 @@ $sticky-cols: (
 		// Add space for box-shadow - $table-cell-padding-x + 2px
 		tr {
 			td:nth-child(#{$col-num}),
-			th:nth-child(#{$col-num}) {
+			th:nth-child(#{$col-num}),
+			th.sticky-divider {
 				padding-right: 6px;
 			}
 		}

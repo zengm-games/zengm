@@ -10,7 +10,7 @@ import {
 } from "react";
 import Controls from "./Controls.tsx";
 import CustomizeColumns from "./CustomizeColumns.tsx";
-import Footer, { type FooterRow } from "./Footer.tsx";
+import { Footer, type FooterRow } from "./Footer.tsx";
 import Header from "./Header.tsx";
 import Info from "./Info.tsx";
 import Row from "./Row.tsx";
@@ -25,7 +25,7 @@ import type { Col, SortOrder, SuperCol } from "../../../common/types.ts";
 export type { Col, SuperCol };
 import { arrayMove } from "@dnd-kit/sortable";
 import updateSortBys, { type SortEvent } from "./updateSortBys.ts";
-import useStickyXX from "./useStickyXX.ts";
+import { useStickyXX } from "./useStickyXX.ts";
 import { useDataTableState } from "./useDataTableState.ts";
 import { processRows } from "./processRows.ts";
 import { useBulkSelectRows, type SelectedRows } from "./useBulkSelectRows.ts";
@@ -447,7 +447,7 @@ export const DataTable = <Type extends MetadataType = undefined>({
 		sortBys: state.sortBys,
 	};
 
-	const { stickyClass, tableRef } = useStickyXX(
+	const { stickyClass, stickyCols, tableRef } = useStickyXX(
 		state.stickyCols,
 		showBulkSelectCheckboxes,
 	);
@@ -507,7 +507,11 @@ export const DataTable = <Type extends MetadataType = undefined>({
 					})}
 				</tbody>
 				{sortableRows ? <MyDragOverlay /> : null}
-				<Footer colOrder={colOrderFiltered} footer={footer} />
+				<Footer
+					colOrder={colOrderFiltered}
+					footer={footer}
+					stickyCols={stickyCols}
+				/>
 			</table>
 		</DataTableContext>
 	);

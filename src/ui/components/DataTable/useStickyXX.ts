@@ -7,7 +7,7 @@ import { range } from "../../../common/utils.ts";
 export type StickyColsPlusCheckboxes = StickyCols | 4;
 
 // >1 sticky column requires some JS to compute the left offset of all besides the first sticky column (whose offset is always 0)
-const useStickyXX = (
+export const useStickyXX = (
 	stickyColsRaw: StickyCols,
 	showBulkSelectCheckboxes: boolean,
 ) => {
@@ -121,8 +121,7 @@ const useStickyXX = (
 
 	return {
 		stickyClass,
+		stickyCols,
 		tableRef,
 	};
 };
-
-export default useStickyXX;

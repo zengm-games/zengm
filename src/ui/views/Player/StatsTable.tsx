@@ -137,7 +137,14 @@ export const StatsTable = ({
 
 	const isBaseballFielding = __SPORT === "baseball" && name === "Fielding";
 
-	const careerLabel = `${rangeFooter.state.seasons.length} ${helpers.plural("yr", rangeFooter.state.seasons.length)}`;
+	const careerLabel = `${rangeFooter.state.seasons.length} ${helpers.plural("year", rangeFooter.state.seasons.length)}`;
+
+	// Label spanning the year, team, and age columns
+	const spanningLabel = (label: ReactNode): FooterRow["data"] => [
+		{ value: label, colspan: 3 },
+		null,
+		null,
+	];
 
 	let footer: FooterRow[];
 	if (isBaseballFielding) {
@@ -152,35 +159,29 @@ export const StatsTable = ({
 			addDummyPosIndex: true,
 		}).map((object, i) => ({
 			data: [
-				i === 0 ? careerLabel : null,
-				null,
-				null,
+				...(i === 0 ? spanningLabel(careerLabel) : [null, null, null]),
 				...stats.map((stat) => formatStatGameHigh(object, stat)),
 				null,
 			],
 		}));
 	} else {
 		const getFooterRow = (
-			label: ReactNode,
-			team: ReactNode,
+			label: FooterRow["data"],
 			row: Record<string, unknown>,
 		): FooterRow => ({
 			data: [
-				label,
-				team,
-				null,
+				...label,
 				...stats.map((stat) => formatStatGameHigh(row, stat)),
 				null,
 			],
 		});
 
-		footer = [getFooterRow(careerLabel, null, careerStats)];
+		footer = [getFooterRow(spanningLabel(careerLabel), careerStats)];
 
 		if (careerStatsScaled) {
 			footer.push(
 				getFooterRow(
-					`${numGames} game avg`,
-					null,
+					spanningLabel(`${numGames} game avg`),
 					careerStatsScaled[seasonType],
 				),
 			);
@@ -192,8 +193,9 @@ export const StatsTable = ({
 			for (const team of careerStatsByTeam) {
 				footer.push(
 					getFooterRow(
-						`${team.numSeasons} ${helpers.plural("yr", team.numSeasons)}`,
-						team.abbrev,
+						spanningLabel(
+							`${team.abbrev} (${team.numSeasons} ${helpers.plural("year", team.numSeasons)})`,
+						),
 						team.stats,
 					),
 				);

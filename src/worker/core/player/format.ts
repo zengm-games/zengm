@@ -11,6 +11,7 @@ import type {
 	PlayerStatAttr,
 	PlayerStatType,
 	PlayerFormatOptions,
+	CareerStatsScaledOptions,
 	TeamSeason,
 } from "../../../common/types.ts";
 import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball.ts";
@@ -27,11 +28,15 @@ import {
 } from "../contract/index.ts";
 
 type PlayerFormatOptionsRequired = Required<
-	Omit<PlayerFormatOptions, "season" | "seasonRange" | "seasonType" | "tid">
+	Omit<
+		PlayerFormatOptions,
+		"season" | "seasonRange" | "seasonType" | "tid" | "careerStatsScaled"
+	>
 > & {
 	season?: number;
 	seasonRange?: [number, number];
 	tid?: number;
+	careerStatsScaled?: PlayerFormatOptions["careerStatsScaled"];
 
 	// Derived from seasonType
 	playoffs: boolean;
@@ -754,7 +759,40 @@ const filterForCareerStats = (
 	);
 };
 
+// How a stat is combined when summing stats rows. Only "normal" and "byPos" stats are totals, the others are rates or single game values
+type SumType =
+	| "tovpHack"
+	| "max"
+	| "byPos"
+	| "lng"
+	| "weightByMinutes"
+	| "normal";
+
+const getSumType = (attr: string): SumType => {
+	if (__SPORT === "basketball" && attr === "tovp") {
+		return "tovpHack";
+	}
+	if (attr.endsWith("Max")) {
+		return "max";
+	}
+	if (
+		player.stats.byPos?.includes(attr) ||
+		(__SPORT === "baseball" && attr === "rfld")
+	) {
+		return "byPos";
+	}
+	if (attr.endsWith("Lng")) {
+		return "lng";
+	}
+	if (weightByMinutes.has(attr)) {
+		return "weightByMinutes";
+	}
+	return "normal";
+};
+
 const sumCareerStats = (careerStats: any[], attr: string) => {
+	const sumType = getSumType(attr);
+
 	let info:
 		| {
 				type: "max";
@@ -773,20 +811,17 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 				value: [0, 0]; // Numberator and denominator of tovp formula
 		  };
 
-	if (__SPORT === "basketball" && attr === "tovp") {
+	if (sumType === "tovpHack") {
 		info = {
 			type: "tovpHack",
 			value: [0, 0],
 		};
-	} else if (attr.endsWith("Max")) {
+	} else if (sumType === "max") {
 		info = {
 			type: "max",
 			value: null,
 		};
-	} else if (
-		player.stats.byPos?.includes(attr) ||
-		(__SPORT === "baseball" && attr === "rfld")
-	) {
+	} else if (sumType === "byPos") {
 		info = {
 			type: "byPos",
 			value: [],
@@ -798,8 +833,8 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 		};
 	}
 
-	const weightAttrByMinutes = weightByMinutes.has(attr);
-	const lng = attr.endsWith("Lng");
+	const weightAttrByMinutes = sumType === "weightByMinutes";
+	const lng = sumType === "lng";
 
 	// Calculate values used for perGame and per36 averages, which is needed for historical stats where some seasons might not have had a stat collected. Like if you want career assists per game, and only 2 of the player's 5 seasons were after they started tracking assists, we need to know gp for only those 2 seasons
 	let extraForMissingValues:
@@ -890,6 +925,128 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 		value: outputValue,
 		extraForMissingValues,
 	};
+};
+
+type StatsRowsSum = {
+	statSums: any;
+	statSumsExtra: StatSumsExtra;
+};
+
+// Keys of stats rows that are not stats, so they are not summed
+const notSummedKeys = new Set([
+	"season",
+	"tid",
+	"yearsWithTeam",
+	"jerseyNumber",
+	"playoffs",
+]);
+
+// Sums stats rows into one row of raw stats, like for career totals. playoffs has the same value as in the rows being summed
+const sumStatsRows = (
+	rows: any[],
+	playoffs: boolean | "combined",
+): StatsRowsSum => {
+	const statSums: any = { playoffs };
+	const statSumsExtra: StatSumsExtra = {};
+
+	for (const attr of getAttrsToSum(rows)) {
+		if (!notSummedKeys.has(attr)) {
+			const sumInfo = sumCareerStats(rows, attr);
+
+			statSums[attr] = sumInfo.value;
+
+			if (sumInfo.extraForMissingValues) {
+				statSumsExtra[attr] = sumInfo.extraForMissingValues;
+			}
+		}
+	}
+
+	// Special case for some variables, weight by minutes
+	for (const attr of weightByMinutes) {
+		if (Object.hasOwn(statSums, attr)) {
+			if (statSumsExtra[attr]) {
+				const min = statSumsExtra[attr].min;
+				if (min === undefined) {
+					statSums[attr] = 0;
+				} else {
+					statSums[attr] /= min;
+				}
+			} else if (statSums.min > 0) {
+				statSums[attr] /= statSums.min;
+			} else {
+				statSums[attr] = 0;
+			}
+		}
+	}
+
+	return { statSums, statSumsExtra };
+};
+
+// playoffs value of stats rows for each season type
+const playoffsValues = {
+	regularSeason: false,
+	playoffs: true,
+	combined: "combined",
+} as const;
+
+// Raw stats rows with games played, grouped by team in order of each team's first row. Combined includes both regular season and playoffs rows.
+const groupRowsByTeam = (rows: any[], seasonType: PlayerSeasonType) => {
+	const rowsByTid = new Map<number, any[]>();
+	for (const row of rows) {
+		const seasonTypeMatches =
+			seasonType === "combined" || row.playoffs === playoffsValues[seasonType];
+		if (seasonTypeMatches && row.gp > 0) {
+			rowsByTid.getOrInsert(row.tid, []).push(row);
+		}
+	}
+
+	return Array.from(rowsByTid, ([tid, rows]) => ({ tid, rows }));
+};
+
+// Scales the totals in a sum of stats rows to a full season, leaving rates and single game values alone. Totals that are whole numbers stay whole numbers, so derived stats like IP and W-L records still make sense.
+const scaleToFullSeason = (
+	{ statSums, statSumsExtra }: StatsRowsSum,
+	{ gamesStats, fullSeasonGames }: CareerStatsScaledOptions,
+): StatsRowsSum => {
+	const games = Math.sumPrecise(gamesStats.map((stat) => statSums[stat] ?? 0));
+
+	// With no games played, all the totals are 0 anyway
+	const factor = games === 0 ? 0 : fullSeasonGames / games;
+
+	const scale = (value: number) => {
+		const scaled = value * factor;
+		return Number.isInteger(value) ? Math.round(scaled) : scaled;
+	};
+
+	const scaledStatSums: any = { ...statSums };
+	for (const [attr, value] of Object.entries(statSums)) {
+		if (notSummedKeys.has(attr)) {
+			continue;
+		}
+
+		const sumType = getSumType(attr);
+		if (sumType === "normal") {
+			scaledStatSums[attr] = scale(value as number);
+		} else if (sumType === "byPos") {
+			scaledStatSums[attr] = (value as (number | undefined)[]).map((x) =>
+				x === undefined ? undefined : scale(x),
+			);
+		}
+	}
+
+	// These are the gp and min used to compute per game and per minute stats, so they need to be scaled like gp and min
+	const scaledStatSumsExtra: StatSumsExtra = {};
+	for (const [attr, extra] of Object.entries(statSumsExtra)) {
+		scaledStatSumsExtra[attr] =
+			extra === undefined
+				? undefined
+				: {
+						gp: extra.gp === undefined ? undefined : scale(extra.gp),
+						min: extra.min === undefined ? undefined : scale(extra.min),
+					};
+	}
+
+	return { statSums: scaledStatSums, statSumsExtra: scaledStatSumsExtra };
 };
 
 const getPlayerStats = (
@@ -989,14 +1146,6 @@ const getPlayerStats = (
 		rowsToMerge: any[],
 		seasonType: "regularSeason" | "playoffs" | "combined",
 	) => {
-		// Aggregate annual stats and ignore other things
-		const ignoredKeys = new Set([
-			"season",
-			"tid",
-			"yearsWithTeam",
-			"playoffs",
-			"jerseyNumber",
-		]);
 		const statSums: any = {};
 
 		const rowsToMerge2 = filterForCareerStats(
@@ -1006,7 +1155,7 @@ const getPlayerStats = (
 		);
 
 		for (const attr of getAttrsToSum(rowsToMerge)) {
-			if (!ignoredKeys.has(attr)) {
+			if (!notSummedKeys.has(attr)) {
 				statSums[attr] = sumCareerStats(rowsToMerge2, attr).value;
 			}
 		}
@@ -1023,7 +1172,7 @@ const getPlayerStats = (
 		}
 
 		// Defaults from latest entry
-		for (const attr of ignoredKeys) {
+		for (const attr of notSummedKeys) {
 			if (attr === "tid" && mergeStats === "totAndTeams") {
 				// In combined mode, if all teams are the same (like same regular season and playoffs team), then keep the tid there
 				if (seasonType === "combined") {
@@ -1190,6 +1339,8 @@ const processStats = (
 		oldStats,
 		statType,
 		stats,
+		careerStatsByTeam,
+		careerStatsScaled,
 	}: PlayerFormatOptionsRequired,
 	keepWithNoStats: boolean,
 	abbrevsCache: AbbrevsCache | undefined,
@@ -1275,41 +1426,19 @@ const processStats = (
 		// Take last value, because unless mergeStats is enabled there could be multiple
 		output.stats = output.stats.at(-1);
 	} else if (season === undefined) {
-		// Aggregate annual stats and ignore other things
-		const ignoredKeys = new Set([
-			"season",
-			"tid",
-			"yearsWithTeam",
-			"jerseyNumber",
-			"playoffs",
-		]);
+		const processCareerStats = ({ statSums, statSumsExtra }: StatsRowsSum) =>
+			processPlayerStats(
+				p,
+				statSums,
+				stats,
+				statType,
+				keepWithNoStats,
+				"career",
+				undefined,
+				statSumsExtra,
+			);
 
-		// playoffs has the same value as in the rows being summed
-		const statSums = {
-			regularSeason: { playoffs: false } as any,
-			playoffs: { playoffs: true } as any,
-			combined: { playoffs: "combined" } as any,
-		};
-
-		const statSumsExtra = {
-			regularSeason: {} as StatSumsExtra,
-			playoffs: {} as StatSumsExtra,
-			combined: {} as StatSumsExtra,
-		};
-
-		const careerStatsFiltered = {
-			regularSeason: regularSeason
-				? filterForCareerStats(careerStats, "regularSeason", mergeStats)
-				: [],
-			playoffs: playoffs
-				? filterForCareerStats(careerStats, "playoffs", mergeStats)
-				: [],
-			combined: combined
-				? filterForCareerStats(careerStats, "combined", mergeStats)
-				: [],
-		};
-
-		const seasonTypes: ("regularSeason" | "playoffs" | "combined")[] = [];
+		const seasonTypes: PlayerSeasonType[] = [];
 		if (regularSeason) {
 			seasonTypes.push("regularSeason");
 		}
@@ -1320,78 +1449,55 @@ const processStats = (
 			seasonTypes.push("combined");
 		}
 
+		const careerStatsKeys = {
+			regularSeason: "careerStats",
+			playoffs: "careerStatsPlayoffs",
+			combined: "careerStatsCombined",
+		} as const;
+
+		if (careerStatsScaled !== undefined) {
+			output.careerStatsScaled = {};
+			for (const key of Object.keys(careerStatsScaled)) {
+				output.careerStatsScaled[key] = {};
+			}
+		}
+		if (careerStatsByTeam) {
+			output.careerStatsByTeam = {};
+		}
+
 		for (const seasonType of seasonTypes) {
-			for (const attr of getAttrsToSum(careerStatsFiltered[seasonType])) {
-				if (!ignoredKeys.has(attr)) {
-					const sumInfo = sumCareerStats(careerStatsFiltered[seasonType], attr);
+			const playoffsValue = playoffsValues[seasonType];
 
-					statSums[seasonType][attr] = sumInfo.value;
+			const sum = sumStatsRows(
+				filterForCareerStats(careerStats, seasonType, mergeStats),
+				playoffsValue,
+			);
+			output[careerStatsKeys[seasonType]] = processCareerStats(sum);
 
-					if (sumInfo.extraForMissingValues) {
-						statSumsExtra[seasonType][attr] = sumInfo.extraForMissingValues;
-					}
+			if (careerStatsScaled !== undefined) {
+				for (const [key, scaledOptions] of Object.entries(careerStatsScaled)) {
+					output.careerStatsScaled[key][seasonType] = processCareerStats(
+						scaleToFullSeason(sum, scaledOptions),
+					);
 				}
 			}
-		}
 
-		// Special case for some variables, weight by minutes
-		for (const attr of weightByMinutes) {
-			for (const seasonType of seasonTypes) {
-				const object = statSums[seasonType];
-				if (Object.hasOwn(object, attr)) {
-					if (statSumsExtra[seasonType][attr]) {
-						const min = statSumsExtra[seasonType][attr].min;
-						if (min === undefined) {
-							object[attr] = 0;
-						} else {
-							object[attr] /= min;
-						}
-					} else if (object.min > 0) {
-						object[attr] /= object.min;
-					} else {
-						object[attr] = 0;
-					}
-				}
+			if (careerStatsByTeam) {
+				output.careerStatsByTeam[seasonType] = groupRowsByTeam(
+					playerStatsInput,
+					seasonType,
+				).map(({ tid, rows }) => {
+					const numSeasons = new Set(rows.map((row) => row.season)).size;
+					const lastSeason = rows.at(-1)!.season;
+					return {
+						tid,
+						abbrev:
+							abbrevsCache?.get(lastSeason, tid) ?? helpers.getAbbrev(tid),
+						numSeasons,
+						stats: processCareerStats(sumStatsRows(rows, playoffsValue)),
+					};
+				});
 			}
-		}
-
-		if (regularSeason) {
-			output.careerStats = processPlayerStats(
-				p,
-				statSums.regularSeason,
-				stats,
-				statType,
-				keepWithNoStats,
-				"career",
-				undefined,
-				statSumsExtra.regularSeason,
-			);
-		}
-
-		if (playoffs) {
-			output.careerStatsPlayoffs = processPlayerStats(
-				p,
-				statSums.playoffs,
-				stats,
-				statType,
-				keepWithNoStats,
-				"career",
-				undefined,
-				statSumsExtra.playoffs,
-			);
-		}
-
-		if (combined) {
-			output.careerStatsCombined = processPlayerStats(
-				p,
-				statSums.combined,
-				stats,
-				statType,
-				keepWithNoStats,
-				"career",
-				undefined,
-				statSumsExtra.combined,
-			);
 		}
 	}
 };
@@ -1503,6 +1609,8 @@ const normalizeOptions = (
 		oldStats = false,
 		statType = "perGame",
 		mergeStats = "none",
+		careerStatsByTeam = false,
+		careerStatsScaled,
 	} = optionsInput;
 
 	if (mergeStats === "totAndTeams" && season !== undefined) {
@@ -1533,6 +1641,8 @@ const normalizeOptions = (
 		oldStats,
 		statType,
 		mergeStats,
+		careerStatsByTeam,
+		careerStatsScaled,
 	};
 };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import type {
 	PlayerAward,
 	PlayerStatAttr,
@@ -20,6 +20,7 @@ import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
 import type { SuperCol } from "../../components/DataTable/index.tsx";
 import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
 import { hasNonZeroStat } from "../../../common/statValue.ts";
+import { useLocal } from "../../util/local.ts";
 
 const hasStats = (
 	careerStats: View<"player">["player"][
@@ -48,6 +49,7 @@ const hasStats = (
 
 export const StatsTable = ({
 	awardsBySeason,
+	careerStatsScaled,
 	name,
 	onlyShowIf,
 	p,
@@ -56,6 +58,9 @@ export const StatsTable = ({
 	leaders,
 }: {
 	awardsBySeason: Map<number, PlayerAward[]>;
+	careerStatsScaled:
+		| View<"player">["player"]["careerStatsScaled"][string]
+		| undefined;
 	name: string;
 	onlyShowIf?: PlayerStatAttr[];
 	p: View<"player">["player"];
@@ -63,6 +68,8 @@ export const StatsTable = ({
 	superCols?: SuperCol[];
 	leaders: View<"player">["leaders"];
 }) => {
+	const { numGames } = useLocal(["numGames"]);
+
 	const hasRegularSeasonStats = hasStats(p.careerStats, onlyShowIf);
 	const hasPlayoffStats = hasStats(p.careerStatsPlayoffs, onlyShowIf);
 
@@ -86,6 +93,13 @@ export const StatsTable = ({
 	if (!hasRegularSeasonStats && !hasPlayoffStats) {
 		return null;
 	}
+
+	const seasonType =
+		playoffs === "combined"
+			? "combined"
+			: playoffs === true
+				? "playoffs"
+				: "regularSeason";
 
 	const careerStats =
 		playoffs === "combined"
@@ -123,7 +137,7 @@ export const StatsTable = ({
 
 	const isBaseballFielding = __SPORT === "baseball" && name === "Fielding";
 
-	const careerLabel = `${rangeFooter.state.seasons.length} yrs`;
+	const careerLabel = `${rangeFooter.state.seasons.length} ${helpers.plural("yr", rangeFooter.state.seasons.length)}`;
 
 	let footer: FooterRow[];
 	if (isBaseballFielding) {
@@ -146,17 +160,45 @@ export const StatsTable = ({
 			],
 		}));
 	} else {
-		footer = [
-			{
-				data: [
-					careerLabel,
+		const getFooterRow = (
+			label: ReactNode,
+			team: ReactNode,
+			row: Record<string, unknown>,
+		): FooterRow => ({
+			data: [
+				label,
+				team,
+				null,
+				...stats.map((stat) => formatStatGameHigh(row, stat)),
+				null,
+			],
+		});
+
+		footer = [getFooterRow(careerLabel, null, careerStats)];
+
+		if (careerStatsScaled) {
+			footer.push(
+				getFooterRow(
+					`${numGames} game avg`,
 					null,
-					null,
-					...stats.map((stat) => formatStatGameHigh(careerStats, stat)),
-					null,
-				],
-			},
-		];
+					careerStatsScaled[seasonType],
+				),
+			);
+		}
+
+		// Totals for each team are redundant with the career totals if there is only one team
+		const careerStatsByTeam = p.careerStatsByTeam[seasonType];
+		if (careerStatsByTeam.length > 1) {
+			for (const team of careerStatsByTeam) {
+				footer.push(
+					getFooterRow(
+						`${team.numSeasons} ${helpers.plural("yr", team.numSeasons)}`,
+						team.abbrev,
+						team.stats,
+					),
+				);
+			}
+		}
 
 		const rangeFooterState = rangeFooter.state;
 		if (
@@ -233,26 +275,17 @@ export const StatsTable = ({
 		}
 	}
 
-	const leadersType =
-		playoffs === "combined"
-			? "combined"
-			: playoffs === true
-				? "playoffs"
-				: "regularSeason";
-
 	let hasLeader = false;
-	if (leadersType) {
-		LEADERS_LOOP: for (const row of Object.values(leaders)) {
-			if (row?.attrs.has("age")) {
-				hasLeader = true;
-				break;
-			}
+	LEADERS_LOOP: for (const row of Object.values(leaders)) {
+		if (row?.attrs.has("age")) {
+			hasLeader = true;
+			break;
+		}
 
-			for (const stat of stats) {
-				if (row?.[leadersType].has(stat)) {
-					hasLeader = true;
-					break LEADERS_LOOP;
-				}
+		for (const stat of stats) {
+			if (row?.[seasonType].has(stat)) {
+				hasLeader = true;
+				break LEADERS_LOOP;
 			}
 		}
 	}
@@ -320,7 +353,7 @@ export const StatsTable = ({
 				</MaybeBold>,
 				...stats.map((stat) => (
 					<MaybeBold
-						bold={!ps.hasTot && leaders[ps.season]?.[leadersType].has(stat)}
+						bold={!ps.hasTot && leaders[ps.season]?.[seasonType].has(stat)}
 					>
 						{formatStatGameHigh(ps, stat)}
 					</MaybeBold>

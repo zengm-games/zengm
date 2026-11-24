@@ -195,6 +195,7 @@ export const PLAYER_SUMMARY = {
 export const PLAYER_STATS_TABLES = {
 	batting: {
 		name: "Batting",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		stats: [
 			"war",
 			"gp",
@@ -226,6 +227,12 @@ export const PLAYER_STATS_TABLES = {
 	},
 	pitching: {
 		name: "Pitching",
+		scaledCareer: {
+			gamesStats: ["gpPit", "gsPit"],
+
+			// Like baseball-reference, a full season for a pitcher is 68 games pitched plus games started in a 162 game season
+			fullSeasonFraction: 68 / 162,
+		},
 		stats: [
 			"war",
 			"w",

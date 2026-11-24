@@ -301,6 +301,7 @@ export const PLAYER_SUMMARY = {
 export const PLAYER_STATS_TABLES = {
 	passing: {
 		name: "Passing",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		onlyShowIf: ["pss"],
 		stats: [
 			"gp",
@@ -331,6 +332,7 @@ export const PLAYER_STATS_TABLES = {
 	},
 	rushingReceiving: {
 		name: "Rushing and Receiving",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		onlyShowIf: ["rus", "rec"],
 		stats: [
 			"gp",
@@ -363,6 +365,7 @@ export const PLAYER_STATS_TABLES = {
 	},
 	blocking: {
 		name: "Blocking",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		onlyShowIf: ["pba", "rba"],
 		stats: [
 			"gp",
@@ -380,6 +383,7 @@ export const PLAYER_STATS_TABLES = {
 	},
 	defense: {
 		name: "Defense, Fumbles, and Penalties",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		onlyShowIf: ["gp"],
 		stats: [
 			"gp",
@@ -409,6 +413,7 @@ export const PLAYER_STATS_TABLES = {
 	},
 	kicking: {
 		name: "Kicking",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		onlyShowIf: ["fga", "xpa", "ko"],
 		stats: [
 			"gp",
@@ -445,6 +450,7 @@ export const PLAYER_STATS_TABLES = {
 	},
 	punting: {
 		name: "Punting",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		onlyShowIf: ["pnt"],
 		stats: [
 			"pnt",
@@ -461,6 +467,7 @@ export const PLAYER_STATS_TABLES = {
 	},
 	returns: {
 		name: "Kick and Punt Returns",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		onlyShowIf: ["pr", "kr"],
 		stats: [
 			"gp",

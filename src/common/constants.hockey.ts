@@ -121,6 +121,7 @@ export const PLAYER_SUMMARY = {
 export const PLAYER_STATS_TABLES = {
 	goalie: {
 		name: "Goalie",
+		scaledCareer: { gamesStats: ["gpGoalie"], fullSeasonFraction: 1 },
 		stats: [
 			"gpGoalie",
 			"gRec",
@@ -139,6 +140,7 @@ export const PLAYER_STATS_TABLES = {
 	},
 	skater: {
 		name: "Skater",
+		scaledCareer: { gamesStats: ["gpSkater"], fullSeasonFraction: 1 },
 		stats: [
 			"gpSkater",
 			"g",
@@ -174,6 +176,7 @@ export const PLAYER_STATS_TABLES = {
 	},
 	advanced: {
 		name: "Advanced",
+		scaledCareer: { gamesStats: ["gp"], fullSeasonFraction: 1 },
 		stats: [
 			"gp",
 			"gc",

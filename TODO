@@ -1,6 +1,10 @@
 show career totals per team at bottom of stats tables in player profile pages
 - add some extra option to playersPlus like careerStatsPerTeam
+  - DRY with teamhistory?
 - repeat headers at the bottom if enough seasons - how many?
+- colspan 2
+  - need fixed columns even if sorting others
+  - UI for sorting with supercols unclear?
 
 rookie contract default length
 

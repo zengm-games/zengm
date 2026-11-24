@@ -573,6 +573,91 @@ test("careerStats works when player has no stats rows", async () => {
 	});
 });
 
+test("careerStatsByTeam sums stats for each team, in order of each team's first season", async () => {
+	const pf = await player.format(p, {
+		stats: ["gp", "fg"],
+		seasonType: ["regularSeason", "playoffs", "combined"],
+		statType: "totals",
+		careerStatsByTeam: true,
+	});
+
+	if (!pf) {
+		throw new Error("Missing player");
+	}
+
+	assert.deepStrictEqual(
+		pf.careerStatsByTeam.regularSeason.map(({ tid, numSeasons, stats }) => ({
+			tid,
+			numSeasons,
+			gp: stats.gp,
+			fg: stats.fg,
+		})),
+		[
+			{ tid: 4, numSeasons: 1, gp: 5, fg: 20 },
+			{ tid: 0, numSeasons: 1, gp: 8, fg: 56 },
+		],
+	);
+	assert.deepStrictEqual(
+		pf.careerStatsByTeam.playoffs.map(({ tid, stats }) => ({
+			tid,
+			gp: stats.gp,
+			fg: stats.fg,
+		})),
+		[{ tid: 4, gp: 3, fg: 30 }],
+	);
+
+	// Combined includes both regular season and playoffs
+	assert.deepStrictEqual(
+		pf.careerStatsByTeam.combined.map(({ tid, stats }) => ({
+			tid,
+			gp: stats.gp,
+			fg: stats.fg,
+		})),
+		[
+			{ tid: 4, gp: 8, fg: 50 },
+			{ tid: 0, gp: 8, fg: 56 },
+		],
+	);
+});
+
+test("careerStatsScaled scales totals to a full season, but not rates", async () => {
+	const pf = await player.format(p, {
+		stats: ["gp", "fg", "fgMax"],
+		seasonType: ["regularSeason", "playoffs"],
+		statType: "totals",
+		careerStatsScaled: {
+			test: { gamesStats: ["gp"], fullSeasonGames: 26 },
+		},
+	});
+
+	if (!pf) {
+		throw new Error("Missing player");
+	}
+
+	// 13 GP in the regular season, so everything is doubled
+	const regularSeason = pf.careerStatsScaled.test.regularSeason;
+	assert.strictEqual(regularSeason.gp, 26);
+	assert.strictEqual(regularSeason.fg, 152);
+	assert.deepStrictEqual(regularSeason.fgMax, pf.careerStats.fgMax);
+
+	// 3 GP in the playoffs, and whole number totals are rounded
+	const playoffs = pf.careerStatsScaled.test.playoffs;
+	assert.strictEqual(playoffs.gp, 26);
+	assert.strictEqual(playoffs.fg, 260);
+
+	// Per game stats are the same as without scaling
+	const pfPerGame = await player.format(p, {
+		stats: ["fg"],
+		careerStatsScaled: {
+			test: { gamesStats: ["gp"], fullSeasonGames: 26 },
+		},
+	});
+	assert.strictEqual(
+		pfPerGame?.careerStatsScaled.test.regularSeason.fg,
+		pfPerGame?.careerStats.fg,
+	);
+});
+
 describe("TypeScript", () => {
 	test("Returns attrs, ratings, and stats as objects for a single season", async () => {
 		const players = await player.formatAll([p], {

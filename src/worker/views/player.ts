@@ -10,6 +10,7 @@ import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
+	CareerStatsScaledOptions,
 	MenuItemHeader,
 	MenuItemLink,
 	Player,
@@ -46,6 +47,22 @@ export const getPlayerProfileStats = () => {
 	}
 
 	return Array.from(stats);
+};
+
+// Keyed by stats table
+const getCareerStatsScaledOptions = () => {
+	const options: Record<string, CareerStatsScaledOptions> = {};
+	for (const [key, info] of Object.entries(PLAYER_STATS_TABLES)) {
+		if (info.scaledCareer) {
+			options[key] = {
+				gamesStats: info.scaledCareer.gamesStats,
+				fullSeasonGames:
+					info.scaledCareer.fullSeasonFraction * g.get("numGames"),
+			};
+		}
+	}
+
+	return options;
 };
 
 export type PlayerAwardBuiltInWithPrefix = PlayerAwardBuiltIn & {
@@ -109,6 +126,8 @@ export const getPlayer = async <
 		fuzz: true,
 		mergeStats: "totAndTeams",
 		seasonRange,
+		careerStatsByTeam: true,
+		careerStatsScaled: getCareerStatsScaledOptions(),
 	});
 
 	if (!p) {
@@ -379,23 +398,25 @@ export const getCommon = async (
 
 	const statSummary = Object.values(PLAYER_SUMMARY);
 
-	let statTables;
+	let statTablesKeys = Object.keys(PLAYER_STATS_TABLES);
 	if (__SPORT === "baseball" && (bestPos === "SP" || bestPos === "RP")) {
 		// Primarily a pitcher, so show pitching stats first - keep in sync with playerGameLog.ts
-		statTables = Object.keys(PLAYER_STATS_TABLES).map((type) => {
-			if (type === "pitching") {
-				return PLAYER_STATS_TABLES.batting!;
+		statTablesKeys = statTablesKeys.map((key) => {
+			if (key === "pitching") {
+				return "batting";
 			}
 
-			if (type === "batting") {
-				return PLAYER_STATS_TABLES.pitching!;
+			if (key === "batting") {
+				return "pitching";
 			}
 
-			return PLAYER_STATS_TABLES[type]!;
+			return key;
 		});
-	} else {
-		statTables = Object.values(PLAYER_STATS_TABLES);
 	}
+	const statTables = statTablesKeys.map((key) => ({
+		key,
+		...PLAYER_STATS_TABLES[key]!,
+	}));
 
 	let teamURL;
 	if (p.tid >= 0) {

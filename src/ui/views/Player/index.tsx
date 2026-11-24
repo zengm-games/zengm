@@ -118,10 +118,11 @@ const Player2 = ({
 				willingToSign={willingToSign}
 			/>
 
-			{statTables.map(({ name, onlyShowIf, stats, superCols }) => (
+			{statTables.map(({ key, name, onlyShowIf, stats, superCols }) => (
 				<StatsTable
 					awardsBySeason={awardsBySeason}
-					key={name}
+					careerStatsScaled={player.careerStatsScaled[key]}
+					key={key}
 					name={name}
 					onlyShowIf={onlyShowIf}
 					stats={stats}

@@ -1520,6 +1520,12 @@ export type PlayerStatsTables = Record<
 		stats: (PlayerStatAttr | "pos")[];
 
 		superCols?: SuperCol[];
+
+		// Show career totals scaled to a full season, which is when the sum of gamesStats is fullSeasonFraction * numGames
+		scaledCareer?: {
+			gamesStats: PlayerStatAttr[];
+			fullSeasonFraction: number;
+		};
 	}
 >;
 
@@ -1557,6 +1563,20 @@ export type PlayerFormatOptions = {
 	oldStats?: boolean;
 	statType?: PlayerStatType;
 	mergeStats?: "none" | "totOnly" | "totAndTeams";
+
+	// With no season, also return career stats for each team, in careerStatsByTeam
+	careerStatsByTeam?: boolean;
+
+	// With no season, also return career stats scaled to a full season, in careerStatsScaled under the same keys
+	careerStatsScaled?: Readonly<Record<string, CareerStatsScaledOptions>>;
+};
+
+export type CareerStatsScaledOptions = {
+	// Stats that add up to the number of games played, like gpPit and gsPit for pitchers
+	gamesStats: Readonly<PlayerStatAttr[]>;
+
+	// Total of gamesStats in a full season
+	fullSeasonGames: number;
 };
 
 // Is SeasonType one of the values in the seasonType option? Distributes over unions, so if seasonType is a union of single values (like "playoffs" | "regularSeason"), the result is boolean because it's not known which one it is
@@ -1670,6 +1690,65 @@ type PlayerStatsSingleUndefined<
 		? never
 		: undefined;
 
+// Present if that season type was requested, optional if that's ambiguous
+type SeasonTypeKey<
+	Key extends PlayerSeasonType,
+	Value,
+	Flag extends boolean,
+> = [Flag] extends [false]
+	? unknown
+	: [Flag] extends [true]
+		? { [K in Key]: Value }
+		: { [K in Key]?: Value };
+
+type CareerStatsBySeasonType<
+	Stats extends Readonly<PlayerStatAttr[]>,
+	Playoffs extends boolean,
+	RegularSeason extends boolean,
+	Combined extends boolean,
+> = SeasonTypeKey<
+	"regularSeason",
+	PlayerCareerStatsRow<Stats, false>,
+	RegularSeason
+> &
+	SeasonTypeKey<"playoffs", PlayerCareerStatsRow<Stats, true>, Playoffs> &
+	SeasonTypeKey<"combined", PlayerCareerStatsRow<Stats, "combined">, Combined>;
+
+type CareerStatsTeam<Row> = {
+	tid: number;
+	abbrev: string;
+	numSeasons: number;
+	stats: Row;
+};
+
+type CareerStatsByTeamBySeasonType<
+	Stats extends Readonly<PlayerStatAttr[]>,
+	Playoffs extends boolean,
+	RegularSeason extends boolean,
+	Combined extends boolean,
+> = SeasonTypeKey<
+	"regularSeason",
+	CareerStatsTeam<PlayerCareerStatsRow<Stats, false>>[],
+	RegularSeason
+> &
+	SeasonTypeKey<
+		"playoffs",
+		CareerStatsTeam<PlayerCareerStatsRow<Stats, true>>[],
+		Playoffs
+	> &
+	SeasonTypeKey<
+		"combined",
+		CareerStatsTeam<PlayerCareerStatsRow<Stats, "combined">>[],
+		Combined
+	>;
+
+// Whether an option was requested, or boolean if that's ambiguous
+type OptionRequested<Option> = [Option] extends [undefined]
+	? false
+	: undefined extends Option
+		? boolean
+		: true;
+
 type PlayerStatsPart<
 	Stats extends Readonly<PlayerStatAttr[]>,
 	Season extends number | undefined,
@@ -1679,6 +1758,8 @@ type PlayerStatsPart<
 	Combined extends boolean,
 	ShowNoStats extends boolean,
 	ShowRookies extends boolean,
+	CareerStatsByTeam extends boolean,
+	CareerStatsScaled extends PlayerFormatOptions["careerStatsScaled"],
 > = {
 	stats: Season extends number
 		? RowOrRows<
@@ -1704,6 +1785,21 @@ type PlayerStatsPart<
 		PlayerCareerStatsRow<Stats, "combined">,
 		Season,
 		Combined
+	> &
+	CareerStatsKey<
+		"careerStatsByTeam",
+		CareerStatsByTeamBySeasonType<Stats, Playoffs, RegularSeason, Combined>,
+		Season,
+		CareerStatsByTeam
+	> &
+	CareerStatsKey<
+		"careerStatsScaled",
+		Record<
+			keyof NonNullable<CareerStatsScaled>,
+			CareerStatsBySeasonType<Stats, Playoffs, RegularSeason, Combined>
+		>,
+		Season,
+		OptionRequested<CareerStatsScaled>
 	>;
 
 // If it's not known whether attrs/ratings/stats were requested (like the type includes undefined), then its properties are optional
@@ -1719,6 +1815,8 @@ type PlayerFilteredInner<
 	Combined extends boolean,
 	ShowNoStats extends boolean,
 	ShowRookies extends boolean,
+	CareerStatsByTeam extends boolean,
+	CareerStatsScaled extends PlayerFormatOptions["careerStatsScaled"],
 > = ([Attrs] extends [undefined]
 	? unknown
 	: [Attrs] extends [Readonly<PlayerAttr[]>]
@@ -1743,7 +1841,9 @@ type PlayerFilteredInner<
 					RegularSeason,
 					Combined,
 					ShowNoStats,
-					ShowRookies
+					ShowRookies,
+					CareerStatsByTeam,
+					CareerStatsScaled
 				>
 			: Partial<
 					PlayerStatsPart<
@@ -1754,7 +1854,9 @@ type PlayerFilteredInner<
 						RegularSeason,
 						Combined,
 						ShowNoStats,
-						ShowRookies
+						ShowRookies,
+						CareerStatsByTeam,
+						CareerStatsScaled
 					>
 				>);
 
@@ -1764,9 +1866,8 @@ type PlayerFormatOptionValue<
 	Key extends keyof PlayerFormatOptions,
 	Default,
 > = Key extends keyof Options
-	?
-			| Exclude<Options[Key], undefined>
-			| (undefined extends Options[Key] ? Default : never)
+	? | Exclude<Options[Key], undefined>
+		| (undefined extends Options[Key] ? Default : never)
 	: Default;
 
 type PlayerFilteredWithSeasonType<
@@ -1783,7 +1884,9 @@ type PlayerFilteredWithSeasonType<
 	SeasonTypeIncluded<SeasonTypeOption, "regularSeason">,
 	SeasonTypeIncluded<SeasonTypeOption, "combined">,
 	PlayerFormatOptionValue<Options, "showNoStats", false>,
-	PlayerFormatOptionValue<Options, "showRookies", false>
+	PlayerFormatOptionValue<Options, "showRookies", false>,
+	PlayerFormatOptionValue<Options, "careerStatsByTeam", false>,
+	PlayerFormatOptionValue<Options, "careerStatsScaled", undefined>
 >;
 
 // Output of player.formatAll for a given set of options

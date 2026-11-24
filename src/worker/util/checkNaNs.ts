@@ -1,20 +1,15 @@
-// Check all properties of an object for NaN
-const checkObject = (
-	obj: any,
-	foundNaN?: boolean,
-	replace?: boolean,
-): boolean => {
-	foundNaN = foundNaN ?? false;
-	replace = replace ?? false;
+// Check all properties of an object for NaN, recursively. This runs on every object written to IndexedDB, so it needs to be fast.
+const checkObject = (obj: any, replace: boolean): boolean => {
+	let foundNaN = false;
 
-	if (obj === null || obj === undefined) {
-		return foundNaN;
-	}
-
-	for (const prop of Object.keys(obj)) {
-		if (typeof obj[prop] === "object" && obj[prop] !== null) {
-			foundNaN = checkObject(obj[prop], foundNaN, replace);
-		} else if (Number.isNaN(obj[prop])) {
+	// for...in rather than Object.keys, to not allocate an array of keys for every nested object. Objects written to IndexedDB are plain data, so there are no inherited enumerable properties to skip.
+	for (const prop in obj) {
+		const value = obj[prop];
+		if (typeof value === "object") {
+			if (value !== null && checkObject(value, replace)) {
+				foundNaN = true;
+			}
+		} else if (Number.isNaN(value)) {
 			foundNaN = true;
 
 			if (replace) {
@@ -33,7 +28,7 @@ const wrap = (parent: any, name: any, wrapper: (x: unknown) => unknown) => {
 
 const wrapperNaNChecker = (_super: unknown) => {
 	return function (obj: unknown, ...args: unknown[]) {
-		/*if (checkObject(obj)) {
+		/*if (checkObject(obj, false)) {
 			const error = new Error("NaN found before writing to IndexedDB");
 			void toUI("bugsnagNotify", [
 				error,
@@ -46,9 +41,9 @@ const wrapperNaNChecker = (_super: unknown) => {
 			]);
 
 			// Try to recover gracefully
-			checkObject(obj, false, true); // This will update obj
+			checkObject(obj, true); // This will update obj
 		}*/
-		checkObject(obj, false, true); // This will update obj
+		checkObject(obj, true); // This will update obj
 
 		// @ts-expect-error because annotating this seems to cause runtime errors
 		return _super.call(this, obj, ...args);

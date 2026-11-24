@@ -37,6 +37,7 @@ import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
 import { BarGraph } from "./BarGraph.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
+import { formatDecimal } from "../../../common/formatDecimal.ts";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -51,13 +52,10 @@ const formatTicketPrice = (ticketPrice: number) => {
 type BudgetKey = "scouting" | "coaching" | "health" | "facilities";
 
 const roundEffect = (effect: number, includePlusSign: boolean) => {
-	return `${includePlusSign && effect >= 0 ? "+" : ""}${effect.toLocaleString(
-		"en-US",
-		{
-			maximumFractionDigits: 2,
-			minimumFractionDigits: 0,
-		},
-	)}`;
+	return `${includePlusSign && effect >= 0 ? "+" : ""}${formatDecimal(effect, {
+		maximumFractionDigits: 2,
+		minimumFractionDigits: 0,
+	})}`;
 };
 
 const GradientStyle = ({

@@ -124,24 +124,23 @@ const teamNums: [TeamNum, TeamNum] = [0, 1];
 
 // Return the indexes of the elements in ovrs, sorted from smallest to largest.
 // So [50, 70, 10, 20, 60] => [2, 3, 0, 4, 1]
-// The set is to handle ties.
-// The descending sort and reverse is so ties are handled with the later entry in ovrs getting the lower index, like:
+// Ties are handled with the later entry in ovrs coming first, like:
 // [0, 0, 0, 0, 0] => [4, 3, 2, 1, 0]
 const getSortedIndexes = (ovrs: number[]) => {
-	const ovrsSortedDesc = ovrs.toSorted((a, b) => b - a);
-	const usedIndexes = new Set();
-	const sortedIndexes = ovrsSortedDesc
-		.map((ovr) => {
-			let index = ovrs.indexOf(ovr);
-			while (usedIndexes.has(index)) {
-				index += 1;
-			}
-			usedIndexes.add(index);
-			return index;
-		})
-		.reverse();
+	const indexes = ovrs.map((ovr, i) => i);
+	indexes.sort((a, b) => {
+		const ovrA = ovrs[a]!;
+		const ovrB = ovrs[b]!;
 
-	return sortedIndexes;
+		// Comparison rather than subtraction, because ovrs can contain -Infinity
+		if (ovrA !== ovrB) {
+			return ovrA < ovrB ? -1 : 1;
+		}
+
+		return b - a;
+	});
+
+	return indexes;
 };
 
 // Use if denominator of prob might be 0
@@ -155,6 +154,10 @@ class GameSim extends GameSimBase {
 	t: number;
 
 	numPeriods: number;
+
+	quarterLength: number;
+
+	foulsNeededToFoulOut: number;
 
 	foulsThisQuarter: [number, number];
 
@@ -248,6 +251,10 @@ class GameSim extends GameSimBase {
 
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
+		// Read every possession, so cache them rather than calling g.get each time. Needs to be before updatePlayersOnCourt.
+		this.quarterLength = g.get("quarterLength");
+		this.foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
+
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
 		this.numPlayersOnCourt = g.get("numPlayersOnCourt");
 		this.playersOnCourt = [
@@ -261,7 +268,7 @@ class GameSim extends GameSimBase {
 		});
 		this.updateSynergy();
 
-		this.t = g.get("quarterLength") * 60; // Game clock, in seconds
+		this.t = this.quarterLength * 60; // Game clock, in seconds
 		this.numPeriods = g.get("numPeriods");
 		this.gender = g.get("gender");
 
@@ -609,7 +616,7 @@ class GameSim extends GameSimBase {
 			this.foulsThisQuarter = [0, 0];
 			this.foulsLastTwoMinutes = [0, 0];
 			this.lastScoringPlay = [];
-			this.t = g.get("quarterLength") * 60;
+			this.t = this.quarterLength * 60;
 			this.playByPlay.logEvent({
 				type: "period",
 				period: this.team[0].stat.ptsQtrs.length,
@@ -859,7 +866,7 @@ class GameSim extends GameSimBase {
 	}
 
 	getFoulTroubleLimit() {
-		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
+		const foulsNeededToFoulOut = this.foulsNeededToFoulOut;
 
 		// No foul trouble in overtime or late in 4th quarter
 		const quarter = this.team[0].stat.ptsQtrs.length;
@@ -871,10 +878,8 @@ class GameSim extends GameSimBase {
 			return foulsNeededToFoulOut;
 		}
 
-		const quarterLength = g.get("quarterLength");
-
 		const gameCompletionFraction =
-			(quarter - this.t / (quarterLength * 60)) / this.numPeriods;
+			(quarter - this.t / (this.quarterLength * 60)) / this.numPeriods;
 
 		// For default settings, the limit by quarter is 2/3/5/5. (Last quarter is 5 because of that Math.min)
 		let foulLimit = Math.ceil(gameCompletionFraction * foulsNeededToFoulOut);
@@ -921,7 +926,7 @@ class GameSim extends GameSimBase {
 		let blowout = false;
 		const lateGame = this.isLateGame();
 
-		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
+		const foulsNeededToFoulOut = this.foulsNeededToFoulOut;
 
 		if (this.o !== undefined && this.d !== undefined) {
 			const diff = Math.abs(
@@ -947,13 +952,16 @@ class GameSim extends GameSimBase {
 		const foulLimit = this.getFoulTroubleLimit();
 
 		for (const t of teamNums) {
+			const players = this.team[t].player;
+
 			const getOvrs = (includeFouledOut: boolean) => {
-				// Overall values scaled by fatigue, etc
-				// Player IDs can be large and sparse in long-running leagues.
-				const ovrs = new Map<number, number>();
+				// Overall values scaled by fatigue, etc. Same order as players, which is faster than a Map keyed by pid.
+				const ovrs: number[] = [];
 				let numEligiblePlayers = 0;
 
-				for (const [i, p] of this.team[t].player.entries()) {
+				for (let i = 0; i < players.length; i++) {
+					const p = players[i]!;
+
 					// Injured or fouled out players can't play
 					if (
 						p.injured ||
@@ -961,7 +969,7 @@ class GameSim extends GameSimBase {
 							foulsNeededToFoulOut > 0 &&
 							p.stat.pf >= foulsNeededToFoulOut)
 					) {
-						ovrs.set(p.id, -Infinity);
+						ovrs.push(-Infinity);
 					} else {
 						let ovr =
 							p.valueNoPot *
@@ -981,7 +989,7 @@ class GameSim extends GameSimBase {
 							ovr *= foulTroubleFactor;
 						}
 
-						ovrs.set(p.id, ovr);
+						ovrs.push(ovr);
 						if (ovr > -Infinity) {
 							numEligiblePlayers += 1;
 						}
@@ -999,7 +1007,9 @@ class GameSim extends GameSimBase {
 				ovrs = getOvrs(true).ovrs;
 			}
 
-			const ovrsOnCourt = this.playersOnCourt[t].map((p) => ovrs.get(p.id)!);
+			const ovrsOnCourt = this.playersOnCourt[t].map(
+				(p) => ovrs[players.indexOf(p)]!,
+			);
 
 			const pids = [];
 			const pidsOff = [];
@@ -1007,7 +1017,7 @@ class GameSim extends GameSimBase {
 			// Sub off the lowest ovr guy first
 			for (const pp of getSortedIndexes(ovrsOnCourt)) {
 				const p = this.playersOnCourt[t][pp]!;
-				const onCourtOvr = ovrs.get(p.id)!;
+				const onCourtOvr = ovrsOnCourt[pp]!;
 				const onCourtIsIneligible = onCourtOvr === -Infinity;
 				this.playersOnCourt[t][pp] = p; // Don't sub out guy shooting FTs!
 
@@ -1024,7 +1034,8 @@ class GameSim extends GameSimBase {
 					| undefined;
 
 				// Loop through bench players (in order of current roster position) to see if any should be subbed in)
-				for (const b of this.team[t].player) {
+				for (let j = 0; j < players.length; j++) {
+					const b = players[j]!;
 					if (this.playersOnCourt[t].includes(b)) {
 						continue;
 					}
@@ -1032,8 +1043,8 @@ class GameSim extends GameSimBase {
 					const benchIsValidAndBetter =
 						p.stat.courtTime > 2 &&
 						b.stat.benchTime > 2 &&
-						ovrs.get(b.id)! > onCourtOvr;
-					const benchIsEligible = ovrs.get(b.id) !== -Infinity;
+						ovrs[j]! > onCourtOvr;
+					const benchIsEligible = ovrs[j] !== -Infinity;
 
 					if (
 						benchIsValidAndBetter ||
@@ -2644,7 +2655,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// Foul out
-		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
+		const foulsNeededToFoulOut = this.foulsNeededToFoulOut;
 		if (foulsNeededToFoulOut > 0 && p.stat.pf >= foulsNeededToFoulOut) {
 			this.playByPlay.logEvent({
 				type: "foulOut",
@@ -2796,8 +2807,8 @@ class GameSim extends GameSimBase {
 
 		let runningSum = 0;
 
-		for (const [i, ratio] of ratios.entries()) {
-			runningSum += ratio;
+		for (let i = 0; i < ratios.length; i++) {
+			runningSum += ratios[i]!;
 			if (rand < runningSum) {
 				return playersOnCourt[i]!;
 			}

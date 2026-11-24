@@ -1,4 +1,8 @@
 import { helpers as commonHelpers } from "../../common/helpers.ts";
+import {
+	formatDecimal,
+	type FormatDecimalOptions,
+} from "../../common/formatDecimal.ts";
 import { local } from "./local.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import type { LeagueUrlParts } from "../router/types.ts";
@@ -433,12 +437,11 @@ const roundOverrides = bySport<Record<string, RoundType>>({
 	},
 });
 
-const toLocaleStringWithoutNegativeZero = (
+const formatDecimalWithoutNegativeZero = (
 	value: number,
-	locales: Intl.LocalesArgument,
-	options?: Intl.NumberFormatOptions,
+	options: FormatDecimalOptions,
 ) => {
-	const output = value.toLocaleString(locales, options);
+	const output = formatDecimal(value, options);
 	if (output === "-0") {
 		return "0";
 	}
@@ -451,17 +454,17 @@ const formatNumber = (value: number, type: RoundType): string => {
 			return "100";
 		}
 
-		return toLocaleStringWithoutNegativeZero(value, "en-US", {
+		return formatDecimalWithoutNegativeZero(value, {
 			maximumFractionDigits: 1,
 			minimumFractionDigits: 1,
 		});
 	} else if (type === "twoDecimalPlaces") {
-		return toLocaleStringWithoutNegativeZero(value, "en-US", {
+		return formatDecimalWithoutNegativeZero(value, {
 			maximumFractionDigits: 2,
 			minimumFractionDigits: 2,
 		});
 	} else if (type === "threeDecimalPlaces") {
-		return toLocaleStringWithoutNegativeZero(value, "en-US", {
+		return formatDecimalWithoutNegativeZero(value, {
 			maximumFractionDigits: 3,
 			minimumFractionDigits: 3,
 		});
@@ -472,12 +475,12 @@ const formatNumber = (value: number, type: RoundType): string => {
 	} else if (type === "plusMinusNoDecimalPlace") {
 		return plusMinus(value, 0);
 	} else if (type === "noDecimalPlace") {
-		return toLocaleStringWithoutNegativeZero(value, "en-US", {
+		return formatDecimalWithoutNegativeZero(value, {
 			maximumFractionDigits: 0,
 		});
 	} else if (type === "minutes") {
 		if (value > 100) {
-			return toLocaleStringWithoutNegativeZero(value, "en-US", {
+			return formatDecimalWithoutNegativeZero(value, {
 				maximumFractionDigits: 0,
 			});
 		}
@@ -540,7 +543,7 @@ const roundStat = (
 			return formatNumber(value, type);
 		}
 
-		return toLocaleStringWithoutNegativeZero(value, "en-US", {
+		return formatDecimalWithoutNegativeZero(value, {
 			maximumFractionDigits: decimalPlaces,
 			minimumFractionDigits: decimalPlaces,
 		});

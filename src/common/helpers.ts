@@ -10,6 +10,7 @@ import type {
 	ByConf,
 } from "./types.ts";
 import getTeamInfos from "./getTeamInfos.ts";
+import { formatDecimal } from "./formatDecimal.ts";
 import { PHASE } from "./constants.ts";
 import { orderBy } from "./utils.ts";
 import type { LeagueUrlParts } from "../ui/router/types.ts";
@@ -1055,24 +1056,14 @@ const localeParseFloat = (string: string) => {
 	);
 };
 
-const DEFAULT_MAXIMUM_FRACTION_DIGITS = 10;
-
-const numberWithCommasFormatter = new Intl.NumberFormat("en-US", {
-	maximumFractionDigits: DEFAULT_MAXIMUM_FRACTION_DIGITS,
-});
-
 // Format a number as an integer with commas in the thousands places.
 const numberWithCommas = (
 	x: number | string,
-	maximumFractionDigits: number = DEFAULT_MAXIMUM_FRACTION_DIGITS,
+	maximumFractionDigits: number = 10,
 ): string => {
 	const y = typeof x === "string" ? localeParseFloat(x) : x;
 
-	if (maximumFractionDigits === DEFAULT_MAXIMUM_FRACTION_DIGITS) {
-		return numberWithCommasFormatter.format(y);
-	}
-
-	return y.toLocaleString("en-US", { maximumFractionDigits });
+	return formatDecimal(y, { maximumFractionDigits });
 };
 
 const roundWinp = (winp: number): string => {

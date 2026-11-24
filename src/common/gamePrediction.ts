@@ -1,4 +1,5 @@
 import { defaultGameAttributes } from "./defaultGameAttributes.ts";
+import { formatDecimal } from "./formatDecimal.ts";
 import { bySport } from "./sportFunctions.ts";
 
 // Measured by simulating games in 12 random leagues per sport with simGamesForPrediction (in worker/core/debug), and fitting to whether the home team won. Use many leagues rather than many games in one league, because how well team ovr predicts results varies from league to league.
@@ -208,20 +209,10 @@ export const formatGameSpreads = (
 	const spread = roundHalf(unroundedSpread);
 
 	if (spread > 0) {
-		return [
-			(-spread).toLocaleString("en-US", {
-				maximumFractionDigits: 1,
-			}),
-			undefined,
-		];
+		return [formatDecimal(-spread, { maximumFractionDigits: 1 }), undefined];
 	}
 	if (spread < 0) {
-		return [
-			undefined,
-			spread.toLocaleString("en-US", {
-				maximumFractionDigits: 1,
-			}),
-		];
+		return [undefined, formatDecimal(spread, { maximumFractionDigits: 1 })];
 	}
 	return [undefined, "PK"];
 };

@@ -1,3 +1,5 @@
+import { formatDecimal } from "../../common/formatDecimal.ts";
+
 export const PlusMinus = ({
 	children,
 	decimalPlaces = 1,
@@ -9,7 +11,7 @@ export const PlusMinus = ({
 		return null;
 	}
 
-	const formattedNumber = children.toLocaleString("en-US", {
+	const formattedNumber = formatDecimal(children, {
 		maximumFractionDigits: decimalPlaces,
 		minimumFractionDigits: decimalPlaces,
 	});

@@ -588,6 +588,32 @@ export const iterateAllPlayersWithStats = async (
 
 type Category = ReturnType<typeof getCategoriesAndStats>["categories"][number];
 
+// These only depend on league settings, so callers compute them once rather than for every player and category
+export const getCategoryRequirementFactors = () => {
+	const numPlayersOnCourtFactor = bySport({
+		baseball: 1,
+		basketball:
+			defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
+		football: 1,
+		hockey: 1,
+	});
+
+	const numGames = g.get("numGames");
+
+	return {
+		// To handle changes in number of games, playing time, etc
+		factor:
+			(numGames / defaultGameAttributes.numGames[0].value) *
+			numPlayersOnCourtFactor *
+			helpers.quarterLengthFactor(),
+
+		// Need to undo numPlayersOnCourtFactor for testing "min", because you don't get more minutes with less players on the court, unlike most other stats
+		minFactor: 1 / numPlayersOnCourtFactor,
+
+		numGames,
+	};
+};
+
 // Accept season even when career is true, because for progressive leaders we need to know the season being evaluated, otherwise we might want multiple seasons of stats to determine the all-time leader when there is only one season available
 export const playerMeetsCategoryRequirements = ({
 	career,
@@ -595,6 +621,7 @@ export const playerMeetsCategoryRequirements = ({
 	gamesPlayedCache,
 	p,
 	playerStats,
+	requirementFactors,
 	seasonType,
 	season,
 	statType,
@@ -604,26 +631,12 @@ export const playerMeetsCategoryRequirements = ({
 	gamesPlayedCache: GamesPlayedCache;
 	p: unknown;
 	playerStats: Record<string, any>;
+	requirementFactors: ReturnType<typeof getCategoryRequirementFactors>;
 	seasonType: "regularSeason" | "playoffs" | "combined";
 	season: number;
 	statType: PlayerStatType;
 }) => {
-	const numPlayersOnCourtFactor = bySport({
-		baseball: 1,
-		basketball:
-			defaultGameAttributes.numPlayersOnCourt / g.get("numPlayersOnCourt"),
-		football: 1,
-		hockey: 1,
-	});
-
-	// To handle changes in number of games, playing time, etc
-	const factor =
-		(g.get("numGames") / defaultGameAttributes.numGames[0].value) *
-		numPlayersOnCourtFactor *
-		helpers.quarterLengthFactor();
-
-	// Need to undo numPlayersOnCourtFactor for testing "min", because you don't get more minutes with less players on the court, unlike most other stats
-	const minFactor = 1 / numPlayersOnCourtFactor;
+	const { factor, minFactor, numGames } = requirementFactors;
 
 	// Test if the player meets the minimum statistical requirements for this category
 	let pass = !cat.minStats && (!cat.filter || cat.filter(p));
@@ -672,7 +685,7 @@ export const playerMeetsCategoryRequirements = ({
 					playerValue >=
 					Math.ceil(
 						(minValue * factor * (minStat === "min" ? minFactor : 1) * gpTeam) /
-							g.get("numGames"),
+							numGames,
 					)
 				) {
 					pass = true;
@@ -749,6 +762,7 @@ export default defineView({
 
 			// Load all gameslayedCache seasons ahead of time, so we don't make IndexedDB transaction auto commit if doing this dynamically in iterateAllPlayers
 			const gamesPlayedCache = new GamesPlayedCache();
+			const requirementFactors = getCategoryRequirementFactors();
 			let seasons: number[];
 			if (inputs.season === "career") {
 				// Nothing to cache
@@ -911,6 +925,7 @@ export default defineView({
 						career: season === "career",
 						cat,
 						gamesPlayedCache,
+						requirementFactors,
 						p,
 						playerStats,
 						seasonType: inputs.playoffs,

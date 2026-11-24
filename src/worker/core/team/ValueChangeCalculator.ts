@@ -588,7 +588,8 @@ const shiftProbs = (probs: number[], shift: number) => {
 
 	const maxIndex = probs.length - 1;
 	const shifted = new Array<number>(probs.length).fill(0);
-	for (const [i, prob] of probs.entries()) {
+	for (let i = 0; i < probs.length; i++) {
+		const prob = probs[i]!;
 		if (prob > 0) {
 			// If it's between two positions, split it between them
 			const index = i + shift;
@@ -650,13 +651,18 @@ const getPickProbs = async (
 		pickEstimates.season,
 	);
 
+	if (slotProbs.length !== slotPickProbs.length) {
+		throw new Error("slotProbs and slotPickProbs have different lengths");
+	}
+
+	// Index loops rather than Iterator.zip and entries(), because this runs many times for every trade evaluation, and those are much slower here
 	const pickProbs = new Array<number>(slotProbs.length).fill(0);
-	for (const [slotProb, probs] of Iterator.zip([slotProbs, slotPickProbs], {
-		mode: "strict",
-	})) {
+	for (let slot = 0; slot < slotProbs.length; slot++) {
+		const slotProb = slotProbs[slot]!;
 		if (slotProb > 0) {
-			for (const [i, prob] of probs.entries()) {
-				pickProbs[i]! += slotProb * prob;
+			const probs = slotPickProbs[slot]!;
+			for (let i = 0; i < probs.length; i++) {
+				pickProbs[i]! += slotProb * probs[i]!;
 			}
 		}
 	}

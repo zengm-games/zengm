@@ -15,6 +15,7 @@ import { getGroupPrefix } from "./prefixes.ts";
 import getLeaderRequirements from "../season/getLeaderRequirements.ts";
 import {
 	GamesPlayedCache,
+	getCategoryRequirementFactors,
 	playerMeetsCategoryRequirements,
 } from "../../views/leaders.ts";
 import { leaderAwardCategories } from "../../../common/awards.ts";
@@ -213,6 +214,7 @@ export const getLeagueLeaderAwards = async (
 	});
 
 	const gamesPlayedCache = new GamesPlayedCache();
+	const requirementFactors = getCategoryRequirementFactors();
 	await gamesPlayedCache.loadSeasons([season], false);
 
 	const awardsByPlayer: AwardByPlayer[] = [];
@@ -236,6 +238,7 @@ export const getLeagueLeaderAwards = async (
 				career: false,
 				cat: statInfo,
 				gamesPlayedCache,
+				requirementFactors,
 				p,
 				playerStats: p.currentStats.regularSeason ?? {},
 				seasonType: "regularSeason",

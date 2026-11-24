@@ -8,6 +8,7 @@ import {
 	iterateAllPlayersWithStats,
 	type Leader,
 	leadersAddFirstNameShort,
+	getCategoryRequirementFactors,
 	playerMeetsCategoryRequirements,
 } from "./leaders.ts";
 import type { RouteParams } from "../../ui/router/types.ts";
@@ -84,6 +85,7 @@ export default defineView({
 			const leadersBySeason = groupByUnique(allLeaders, "season");
 
 			const gamesPlayedCache = new GamesPlayedCache();
+			const requirementFactors = getCategoryRequirementFactors();
 			if (inputs.playoffs === "combined") {
 				await gamesPlayedCache.loadSeasons(seasons, false);
 				await gamesPlayedCache.loadSeasons(seasons, true);
@@ -150,6 +152,7 @@ export default defineView({
 					career: false,
 					cat,
 					gamesPlayedCache,
+					requirementFactors,
 					p,
 					playerStats: p.stats,
 					seasonType: inputs.playoffs,

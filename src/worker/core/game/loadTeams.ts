@@ -155,11 +155,6 @@ export const processTeam = async (
 				.filter((key) => !SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp"))
 				.map((key) => [key, 0]),
 
-			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter
-			["courtTime", -3],
-			["benchTime", 0],
-			["energy", 1],
-
 			// Placeholders, replaced with a new array for each player below. Including them here avoids adding new properties to the object, which is slow
 			...(player.stats.byPos ?? []).map((key) => [key, []]),
 		]);
@@ -293,6 +288,9 @@ export const processTeam = async (
 			jerseyNumber,
 			ptModifier: p.ptModifier,
 			ovrs: rating.ovrs,
+
+			// GameSim state, not stats, so it's not part of the box score
+			energy: 1,
 		};
 
 		// Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
@@ -347,6 +345,11 @@ export const processTeam = async (
 		}
 		if (__SPORT === "baseball") {
 			(p2 as any).pFatigue = p.pFatigue ?? 0;
+		}
+		if (__SPORT === "basketball") {
+			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter
+			(p2 as any).courtTime = -3;
+			(p2 as any).benchTime = 0;
 		}
 
 		// playerStats is created with Object.fromEntries and contains all properties, so that this spread is fast and produces an object with fast properties. Otherwise, with a lot of stats (like in ZGMB), it's slow to create and the object is slow to use in GameSim

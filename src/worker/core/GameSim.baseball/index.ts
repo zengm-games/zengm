@@ -2295,7 +2295,6 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		this.deleteGameSimOnlyProperties(this.team.map((t) => t.t));
 		for (const t of teamNums) {
 			this.team[t] = this.team[t].t as any;
 		}

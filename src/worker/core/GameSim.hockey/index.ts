@@ -444,8 +444,6 @@ class GameSim extends GameSimBase {
 			clock: this.clock,
 		});
 
-		this.deleteGameSimOnlyProperties(this.team);
-
 		const out = {
 			gid: this.id,
 			day: this.day,
@@ -651,7 +649,7 @@ class GameSim extends GameSimBase {
 		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
 		const target = this.pickPlayer(t2, undefined, ["C", "W", "D"]);
 
-		target.stat.energy += -0.5;
+		target.energy += -0.5;
 
 		this.recordStat(t, hitter, "hit", 1);
 		this.playByPlay.logEvent({
@@ -869,10 +867,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// Can tune the exponent to adjust the cross-team variance of shooting percentage, and the constant to set the baseline shooting percentage
-		if (
-			r <
-			0.75 - shooter.compositeRating.scoring * fatigue(shooter.stat.energy)
-		) {
+		if (r < 0.75 - shooter.compositeRating.scoring * fatigue(shooter.energy)) {
 			this.playByPlay.logEvent({
 				type: "miss",
 				clock: this.clock,
@@ -1626,7 +1621,7 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			for (const pos of helpers.keys(this.playersOnIce[t])) {
+			for (const pos of POSITIONS) {
 				for (const p of this.playersOnIce[t][pos]) {
 					if (options.type === "starters") {
 						this.recordStat(t, p, "gs");
@@ -1636,7 +1631,7 @@ class GameSim extends GameSimBase {
 			}
 
 			if (substitutions || options.type === "starters") {
-				for (const pos of helpers.keys(this.playersOnIce[t])) {
+				for (const pos of POSITIONS) {
 					for (const p of this.playersOnIce[t][pos]) {
 						const stat = pos === "G" ? "gpGoalie" : "gpSkater";
 						if (p.stat[stat] === 0) {
@@ -1667,7 +1662,7 @@ class GameSim extends GameSimBase {
 		const onField = new Set<number>();
 		const playersOnBench: [PlayerGameSim[], PlayerGameSim[]] = [[], []];
 		for (const t of teamNums) {
-			for (const pos of helpers.keys(this.playersOnIce[t])) {
+			for (const pos of POSITIONS) {
 				for (const p of this.playersOnIce[t][pos]) {
 					onField.add(p.id);
 				}
@@ -1700,7 +1695,7 @@ class GameSim extends GameSimBase {
 				strengthType = "pp";
 			}
 
-			for (const pos of helpers.keys(this.playersOnIce[t])) {
+			for (const pos of POSITIONS) {
 				for (const p of this.playersOnIce[t][pos]) {
 					p.stat.min += possessionTime;
 					this.team[t].stat.min += possessionTime;
@@ -1713,26 +1708,23 @@ class GameSim extends GameSimBase {
 					} else if (strengthType === "sh") {
 						p.stat.shMin += possessionTime;
 					}
-					p.stat.courtTime += possessionTime;
 
 					if (pos === "G") {
 						p.stat.gMin += possessionTime;
 					}
 
 					// This used to be 0.04. Increase more to lower PT
-					p.stat.energy += -0.25 * possessionTime;
+					p.energy += -0.25 * possessionTime;
 
-					if (p.stat.energy < 0) {
-						p.stat.energy = 0;
+					if (p.energy < 0) {
+						p.energy = 0;
 					}
 				}
 			}
 
 			for (const p of this.playersOnBench![t]) {
-				p.stat.benchTime += possessionTime;
-
 				// Any player on the bench is full strength the next time he comes on
-				p.stat.energy = 1;
+				p.energy = 1;
 			}
 		}
 	}
@@ -1795,7 +1787,7 @@ class GameSim extends GameSimBase {
 			}
 		} else {
 			for (const t of teamNums) {
-				for (const pos of helpers.keys(this.playersOnIce[t])) {
+				for (const pos of POSITIONS) {
 					for (const p of this.playersOnIce[t][pos]) {
 						let injuryRate = getInjuryRate(
 							this.baseInjuryRate,
@@ -1849,9 +1841,7 @@ class GameSim extends GameSimBase {
 						const injuryFactor = p.injured ? 0.5 : 1;
 
 						return (
-							(p.compositeRating[rating] *
-								fatigue(p.stat.energy) *
-								injuryFactor) **
+							(p.compositeRating[rating] * fatigue(p.energy) * injuryFactor) **
 							power
 						);
 					}
@@ -1866,7 +1856,7 @@ class GameSim extends GameSimBase {
 	) {
 		const p = maxBy(
 			getPlayers(this.playersOnIce[t], positions),
-			(p) => p.compositeRating[rating] * fatigue(p.stat.energy),
+			(p) => p.compositeRating[rating] * fatigue(p.energy),
 		);
 
 		return p!;
@@ -1910,13 +1900,12 @@ class GameSim extends GameSimBase {
 					// Power play goals don't count for +/-
 					if (s !== "ppG") {
 						for (const t2 of teamNums) {
-							const currentlyOnIce = Object.values(
-								this.playersOnIce[t2],
-							).flat();
-							for (const p2 of currentlyOnIce) {
-								const pm = t2 === t ? 1 : -1;
-								p2.stat.pm += pm;
-								this.playByPlay.logStat(t2, p2.id, "pm", pm);
+							const pm = t2 === t ? 1 : -1;
+							for (const pos of POSITIONS) {
+								for (const p2 of this.playersOnIce[t2][pos]) {
+									p2.stat.pm += pm;
+									this.playByPlay.logStat(t2, p2.id, "pm", pm);
+								}
 							}
 						}
 					}

@@ -296,8 +296,6 @@ class GameSim extends GameSimBase {
 			clock: this.clock,
 		});
 
-		this.deleteGameSimOnlyProperties(this.team);
-
 		const scoringSummary: PlayByPlayEventScore[] = [];
 
 		// Remove any scores that were negated by penalties
@@ -1410,7 +1408,7 @@ class GameSim extends GameSimBase {
 
 						if (
 							Math.random() <
-							FATIGUE_MODIFIER * fatigue(p.stat.energy, p.injured)
+							FATIGUE_MODIFIER * fatigue(p.energy, p.injured)
 						) {
 							players.push(p);
 							pidsUsed.add(p.id);
@@ -2953,24 +2951,22 @@ class GameSim extends GameSimBase {
 					onField.add(p.id);
 					p.stat.min += possessionTime;
 					this.team[t].stat.min += possessionTime;
-					p.stat.courtTime += possessionTime;
 
 					// This used to be 0.04. Increase more to lower PT
-					p.stat.energy += -0.08 * (1 - p.compositeRating.endurance);
+					p.energy += -0.08 * (1 - p.compositeRating.endurance);
 
-					if (p.stat.energy < 0) {
-						p.stat.energy = 0;
+					if (p.energy < 0) {
+						p.energy = 0;
 					}
 				}
 			}
 
 			for (const p of this.team[t].player) {
 				if (!onField.has(p.id)) {
-					p.stat.benchTime += possessionTime;
-					p.stat.energy += 0.5;
+					p.energy += 0.5;
 
-					if (p.stat.energy > 1) {
-						p.stat.energy = 1;
+					if (p.energy > 1) {
+						p.energy = 1;
 					}
 				}
 			}
@@ -3033,8 +3029,7 @@ class GameSim extends GameSimBase {
 		const weightFunc =
 			rating !== undefined
 				? (p: PlayerGameSim) =>
-						(p.compositeRating[rating] * fatigue(p.stat.energy, p.injured)) **
-						power
+						(p.compositeRating[rating] * fatigue(p.energy, p.injured)) ** power
 				: undefined;
 		return choice(players, weightFunc);
 	}

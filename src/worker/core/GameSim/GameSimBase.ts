@@ -110,43 +110,6 @@ class GameSimBase {
 		}
 	}
 
-	deleteGameSimOnlyProperties(
-		teams: {
-			compositeRating?: unknown;
-			pace?: unknown;
-			player: {
-				age?: unknown;
-				valueNoPot?: unknown;
-				compositeRating?: unknown;
-				ptModifier?: unknown;
-				numConsecutiveGamesG?: unknown;
-				pFatigue?: unknown;
-				stat: {
-					benchTime?: unknown;
-					courtTime?: unknown;
-					energy?: unknown;
-				};
-			}[];
-		}[],
-	) {
-		for (const t of teams) {
-			delete t.compositeRating;
-			delete t.pace;
-
-			for (const p of t.player) {
-				delete p.age;
-				delete p.valueNoPot;
-				delete p.compositeRating;
-				delete p.ptModifier;
-				delete p.numConsecutiveGamesG;
-				delete p.pFatigue;
-				delete p.stat.benchTime;
-				delete p.stat.courtTime;
-				delete p.stat.energy;
-			}
-		}
-	}
-
 	getOvertimeLength() {
 		if (__SPORT === "baseball") {
 			throw new Error("Should never happen");

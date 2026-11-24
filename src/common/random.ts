@@ -163,42 +163,36 @@ export const choice = <T>(
 	weightInput?: ((a: T, index: number) => number) | number[],
 	seed?: number,
 ): T => {
-	let seed2 = seed ?? 0;
-	const getSeed = () => {
-		if (seed === undefined) {
-			return undefined;
-		}
-		seed2 += 1;
-		return seed2;
-	};
+	// Only one random number is drawn, so this is the seed for it
+	const seed2 = seed === undefined ? undefined : seed + 1;
 
 	if (weightInput === undefined) {
-		return x[Math.floor(uniformSeed(getSeed()) * x.length)]!;
+		return x[Math.floor(uniformSeed(seed2) * x.length)]!;
 	}
 
-	let weights;
-	if (Array.isArray(weightInput)) {
-		weights = weightInput;
-	} else {
-		weights = x.map(weightInput);
-	}
-
-	const cumsums = weights.reduce<number[]>((array, weight, i) => {
+	// Game simulations call this for almost every play, so it uses plain loops rather than map/reduce/findIndex with callbacks
+	const weightsIsArray = Array.isArray(weightInput);
+	const numWeights = weightsIsArray ? weightInput.length : x.length;
+	const cumsums: number[] = [];
+	let sum = 0;
+	for (let i = 0; i < numWeights; i++) {
+		let weight = weightsIsArray ? weightInput[i]! : weightInput(x[i]!, i);
 		if (weight < 0 || Number.isNaN(weight)) {
 			weight = Number.MIN_VALUE;
 		}
 
-		if (i === 0) {
-			array[0] = weight;
-		} else {
-			array[i] = array[i - 1]! + weight;
-		}
+		sum += weight;
+		cumsums.push(sum);
+	}
 
-		return array;
-	}, []);
-	const max = cumsums.at(-1)!;
-	const rand = uniformSeed(getSeed()) * max;
-	const ind = cumsums.findIndex((cumsum) => cumsum >= rand);
+	const rand = uniformSeed(seed2) * sum;
+	let ind = -1;
+	for (let i = 0; i < cumsums.length; i++) {
+		if (cumsums[i]! >= rand) {
+			ind = i;
+			break;
+		}
+	}
 	return x[ind]!;
 };
 

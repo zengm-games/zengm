@@ -40,11 +40,8 @@ type ShotType =
 type Stat =
 	| "ast"
 	| "ba"
-	| "benchTime"
 	| "blk"
-	| "courtTime"
 	| "drb"
-	| "energy"
 	| "fg"
 	| "fgAtRim"
 	| "fgLowPost"
@@ -91,6 +88,9 @@ type PlayerGameSim = {
 		playingThrough: boolean;
 	};
 	ptModifier: number;
+	energy: number;
+	courtTime: number;
+	benchTime: number;
 };
 type TeamGameSim = {
 	id: number;
@@ -390,8 +390,6 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: "gameOver",
 		});
-
-		this.deleteGameSimOnlyProperties(this.team);
 
 		const out = {
 			gid: this.id,
@@ -973,7 +971,7 @@ class GameSim extends GameSimBase {
 					} else {
 						let ovr =
 							p.valueNoPot *
-							this.fatigue(p.stat.energy) *
+							this.fatigue(p.energy) *
 							(!lateGame ? uniform(0.9, 1.1) : 1);
 
 						if (!this.allStarGame) {
@@ -1024,7 +1022,7 @@ class GameSim extends GameSimBase {
 				if (t === this.o && p === shooter) {
 					continue;
 				}
-				if (!(p.stat.courtTime > 2) && !onCourtIsIneligible) {
+				if (!(p.courtTime > 2) && !onCourtIsIneligible) {
 					continue;
 				}
 
@@ -1041,9 +1039,7 @@ class GameSim extends GameSimBase {
 					}
 
 					const benchIsValidAndBetter =
-						p.stat.courtTime > 2 &&
-						b.stat.benchTime > 2 &&
-						ovrs[j]! > onCourtOvr;
+						p.courtTime > 2 && b.benchTime > 2 && ovrs[j]! > onCourtOvr;
 					const benchIsEligible = ovrs[j] !== -Infinity;
 
 					if (
@@ -1079,7 +1075,7 @@ class GameSim extends GameSimBase {
 							(numG < cutoff && numPG === 0) ||
 							(numF < cutoff && numC === 0)
 						) {
-							if (this.fatigue(p.stat.energy) > 0.728 && !onCourtIsIneligible) {
+							if (this.fatigue(p.energy) > 0.728 && !onCourtIsIneligible) {
 								// Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
 								continue;
 							}
@@ -1089,10 +1085,10 @@ class GameSim extends GameSimBase {
 
 						// Substitute player
 						this.playersOnCourt[t][pp] = b;
-						b.stat.courtTime = uniform(-2, 2);
-						b.stat.benchTime = uniform(-2, 2);
-						p.stat.courtTime = uniform(-2, 2);
-						p.stat.benchTime = uniform(-2, 2);
+						b.courtTime = uniform(-2, 2);
+						b.benchTime = uniform(-2, 2);
+						p.courtTime = uniform(-2, 2);
+						p.benchTime = uniform(-2, 2);
 
 						/*// Keep track of deviations from the normal starting lineup for the play-by-play
 						if (this.playByPlay?.active) {
@@ -1266,7 +1262,7 @@ class GameSim extends GameSimBase {
 			let blocking = 0;
 			for (const p of this.playersOnCourt[t]) {
 				const ratings = p.compositeRating;
-				const fatigue = this.fatigue(p.stat.energy);
+				const fatigue = this.fatigue(p.energy);
 				const pf = p.stat.pf;
 				const foulLimitFactor =
 					pf === foulLimit ? 0.9 : pf > foulLimit ? 0.75 : 1;
@@ -1312,21 +1308,21 @@ class GameSim extends GameSimBase {
 						this.playByPlay.logStat(t, p.id, "min", min);
 					}
 
-					p.stat.courtTime += min;
+					p.courtTime += min;
 
 					// This used to be 0.04. Increase more to lower PT
-					p.stat.energy +=
+					p.energy +=
 						-min * this.fatigueFactor * (1 - p.compositeRating.endurance);
 
-					if (p.stat.energy < 0) {
-						p.stat.energy = 0;
+					if (p.energy < 0) {
+						p.energy = 0;
 					}
 				} else {
-					p.stat.benchTime += min;
-					p.stat.energy += min * 0.094;
+					p.benchTime += min;
+					p.energy += min * 0.094;
 
-					if (p.stat.energy > 1) {
-						p.stat.energy = 1;
+					if (p.energy > 1) {
+						p.energy = 1;
 					}
 				}
 			}
@@ -1941,7 +1937,7 @@ class GameSim extends GameSimBase {
 			p = this.lastOrbPlayer;
 		}
 
-		const currentFatigue = this.fatigue(p.stat.energy);
+		const currentFatigue = this.fatigue(p.energy);
 
 		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
 		let passer: PlayerGameSim | undefined;
@@ -2758,7 +2754,7 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			const value = (compositeRating * this.fatigue(p.stat.energy)) ** power;
+			const value = (compositeRating * this.fatigue(p.energy)) ** power;
 
 			array[i] = value;
 			total += value;
@@ -2828,7 +2824,7 @@ class GameSim extends GameSimBase {
 	recordStat(
 		t: TeamNum,
 		p: PlayerGameSim | undefined,
-		s: Exclude<Stat, "benchTime" | "courtTime" | "energy" | "min">,
+		s: Exclude<Stat, "min">,
 		amt: number = 1,
 	) {
 		if (p !== undefined) {

@@ -8,6 +8,7 @@ import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
 import {
 	GamesPlayedCache,
+	getCategoryRequirementFactors,
 	playerMeetsCategoryRequirements,
 } from "../../views/leaders.ts";
 import { getPlayerProfileStats } from "../../views/player.ts";
@@ -147,6 +148,7 @@ const calculateSeasonLeaders = async (
 	});
 
 	const gamesPlayedCache = new GamesPlayedCache();
+	const requirementFactors = getCategoryRequirementFactors();
 
 	// "combined" comes last so loadSeasons can run for regularSeason and playoffs first, otherwise it won't work
 	for (const type of ["regularSeason", "playoffs", "combined"] as const) {
@@ -188,6 +190,7 @@ const calculateSeasonLeaders = async (
 						career: false,
 						cat: statInfo,
 						gamesPlayedCache,
+						requirementFactors,
 						p,
 						playerStats,
 						seasonType: type,

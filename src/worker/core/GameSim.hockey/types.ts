@@ -33,6 +33,7 @@ export type PlayerGameSim = {
 	ovrs: Record<Position, number>;
 	numConsecutiveGamesG?: number;
 	seasonStats: Record<string, number>;
+	energy: number;
 };
 
 export type PlayersOnIce = Record<Position, PlayerGameSim[]>;

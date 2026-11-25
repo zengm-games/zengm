@@ -31,7 +31,6 @@ type BasketballState = {
 	clock: number;
 	o: 0 | 1;
 	pts: [number, number];
-	timeouts: [number, number];
 };
 
 // Records BaseballState for every plate appearance in games simulated while this is on, by wrapping GameSim. Baseball only.
@@ -80,7 +79,6 @@ const recordBasketballStates = () => {
 				clock: this.t,
 				o: nextO,
 				pts: [this.team[0].stat.pts, this.team[1].stat.pts],
-				timeouts: [this.timeouts[0], this.timeouts[1]],
 			});
 		}
 		return original.call(this);

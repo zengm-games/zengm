@@ -1,6 +1,11 @@
 import { g, helpers } from "../../util/index.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
-import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
+import {
+	getBasketballClockFactor,
+	SHOT_CLOCK,
+	type BasketballClockFactor,
+} from "../../../common/GameSim.basketball/clockFactor.ts";
+import jumpBallWinnerStartsThisPeriodWithPossession from "../../../common/GameSim.basketball/jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import type {
 	GameAttributesLeague,
 	PlayerInjury,
@@ -19,7 +24,6 @@ import { formatClock } from "../../../common/formatClock.ts";
 import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 import { choice, truncGauss, uniform } from "../../../common/random.ts";
 
-const SHOT_CLOCK = 24;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN = 2;
 const NUM_TIMEOUTS_OVERTIME = 2;
@@ -117,8 +121,6 @@ type PossessionOutcome =
 	| "timeout"
 	| "outOfBoundsDefense"
 	| "outOfBoundsOffense";
-
-type ClockFactor = ReturnType<GameSim["getClockFactor"]>;
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -661,62 +663,19 @@ class GameSim extends GameSimBase {
 		}
 	}
 
+	// Call this before running clock for possession
 	getClockFactor() {
 		if (this.elamActive) {
 			return;
 		}
 
-		if (this.shouldIntentionalFoul()) {
-			return "intentionalFoul";
-		}
-
-		const period = this.team[this.o].stat.ptsQtrs.length;
-		const pointDifferential =
-			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
-
-		// Run out the clock if winning
-		if (period >= this.numPeriods && this.t <= 24 && pointDifferential > 0) {
-			return "runOutClock" as const;
-		}
-
-		if (this.t <= 26 && (period < this.numPeriods || pointDifferential >= 0)) {
-			return "holdForLastShot" as const;
-		}
-
-		if (
-			period >= this.numPeriods &&
-			((this.t <= 3 * 60 && pointDifferential <= -10) ||
-				(this.t <= 2 * 60 && pointDifferential <= -5) ||
-				(this.t <= 1 * 60 && pointDifferential < 0))
-		) {
-			return "catchUp";
-		}
-		if (
-			period >= this.numPeriods &&
-			((this.t <= 3 * 60 && pointDifferential > 10) ||
-				(this.t <= 2 * 60 && pointDifferential > 5) ||
-				(this.t <= 1 * 60 && pointDifferential > 0))
-		) {
-			return "maintainLead";
-		}
-
-		if (this.t >= 32 && this.t <= 52) {
-			return "twoForOne";
-		}
-	}
-
-	// Call this before running clock for possession
-	shouldIntentionalFoul() {
-		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
-		const offenseWinningByABit = diff > 0 && diff <= 6;
-		const intentionalFoul =
-			offenseWinningByABit &&
-			this.team[0].stat.ptsQtrs.length >= this.numPeriods &&
-			this.t < 27 &&
-			this.t > 0.3 &&
-			this.getNumFoulsUntilBonus() <= 10;
-
-		return intentionalFoul;
+		return getBasketballClockFactor({
+			finalPeriod: this.team[this.o].stat.ptsQtrs.length >= this.numPeriods,
+			numFoulsUntilBonus: this.getNumFoulsUntilBonus(),
+			pointDifferential:
+				this.team[this.o].stat.pts - this.team[this.d].stat.pts,
+			t: this.t,
+		});
 	}
 
 	probNonShootingFoul() {
@@ -1428,7 +1387,7 @@ class GameSim extends GameSimBase {
 		return offenseRetainsBall ? "outOfBoundsDefense" : "outOfBoundsOffense";
 	}
 
-	getPossessionOutcome(clockFactor: ClockFactor): PossessionOutcome {
+	getPossessionOutcome(clockFactor: BasketballClockFactor): PossessionOutcome {
 		// If winning at end of game, just run out the clock
 		if (clockFactor === "runOutClock") {
 			this.advanceClockSeconds(Infinity);
@@ -1921,7 +1880,7 @@ class GameSim extends GameSimBase {
 
 	doShot(
 		p: PlayerGameSim,
-		clockFactor: ClockFactor,
+		clockFactor: BasketballClockFactor,
 		possessionStartsInFrontcourt: boolean,
 		tipInFromOutOfBounds: boolean,
 		lateGamePutBack: boolean,

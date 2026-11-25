@@ -11,7 +11,7 @@ import type {
 	PlayByPlayEventStat,
 } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
 import type { PlayerInjury, TeamNum } from "../../common/types.ts";
-import jumpBallWinnerStartsThisPeriodWithPossession from "../../worker/core/GameSim.basketball/jumpBallWinnerStartsThisPeriodWithPossession.ts";
+import jumpBallWinnerStartsThisPeriodWithPossession from "../../common/GameSim.basketball/jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import {
 	addStat,
 	getEventTeam,

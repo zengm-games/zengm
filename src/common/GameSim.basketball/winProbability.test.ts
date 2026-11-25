@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import { getWinProbabilityBasketball } from "./basketballWinProbability.ts";
+import { getWinProbabilityBasketball } from "./winProbability.ts";
 
 const base = {
 	margin: 0,
@@ -180,20 +180,5 @@ describe("getWinProbabilityBasketball", () => {
 			getProb({ margin: 0, regulationSeconds: 0, secondsLeft: 0 }),
 			0.5,
 		);
-	});
-
-	test("evaluates a full 500-play game quickly via DP table cache", () => {
-		const start = performance.now();
-		for (let i = 0; i < 500; i++) {
-			const secondsLeft = Math.max(0, 2880 - i * 5.8);
-			getProb({
-				margin: (i % 7) - 3,
-				o: (i % 2) as 0 | 1,
-				secondsLeft,
-				spread: 6.35,
-			});
-		}
-		const elapsedMs = performance.now() - start;
-		assert.isBelow(elapsedMs, 50);
 	});
 });

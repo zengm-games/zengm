@@ -1,9 +1,12 @@
 import { getWinProbabilityBaseball } from "../../common/baseballWinProbability.ts";
+import { getWinProbabilityBasketball } from "../../common/basketballWinProbability.ts";
 import { getSeconds } from "../../common/formatClock.ts";
 import { helpers } from "../../common/helpers.ts";
 import type { SportState as SportStateBaseball } from "./LiveGamePlayback.baseball.tsx";
+import type { SportState as SportStateBasketball } from "./LiveGamePlayback.basketball.tsx";
 import {
 	isSportStateBaseball,
+	isSportStateBasketball,
 	type LiveGameSportState,
 } from "./LiveGamePlayback.ts";
 import {
@@ -136,6 +139,39 @@ export const getLiveWinp = ({
 				boxScore,
 				spread: prediction.spread,
 				sportState,
+			}),
+		};
+	}
+
+	if (__SPORT === "basketball" && boxScore.elamTarget === undefined) {
+		const period = teams[0].ptsQtrs.length;
+		if (period === 0) {
+			return { prob: getWinProbability(prediction) };
+		}
+
+		const regulationSeconds = numPeriods * quarterLength * 60;
+		const clockSeconds = getSeconds(boxScore.time);
+		const secondsLeft =
+			period > numPeriods
+				? clockSeconds
+				: (numPeriods - period) * quarterLength * 60 + clockSeconds;
+
+		const state: SportStateBasketball | undefined = isSportStateBasketball(
+			sportState,
+		)
+			? sportState
+			: undefined;
+
+		return {
+			prob: getWinProbabilityBasketball({
+				awaitingRebound: state?.awaitingRebound,
+				ftRemaining: state?.ftRemaining,
+				margin: teams[0].pts - teams[1].pts,
+				o: state?.o,
+				regulationSeconds,
+				secondsLeft,
+				sigma: prediction.sigma,
+				spread: prediction.spread,
 			}),
 		};
 	}

@@ -1,3 +1,5 @@
+import { tiltDistribution } from "../tiltDistribution.ts";
+
 // Live win probability for baseball, from the distribution of runs left in each half inning. This works better than the normal distribution used for other sports, because most innings are scoreless and runs are scored in bunches, so a small lead late in the game is safer than a normal distribution says.
 
 // Runs scored in the rest of a half inning, by outs and then by bases (a bitmask where 1 is first base, 2 is second, 4 is third). p0 is the probability of no runs. Measured by simulating games with simGamesForPrediction (in worker/core/debug) with recordStates, in 6 random leagues.
@@ -61,13 +63,6 @@ const getVariance = (dist: number[]) => {
 	return dist.reduce((sum, prob, runs) => sum + prob * (runs - mean) ** 2, 0);
 };
 
-// Exponential tilt, to shift a team's distribution for how good it is while keeping the shape. theta of about the change in mean divided by the variance gives that change in mean.
-const tilt = (dist: number[], theta: number) => {
-	const weighted = dist.map((prob, runs) => prob * Math.exp(theta * runs));
-	const total = weighted.reduce((sum, x) => sum + x, 0);
-	return weighted.map((x) => x / total);
-};
-
 const convolve = (a: number[], b: number[]) => {
 	const out: number[] = Array(
 		Math.min(a.length + b.length - 1, 2 * MAX_RUNS + 1),
@@ -123,8 +118,8 @@ export const getWinProbabilityBaseball = ({
 		-delta / FULL_HALF_INNING_VARIANCE,
 	] as const;
 	const fullHalfInnings = [
-		tilt(FULL_HALF_INNING, thetas[0]),
-		tilt(FULL_HALF_INNING, thetas[1]),
+		tiltDistribution(FULL_HALF_INNING, thetas[0]),
+		tiltDistribution(FULL_HALF_INNING, thetas[1]),
 	] as const;
 
 	// Any extra inning could be the last
@@ -143,7 +138,7 @@ export const getWinProbabilityBaseball = ({
 	const restOfHalfInning =
 		outs >= NUM_OUTS_PER_INNING
 			? SCORELESS
-			: tilt(
+			: tiltDistribution(
 					getDistribution(RUNS_LEFT_IN_HALF_INNING[outs]![bases]!),
 					thetas[o],
 				);

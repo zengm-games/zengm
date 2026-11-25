@@ -155,22 +155,28 @@ export const makeGetPregameWinProbability = (
  * Probability that teams[0] wins.
  *
  * For a game in progress, margin is the current lead of teams[0] and frac is the fraction of the game left. The defaults are the pre-game value.
+ *
+ * possessionValue is the expected points for teams[0] from who has the ball right now, which is added to the expected margin without decaying like a lead does.
  */
 export const getWinProbability = ({
 	constants = GAME_PREDICTION_CONSTANTS,
 	frac = 1,
 	margin = 0,
+	possessionValue = 0,
 	sigma,
 	spread,
 }: {
 	constants?: GamePredictionConstants;
 	frac?: number;
 	margin?: number;
+	possessionValue?: number;
 	sigma: number;
 	spread: number;
 }) => {
 	const expectedMargin =
-		(1 - constants.liveLeadDecay * frac) * margin + spread * frac;
+		(1 - constants.liveLeadDecay * frac) * margin +
+		spread * frac +
+		possessionValue;
 	const sigmaLeft = sigma * frac ** constants.liveSigmaExponent;
 
 	return getProbFromNormal(expectedMargin, sigmaLeft);

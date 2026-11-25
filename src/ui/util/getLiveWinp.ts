@@ -1,9 +1,11 @@
-import { getWinProbabilityBaseball } from "../../common/baseballWinProbability.ts";
+import { getWinProbabilityBaseball } from "../../common/GameSim.baseball/winProbability.ts";
+import { getWinProbabilityBasketball } from "../../common/GameSim.basketball/winProbability.ts";
 import { getSeconds } from "../../common/formatClock.ts";
 import { helpers } from "../../common/helpers.ts";
 import type { SportState as SportStateBaseball } from "./LiveGamePlayback.baseball.tsx";
 import {
 	isSportStateBaseball,
+	isSportStateBasketball,
 	type LiveGameSportState,
 } from "./LiveGamePlayback.ts";
 import {
@@ -56,6 +58,22 @@ const getLiveWinpBaseball = ({
 	});
 };
 
+// Seconds left in regulation, or in the current overtime period
+const getSecondsLeft = ({
+	boxScore,
+	quarterLength,
+}: {
+	boxScore: any;
+	quarterLength: number;
+}) => {
+	const { numPeriods, teams } = boxScore;
+	const period = teams[0].ptsQtrs.length;
+	const clockSeconds = getSeconds(boxScore.time);
+	return period > numPeriods
+		? clockSeconds
+		: (numPeriods - Math.max(period, 1)) * quarterLength * 60 + clockSeconds;
+};
+
 const getFrac = ({
 	boxScore,
 	expectedGamePoints,
@@ -78,14 +96,11 @@ const getFrac = ({
 		return 0;
 	}
 
-	const period = teams[0].ptsQtrs.length;
-	const clockSeconds = getSeconds(boxScore.time);
-	const secondsLeft =
-		period > numPeriods
-			? clockSeconds
-			: (numPeriods - Math.max(period, 1)) * quarterLength * 60 + clockSeconds;
-
-	return helpers.bound(secondsLeft / regulationSeconds, 0, 1);
+	return helpers.bound(
+		getSecondsLeft({ boxScore, quarterLength }) / regulationSeconds,
+		0,
+		1,
+	);
 };
 
 // Probability that teams[0] wins. This never reads boxScore.won, boxScore.lost, or forceWin, because those know how the game ends.
@@ -136,6 +151,27 @@ export const getLiveWinp = ({
 				boxScore,
 				spread: prediction.spread,
 				sportState,
+			}),
+		};
+	}
+
+	if (__SPORT === "basketball" && boxScore.elamTarget === undefined) {
+		if (teams[0].ptsQtrs.length === 0) {
+			return { prob: getWinProbability(prediction) };
+		}
+
+		const state = isSportStateBasketball(sportState) ? sportState : undefined;
+
+		return {
+			prob: getWinProbabilityBasketball({
+				awaitingRebound: state?.awaitingRebound,
+				ftRemaining: state?.ftRemaining,
+				margin: teams[0].pts - teams[1].pts,
+				o: state?.o,
+				regulationSeconds: numPeriods * quarterLength * 60,
+				secondsLeft: getSecondsLeft({ boxScore, quarterLength }),
+				sigma: prediction.sigma,
+				spread: prediction.spread,
 			}),
 		};
 	}

@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import { getWinProbabilityBaseball } from "./baseballWinProbability.ts";
+import { getWinProbabilityBaseball } from "./winProbability.ts";
 
 const base = {
 	basesOccupied: [false, false, false],

@@ -25,6 +25,14 @@ type BaseballState = {
 	pts: [number, number];
 };
 
+// Game state before each possession in basketball. o is the team about to run the possession.
+type BasketballState = {
+	period: number;
+	clock: number;
+	o: 0 | 1;
+	pts: [number, number];
+};
+
 // Records BaseballState for every plate appearance in games simulated while this is on, by wrapping GameSim. Baseball only.
 const recordBaseballStates = () => {
 	const proto = GameSim.prototype as any;
@@ -57,10 +65,41 @@ const recordBaseballStates = () => {
 	};
 };
 
+// Records BasketballState before every non-Elam possession in games simulated while this is on, by wrapping GameSim. Basketball only.
+const recordBasketballStates = () => {
+	const proto = GameSim.prototype as any;
+	const original = proto.simPossession;
+	let states: BasketballState[] = [];
+	proto.simPossession = function (this: any) {
+		if (!this.elamActive && this.t > 0) {
+			// simPossession swaps this.o at the start, so the upcoming offense is the opposite of this.o
+			const nextO: 0 | 1 = this.o === 1 ? 0 : 1;
+			states.push({
+				period: this.team[0].stat.ptsQtrs.length,
+				clock: this.t,
+				o: nextO,
+				pts: [this.team[0].stat.pts, this.team[1].stat.pts],
+			});
+		}
+		return original.call(this);
+	};
+
+	return {
+		takeStates: () => {
+			const taken = states;
+			states = [];
+			return taken;
+		},
+		stop: () => {
+			proto.simPossession = original;
+		},
+	};
+};
+
 /**
  * Simulates games between random pairs of teams, without saving anything. ovrs are the same injury adjusted ovrs that are shown for upcoming games.
  *
- * recordStates (baseball only) also returns the game state before every plate appearance, for evaluating live win probability.
+ * recordStates (baseball and basketball only) also returns the game state before every plate appearance / possession, for evaluating live win probability.
  */
 export const simGamesForPrediction = async ({
 	neutralSite = false,
@@ -73,8 +112,10 @@ export const simGamesForPrediction = async ({
 	recordStates?: boolean;
 	settings?: PredictionSettings;
 }) => {
-	if (recordStates && __SPORT !== "baseball") {
-		throw new Error("recordStates is only supported in baseball");
+	if (recordStates && __SPORT !== "baseball" && __SPORT !== "basketball") {
+		throw new Error(
+			"recordStates is only supported in baseball and basketball",
+		);
 	}
 	const tids = (await idb.cache.teams.getAll())
 		.filter((t) => !t.disabled)
@@ -86,7 +127,11 @@ export const simGamesForPrediction = async ({
 		g.setWithoutSavingToDB(key, settings[key]!);
 	}
 
-	const recorder = recordStates ? recordBaseballStates() : undefined;
+	const recorder = recordStates
+		? __SPORT === "baseball"
+			? recordBaseballStates()
+			: recordBasketballStates()
+		: undefined;
 	const results = [];
 	try {
 		for (let i = 0; i < numGames; i++) {

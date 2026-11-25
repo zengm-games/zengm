@@ -1,4 +1,6 @@
 import { useState, type ReactNode } from "react";
+import { flushSync } from "react-dom";
+import useLocalStorageState from "use-local-storage-state";
 import type {
 	PlayerAward,
 	PlayerStatAttr,
@@ -13,7 +15,7 @@ import { formatStatGameHigh } from "../PlayerStats.tsx";
 import { SeasonIcons } from "../../components/SeasonIcons.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
 import { DataTable } from "../../components/DataTable/index.tsx";
-import clsx from "clsx";
+import clsx, { type ClassValue } from "clsx";
 import { useRangeFooter } from "./useRangeFooter.ts";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
 import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
@@ -21,6 +23,7 @@ import type { SuperCol } from "../../components/DataTable/index.tsx";
 import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
 import { hasNonZeroStat } from "../../../common/statValue.ts";
 import { useLocal } from "../../util/local.ts";
+import CollapseArrow from "../../components/CollapseArrow.tsx";
 
 const hasStats = (
 	careerStats: View<"player">["player"][
@@ -47,6 +50,38 @@ const hasStats = (
 	return true;
 };
 
+// Shows or hides the footer rows after the career totals, which is a single setting for all stats tables. The button covers its whole cell, which needs the stretched-link-cell class.
+const ExtraRowsToggle = ({
+	label,
+	open,
+	setOpen,
+}: {
+	label: ReactNode;
+	open: boolean;
+	setOpen: (open: boolean) => void;
+}) => (
+	<div className="d-flex align-items-center justify-content-between gap-2">
+		{label}
+		<button
+			aria-expanded={open}
+			className="btn btn-link p-0 border-0 text-reset stretched-link"
+			onClick={(event) => {
+				// This also changes the tables above this one, which would move the button, so scroll to keep it in the same place on screen. This is just needed for the case where two tables are visible on the screen, otherwise browsers handle it fine if there's only one visible.
+				const button = event.currentTarget;
+				const prevTop = button.getBoundingClientRect().top;
+				flushSync(() => {
+					setOpen(!open);
+				});
+				window.scrollBy(0, button.getBoundingClientRect().top - prevTop);
+			}}
+			title={open ? "Hide more career totals" : "Show more career totals"}
+			type="button"
+		>
+			<CollapseArrow closedDirection="left" open={open} />
+		</button>
+	</div>
+);
+
 export const StatsTable = ({
 	awardsBySeason,
 	careerStatsScaled,
@@ -69,6 +104,13 @@ export const StatsTable = ({
 	leaders: View<"player">["leaders"];
 }) => {
 	const { numGames } = useLocal(["numGames"]);
+
+	const [showExtraRows, setShowExtraRows] = useLocalStorageState(
+		"show-player-stats-extra-footer-rows",
+		{
+			defaultValue: true,
+		},
+	);
 
 	const hasRegularSeasonStats = hasStats(p.careerStats, onlyShowIf);
 	const hasPlayoffStats = hasStats(p.careerStatsPlayoffs, onlyShowIf);
@@ -140,8 +182,11 @@ export const StatsTable = ({
 	const careerLabel = `${rangeFooter.state.seasons.length} ${helpers.plural("year", rangeFooter.state.seasons.length)}`;
 
 	// Label spanning the year, team, and age columns
-	const spanningLabel = (label: ReactNode): FooterRow["data"] => [
-		{ value: label, colspan: 3 },
+	const spanningLabel = (
+		label: ReactNode,
+		classNames?: ClassValue,
+	): FooterRow["data"] => [
+		{ value: label, classNames, colspan: 3 },
 		null,
 		null,
 	];
@@ -176,10 +221,11 @@ export const StatsTable = ({
 			],
 		});
 
-		footer = [getFooterRow(spanningLabel(careerLabel), careerStats)];
+		// Rows after the career totals, which can be hidden
+		const extraRows: FooterRow[] = [];
 
 		if (careerStatsScaled) {
-			footer.push(
+			extraRows.push(
 				getFooterRow(
 					spanningLabel(`${numGames} game avg`),
 					careerStatsScaled[seasonType],
@@ -191,7 +237,7 @@ export const StatsTable = ({
 		const careerStatsByTeam = p.careerStatsByTeam[seasonType];
 		if (careerStatsByTeam.length > 1) {
 			for (const team of careerStatsByTeam) {
-				footer.push(
+				extraRows.push(
 					getFooterRow(
 						spanningLabel(
 							`${team.abbrev} (${team.numSeasons} ${helpers.plural("year", team.numSeasons)})`,
@@ -201,6 +247,23 @@ export const StatsTable = ({
 				);
 			}
 		}
+
+		footer = [
+			getFooterRow(
+				extraRows.length > 0
+					? spanningLabel(
+							<ExtraRowsToggle
+								label={careerLabel}
+								open={showExtraRows}
+								setOpen={setShowExtraRows}
+							/>,
+							"stretched-link-cell",
+						)
+					: spanningLabel(careerLabel),
+				careerStats,
+			),
+			...(showExtraRows ? extraRows : []),
+		];
 
 		const rangeFooterState = rangeFooter.state;
 		if (

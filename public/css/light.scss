@@ -1563,7 +1563,8 @@ $sticky-cols: (
 					td:nth-child(#{$i}),
 					th:nth-child(#{$i}) {
 						position: sticky;
-						// left: 157px; will be set by JS
+						// Set by useStickyXX
+						left: var(--sticky-left-#{$i});
 						z-index: 10;
 
 						// Not sure why this was needed, but it broke sortable handle background colors
@@ -1612,6 +1613,11 @@ table.sticky-iv {
 			background-color: inherit !important;
 		}
 	}
+}
+
+// Table cell containing a .stretched-link. :where() keeps the specificity low, so sticky columns still get position: sticky, which also contains the stretched link.
+:where(td, th).stretched-link-cell {
+	position: relative;
 }
 
 .standings-name {

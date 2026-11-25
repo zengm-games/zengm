@@ -186,3 +186,84 @@ test("quarterLength of 0 has no time left, so it's decided by the lead and not N
 	assert.strictEqual(getProbQuarterLength0([5, 0]), 1);
 	assert.strictEqual(getProbQuarterLength0([0, 0]), 0.5);
 });
+
+test("uses basketball sportState possession to shift live win probability", () => {
+	const makeState = (o: 0 | 1 | undefined) => ({
+		awaitingRebound: false,
+		ftRemaining: 0,
+		jumpBallWinner: 0 as const,
+		o,
+	});
+	const boxScore = makeBoxScore({ period: 4, pts: [124, 125], time: "23.6" });
+	const homeBall = getLiveWinp({
+		boxScore,
+		homeCourtAdvantage: 1,
+		quarterLength: 12,
+		sportState: makeState(0),
+	})!.prob;
+	const neutral = getLiveWinp({
+		boxScore,
+		homeCourtAdvantage: 1,
+		quarterLength: 12,
+		sportState: undefined,
+	})!.prob;
+	const awayBall = getLiveWinp({
+		boxScore,
+		homeCourtAdvantage: 1,
+		quarterLength: 12,
+		sportState: makeState(1),
+	})!.prob;
+
+	assert.isAbove(homeBall, neutral);
+	assert.isAbove(neutral, awayBall);
+	assert.isAbove(homeBall, 0.4);
+});
+
+test("early-quarter low clock is not treated as an endgame situation (AE7)", () => {
+	const q1Late = getLiveWinp({
+		boxScore: makeBoxScore({ period: 1, pts: [20, 22], time: "5.0" }),
+		homeCourtAdvantage: 1,
+		quarterLength: 12,
+		sportState: {
+			awaitingRebound: false,
+			ftRemaining: 0,
+			jumpBallWinner: 0,
+			o: 0,
+		},
+	})!.prob;
+	const q4Late = getLiveWinp({
+		boxScore: makeBoxScore({ period: 4, pts: [100, 102], time: "5.0" }),
+		homeCourtAdvantage: 1,
+		quarterLength: 12,
+		sportState: {
+			awaitingRebound: false,
+			ftRemaining: 0,
+			jumpBallWinner: 0,
+			o: 0,
+		},
+	})!.prob;
+
+	assert.isAbove(q1Late, 0.45);
+	assert.isBelow(q4Late, 0.4);
+});
+
+test("late overtime uses discrete endgame rather than regulation bulk", () => {
+	const homeDown1WithBall = getLiveWinp({
+		boxScore: makeBoxScore({
+			overtime: "(OT)",
+			period: 5,
+			pts: [110, 111],
+			time: "15.0",
+		}),
+		homeCourtAdvantage: 1,
+		quarterLength: 12,
+		sportState: {
+			awaitingRebound: false,
+			ftRemaining: 0,
+			jumpBallWinner: 0,
+			o: 0,
+		},
+	})!.prob;
+	assert.isAbove(homeDown1WithBall, 0.37);
+	assert.isBelow(homeDown1WithBall, 0.6);
+});

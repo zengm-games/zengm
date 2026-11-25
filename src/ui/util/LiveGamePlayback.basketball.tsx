@@ -10,7 +10,8 @@ import type {
 	PlayByPlayEvent,
 	PlayByPlayEventStat,
 } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
-import type { PlayerInjury } from "../../common/types.ts";
+import type { PlayerInjury, TeamNum } from "../../common/types.ts";
+import jumpBallWinnerStartsThisPeriodWithPossession from "../../worker/core/GameSim.basketball/jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import {
 	addStat,
 	getEventTeam,
@@ -18,6 +19,27 @@ import {
 	type LiveGameBoxScore,
 	type LiveGameEntry,
 } from "./LiveGamePlaybackBase.ts";
+
+export type SportState = {
+	// Team holding or about to inbound the ball (undefined when neutral/between periods)
+	o: TeamNum | undefined;
+
+	// Free throws remaining in the current trip for team o
+	ftRemaining: number;
+
+	// True after a missed shot or final missed FT until a rebound resolves possession
+	awaitingRebound: boolean;
+
+	// Winner of the opening jump ball, used to determine Q2-Q4 starting possession
+	jumpBallWinner: TeamNum | undefined;
+};
+
+const getDefaultSportState = (): SportState => ({
+	o: undefined,
+	ftRemaining: 0,
+	awaitingRebound: false,
+	jumpBallWinner: undefined,
+});
 
 const getPronoun = (pronoun: Parameters<typeof helpers.pronoun>[1]) => {
 	return helpers.pronoun(local.getState().gender, pronoun);
@@ -423,12 +445,148 @@ const PLAYER_AND_TEAM_STATS = new Set([
 	"pts",
 ]);
 
+const otherTeam = (t: TeamNum): TeamNum => (t === 0 ? 1 : 0);
+
+const updateSportState = (
+	sportState: SportState,
+	e: PlayByPlayEventOutput,
+	boxScore: BoxScore,
+) => {
+	switch (e.type) {
+		case "jumpBall": {
+			sportState.o = e.t;
+			sportState.ftRemaining = 0;
+			sportState.awaitingRebound = false;
+			if (boxScore.teams[0].ptsQtrs.length <= 1) {
+				sportState.jumpBallWinner = e.t;
+			}
+			break;
+		}
+		case "period": {
+			if (e.period > 1 && sportState.jumpBallWinner !== undefined) {
+				const winnerStarts = jumpBallWinnerStartsThisPeriodWithPossession(
+					e.period,
+					boxScore.numPeriods,
+				);
+				sportState.o = winnerStarts
+					? sportState.jumpBallWinner
+					: otherTeam(sportState.jumpBallWinner);
+			} else {
+				sportState.o = undefined;
+			}
+			sportState.ftRemaining = 0;
+			sportState.awaitingRebound = false;
+			break;
+		}
+		case "overtime":
+		case "endOfPeriod":
+		case "gameOver": {
+			sportState.o = undefined;
+			sportState.ftRemaining = 0;
+			sportState.awaitingRebound = false;
+			break;
+		}
+		case "fgaAtRim":
+		case "fgaLowPost":
+		case "fgaMidRange":
+		case "fgaPutBack":
+		case "fgaTp":
+		case "fgaTpFake":
+		case "fgaTipIn":
+		case "orb":
+		case "drb":
+		case "stl":
+		case "timeout": {
+			sportState.o = e.t;
+			sportState.ftRemaining = 0;
+			sportState.awaitingRebound = false;
+			break;
+		}
+		case "fgAtRim":
+		case "fgLowPost":
+		case "fgMidRange":
+		case "tp":
+		case "fgTipIn":
+		case "fgPutBack":
+		case "tov":
+		case "outOfBounds":
+		case "pfNonShooting": {
+			sportState.o = otherTeam(e.t);
+			sportState.ftRemaining = 0;
+			sportState.awaitingRebound = false;
+			break;
+		}
+		case "fgAtRimAndOne":
+		case "fgLowPostAndOne":
+		case "fgMidRangeAndOne":
+		case "tpAndOne":
+		case "fgTipInAndOne":
+		case "fgPutBackAndOne": {
+			sportState.o = e.t;
+			sportState.ftRemaining = 1;
+			sportState.awaitingRebound = false;
+			break;
+		}
+		case "pfBonus":
+		case "pfFG": {
+			sportState.o = otherTeam(e.t);
+			sportState.ftRemaining = 2;
+			sportState.awaitingRebound = false;
+			break;
+		}
+		case "pfTP": {
+			sportState.o = otherTeam(e.t);
+			sportState.ftRemaining = 3;
+			sportState.awaitingRebound = false;
+			break;
+		}
+		case "ft": {
+			const remaining = Math.max(0, sportState.ftRemaining - 1);
+			sportState.ftRemaining = remaining;
+			sportState.awaitingRebound = false;
+			sportState.o = remaining > 0 ? e.t : otherTeam(e.t);
+			break;
+		}
+		case "missFt": {
+			const remaining = Math.max(0, sportState.ftRemaining - 1);
+			sportState.ftRemaining = remaining;
+			sportState.o = e.t;
+			sportState.awaitingRebound = remaining === 0;
+			break;
+		}
+		case "missAtRim":
+		case "missLowPost":
+		case "missMidRange":
+		case "missTp":
+		case "missTipIn":
+		case "missPutBack": {
+			sportState.o = e.t;
+			sportState.ftRemaining = 0;
+			sportState.awaitingRebound = true;
+			break;
+		}
+		case "blkAtRim":
+		case "blkLowPost":
+		case "blkMidRange":
+		case "blkTp":
+		case "blkTipIn":
+		case "blkPutBack": {
+			// e.t is the blocking defender; shooter is the other team
+			sportState.o = otherTeam(e.t);
+			sportState.ftRemaining = 0;
+			sportState.awaitingRebound = true;
+			break;
+		}
+		default:
+			break;
+	}
+};
+
 export class LiveGamePlaybackBasketball extends LiveGamePlaybackBase<
 	PlayByPlayEventOutput,
 	BoxScore
 > {
-	// No extra state for the live game UI
-	override sportState = undefined;
+	override sportState = getDefaultSportState();
 
 	protected override getClockText() {
 		// No clock in the Elam Ending
@@ -531,6 +689,7 @@ export class LiveGamePlaybackBasketball extends LiveGamePlaybackBase<
 		}
 
 		this.updatePossession(e, newPossessionTypes);
+		updateSportState(this.sportState, e, boxScore);
 
 		return entry;
 	}

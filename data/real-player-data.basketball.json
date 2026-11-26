@@ -33035,6 +33035,18 @@
       "pos": "G",
       "weight": 185
     },
+    "ajayimi01": {
+      "bornYear": 2003,
+      "college": "Butler",
+      "country": "Washington, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 79,
+      "name": "Michael Ajayi",
+      "pos": "SF",
+      "weight": 235
+    },
     "ajincal01": {
       "bornYear": 1988,
       "college": "",
@@ -33074,6 +33086,18 @@
       "name": "Henry Akin",
       "pos": "FC",
       "weight": 225
+    },
+    "akinsja01": {
+      "bornYear": 2003,
+      "college": "Michigan State",
+      "country": "Michigan, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2025,
+      "height": 76,
+      "name": "Jaden Akins",
+      "pos": "SG",
+      "weight": 195
     },
     "akognjo01": {
       "bornYear": 1986,
@@ -34815,6 +34839,18 @@
       "name": "William Avery",
       "pos": "PG",
       "weight": 197
+    },
+    "awakato01": {
+      "bornYear": 2004,
+      "college": "Arizona",
+      "country": "New York, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 80,
+      "name": "Tobe Awaka",
+      "pos": "PF",
+      "weight": 250
     },
     "awtrede01": {
       "bornYear": 1948,
@@ -37390,6 +37426,18 @@
       "pos": "SG",
       "weight": 215
     },
+    "bittlna01": {
+      "bornYear": 2003,
+      "college": "Oregon",
+      "country": "Oregon, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 84,
+      "name": "Nate Bittle",
+      "pos": "C",
+      "weight": 254
+    },
     "biyombi01": {
       "bornYear": 1992,
       "college": "",
@@ -38438,6 +38486,18 @@
       "name": "Lawrence Boston",
       "pos": "PF",
       "weight": 225
+    },
+    "bosweky01": {
+      "bornYear": 2005,
+      "college": "Illinois",
+      "country": "Illinois, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 74,
+      "name": "Kylan Boswell",
+      "pos": "PG",
+      "weight": 226
     },
     "bosweto01": {
       "bornYear": 1953,
@@ -44371,6 +44431,18 @@
       "pos": "FC",
       "weight": 274
     },
+    "coopeca02": {
+      "bornYear": 2004,
+      "college": "Michigan State",
+      "country": "Michigan, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 83,
+      "name": "Carson Cooper",
+      "pos": "PF",
+      "weight": 235
+    },
     "coopech01": {
       "bornYear": 1926,
       "college": "Duquesne",
@@ -44499,6 +44571,18 @@
       "name": "Lanard Copeland",
       "pos": "SG",
       "weight": 190
+    },
+    "copelqu01": {
+      "bornYear": 2003,
+      "college": "NC State",
+      "country": "Pennsylvania, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 78,
+      "name": "Quadir Copeland",
+      "pos": "PG",
+      "weight": 220
     },
     "corbity01": {
       "bornYear": 1962,
@@ -47142,6 +47226,18 @@
       "pos": "SG",
       "weight": 184
     },
+    "diallal01": {
+      "bornYear": 1997,
+      "college": "Providence",
+      "country": "New York, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2020,
+      "height": 79,
+      "name": "Alpha Diallo",
+      "pos": "SF",
+      "weight": 210
+    },
     "diallch01": {
       "bornYear": 1996,
       "college": "Kansas",
@@ -47612,6 +47708,18 @@
       "pos": "SG",
       "weight": 203
     },
+    "dixjo01": {
+      "bornYear": 2004,
+      "college": "Creighton",
+      "country": "Iowa, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 78,
+      "name": "Josh Dix",
+      "pos": "SG",
+      "weight": 205
+    },
     "dixoner01": {
       "bornYear": 2001,
       "college": "Villanova",
@@ -47728,6 +47836,18 @@
       "name": "James Donaldson",
       "pos": "C",
       "weight": 275
+    },
+    "donaltr01": {
+      "bornYear": 2003,
+      "college": "Miami (FL)",
+      "country": "Florida, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 75,
+      "name": "Tre Donaldson",
+      "pos": "PG",
+      "weight": 200
     },
     "doncilu01": {
       "bornYear": 1999,
@@ -48345,18 +48465,6 @@
       "pos": "G",
       "weight": 185
     },
-    "dp_2020_alpha_diallo": {
-      "bornYear": 1997,
-      "college": "Providence",
-      "country": "New York, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2020,
-      "height": 79,
-      "name": "Alpha Diallo",
-      "pos": "GF",
-      "weight": 210
-    },
     "dp_2020_caleb_homesley": {
       "bornYear": 1997,
       "college": "Liberty",
@@ -48731,18 +48839,6 @@
       "pos": "GF",
       "weight": 189
     },
-    "dp_2026_ak_okereke": {
-      "bornYear": 2004,
-      "college": "Vanderbilt",
-      "country": "California, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 79,
-      "name": "AK Okereke",
-      "pos": "F",
-      "weight": 244
-    },
     "dp_2026_baye_ndongo": {
       "bornYear": 2003,
       "college": "Georgia Tech",
@@ -48752,18 +48848,6 @@
       "name": "Baye Ndongo",
       "pos": "PF",
       "weight": 240
-    },
-    "dp_2026_carson_cooper": {
-      "bornYear": 2004,
-      "college": "Michigan State",
-      "country": "Michigan, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 83,
-      "name": "Carson Cooper",
-      "pos": "C",
-      "weight": 235
     },
     "dp_2026_darrion_williams": {
       "bornYear": 2003,
@@ -48786,18 +48870,6 @@
       "name": "Derrion Reid",
       "pos": "PF",
       "weight": 200
-    },
-    "dp_2026_ernest_udeh_jr": {
-      "bornYear": 2004,
-      "college": "Miami",
-      "country": "Florida, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 83,
-      "name": "Ernest Udeh Jr.",
-      "pos": "C",
-      "weight": 262
     },
     "dp_2026_fletcher_loyer": {
       "bornYear": 2004,
@@ -48863,18 +48935,6 @@
       "pos": "SG",
       "weight": 200
     },
-    "dp_2026_jaylin_sellers": {
-      "bornYear": 2003,
-      "college": "Providence",
-      "country": "Georgia, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 76,
-      "name": "Jaylin Sellers",
-      "pos": "G",
-      "weight": 205
-    },
     "dp_2026_joseph_tugler": {
       "bornYear": 2005,
       "college": "Houston",
@@ -48884,18 +48944,6 @@
       "name": "Joseph Tugler",
       "pos": "PF",
       "weight": 230
-    },
-    "dp_2026_josh_dix": {
-      "bornYear": 2004,
-      "college": "Creighton",
-      "country": "Iowa, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 78,
-      "name": "Josh Dix",
-      "pos": "GF",
-      "weight": 203
     },
     "dp_2026_joson_sanon": {
       "bornYear": 2006,
@@ -48929,18 +48977,6 @@
       "pos": "GF",
       "weight": 227
     },
-    "dp_2026_kylan_boswell": {
-      "bornYear": 2005,
-      "college": "Illinois",
-      "country": "Illinois, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 74,
-      "name": "Kylan Boswell",
-      "pos": "PG",
-      "weight": 226
-    },
     "dp_2026_mackenzie_mgbako": {
       "bornYear": 2005,
       "college": "Texas A&M",
@@ -48962,18 +48998,6 @@
       "name": "Mark Mitchell",
       "pos": "F",
       "weight": 230
-    },
-    "dp_2026_michael_ajayi": {
-      "bornYear": 2003,
-      "college": "Butler",
-      "country": "Washington, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 80,
-      "name": "Michael Ajayi",
-      "pos": "F",
-      "weight": 228
     },
     "dp_2026_milos_uzan": {
       "bornYear": 2003,
@@ -49009,18 +49033,6 @@
       "pos": "C",
       "weight": 235
     },
-    "dp_2026_nate_bittle": {
-      "bornYear": 2003,
-      "college": "Oregon",
-      "country": "Oregon, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 84,
-      "name": "Nate Bittle",
-      "pos": "C",
-      "weight": 252
-    },
     "dp_2026_noa_kouakou-heugue": {
       "bornYear": 2007,
       "college": "Australia",
@@ -49052,18 +49064,6 @@
       "name": "P.J. Haggerty",
       "pos": "SG",
       "weight": 195
-    },
-    "dp_2026_quadir_copeland": {
-      "bornYear": 2003,
-      "college": "NC State",
-      "country": "Pennsylvania, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 78,
-      "name": "Quadir Copeland",
-      "pos": "GF",
-      "weight": 220
     },
     "dp_2026_rafael_castro": {
       "bornYear": 2003,
@@ -49099,18 +49099,6 @@
       "pos": "PG",
       "weight": 200
     },
-    "dp_2026_tobe_awaka": {
-      "bornYear": 2004,
-      "college": "Arizona",
-      "country": "New York, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 81,
-      "name": "Tobe Awaka",
-      "pos": "PF",
-      "weight": 261
-    },
     "dp_2026_tobias_jensen": {
       "bornYear": 2004,
       "college": "Germany",
@@ -49122,18 +49110,6 @@
       "name": "Tobias Jensen",
       "pos": "GF",
       "weight": 200
-    },
-    "dp_2026_tre_donaldson": {
-      "bornYear": 2004,
-      "college": "Miami (FL)",
-      "country": "Florida, USA",
-      "draftPick": 0,
-      "draftRound": 0,
-      "draftYear": 2026,
-      "height": 74,
-      "name": "Tre Donaldson",
-      "pos": "G",
-      "weight": 208
     },
     "dp_2027_aaron_bradshaw": {
       "bornYear": 2004,
@@ -63470,6 +63446,18 @@
       "name": "Andre Iguodala",
       "pos": "GF",
       "weight": 215
+    },
+    "ikegr01": {
+      "bornYear": 2002,
+      "college": "Gonzaga",
+      "country": "Colorado, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 81,
+      "name": "Graham Ike",
+      "pos": "C",
+      "weight": 251
     },
     "ilgauzy01": {
       "bornYear": 1975,
@@ -80398,6 +80386,18 @@
       "pos": "F",
       "weight": 229
     },
+    "okereak01": {
+      "bornYear": 2003,
+      "college": "Vanderbilt",
+      "country": "California, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 79,
+      "name": "AK Okereke",
+      "pos": "F",
+      "weight": 244
+    },
     "okoboel01": {
       "bornYear": 1997,
       "college": "",
@@ -89318,6 +89318,18 @@
       "pos": "F",
       "weight": 210
     },
+    "selleja01": {
+      "bornYear": 2003,
+      "college": "Providence",
+      "country": "Georgia, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 77,
+      "name": "Jaylin Sellers",
+      "pos": "PG",
+      "weight": 205
+    },
     "selleph01": {
       "bornYear": 1953,
       "college": "Rutgers University",
@@ -96366,6 +96378,18 @@
       "name": "Edwin Ubiles",
       "pos": "SF",
       "weight": 204
+    },
+    "udehjer01": {
+      "bornYear": 2004,
+      "college": "Miami (FL)",
+      "country": "Florida, USA",
+      "draftPick": 0,
+      "draftRound": 0,
+      "draftYear": 2026,
+      "height": 83,
+      "name": "Ernest Udeh Jr.",
+      "pos": "C",
+      "weight": 266
     },
     "udohek01": {
       "bornYear": 1987,
@@ -192211,23 +192235,23 @@
       "tp": 20
     },
     {
-      "diq": 13,
-      "dnk": 62,
-      "drb": 54,
-      "endu": 35,
-      "fg": 71,
-      "ft": 57,
+      "diq": 12,
+      "dnk": 61,
+      "drb": 53,
+      "endu": 91,
+      "fg": 91,
+      "ft": 56,
       "fuzz": 0,
       "hgt": 36,
-      "ins": 56,
-      "jmp": 47,
-      "oiq": 48,
-      "pss": 51,
-      "reb": 42,
+      "ins": 65,
+      "jmp": 42,
+      "oiq": 67,
+      "pss": 47,
+      "reb": 52,
       "season": 2027,
       "slug": "acuffda01",
-      "spd": 62,
-      "stre": 48,
+      "spd": 61,
+      "stre": 33,
       "tp": 65
     },
     {
@@ -195107,6 +195131,26 @@
       "tp": 79
     },
     {
+      "diq": 28,
+      "dnk": 50,
+      "drb": 43,
+      "endu": 25,
+      "fg": 55,
+      "ft": 32,
+      "fuzz": 0,
+      "hgt": 56,
+      "ins": 43,
+      "jmp": 43,
+      "oiq": 36,
+      "pss": 41,
+      "reb": 62,
+      "season": 2027,
+      "slug": "ajayimi01",
+      "spd": 44,
+      "stre": 41,
+      "tp": 30
+    },
+    {
       "diq": 38,
       "dnk": 50,
       "drb": 36,
@@ -195374,6 +195418,26 @@
       "spd": 38,
       "stre": 44,
       "tp": 22
+    },
+    {
+      "diq": 41,
+      "dnk": 23,
+      "drb": 34,
+      "endu": 19,
+      "fg": 42,
+      "ft": 47,
+      "fuzz": 0,
+      "hgt": 40,
+      "ins": 38,
+      "jmp": 47,
+      "oiq": 36,
+      "pss": 33,
+      "reb": 42,
+      "season": 2027,
+      "slug": "akinsja01",
+      "spd": 54,
+      "stre": 38,
+      "tp": 37
     },
     {
       "diq": 41,
@@ -211048,6 +211112,26 @@
       "tp": 56
     },
     {
+      "diq": 28,
+      "dnk": 61,
+      "drb": 36,
+      "endu": 25,
+      "fg": 41,
+      "ft": 33,
+      "fuzz": 0,
+      "hgt": 53,
+      "ins": 48,
+      "jmp": 47,
+      "oiq": 37,
+      "pss": 24,
+      "reb": 71,
+      "season": 2027,
+      "slug": "awakato01",
+      "spd": 43,
+      "stre": 50,
+      "tp": 17
+    },
+    {
       "diq": 53,
       "dnk": 53,
       "drb": 48,
@@ -211535,8 +211619,8 @@
       "diq": 49,
       "dnk": 6,
       "drb": 28,
-      "endu": 48,
-      "fg": 83,
+      "endu": 3,
+      "fg": 63,
       "ft": 39,
       "fuzz": 0,
       "hgt": 70,
@@ -211544,11 +211628,11 @@
       "jmp": 34,
       "oiq": 85,
       "pss": 31,
-      "reb": 71,
+      "reb": 68,
       "season": 2027,
       "slug": "aytonde01",
-      "spd": 37,
-      "stre": 86,
+      "spd": 34,
+      "stre": 83,
       "tp": 27
     },
     {
@@ -223503,6 +223587,26 @@
       "tp": 58
     },
     {
+      "diq": 52,
+      "dnk": 0,
+      "drb": 32,
+      "endu": 18,
+      "fg": 27,
+      "ft": 52,
+      "fuzz": 0,
+      "hgt": 55,
+      "ins": 34,
+      "jmp": 45,
+      "oiq": 58,
+      "pss": 34,
+      "reb": 42,
+      "season": 2027,
+      "slug": "batumni01",
+      "spd": 28,
+      "stre": 42,
+      "tp": 54
+    },
+    {
       "diq": 50,
       "dnk": 42,
       "drb": 47,
@@ -233570,6 +233674,26 @@
       "tp": 53
     },
     {
+      "diq": 29,
+      "dnk": 42,
+      "drb": 33,
+      "endu": 15,
+      "fg": 39,
+      "ft": 44,
+      "fuzz": 0,
+      "hgt": 72,
+      "ins": 41,
+      "jmp": 35,
+      "oiq": 34,
+      "pss": 37,
+      "reb": 53,
+      "season": 2027,
+      "slug": "bittlna01",
+      "spd": 28,
+      "stre": 34,
+      "tp": 35
+    },
+    {
       "diq": 35,
       "dnk": 58,
       "drb": 43,
@@ -241255,23 +241379,23 @@
     },
     {
       "diq": 39,
-      "dnk": 71,
-      "drb": 49,
-      "endu": 26,
-      "fg": 57,
+      "dnk": 76,
+      "drb": 50,
+      "endu": 46,
+      "fg": 60,
       "ft": 55,
       "fuzz": 0,
       "hgt": 60,
-      "ins": 60,
+      "ins": 57,
       "jmp": 53,
-      "oiq": 46,
-      "pss": 48,
-      "reb": 69,
+      "oiq": 58,
+      "pss": 53,
+      "reb": 73,
       "season": 2027,
       "slug": "boozeca02",
       "spd": 45,
       "stre": 49,
-      "tp": 48
+      "tp": 50
     },
     {
       "diq": 37,
@@ -241886,6 +242010,26 @@
       "spd": 43,
       "stre": 49,
       "tp": 39
+    },
+    {
+      "diq": 30,
+      "dnk": 52,
+      "drb": 48,
+      "endu": 25,
+      "fg": 51,
+      "ft": 55,
+      "fuzz": 0,
+      "hgt": 28,
+      "ins": 32,
+      "jmp": 45,
+      "oiq": 38,
+      "pss": 45,
+      "reb": 53,
+      "season": 2027,
+      "slug": "bosweky01",
+      "spd": 51,
+      "stre": 40,
+      "tp": 36
     },
     {
       "diq": 40,
@@ -247493,24 +247637,24 @@
       "tp": 60
     },
     {
-      "diq": 39,
-      "dnk": 58,
-      "drb": 31,
-      "endu": 35,
-      "fg": 45,
-      "ft": 37,
+      "diq": 38,
+      "dnk": 52,
+      "drb": 27,
+      "endu": 51,
+      "fg": 41,
+      "ft": 33,
       "fuzz": 0,
       "hgt": 62,
-      "ins": 36,
-      "jmp": 58,
-      "oiq": 40,
-      "pss": 30,
-      "reb": 54,
+      "ins": 34,
+      "jmp": 50,
+      "oiq": 42,
+      "pss": 23,
+      "reb": 61,
       "season": 2027,
       "slug": "brazitr01",
-      "spd": 47,
-      "stre": 35,
-      "tp": 47
+      "spd": 43,
+      "stre": 41,
+      "tp": 48
     },
     {
       "diq": 34,
@@ -255882,24 +256026,24 @@
       "tp": 42
     },
     {
-      "diq": 27,
-      "dnk": 63,
-      "drb": 55,
-      "endu": 39,
-      "fg": 63,
-      "ft": 60,
+      "diq": 28,
+      "dnk": 65,
+      "drb": 54,
+      "endu": 37,
+      "fg": 65,
+      "ft": 59,
       "fuzz": 0,
       "hgt": 41,
       "ins": 41,
-      "jmp": 46,
-      "oiq": 43,
+      "jmp": 43,
+      "oiq": 49,
       "pss": 49,
-      "reb": 45,
+      "reb": 50,
       "season": 2027,
       "slug": "brownmi02",
       "spd": 65,
-      "stre": 31,
-      "tp": 50
+      "stre": 19,
+      "tp": 49
     },
     {
       "diq": 50,
@@ -291727,6 +291871,26 @@
       "tp": 38
     },
     {
+      "diq": 31,
+      "dnk": 51,
+      "drb": 42,
+      "endu": 22,
+      "fg": 45,
+      "ft": 56,
+      "fuzz": 0,
+      "hgt": 61,
+      "ins": 37,
+      "jmp": 40,
+      "oiq": 42,
+      "pss": 36,
+      "reb": 57,
+      "season": 2027,
+      "slug": "coopeca02",
+      "spd": 41,
+      "stre": 38,
+      "tp": 16
+    },
+    {
       "diq": 49,
       "dnk": 52,
       "drb": 53,
@@ -292756,6 +292920,26 @@
       "spd": 46,
       "stre": 44,
       "tp": 44
+    },
+    {
+      "diq": 37,
+      "dnk": 59,
+      "drb": 56,
+      "endu": 26,
+      "fg": 42,
+      "ft": 46,
+      "fuzz": 0,
+      "hgt": 48,
+      "ins": 46,
+      "jmp": 32,
+      "oiq": 36,
+      "pss": 52,
+      "reb": 45,
+      "season": 2027,
+      "slug": "copelqu01",
+      "spd": 50,
+      "stre": 31,
+      "tp": 37
     },
     {
       "diq": 45,
@@ -315395,6 +315579,26 @@
       "tp": 46
     },
     {
+      "diq": 55,
+      "dnk": 51,
+      "drb": 37,
+      "endu": 13,
+      "fg": 45,
+      "ft": 41,
+      "fuzz": 0,
+      "hgt": 48,
+      "ins": 29,
+      "jmp": 53,
+      "oiq": 48,
+      "pss": 39,
+      "reb": 53,
+      "season": 2027,
+      "slug": "diallal01",
+      "spd": 55,
+      "stre": 47,
+      "tp": 38
+    },
+    {
       "diq": 40,
       "dnk": 48,
       "drb": 42,
@@ -318420,6 +318624,26 @@
       "tp": 17
     },
     {
+      "diq": 32,
+      "dnk": 61,
+      "drb": 15,
+      "endu": 25,
+      "fg": 26,
+      "ft": 22,
+      "fuzz": 0,
+      "hgt": 63,
+      "ins": 51,
+      "jmp": 43,
+      "oiq": 26,
+      "pss": 27,
+      "reb": 63,
+      "season": 2027,
+      "slug": "diopkh01",
+      "spd": 41,
+      "stre": 59,
+      "tp": 17
+    },
+    {
       "diq": 60,
       "dnk": 72,
       "drb": 60,
@@ -319131,6 +319355,26 @@
       "spd": 56,
       "stre": 26,
       "tp": 79
+    },
+    {
+      "diq": 32,
+      "dnk": 16,
+      "drb": 38,
+      "endu": 20,
+      "fg": 67,
+      "ft": 63,
+      "fuzz": 0,
+      "hgt": 41,
+      "ins": 28,
+      "jmp": 46,
+      "oiq": 39,
+      "pss": 40,
+      "reb": 44,
+      "season": 2027,
+      "slug": "dixjo01",
+      "spd": 47,
+      "stre": 30,
+      "tp": 55
     },
     {
       "diq": 40,
@@ -319991,6 +320235,26 @@
       "spd": 27,
       "stre": 42,
       "tp": 39
+    },
+    {
+      "diq": 29,
+      "dnk": 44,
+      "drb": 48,
+      "endu": 31,
+      "fg": 51,
+      "ft": 52,
+      "fuzz": 0,
+      "hgt": 28,
+      "ins": 36,
+      "jmp": 59,
+      "oiq": 38,
+      "pss": 49,
+      "reb": 47,
+      "season": 2027,
+      "slug": "donaltr01",
+      "spd": 55,
+      "stre": 32,
+      "tp": 47
     },
     {
       "diq": 53,
@@ -323287,26 +323551,6 @@
       "tp": 41
     },
     {
-      "diq": 55,
-      "dnk": 51,
-      "drb": 37,
-      "endu": 13,
-      "fg": 45,
-      "ft": 41,
-      "fuzz": 0,
-      "hgt": 48,
-      "ins": 29,
-      "jmp": 53,
-      "oiq": 48,
-      "pss": 39,
-      "reb": 53,
-      "season": 2027,
-      "slug": "dp_2020_alpha_diallo",
-      "spd": 55,
-      "stre": 47,
-      "tp": 38
-    },
-    {
       "diq": 33,
       "dnk": 62,
       "drb": 50,
@@ -324167,26 +324411,6 @@
       "tp": 37
     },
     {
-      "diq": 31,
-      "dnk": 48,
-      "drb": 41,
-      "endu": 25,
-      "fg": 51,
-      "ft": 54,
-      "fuzz": 0,
-      "hgt": 48,
-      "ins": 36,
-      "jmp": 40,
-      "oiq": 33,
-      "pss": 41,
-      "reb": 47,
-      "season": 2027,
-      "slug": "dp_2026_ak_okereke",
-      "spd": 45,
-      "stre": 42,
-      "tp": 48
-    },
-    {
       "diq": 39,
       "dnk": 60,
       "drb": 33,
@@ -324205,26 +324429,6 @@
       "spd": 48,
       "stre": 59,
       "tp": 27
-    },
-    {
-      "diq": 31,
-      "dnk": 51,
-      "drb": 42,
-      "endu": 22,
-      "fg": 45,
-      "ft": 56,
-      "fuzz": 0,
-      "hgt": 61,
-      "ins": 37,
-      "jmp": 40,
-      "oiq": 42,
-      "pss": 36,
-      "reb": 57,
-      "season": 2027,
-      "slug": "dp_2026_carson_cooper",
-      "spd": 41,
-      "stre": 38,
-      "tp": 16
     },
     {
       "diq": 36,
@@ -324265,26 +324469,6 @@
       "spd": 44,
       "stre": 34,
       "tp": 31
-    },
-    {
-      "diq": 33,
-      "dnk": 67,
-      "drb": 28,
-      "endu": 21,
-      "fg": 29,
-      "ft": 8,
-      "fuzz": 0,
-      "hgt": 67,
-      "ins": 35,
-      "jmp": 48,
-      "oiq": 35,
-      "pss": 23,
-      "reb": 67,
-      "season": 2027,
-      "slug": "dp_2026_ernest_udeh_jr",
-      "spd": 41,
-      "stre": 62,
-      "tp": 0
     },
     {
       "diq": 25,
@@ -324407,26 +324591,6 @@
       "tp": 56
     },
     {
-      "diq": 32,
-      "dnk": 39,
-      "drb": 43,
-      "endu": 17,
-      "fg": 51,
-      "ft": 65,
-      "fuzz": 0,
-      "hgt": 38,
-      "ins": 36,
-      "jmp": 46,
-      "oiq": 39,
-      "pss": 39,
-      "reb": 48,
-      "season": 2027,
-      "slug": "dp_2026_jaylin_sellers",
-      "spd": 46,
-      "stre": 33,
-      "tp": 61
-    },
-    {
       "diq": 49,
       "dnk": 54,
       "drb": 29,
@@ -324445,26 +324609,6 @@
       "spd": 39,
       "stre": 60,
       "tp": 9
-    },
-    {
-      "diq": 32,
-      "dnk": 16,
-      "drb": 38,
-      "endu": 20,
-      "fg": 67,
-      "ft": 63,
-      "fuzz": 0,
-      "hgt": 41,
-      "ins": 28,
-      "jmp": 46,
-      "oiq": 39,
-      "pss": 40,
-      "reb": 44,
-      "season": 2027,
-      "slug": "dp_2026_josh_dix",
-      "spd": 47,
-      "stre": 30,
-      "tp": 55
     },
     {
       "diq": 32,
@@ -324527,26 +324671,6 @@
       "tp": 46
     },
     {
-      "diq": 30,
-      "dnk": 52,
-      "drb": 48,
-      "endu": 25,
-      "fg": 51,
-      "ft": 55,
-      "fuzz": 0,
-      "hgt": 28,
-      "ins": 32,
-      "jmp": 45,
-      "oiq": 38,
-      "pss": 45,
-      "reb": 53,
-      "season": 2027,
-      "slug": "dp_2026_kylan_boswell",
-      "spd": 51,
-      "stre": 40,
-      "tp": 36
-    },
-    {
       "diq": 31,
       "dnk": 45,
       "drb": 33,
@@ -324585,26 +324709,6 @@
       "spd": 47,
       "stre": 36,
       "tp": 28
-    },
-    {
-      "diq": 28,
-      "dnk": 50,
-      "drb": 43,
-      "endu": 25,
-      "fg": 55,
-      "ft": 32,
-      "fuzz": 0,
-      "hgt": 56,
-      "ins": 43,
-      "jmp": 43,
-      "oiq": 36,
-      "pss": 41,
-      "reb": 62,
-      "season": 2027,
-      "slug": "dp_2026_michael_ajayi",
-      "spd": 44,
-      "stre": 41,
-      "tp": 30
     },
     {
       "diq": 32,
@@ -324665,26 +324769,6 @@
       "spd": 40,
       "stre": 40,
       "tp": 27
-    },
-    {
-      "diq": 29,
-      "dnk": 42,
-      "drb": 33,
-      "endu": 15,
-      "fg": 39,
-      "ft": 44,
-      "fuzz": 0,
-      "hgt": 72,
-      "ins": 41,
-      "jmp": 35,
-      "oiq": 34,
-      "pss": 37,
-      "reb": 53,
-      "season": 2027,
-      "slug": "dp_2026_nate_bittle",
-      "spd": 28,
-      "stre": 34,
-      "tp": 35
     },
     {
       "diq": 36,
@@ -324748,26 +324832,6 @@
     },
     {
       "diq": 37,
-      "dnk": 59,
-      "drb": 56,
-      "endu": 26,
-      "fg": 42,
-      "ft": 46,
-      "fuzz": 0,
-      "hgt": 48,
-      "ins": 46,
-      "jmp": 32,
-      "oiq": 36,
-      "pss": 52,
-      "reb": 45,
-      "season": 2027,
-      "slug": "dp_2026_quadir_copeland",
-      "spd": 50,
-      "stre": 31,
-      "tp": 37
-    },
-    {
-      "diq": 37,
       "dnk": 68,
       "drb": 33,
       "endu": 18,
@@ -324827,26 +324891,6 @@
       "tp": 38
     },
     {
-      "diq": 28,
-      "dnk": 61,
-      "drb": 36,
-      "endu": 25,
-      "fg": 41,
-      "ft": 33,
-      "fuzz": 0,
-      "hgt": 53,
-      "ins": 48,
-      "jmp": 47,
-      "oiq": 37,
-      "pss": 24,
-      "reb": 71,
-      "season": 2027,
-      "slug": "dp_2026_tobe_awaka",
-      "spd": 43,
-      "stre": 50,
-      "tp": 17
-    },
-    {
       "diq": 29,
       "dnk": 22,
       "drb": 34,
@@ -324864,26 +324908,6 @@
       "slug": "dp_2026_tobias_jensen",
       "spd": 40,
       "stre": 26,
-      "tp": 47
-    },
-    {
-      "diq": 29,
-      "dnk": 44,
-      "drb": 48,
-      "endu": 31,
-      "fg": 51,
-      "ft": 52,
-      "fuzz": 0,
-      "hgt": 28,
-      "ins": 36,
-      "jmp": 59,
-      "oiq": 38,
-      "pss": 49,
-      "reb": 47,
-      "season": 2027,
-      "slug": "dp_2026_tre_donaldson",
-      "spd": 55,
-      "stre": 32,
       "tp": 47
     },
     {
@@ -335466,7 +335490,7 @@
       "diq": 30,
       "dnk": 73,
       "drb": 53,
-      "endu": 43,
+      "endu": 57,
       "fg": 70,
       "ft": 49,
       "fuzz": 0,
@@ -347480,24 +347504,24 @@
       "tp": 0
     },
     {
-      "diq": 42,
-      "dnk": 52,
-      "drb": 19,
-      "endu": 29,
-      "fg": 24,
-      "ft": 0,
+      "diq": 44,
+      "dnk": 54,
+      "drb": 21,
+      "endu": 31,
+      "fg": 26,
+      "ft": 2,
       "fuzz": 0,
-      "hgt": 87,
-      "ins": 60,
-      "jmp": 29,
-      "oiq": 32,
-      "pss": 27,
-      "reb": 67,
+      "hgt": 100,
+      "ins": 62,
+      "jmp": 31,
+      "oiq": 34,
+      "pss": 29,
+      "reb": 69,
       "season": 2027,
       "slug": "fallta01",
-      "spd": 27,
-      "stre": 57,
-      "tp": 0
+      "spd": 29,
+      "stre": 59,
+      "tp": 2
     },
     {
       "diq": 49,
@@ -353243,24 +353267,24 @@
       "tp": 40
     },
     {
-      "diq": 51,
-      "dnk": 74,
-      "drb": 46,
-      "endu": 43,
-      "fg": 79,
-      "ft": 58,
+      "diq": 54,
+      "dnk": 81,
+      "drb": 50,
+      "endu": 54,
+      "fg": 84,
+      "ft": 59,
       "fuzz": 0,
       "hgt": 57,
-      "ins": 50,
-      "jmp": 61,
-      "oiq": 66,
-      "pss": 46,
-      "reb": 63,
+      "ins": 55,
+      "jmp": 65,
+      "oiq": 72,
+      "pss": 49,
+      "reb": 62,
       "season": 2027,
       "slug": "flaggco01",
-      "spd": 60,
-      "stre": 45,
-      "tp": 40
+      "spd": 65,
+      "stre": 50,
+      "tp": 41
     },
     {
       "diq": 42,
@@ -353590,24 +353614,24 @@
       "tp": 20
     },
     {
-      "diq": 43,
-      "dnk": 35,
+      "diq": 40,
+      "dnk": 32,
       "drb": 48,
-      "endu": 19,
-      "fg": 65,
-      "ft": 62,
+      "endu": 27,
+      "fg": 62,
+      "ft": 59,
       "fuzz": 0,
       "hgt": 37,
       "ins": 32,
-      "jmp": 59,
-      "oiq": 38,
-      "pss": 53,
-      "reb": 49,
+      "jmp": 64,
+      "oiq": 43,
+      "pss": 55,
+      "reb": 53,
       "season": 2027,
       "slug": "flemiki01",
-      "spd": 72,
-      "stre": 27,
-      "tp": 44
+      "spd": 69,
+      "stre": 26,
+      "tp": 41
     },
     {
       "diq": 48,
@@ -380861,24 +380885,24 @@
       "tp": 44
     },
     {
-      "diq": 42,
-      "dnk": 49,
-      "drb": 37,
-      "endu": 16,
-      "fg": 36,
-      "ft": 45,
+      "diq": 44,
+      "dnk": 54,
+      "drb": 35,
+      "endu": 51,
+      "fg": 50,
+      "ft": 40,
       "fuzz": 0,
       "hgt": 57,
-      "ins": 39,
-      "jmp": 56,
-      "oiq": 29,
-      "pss": 34,
-      "reb": 55,
+      "ins": 20,
+      "jmp": 65,
+      "oiq": 38,
+      "pss": 29,
+      "reb": 60,
       "season": 2027,
       "slug": "graveal01",
-      "spd": 45,
-      "stre": 51,
-      "tp": 41
+      "spd": 40,
+      "stre": 46,
+      "tp": 36
     },
     {
       "diq": 42,
@@ -429512,6 +429536,26 @@
       "spd": 34,
       "stre": 47,
       "tp": 49
+    },
+    {
+      "diq": 30,
+      "dnk": 39,
+      "drb": 39,
+      "endu": 13,
+      "fg": 46,
+      "ft": 56,
+      "fuzz": 0,
+      "hgt": 65,
+      "ins": 38,
+      "jmp": 35,
+      "oiq": 42,
+      "pss": 38,
+      "reb": 54,
+      "season": 2027,
+      "slug": "ikegr01",
+      "spd": 35,
+      "stre": 49,
+      "tp": 27
     },
     {
       "abbrev_if_new_row": "CLE",
@@ -486108,23 +486152,23 @@
       "tp": 62
     },
     {
-      "diq": 45,
-      "dnk": 56,
-      "drb": 36,
-      "endu": 44,
-      "fg": 49,
+      "diq": 50,
+      "dnk": 66,
+      "drb": 46,
+      "endu": 42,
+      "fg": 69,
       "ft": 53,
       "fuzz": 0,
       "hgt": 61,
-      "ins": 46,
-      "jmp": 46,
-      "oiq": 49,
-      "pss": 44,
-      "reb": 64,
+      "ins": 58,
+      "jmp": 43,
+      "oiq": 65,
+      "pss": 47,
+      "reb": 65,
       "season": 2027,
       "slug": "lendeya01",
-      "spd": 47,
-      "stre": 49,
+      "spd": 52,
+      "stre": 52,
       "tp": 48
     },
     {
@@ -505619,24 +505663,24 @@
       "tp": 18
     },
     {
-      "diq": 27,
-      "dnk": 62,
-      "drb": 35,
-      "endu": 35,
-      "fg": 48,
-      "ft": 12,
+      "diq": 26,
+      "dnk": 61,
+      "drb": 34,
+      "endu": 26,
+      "fg": 41,
+      "ft": 11,
       "fuzz": 0,
       "hgt": 83,
-      "ins": 54,
-      "jmp": 38,
-      "oiq": 48,
-      "pss": 45,
-      "reb": 62,
+      "ins": 53,
+      "jmp": 60,
+      "oiq": 47,
+      "pss": 49,
+      "reb": 59,
       "season": 2027,
       "slug": "maraad01",
-      "spd": 32,
-      "stre": 52,
-      "tp": 21
+      "spd": 31,
+      "stre": 51,
+      "tp": 20
     },
     {
       "diq": 43,
@@ -566625,6 +566669,26 @@
       "tp": 37
     },
     {
+      "diq": 31,
+      "dnk": 48,
+      "drb": 41,
+      "endu": 25,
+      "fg": 51,
+      "ft": 54,
+      "fuzz": 0,
+      "hgt": 48,
+      "ins": 36,
+      "jmp": 40,
+      "oiq": 33,
+      "pss": 41,
+      "reb": 47,
+      "season": 2027,
+      "slug": "okereak01",
+      "spd": 45,
+      "stre": 42,
+      "tp": 48
+    },
+    {
       "diq": 42,
       "dnk": 37,
       "drb": 60,
@@ -584972,21 +585036,21 @@
     {
       "diq": 43,
       "dnk": 59,
-      "drb": 52,
-      "endu": 28,
-      "fg": 70,
+      "drb": 51,
+      "endu": 23,
+      "fg": 76,
       "ft": 58,
       "fuzz": 0,
       "hgt": 48,
-      "ins": 51,
-      "jmp": 66,
-      "oiq": 46,
-      "pss": 43,
-      "reb": 49,
+      "ins": 47,
+      "jmp": 62,
+      "oiq": 53,
+      "pss": 44,
+      "reb": 51,
       "season": 2027,
       "slug": "peterda02",
       "spd": 64,
-      "stre": 41,
+      "stre": 36,
       "tp": 63
     },
     {
@@ -638664,6 +638728,26 @@
       "tp": 47
     },
     {
+      "diq": 32,
+      "dnk": 39,
+      "drb": 43,
+      "endu": 17,
+      "fg": 51,
+      "ft": 65,
+      "fuzz": 0,
+      "hgt": 38,
+      "ins": 36,
+      "jmp": 46,
+      "oiq": 39,
+      "pss": 39,
+      "reb": 48,
+      "season": 2027,
+      "slug": "selleja01",
+      "spd": 46,
+      "stre": 33,
+      "tp": 61
+    },
+    {
       "diq": 36,
       "dnk": 62,
       "drb": 52,
@@ -692025,6 +692109,26 @@
     },
     {
       "diq": 33,
+      "dnk": 67,
+      "drb": 28,
+      "endu": 21,
+      "fg": 29,
+      "ft": 8,
+      "fuzz": 0,
+      "hgt": 67,
+      "ins": 35,
+      "jmp": 48,
+      "oiq": 35,
+      "pss": 23,
+      "reb": 67,
+      "season": 2027,
+      "slug": "udehjer01",
+      "spd": 41,
+      "stre": 62,
+      "tp": 0
+    },
+    {
+      "diq": 33,
       "dnk": 45,
       "drb": 37,
       "endu": 36,
@@ -700772,24 +700876,24 @@
       "tp": 20
     },
     {
-      "diq": 26,
-      "dnk": 70,
+      "diq": 28,
+      "dnk": 72,
       "drb": 58,
-      "endu": 41,
-      "fg": 64,
-      "ft": 57,
+      "endu": 48,
+      "fg": 61,
+      "ft": 54,
       "fuzz": 0,
       "hgt": 40,
-      "ins": 50,
-      "jmp": 41,
+      "ins": 49,
+      "jmp": 38,
       "oiq": 44,
-      "pss": 43,
-      "reb": 56,
+      "pss": 45,
+      "reb": 58,
       "season": 2027,
       "slug": "wagleke01",
-      "spd": 54,
-      "stre": 31,
-      "tp": 64
+      "spd": 55,
+      "stre": 26,
+      "tp": 61
     },
     {
       "diq": 46,
@@ -735893,24 +735997,24 @@
       "tp": 38
     },
     {
-      "diq": 34,
-      "dnk": 70,
-      "drb": 43,
-      "endu": 18,
-      "fg": 59,
-      "ft": 35,
+      "diq": 45,
+      "dnk": 71,
+      "drb": 45,
+      "endu": 40,
+      "fg": 73,
+      "ft": 37,
       "fuzz": 0,
       "hgt": 60,
-      "ins": 45,
-      "jmp": 64,
-      "oiq": 34,
-      "pss": 39,
-      "reb": 65,
+      "ins": 49,
+      "jmp": 65,
+      "oiq": 53,
+      "pss": 46,
+      "reb": 62,
       "season": 2027,
       "slug": "wilsoca01",
-      "spd": 60,
-      "stre": 43,
-      "tp": 25
+      "spd": 64,
+      "stre": 39,
+      "tp": 42
     },
     {
       "diq": 42,
@@ -750835,6 +750939,15 @@
         "start": 1993
       }
     ],
+    "ajayimi01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
+      }
+    ],
     "ajincal01": [
       {
         "amounts": [
@@ -753703,6 +753816,15 @@
         ],
         "exp": 2002,
         "start": 2000
+      }
+    ],
+    "awakato01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
       }
     ],
     "ayongu01": [
@@ -758845,6 +758967,15 @@
         ],
         "exp": 2025,
         "start": 2025
+      }
+    ],
+    "bosweky01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
       }
     ],
     "bosweto01": [
@@ -767327,6 +767458,15 @@
         "start": 2015
       }
     ],
+    "coopeca02": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
+      }
+    ],
     "coopedu01": [
       {
         "amounts": [
@@ -767450,6 +767590,15 @@
         ],
         "exp": 1992,
         "start": 1992
+      }
+    ],
+    "copelqu01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
       }
     ],
     "corbity01": [
@@ -770955,6 +771104,15 @@
         "start": 2004
       }
     ],
+    "diallal01": [
+      {
+        "amounts": [
+          1357763
+        ],
+        "exp": 2027,
+        "start": 2027
+      }
+    ],
     "diallch01": [
       {
         "amounts": [
@@ -771548,6 +771706,15 @@
         "start": 2024
       }
     ],
+    "dixjo01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
+      }
+    ],
     "dixonju01": [
       {
         "amounts": [
@@ -771644,6 +771811,15 @@
         ],
         "exp": 1992,
         "start": 1991
+      }
+    ],
+    "donaltr01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
       }
     ],
     "doncilu01": [
@@ -772116,15 +772292,6 @@
         "start": 2025
       }
     ],
-    "dp_2020_alpha_diallo": [
-      {
-        "amounts": [
-          1357000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
     "dp_2020_caleb_homesley": [
       {
         "amounts": [
@@ -772196,97 +772363,7 @@
         "start": 2025
       }
     ],
-    "dp_2026_ak_okereke": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_carson_cooper": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_ernest_udeh_jr": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_jaylin_sellers": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_josh_dix": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_kylan_boswell": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_michael_ajayi": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_quadir_copeland": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
     "dp_2026_rafael_castro": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_tobe_awaka": [
-      {
-        "amounts": [
-          700000
-        ],
-        "exp": 2027,
-        "start": 2027
-      }
-    ],
-    "dp_2026_tre_donaldson": [
       {
         "amounts": [
           700000
@@ -810942,6 +811019,15 @@
         "start": 2025
       }
     ],
+    "okereak01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
+      }
+    ],
     "okoboel01": [
       {
         "amounts": [
@@ -822888,6 +822974,15 @@
         "start": 1992
       }
     ],
+    "selleja01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
+      }
+    ],
     "senesa01": [
       {
         "amounts": [
@@ -831651,6 +831746,15 @@
         ],
         "exp": 2028,
         "start": 2025
+      }
+    ],
+    "udehjer01": [
+      {
+        "amounts": [
+          700000
+        ],
+        "exp": 2027,
+        "start": 2027
       }
     ],
     "udohek01": [
@@ -870254,6 +870358,13 @@
         "season": 1995
       }
     ],
+    "ajayimi01": [
+      {
+        "abbrev": "CHA",
+        "jerseyNumber": "10",
+        "season": 2027
+      }
+    ],
     "ajincal01": [
       {
         "abbrev": "CHA",
@@ -874666,6 +874777,13 @@
         "abbrev": "MIN",
         "jerseyNumber": "5",
         "season": 2002
+      }
+    ],
+    "awakato01": [
+      {
+        "abbrev": "CHI",
+        "jerseyNumber": "19",
+        "season": 2027
       }
     ],
     "awtrede01": [
@@ -883227,6 +883345,13 @@
         "abbrev": "WAS",
         "jerseyNumber": "4",
         "season": 1980
+      }
+    ],
+    "bosweky01": [
+      {
+        "abbrev": "CHA",
+        "jerseyNumber": "18",
+        "season": 2027
       }
     ],
     "bosweto01": [
@@ -897056,6 +897181,13 @@
         "season": 2018
       }
     ],
+    "coopeca02": [
+      {
+        "abbrev": "MEM",
+        "jerseyNumber": "20",
+        "season": 2027
+      }
+    ],
     "coopech01": [
       {
         "abbrev": "BOS",
@@ -897329,6 +897461,13 @@
         "abbrev": "LAC",
         "jerseyNumber": "21",
         "season": 1992
+      }
+    ],
+    "copelqu01": [
+      {
+        "abbrev": "HOU",
+        "jerseyNumber": "25",
+        "season": 2027
       }
     ],
     "corbity01": [
@@ -903600,6 +903739,13 @@
         "season": 2004
       }
     ],
+    "diallal01": [
+      {
+        "abbrev": "DEN",
+        "jerseyNumber": "22",
+        "season": 2027
+      }
+    ],
     "diallch01": [
       {
         "abbrev": "NOL",
@@ -904624,6 +904770,13 @@
         "season": 2027
       }
     ],
+    "dixjo01": [
+      {
+        "abbrev": "OKC",
+        "jerseyNumber": "21",
+        "season": 2027
+      }
+    ],
     "dixonju01": [
       {
         "abbrev": "WAS",
@@ -904856,6 +905009,13 @@
         "abbrev": "UTA",
         "jerseyNumber": "54",
         "season": 1995
+      }
+    ],
+    "donaltr01": [
+      {
+        "abbrev": "MIA",
+        "jerseyNumber": "24",
+        "season": 2027
       }
     ],
     "doncilu01": [
@@ -905574,13 +905734,6 @@
         "season": 2021
       }
     ],
-    "dp_2020_alpha_diallo": [
-      {
-        "abbrev": "DEN",
-        "jerseyNumber": "22",
-        "season": 2027
-      }
-    ],
     "dp_2020_caleb_homesley": [
       {
         "abbrev": "WAS",
@@ -905652,80 +905805,10 @@
         "season": 2025
       }
     ],
-    "dp_2026_ak_okereke": [
-      {
-        "abbrev": "LAL",
-        "jerseyNumber": "31",
-        "season": 2027
-      }
-    ],
-    "dp_2026_carson_cooper": [
-      {
-        "abbrev": "MEM",
-        "jerseyNumber": "20",
-        "season": 2027
-      }
-    ],
-    "dp_2026_ernest_udeh_jr": [
-      {
-        "abbrev": "CLE",
-        "jerseyNumber": "39",
-        "season": 2027
-      }
-    ],
-    "dp_2026_jaylin_sellers": [
-      {
-        "abbrev": "CHI",
-        "jerseyNumber": "2",
-        "season": 2027
-      }
-    ],
-    "dp_2026_josh_dix": [
-      {
-        "abbrev": "OKC",
-        "jerseyNumber": "21",
-        "season": 2027
-      }
-    ],
-    "dp_2026_kylan_boswell": [
-      {
-        "abbrev": "CHA",
-        "jerseyNumber": "18",
-        "season": 2027
-      }
-    ],
-    "dp_2026_michael_ajayi": [
-      {
-        "abbrev": "CHA",
-        "jerseyNumber": "10",
-        "season": 2027
-      }
-    ],
-    "dp_2026_quadir_copeland": [
-      {
-        "abbrev": "HOU",
-        "jerseyNumber": "25",
-        "season": 2027
-      }
-    ],
     "dp_2026_rafael_castro": [
       {
         "abbrev": "MIL",
         "jerseyNumber": "40",
-        "season": 2027
-      }
-    ],
-    "dp_2026_tobe_awaka": [
-      {
-        "abbrev": "CHI",
-        "jerseyNumber": "19",
-        "season": 2027
-      }
-    ],
-    "dp_2026_tre_donaldson": [
-      {
-        "abbrev": "MIA",
-        "jerseyNumber": "24",
         "season": 2027
       }
     ],
@@ -972181,6 +972264,13 @@
         "season": 2025
       }
     ],
+    "okereak01": [
+      {
+        "abbrev": "LAL",
+        "jerseyNumber": "31",
+        "season": 2027
+      }
+    ],
     "okoboel01": [
       {
         "abbrev": "PHO",
@@ -992316,6 +992406,13 @@
         "season": 1993
       }
     ],
+    "selleja01": [
+      {
+        "abbrev": "CHI",
+        "jerseyNumber": "2",
+        "season": 2027
+      }
+    ],
     "selleph01": [
       {
         "abbrev": "DET",
@@ -1007291,6 +1007388,13 @@
         "abbrev": "WAS",
         "jerseyNumber": "1",
         "season": 2012
+      }
+    ],
+    "udehjer01": [
+      {
+        "abbrev": "CLE",
+        "jerseyNumber": "39",
+        "season": 2027
       }
     ],
     "udohek01": [

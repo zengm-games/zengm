@@ -3,6 +3,7 @@ import addRatingsRow from "./addRatingsRow.ts";
 import addRelatives from "./addRelatives.ts";
 import addStatsRow from "./addStatsRow.ts";
 import addToFreeAgents from "./addToFreeAgents.ts";
+import applyFaceAging from "./applyFaceAging.ts";
 import augmentPartialPlayer from "./augmentPartialPlayer.ts";
 import bonus from "./bonus.ts";
 import checkJerseyNumberRetirement from "./checkJerseyNumberRetirement.ts";
@@ -59,6 +60,7 @@ export default {
 	addRelatives,
 	addStatsRow,
 	addToFreeAgents,
+	applyFaceAging,
 	augmentPartialPlayer,
 	bonus,
 	checkJerseyNumberRetirement,

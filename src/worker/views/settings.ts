@@ -152,6 +152,7 @@ const gameAttributeKeys = [
 	"gender",
 	"heightFactor",
 	"weightFactor",
+	"faceAging",
 	"allStarDunk",
 	"allStarThree",
 	"minRetireAge",

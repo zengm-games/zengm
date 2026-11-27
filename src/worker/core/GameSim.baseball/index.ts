@@ -2659,6 +2659,9 @@ class GameSim extends GameSimBase {
 			const t = i === -1 ? this.o : this.d;
 			const weight = i === -1 || playerInGame.pos === "P" ? 5 : 1;
 			const p = playerInGame.p;
+			if (p.injuryImmune) {
+				continue;
+			}
 
 			const injuryRate = p.injuryRate * weight;
 

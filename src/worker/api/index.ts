@@ -5115,6 +5115,15 @@ const upsertCustomizedPlayer = async (
 		last(p.ratings).season = g.get("season");
 	}
 
+	if (p.injuryImmune) {
+		p.injury = {
+			type: "Healthy",
+			gamesRemaining: 0,
+		};
+	} else {
+		delete p.injuryImmune;
+	}
+
 	// If player was retired, add ratings (but don't develop, because that would change ratings)
 	if (originalTid === PLAYER.RETIRED && p.tid !== PLAYER.RETIRED) {
 		if (g.get("season") - last(p.ratings).season > 0) {

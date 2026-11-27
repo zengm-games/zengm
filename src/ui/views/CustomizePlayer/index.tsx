@@ -211,6 +211,16 @@ const copyValidValues = (
 
 	target.injury.type = source.injury.type;
 
+	if (source.injuryImmune) {
+		target.injuryImmune = true;
+		target.injury = {
+			type: "Healthy",
+			gamesRemaining: 0,
+		};
+	} else {
+		delete target.injuryImmune;
+	}
+
 	{
 		const sourceRatings = last(source.ratings);
 		const targetRatings = last(target.ratings);
@@ -495,6 +505,16 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						p[field] = 1;
 					} else {
 						delete p[field];
+					}
+				} else if (field === "injuryImmune") {
+					if (checked) {
+						p.injuryImmune = true;
+						p.injury = {
+							type: "Healthy",
+							gamesRemaining: 0,
+						};
+					} else {
+						delete p.injuryImmune;
 					}
 				} else if (field === "jerseyNumber") {
 					p.jerseyNumber = val;
@@ -1137,7 +1157,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										aria-label="Injury"
 										onChange={handleChange.bind(null, "injury", "type")}
 										value={p.injury.type}
-										disabled={!godMode}
+										disabled={!godMode || !!p.injuryImmune}
 									/>
 									<input
 										type="text"
@@ -1149,7 +1169,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 											"gamesRemaining",
 										)}
 										value={p.injury.gamesRemaining}
-										disabled={!godMode}
+										disabled={!godMode || !!p.injuryImmune}
 										style={{
 											maxWidth: 70,
 										}}
@@ -1177,7 +1197,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 													};
 												});
 											}}
-											disabled={!godMode}
+											disabled={!godMode || !!p.injuryImmune}
 										>
 											Heal
 										</button>
@@ -1209,11 +1229,27 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 													};
 												});
 											}}
-											disabled={!godMode}
+											disabled={!godMode || !!p.injuryImmune}
 										>
 											Injure
 										</button>
 									)}
+								</div>
+								<div className="form-check mt-2">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										id="customize-player-injury-immune"
+										checked={Boolean(p.injuryImmune)}
+										onChange={handleChange.bind(null, "root", "injuryImmune")}
+										disabled={!godMode}
+									/>
+									<label
+										className="form-check-label"
+										htmlFor="customize-player-injury-immune"
+									>
+										Never get injured (immune to injuries)
+									</label>
 								</div>
 							</div>
 						</div>

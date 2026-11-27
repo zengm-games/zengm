@@ -87,6 +87,7 @@ type PlayerGameSim = {
 	skills: string[];
 	injured: boolean;
 	newInjury: boolean;
+	injuryImmune?: boolean;
 	injury: PlayerInjury & {
 		playingThrough: boolean;
 	};
@@ -1308,6 +1309,9 @@ class GameSim extends GameSimBase {
 
 		for (const t of teamNums) {
 			for (const p of this.team[t].player) {
+				if (p.injuryImmune) {
+					continue;
+				}
 				// Only players on the court can be injured
 				if (this.playersOnCourt[t].includes(p)) {
 					if (Math.random() < p.injuryRate) {

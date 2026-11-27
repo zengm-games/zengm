@@ -2993,6 +2993,9 @@ class GameSim extends GameSimBase {
 			}
 
 			for (const p of onField) {
+				if (p.injuryImmune) {
+					continue;
+				}
 				if (Math.random() < p.injuryRate) {
 					// 50% as many injuries for some positions
 					if (FEWER_INJURIES_POS.has(p.pos) && Math.random() < 0.5) {

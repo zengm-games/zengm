@@ -1288,6 +1288,7 @@ export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	hof?: 1; // Would rather be boolean, but can't index boolean
 	imgURL: string;
 	injury: PlayerInjury;
+	injuryImmune?: boolean;
 	injuries: {
 		season: number;
 		games: number;

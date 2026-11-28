@@ -136,3 +136,44 @@ test("walk-off scoring", async () => {
 		}
 	}
 });
+
+test("baseball injuryImmune players never get injured in checkInjuries", async () => {
+	const teams = await loadTeams([0, 1], {});
+	for (const t of [teams[0], teams[1]]) {
+		if (t.depth !== undefined) {
+			t.depth = team.getDepthPlayers(t.depth, t.player, true);
+		}
+	}
+	const game = new GameSim({
+		gid: 0,
+		teams: [teams[0]!, teams[1]!],
+		baseInjuryRate: 100,
+		doPlayByPlay: false,
+		homeCourtFactor: 1,
+		allStarGame: false,
+		neutralSite: false,
+		dh: true,
+	});
+	game.o = 0;
+	game.d = 1;
+	game.team[game.o].advanceToNextBatter();
+
+	const batter = game.team[game.o].getBatter();
+	batter.p.injuryImmune = true;
+	game.team[game.o].rebuildIndexes();
+
+	const initialFielders = [...game.team[game.d].fielders];
+	const immuneFielder = initialFielders[0]!;
+	immuneFielder.p.injuryImmune = true;
+	game.team[game.d].rebuildIndexes();
+
+	const nonImmuneFielder = initialFielders[1]!;
+	game.checkInjuries();
+
+	assert.strictEqual(batter.p.injured, false);
+	assert.notOk(batter.p.newInjury);
+	assert.strictEqual(immuneFielder.p.injured, false);
+	assert.notOk(immuneFielder.p.newInjury);
+	assert.strictEqual(nonImmuneFielder.p.injured, true);
+	assert.strictEqual(nonImmuneFielder.p.newInjury, true);
+});

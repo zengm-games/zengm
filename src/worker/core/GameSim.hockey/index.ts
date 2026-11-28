@@ -1751,6 +1751,9 @@ class GameSim extends GameSimBase {
 		let injuryOccurred = false;
 
 		if (info) {
+			if (info.target.injuryImmune) {
+				return;
+			}
 			// Some chance of a hit/block resulting in injury
 			if (info.type === "hit") {
 				if (
@@ -1789,6 +1792,9 @@ class GameSim extends GameSimBase {
 			for (const t of teamNums) {
 				for (const pos of POSITIONS) {
 					for (const p of this.playersOnIce[t][pos]) {
+						if (p.injuryImmune) {
+							continue;
+						}
 						let injuryRate = p.injuryRate;
 
 						// Fewer injuries for G

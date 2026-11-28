@@ -508,7 +508,7 @@ const writePlayerStats = async (
 					}
 				}
 
-				const injuredThisGame = p.newInjury;
+				const injuredThisGame = p.newInjury && !p2.injuryImmune;
 
 				let ratingsLoss = false;
 

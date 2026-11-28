@@ -260,7 +260,10 @@ export const processTeam = async (
 	}
 
 	for (const p of players) {
-		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
+		const injury = p.injuryImmune
+			? { type: "Healthy", gamesRemaining: 0 }
+			: p.injury;
+		const injuryFactor = playThroughInjuriesFactor(injury.gamesRemaining);
 
 		// p.jerseyNumber fallback is for exhibition game players for the current season with no stats
 		const jerseyNumber =
@@ -279,12 +282,13 @@ export const processTeam = async (
 			compositeRating: playerCompositeRatings,
 			skills: rating.skills,
 			injury: {
-				...p.injury,
+				...injury,
 				playingThrough:
-					p.injury.gamesRemaining > 0 &&
-					p.injury.gamesRemaining <= playThroughInjuries,
+					injury.gamesRemaining > 0 &&
+					injury.gamesRemaining <= playThroughInjuries,
 			},
-			injured: p.injury.gamesRemaining > playThroughInjuries,
+			injured: injury.gamesRemaining > playThroughInjuries,
+			injuryImmune: p.injuryImmune,
 			jerseyNumber,
 			ptModifier: p.ptModifier,
 			ovrs: rating.ovrs,

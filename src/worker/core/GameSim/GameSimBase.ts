@@ -50,6 +50,7 @@ class GameSimBase {
 				injury: {
 					gamesRemaining: number;
 				};
+				injuryImmune?: boolean;
 				injuryRate: number;
 			}[];
 		}[],
@@ -61,6 +62,7 @@ class GameSimBase {
 					baseRate,
 					p.age,
 					p.injury.gamesRemaining > 0,
+					p.injuryImmune,
 				);
 			}
 		}

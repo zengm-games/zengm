@@ -12,6 +12,7 @@ export type PlayerGameSim = {
 	skills: string[];
 	injured: boolean;
 	newInjury: boolean;
+	injuryImmune?: boolean;
 	injury: PlayerInjury & {
 		playingThrough: boolean;
 	};

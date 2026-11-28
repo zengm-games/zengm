@@ -587,3 +587,35 @@ test("fumble recovered by offense should only cost one down", async () => {
 	assert.strictEqual(game.o, 0);
 	assert.strictEqual(game.d, 1);
 });
+
+test("football injuryImmune players never get injured in GameSim.injuries", async () => {
+	const game = await initGameSim();
+	game.baseInjuryRate = 100;
+	game.initInjuryRates(game.team, 100);
+	game.awaitingKickoff = undefined;
+	game.o = 0;
+	game.d = 1;
+	game.updatePlayersOnField("pass");
+
+	const qb = game.getTopPlayerOnField(0, "QB");
+	qb.injuryImmune = true;
+
+	const origRandom = Math.random;
+	Math.random = () => 0.9;
+	try {
+		game.injuries();
+	} finally {
+		Math.random = origRandom;
+	}
+
+	assert.strictEqual(qb.injured, false);
+	assert.notOk(qb.newInjury);
+	const otherOffense = Object.values(game.playersOnField[0])
+		.flat()
+		.filter((p) => p !== qb);
+	assert.isAbove(otherOffense.length, 0);
+	for (const p of otherOffense) {
+		assert.strictEqual(p.injured, true);
+		assert.strictEqual(p.newInjury, true);
+	}
+});

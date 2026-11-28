@@ -28,6 +28,7 @@ import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { showUndoNotification } from "../../components/UndoNotification.tsx";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { AsyncButton } from "../../components/AsyncButton.tsx";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -324,13 +325,13 @@ const Roster = ({
 					: []),
 				...(showRelease
 					? [
-							<button
+							<AsyncButton
 								className="btn btn-light-bordered btn-xs"
 								disabled={!p.canRelease}
 								onClick={() => handleRelease(p, phase, currentSeason)}
 							>
 								Release
-							</button>,
+							</AsyncButton>,
 						]
 					: []),
 				...(showTradeFor || showTradingBlock

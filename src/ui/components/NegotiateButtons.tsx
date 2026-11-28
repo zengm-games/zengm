@@ -1,3 +1,4 @@
+import { AsyncButton } from "./AsyncButton.tsx";
 import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { showUndoNotification } from "./UndoNotification.tsx";
@@ -67,7 +68,7 @@ export const NegotiateButtons = ({
 			>
 				Negotiate
 			</button>
-			<button
+			<AsyncButton
 				className="btn btn-light-bordered btn-xs"
 				disabled={signDisabled}
 				onClick={async () => {
@@ -91,7 +92,7 @@ export const NegotiateButtons = ({
 				}}
 			>
 				Sign
-			</button>
+			</AsyncButton>
 		</>
 	);
 };

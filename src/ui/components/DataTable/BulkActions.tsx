@@ -20,6 +20,7 @@ import type { DataTableRowMetadata, MetadataType, Props } from "./index.tsx";
 import clsx from "clsx";
 import { confirm } from "../../util/confirm.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { useAction } from "../../util/useAction.ts";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;
@@ -74,7 +75,7 @@ const getSeason = (
 
 export type BulkAction<Type extends MetadataType = undefined> = {
 	godMode?: boolean;
-	onClick: (selectedRows: SelectedRows<Type>) => void;
+	onClick: (selectedRows: SelectedRows<Type>) => void | Promise<unknown>;
 	text: ReactNode;
 	textLong?: ReactNode;
 };
@@ -329,6 +330,13 @@ const BulkActionsUI = <Type extends MetadataType>({
 
 	const hasSomeSelected = selectedRows.map.size > 0;
 
+	// Only one action at a time, since they all act on the same selected rows
+	const { busy, run } = useAction();
+	const onClickAction = (action: BulkAction<Type>) =>
+		run(async () => {
+			await action.onClick(selectedRows);
+		});
+
 	if (showInlineButtons) {
 		return (
 			<div className="d-flex align-items-start gap-2 mb-2">
@@ -340,10 +348,8 @@ const BulkActionsUI = <Type extends MetadataType>({
 								"btn btn-sm",
 								action.godMode ? "btn-god-mode" : "btn-primary",
 							)}
-							disabled={!hasSomeSelected}
-							onClick={() => {
-								action.onClick(selectedRows);
-							}}
+							disabled={!hasSomeSelected || busy}
+							onClick={() => onClickAction(action)}
 						>
 							{action.text}
 						</button>
@@ -368,10 +374,8 @@ const BulkActionsUI = <Type extends MetadataType>({
 						<Dropdown.Item
 							key={i}
 							className={action.godMode ? "god-mode" : undefined}
-							onClick={() => {
-								action.onClick(selectedRows);
-							}}
-							disabled={!hasSomeSelected}
+							onClick={() => onClickAction(action)}
+							disabled={!hasSomeSelected || busy}
 						>
 							{action.textLong ?? action.text}
 						</Dropdown.Item>

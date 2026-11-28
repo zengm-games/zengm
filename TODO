@@ -134,9 +134,6 @@ for non-basketball sports, colored ratings (from ratingsGradientStyle) should be
 
 some way to collapse non-TOT rows on player profile https://old.reddit.com/r/BasketballGM/comments/1t0d9ep/monthly_suggestions_thread/ojc8rru/
 
-bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
-- more generally, draft order code should be aligned with pick value estimation code. this would also solve issue with weird draftTypes and unbalanced conferences (team makes playoff and no longer is in lottery)
-
 combine leagueLeaders award calculation and getSeasonLeaders, since they are really doing the same thing. just do it all at once. then we will also have less situations where we need to worry about async loading of seasonLeaders, since it will happen at the end of every season
 
 save multiple GOAT formulas somehow https://app.fastmail.com/mail/Inbox/AM4NH_t4SdKw.Stp1kcfDMlQk?u=433e4054
@@ -1368,8 +1365,6 @@ take advantage of the ability to bring people back to life
 - play all-star game between all time players in league
 - torunament between all best teams in league
 
-derived variables in GOAT lab
-
 On Free Agents page, for players asking for more than my available cap space, add somewhere (maybe in the "asking for" column?) the amount of cap space I have to get rid to sign this player so I don't have to do the maths by myself https://discord.com/channels/290013534023057409/331882115119448065/979755636529168404
 - should be in another column, hidden by default
 
@@ -1440,8 +1435,6 @@ group ratings ranks into categories https://discord.com/channels/290013534023057
 - https://discord.com/channels/290013534023057409/331882115119448065/936680191936323624
 - and add that green/red feature from the team stats to that to ez compare to league
 
-put playoff/champ odds on power rankings https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hre8hl7/
-
 put position ranks (from power rankings) in roster composition block https://discord.com/channels/290013534023057409/331882115119448065/937446267859107870
 
 load real player info from url/file https://discord.com/channels/290013534023057409/290015591216054273/937276075841572874
@@ -1487,12 +1480,6 @@ hockey ovr revamp
 - ovrs for skater and goalie. determine skater positions like BBGM, including possibility of hybrid positions like F. cause there's really a fair amount of overlap in what players do
 
 for some fbgm penalties, don't allow the ball carrier to be called
-
-getCopy/getCopies dry
-- rename to idb.get/idb.getAll
-- share code
-- any place that uses this conditionally vs cache.get/getAll, use just getCopy and make sure it's no slower
-  - lookup of single primary key (such as season or xid) should look in cache first and short circuit if found there
 
 fbgm edge cases
 - half the distance to the goal should also happen for offensive penalties, except pass interference https://mail.google.com/mail/u/0/#inbox/FMfcgzGllMLKdrcDDZTrvJDDlgkNBFTl
@@ -2830,7 +2817,6 @@ MINOR FIXES
 
 documentation
   http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
-Add MVP and Titles columns to HoF table
 on team history, show counts of conf/league championships, hall of fame players, etc
 if a player refuses to resign, that decision should also be reflected in free agency (don't recalculate mood)
 add "drb" to usage so that good ball handlers shoot more (favor guards over bigs more)

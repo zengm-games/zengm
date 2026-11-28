@@ -19,7 +19,7 @@ import {
 } from "../season/genPlayoffSeries.ts";
 import addDaysToSchedule from "../season/addDaysToSchedule.ts";
 import getSchedule from "../season/getSchedule.ts";
-import { addSpecialGames, genScheduleMatchups } from "../season/newSchedule.ts";
+import { genSchedule } from "../season/newSchedule.ts";
 import { getPlayoffsByConf } from "../season/getPlayoffsByConf.ts";
 import {
 	betterSeedHome,
@@ -901,14 +901,14 @@ const getRegularSeasonSchedule = async ({
 	teamSeasons: TeamSeason[];
 }): Promise<{ awayTid: number; day: number; homeTid: number }[]> => {
 	if (phase === PHASE.PRESEASON) {
-		const { tids } = genScheduleMatchups(
+		const { tids } = genSchedule(
 			teamSeasons.map(({ cid, did, tid }) => ({
 				seasonAttrs: { cid, did },
 				tid,
 			})),
 		);
 		return addDaysToSchedule(
-			addSpecialGames(tids).map(([homeTid, awayTid]) => ({
+			tids.map(([homeTid, awayTid]) => ({
 				awayTid,
 				homeTid,
 			})),

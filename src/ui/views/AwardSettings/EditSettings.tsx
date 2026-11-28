@@ -37,6 +37,9 @@ export const awardSettingToEditingState = (award: AwardSetting) => {
 		showStats: award.showStats,
 		group,
 		bench: !!award.bench,
+		positionalSelection:
+			award.numTeams !== undefined && !!award.positionalSelection,
+		benchPenalty: award.numTeams !== undefined && !!award.benchPenalty,
 		mip: !!award.mip,
 		rookie: !!award.rookie,
 	} as const;
@@ -139,6 +142,12 @@ const editingStateToAward = (state: EditingState, index: number) => {
 			...common,
 			numTeams,
 		};
+		if (state.positionalSelection) {
+			award.positionalSelection = true;
+		}
+		if (state.benchPenalty) {
+			award.benchPenalty = true;
+		}
 	}
 
 	if (state.group === "conf" || state.group === "div") {
@@ -582,6 +591,26 @@ export const EditSettings = ({
 						);
 					})}
 				</>
+			) : null}
+			{__SPORT === "basketball" && state.type === "team" ? (
+				<div className="mt-2">
+					{(["positionalSelection", "benchPenalty"] as const).map((key) => (
+						<label className="d-block" key={key}>
+							<input
+								type="checkbox"
+								className="form-check-input me-2"
+								disabled={disabled}
+								checked={state[key]}
+								onChange={(event) =>
+									setState({ ...state, [key]: event.target.checked })
+								}
+							/>
+							{key === "positionalSelection"
+								? "Positional selection (2 guards, 2 forwards, 1 center; GF/FC are flexible)"
+								: "Bench penalty (reduce formula score when starts are below 75% of games)"}
+						</label>
+					))}
+				</div>
 			) : null}
 			<div className="mt-2 d-flex gap-3">
 				<div>

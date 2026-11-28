@@ -81,6 +81,8 @@ const awardInfoIndividualCommonSchema = z.object({
 
 const awardInfoTeamCommonSchema = z.object({
 	numTeams: z.number().gte(1),
+	positionalSelection: z.boolean().optional(),
+	benchPenalty: z.boolean().optional(),
 });
 
 const awardInfoIndividualSchema = awardInfoCommonSchema

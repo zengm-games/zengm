@@ -19,6 +19,15 @@ import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { getSeconds } from "../../../common/formatClock.ts";
 import { LiveWinProbability } from "../../components/WinProbability.tsx";
+import { WinProbabilityChart } from "../../components/WinProbabilityChart.tsx";
+import {
+	getLiveWinpElapsedSeconds,
+	getLiveWinpXDomain,
+	getNextLiveWinpSample,
+	INITIAL_LIVE_WINP_X_STATE,
+	type LiveWinpSample,
+} from "../../util/liveWinpChart.ts";
+import { local } from "../../util/local.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { LiveGamePlayback } from "../../util/LiveGamePlayback.ts";
 import type { LiveGameEntry } from "../../util/LiveGamePlaybackBase.ts";
@@ -281,6 +290,26 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	const playByPlayEntries = useRef<PlayByPlayEntryInfo[]>([]);
 
+	const winpSamples = useRef<LiveWinpSample[]>([]);
+	const winpXState = useRef(INITIAL_LIVE_WINP_X_STATE);
+	const recordWinpSample = useCallback(
+		(elapsedSeconds: number) => {
+			const next = getNextLiveWinpSample({
+				boxScore: boxScore.current,
+				elapsedSeconds,
+				homeCourtAdvantage: local.getState().homeCourtAdvantage,
+				quarterLength: props.quarterLength,
+				sportState: playback.current?.sportState,
+				xState: winpXState.current,
+			});
+			if (next) {
+				winpXState.current = next.xState;
+				winpSamples.current.push(next.sample);
+			}
+		},
+		[props.quarterLength],
+	);
+
 	const navigateWarning = getNavigateWarning(boxScore.current.exhibition);
 
 	const { setDirty } = useBlocker({
@@ -350,13 +379,33 @@ export const LiveGame = (props: View<"liveGame">) => {
 				onLiveSimOver();
 			}
 
+			recordWinpSample(
+				getLiveWinpElapsedSeconds({
+					// Clock before the game over reset to 0:00, so a sudden-death winner does not add the unplayed time
+					endSeconds: getSeconds(pb.lastPlayTime),
+					gameOver: !!boxScore.current.gameOver,
+					overtimes: Math.max(
+						0,
+						boxScore.current.teams[0].ptsQtrs.length -
+							boxScore.current.numPeriods,
+					),
+					startSeconds,
+				}),
+			);
+
 			const endSeconds = getSeconds(boxScore.current.time);
 
 			// This is negative when rolling over to a new quarter
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[clearPlaybackTimeout, props.confetti, props.otl, setDirty],
+		[
+			clearPlaybackTimeout,
+			props.confetti,
+			props.otl,
+			recordWinpSample,
+			setDirty,
+		],
 	);
 
 	useEffect(() => {
@@ -371,6 +420,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 	useEffect(() => {
 		if (props.events && !started) {
+			winpSamples.current = [];
+			winpXState.current = INITIAL_LIVE_WINP_X_STATE;
+			recordWinpSample(0);
 			setStarted(true);
 
 			clearPlaybackTimeout();
@@ -379,7 +431,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 				setPlayIndex((prev) => prev + 1);
 			}, speedToMs(DEFAULT_SPEED));
 		}
-	}, [clearPlaybackTimeout, processToNextPause, props.events, started]);
+	}, [
+		clearPlaybackTimeout,
+		processToNextPause,
+		props.events,
+		recordWinpSample,
+		started,
+	]);
 
 	const handleSpeedChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const speed = event.target.value;
@@ -777,6 +835,18 @@ export const LiveGame = (props: View<"liveGame">) => {
 								sportState={playback.current?.sportState}
 							/>
 						</div>
+					) : null}
+					{boxScore.current.gid >= 0 && !boxScore.current.exhibition ? (
+						<WinProbabilityChart
+							gameOver={!!boxScore.current.gameOver}
+							samples={winpSamples.current}
+							teams={boxScore.current.teams}
+							xDomain={getLiveWinpXDomain({
+								boxScore: boxScore.current,
+								quarterLength: props.quarterLength,
+								x: winpXState.current.x,
+							})}
+						/>
 					) : null}
 					{boxScore.current.gid >= 0 ? (
 						<BoxScoreWrapper

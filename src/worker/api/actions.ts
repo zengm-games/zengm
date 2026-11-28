@@ -164,7 +164,20 @@ const addToTradingBlock = (
 	);
 };
 
+const oneGameActionAllowed = async (gid: number) => {
+	if (g.get("phase") !== PHASE.PLAYOFFS) {
+		return true;
+	}
+
+	const scheduleToday = await season.getSchedule(true);
+	return scheduleToday.some((game) => game.gid === gid);
+};
+
 const liveGame = async (gid: number, conditions: Conditions) => {
+	if (!(await oneGameActionAllowed(gid))) {
+		return;
+	}
+
 	await toUI(
 		"realtimeUpdate",
 		[
@@ -180,6 +193,10 @@ const liveGame = async (gid: number, conditions: Conditions) => {
 };
 
 const simGame = async (gid: number, conditions: Conditions) => {
+	if (!(await oneGameActionAllowed(gid))) {
+		return;
+	}
+
 	await game.play(1, conditions, gid);
 };
 

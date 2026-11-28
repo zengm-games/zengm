@@ -189,6 +189,7 @@ export const getUpcoming = async ({
 	};
 
 	const upcoming: {
+		canLiveSim: boolean;
 		finals?: boolean;
 		forceWin?: number | "tie";
 		gid: number;
@@ -197,6 +198,7 @@ export const getUpcoming = async ({
 	}[] = filteredSchedule.map(
 		({ awayTid, day, finals, forceWin, gid, homeTid }) => {
 			return {
+				canLiveSim: false,
 				finals,
 				forceWin,
 				gid,
@@ -205,6 +207,14 @@ export const getUpcoming = async ({
 			};
 		},
 	);
+
+	if (g.get("phase") === PHASE.PLAYOFFS) {
+		const scheduleToday = await season.getSchedule(true);
+		const canLiveSimGids = new Set(scheduleToday.map((game) => game.gid));
+		for (const game of upcoming) {
+			game.canLiveSim = canLiveSimGids.has(game.gid);
+		}
+	}
 
 	return upcoming;
 };
